@@ -97,58 +97,30 @@ The extractor rejects a schema hash or managed-type denominator mismatch. Ordina
 
 ## 過去の監査への参照
 
-### Load balancing, edge and DNS review (#715)
+### [Load balancing, edge and DNS review (#715)](aws-semantic-history.md#load-balancing-edge-and-dns-review-715)
 
-[Load balancing, edge and DNS review (#715)](aws-semantic-history.md#load-balancing-edge-and-dns-review-715) を参照してください。
+### [Lambda, APIs and application integration review (#714)](aws-semantic-history.md#lambda-apis-and-application-integration-review-714)
 
-### Lambda, APIs and application integration review (#714)
+### [EC2 VPC, subnet, endpoint and network-interface review (#710)](aws-semantic-history.md#ec2-vpc-subnet-endpoint-and-network-interface-review-710)
 
-[Lambda, APIs and application integration review (#714)](aws-semantic-history.md#lambda-apis-and-application-integration-review-714) を参照してください。
+### [Machine learning and generative AI review (#725)](aws-semantic-history.md#machine-learning-and-generative-ai-review-725)
 
-### EC2 VPC, subnet, endpoint and network-interface review (#710)
+### [Compute and scaling review (#712)](aws-semantic-history.md#compute-and-scaling-review-712)
 
-[EC2 VPC, subnet, endpoint and network-interface review (#710)](aws-semantic-history.md#ec2-vpc-subnet-endpoint-and-network-interface-review-710) を参照してください。
+### [Network connectivity and traffic protection review (#716)](aws-semantic-history.md#network-connectivity-and-traffic-protection-review-716)
 
-### Machine learning and generative AI review (#725)
+### [Search and business intelligence review (#724)](aws-semantic-history.md#search-and-business-intelligence-review-724)
 
-[Machine learning and generative AI review (#725)](aws-semantic-history.md#machine-learning-and-generative-ai-review-725) を参照してください。
+### [Containers and application hosting review (#713)](aws-semantic-history.md#containers-and-application-hosting-review-713)
 
-### Compute and scaling review (#712)
+### [NoSQL, caches and time-series review (#718)](aws-semantic-history.md#nosql-caches-and-time-series-review-718)
 
-[Compute and scaling review (#712)](aws-semantic-history.md#compute-and-scaling-review-712) を参照してください。
+### [Streaming, messaging and workflows review (#721)](aws-semantic-history.md#streaming-messaging-and-workflows-review-721)
 
-### Network connectivity and traffic protection review (#716)
+### [Relational and graph database review (#717)](aws-semantic-history.md#relational-and-graph-database-review-717)
 
-[Network connectivity and traffic protection review (#716)](aws-semantic-history.md#network-connectivity-and-traffic-protection-review-716) を参照してください。
+### [Filesystems, transfer and backup review (#720)](aws-semantic-history.md#filesystems-transfer-and-backup-review-720)
 
-### Search and business intelligence review (#724)
+### [Analytics and data governance review, batch 1 (#722)](aws-semantic-history.md#analytics-and-data-governance-review-batch-1-722)
 
-[Search and business intelligence review (#724)](aws-semantic-history.md#search-and-business-intelligence-review-724) を参照してください。
-
-### Containers and application hosting review (#713)
-
-[Containers and application hosting review (#713)](aws-semantic-history.md#containers-and-application-hosting-review-713) を参照してください。
-
-### NoSQL, caches and time-series review (#718)
-
-[NoSQL, caches and time-series review (#718)](aws-semantic-history.md#nosql-caches-and-time-series-review-718) を参照してください。
-
-### Streaming, messaging and workflows review (#721)
-
-[Streaming, messaging and workflows review (#721)](aws-semantic-history.md#streaming-messaging-and-workflows-review-721) を参照してください。
-
-### Relational and graph database review (#717)
-
-[Relational and graph database review (#717)](aws-semantic-history.md#relational-and-graph-database-review-717) を参照してください。
-
-### Filesystems, transfer and backup review (#720)
-
-[Filesystems, transfer and backup review (#720)](aws-semantic-history.md#filesystems-transfer-and-backup-review-720) を参照してください。
-
-### Analytics and data governance review, batch 1 (#722)
-
-[Analytics and data governance review, batch 1 (#722)](aws-semantic-history.md#analytics-and-data-governance-review-batch-1-722) を参照してください。
-
-### Analytics and data governance review, batch 2 (#723)
-
-[Analytics and data governance review, batch 2 (#723)](aws-semantic-history.md#analytics-and-data-governance-review-batch-2-723) を参照してください。
+### [Analytics and data governance review, batch 2 (#723)](aws-semantic-history.md#analytics-and-data-governance-review-batch-2-723)

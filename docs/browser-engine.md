@@ -15,29 +15,23 @@ An omitted `icon_mode` defaults to `service-name`; explicitly requesting `icon`
 returns `invalid_options` (the native CLI also rejects it). Site integrations
 must explicitly send `"icon_mode":"service-name"`.
 
-The engine build writes `output/wasm-engine/planorama.js` and
-`planorama_bg.wasm` from one wasm-bindgen invocation, plus `manifest.json` with
-package version, compiled engine revision (including dirty/unavailable state), binding version,
-memory capabilities and SHA-256 hashes. Packaging reads revision from the engine's
-existing HTML generation metadata, so it also works without Git and cannot relabel
-an older engine with a newer checkout SHA. Packaging
-produces `output/wasm-release/planorama-<version>-wasm-no-artwork.tar.gz` and
-its `.sha256` sidecar. The archive contains the engine, manifest and software licenses,
-without the sample browser UI or artwork. Do not mix bindings and Wasm files
-from different archives. Both builds append the same memory initialization adapter
-to the pinned bindings. The normal distribution also contains `pkg/memory-capabilities.json`.
+One wasm-bindgen invocation writes `output/wasm-engine/planorama.js` and
+`planorama_bg.wasm`; `manifest.json` records package/binding versions, compiled
+revision (including dirty/unavailable), memory capabilities and SHA-256 hashes.
+Revision comes from engine HTML metadata, so packaging works without Git and
+cannot relabel an old engine with a new checkout SHA. Both builds append the same
+memory adapter; the normal distribution has `pkg/memory-capabilities.json`.
+`output/wasm-release/planorama-<version>-wasm-no-artwork.tar.gz` contains engine,
+manifest and licenses, excluding UI/artwork; `.sha256` supplies its checksum.
+Never mix archives' bindings/Wasm.
 
-The manual **Wasm engine release** workflow validates both normal browser and
-standalone engine builds. Its default is build-only. Publication requires an
-existing `v<package-version>` tag and published stable GitHub Release, plus a
-successful manually dispatched **Layout quality** run for the checked-out commit
-(a PR merge-ref check does not qualify). It attaches the
-archive and checksum without replacing existing assets; matching existing assets
-are verified by size and SHA-256 and reused, so retrying a partial upload sends
-only missing files. Conflicting assets stop publication before any upload.
-Archive metadata (timestamps, owners and modes) is normalized so rebuilding the
-same engine files produces the same checksum. The workflow creates no tags or
-releases. Run publication only after the release commit has passed validation.
+**Wasm engine release** is manual and build-only by default. Publication validates
+both builds and requires an existing `v<package-version>` tag, published stable
+GitHub Release and successful manual **Layout quality** for the checkout commit
+(not a PR merge ref). Size/SHA-256-matching assets are reused; conflicts abort
+before upload, and retries send only missing files. Normalized timestamps/owners/
+modes make identical engine files reproducible. The workflow creates no tag/release;
+publish only a validated release commit.
 
 After that version's assets have been published, fetch a pinned pair:
 
@@ -85,29 +79,24 @@ counts, including non-finite or fractional JavaScript numbers, return
 terminate its Worker after completion, failure or cancellation to release the
 instance's linear-memory high-water allocation.
 
-The Rust equivalent is `Generator::new(String, Options)` and
-`Generator::new_named(Vec<NamedInput>, Options)`, with
-`step(usize) -> Result<Option<Generated>, Error>`. Compiler-generated Future state
-machines retain placement preferences, route candidates, search queues, scoring
-caches and refinement attempts. They resume at the pending checkpoint without
-replaying completed work. The existing synchronous API drives this shared
-implementation to completion, without the browser structure/search budgets.
-Dropping the Future cancels it; no background executor or thread is retained.
+Rust uses `Generator::new(String, Options)` or
+`Generator::new_named(Vec<NamedInput>, Options)` and
+`step(usize) -> Result<Option<Generated>, Error>`. Futures retain placement,
+candidates, queues, scoring and refinement state and resume without replay.
+Dropping them cancels without a background executor/thread. Synchronous generation
+drives the same implementation to completion without browser structure/search budgets.
 
 Both job forms expose `stage()` and `step_with_progress(units, callback)`.
-The latter has the same result and work-unit contract as `step`, and invokes the
-callback at real boundaries crossed during that step. It retains neither the
-callback nor an event history between calls. Wasm callback exceptions are ignored;
-callbacks should return promptly and must not re-enter the job. Rust accepts an
-`Fn(&'static str) + 'static` observer. Names are fixed: `parsing`, `selection`,
-`placement`, `routing`, `output`. No identifiers, values or percentages are sent.
-`stage()` initially returns `parsing`, then the most recently entered stage,
-including after closure; it is not a completion indicator. Named jobs parse all
-states and select once, then perform placement/routing for each selected state,
-then compose output. Placement/routing may repeat, including internal refinement;
-stages are not a monotonic progress scale. Use the callback to observe boundaries
-that a larger step crosses before returning. Pending/rest/paused scheduling,
-timers, stale-message rejection and Worker termination remain caller responsibilities.
+The latter shares `step`'s result/units and reports crossed boundaries without
+retaining callbacks/history. Callbacks must return promptly and never re-enter;
+Wasm exceptions are ignored, Rust accepts `Fn(&'static str) + 'static`.
+Names are `parsing`, `selection`, `placement`, `routing`, `output`, with no
+identifiers/values/percentages. `stage()` starts at parsing and retains the last
+stage even after closure; it does not signal completion. Named jobs parse all,
+select once, place/route each selected state, then compose. Refinement can repeat
+stages, so progress is not monotonic. Callbacks reveal boundaries crossed inside
+a step; scheduling, timers, stale-message rejection and Worker termination belong
+to the caller.
 
 Inside a fresh, initialized Worker, a named job can be driven with:
 
@@ -204,33 +193,27 @@ loading/instantiation failures also require a fresh Worker, with no fallback to
 a lower budget. The sample synchronous UI has no memory selector; the site UI
 is maintained separately.
 
-Both modules declare an imported wasm32 memory with a 65,536-page (4 GiB)
-maximum. The adapter creates memory with its small module-required initial size
-and a selected maximum of 8,192–65,536 pages. The runtime refuses growth beyond
-that maximum **before** allocating more linear memory, including inside a step
-and during string transfer. This includes static data, stack, allocator overhead,
-fragmentation and unused capacity; it is not all usable input/output storage.
-It excludes JS strings/copies, runtime/compiler metadata, browser/Worker overhead
-and preview DOM. Allocator live bytes are not measured. The reported
-`wasm.memory.buffer.byteLength` is capacity, not live allocations or process RSS.
+Both modules import wasm32 memory with a 65,536-page (4 GiB) maximum. The adapter
+uses module-required initial size and selected maximum 8,192–65,536 pages; growth
+past it is refused before allocation, including during steps/string transfer.
+Capacity includes static data, stack, allocator overhead, fragmentation and unused
+space; it excludes JS strings/copies, compiler/runtime metadata, Worker/browser
+overhead and preview DOM. `wasm.memory.buffer.byteLength` measures capacity,
+not live allocations or process RSS.
 
-At construction and checkpoints, a conservative preflight keeps 1 MiB of linear
-memory headroom. Grid expansion estimates additional storage before allocating;
-grid/distance vectors and queue growth also use fallible reservations. These
-checks may reject work even when the allocator could reuse existing free blocks.
-Parsing, semantic projection, some collections and output serialization still
-contain infallible allocation and non-interruptible work. Their OOM can trap
-instead of returning `memory_limit`; the imported maximum still applies. On a
-trap, terminate the Worker without further Wasm calls, including `free`, and
-retry using a new Worker. No partial diagram is a successful result.
+Construction/checkpoints preserve 1 MiB headroom; grid expansion estimates storage,
+and grid/distance/queue growth uses fallible reservations. This can reject work
+despite reusable free blocks. Parsing, projection, some collections and output
+still allocate infallibly/non-interruptibly: OOM may trap instead of
+`memory_limit`, although the maximum holds. On a trap, terminate without any
+further Wasm call (including `free`) and retry in a fresh Worker; never accept a
+partial diagram.
 
-Use one active generation per Worker. Any jobs or synchronous calls sharing an
-instance share its single memory maximum; there is no additive per-job allowance.
-Freeing/cancelling a job does not shrink linear memory or immediately return
-memory to the OS. A lower budget requires a fresh Worker/instance even after a
-job finishes. Input, reference, grid/queue, output and preview limits remain
-independent; `resource_limit` can therefore occur at any memory setting. Scheduling
-units, rest intervals and hidden-page behavior are independent of this option.
+Use one active job per Worker. Shared calls/jobs share one maximum, not additive
+budgets. Free/cancel does not shrink memory or guarantee immediate OS reclamation;
+lowering the budget requires a new instance. Input/reference/grid/queue/output/
+preview limits stay independent, so `resource_limit` may occur at any memory
+setting. Scheduling/rest/hidden-page policy is independent too.
 
 The build verifies the binary import limits against the binding and capability.
 The pinned wasm-bindgen uses unsigned pointers for JS views; Rust byte conversions
@@ -276,16 +259,10 @@ Budget and scheduling choices remain conservative provisional values until
 representative browser stress measurements and low-performance hardware results
 are available.
 
-Verify the extracted release archive in Chromium with
-`node tests/browser/wasm-engine.cjs` after building the release CLI (with
-`--no-default-features` for the standalone configuration) and
-the standalone engine. It checks archive membership, provenance and hashes,
-scans JS/Wasm for embedded artwork markers, compares AWS and Terraform SVG/HTML
-outputs exactly with native service-name generation, and tests omitted/explicit
-icon options on `viewer-plan` and archive reproducibility. PR CI runs
-`cargo test --locked --no-default-features --lib artwork_free::` for the native
-artwork-exclusion contract, also covered with all features in Rust CI. For the
-complete no-default-feature library suite, select `full_library` in the Browser
-Wasm manual workflow or run `WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` in Docker.
-The [coverage audit and measurements](ci-history.md#browser-wasm-test-scope-audit-885)
-explain the selection and its limits.
+After building the release CLI with `--no-default-features` and standalone engine,
+run `node tests/browser/wasm-engine.cjs` to verify it with Chromium: archive contents,
+provenance/hashes, JS/Wasm artwork exclusion, AWS/Terraform native SVG/HTML parity,
+`viewer-plan` omitted/explicit icon options and archive reproducibility.
+The focused native check is `cargo test --locked --no-default-features --lib artwork_free::`.
+PR/full-library selection is defined in [CI](ci.md#browser-wasm-432), with
+[coverage rationale and measurements](ci-history.md#browser-wasm-test-scope-audit-885).

@@ -29,41 +29,31 @@ end-to-end savings.
 
 ## Test runner evaluation (#254)
 
-Keep `cargo test` as the CI runner. Nextest did not improve the Standard suite
-at either tested concurrency, so adding installation and configuration is not
-justified by this experiment. Re-evaluate if the suite distribution changes.
+The 2026-10-15 two-repeat comparison retained `cargo test`: nextest was slower
+for standard by 3.6% at two threads and 1.4% at eight; Large differed by less than
+one second. Revisit if suite distribution changes. [PR #411](https://github.com/ritz-p/planorama/pull/411)
+records the decision; [original measurements](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#test-runner-evaluation-254)
+retain per-run CPU/timings, inventories and failure probes.
 
-The 2026-10-15 two-repeat comparison found nextest slower for standard by 3.6%
-at two threads and 1.4% at eight. Large differed by less than one second.
-[PR #411](https://github.com/ritz-p/planorama/pull/411) records the decision;
-[the original measurements](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/ci.md#test-runner-evaluation-254)
-retain per-run timings, CPU, inventories and failure probes. These historical
-results do not predict the current suite's runtime.
+Conditions: post-#253 selection at `efb7de9`, Rust 1.85.1, optimized test profile,
+cargo-nextest 0.9.148, Docker Desktop Linux, Ryzen 9 5950X, 32 visible CPUs, no
+container quota. Test concurrency varied, not CPU allocation; sources/fixtures
+were identical. Historical results used the former Python tool, not its JavaScript
+replacement, and do not predict current runtime.
 
-The comparison uses the post-#253 test selection at `efb7de9`, Rust 1.85.1,
-the optimized test profile and cargo-nextest 0.9.148 in Docker Desktop Linux
-on an AMD Ryzen 9 5950X with 32 visible logical CPUs and no container CPU quota.
-The experiment varies test concurrency, not the VM's CPU allocation. Rust sources and fixtures stay identical across
-runners. These historical observations used the former Python tool; they are not
-measurements from its JavaScript replacement. The
-[comparison script](../tests/support/compare_test_runners.cjs) reuses
-the CI suite selector, verifies names and ignored attributes against each
-libtest binary, and rejects unexpected nextest filters. It compiles before
-timing, then alternates runner order and reverses concurrency order on the second
-repeat. JSON records command wall time, child-process CPU time, revision,
-tool versions, inventories and per-run logs. Existing ignored benchmarks and
-deferred regressions are excluded from both runners.
+The [comparison script](../tests/support/compare_test_runners.cjs) reuses CI selection,
+checks libtest names/ignored flags and rejects unexpected nextest filters. It
+compiles before timing, alternates runners and reverses concurrency order on the
+second repeat; ignored benchmarks/deferred regressions stay excluded. JSON records
+wall time, child-process CPU, revision, tools, inventories and logs. Node
+`performance.now()` measures elapsed time; GNU `time` measures descendant user/system
+CPU (0.01 s precision). Failed runs retain stdout/stderr logs before nonzero exit.
+Only Node built-ins and Docker's `time` package are needed.
 
-The JavaScript tool uses Node's monotonic `performance.now()` for elapsed time
-and GNU `time` for the command's user plus system CPU time, including descendants
-(CPU precision: 0.01 seconds). Both stdout and stderr go to the per-run log;
-failed runs are recorded before the tool exits unsuccessfully. This development
-tool uses only Node built-ins and the Docker image's `time` package.
-After downloading nextest as below, run
-`docker compose exec -T -e NEXTEST_BIN=/tmp/planorama-nextest dev node --test tests/support/tooling.test.cjs`
-to exercise both runners against a temporary dependency-free crate, including
-ignored inventory, execution order and failed-run logs. These probes validate the
-tool and do not replace repository performance measurements.
+After downloading nextest, run
+`docker compose exec -T -e NEXTEST_BIN=/tmp/planorama-nextest dev node --test tests/support/tooling.test.cjs`.
+Its temporary dependency-free crate checks ignored inventory, order and failure
+logs for both runners; these are tooling probes, not performance measurements.
 
 Reproduce inside the existing development container from the repository root:
 
@@ -116,15 +106,11 @@ This is an inspected property of this revision, not an assumption that
 | Move large completion to scheduled/manual CI | Retain it on every PR along with progress, cancellation and retry. Moving completion would delay detection of large-input Wasm traps, deterministic output differences and missing progress stages. |
 | Bindings/cache changes | Keep the existing caches and both bindings builds; binding generation is below one second per distribution in the sampled runs. |
 
-The default selection no longer repeats 898 of the 900 passing library tests
-under no-default-features (eight ignored tests were not running before either).
-No browser assertion or fixture/format pair is removed. A future feature-specific
-implementation outside `artwork_free` could therefore escape the focused native
-suite; feature changes must revisit this audit. Manual `full_library: true`, or
-`WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh` in Docker, restores the complete suite
-for investigation. It is not a scheduled replacement or a claim of identical
-coverage for arbitrary future feature combinations.
-The separate Wasm engine release workflow still runs the complete library suite.
+The selection skips 898 of 900 previously passing no-default library tests;
+eight ignored tests were already excluded. Browser assertions/fixture-format pairs
+are unchanged. Feature-specific code outside `artwork_free` requires re-auditing
+this selection; no equivalence is promised for future feature combinations.
+Full-library investigation and release coverage follow [current CI](ci.md#browser-wasm-432).
 
 The browser inventory is unchanged: `viewer-plan` SVG/HTML and selection options;
 15 complete service fixtures in both formats (DynamoDB, ElastiCache, EventBridge,

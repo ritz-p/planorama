@@ -31,42 +31,37 @@ uses the same acquisition and fallback rules for native and Wasm builds.
 
 ## API and supported options
 
-Native Rust callers use `planorama::generate(json, &planorama::Options::default())`
-and receive `Result<Generated, Error>`. `Generated` contains `content` and
-`diagnostics`. Internal parser, graph and layout types are not public API.
-The CLI retains its existing options and detailed diagnostics; the public API
-uses typed errors and deduplicated static diagnostic descriptions without
-addresses, paths, input excerpts or attribute values.
+| API | Result |
+| --- | --- |
+| Rust `planorama::generate(json, &planorama::Options::default())` | `Result<Generated, Error>`; `Generated` has `content` and `diagnostics` |
+| Wasm `wasm_bindgen.generate(jsonString, optionsJsonString)` after `initSync` | JSON string with the same fields; errors throw a JSON string with `code` and `message` |
+| Rust `planorama::inspect_modules(json)` | `Result<Vec<ModuleInventoryEntry>, Error>` |
+| Rust `planorama::inspect_resources(json)` | `Result<Vec<ResourceInventoryEntry>, Error>` |
+| `inspect_input(json)` | Both inventories from one parse; used by the sample Worker |
 
-The generated JavaScript binding exposes
-`wasm_bindgen.generate(jsonString, optionsJsonString)`. After `initSync`, it
-returns a JSON string with `content` and `diagnostics`. Errors throw a JSON string
-with `code` and `message`. Codes are `input_too_large`, `invalid_json`,
-`unsupported_input`, `invalid_options`, `selection_failed`, `generation_failed`.
-Runtime traps are handled by the Worker as a generic generation failure.
+Wasm `wasm_bindgen.inspect_modules(jsonString)` and
+`wasm_bindgen.inspect_resources(jsonString)` serialize the corresponding arrays;
+`inspect_input(json)` serializes both in an object. Inspection
+uses the original input and CLI collectors without projection, selection, layout
+or routing; it shares generation's input limit and safe errors. Parser, graph and
+layout types are private. Public diagnostics are deduplicated static descriptions
+without addresses, paths, excerpts or values; CLI diagnostics remain detailed.
+Generation codes are `input_too_large`, `invalid_json`, `unsupported_input`,
+`invalid_options`, `selection_failed`, `generation_failed`; the Worker reports
+runtime traps as generic generation failures.
 
-`planorama::inspect_modules(json)` returns `Result<Vec<ModuleInventoryEntry>, Error>`;
-`wasm_bindgen.inspect_modules(jsonString)` returns the same entries as a JSON array.
-Both use the CLI inventory collector on the original parsed input, without semantic
-projection, selection, layout or routing. Each entry has `selector` (null for root),
-`instance` (false for configuration aggregates), `direct` and `subtree` counts.
-Counts include distinct managed/data instances and each current/deposed object;
-subtree includes direct resources. Overlapping rows must not be summed. Empty
-instances and configuration modules with no known instances have zero counts;
-configuration evidence does not prove an indexed instance exists. Inspection uses
-the same input limit and safe error contract as generation.
+Module rows contain `selector` (null for root), `instance` (false for
+configuration aggregates), `direct` and `subtree` counts. Counts distinguish
+managed/data and current/deposed objects; subtree includes direct resources,
+so overlapping rows must not be summed. Empty/configuration-only modules count
+zero and do not prove indexed instances exist.
 
-`planorama::inspect_resources(json)` returns `Result<Vec<ResourceInventoryEntry>, Error>`;
-the Wasm export returns these rows as JSON. `inspect_input(json)` returns both
-`modules` and `resources` using one parse, and is used by the sample Worker.
-Neither API performs semantic projection, selection, layout or routing. Resource
-rows contain only `state`, `selector`, original `address`, `resource_type`, `module`,
-`mode` (`managed`/`data`), and `current`/`deposed` object counts. One row groups all
-objects sharing an exact focus address; it does not offer individual historical
-objects. Generation still rejects ambiguous focus according to shared selection
-rules. No attributes or deposed keys are returned. Single-plan `state` is null;
-named-state inventory groups by state and address and returns
-`STATE:ADDRESS` selectors. Consumers must pass `selector` unchanged.
+Resource rows contain only `state`, `selector`, original `address`,
+`resource_type`, `module`, `mode` (`managed`/`data`) and `current`/`deposed`
+counts. Each exact focus address groups its objects; historical objects are not
+individually selectable and ambiguous generation focus still fails. Attributes
+and deposed keys are excluded. Single-plan `state` is null; named inventories
+group by state/address and return `STATE:ADDRESS`. Pass selectors unchanged.
 
 | Option | Values / default |
 | --- | --- |
@@ -85,78 +80,53 @@ named-state inventory groups by state and address and returns
 | `remote_state_mappings` | Array of explicit named-state mappings, default empty; [schema below](#explicit-remote-state-mappings) |
 
 Unknown keys, invalid enum values and invalid combinations fail explicitly.
+
 ### Sample UI settings
 
-Both diagnostic options reject SVG with `invalid_options`; the form explains
-the conflict and focuses the enabled diagnostic checkbox. Switching formats
-retains checkbox values. Reset clears both.
-The sample UI exposes the options above except remote-state mappings, which are
-available through the Rust/Wasm API. Generation settings remain
-visible and use the existing API decoder and selection rules.
+The sample UI exposes all options except remote-state mappings. Diagnostic
+checkboxes require HTML; SVG conflicts return `invalid_options`, focus the enabled
+checkbox and explain the error. Format changes retain checkbox values; Reset clears them.
 
-**Semantic findings** and **Routing hotspots** independently enable the existing
-[HTML viewer panels](viewer.md#routing-hotspots). Rust `Options` and Wasm JSON
-use the names above; CLI equivalents are `--html-semantic-diagnostics` and
-`--html-diagnostics`. The default output embeds neither diagnostic payload.
-Semantic findings describe supported rules for the selected resources; geometry
-findings describe final layout and routes. Navigation uses the selected view's
-resource index. Unavailable targets remain explanatory text.
+**Semantic findings** and **Routing hotspots** enable the independent
+[viewer panels](viewer.md#routing-hotspots), equivalent to
+`--html-semantic-diagnostics` and `--html-diagnostics`. Both default off.
+Semantic records describe selected-resource rules (1,000 records / 256 KiB);
+routing groups describe final geometry (200 groups). Panels distinguish
+uncollected, zero, omitted and incomplete/unknown-input results, use the selected
+resource index and show unavailable targets as text. Cross-state diagnostics go
+to `Generated.diagnostics`. Only identifiers/fixed explanations are embedded,
+not values, expressions, provider settings or the plan body. Provider evidence
+remains unsupported; diagnostics share the normal settings lifecycle and sandbox.
 
-These reuse the native collectors and bounded bridges: semantic records are
-limited to 1,000 and 256 KiB, routing groups to 200. Panels distinguish
-uncollected diagnostics from collected zero findings, report omitted entries and
-incomplete analysis/input (including unknown input completeness). Cross-state
-mapping diagnostics are returned in `Generated.diagnostics`, not these panels.
-Provider evidence is unsupported; this is not complete analysis. Only existing
-identifiers and fixed explanations are embedded, without
-raw attribute values, expressions, provider settings or the plan body. Diagnostic
-settings share snapshot, reset, cancellation and offline sandbox preview behavior.
+Legend options apply to SVG/HTML at generation time: hiding explanations retains
+the action key, while `omit_relationship_legend: true` removes the whole legend
+and reserved space without changing resources/relationships. Both default false;
+omission takes precedence. Changed-only and address/output format use the API rules.
+Focus enables depth: blank defaults to 1, 0 selects no neighbors; explicit input
+must be decimal digits in 0–4294967295. Invalid depth is announced/focused without
+correction. Clearing focus disables/omits depth but retains its field value.
 
-Choose the output and address format, and optionally hide relationship
-explanations (retaining the action color key), omit the entire relationship legend,
-or enable changed-only. Both legend settings default to false; entire omission
-takes precedence. They apply at generation time to SVG and HTML and participate
-in the settings snapshot, reset and cancellation of stale results. For example,
-`generate(json, JSON.stringify({omit_relationship_legend: true}))` removes the
-legend and its reserved space without changing relationships or resource cards.
-Enter a focus resource address to
-enable depth: empty uses the API default of 1, and 0 selects no neighbors.
-Explicit depth must be decimal digits in the Wasm nonnegative integer range
-0–4294967295; invalid input is announced and focused without correction.
-Clearing focus disables depth and omits it from requests, retaining the field
-value for when focus is entered again.
+Choosing a file loads unfiltered module/resource inventories. Both pickers show
+50 rows per page, retain selections through search/pagination and support Tab/Space.
+The focus search matches address, type, module, mode and state. It shows total
+matches/range; selecting one address replaces and synchronizes manual focus.
+Uncheck or **Clear focus** clears it. Selectors preserve indexed whitespace,
+quotes, commas and backslashes. Manual entries absent from inventory remain for
+generation validation; inventory presence does not bypass filters/context closure.
 
-Choosing a file automatically lists resources and modules. The focus picker searches
-address, type, module, mode and state, showing total matches and a range of up to
-50 addresses. Tab/Space selects one address and synchronizes the manual focus field;
-selecting another replaces it. Uncheck or **Clear focus** to clear it. Search and
-pagination retain the exact selected string, including indexed-key whitespace,
-quotes, commas and backslashes. Manual selectors absent from the list are retained
-for generation validation. Presence in the original input does not guarantee
-rendering after modules, changed-only, depth and context closure are applied.
+Module roots are disabled. **Previous modules** / **Next modules** page through
+the inventory; selected counts persist. Checking adds a selector row, unchecking
+removes all matching rows, and manual edits update checkboxes. **Add module** takes
+one complete, untrimmed/unsplit selector per row, including dots and escapes.
+No rows means an empty `modules` array; empty rows must be filled or removed.
+Duplicates reach the API unchanged but select each resource once. Removal focuses
+an adjacent row or Add module. Invalid selectors use the API's safe error;
+CLI focus/changed-only/context closure apply, without changing HTML runtime filters.
 
-Search the original module inventory and
-use **Previous modules** / **Next modules** to browse 50 rows at a time. Checkboxes
-support Tab and Space; root is disabled. Selection and the selected-selector count
-survive searching and pagination. Picking an entry adds a selector row; unchecking
-it removes every matching row. Manual edits update the corresponding checkbox.
-The rows are passed to the existing `modules` option, sharing CLI focus,
-changed-only and context-closure rules. Generated HTML runtime filters are unchanged.
-
-Use **Add module** to enter one complete selector per row. Rows preserve spaces,
-commas, dots, quotes and escapes inside instance keys; they are not split or
-trimmed. No rows sends an empty array (no module filter). Empty rows must be
-filled or removed. Duplicate rows are passed unchanged to the API, which selects
-each resource once. Removing a row moves keyboard focus to an adjacent selector
-or the Add module button. Invalid selectors use the API's safe selection error.
-
-Use **Spatial resource types** in Generation settings to select any combination
-of the seven AWS types. No selection preserves the default Logical presentation.
-Selections pass exact type names to the Wasm API; reference details and resource
-identity follow the shared native/library projection rules. The build generates
-labelled checkboxes from `src/view/purpose.rs`'s `TYPES` definition using
-`scripts/build-spatial-options.cjs`, so the UI and decoder share the allowed list.
-Each checkbox supports keyboard focus and Space to toggle.
+**Spatial resource types** passes exact names for any subset of the seven allowed
+AWS types; none preserves Logical defaults and native identity/reference rules.
+`scripts/build-spatial-options.cjs` generates labelled Tab/Space checkboxes from
+`src/view/purpose.rs`'s `TYPES`, keeping UI and decoder lists aligned.
 
 **Reset settings** restores every option, clears spatial selections, removes module rows and clears depth,
 while retaining the selected file and completed inventories. It also clears focus
@@ -216,14 +186,11 @@ and SVG/HTML rendering. Explicit remote-state mappings use the shared CLI resolv
 as described below. Provider evidence remains CLI-only. Equal names or ARNs do
 not automatically create cross-state connections.
 
-Each request snapshots all active files, names and generation settings before
-reading. Adding, removing or replacing a file, renaming a state, or switching input
-mode cancels the Worker, invalidates pending reads and results, clears inventories,
-focus, module selectors and searches, and retains other settings. Reload either
-list once inputs are ready. Settings edits cancel work and results while retaining
-completed inventories and selections. Reset retains all chosen files and state
-names. Cancel/read failure retains manual selectors for retry; stale callbacks
-cannot publish an inventory or result. No partial input set is generated.
+Named requests follow the [shared lifecycle](#privacy-and-lifecycle), snapshotting
+active files, names and settings before reading. Adding/removing/replacing files,
+renaming states or switching mode clears inventories, focus, module selectors and
+searches while retaining other settings; reload either list when ready. Reset
+retains chosen files/names. No partial input set is generated.
 
 `tests/fixtures/browser-named.json` deliberately reuses the same addresses across
 two named states. Browser checks compare exact native/Wasm SVG and HTML, module
@@ -295,47 +262,36 @@ cover mapped synchronous/resumable parity, cancellation and typed failures.
 
 ## Privacy and lifecycle
 
-During generation the UI shows parsing, interpretation/selection, placement,
-routing and output composition at their actual pipeline boundaries. Routing
-includes geometry refinement and may remain visible for a long time. These
-stages are not percentages or predictions of remaining time; only a successful
-result indicates completion. Elapsed seconds use the page's monotonic clock,
-starting before file reading, and stop on completion, failure or cancellation.
-Only stage changes are announced to screen readers. Cancel terminates the Worker;
-settings changes, file replacement and retry invalidate its notifications and timer.
-Module and resource inspection share a status and do not report generation progress.
+The UI reports real `parsing`, `selection`, `placement`, `routing` and `output`
+boundaries; routing includes refinement. Stages are neither percentages nor time
+estimates, and only a successful result means completion. Monotonic elapsed time
+starts before file reads and stops on completion/failure/cancel. Screen readers
+announce only stage changes; inspection shares a status without generation progress.
 
-The optional synchronous Wasm `generate_with_progress(json, options, callback)`
-uses the same pipeline and limits as `generate`. The callback receives only a
-fixed stage name (`parsing`, `selection`, `placement`, `routing`, `output`);
-callback exceptions do not change generation. The sample Worker suppresses
-repeated stages and associates notifications with the current request. Neither
-progress nor elapsed time contains plan identifiers or attributes or is persisted.
+`generate_with_progress(json, options, callback)` shares synchronous `generate`
+limits/pipeline and sends only those fixed names; callback exceptions do not alter
+generation. The sample Worker suppresses repeats and binds notifications to the
+current request. Progress/time contains no plan data and is not persisted.
 
-Only static assets are fetched at startup, without credentials. After the Ready
-message the page holds the compiled Wasm module and Worker source in memory.
-Module inspection, generation, preview and download work with the network disabled while this page
-remains open. Reloading requires fetching the assets again; there is no service
-worker or persistent offline cache managed by the sample.
+Startup fetches static assets without credentials. After Ready, the compiled
+module and Worker source stay in memory: inspection, generation, preview, download
+and retry work offline while the page stays open. Reload fetches assets again;
+the sample has no service worker or persistent offline cache.
 
-Input, output and diagnostics are never sent over the network or automatically
-written to localStorage, sessionStorage or IndexedDB. Downloads are explicit.
-Each request uses a new Worker; completion, cancellation and failure terminate
-it. Generate snapshots all settings before reading the file. Editing any setting,
-changing the file, resetting or cancelling terminates pending generation and
-invalidates pending file reads and stale completion callbacks. Edits stay visible;
-generate again to apply them. Failure leaves settings available for correction
-and retry. Blob URLs from prior results
-are revoked. Retrying after failure or cancellation does not reload remote assets.
+Input/output/diagnostics are never uploaded or automatically stored in localStorage,
+sessionStorage or IndexedDB; downloads are explicit. Each request snapshots settings
+before reading and uses a fresh Worker, terminated on completion, failure or cancel.
+Settings/file edits, Reset, Cancel and retry invalidate pending reads, callbacks,
+notifications and timer; prior Blob URLs are revoked. Edits remain visible for
+the next Generate, and failures retain settings for correction. Inventory retention
+and selector reset rules are in [UI settings](#sample-ui-settings).
 
-Preview uses an opaque-origin sandboxed iframe with scripts allowed for the HTML
-viewer, but no same-origin access, forms, popups or top navigation. A preview-only
-CSP blocks connections and external content; original downloaded content is
-unchanged. Input strings use the renderer's existing escaping, and status text
-uses `textContent`. The host page never inserts a generated diagram into its DOM.
-The host CSP permits inline scripts because Blob previews inherit its policy and
-the self-contained viewer contains inline JavaScript; the preview's own CSP and
-opaque-origin sandbox still restrict that script's capabilities.
+Preview is an opaque-origin sandboxed iframe allowing viewer scripts but no
+same-origin access, forms, popups or top navigation. Its CSP blocks connections
+and external content without changing downloads. The renderer escapes inputs,
+status uses `textContent`, and generated diagrams never enter the host DOM.
+Host CSP allows inline scripts for inherited Blob/viewer JavaScript; preview CSP
+and the opaque sandbox still restrict their capabilities.
 
 Plan JSON may contain secrets. The generated diagram still contains resource
 identifiers, and SVG may show validated route destination constants; HTML omits
@@ -344,16 +300,12 @@ Keeping generation local does not make the explicit download anonymous.
 
 ## Limits and verification
 
-The library and file picker limit UTF-8 input to 32 MiB. This is an input limit,
-not a memory or duration guarantee: JSON trees, graph expansion, routing search,
-output strings, structured-clone copies and the preview consume additional memory.
-Very dense or oversized plans may exhaust a browser process or Wasm memory before
-a recoverable error is possible. Use Cancel for long work and reduce the plan or
-use CLI selection for inputs that exceed practical browser capacity. Worker
-termination allows the runtime to reclaim its Wasm allocation, without promising
-immediate OS reclamation; a fresh request does not retain its
-high-water memory. Worker measurements report Wasm linear memory size, not total
-browser RSS or JavaScript heap usage.
+The library/file picker limits input to 32 MiB UTF-8, not total memory or duration.
+Trees, graph expansion, search, strings/copies and preview need additional memory;
+dense plans can exhaust Wasm/browser memory before a recoverable error. Cancel long
+work, reduce input or use CLI selection. A fresh Worker drops prior high-water
+memory, without guaranteeing immediate OS reclamation. Measurements report linear
+memory capacity, not browser RSS or JavaScript heap.
 
 検証コマンド・coverage・計測条件は [開発者向け検証](browser-development.md#verification) を参照してください。
 

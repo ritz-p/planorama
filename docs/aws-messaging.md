@@ -1,19 +1,6 @@
 # AWS APIs and messaging
 
-[共通契約・サービス一覧](aws.md) に戻る。以下はサービス固有の条件です。各節に記載した Provider 版と証拠の範囲を維持し、他サービスの条件を転用しないでください。
-
-- [API Gateway integrations and deployment context](#api-gateway-integrations-and-deployment-context)
-- [Step Functions](#step-functions)
-- [EventBridge buses and rules](#eventbridge-buses-and-rules)
-- [SQS and SNS](#sqs-and-sns)
-- [Amazon MQ network and configuration (#689)](#amazon-mq-network-and-configuration-689)
-- [MSK network and configuration (#688)](#msk-network-and-configuration-688)
-- [Scheduler and Pipes configuration (#692)](#scheduler-and-pipes-configuration-692)
-- [SNS subscriptions](#sns-subscriptions)
-- [Lambda event source mappings](#lambda-event-source-mappings)
-- [Kinesis Data Streams](#kinesis-data-streams)
-- [Amazon Data Firehose](#amazon-data-firehose)
-- [EventBridge targets](#eventbridge-targets)
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
 
 ## API Gateway integrations and deployment context
 

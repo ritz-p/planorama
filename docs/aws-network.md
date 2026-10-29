@@ -1,14 +1,6 @@
 # AWS Network and edge
 
-[共通契約・サービス一覧](aws.md) に戻る。以下はサービス固有の条件です。各節に記載した Provider 版と証拠の範囲を維持し、他サービスの条件を転用しないでください。
-
-- [Network Firewall (#693)](#network-firewall-693)
-- [CloudFront origins and policies](#cloudfront-origins-and-policies)
-- [WAFv2](#wafv2)
-- [Route 53](#route-53)
-- [PrivateLink endpoints and services (#902)](#privatelink-endpoints-and-services-902)
-- [VPC gateways and Elastic IPs (#895)](#vpc-gateways-and-elastic-ips-895)
-- [Security group rule relationships (#899)](#security-group-rule-relationships-899)
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
 
 ## Network Firewall (#693)
 

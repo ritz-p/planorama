@@ -1,15 +1,6 @@
 # AWS Compute and containers
 
-[共通契約・サービス一覧](aws.md) に戻る。以下はサービス固有の条件です。各節に記載した Provider 版と証拠の範囲を維持し、他サービスの条件を転用しないでください。
-
-- [Batch compute environments and queues (#700)](#batch-compute-environments-and-queues-700)
-- [Lambda aliases, layers and function URLs](#lambda-aliases-layers-and-function-urls)
-- [App Runner networking (#694)](#app-runner-networking-694)
-- [ECR repositories](#ecr-repositories)
-- [ECS Cluster membership](#ecs-cluster-membership)
-- [EKS configuration and membership](#eks-configuration-and-membership)
-- [Auto Scaling configuration (#810)](#auto-scaling-configuration-810)
-- [Workload references and monitoring](#workload-references-and-monitoring)
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
 
 ## Batch compute environments and queues (#700)
 

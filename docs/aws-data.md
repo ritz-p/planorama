@@ -1,21 +1,6 @@
 # AWS Databases and analytics
 
-[共通契約・サービス一覧](aws.md) に戻る。以下はサービス固有の条件です。各節に記載した Provider 版と証拠の範囲を維持し、他サービスの条件を転用しないでください。
-
-- [OpenSearch Serverless (#696)](#opensearch-serverless-696)
-- [RDS Global Clusters](#rds-global-clusters)
-- [Redshift provisioned clusters](#redshift-provisioned-clusters)
-- [Athena Workgroup and Data Catalog](#athena-workgroup-and-data-catalog)
-- [Glue Catalog, Crawler and Job](#glue-catalog-crawler-and-job)
-- [Aurora cluster instances](#aurora-cluster-instances)
-- [RDS Proxy](#rds-proxy)
-- [ElastiCache configuration references (#691)](#elasticache-configuration-references-691)
-- [ElastiCache Serverless](#elasticache-serverless)
-- [DocumentDB (#697)](#documentdb-697)
-- [Neptune (#698)](#neptune-698)
-- [DMS replication configuration (#699)](#dms-replication-configuration-699)
-- [Redshift Serverless (#695)](#redshift-serverless-695)
-- [SageMaker inference configuration (#701)](#sagemaker-inference-configuration-701)
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
 
 ## OpenSearch Serverless (#696)
 

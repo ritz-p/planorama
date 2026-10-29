@@ -6,17 +6,10 @@
 - [SVG 生成・レビュー](#generation-and-review) / [復旧](#recovery) / [マージ後](#validation-after-merging)
 - [Browser Wasm と cache 復旧](#browser-wasm-432) / [リソース一覧](#resource-support-catalog)
 
-Native CLI distribution has a separate [release workflow and recovery procedure](releases.md).
-Native release builds run only through `workflow_dispatch`, never automatically on
-PR updates or tag pushes. Manual runs verify artifacts by default; publication
-requires explicit `publish: true` on a matching existing version tag. Lightweight
-release-control tests remain part of Workflow Tests on ordinary PRs.
-
-Contributors and Codex regenerate maintained diagrams locally when rendering or
-generation inputs change, inspect the diff, and include the outputs in the PR.
-**Update SVG examples** is manual-only. When requested, it can append SVG changes
-to the same PR branch, dispatch validation on that head, and publish results
-through **Report PR validation**.
+Native CLI publication is manual-only (`workflow_dispatch`, `publish: true`,
+matching existing version tag); see [release validation and recovery](releases.md).
+Ordinary PRs retain lightweight release-control tests. Diagram regeneration and
+manual SVG writeback follow [generation and review](#generation-and-review).
 
 ## Resource support catalog
 
@@ -36,56 +29,44 @@ changes do not require SVG regeneration or Layout quality.
 
 ## Toolchain and dependency cache
 
-Local setup and check commands live in [CONTRIBUTING](../CONTRIBUTING.md).
-Ordinary Formatting, Tests and Clippy use the pinned `rust-toolchain.toml` on
-Ubuntu runners. Tests and Clippy cache Cargo registry/git data and dependency
-build products with `Swatinem/rust-cache`; workspace crates are rebuilt each run.
-Tests use the `v2-mold-2.40.4` prefix for the pinned Linux x86_64 native linker;
-Clippy retains `v1-rust-dependencies`. Both exclude older workspace-product caches.
-Keys include the runner/compiler environment, Cargo manifests and lockfile,
-toolchain/Cargo configuration, build-related environment and the `build.rs` /
-`assets/**` hash. Test suites share the `-tests` key, including installer/wrapper
-hashes; Clippy uses a separate key.
-Cargo still checks rebuild requirements, and cache misses do not reduce coverage.
+Formatting, Tests and Clippy use the pinned `rust-toolchain.toml` on Ubuntu.
+Tests/Clippy cache registry/git and dependency products with `Swatinem/rust-cache`;
+workspace crates rebuild each run. Cache misses never reduce coverage.
 
-Cargo test additionally uses checksum-verified sccache 0.10.0 with incremental
-compilation disabled in those two jobs and Browser Wasm. Its 2 GiB local compiler cache is
-restored separately from the existing dependency target cache. Target hits avoid
-compiler requests; sccache is a fallback for eligible requests after invalidation
-or a missing target cache. Only successful runs with newly written compiler
-entries upload a new cache, after stopping the server. Unchanged cache hits do
-not repeatedly upload identical data. Fork/PR cache scopes and workflow permissions
-are unchanged. Clippy retains its existing target cache without this wrapper.
-See [measurements and recovery](build-performance.md#compiler-cache).
+| Job | Dependency cache | Compiler/linker |
+| --- | --- | --- |
+| Both test suites | `v2-mold-2.40.4`; shared `-tests` key | checksum-verified mold 2.40.4 and sccache 0.10.0 |
+| Clippy | `v1-rust-dependencies`; separate key | no sccache wrapper |
 
-Tests install checksum-verified mold 2.40.4 and select its compiler-driver wrapper
-only through `CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER`. Docker Compose uses
-the same selection. Wasm retains its target rustflags and `wasm-ld`; native
-release publication, cross compilation and other architectures keep their existing
-linkers. See [scope, reproduction and measurements](build-performance.md).
+Keys include runner/compiler environment, manifests/lockfile, toolchain/Cargo
+configuration, build environment and `build.rs` / `assets/**` hashes; test keys
+also include linker installer/wrapper hashes. Older workspace-product caches are excluded.
+Tests and Docker Compose select mold only via
+`CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER`; Wasm keeps its rustflags and
+`wasm-ld`, and release/cross/other-architecture linkers are unchanged.
 
-MSRV uses Docker with Rust 1.85.0. Its workflow runs for changes to Cargo.toml,
-Cargo.lock, rust-toolchain.toml, Dockerfile, .dockerignore, compose.yaml, the MSRV
-workflow or shared validation-checkout helper. See [post-merge validation](#validation-after-merging)
-for cache population and direct pushes to main.
+Tests and Browser Wasm disable incremental compilation for sccache. The two test
+jobs restore a separate 2 GiB compiler cache: target hits avoid compilation,
+sccache handles eligible misses. Only successful runs with new compiler entries
+upload it, after stopping the server. Fork/PR cache scopes and permissions are
+unchanged. See [measurements and recovery](build-performance.md#compiler-cache).
+
+MSRV runs Docker/Rust 1.85.0 for changes to Cargo.toml, Cargo.lock,
+rust-toolchain.toml, Dockerfile, .dockerignore, compose.yaml, its workflow or the
+shared validation-checkout helper. See [local setup](../CONTRIBUTING.md) and
+[post-merge cache population](#validation-after-merging).
 
 ## Cancelling superseded validation
 
-**Cargo fmt**, **Cargo clippy** and **Cargo test** use workflow-level concurrency.
-A new `pull_request` run cancels pending or running PR-event validation for the
-same workflow and PR. Fixed `cargo-fmt`, `cargo-clippy` and `cargo-test` prefixes
-separate the workflows even if their display names change. PR numbers separate
-unrelated PRs, including forks whose source branches have the same name.
-Completed runs and their check results remain visible in the run history.
+**Cargo fmt**, **Cargo clippy** and **Cargo test** cancel older pending/running
+`pull_request` runs for the same workflow and PR. Keys use fixed `cargo-fmt`,
+`cargo-clippy`, `cargo-test` prefixes and `pr-<number>`, keeping workflow
+renames, unrelated PRs and same-named fork branches independent. Completed results remain.
 
-Only `pull_request` events share a `pr-<number>` key. Every `workflow_dispatch` and
-post-merge `pull_request_target` run uses a unique `run-<run_id>` key. This includes
-PR-bound dispatches after automatic SVG commits: a dispatch request can arrive
-after the PR has advanced, and must not cancel a newer PR check before its own
-checkout rejects the stale SHA. The dispatched checkout and reporter still verify
-the exact expected head. Repeated manual runs on the same branch also remain
-independent. The existing non-cancelling SVG generation/writeback and
-status-reporting groups retain their own policies.
+Every manual `workflow_dispatch` and post-merge `pull_request_target` run instead
+uses `run-<run_id>`. A stale SVG-triggered dispatch must fail its exact-head
+checkout/reporter checks without cancelling newer PR validation. Repeated manual
+runs stay independent; SVG writeback and reporting retain their non-cancelling groups.
 
 See GitHub's [workflow concurrency documentation](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency).
 
@@ -100,43 +81,27 @@ suite does not cancel the other suite's coverage:
 | `Test suite (large)` | The `planorama` package's `large_example` integration target. |
 | `Tests` | A small aggregate job that succeeds only after both suites succeed. |
 
-Both suites keep separate **Compile tests** and **Run tests** steps. The
-[suite selector](../.github/scripts/test-suites.cjs) reads
-`cargo metadata --locked --all-features --no-deps --format-version 1`, selects
-Cargo's default workspace packages and builds explicit target arguments. The
-compile step adds `--no-run` to the same `cargo test --locked --all-features`
-commands used by the run step. Build scripts remain Cargo-managed prerequisites.
-Snapshot comparisons remain in their original suites. Three explicitly ignored
-large-fixture unit regressions run separately as described below.
+The [suite selector](../.github/scripts/test-suites.cjs) reads
+`cargo metadata --locked --all-features --no-deps --format-version 1` for default
+workspace packages. **Compile tests** adds `--no-run` to the same explicit
+`cargo test --locked --all-features` target arguments used by **Run tests**.
+Build scripts remain Cargo prerequisites; snapshots stay in their original suites.
 
-Spacing-budget calibration is an ignored tuning experiment, run only on demand
-by **Spacing budget calibration**. Standard and large retain ordinary routing
-correctness and layout regression tests; the aggregate **Tests** check depends
-only on those two suites. Calibration and deferred regression uploads are not PR gates.
+All discovered non-build targets join `standard` except `large_example`, including
+new integration/library/binary/example/benchmark targets and those with
+`test = false`, preserving prior `--all-targets` coverage. Unknown target kinds,
+incomplete metadata or missing/renamed/ambiguous `large_example` fail explicitly.
+Three ignored large-fixture regressions run in [their own lane](#deferred-routing-regressions-253);
+ignored spacing calibration is [manual-only](#on-demand-spacing-calibration).
+Neither is a PR gate or dependency of **Tests**.
 
-New integration targets automatically join `standard`; no ordinary target list is
-duplicated in the workflow. New library, binary, example and benchmark targets are
-also selected. CI deliberately selects every discovered non-build target even
-when its manifest has `test = false`, preserving targets such as examples that the
-previous `--all-targets` command covered. An explicitly disabled integration or
-benchmark target added later can therefore receive extra coverage. Unknown target
-kinds, incomplete metadata, or a renamed/missing/ambiguous `large_example` target
-fail explicitly and require updating the selection policy.
-
-The two jobs share the existing dependency cache through a `shared-key` containing
-the `build.rs`/`assets/**` and linker installer/wrapper hashes followed by `-tests`.
-Clippy retains its separate cache. The pinned compiler, Cargo configuration,
-manifest/lockfiles and build inputs still determine compatibility. Workspace
-crates are rebuilt in each job and are not cached. Thus parallel execution can
-shorten waiting time while increasing total runner time. Normal integration tests
-stay with unit tests to avoid paying another runner startup and compilation for a
-small amount of test execution. There is no serial artifact-upload prerequisite.
-
-For comparisons, record both workflow wall time and the sum of the two suite jobs
-plus the aggregate job, including checkout, toolchain/cache work and compilation.
-Separate queue time from active job time, and record cache hits, per-step timings,
-source/base SHAs and test counts. Compare identical Rust sources and fixtures;
-runner elapsed seconds measure compute use, not an account's billed price.
+Both suites use the [shared dependency cache](#toolchain-and-dependency-cache)
+but rebuild workspace crates independently, without serial artifact transfer.
+Ordinary integration tests stay with unit tests to avoid a third startup/build.
+For comparisons, record workflow wall time and summed suite/aggregate job time,
+including setup, cache and compilation; separate queue time, record cache hits,
+step timings, source/base SHAs and test counts, and keep Rust sources/fixtures
+identical. Runner seconds measure compute, not billed price.
 
 ### Observed timing and runner cost
 
@@ -336,22 +301,18 @@ runs and selected by this workflow:
 | `congested_container_routes_improve_over_shortest_paths` | Large-fixture layout followed by both shortest and scored routing passes. | `simple_routes_respect_ports_obstacles_and_edge_conflicts`, scoring/overlap tests, `crossings_do_not_force_clear_detours`, and `completed_paths_compact_stubs_before_scoring_and_occupancy`. |
 | `large_listener_locality_preserves_geometry_and_routes` | Three large-fixture layouts comparing owner locality, area and repeatability. | `multiple_owners_and_shared_targets_keep_stable_separate_cards`, `listener_owner_resolution_is_conservative`, and focused leaf locality/containment tests. |
 
-The large-fixture-specific thresholds remain in deferred coverage. PRs retain
-`large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships`
-and the `large_example` integration target, including full SVG snapshot and
-reproducibility assertions. Dense synthetic graphs and small exhaustive search
-equivalence tests remain PR-blocking; size-related names alone do not justify
-deferral. Existing ignored calibration, diagnostics and manual benchmarks remain
-opt-in and are not selected by the regression filter.
+Large-specific thresholds stay in the deferred tests. PRs retain
+`large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationships`,
+`large_example` SVG snapshots/reproducibility, dense synthetic graphs and small
+exhaustive-search equivalence. Size-related names alone do not justify deferral;
+ignored calibration, diagnostics and benchmarks remain outside this filter.
 
-The subnet route-shape guard compares against a reference using the same visible
-border frames, relationship stroke and soft occlusion as the renderer. An
-obstacle-only shortest route can run along a card boundary even when its centerline
-does not enter the card. If that route violates minimum border clearance, each
-pair of additional bends in the border-aware reference permits one short offset.
-Otherwise the offset allowance stays zero. Final routes must preserve the
-reference's minimum-clearance safety and cannot add bends, reversals, backtracking
-or S-jogs. A focused guard test rejects boundary-hugging shortcuts and extra doglegs.
+The subnet route-shape reference uses the renderer's visible borders, stroke and
+soft occlusion. If an obstacle-only shortest route violates border clearance,
+each pair of extra bends in the border-aware reference permits one short offset;
+otherwise none are allowed. Final routes must preserve reference clearance and
+add no bends, reversals, backtracking or S-jogs. A focused test rejects
+boundary-hugging shortcuts and extra doglegs.
 
 Reproduce all deferred checks with the pinned Docker toolchain:
 
@@ -400,9 +361,7 @@ output fails the upload. This compares previous numerical budgets, defaults and
 doubled candidates on large, dense-corridor and constrained fixtures. See
 [the experiment](../examples/terraform-large/spacing-calibration.md).
 
-The workflow is independent of the required test aggregate and generated-head
-validation dispatch/reporter. A future schedule or post-merge trigger can use
-the same job and captured `github.sha` without adding a dependency to **Tests**.
+Calibration is independent of **Tests** and generated-head validation/reporting.
 
 ### Calibration split timing (#406)
 
@@ -473,13 +432,11 @@ rendering: `association`, `bundling`, `checks`, `components`, `containment`,
 `subnet-groups`, `terraform`, `terraform-large/diagram`, `vpc-workloads`,
 `workload-security-groups`, `aurora`, and `elasticache` (paths under `examples/`, with `.svg`).
 
-Other maintained SVGs are listed in `scripts/generated-svgs.txt`. Their related behavior has focused tests, but ordinary tests do not reproduce these
-committed SVGs byte for byte. The multi-account input/topology test reads the
-committed SVG; its full rendering comparison is ignored and opt-in. These outputs
-can become stale while ordinary checks pass, so local generation and visual diff
-review remain necessary. Rust tests, formatting, Clippy, representative HTML
-snapshot tests and the existing Docker browser test remain unchanged; none claims
-to validate all maintained SVGs on ordinary PRs.
+Other outputs in `scripts/generated-svgs.txt` have focused behavioral tests,
+not byte-for-byte ordinary snapshot coverage. The multi-account topology test
+reads its committed SVG; full rendering is ignored/opt-in. These SVGs can be
+stale despite passing Rust/formatting/Clippy/HTML/browser checks, so regenerate
+and inspect the diff when required.
 
 ## Generation and review
 
@@ -533,35 +490,27 @@ other edits. Local regeneration remains available through the
 
 ## Branch updates and permissions
 
-Generation runs with read-only repository permissions. A separate fresh runner
-performs writeback, with `contents: write`, `actions: write`, `statuses: write` and
-`pull-requests: read`. Preparation, packaging and writeback use
-`actions/github-script`. The write-enabled job reads the output allowlist again
-from the captured source commit through the
-GitHub API and handles the artifact as data. It does not check out or build the PR
-source, run downloaded scripts or apply an artifact patch.
+Generation is read-only. A fresh writeback runner uses `actions/github-script`
+with `contents: write`, `actions: write`, `statuses: write` and
+`pull-requests: read`. It rereads the allowlist from the captured source commit
+through GitHub API, treats artifacts as data, and never checks out/builds PR code,
+runs downloaded scripts or applies an artifact patch.
 
-GitHub creates a tree and commit containing the declared SVG changes. The branch
-update uses GraphQL `updateRefs` with the captured `beforeOid` and `force: false`.
-If the head changes before this atomic update, including a branch rewind, the
-update is rejected. Discard the old result and regenerate locally or dispatch
-again for the newer head. The SVG workflow's per-PR concurrency does not cancel a
-running writeback between its commit and validation dispatch.
+The declared SVGs become a Git tree/commit. GraphQL `updateRefs` atomically
+updates the branch with captured `beforeOid` and `force: false`; any intervening
+head change, including rewind, rejects it. Regenerate for the new head.
+Per-PR concurrency does not cancel writeback between commit and validation dispatch.
 
-Fork PRs keep the patch/artifact flow and do not enter the write-enabled job.
-Protected branches, read-only tokens and repository policy restrictions also fall
-back to the artifact. Generation and writeback do not use `pull_request_target` or
-require a personal token for the ordinary same-repository case.
+Forks never enter the write job. Forks, protected branches, read-only tokens and
+policy restrictions retain the patch/artifact fallback. Generation/writeback
+use neither `pull_request_target` nor a personal token in the ordinary same-repo flow.
 
 ## Validation on the generated head
 
-The standard `GITHUB_TOKEN` is used for both writeback and explicit
-`workflow_dispatch` requests. The bot commit's `[skip ci]` directive suppresses
-duplicate push/PR-event runs, including the token-generated PR runs that would
-otherwise require approval. Explicit dispatch is unaffected by that directive and
-starts validation on the generated head without an additional approval in the
-ordinary same-repository flow. The directive does not cancel runs already created
-for an earlier commit; dispatches remain independent of PR-event concurrency.
+Writeback and explicit `workflow_dispatch` use `GITHUB_TOKEN`.
+The bot commit's `[skip ci]` suppresses duplicate push/PR runs (including those
+requiring approval), but not dispatch or already-created runs. Same-repository
+dispatch needs no additional approval and stays independent of PR concurrency.
 
 Formatting, Clippy and Tests are dispatched after an SVG commit. MSRV is included
 when the full PR file list touches its existing toolchain/Cargo/Docker inputs,
@@ -571,31 +520,30 @@ for changes under `.github/**`, `tests/ci/**`, `tests/layout-quality/**`, or to
 examines the whole PR, including changes before the generated commit, independently
 of local generation decisions.
 
-Dispatch specifies the PR branch, PR number and exact expected head SHA. Its run
-name is `Validate PR #<number> at <full head SHA>`, and the returned run ID is checked
-against that SHA, event and workflow. Six bounded reads allow the run identity to
-appear; persistent mismatches fail with the differing fields in the log.
-When these PR inputs are provided, each validation workflow also checks its own
-run/checkout SHA, fetches the PR merge
-ref, verifies its parents against the expected head and current base, and checks
-the PR metadata again. A stacked PR may use its predecessor's generated merge
-as the first parent. This is accepted only when exactly one open same-repository
-predecessor PR identifies that merge and its head equals the advertised base.
-The generated merge's parents must match the predecessor's current base and head,
-and its tree must equal the advertised base tree. Both PRs' metadata must remain current throughout these
-checks. This tests the PR/base merge while binding the run to the
-generated head. Short, bounded retries allow GitHub's PR metadata and merge ref to
-catch up after the bot commit. A stale dispatch, a conflicting PR or a merge ref
-that has not caught up fails explicitly instead of testing a different revision.
+Dispatch binds branch, PR number and exact expected head SHA; the run name is
+`Validate PR #<number> at <full head SHA>`. Verify its returned run ID, SHA,
+event and workflow, with six bounded identity reads; persistent mismatches log
+the differing fields and fail.
+
+PR-bound workflows verify their run/checkout SHA, fetch the PR merge ref, check
+its parents against expected head/current base, and recheck PR metadata.
+A stacked predecessor's generated merge is accepted as first parent only if:
+
+- Exactly one open same-repository predecessor PR identifies it, with head equal
+  to the advertised base.
+- Its parents equal that predecessor's current base/head and its tree equals the
+  advertised base tree.
+- Both PRs' metadata stay current throughout verification.
+
+Bounded retries allow merge refs/metadata to catch up. Stale dispatches, conflicts
+and lagging refs fail rather than test a different revision.
 
 ### PR results and Actions jobs
 
-GitHub does not use jobs from `workflow_dispatch` runs as PR checks or required
-status checks. Explicit dispatch alone therefore does not restore the checks
-suppressed by `[skip ci]`. **Report PR validation** reads the validation runs and
-uses the Commit Status API to publish their results on the generated PR head.
-Both writeback and reporting use `GITHUB_TOKEN`; no additional credentials or
-workflow approval are needed in the ordinary same-repository flow.
+Dispatched jobs do not supply PR/required status checks. **Report PR validation**
+reads their results and publishes Commit Status API statuses on the generated
+head, using `GITHUB_TOKEN` without extra credentials/approval in the ordinary
+same-repository flow. Job/status names differ to avoid collisions:
 
 | Validation | Ordinary PR job check | Dispatched job in Actions | Reported PR commit status |
 | --- | --- | --- | --- |
@@ -614,44 +562,29 @@ failed, cancelled, skipped, missing or duplicated suite cannot publish success.
 The pre-split serial `Dispatched Tests` shape remains supported for older branches
 and runs; a partially present split execution cannot fall back to that shape.
 
-The different dispatched job names avoid a same-name job check and commit status
-on the generated head. Writeback initializes the applicable validation contexts
-as pending before publishing a new SVG commit on the PR branch. The workflow list
-selected for initialization is reused for dispatch, so both operations cover the
-same checks. After publication, only the reporter updates those contexts and links
-each result to its validation run. A no-diff dispatch repair does not initialize
-them again; the reporter handles subsequent attempts and their results.
+Writeback marks selected validation contexts pending before publishing the SVG
+commit and reuses that workflow list for dispatch. Thereafter only the reporter
+updates them, linking each status to its run. No-diff dispatch repair does not
+reinitialize statuses; the reporter processes new attempts.
+**SVG validation dispatch** separately reports `pending` / `error` / `success`
+for dispatch requests, not test results. If reporting fails, validation stays pending.
 
-Writeback also maintains **SVG validation dispatch**, whose `pending`, `error` and
-`success` states describe dispatch progress. Its success does not claim that the
-tests passed. If the reporter cannot run or fails before publishing a result, the
-initial validation statuses remain pending even when dispatch succeeded.
+The reporter handles `workflow_run` requests, starts and completions using trusted
+`github.workflow_sha` code with only `statuses: write`; it never executes PR code.
+It validates workflow path/ID, PR number, expected SHA and required job steps.
+Only the latest eligible run/attempt for the exact current generated head may
+update statuses. Queued/running means pending; missing/skipped steps cannot pass.
+Earlier heads, attempts and delayed events cannot validate newer code. Runs
+without bound PR inputs, including manual `main` runs, are not reported.
 
-The reporter listens for `workflow_run` requests, starts and completions. It
-executes reporting code from its trusted `github.workflow_sha`, without checking
-out or executing PR code. Its repository write access is limited to
-`statuses: write`. It reads GitHub's run/job and PR metadata, verifies the
-allowed workflow path and ID, the PR number and expected SHA, and every expected
-dispatched job's required steps. Only the latest eligible run/attempt
-for the exact current generated PR head can update its status. Earlier heads,
-old attempts and delayed events cannot supply a successful result for newer code.
-Queued or running validation is reported as pending; success requires its expected
-steps to pass. Missing or skipped validation steps do not count as success.
-Runs without the bound PR inputs, including ordinary manual runs on `main`, are
-not reported as validation of the generated head.
-
-Required status checks may use the stable names `Formatting`, `Clippy`, `Tests`,
-`MSRV` and `Workflow tests`; the workflow does not change repository rules. Ensure
-a required check runs for every PR covered by the rule: normal workflows use path
-filters, and MSRV and Workflow tests are dispatched only for their relevant inputs.
-Requiring a conditionally absent check leaves the PR waiting. Select the validation
-names, not `Dispatched ...`, the reporter job or **SVG validation dispatch**. This
-mechanism supplies required status checks; it does not establish that a rule requiring a particular
-workflow execution has been satisfied.
-
-Do not require **Generate SVG examples** or **Commit SVG updates and start
-validation**: manual generation is optional and creates no pending status when
-not dispatched.
+Repository rules may require stable `Formatting`, `Clippy`, `Tests`, `MSRV`
+or `Workflow tests` statuses only where those checks run for every covered PR.
+Path-filtered/conditional checks can otherwise wait forever. Do not select
+`Dispatched ...`, the reporter, **SVG validation dispatch**, **Generate SVG
+examples** or **Commit SVG updates and start validation**: manual generation is
+optional and creates no pending status unless dispatched. Commit statuses do not
+satisfy rules requiring a particular workflow execution. Workflows do not alter
+repository rules.
 
 See GitHub's [required-check rules and event restrictions](https://docs.github.com/en/pull-requests/how-tos/merge-and-close-pull-requests/troubleshooting-required-status-checks)
 and [Commit Status API](https://docs.github.com/en/rest/commits/statuses).
@@ -697,19 +630,15 @@ successful completion, without treating dispatch success as validation success.
 
 ## Validation after merging
 
-Tests and Clippy also run when a PR with relevant changes is merged into `main`.
-Their `pull_request_target` trigger accepts only the `closed` activity for `main`,
-and the jobs require `merged == true`. They keep read-only repository permissions
-and the default checkout of the event's default-branch commit. They do not check
-out the PR head in this post-merge path. These runs populate the default-branch
-dependency caches for later PRs.
+Tests/Clippy seed default-branch dependency caches after relevant PRs merge into
+`main`: `pull_request_target` accepts only `closed`, jobs require
+`merged == true`, permissions remain read-only, and checkout uses the event's
+default-branch commit, never the PR head.
 
-GitHub's skip directives apply to `push` and `pull_request`, so a bot commit's
-`[skip ci]` can also suppress a push workflow if retained in a squash-merge
-message. The merged-PR trigger is unaffected and replaces the previous `main`
-push trigger, avoiding duplicate post-merge runs. A direct push to `main` requires
-manually dispatching Tests and Clippy on `main`, leaving the optional PR inputs
-empty. Formatting and MSRV retain their existing PR and manual-dispatch triggers.
+This replaces their `main` push trigger to avoid duplicate runs and squash-message
+`[skip ci]` suppression (skip directives affect push/PR events, not merged-PR
+events). After a direct push, dispatch Tests/Clippy on `main` with PR inputs empty.
+Formatting/MSRV retain PR and manual triggers.
 
 References: [workflow triggers and GITHUB_TOKEN](https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow),
 [skip directives](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs),
@@ -720,60 +649,46 @@ References: [workflow triggers and GITHUB_TOKEN](https://docs.github.com/en/acti
 
 ## Browser Wasm (#432)
 
-The `Browser Wasm` workflow builds the native CLI and Wasm library in the pinned
-Docker environment on pull requests, manual dispatch and cache-input pushes to
-`main`. It checks exact output
-parity, offline generation, isolated previews, downloads and cancellation using
-Chromium. It also builds and checks the standalone artwork-free engine archive,
-including native output parity, JS/Wasm artwork exclusion and reproducible
-packaging. The no-default-feature build runs the `artwork_free::` library tests
-and CLI help checks. The full library suite is available through the manual
-`full_library` input. Both distributions run memory-budget tests with small fixtures at every
-configured maximum, binary import/capability checks and tiny-memory allocation
-failure/trap recovery. Multi-GiB growth and pointer tests remain opt-in; see the
-[memory contract](browser-engine.md#per-generation-memory-selection). Artwork-exclusion tests also run with all features enabled. The manual
-**Wasm engine release** workflow distributes this engine separately from the UI;
-see [browser build, distribution and verification](browser.md). Unit tests now run
-from the library target (`--lib`); suite discovery includes that target automatically.
+**Browser Wasm** runs the pinned Docker native/Wasm builds on every PR, manual
+dispatch and cache-input pushes to `main`. Its required `browser` job has a
+20-minute timeout, no PR path skip and no cross-job binary transfer. See
+[browser verification](browser-development.md#verification) for UI/parity coverage
+and [engine verification](browser-engine.md#per-generation-memory-selection) for
+archive, artwork, memory-capability and trap-recovery checks.
+
+Both distributions test small fixtures at every configured memory maximum;
+multi-GiB pointer/growth stress remains opt-in. PR no-default-feature native tests
+select `artwork_free::` plus CLI help; artwork exclusion also runs with all features.
+Manual `full_library` restores the complete `--lib` suite (automatically discovered
+by suite selection). **Wasm engine release** validates/distributes the engine
+separately from the UI; its complete library suite is retained.
 
 ### Browser Wasm caches and measurements (#674)
 
-The required `browser` job still runs on every PR and manual dispatch, with the
-same 20-minute timeout. PR coverage has no path-based skip or cross-job binary transfer.
-Pushes to `main` that change cache inputs run the same validation to seed trusted
-caches for later PRs; manual dispatch on `main` can also populate an empty cache.
-Default and `--no-default-features` build commands both run even though the
-current default feature list is empty: Cargo exposes the `default` feature to
-the compiler. They share `target/shared` so Cargo can reuse common dependencies
-while tracking each feature configuration. Browser validation completes before
-the standalone build replaces the native reference executable. Both binding,
-memory and distribution paths run on every invocation.
+Cache-input pushes or manual dispatch on `main` seed trusted caches. Default
+and `--no-default-features` builds both run because Cargo exposes `default` even
+when its list is empty. They share `target/shared` dependencies; browser checks
+finish before the standalone build replaces the native reference executable.
+Both binding, memory and distribution paths run every time.
 
-Buildx loads the pinned Dockerfile image as `planorama-wasm-ci:local`, restoring
-and exporting GitHub Actions BuildKit layers under `browser-wasm`. Tool layers
-copy only their installation scripts; ordinary source edits do not invalidate
-Rust, Terraform, Chromium or wasm-bindgen installation. `compose.wasm-ci.yaml`
-overrides the registry/git/target named volumes with `.wasm-ci` bind mounts so
-the restored host files are actually visible inside the container. The local
-Compose setup retains its named volumes. Container-created cache files are
-returned to the runner's ownership before upload.
+Buildx loads `planorama-wasm-ci:local` from the pinned Dockerfile and restores/
+exports BuildKit layers under `browser-wasm`. Tool layers copy only installers,
+so source edits do not invalidate Rust/Terraform/Chromium/wasm-bindgen installation.
+`compose.wasm-ci.yaml` replaces registry/git/target volumes with `.wasm-ci` bind
+mounts; ordinary Compose retains named volumes. Cache files return to runner
+ownership before upload.
 
-Cargo caches separate native and Wasm targets; the native cache includes release
-and test profile directories shared by both feature configurations. Together with
-the registry/git cache, this uses three archives instead of five. Keys include
-runner OS/architecture, Docker/Compose, toolchain, manifests/lock, Cargo config,
-build script, assets, scripts and workflow. A changed key starts empty, without
-a broad fallback. Workspace products and CLI test binaries are removed before
-save; bindings and distribution archives are always generated from freshly built
-workspace code. Only successful runs save Cargo caches. Immutable dependency
-keys avoid uploading the same dependencies on every source edit.
+Three Cargo archives cover registry/git, native release/test and Wasm products.
+Keys include runner OS/architecture, Docker/Compose, toolchain, manifests/lock,
+Cargo config, build script, assets, scripts and workflow. Changed keys start empty
+without broad fallback. Only successful runs save dependencies, after removing
+workspace products and CLI test binaries; immutable keys avoid repeat uploads.
+Bindings/archives always use freshly built workspace code.
 
-Native compilation retains mold; Wasm retains `wasm-ld` and its memory flags.
-The existing container sccache wrapper can reuse eligible compilations within
-the job, with incremental compilation disabled and a 2 GiB local limit. Its
-cache is not separately transferred: the [compiler-cache measurements](build-performance.md#compiler-cache)
-show a small Wasm benefit before transfer overhead, while the Cargo caches
-already avoid those compiler requests. No host wrapper settings are assumed.
+Native keeps mold; Wasm keeps `wasm-ld`/memory flags. Container sccache has a 2 GiB
+local limit and incremental disabled, with no host-wrapper assumption or separate
+transfer: [measured Wasm gains](build-performance.md#compiler-cache) were small
+before transfer overhead, and target hits already avoid compilation.
 
 All jobs use `contents: read` and checkout without persisted credentials.
 GitHub's [PR cache scope](https://docs.github.com/en/actions/reference/workflows-and-actions/dependency-caching#restrictions-for-accessing-a-cache) isolates untrusted writes from the base branch and
@@ -783,21 +698,21 @@ causes failures, delete the affected `wasm-ci-v2-*` entry and rerun; bump the
 prefix for a full Cargo reset. Delete the `browser-wasm` BuildKit cache to reset
 environment layers. Cache hits never bypass build or validation commands.
 
-`sh scripts/wasm-ci.sh` runs the full sequence inside Docker and writes
-`output/wasm-ci/{timings,bindings}.tsv` (phase, wall seconds, user seconds,
-system seconds, peak RSS KiB), environment, cache sizes and sccache statistics.
-`WASM_CI_REPORT_DIR` selects another repository-relative report directory.
-`browser.tsv` records non-overlapping browser test sections in wall seconds,
-including each service fixture/format, incomplete inputs, large-input UI
-progress/cancellation/retry, Wasm completion, and native comparison separately.
-It contains fixed test labels and timings, not input or generated content.
-`selection.txt` records whether the complete library suite was selected.
-The seven-day `wasm-ci-<sha>-<attempt>` artifact carries these records. Action
-step timestamps include environment import/export, cache restore/save and
-artifact upload overhead; use the complete job duration when comparing runs.
-Native reference reuse is process-local, bounded to 64 MiB of UTF-8 output and keyed by input
-bytes, the full argument vector/options and executable SHA-256. Failures are
-never cached. Named/file-based cases remain uncached, and every Wasm case runs.
+`sh scripts/wasm-ci.sh` writes `output/wasm-ci/` (override with repository-relative
+`WASM_CI_REPORT_DIR`):
+
+| Record | Contents |
+| --- | --- |
+| `timings.tsv`, `bindings.tsv` | phase, wall/user/system seconds, peak RSS KiB |
+| `browser.tsv` | non-overlapping fixture/format, incomplete-input, large UI progress/cancel/retry, Wasm completion and native-comparison timings |
+| `selection.txt` | complete-library selection |
+| Environment/cache records | environment, cache sizes, sccache statistics |
+
+The seven-day `wasm-ci-<sha>-<attempt>` artifact excludes input/generated content.
+Compare complete job durations too: Action steps include setup, cache transfer and
+artifact overhead. Native output reuse is process-local, capped at 64 MiB UTF-8,
+keyed by input bytes, full arguments/options and executable SHA-256. Failures and
+named/file-based cases are never cached; every Wasm case executes.
 
 Invalid memory-option values are checked once at the default memory budget;
 each configured maximum retains generation, output equality, cancellation and

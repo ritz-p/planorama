@@ -6,62 +6,46 @@ AWS の共通契約とサービス別の証拠条件の正本です。型ごと�
 
 共通契約は [役割と data](#resource-roles-and-data)、[deployment scope](#deployment-scopes)、[包含](#containment)、[SG 接続](#security-group-attachments)、[Association](#association-resources) です。サービス固有の型・値・scope・lifecycle 条件を合わせて確認してください。共通ルールから未記載のサービス対応を推測しないでください。
 
-- [Compute and containers](aws-compute.md): Batch compute environments and queues / Lambda aliases, layers and function URLs / App Runner networking / ECR repositories / ECS Cluster membership / EKS configuration and membership / Auto Scaling configuration / Workload references and monitoring
-- [Network and edge](aws-network.md): Network Firewall / CloudFront origins and policies / WAFv2 / Route 53 / PrivateLink endpoints and services / VPC gateways and Elastic IPs / Security group rule relationships
-- [Databases and analytics](aws-data.md): OpenSearch Serverless / RDS Global Clusters / Redshift provisioned clusters / Athena Workgroup and Data Catalog / Glue Catalog, Crawler and Job / Aurora cluster instances / RDS Proxy / ElastiCache configuration references / ElastiCache Serverless / DocumentDB / Neptune / DMS replication configuration / Redshift Serverless / SageMaker inference configuration
-- [Storage and backup](aws-storage.md): S3 bucket configuration / AWS Backup / EFS / EBS / FSx Lustre networking and encryption
-- [Identity and security](aws-security.md): AWS Private CA / Cognito / CloudTrail / IAM users and groups / IAM identity providers / SSM Parameter Store / Secrets Manager / KMS / ACM / Organizations hierarchy / Organizations policies and direct attachments / Organizations member Account deployment navigation
-- [APIs and messaging](aws-messaging.md): API Gateway integrations and deployment context / Step Functions / EventBridge buses and rules / SQS and SNS / Amazon MQ network and configuration / MSK network and configuration / Scheduler and Pipes configuration / SNS subscriptions / Lambda event source mappings / Kinesis Data Streams / Amazon Data Firehose / EventBridge targets
+- [Compute and containers](aws-compute.md)
+- [Network and edge](aws-network.md)
+- [Databases and analytics](aws-data.md)
+- [Storage and backup](aws-storage.md)
+- [Identity and security](aws-security.md)
+- [APIs and messaging](aws-messaging.md)
 - [DynamoDB](dynamodb.md)、[Route](routes.md)、[暗号化表示](encryption.md) は既存の専用契約を参照。
 
 ## Resource roles and data
 
-VPC and Subnet are spatial `Container` resources. Other supported types are
-classified as nodes, connectors, associations, identities, policies or controllers by
-the dedicated classification rules or the [basic capability table](aws-inventory.md).
-Unknown types remain visible as `Unknown`. Roles are separate
-from managed/data mode; Security Groups remain Policy cards and target groups
-remain Controller cards even when placed inside a VPC.
+VPC/Subnet are Spatial `Container` resources. Other types use dedicated
+classification or the [basic capability table](aws-inventory.md); unknown types
+stay visible as `Unknown`. Role is independent of managed/data mode and placement:
+SGs remain Policies and target groups Controllers even inside VPCs.
 
-Identity describes principals, identity collections or federation configuration;
-it proves neither authentication, role assumption nor effective permissions.
-It does not establish equivalence between users or accounts: state, managed/data
-and current/deposed identities remain separate even when display names match.
-Policy describes access/control rules or policy-like configuration; it does not
-necessarily mean IAM or policy enforcement. Controller describes resources that
-manage or configure services, workloads or related resources; the role alone does
-not establish runtime control, traffic or relationships. Logical type cards show
-these explanations once per role, separately from Terraform action and managed/data
-mode. Their action subsections change presentation only, not role or placement.
+| Role | Meaning and limit |
+| --- | --- |
+| Identity | Principal, collection or federation configuration; no authentication, assumption, effective-permission or identity-equivalence claim |
+| Policy | Access/control rules or policy-like configuration; not necessarily IAM or enforcement |
+| Controller | Manages/configures services, workloads or resources; no runtime control, traffic or relationship proof |
 
-Placement is independent of role. The [generated matrix](resource-support.md)
-records current behavior; the [presentation policy](resource-presentation.md)
-defines ownership, selection and conditional child presentation.
-The [purpose-dependent review](purpose-placement.md) retains Logical defaults for
-SSM Parameters, metric alarms and the five IAM Identity types.
-The [explicit generation-time option](configuration.md#explicit-spatial-types)
-displays these types as independent Spatial cards while retaining reference details.
-The matrix
-lists the explicit logical types. They render as rows grouped by provider source,
-resource type and mode in the top annotation area. AMI describes
-an image definition used by workloads, not a deployed compute instance. These
-existing provider-aware rules apply to managed and data resources; the basic
-inventory extends managed resources only. Custom providers do
-not inherit them. Unknown types retain unresolved placement and stay visible in
-the spatial diagram. Missing VPC/subnet references never imply logical placement.
-Logical placement does not suppress architectural significance: individual resource
-rows retain actions, identities, operation metadata, scope and focus/filter
-participation. Focus selects resources without changing their placement;
-independent Spatial cards require an explicit allowed `--spatial-type`.
+Logical type cards explain each role once, separately from action/mode. Action
+subsections change presentation only. The [matrix](resource-support.md) records
+defaults; [presentation policy](resource-presentation.md) defines ownership/selection.
+[SSM Parameters, metric alarms and five IAM Identity types](purpose-placement.md)
+stay Logical unless an allowed [`--spatial-type`](configuration.md#explicit-spatial-types)
+selects independent cards with reference details retained. Focus alone never changes placement.
 
-Infrastructure data sources retain their roles and external identity. Spatial
-cards use an external badge and dashed border; logical resources use separate
-`data / external` groups and dashed action underlines. The matrix marks omitted
-AWS metadata data sources; their incident edges are also omitted.
-References from retained resources keep
-the omitted source identities as provenance, without creating cards or paths.
-Cached data resources in prior state are
-included when still present in configuration. See [data.svg](../examples/data.svg).
+Logical rows group by provider source/type/mode in the top annotation area and
+retain identity, actions, operation metadata, scope and filter participation.
+AMI is an image definition, not a deployed instance. Provider-aware rules cover
+managed/data resources; the basic inventory extends managed types only, not custom
+providers. Unknown types stay spatial with unresolved placement; missing subnet/VPC
+references do not imply Logical placement. Names never merge state, mode or lifecycle identities.
+
+Data resources retain roles/external identities: Spatial cards use dashed borders
+and an external badge; Logical rows use `data / external` groups and dashed action
+underlines. The matrix's omitted AWS metadata sources lose their cards/incident
+edges but remain reference provenance. Cached prior-state data remains when still
+configured. See [data.svg](../examples/data.svg).
 
 ## Deployment scopes
 
@@ -71,39 +55,27 @@ aliases are not accounts. Logical-resource scope labels include a known
 `AWS Account: <12-digit ID>`; generated SVG/HTML therefore expose that deployment
 identifier. Role ARNs and credential-related provider values are not retained.
 
-Known accounts form `AWS Account: <ID>` backgrounds above Region and AWS Global,
-when evidence is available. The JSON-only [accounts.svg](../examples/accounts.svg)
-demonstrates unknown accounts retaining known regions. One displayed spatial
-resource is enough for either level. Multiple bindings with equal proven accounts
-share a panel, while the same region under different accounts stays separate.
-Known account/unknown region resources remain directly inside Account; unknown
-account/known region resources retain their Region panel. Unknown accounts never
-receive guessed wrappers. Logical rows remain in the annotation area.
-Account backgrounds are drawn before their child backgrounds, and both headers
-are routing obstacles. Their final geometry participates in state sizing and
-cross-state routing. `data-account-panel` identifies the account frame;
-`data-account` on child frames records its parent identity within the state.
-The [combined large example](../examples/multi-account/README.md) exercises
-JSON-only region/global scopes with VPC/Subnet containment, logical annotations
-and cross-state routing; its accounts remain unknown.
+Known accounts form `AWS Account: <ID>` backgrounds above Region/AWS Global.
+One displayed Spatial resource suffices; equal proven accounts share panels,
+while equal regions in different accounts stay separate. Known account/unknown
+region stays directly under Account; unknown account/known region gets only Region.
+Logical rows stay in the annotation area. Account frames precede child frames;
+both headers obstruct routing and their geometry affects state/cross-state sizing.
+`data-account-panel` identifies account frames; child `data-account` identifies
+the parent within its state. JSON-only [accounts](../examples/accounts.svg) and
+[combined examples](../examples/multi-account/README.md) retain unknown accounts.
 
-Known static provider regions automatically group explicitly supported regional
-resources into background panels (see [regions.svg](../examples/regions.svg)).
-One displayed spatial resource is sufficient, including when the state has only
-one known region. Eligibility is evaluated per state and region after filtering;
-removing the last spatial resource removes the panel and its title/padding.
-Logical-resource rows, synthetic summaries and relationship-index entries do not
-create panels. Panels are deployment scopes, not Terraform resources or semantic
-containers. VPC/Subnet containment stays intact inside each panel, and
-cross-region relationships remain routed paths above the background.
-Spatial IAM resources, CloudFront and supported Route 53 resources share an
-`AWS Global` panel when regional panels are present or their account is known. IAM Role, Policy, Role Policy
-and Instance Profile retain global scope metadata but render as logical-resource
-rows above the spatial diagram, outside deployment-scope panels. AWS scope
-classification lives in `provider/aws/scope.rs`; layout and SVG consume generic
-deployment scopes. Unsupported resource types, cross-region peering resources and
-unknown regions stay outside regional panels (but inside a proven account). No aliases, names, tags, ARNs or IDs supply
-region information.
+Static proven regions group eligible Spatial resources after filtering
+([example](../examples/regions.svg)); removing the last removes its panel/title/padding.
+Logical rows, synthetic summaries and relationship-index entries create no panels.
+These backgrounds are deployment scopes, not Terraform resources/semantic containers:
+VPC/Subnet containment stays intact and cross-region routes draw above them.
+Spatial IAM, CloudFront and supported Route 53 share `AWS Global` when region panels
+exist or account is known. IAM Role/Policy/Role Policy/Instance Profile keep global
+metadata as Logical rows outside panels. `provider/aws/scope.rs` classifies scopes;
+layout/SVG consume them generically. Unsupported types, cross-region peering and
+unknown regions stay outside regional panels (inside proven accounts if available).
+Aliases, names, tags, ARNs and IDs never establish region.
 
 Each Logical Resources row displays its own `Region: <region>`, `AWS Global`,
 or `Region: unknown` label in SVG and HTML. Equal type/mode resources from different
@@ -278,234 +250,118 @@ Other Association-role resources remain cards. Examples:
 
 既存の外部リンク用の案内です。仕様の本文はリンク先だけで管理します。
 
-### Batch compute environments and queues (#700)
+### [Batch compute environments and queues (#700)](aws-compute.md#batch-compute-environments-and-queues-700)
 
-[Batch compute environments and queues (#700)](aws-compute.md#batch-compute-environments-and-queues-700) を参照してください。
+### [OpenSearch Serverless (#696)](aws-data.md#opensearch-serverless-696)
 
-### OpenSearch Serverless (#696)
+### [Network Firewall (#693)](aws-network.md#network-firewall-693)
 
-[OpenSearch Serverless (#696)](aws-data.md#opensearch-serverless-696) を参照してください。
+### [API Gateway integrations and deployment context](aws-messaging.md#api-gateway-integrations-and-deployment-context)
 
-### Network Firewall (#693)
+### [Lambda aliases, layers and function URLs](aws-compute.md#lambda-aliases-layers-and-function-urls)
 
-[Network Firewall (#693)](aws-network.md#network-firewall-693) を参照してください。
+### [RDS Global Clusters](aws-data.md#rds-global-clusters)
 
-### API Gateway integrations and deployment context
+### [CloudFront origins and policies](aws-network.md#cloudfront-origins-and-policies)
 
-[API Gateway integrations and deployment context](aws-messaging.md#api-gateway-integrations-and-deployment-context) を参照してください。
+### [WAFv2](aws-network.md#wafv2)
 
-### Lambda aliases, layers and function URLs
+### [S3 bucket configuration](aws-storage.md#s3-bucket-configuration)
 
-[Lambda aliases, layers and function URLs](aws-compute.md#lambda-aliases-layers-and-function-urls) を参照してください。
+### [AWS Private CA](aws-security.md#aws-private-ca)
 
-### RDS Global Clusters
+### [Cognito](aws-security.md#cognito)
 
-[RDS Global Clusters](aws-data.md#rds-global-clusters) を参照してください。
+### [Step Functions](aws-messaging.md#step-functions)
 
-### CloudFront origins and policies
+### [Redshift provisioned clusters](aws-data.md#redshift-provisioned-clusters)
 
-[CloudFront origins and policies](aws-network.md#cloudfront-origins-and-policies) を参照してください。
+### [CloudTrail](aws-security.md#cloudtrail)
 
-### WAFv2
+### [AWS Backup](aws-storage.md#aws-backup)
 
-[WAFv2](aws-network.md#wafv2) を参照してください。
+### [Athena Workgroup and Data Catalog](aws-data.md#athena-workgroup-and-data-catalog)
 
-### S3 bucket configuration
+### [Glue Catalog, Crawler and Job](aws-data.md#glue-catalog-crawler-and-job)
 
-[S3 bucket configuration](aws-storage.md#s3-bucket-configuration) を参照してください。
+### [IAM users and groups](aws-security.md#iam-users-and-groups)
 
-### AWS Private CA
+### [IAM identity providers](aws-security.md#iam-identity-providers)
 
-[AWS Private CA](aws-security.md#aws-private-ca) を参照してください。
+### [EFS](aws-storage.md#efs)
 
-### Cognito
+### [EBS](aws-storage.md#ebs)
 
-[Cognito](aws-security.md#cognito) を参照してください。
+### [SSM Parameter Store](aws-security.md#ssm-parameter-store)
 
-### Step Functions
+### [Secrets Manager](aws-security.md#secrets-manager)
 
-[Step Functions](aws-messaging.md#step-functions) を参照してください。
+### [KMS](aws-security.md#kms)
 
-### Redshift provisioned clusters
+### [ACM](aws-security.md#acm)
 
-[Redshift provisioned clusters](aws-data.md#redshift-provisioned-clusters) を参照してください。
+### [Route 53](aws-network.md#route-53)
 
-### CloudTrail
+### [EventBridge buses and rules](aws-messaging.md#eventbridge-buses-and-rules)
 
-[CloudTrail](aws-security.md#cloudtrail) を参照してください。
+### [Aurora cluster instances](aws-data.md#aurora-cluster-instances)
 
-### AWS Backup
+### [SQS and SNS](aws-messaging.md#sqs-and-sns)
 
-[AWS Backup](aws-storage.md#aws-backup) を参照してください。
+### [Amazon MQ network and configuration (#689)](aws-messaging.md#amazon-mq-network-and-configuration-689)
 
-### Athena Workgroup and Data Catalog
+### [MSK network and configuration (#688)](aws-messaging.md#msk-network-and-configuration-688)
 
-[Athena Workgroup and Data Catalog](aws-data.md#athena-workgroup-and-data-catalog) を参照してください。
+### [Scheduler and Pipes configuration (#692)](aws-messaging.md#scheduler-and-pipes-configuration-692)
 
-### Glue Catalog, Crawler and Job
+### [SNS subscriptions](aws-messaging.md#sns-subscriptions)
 
-[Glue Catalog, Crawler and Job](aws-data.md#glue-catalog-crawler-and-job) を参照してください。
+### [Lambda event source mappings](aws-messaging.md#lambda-event-source-mappings)
 
-### IAM users and groups
+### [Kinesis Data Streams](aws-messaging.md#kinesis-data-streams)
 
-[IAM users and groups](aws-security.md#iam-users-and-groups) を参照してください。
+### [Amazon Data Firehose](aws-messaging.md#amazon-data-firehose)
 
-### IAM identity providers
+### [EventBridge targets](aws-messaging.md#eventbridge-targets)
 
-[IAM identity providers](aws-security.md#iam-identity-providers) を参照してください。
+### [App Runner networking (#694)](aws-compute.md#app-runner-networking-694)
 
-### EFS
+### [ECR repositories](aws-compute.md#ecr-repositories)
 
-[EFS](aws-storage.md#efs) を参照してください。
+### [ECS Cluster membership](aws-compute.md#ecs-cluster-membership)
 
-### EBS
+### [EKS configuration and membership](aws-compute.md#eks-configuration-and-membership)
 
-[EBS](aws-storage.md#ebs) を参照してください。
+### [RDS Proxy](aws-data.md#rds-proxy)
 
-### SSM Parameter Store
+### [ElastiCache configuration references (#691)](aws-data.md#elasticache-configuration-references-691)
 
-[SSM Parameter Store](aws-security.md#ssm-parameter-store) を参照してください。
+### [ElastiCache Serverless](aws-data.md#elasticache-serverless)
 
-### Secrets Manager
+### [Organizations hierarchy](aws-security.md#organizations-hierarchy)
 
-[Secrets Manager](aws-security.md#secrets-manager) を参照してください。
+### [Organizations policies and direct attachments](aws-security.md#organizations-policies-and-direct-attachments)
 
-### KMS
+### [Organizations member Account deployment navigation](aws-security.md#organizations-member-account-deployment-navigation)
 
-[KMS](aws-security.md#kms) を参照してください。
+### [DocumentDB (#697)](aws-data.md#documentdb-697)
 
-### ACM
+### [Neptune (#698)](aws-data.md#neptune-698)
 
-[ACM](aws-security.md#acm) を参照してください。
+### [DMS replication configuration (#699)](aws-data.md#dms-replication-configuration-699)
 
-### Route 53
+### [Redshift Serverless (#695)](aws-data.md#redshift-serverless-695)
 
-[Route 53](aws-network.md#route-53) を参照してください。
+### [SageMaker inference configuration (#701)](aws-data.md#sagemaker-inference-configuration-701)
 
-### EventBridge buses and rules
+### [FSx Lustre networking and encryption (#702)](aws-storage.md#fsx-lustre-networking-and-encryption-702)
 
-[EventBridge buses and rules](aws-messaging.md#eventbridge-buses-and-rules) を参照してください。
+### [PrivateLink endpoints and services (#902)](aws-network.md#privatelink-endpoints-and-services-902)
 
-### Aurora cluster instances
+### [VPC gateways and Elastic IPs (#895)](aws-network.md#vpc-gateways-and-elastic-ips-895)
 
-[Aurora cluster instances](aws-data.md#aurora-cluster-instances) を参照してください。
+### [Auto Scaling configuration (#810)](aws-compute.md#auto-scaling-configuration-810)
 
-### SQS and SNS
+### [Security group rule relationships (#899)](aws-network.md#security-group-rule-relationships-899)
 
-[SQS and SNS](aws-messaging.md#sqs-and-sns) を参照してください。
-
-### Amazon MQ network and configuration (#689)
-
-[Amazon MQ network and configuration (#689)](aws-messaging.md#amazon-mq-network-and-configuration-689) を参照してください。
-
-### MSK network and configuration (#688)
-
-[MSK network and configuration (#688)](aws-messaging.md#msk-network-and-configuration-688) を参照してください。
-
-### Scheduler and Pipes configuration (#692)
-
-[Scheduler and Pipes configuration (#692)](aws-messaging.md#scheduler-and-pipes-configuration-692) を参照してください。
-
-### SNS subscriptions
-
-[SNS subscriptions](aws-messaging.md#sns-subscriptions) を参照してください。
-
-### Lambda event source mappings
-
-[Lambda event source mappings](aws-messaging.md#lambda-event-source-mappings) を参照してください。
-
-### Kinesis Data Streams
-
-[Kinesis Data Streams](aws-messaging.md#kinesis-data-streams) を参照してください。
-
-### Amazon Data Firehose
-
-[Amazon Data Firehose](aws-messaging.md#amazon-data-firehose) を参照してください。
-
-### EventBridge targets
-
-[EventBridge targets](aws-messaging.md#eventbridge-targets) を参照してください。
-
-### App Runner networking (#694)
-
-[App Runner networking (#694)](aws-compute.md#app-runner-networking-694) を参照してください。
-
-### ECR repositories
-
-[ECR repositories](aws-compute.md#ecr-repositories) を参照してください。
-
-### ECS Cluster membership
-
-[ECS Cluster membership](aws-compute.md#ecs-cluster-membership) を参照してください。
-
-### EKS configuration and membership
-
-[EKS configuration and membership](aws-compute.md#eks-configuration-and-membership) を参照してください。
-
-### RDS Proxy
-
-[RDS Proxy](aws-data.md#rds-proxy) を参照してください。
-
-### ElastiCache configuration references (#691)
-
-[ElastiCache configuration references (#691)](aws-data.md#elasticache-configuration-references-691) を参照してください。
-
-### ElastiCache Serverless
-
-[ElastiCache Serverless](aws-data.md#elasticache-serverless) を参照してください。
-
-### Organizations hierarchy
-
-[Organizations hierarchy](aws-security.md#organizations-hierarchy) を参照してください。
-
-### Organizations policies and direct attachments
-
-[Organizations policies and direct attachments](aws-security.md#organizations-policies-and-direct-attachments) を参照してください。
-
-### Organizations member Account deployment navigation
-
-[Organizations member Account deployment navigation](aws-security.md#organizations-member-account-deployment-navigation) を参照してください。
-
-### DocumentDB (#697)
-
-[DocumentDB (#697)](aws-data.md#documentdb-697) を参照してください。
-
-### Neptune (#698)
-
-[Neptune (#698)](aws-data.md#neptune-698) を参照してください。
-
-### DMS replication configuration (#699)
-
-[DMS replication configuration (#699)](aws-data.md#dms-replication-configuration-699) を参照してください。
-
-### Redshift Serverless (#695)
-
-[Redshift Serverless (#695)](aws-data.md#redshift-serverless-695) を参照してください。
-
-### SageMaker inference configuration (#701)
-
-[SageMaker inference configuration (#701)](aws-data.md#sagemaker-inference-configuration-701) を参照してください。
-
-### FSx Lustre networking and encryption (#702)
-
-[FSx Lustre networking and encryption (#702)](aws-storage.md#fsx-lustre-networking-and-encryption-702) を参照してください。
-
-### PrivateLink endpoints and services (#902)
-
-[PrivateLink endpoints and services (#902)](aws-network.md#privatelink-endpoints-and-services-902) を参照してください。
-
-### VPC gateways and Elastic IPs (#895)
-
-[VPC gateways and Elastic IPs (#895)](aws-network.md#vpc-gateways-and-elastic-ips-895) を参照してください。
-
-### Auto Scaling configuration (#810)
-
-[Auto Scaling configuration (#810)](aws-compute.md#auto-scaling-configuration-810) を参照してください。
-
-### Security group rule relationships (#899)
-
-[Security group rule relationships (#899)](aws-network.md#security-group-rule-relationships-899) を参照してください。
-
-### Workload references and monitoring
-
-[Workload references and monitoring](aws-compute.md#workload-references-and-monitoring) を参照してください。
+### [Workload references and monitoring](aws-compute.md#workload-references-and-monitoring)

@@ -1,19 +1,6 @@
 # AWS Identity and security
 
-[共通契約・サービス一覧](aws.md) に戻る。以下はサービス固有の条件です。各節に記載した Provider 版と証拠の範囲を維持し、他サービスの条件を転用しないでください。
-
-- [AWS Private CA](#aws-private-ca)
-- [Cognito](#cognito)
-- [CloudTrail](#cloudtrail)
-- [IAM users and groups](#iam-users-and-groups)
-- [IAM identity providers](#iam-identity-providers)
-- [SSM Parameter Store](#ssm-parameter-store)
-- [Secrets Manager](#secrets-manager)
-- [KMS](#kms)
-- [ACM](#acm)
-- [Organizations hierarchy](#organizations-hierarchy)
-- [Organizations policies and direct attachments](#organizations-policies-and-direct-attachments)
-- [Organizations member Account deployment navigation](#organizations-member-account-deployment-navigation)
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
 
 ## AWS Private CA
 
@@ -225,25 +212,22 @@ and ECS reference shape. Regenerate HTML in Docker with
 
 ## Secrets Manager
 
-Secrets Manager Secrets are independent regional cards, including separate data
-lookups, with the AWS Secrets Manager service label. `Version secret` requires
-an explicit `secret_id` reference from a managed or data Version to a managed
-Secret's `id` or `arn`, matching known planned values. Name-based references remain
-ordinary Terraform references because names resolve in the consumer's account and
-region. Versions retain their own identities and actions.
-Managed and data Versions become measured children only of one verified managed
-Secret with compatible proven scope. Unknown, external, ambiguous, filtered,
-data or deposed Secrets leave Versions as independent cards; deposed/deleted
-Versions also remain independent. A shared nonconflicting provider configuration
-and known region can prove compatibility without inferring an account.
-Direct Version focus or `--modules` selection keeps the selected Version without
-restoring its Secret; Secret-only selection does not restore excluded Versions.
-Multiple Versions remain distinct children with their own bounds, links and
-coverage counts. Shared consumers never own the Secret. Cards retain their own
-proven region or unknown scope; display ownership adds no containment or consumer
-association.
-Equal names never merge managed/data resources. Payloads, secret strings/binary,
-rotation configuration and container environment values are not retained or output.
+Secrets are independent regional cards with the AWS Secrets Manager label;
+managed/data identities never merge by name. `Version secret` requires an explicit
+managed/data Version `secret_id` reference to managed Secret `id`/`arn` and equal
+known planned values. Name references stay ordinary because they resolve in the
+consumer's account/region.
+
+Managed/data Versions become measured children of one verified managed Secret
+with compatible proven scope (known region plus shared nonconflicting provider
+configuration can suffice without inferring account). Unknown/external/ambiguous/
+filtered/data/deposed Secrets, and deleted/deposed Versions, leave independent
+cards. Each card keeps its own proven region or unknown scope. The
+[presentation contract](resource-presentation.md) preserves distinct identities,
+actions, bounds, links and coverage; focus/modules do not restore excluded parents
+or children. Consumers never own Secrets; child display adds no network containment
+or consumer association. Payloads, secret strings/binary, rotation configuration
+and container environment values are not retained/output.
 See [SVG](../examples/secrets-manager.svg) / [HTML](../examples/secrets-manager.html).
 
 Terraform 1.9.8 with AWS Provider 5.100.0 serializes ECS `container_definitions` as
@@ -275,16 +259,15 @@ managed `aws_kms_key` attribute reference. Same-named fields on other types do n
 qualify. Literal aliases/ARNs, AWS managed keys and multi-region replicas are never
 merged or guessed. Key policies, key material and encryption contexts are omitted;
 configuration references establish neither runtime encryption nor permissions.
-Aliases use measured child cards only when this unique verified Key also has
-compatible proven scope. A shared nonconflicting provider configuration with a
-known region may establish compatibility when account identity is unavailable;
-it does not infer an account. Unknown, external, ambiguous, filtered, data or
-deposed Keys leave Aliases as independent cards. Data/deposed Aliases also remain
-independent. Focus/modules selection never restores excluded parents or children.
-Keys remain independent even with several encryption consumers; each Key and Alias
-retains one identity, action and coverage count. Child presentation adds no network
-containment or communication edge, and existing service-reference links remain
-navigable. Cards use their own proven region, otherwise unknown scope.
+Aliases become measured children of the uniquely verified Key only with compatible
+proven scope; known region and shared nonconflicting provider configuration may
+suffice without account inference. Unknown/external/ambiguous/filtered/data/deposed
+Keys, and data/deposed Aliases, leave independent cards. Under the
+[presentation contract](resource-presentation.md), each Key/Alias keeps its identity,
+action, coverage and own proven region (otherwise unknown); filtering restores
+neither endpoint. Keys stay independent of encryption consumers. Child display
+adds no network containment/communication edge and preserves service references.
+
 See [SVG](../examples/kms.svg) / [HTML](../examples/kms.html). The allowlist follows
 AWS Provider 5.100.0 [Key](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kms_key.html.markdown),
 [Alias](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kms_alias.html.markdown)

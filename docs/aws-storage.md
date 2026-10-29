@@ -1,12 +1,6 @@
 # AWS Storage and backup
 
-[共通契約・サービス一覧](aws.md) に戻る。以下はサービス固有の条件です。各節に記載した Provider 版と証拠の範囲を維持し、他サービスの条件を転用しないでください。
-
-- [S3 bucket configuration](#s3-bucket-configuration)
-- [AWS Backup](#aws-backup)
-- [EFS](#efs)
-- [EBS](#ebs)
-- [FSx Lustre networking and encryption (#702)](#fsx-lustre-networking-and-encryption-702)
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
 
 ## S3 bucket configuration
 
@@ -115,30 +109,25 @@ schema and reference contracts.
 
 ## EFS
 
-EFS File Systems, Mount Targets and Access Points are regional spatial Nodes.
-All three use the Amazon EFS service label. A File System is never
-placed inside a Subnet, including One Zone file systems; no AZ layer is inferred.
-Mount Targets reuse Subnet containment and SG connections. `File system` and
-`Mount target subnet` require a complete, explicit, unique managed-resource `id`
-reference with matching known planned values and the exact AWS endpoint type.
-Unknown values retain ordinary Terraform references and an unproven-value diagnostic.
-Deleted/deposed endpoints do not establish these current-configuration links.
-SG lists use the existing complete collection proof. Access Points keep their own
-identity, action and coverage. No EC2/ECS mount, NFS reachability, file content or
-arbitrary POSIX/path setting is inferred or output.
-Access Points with a verified `file_system_id` reference render as measured child
-cards inside that File System. This is presentation ownership, not network
-containment, and never places them under a Mount Target or Subnet. Scope must
-match independently: known account and region, or a known region and the same
-nonconflicting provider configuration. Parent scope is never copied to the child.
-Missing, external, ambiguous, filtered or scope-incompatible owners leave an
-independent Access Point card with its own scope. Data, deleted and deposed Access
-Points also remain independent because current managed service-reference proof
-does not apply. Child-only focus/modules selections do not restore the File System;
-parent-only selection does not restore excluded children. Shared File Systems can
-contain multiple distinct Access Points, each counted once. Verified references,
-service-name rendering, lifecycle badges and state-local HTML export context are
-preserved through the [common presentation contract](resource-presentation.md).
+EFS File Systems, Mount Targets and Access Points are regional Spatial Nodes
+with the Amazon EFS label. File Systems never enter Subnets, including One Zone;
+no AZ layer is inferred. Mount Targets reuse Subnet containment and complete SG
+collection proof. `File system` / `Mount target subnet` links require unique,
+complete explicit managed AWS `id` references of the exact endpoint type with
+matching known planned values. Unknowns keep ordinary references plus an
+unproven-value diagnostic; deleted/deposed endpoints cannot prove current links.
+
+An Access Point's verified `file_system_id` permits a measured child card under
+that File System, never a Mount Target/Subnet. Independent scope must match by
+known account/region, or known region plus the same nonconflicting provider config;
+parent scope is not copied. Missing/external/ambiguous/filtered/incompatible owners,
+and data/deleted/deposed Access Points, leave independent cards with their own scope.
+The [presentation contract](resource-presentation.md) preserves each child's identity,
+action, coverage, references, label, lifecycle badge and state-local HTML context;
+multiple Access Points stay distinct and counted once. Focus/modules never restore
+excluded parents or children. No EC2/ECS mount, NFS
+reachability, file content or arbitrary POSIX/path settings are inferred/output.
+
 See the synthetic [SVG](../examples/efs.svg) / [HTML](../examples/efs.html).
 The AWS Provider 5.100.0 [File System](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_file_system.html.markdown),
 [Mount Target](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_mount_target.html.markdown)
@@ -149,23 +138,19 @@ fields and reference shapes. Regenerate HTML in Docker with
 
 ## EBS
 
-EBS Volumes are regional spatial Nodes with the Amazon EBS service label. A volume belongs
-to an Availability Zone in AWS; this view groups it by its proven region without
-adding an AZ layer or placing it inside the attached instance's Subnet. An AZ
-string does not infer a region, attachment, co-location or attachment success.
-Independent `aws_volume_attachment` resources are Associations. Both `instance_id`
-and `volume_id` must explicitly and uniquely reference a current managed AWS
-Instance/Volume's `id`, with known matching planned values. Only the proof survives
-ingestion. Deleted/deposed, unknown, dynamic, wrong-type/provider and ambiguous
-endpoints retain a visible attachment card and safe diagnostics. Additional
-dependencies/consumers also retain that card so its references remain navigable.
-Verified edges keep the attachment's identity, action, import/move provenance and
-coverage once, independently of endpoint identities. Filtering removes unavailable
-edges or marks unavailable fallback-card links without inventing endpoints.
-Inline `aws_instance.ebs_block_device` blocks do not create extra Terraform
-resources and are never merged with standalone volumes. Device paths, snapshot
-payloads and arbitrary block attributes are not output. The association makes no
-claim about encryption, mount success or runtime access.
+EBS Volumes are regional Spatial Nodes with the Amazon EBS label. Their AWS AZ
+does not create a view layer, infer region/co-location or place the volume in an
+instance's Subnet. An `aws_volume_attachment` Association requires unique explicit
+`instance_id` / `volume_id` references to current managed AWS Instance/Volume
+`id` outputs with matching known planned values; only the proof is retained.
+Deleted/deposed, unknown, dynamic, wrong-type/provider or ambiguous endpoints,
+and extra dependencies/consumers, retain a navigable attachment card and diagnostics.
+Verified edges preserve attachment identity/action/import/move/coverage once;
+filtering removes unavailable edges or disables fallback-card links.
+Inline `aws_instance.ebs_block_device` creates no resource and never merges with
+volumes. Device paths, snapshot payloads and arbitrary block attributes are omitted;
+attachments prove neither encryption, mount success nor runtime access.
+
 See the synthetic [SVG](../examples/ebs.svg) / [HTML](../examples/ebs.html).
 The AWS Provider 5.100.0 [Volume](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ebs_volume.html.markdown)
 and [Attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/volume_attachment.html.markdown)

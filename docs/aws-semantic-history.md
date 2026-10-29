@@ -2,43 +2,51 @@
 
 [監査方法・現行判断・更新手順](aws-semantic-audit.md) に戻る。以下は各節の checkout 時点の監査記録です。完了済み監査は実装完了を意味しません。後続実装後の現行状態は [判断データ](aws-semantic-decisions.json)、[生成台帳](aws-semantic-gaps.md)、[サービス契約](aws.md) を優先し、証拠・未対応範囲・再検討条件を照合してください。
 
-- [Load balancing, edge and DNS review (#715)](#load-balancing-edge-and-dns-review-715)
-- [Lambda, APIs and application integration review (#714)](#lambda-apis-and-application-integration-review-714)
-- [EC2 VPC, subnet, endpoint and network-interface review (#710)](#ec2-vpc-subnet-endpoint-and-network-interface-review-710)
-- [Machine learning and generative AI review (#725)](#machine-learning-and-generative-ai-review-725)
-- [Compute and scaling review (#712)](#compute-and-scaling-review-712)
-- [Network connectivity and traffic protection review (#716)](#network-connectivity-and-traffic-protection-review-716)
-- [Search and business intelligence review (#724)](#search-and-business-intelligence-review-724)
-- [Containers and application hosting review (#713)](#containers-and-application-hosting-review-713)
-- [NoSQL, caches and time-series review (#718)](#nosql-caches-and-time-series-review-718)
-- [Streaming, messaging and workflows review (#721)](#streaming-messaging-and-workflows-review-721)
-- [Relational and graph database review (#717)](#relational-and-graph-database-review-717)
-- [Filesystems, transfer and backup review (#720)](#filesystems-transfer-and-backup-review-720)
-- [Analytics and data governance review, batch 1 (#722)](#analytics-and-data-governance-review-batch-1-722)
-- [Analytics and data governance review, batch 2 (#723)](#analytics-and-data-governance-review-batch-2-723)
+## Shared audit method
+
+All reviews use AWS Provider 6.70.0, commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (source archive `5e13eed`), with
+schema SHA-256 and managed denominator checked against the pinned inventory.
+Each type's [review record](aws-semantic-decisions.json) separates placement,
+ownership, network, references, scope and safe summaries, recording inspected
+fields, collection ancestry, input/output flags, managed/data differences,
+official documentation and applicable implementation/test paths.
+The runtime matrix and inventory tests prove basic defaults, not dedicated semantics.
+Historical conclusions stay tied to each checkout; later implementations update
+current status/gap text. Source/helper issues own their listed paths; endpoint
+audits do not duplicate them or reopen completed #688–#702 scopes.
+
+New relationships require unique explicit compatible references, matching known
+outputs, complete element-correlated collections and independent provider,
+account, region, named-state and lifecycle proof. Current configuration cannot
+prove deleted/deposed links; unknown, sensitive, dynamic, mismatched or filtered
+evidence remains conservative. Managed/data registrations are separate contracts.
+Shared objects retain independent identity, action and exactly-once coverage;
+reference evidence alone does not justify ownership or network containment.
+Credentials, payloads, arbitrary maps/JSON, policy interpretation and runtime
+reachability/health inference are excluded. Summary candidates require a separate
+allowlist and known/unknown/sensitive tests, not merely an available schema field.
+Service-specific exceptions and revisit conditions remain below and per type.
+
+Common implementation checks: [aliases](../src/provider/aws/aliases.rs), [containment](../src/provider/aws/containment.rs), [spanning placement](../src/provider/aws/containment/spanning.rs), [SG proof](../src/provider/aws/security_groups.rs), [associations](../src/provider/aws/associations.rs), [references](../src/provider/aws/service_references.rs), [classification](../src/provider/aws/classification.rs), [basic defaults](../src/provider/aws/basic_entries.rs), [presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs), [unknown scope reasons](../src/provider/aws/basic.rs), [indirect placement](../src/provider/aws/containment/indirect.rs), [membership](../src/provider/aws/members.rs), [summary allowlists](../src/provider/aws/encryption.rs), [VPC scope](../src/provider/aws/containment/vpc_scope.rs), [network collections](../src/provider/aws/network.rs), [embedded presentation](../src/provider/aws/service_members.rs).
+Per-type records identify which paths were checked; service-specific evidence follows.
+
+These documentation/data audits changed no runtime or rendering inputs, so SVG
+regeneration and Layout quality were inapplicable. Docker verification used the
+pinned-contract verifier, semantic audit/register tests and resource-support
+consistency checks; #715 additionally verified alias schemas/factories and data
+selectors, and #714 verified same-name data selectors. The #724 audit test covers
+65 types; #720's verifier checks shapes and input/output flags. Commands and
+acquisition instructions are maintained in the
+[audit guide](aws-semantic-audit.md#maintenance-and-verification).
 
 ## Load balancing, edge and DNS review (#715)
 
 Reviewed planorama commit: `f7f5d8bfb39ded416c786a21037935232b8f1eda`.
-All 86 exact managed types in `elb`, `elbv2`, `cloudfront`,
-`cloudfrontkeyvaluestore`, `globalaccelerator`, `route53`, `route53domains`,
-`route53profiles` and `route53resolver` have six separate decisions in
-[the explicit register](aws-semantic-decisions.json). Each records selected field
-shapes, input/output flags, managed/data differences, implementation/test paths
-and official documentation at Provider 6.70.0 commit
-`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The full schema hash matches the inventory.
-These are historical review conclusions; later implementation must also update
-the current gap text. Basic presentation is not complete semantic support.
+86 managed types: `elb`, `elbv2`, `cloudfront`, `cloudfrontkeyvaluestore`,
+`globalaccelerator`, `route53`, `route53domains`, `route53profiles`, `route53resolver`.
 
-Runtime evidence includes [aliases](../src/provider/aws/aliases.rs),
-[components](../src/provider/aws/components.rs),
-[containment](../src/provider/aws/containment.rs),
-[subnet spanning](../src/provider/aws/containment/spanning.rs),
-[SG connections](../src/provider/aws/security_groups.rs),
-[associations](../src/provider/aws/associations.rs),
-[service references](../src/provider/aws/service_references.rs),
-[CloudFront](../src/provider/aws/cloudfront.rs),
-[WAF](../src/provider/aws/waf.rs), scope, classification and basic defaults.
+Additional evidence: [components](../src/provider/aws/components.rs), [CloudFront](../src/provider/aws/cloudfront.rs), [WAF](../src/provider/aws/waf.rs).
 Per-type test paths establish the applicable bounded behavior; inventory and
 support-matrix tests establish defaults only. The support matrix already agrees
 with runtime defaults, so no source classification or matrix correction is needed.
@@ -124,15 +132,11 @@ Contract distinctions checked:
   groups; additional endpoint/logging variants require explicit contract tests.
   Profile association does not expand effective DNS settings or transfer ownership.
 
-Schema/docs discrepancies above were cross-checked in the pinned
+Schema/docs discrepancies were checked in pinned
 `internal/service/{elb,cloudfront,route53,route53resolver,route53profiles}` source;
-per-field `sourceContracts` retain the exact file/token. Data selector shapes and
-flags are checked separately, without extending the managed denominator.
-New relationships require explicit unique compatible references, matching known
-values, complete element-correlated collections and independent scope/state proof.
-Unknown, sensitive, dynamic, deleted/deposed and filtered evidence stays
-conservative. Safe-summary exclusions and concrete revisit conditions are recorded
-per type; no credentials, payloads, policy interpretation or runtime inference.
+per-field `sourceContracts` retain exact files/tokens. Data selectors/flags do not
+extend the managed denominator. Safe-summary exclusions and revisit conditions
+remain per type.
 
 Actionable follow-ups: Classic ELB #906; LB network/logging #907; TLS/trust stores
 #908; Cognito actions #909; target attachments #910; standard CloudFront #911;
@@ -146,24 +150,12 @@ Independent shared identities with no outgoing architecture contract remain logi
 where appropriate. Classic ELB, accelerators, multitenant distributions and
 Resolver endpoints have explicit architecture-card gaps, not blanket promotion.
 
-Docker verification includes pinned contracts and data selectors, alias schema/
-factory verification, semantic register/tests and resource-support check. All
-repository Markdown was reviewed for affected claims. This audit changes only
-documentation, audit data and verification; SVG regeneration and Layout quality
-do not apply.
-
 ## Lambda, APIs and application integration review (#714)
 
-Reviewed planorama commit: `80b70c8fec8b5a3c75b0457bf0f4061fccea441e`
-(stack base [#929](https://github.com/ritz-p/planorama/pull/929), based on main
-`f7f5d8bfb39ded416c786a21037935232b8f1eda`). All **71 exact managed types** in
-`lambda`, `lambdacore`, `lambdamicrovms`, `apigateway`, `apigatewayv2`, `appsync`
-and `serverlessrepo` have individual placement, ownership, network, reference,
-scope and summary decisions in [the explicit register](aws-semantic-decisions.json).
-The pinned Provider 6.70.0 schema hash matches the inventory; field shapes,
-input/output flags, same-name data selectors and official resource documentation
-are checked at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
-The records describe this baseline, not future implementations.
+Reviewed planorama commit: `80b70c8fec8b5a3c75b0457bf0f4061fccea441e`.
+71 managed types: `lambda`, `lambdacore`, `lambdamicrovms`, `apigateway`,
+`apigatewayv2`, `appsync`, `serverlessrepo`. Stack base [#929](https://github.com/ritz-p/planorama/pull/929),
+main `f7f5d8bfb39ded416c786a21037935232b8f1eda`.
 
 Runtime evidence includes classification/basic defaults, scope, reference and
 membership rules, [Lambda proofs](../src/provider/aws/lambda.rs),
@@ -230,29 +222,12 @@ configuration, event sources, async destinations, qualified helpers and policies
 own issue. Shared resources remain independent; payloads, credentials, arbitrary
 summaries, policy interpretation and runtime reachability remain excluded.
 
-Validation: Docker audit denominator/contract tests, pinned schema/documentation
-and same-name data selector verification, gap-register and support-matrix checks.
-This audit changes no runtime code, fixture, diagram or geometry, so it requires
-neither SVG regeneration nor a separate Layout quality run.
-
 ## EC2 VPC, subnet, endpoint and network-interface review (#710)
 
 Reviewed planorama commit: `a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3`.
-All 83 exact managed types assigned to #710 have separate placement, ownership,
-network, references, scope and summary decisions in
-[the explicit register](aws-semantic-decisions.json). Selected field shapes and
-required/optional/computed flags use AWS Provider 6.70.0 schema, whose SHA-256
-matches the inventory, and official documentation/source at
-`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. These are historical review conclusions;
-future implementation updates must also update current gap text.
+83 exact managed types assigned to #710.
 
-Runtime evidence includes classification/basic defaults, scope and aliases,
-[containment](../src/provider/aws/containment.rs),
-[associations](../src/provider/aws/associations.rs),
-[routes](../src/provider/aws/routes.rs),
-[SG connections](../src/provider/aws/security_groups.rs), service references,
-service members and summary allowlists. Per-type evidence paths identify the
-applicable tests; inventory and support-matrix tests establish defaults only.
+Additional evidence: [routes](../src/provider/aws/routes.rs).
 The [support matrix](resource-support.md) already agrees with runtime defaults.
 An incoming route target alone does not prove originating network context.
 #895 now adds verified gateway VPC, NAT allocation and EIP/helper contracts;
@@ -324,14 +299,8 @@ Contract distinctions checked:
   VPC encryption exclusions and block-access flags are configuration, not proof
   of effective encryption, policy compliance or reachability.
 
-Same-name data lookups were checked separately in the pinned schema; per-type
-records list selectors and flags. A data VPC's `default` lookup, for example, is
-not `aws_default_vpc` adoption. No reviewed managed type is a runtime alias.
-New relationships need unique explicit compatible references, matching known
-values, complete collections and independent provider/account/region/named-state
-proof. Unknown, mismatched, deposed/deleted and filtered evidence stays
-conservative. Shared resources remain independent of embedded helper ownership.
-No payloads, credentials, arbitrary maps or policy/runtime inference are included.
+Same-name data selectors/flags are recorded separately: a data VPC `default`
+lookup is not `aws_default_vpc` adoption. No reviewed managed type is a runtime alias.
 
 Actionable follow-ups are adopted defaults #889; ENI/Instance Connect #890;
 prefix-list entries #891; Network Insights #892; secondary networks #893;
@@ -342,22 +311,11 @@ source/helper relationships, coordinating endpoint audits without duplicating
 their work. Eight types retain sufficient logical identity with concrete
 exclusions or summary deferrals; missing functionality remains in these issues.
 
-Docker validation uses the pinned-contract verifier, semantic audit/register tests
-and resource-support check. All repository Markdown was checked for affected
-claims; other service contracts and rendering behavior are unchanged. This is
-audit data/documentation only, so SVG regeneration and Layout quality do not apply.
-
 ## Machine learning and generative AI review (#725)
 
 Reviewed planorama commit: `f5c320438d8abf81de31c884bbd03dde5369773e`.
-All 90 managed types in `sagemaker`, `bedrock`, `bedrockagent`,
-`bedrockagentcore`, `agentregistry`, `comprehend`, `rekognition` and `transcribe`
-have six separate decisions in [the review data](aws-semantic-decisions.json).
-Each entry records pinned documentation, registration, selected field shapes,
-required/optional/computed contracts, managed/data distinctions and implementation
-evidence. The schema hash is checked against the inventory before verification.
-These conclusions describe the reviewed commit; subsequent implementations update
-the current gap text without rewriting this historical baseline.
+90 managed types: `sagemaker`, `bedrock`, `bedrockagent`, `bedrockagentcore`,
+`agentregistry`, `comprehend`, `rekognition`, `transcribe`.
 
 The runtime [matrix](resource-support.md), `basic_entries.rs`, `classification.rs`
 and `scope.rs` establish basic support. `service_references.rs`, containment,
@@ -418,40 +376,17 @@ Contract distinctions checked against the pinned Provider documentation and sche
   Cognito references need pool/client/group agreement; OIDC usernames, URLs and
   IP policy conditions do not establish resource or network identity.
 
-All dedicated links remain missing at this baseline. Future rules require unique
-explicit Terraform references, matching known target outputs, complete collections,
-compatible provider/account/region/state and current/deposed identity evidence.
-Data lookups and list registrations are separate from the managed denominator.
-Shared objects keep independent action and exactly-once coverage. Form bodies,
-policies, scripts, prompts, model data and runtime health remain excluded. Per-type
-summary deferrals name a candidate and require an allowlist and unknown-value tests;
-they do not claim current summary support.
-
-This audit changes no runtime or rendering input. Validate with the pinned-contract
-verifier, semantic audit tests/register and resource-support check in Docker;
-SVG regeneration and Layout quality do not apply to this audit-only change.
+All dedicated links remain missing at this baseline. Endpoint/notebook cards
+do not establish dedicated semantics. Form bodies, scripts, prompts and model
+data are excluded; summary candidates require the shared allowlist review.
+Data lookups and list registrations are outside the managed denominator.
 
 ## Compute and scaling review (#712)
 
 Reviewed planorama commit: `2bef52d045db4c5cf72374a0dca24d0629ed84e3`.
-All 52 managed types in `autoscaling`, `autoscalingplans`, `appautoscaling`,
-`batch`, `imagebuilder`, `lightsail`, `outposts` and `computeoptimizer` have
-separate placement, ownership, network, reference, scope and summary decisions
-in [the explicit register](aws-semantic-decisions.json). Each review records
-exact fields, schema collection ancestry and resource documentation at Provider
-commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The source archive identifies
-`5e13eed`; the schema hash and managed denominator match the pinned inventory.
-These reviews preserve the historical baseline; implementation changes update
-current gap descriptions separately.
+52 managed types: `autoscaling`, `autoscalingplans`, `appautoscaling`, `batch`,
+`imagebuilder`, `lightsail`, `outposts`, `computeoptimizer`.
 
-Runtime evidence is [classification](../src/provider/aws/classification.rs),
-[basic defaults](../src/provider/aws/basic_entries.rs),
-[presentation/reference labels](../src/provider/aws.rs),
-[scope](../src/provider/aws/scope.rs), [basic scope limitations](../src/provider/aws/basic.rs),
-[containment](../src/provider/aws/containment/indirect.rs),
-[service references](../src/provider/aws/service_references.rs),
-[members](../src/provider/aws/members.rs) and
-[summary allowlists](../src/provider/aws/encryption.rs).
 The [runtime support matrix](resource-support.md) and
 [inventory tests](../tests/unit/aws_inventory.rs) establish basic defaults.
 Auto Scaling groups are Spatial Controllers because explicit classification
@@ -517,37 +452,16 @@ Contract distinctions checked against the pinned schema and documentation:
   has no Outpost endpoint; excluded instance IDs are workflow exclusions, not
   children, and the API does not return them after import.
 
-Managed and data registrations remain separate contracts. No reviewed type is
-treated as an alias by [the runtime alias table](../src/provider/aws/aliases.rs).
-New links require unique explicit compatible references, matching known output
-values, complete collections and provider/account/region/state consistency.
-Current configuration cannot create historical/deposed links. Shared resources
-retain independent coverage. Credentials, key material, commands, environment
-maps, policy interpretation and runtime health/capacity inference stay excluded.
-
-The pinned-contract verifier, semantic audit tests/register check and runtime
-support-matrix check run in Docker. This audit changes no rendering input or
-geometry, so SVG regeneration and Layout quality do not apply.
+No reviewed type is an alias in [the runtime alias table](../src/provider/aws/aliases.rs).
+Commands, environment maps, key material and health/capacity inference are excluded.
 
 ## Network connectivity and traffic protection review (#716)
 
 Reviewed planorama commit: `d906716ae153a3d5bd320e64a6205f835850489b`.
-All 68 managed types in `directconnect`, `networkmanager`, `networkfirewall`,
-`vpclattice`, `networkflowmonitor` and `networkmonitor` have six separate
-dimensions, exact fields and collection shapes in [decisions](aws-semantic-decisions.json).
-The pinned Provider source archive identifies commit `5e13eed`, and the schema
-is checked against the inventory SHA-256 before inspecting fields. Resource docs
-are linked per type at the full Provider commit. These are historical conclusions;
-later implementations update current gap text without rewriting this baseline.
+68 managed types: `directconnect`, `networkmanager`, `networkfirewall`,
+`vpclattice`, `networkflowmonitor`, `networkmonitor`.
 
-At this commit all 68 types have basic Logical presentation. Runtime evidence is
-[basic defaults](../src/provider/aws/basic_entries.rs),
-[classification](../src/provider/aws/classification.rs),
-[presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs),
-[unknown scope reasons](../src/provider/aws/basic.rs),
-[containment](../src/provider/aws/containment/indirect.rs),
-[dedicated references](../src/provider/aws/service_references.rs) and
-[summary allowlists](../src/provider/aws/encryption.rs).
+All 68 types have basic Logical presentation at this commit.
 The [runtime matrix](resource-support.md) and
 [inventory tests](../tests/unit/aws_inventory.rs) verify basic support; there
 are no dedicated behavioral tests to borrow from adjacent services. Generic
@@ -601,39 +515,16 @@ Contract distinctions checked against the pinned documentation and schema:
   `source_arn` is a subnet; destination is an IP and monitor linkage uses
   `monitor_name`, not ARN. Monitoring does not imply endpoint health or reachability.
 
-No reviewed type shares a verified managed alias factory. Registered data sources
-remain lookup contracts outside this managed denominator; managed basic defaults
-and future ownership rules do not transfer to them. Dedicated links require unique
-explicit references, matching known output values, complete collections and compatible
-provider/account/region/state evidence. Current configuration must not create
-historical/deposed links. Shared resources keep independent coverage.
-Per-type summary deferrals require a bounded allowlist before revisiting; secrets,
-rule/policy contents, runtime status and arbitrary values remain excluded.
-
-This audit changes no rendering input or runtime geometry. Docker checks cover
-the pinned-contract verifier, semantic register/tests and support-matrix consistency;
-SVG regeneration and Layout quality do not apply to this audit-only change.
+No reviewed type shares a verified managed alias factory. Data lookups remain
+outside the managed denominator and do not inherit managed defaults/ownership.
+Per-type summary deferrals require an allowlist; rule/policy contents stay excluded.
 
 ## Search and business intelligence review (#724)
 
 Reviewed planorama commit: `09b71007288ddc6a7d8662e750acc39278f64ba6`.
-All 65 managed types in `opensearch`, `opensearchserverless`, `elasticsearch`,
-`cloudsearch`, `osis`, `kendra`, `qbusiness`, `quicksight` and `finspace` have
-six separate conclusions and exact schema shapes in
-[decisions](aws-semantic-decisions.json). The official source archive identifies
-`5e13eed`; its full pinned commit and schema SHA-256 are verified against the
-inventory. These review objects preserve the historical baseline; subsequent
-implementation updates current gap descriptions separately.
+65 managed types: `opensearch`, `opensearchserverless`, `elasticsearch`,
+`cloudsearch`, `osis`, `kendra`, `qbusiness`, `quicksight`, `finspace`.
 
-Runtime evidence is [classification](../src/provider/aws/classification.rs),
-[basic defaults](../src/provider/aws/basic_entries.rs),
-[presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs),
-[VPC placement](../src/provider/aws/containment/vpc_scope.rs),
-[SG connections](../src/provider/aws/security_groups.rs),
-[service references](../src/provider/aws/service_references.rs),
-[members](../src/provider/aws/members.rs),
-[aliases](../src/provider/aws/aliases.rs) and
-[summary allowlists](../src/provider/aws/encryption.rs).
 The [runtime matrix](resource-support.md) and
 [inventory tests](../tests/unit/aws_inventory.rs) establish basic behavior.
 OpenSearch domain retains its Spatial card, common-VPC subnet placement #181
@@ -695,36 +586,15 @@ Contract distinctions checked against pinned resource documentation and schema:
   IP restriction maps require map-key reference provenance before safe navigation
   can be reconsidered. Key registration does not prove encryption of each dataset.
 
-Dedicated references require explicit unique compatible Terraform endpoints,
-matching known values, complete collections and provider/account/region/state
-agreement. Current configuration cannot establish deposed or deleted links.
-Shared resources remain independent and filtering cannot create new evidence.
-No safe-summary allowlist currently covers these services; each type records a
-specific exclusion or revisit condition. Credentials, payloads, policies, health
-and effective reachability are excluded.
-
-Docker validation uses the pinned-contract verifier, the 65-type audit test,
-register consistency and support-matrix check. This review changes no runtime,
-rendering input or geometry; SVG regeneration and Layout quality do not apply.
+No safe-summary allowlist covers these services at this baseline; each type
+records its exclusion or revisit condition. Shared proof and privacy rules apply.
 
 ## Containers and application hosting review (#713)
 
 Reviewed planorama commit: `f30289f73269a8a348818dd6e2a8bc44c22f22aa`.
-All 57 managed types in `ecs`, `eks`, `ecr`, `ecrpublic`, `apprunner`,
-`elasticbeanstalk`, `appmesh` and `servicediscovery` have six separate dimensions
-in [decisions](aws-semantic-decisions.json). Each records the pinned official
-document, inspected fields and schema shapes. These are historical conclusions;
-subsequent implementations update current gap text without rewriting the baseline.
+57 managed types: `ecs`, `eks`, `ecr`, `ecrpublic`, `apprunner`,
+`elasticbeanstalk`, `appmesh`, `servicediscovery`.
 
-Implementation evidence is [classification](../src/provider/aws/classification.rs),
-[basic defaults](../src/provider/aws/basic_entries.rs),
-[presentation](../src/provider/aws.rs), [scope](../src/provider/aws/scope.rs),
-[references](../src/provider/aws/service_references.rs),
-[network proof](../src/provider/aws/network.rs),
-[spanning placement](../src/provider/aws/containment/spanning.rs),
-[VPC placement](../src/provider/aws/containment/vpc_scope.rs),
-[SGs](../src/provider/aws/security_groups.rs), and
-[summary allowlists](../src/provider/aws/encryption.rs).
 Behavioral evidence is [ECR reference tests](../tests/unit/semantic/service_references.rs),
 [ECS tests](../tests/unit/semantic/ecs_clusters.rs),
 [EKS tests](../tests/unit/semantic/eks.rs),
@@ -779,40 +649,18 @@ Contract distinctions checked against Provider 6.70.0 at
   registrations' arbitrary attributes do not identify EC2 instances. Its custom
   health-check configuration is deprecated and not runtime health evidence.
 
-No reviewed type is a verified managed alias. Data schemas remain separate lookup
-contracts; managed ownership does not extend to data/deposed identities. References
-require explicit unique compatible endpoints, correct output attributes, matching
-known nonempty values and complete collections. Provider/account/region, named-state,
-deletion and filtering boundaries remain intact. Scope eligibility alone supplies
-neither account identity nor member region. Environment/secret maps, container JSON,
-policy bodies and catalog payloads are excluded even without sensitive markers.
-
-This audit changes no runtime defaults, rendering input or geometry. Docker checks
-cover all pinned contracts, register consistency, audit tests and support-matrix
-consistency; SVG regeneration and Layout quality are not applicable.
+No reviewed type is a verified managed alias. Scope eligibility proves neither
+account identity nor member region. Environment/secret maps, container JSON,
+policy bodies and catalog payloads stay excluded even without sensitive markers.
+References require correct output attributes and known nonempty values.
 
 ## NoSQL, caches and time-series review (#718)
 
 Reviewed planorama commit: `bebadbbeac605bae9efd6810957a89130616d947`.
-The 39 exact managed types owned by #718 now have a `review` object in
-[decisions](aws-semantic-decisions.json), with separate placement, ownership,
-network, references, scope and summary dispositions. Each records the official
-resource document at Provider commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
-checked input paths and their full collection ancestry from the pinned schema.
-The schema hash matches the inventory. This review changes no runtime defaults. Review objects preserve the historical
-baseline at the recorded commit; current status/gap text includes subsequent
-implementation work such as #691.
+39 exact managed types owned by #718. Current status/gap text includes later
+implementation such as #691; review objects retain this baseline.
 
-Implementation evidence: [basic defaults](../src/provider/aws/basic_entries.rs),
-[classification](../src/provider/aws/classification.rs),
-[scope](../src/provider/aws/scope.rs),
-[DynamoDB verification](../src/provider/aws/dynamodb.rs),
-[service references](../src/provider/aws/service_references.rs),
-[indirect placement](../src/provider/aws/containment/indirect.rs),
-[VPC scope](../src/provider/aws/containment/vpc_scope.rs),
-[network verification](../src/provider/aws/network.rs),
-[Backup](../src/provider/aws/backup.rs), and
-[encryption allowlist](../src/provider/aws/encryption.rs).
+Additional evidence: [DynamoDB verification](../src/provider/aws/dynamodb.rs), [Backup](../src/provider/aws/backup.rs).
 Behavioral evidence: [DynamoDB tests](../tests/unit/semantic/dynamodb.rs),
 [ElastiCache integration tests](../tests/integration/elasticache.rs),
 [indirect placement tests](../tests/unit/semantic/indirect.rs),
@@ -861,11 +709,7 @@ state identity; current configuration cannot establish historical/deposed links.
 ## Streaming, messaging and workflows review (#721)
 
 Reviewed planorama commit: `de2686ced20f383ee48ec65b1354b643e2fe659c`.
-All 55 managed types in the fixed #721 scope have separate placement, ownership,
-network, reference, scope and summary decisions in
-[the decision register](aws-semantic-decisions.json). Each review records the
-pinned official resource document and checked schema paths with their complete
-collection ancestry. These are historical audit conclusions, not runtime changes.
+55 managed types in the fixed #721 scope.
 
 Implementation and behavioral evidence:
 
@@ -931,24 +775,10 @@ configuration remains independent. Unknown evidence never becomes a runtime clai
 ## Relational and graph database review (#717)
 
 Reviewed planorama commit: `5d233e4a467f323b46082a35ede1467eec999898`.
-All 59 managed types in `rds`, `docdb`, `docdbelastic`, `neptune`,
-`neptunegraph`, `dsql` and `odb` have separate placement, ownership, network,
-reference, scope and summary conclusions in [decisions](aws-semantic-decisions.json).
-Their `review` objects record this historical baseline, exact reviewed fields,
-collection ancestry and resource documentation at Provider commit
-`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Subsequent implementation updates the
-current status/gap, while preserving the historical review.
+59 managed types: `rds`, `docdb`, `docdbelastic`, `neptune`, `neptunegraph`,
+`dsql`, `odb`.
 
-Runtime evidence is [classification](../src/provider/aws/classification.rs),
-[basic defaults](../src/provider/aws/basic_entries.rs), [scope](../src/provider/aws/scope.rs),
-[indirect placement](../src/provider/aws/containment/indirect.rs),
-[VPC placement](../src/provider/aws/containment/vpc_scope.rs),
-[SG attachment](../src/provider/aws/security_groups.rs),
-[network verification](../src/provider/aws/network.rs),
-[membership](../src/provider/aws/members.rs),
-[references](../src/provider/aws/service_references.rs),
-[proxy validation](../src/provider/aws/rds_proxy.rs),
-[Backup](../src/provider/aws/backup.rs) and [encryption](../src/provider/aws/encryption.rs).
+Additional evidence: [proxy validation](../src/provider/aws/rds_proxy.rs), [Backup](../src/provider/aws/backup.rs).
 Behavioral evidence is [membership tests](../tests/unit/semantic/members.rs),
 [indirect tests](../tests/unit/semantic/indirect.rs),
 [VPC tests](../tests/unit/semantic/vpc_scope.rs),
@@ -1006,41 +836,17 @@ Contract distinctions checked against pinned docs and schema:
   require proxy/group consistency and exclusive instance/cluster selection. RDS
   integration's deprecated `id` is an ARN, distinct from `integration_identifier`.
 
-No reviewed type is a verified managed alias. Registered data schemas remain
-separate lookup contracts; managed defaults and ownership decisions do not extend
-to them. New reference contracts require explicit unique compatible endpoints,
-matching known output values and complete collections. Named-state, provider,
-account/region, current/deposed, deletion and filtering boundaries remain intact.
-Shared parameter/option/subnet groups remain independent. Passwords, policy bodies,
-SQL, connection endpoints, clone data and runtime health are excluded. Type-specific
-remaining deferrals state their contract or use-case prerequisite in the decisions.
-
-This audit changes no runtime, rendering input or geometry; SVG regeneration and
-Layout quality are not required. Docker checks include the complete pinned-contract
-verifier, semantic register/tests and resource-support consistency.
+No reviewed type is a verified managed alias. Shared parameter/option/subnet
+groups stay independent. Passwords, SQL, connection endpoints, clone data and
+policy bodies are excluded. Per-type deferrals specify contract/use-case prerequisites.
 
 ## Filesystems, transfer and backup review (#720)
 
 Reviewed planorama commit: `514c17316e596fbbd0a8c7aa4942a91e3462e09d`.
-All 70 managed types in `efs`, `fsx`, `storagegateway`, `datasync`, `transfer`,
-`backup`, `dlm`, `rbin` and `drs` have six separate dimensions in
-[decisions](aws-semantic-decisions.json). Each review records exact fields,
-collection ancestry, required/optional/computed contracts, managed/data distinction
-and official documentation at Provider commit
-`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The source archive identifies
-`5e13eed`; the schema hash and managed denominator match the pinned inventory.
-These are historical review conclusions; subsequent implementation updates current
-gaps without rewriting the reviewed baseline.
+70 managed types: `efs`, `fsx`, `storagegateway`, `datasync`, `transfer`,
+`backup`, `dlm`, `rbin`, `drs`.
 
-Runtime evidence is [classification](../src/provider/aws/classification.rs),
-[basic defaults](../src/provider/aws/basic_entries.rs),
-[scope](../src/provider/aws/scope.rs), [aliases](../src/provider/aws/aliases.rs),
-[containment](../src/provider/aws/containment.rs),
-[SG proof](../src/provider/aws/security_groups.rs),
-[references](../src/provider/aws/service_references.rs),
-[EFS ownership](../src/provider/aws/efs.rs),
-[Backup selection](../src/provider/aws/backup.rs) and
-[summary allowlists](../src/provider/aws/encryption.rs).
+Additional evidence: [EFS ownership](../src/provider/aws/efs.rs), [Backup selection](../src/provider/aws/backup.rs).
 The [runtime matrix](resource-support.md) and
 [inventory tests](../tests/unit/aws_inventory.rs) establish basic defaults.
 EFS #497/#548 is covered by [EFS tests](../tests/unit/semantic/efs.rs) and
@@ -1111,39 +917,17 @@ Contract distinctions verified against pinned documentation and schema:
   Workflow normal/exception steps need type-gated Lambda/EFS/S3 references;
   file expressions and object paths remain opaque.
 
-No reviewed type is a runtime alias. Data registrations are separate lookup
-contracts, not additional managed types. New links require explicit unique
-compatible references, matching known values, complete collections and independent
-provider/account/region/state proof. Current/deposed identities and filtering remain
-conservative. Shared resources retain independent coverage. Credentials, policy
-interpretation, contents and runtime health/recoverability remain excluded.
-
-The pinned-contract verifier checks both shapes and input/output flags for this
-review. Run it with the schema and extracted Provider source paths, followed by
-semantic register/tests and resource-support checks in Docker. This audit changes
-no rendering input or geometry; SVG regeneration and Layout quality do not apply.
+No reviewed type is a runtime alias. Data lookups do not add managed types;
+credentials, contents, policy interpretation and runtime health/recoverability
+remain excluded under the shared proof and privacy rules.
 
 ## Analytics and data governance review, batch 1 (#722)
 
 Reviewed planorama commit: `c50d830c5737a51a362708b71f67e6c407884dbe`.
-All 81 managed types in Athena, provisioned/Serverless Redshift, Redshift Data,
-Glue, Lake Formation and the three EMR packages have six separate decisions in
-[the explicit register](aws-semantic-decisions.json). Each records selected exact
-fields, collection ancestry, input/output flags and documentation at Provider
-commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The schema hash is checked against
-the pinned inventory before inspecting contracts. Historical review conclusions
-remain separate from subsequent implementation updates to current gap text.
+81 managed types: Athena, provisioned/Serverless Redshift, Redshift Data,
+Glue, Lake Formation and the three EMR packages.
 
-Runtime evidence is [classification](../src/provider/aws/classification.rs),
-[basic defaults](../src/provider/aws/basic_entries.rs),
-[scope](../src/provider/aws/scope.rs), [references](../src/provider/aws/service_references.rs),
-[network collections](../src/provider/aws/network.rs),
-[indirect placement](../src/provider/aws/containment/indirect.rs),
-[VPC scope](../src/provider/aws/containment/vpc_scope.rs),
-[database proof](../src/provider/aws/databases.rs),
-[Glue catalog proof](../src/provider/aws/glue.rs),
-[embedded presentation](../src/provider/aws/service_members.rs) and
-[summary allowlists](../src/provider/aws/encryption.rs).
+Additional evidence: [database proof](../src/provider/aws/databases.rs), [Glue catalog proof](../src/provider/aws/glue.rs).
 [Inventory tests](../tests/unit/aws_inventory.rs) and the
 [runtime support matrix](resource-support.md) establish defaults, not full semantics.
 [Redshift](../tests/unit/semantic/redshift.rs),
@@ -1207,19 +991,13 @@ Credentials, query/script/schema bodies, arbitrary maps, policy interpretation a
 runtime reachability/health are excluded. Safe capacity summaries are deferred until
 configured-versus-observed and unknown-value display contracts are selected.
 
-Run the pinned-contract verifier, semantic register/tests and support-matrix check
-in Docker. This audit changes no rendering input or geometry; SVG regeneration and
-Layout quality do not apply.
-
+Verification follows the shared audit method.
 
 ## Analytics and data governance review, batch 2 (#723)
 
 Reviewed runtime commit: `c50d830c5737a51a362708b71f67e6c407884dbe` on main;
-the documentation change is stacked on #722. All 31 managed types in DMS,
-DataZone, Data Exchange, Data Pipeline and Clean Rooms have six separate decisions,
-selected exact fields, shapes and input/output flags in the explicit register.
-Official documentation and schema are pinned to Provider 6.70.0 commit
-`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`; the schema hash matches the inventory.
+stacked on #722. Scope: 31 managed types in DMS, DataZone, Data Exchange,
+Data Pipeline and Clean Rooms.
 
 At this baseline these types have basic display only: no dedicated originating
 rules in service_references.rs, databases.rs, containment, service_members.rs or
@@ -1270,10 +1048,5 @@ Contract distinctions checked against official docs, schema and source:
   distinct from domain control scope. Built-in blueprints and computed provisioned
   resources are not managed configuration aliases or synthesized children.
 
-No reviewed type is a runtime alias; managed/data lookup contracts stay distinct.
-New relationships need explicit unique compatible references, matching known values,
-complete collections and independent provider/account/region/state proof. Preserve
-current/deposed/deleted and filtered fallback. Credentials, personal data, SQL,
-scripts, schema contents, policy effects and runtime health remain excluded.
-This audit changes no rendering/input/geometry. Docker contract verification,
-register/tests and support-matrix checks apply; SVG/Layout quality do not.
+No reviewed type is a runtime alias. Personal data, SQL, scripts and schema
+contents remain excluded under the shared proof, privacy and verification rules.
