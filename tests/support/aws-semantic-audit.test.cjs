@@ -134,6 +134,45 @@ test('#730 keeps monitoring, selectors, credentials and computed outputs separat
  assert.ok(!r('grafana_workspace_service_account_token').fields.includes('key'));
 });
 
+test('#719 covers the 61 storage types with separate contracts and dispositions',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services='s3 s3control s3outposts s3tables s3vectors s3files glacier'.split(' ');
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===719);
+ assert.equal(expected.length,61);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'00bf0c990596acc196f37c10baf11d2b379c7eaa');
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),path);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#719 audit:/);
+  if(dimensions.some(k=>/Missing:/.test(r[k])))assert.ok(issue>=973&&issue<=982,type);
+ }
+});
+
+test('#719 preserves storage identity and shape boundaries',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.match(r('s3_bucket_replication_configuration').references,/Partial: #511.*Missing: role ARN/);
+ assert.match(r('s3_bucket_server_side_encryption_configuration').ownership,/Supported: #601.*unique/);
+ assert.match(r('s3_bucket_object').managedDataContract,/Deprecated resource, not a verified runtime alias/);
+ assert.equal(r('s3_bucket_metadata_configuration').contracts['metadata_configuration.destination'],'computed');
+ assert.equal(r('s3tables_table').shapes.encryption_configuration[0][0],'object');
+ assert.equal(r('s3vectors_index').shapes.encryption_configuration[0][0],'list');
+ assert.deepEqual(r('s3tables_table_replication').shapes['rule.destination.destination_table_bucket_arn'],['list','set','string']);
+ assert.match(r('s3control_bucket_policy').references,/Outposts bucket ARN, not general-purpose bucket name/);
+ assert.match(r('s3files_access_point').references,/incoming Lambda #950/);
+ assert.match(r('s3files_mount_target').network,/Missing:.*one compatible VPC/);
+ assert.match(r('s3_directory_bucket').network,/cannot place.*subnet/);
+ assert.match(r('s3control_multi_region_access_point').scope,/Unknown/);
+});
+
 test('#715 covers exactly 86 edge and DNS types with pinned evidence and bounded follow-ups',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const services=['elb','elbv2','cloudfront','cloudfrontkeyvaluestore','globalaccelerator','route53','route53domains','route53profiles','route53resolver'];
