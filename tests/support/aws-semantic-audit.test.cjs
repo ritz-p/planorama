@@ -91,6 +91,72 @@ const ec2VpcExpected=[
 ];
 const dimensions=['placement','ownership','network','references','scope','summaries'];
 
+test('#715 covers exactly 86 edge and DNS types with pinned evidence and bounded follow-ups',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services=['elb','elbv2','cloudfront','cloudfrontkeyvaluestore','globalaccelerator','route53','route53domains','route53profiles','route53resolver'];
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===715);
+ assert.equal(expected.length,86);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'f7f5d8bfb39ded416c786a21037935232b8f1eda');
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.ok(r.fields.length>0);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const p of r.implementationEvidence)assert.ok(fs.existsSync(p),type+': '+p);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#715 audit:/);
+  assert.doesNotMatch(gap,/defer until an explicit endpoint contract|require field-level review/);
+  if(dimensions.some(k=>/Missing:|missing[: ]/i.test(r[k])))assert.ok(Number.isInteger(issue)&&issue>=906&&issue<=927,type+' missing follow-up');
+ }
+});
+
+test('#715 preserves alias, collection, identity and managed/data distinctions',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ for(const suffix of ['','_listener','_listener_certificate','_listener_rule','_target_group','_target_group_attachment']){
+  assert.deepEqual(r('alb'+suffix).shapes,r('lb'+suffix).shapes);
+  assert.equal(d['aws_alb'+suffix].issue,d['aws_lb'+suffix].issue);
+  assert.match(r('alb'+suffix).managedDataContract,/Verified managed alias/);
+ }
+ assert.deepEqual(r('alb_listener_rule').dataContracts,{});
+ assert.ok(r('lb_listener_rule').dataContracts.arn);
+ assert.match(r('elb').placement,/Missing:.*Logical/);
+ assert.match(r('elb').references,/not an alias/);
+ assert.equal(r('load_balancer_listener_policy').contracts.policy_names,'optional');
+ assert.deepEqual(r('proxy_protocol_policy').shapes.instance_ports,[['set','string']]);
+ assert.deepEqual(r('lb').shapes['subnet_mapping.subnet_id'],['set','string']);
+ assert.match(r('lb_listener').network,/not containment/);
+ assert.match(r('lb_target_group_attachment').references,/Missing: matching known values and target_type/);
+ assert.match(r('lb_target_group').ownership,/Supported:.*one LB/);
+ assert.deepEqual(r('cloudfront_distribution').shapes['origin.domain_name'],['set','string']);
+ assert.deepEqual(r('cloudfront_multitenant_distribution').shapes['default_cache_behavior.trusted_key_groups.items'],['list','list',['list','string']]);
+ assert.match(r('cloudfront_multitenant_distribution').references,/lambda_function_arn differ/);
+ assert.equal(r('cloudfront_cache_policy').contracts.min_ttl,'optional');
+ assert.equal(r('cloudfront_continuous_deployment_policy').contracts['staging_distribution_dns_names.items'],'optional');
+ assert.ok(r('cloudfront_connection_function').sourceContracts);
+ assert.equal(r('cloudfront_distribution_tenant').contracts.connection_group_id,'optional/computed');
+ assert.match(r('cloudfrontkeyvaluestore_keys_exclusive').references,/destroy does not delete keys/);
+ assert.match(r('globalaccelerator_custom_routing_endpoint_group').references,/subnet ID/);
+ assert.match(r('globalaccelerator_endpoint_group').scope,/endpoint_group_region/);
+ assert.match(r('route53_record').references,/#489.*paired/);
+ assert.deepEqual(r('route53_records_exclusive').shapes['resource_record_set.alias_target.dns_name'],['set','list','string']);
+ assert.match(r('route53_vpc_association_authorization').references,/not evidence the association exists/);
+ assert.equal(r('route53_health_check').contracts.request_interval,'optional');
+ assert.match(r('route53_key_signing_key').references,/hostedZoneID and KSK name/);
+ assert.equal(r('route53domains_domain').contracts.hosted_zone_id,'computed');
+ assert.equal(r('route53domains_domain').shapes.name_server[0][0],'list');
+ assert.deepEqual(r('route53domains_registered_domain').shapes.name_server,['list']);
+ assert.deepEqual(r('route53_resolver_endpoint').shapes['ip_address.subnet_id'],['set','string']);
+ assert.equal(r('route53_resolver_firewall_config').contracts.firewall_fail_open,'optional/computed');
+ assert.match(r('route53_resolver_firewall_rule').references,/Advanced rules have no domain list/);
+ assert.equal(r('route53profiles_resource_association').contracts.resource_type,'computed');
+});
+
 test('#710 retains exactly its 83 managed types and six evidenced decisions',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===710);

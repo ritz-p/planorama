@@ -2,6 +2,141 @@
 
 The [gap register](aws-semantic-gaps.md) covers every **1,742 managed type in 249 service packages** from the pinned AWS Provider 6.70.0 inventory. Basic role, display and scope eligibility are implemented for that denominator. This is not 1,742 complete architecture integrations.
 
+## Load balancing, edge and DNS review (#715)
+
+Reviewed planorama commit: `f7f5d8bfb39ded416c786a21037935232b8f1eda`.
+All 86 exact managed types in `elb`, `elbv2`, `cloudfront`,
+`cloudfrontkeyvaluestore`, `globalaccelerator`, `route53`, `route53domains`,
+`route53profiles` and `route53resolver` have six separate decisions in
+[the explicit register](aws-semantic-decisions.json). Each records selected field
+shapes, input/output flags, managed/data differences, implementation/test paths
+and official documentation at Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. The full schema hash matches the inventory.
+These are historical review conclusions; later implementation must also update
+the current gap text. Basic presentation is not complete semantic support.
+
+Runtime evidence includes [aliases](../src/provider/aws/aliases.rs),
+[components](../src/provider/aws/components.rs),
+[containment](../src/provider/aws/containment.rs),
+[subnet spanning](../src/provider/aws/containment/spanning.rs),
+[SG connections](../src/provider/aws/security_groups.rs),
+[associations](../src/provider/aws/associations.rs),
+[service references](../src/provider/aws/service_references.rs),
+[CloudFront](../src/provider/aws/cloudfront.rs),
+[WAF](../src/provider/aws/waf.rs), scope, classification and basic defaults.
+Per-type test paths establish the applicable bounded behavior; inventory and
+support-matrix tests establish defaults only. The support matrix already agrees
+with runtime defaults, so no source classification or matrix correction is needed.
+
+Preserve #489 Route 53 zone and paired alias references, #510 singleton CloudFront
+origin/OAC/OAI/policy references, ACM certificate and #496 WAFv2 proof,
+#297 listener proximity, #299 target-group component membership and verified ALB
+aliases. Component membership is not embedded presentation or network containment.
+Legacy LB subnet/SG and instance-target association rules do not enforce the same
+complete known-value proof as newer service references. Their extensions must not
+be described as already supported. Completed #688–#702 service work is unaffected.
+
+Contract distinctions checked:
+
+- Six managed `aws_alb*` aliases share the canonical ELBv2 schemas and factories;
+  only LB/listener/target-group have corresponding registered data aliases.
+  `aws_lb_listener_rule` now has a data lookup, but `aws_alb_listener_rule` does not.
+  Classic `aws_elb` and the `aws_lb_*_policy` legacy helpers are not ELBv2 aliases.
+  Classic helper owners are ELB names, while ELBv2 owners use ARNs. Classic
+  `policy_names` is an optional set despite required wording in both listener and
+  backend-policy docs; `instance_ports` is a set of strings, not numbers.
+- LB `subnets`, `security_groups` and Classic ELB `instances` are optional/computed
+  sets. `subnet_mapping` is a set, not a positional list. EIP allocation IDs,
+  IPAM pool IDs and log bucket names need separate typed proof. Target-group
+  `load_balancer_arns` is computed, not configured ownership. Lambda targets omit
+  VPC; IP targets do not identify Terraform workloads. Listener forward groups
+  are nested sets; Cognito, ACM/IAM certificates and verify-mode trust stores have
+  different contracts. Trust-store revocation IDs are computed numbers.
+- Standard CloudFront `origin` is a set and `ordered_cache_behavior` a list.
+  Existing singleton proof does not cover arbitrary collections. Multitenant
+  distributions use `cache_behavior` and `lambda_function_arn`, unlike standard
+  `ordered_cache_behavior` and `lambda_arn`. Their trusted-key groups are a nested
+  block with `items`, not the standard list attribute. Tenant connection group is
+  optional/computed; omitted service defaults and managed certificate requests
+  do not create configured Terraform children. Tenant parameters remain opaque.
+- Connection-function KVS association is nested at
+  `connection_function_config.key_value_store_association.key_value_store_arn`;
+  the documented top-level plural association does not exist in schema/source.
+  Its ARN output is `connection_function_arn`. Ordinary functions instead use a
+  set of store ARNs and have stage-qualified data lookups. Key/exclusive helpers
+  reference the store ARN without exposing keys/values; exclusive destruction
+  stops reconciliation rather than deleting the store's entries.
+- Cache-policy `min_ttl` and continuous-deployment staging `items` are optional
+  in schema/source despite required wording in docs. Staging names require
+  explicit distribution output references, not DNS lookup. Encryption-profile
+  `provider_id` is not Terraform provider identity. CloudFront trust-store S3
+  bundle region belongs to the bucket, not the Global trust store. VPC-origin
+  input endpoint ARN differs from output origin ARN/ID; configured regional
+  ALB/NLB/EC2 endpoints do not put the distribution inside their VPC. The
+  [AWS VPC-origin guide](https://docs.aws.amazon.com/us_en/AmazonCloudFront/latest/DeveloperGuide/private-content-vpc-origins.html)
+  clarifies the endpoint variants beyond the pinned resource's generic ARN wording.
+- Global Accelerator standard endpoint sets use LB ARNs or EIP allocation IDs;
+  custom routing uses subnet IDs. EC2 instance-ID extension requires its explicit
+  [AWS endpoint contract](https://docs.aws.amazon.com/global-accelerator/latest/api/API_EndpointIdentifier.html),
+  which the pinned Terraform endpoint documentation omits. Endpoint-group region
+  is optional/computed and describes targets, not Global control deployment.
+  Cross-account principals are account IDs; CIDR selectors and service-created SGs
+  do not establish managed resources or effective authorization.
+- Route 53 private-zone VPC associations, including authorization prerequisites,
+  never contain the Global zone. Record alias proof needs both DNS and zone
+  outputs from the same endpoint. Exclusive record sets use
+  `alias_target.dns_name` / `hosted_zone_id`, not `alias.name` / `zone_id`, and do
+  not create managed records or own default NS/SOA. CIDR-location IDs are
+  deprecated composites; traffic-policy instances require ID and version.
+  Health-check `request_interval` is optional in schema/source despite required
+  wording in docs. Check regions and alarm region are target facts, not placement.
+- KSK source builds its composite ID from hosted-zone ID and **KSK name**, despite
+  docs describing the second part as KMS identifier. KMS signing keys and public
+  query-log groups retain their us-east-1 contracts. DNSSEC configuration is not
+  proof of validation. Domain creation exports a computed hosted zone; existing
+  registration management is a distinct resource. Their `name_server` schemas
+  differ: a list-of-object attribute versus a list block. Contacts, WHOIS and
+  public-key material are excluded.
+- Resolver endpoints configure subnet sets and SG sets; `host_vpc_id` is computed.
+  Rule endpoint proof must be type/direction gated; target IPs are not resource
+  identities. Resolver `resource_id` controls refer to VPCs. Firewall fail-open is
+  optional/computed despite required wording in docs; DNSSEC validation status
+  is computed. Advanced firewall rules omit domain-list IDs and have computed
+  threat-protection IDs. Shared rules/groups retain independent producer scope.
+- Profile resource associations configure `resource_arn` despite docs calling it
+  an ID; `resource_type` is computed and `resource_properties` is opaque JSON.
+  The bounded initial endpoints are private zones, Resolver rules and firewall
+  groups; additional endpoint/logging variants require explicit contract tests.
+  Profile association does not expand effective DNS settings or transfer ownership.
+
+Schema/docs discrepancies above were cross-checked in the pinned
+`internal/service/{elb,cloudfront,route53,route53resolver,route53profiles}` source;
+per-field `sourceContracts` retain the exact file/token. Data selector shapes and
+flags are checked separately, without extending the managed denominator.
+New relationships require explicit unique compatible references, matching known
+values, complete element-correlated collections and independent scope/state proof.
+Unknown, sensitive, dynamic, deleted/deposed and filtered evidence stays
+conservative. Safe-summary exclusions and concrete revisit conditions are recorded
+per type; no credentials, payloads, policy interpretation or runtime inference.
+
+Actionable follow-ups: Classic ELB #906; LB network/logging #907; TLS/trust stores
+#908; Cognito actions #909; target attachments #910; standard CloudFront #911;
+multitenancy #912; functions/KVS #913; signing helpers #914; monitoring/logging
+#915; VPC origins #916; standard Accelerator #917; custom/cross-account Accelerator
+#918; zone associations #919; records/routing helpers #920; health checks #921;
+DNS query logging #922; DNSSEC #923; Resolver endpoint/rules #924; VPC DNS controls
+#925; DNS Firewall #926; Profiles #927. Each owns its listed source/helper paths;
+consumer-side and endpoint-side work are separated in the issue boundaries.
+Independent shared identities with no outgoing architecture contract remain logical
+where appropriate. Classic ELB, accelerators, multitenant distributions and
+Resolver endpoints have explicit architecture-card gaps, not blanket promotion.
+
+Docker verification includes pinned contracts and data selectors, alias schema/
+factory verification, semantic register/tests and resource-support check. All
+repository Markdown was reviewed for affected claims. This audit changes only
+documentation, audit data and verification; SVG regeneration and Layout quality
+do not apply.
+
 ## Lambda, APIs and application integration review (#714)
 
 Reviewed planorama commit: `80b70c8fec8b5a3c75b0457bf0f4061fccea441e`
