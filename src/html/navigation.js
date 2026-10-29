@@ -1,9 +1,11 @@
 function navigation(svg, viewport, byId) {
   let box = [svg.viewBox.baseVal.x, svg.viewBox.baseVal.y, svg.viewBox.baseVal.width, svg.viewBox.baseVal.height];
   const original = box.slice();
+  const listeners = new Set();
   function updateView() {
     svg.setAttribute('viewBox', box.join(' '));
     byId('zoom-level').textContent = Math.round(original[2] / box[2] * 100) + '%';
+    for (const listener of listeners) listener(false);
   }
   function fit() { box = original.slice(); updateView(); }
   function zoom(factor) {
@@ -61,6 +63,11 @@ function navigation(svg, viewport, byId) {
   function resize(height) {
     original[3] = height;
     fit();
+    for (const listener of listeners) listener(true);
   }
-  return { fit, zoom, reveal, updateView, keydown, resize, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
+  function center(x, y) {
+    box = [x - box[2] / 2, y - box[3] / 2, box[2], box[3]];
+    updateView();
+  }
+  return { fit, zoom, reveal, updateView, keydown, resize, center, bounds: () => original.slice(), subscribe: listener => listeners.add(listener), snapshot: () => box.slice(), restore, wasDragged: () => dragged };
 }

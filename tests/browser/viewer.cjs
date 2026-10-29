@@ -42,6 +42,125 @@ class ViewerTests {
         assert.deepEqual(errors, []);
         assert.deepEqual(remote, []);
     }
+    overview_frame() {
+        wait(() => this.driver.execute_script(`
+            const b = document.querySelector('#viewport > svg').viewBox.baseVal;
+            const r = document.getElementById('overview-frame');
+            return ['x','y','width','height'].every(k => Math.abs(Number(r.getAttribute(k)) - b[k]) < .001);
+        `), 'overview frame follows viewBox');
+    }
+    test_overview_navigation_history_and_exports() {
+        this.load('--state', 'one=tests/fixtures/viewer-plan.json', '--state', 'two=tests/fixtures/viewer-plan.json', '--html-diagnostics');
+        this.overview_frame();
+        const original = this.view_box();
+        this.assertTrue(this.driver.execute_script(`
+            const root = document.querySelector('#viewport > svg');
+            const sources = [...root.querySelectorAll('[data-deployment-scope] > rect, [data-terraform-address] > rect:first-of-type, [data-annotation-card] > rect:first-of-type')];
+            const shapes = [...document.querySelectorAll('#overview-shapes rect')];
+            return sources.length === shapes.length && sources.every((el,i) => {
+                const b = el.getBBox(), m = root.getScreenCTM().inverse().multiply(el.getScreenCTM());
+                const p = new DOMPoint(b.x,b.y).matrixTransform(m), s = shapes[i];
+                return Math.abs(p.x - s.x.baseVal.value) < .01 && Math.abs(p.y - s.y.baseVal.value) < .01;
+            });
+        `));
+        this.choose('two:aws_ecs_service.app'); this.overview_frame();
+        const selected = this.find('[data-viewer-selected]').get_attribute('id');
+        this.find('#zoom-in').click(); this.overview_frame();
+        const saved = this.view_box();
+        this.choose('one:aws_ecs_service.app'); this.overview_frame();
+        this.find('#selection-back').click(); this.overview_frame();
+        this.assertEqual(this.view_box(), saved);
+        this.find('#selection-forward').click(); this.overview_frame();
+        this.find('#selection-back').click();
+        this.driver.execute_script(`window.diagramBeforeMap = document.querySelector('#viewport > svg').innerHTML;
+            window.overviewNodes = [...document.querySelectorAll('#overview-shapes rect')];`);
+        const map = this.find('#overview-map');
+        map.send_keys(Keys.ARROW_RIGHT, '+'); this.overview_frame();
+        this.driver.drag(map, 15, 20); this.overview_frame();
+        this.driver.drag(this.find('#viewport'), 35, 20); this.overview_frame();
+        this.driver.execute_script("document.getElementById('viewport').dispatchEvent(new WheelEvent('wheel',{deltaY:25,bubbles:true,cancelable:true}))"); this.overview_frame();
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), selected);
+        this.assertTrue(this.driver.execute_script(`return window.diagramBeforeMap === document.querySelector('#viewport > svg').innerHTML && window.overviewNodes.every((el,i)=>el===document.querySelectorAll('#overview-shapes rect')[i]);`));
+        map.send_keys(Keys.ARROW_LEFT);
+        this.assertEqual(this.driver.execute_script('return document.activeElement.id'), 'overview-map');
+        this.driver.execute_script("document.querySelector('main').style.width='750px'; document.querySelector('main').style.height='450px'");
+        this.overview_frame();
+        map.send_keys('f'); this.overview_frame(); this.assertEqual(this.view_box(), original);
+        map.send_keys(Keys.ESCAPE);
+        this.assertEqual(this.find('[data-viewer-selected]').get_attribute('id'), selected);
+        this.assertFalse(this.driver.execute_script("return document.getElementById('overview').open"));
+        this.assertEqual(this.driver.execute_script('return document.activeElement.parentElement.id'), 'overview');
+        this.find('#zoom-in').click();
+        this.find('#overview summary').send_keys(Keys.ENTER); this.overview_frame();
+        for (const kind of ['viewport', 'neighborhood']) {
+            this.driver.execute_script(`window.exportText=null; URL.createObjectURL = blob => {window.exportBlob=blob; return 'blob:test';}; HTMLAnchorElement.prototype.click=function(){};`);
+            this.find('#export-' + kind).click();
+            this.driver.execute_script('window.exportBlob.text().then(text=>window.exportText=text)');
+            wait(()=>this.driver.execute_script('return !!window.exportText'), 'overview-free export');
+            this.assertFalse(this.driver.execute_script("return /overview-(map|shapes|frame)|Overview map/.test(window.exportText)"));
+        }
+    }
+    test_overview_extreme_bounds_pointer_resize_and_small_screen() {
+        for (const box of [[-1000,-500,20000,100], [-300,-900,100,20000]]) {
+            this.load('tests/fixtures/viewer-plan.json', {transform: html => html.replace(/(<svg[^>]*viewBox=")[^"]+/, '$1' + box.join(' '))});
+            this.overview_frame();
+            this.find('#zoom-in').click();
+            const before = this.view_box().split(' ').map(Number);
+            const target = this.driver.execute_script(`
+                const map=document.getElementById('overview-map'), b=map.viewBox.baseVal;
+                const x=b.x+b.width*.7,y=b.y+b.height*.4;
+                const p=new DOMPoint(x,y).matrixTransform(map.getScreenCTM());
+                return {x,y,clientX:p.x,clientY:p.y};
+            `);
+            this.driver.command('POST', '/actions', {actions:[{type:'pointer',id:'map',parameters:{pointerType:'mouse'},actions:[
+                {type:'pointerMove',origin:'viewport',x:Math.round(target.clientX),y:Math.round(target.clientY)},
+                {type:'pointerDown',button:0},{type:'pointerUp',button:0}]}]});
+            this.driver.command('DELETE','/actions');
+            this.overview_frame();
+            const after = this.view_box().split(' ').map(Number);
+            this.assertEqual(after.slice(2), before.slice(2));
+            const tolerance = Math.max(box[2]/250, box[3]/140);
+            this.assertTrue(Math.abs(after[0]+after[2]/2-target.x)<tolerance);
+            this.assertTrue(Math.abs(after[1]+after[3]/2-target.y)<tolerance);
+            this.driver.command('POST', '/actions', {actions:[{type:'pointer',id:'cancel-map',parameters:{pointerType:'mouse'},actions:[
+                {type:'pointerMove',origin:this.find('#overview-map'),x:0,y:0},{type:'pointerDown',button:0}]}]});
+            this.driver.execute_script("document.getElementById('overview-map').dispatchEvent(new PointerEvent('pointercancel'))");
+            const cancelled = this.view_box();
+            this.driver.command('POST', '/actions', {actions:[{type:'pointer',id:'cancel-map',parameters:{pointerType:'mouse'},actions:[
+                {type:'pointerMove',origin:'pointer',x:10,y:10},{type:'pointerUp',button:0}]}]});
+            this.driver.command('DELETE','/actions');
+            this.assertEqual(this.view_box(), cancelled);
+            this.find('#fit').click(); this.overview_frame();
+            this.assertEqual(this.view_box().split(' ').map(Number), box);
+        }
+        this.driver.execute_cdp_cmd('Emulation.setDeviceMetricsOverride',{width:390,height:700,deviceScaleFactor:1,mobile:false});
+        try {
+            this.load('tests/fixtures/viewer-plan.json');
+            this.assertFalse(this.driver.execute_script("return document.getElementById('overview').open"));
+            this.find('#overview summary').send_keys(Keys.ENTER); this.overview_frame();
+            this.assertTrue(this.driver.execute_script(`const a=document.querySelector('aside').getBoundingClientRect(),v=document.getElementById('viewport').getBoundingClientRect();return a.bottom<=v.top+1 && v.width>0 && v.height>0;`));
+        } finally { this.driver.execute_cdp_cmd('Emulation.clearDeviceMetricsOverride',{}); }
+    }
+    test_overview_effective_view_and_bounded_rendering() {
+        this.load('tests/fixtures/logical-actions-plan.json');
+        this.overview_frame();
+        const original = this.driver.execute_script("return document.getElementById('overview-shapes').innerHTML");
+        this.driver.execute_script("for(const el of document.querySelectorAll('#logical-filter-controls input:checked:not(:disabled)')) el.click()");
+        this.overview_frame();
+        this.assertNotEqual(this.driver.execute_script("return document.getElementById('overview-shapes').innerHTML"), original);
+        this.driver.execute_script("document.getElementById('logical-filter-reset').click()"); this.overview_frame();
+        this.assertEqual(this.driver.execute_script("return document.getElementById('overview-shapes').innerHTML"), original);
+        this.load('tests/fixtures/viewer-plan.json', '--focus', 'aws_ecs_service.app', '--focus-depth', '0');
+        this.overview_frame();
+        this.assertFalse(this.driver.execute_script("return !!document.querySelector('#overview-map [data-terraform-address], #overview-map use, #overview-map text, #overview-map path')"));
+        this.load('tests/fixtures/viewer-plan.json', {transform: html => html.replace('<script>','<script>const source=document.querySelector(\'#viewport [data-terraform-address] > rect\').parentElement; for(let i=0;i<600;i++){const el=source.cloneNode(true); for(const node of [el,...el.querySelectorAll(\'[id]\')])node.removeAttribute(\'id\'); source.parentElement.append(el);}</script><script>')});
+        this.overview_frame();
+        this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '#overview-shapes rect').length, 256);
+        this.assertIn('some omitted', this.find('#overview-status').text);
+        this.driver.execute_script(`window.shapesBeforePan=document.getElementById('overview-shapes').firstElementChild;for(let i=0;i<100;i++)document.getElementById('zoom-in').click();`);
+        this.overview_frame();
+        this.assertTrue(this.driver.execute_script("return window.shapesBeforePan===document.getElementById('overview-shapes').firstElementChild"));
+    }
     test_logical_action_filters_keyboard_reflow_restore_and_cli_selection() {
         const plan = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/logical-actions-plan.json'), 'utf8'));
         const updated = plan.resource_changes.find(resource => resource.address === 'aws_iam_policy.update');
@@ -893,15 +1012,15 @@ class ViewerTests {
         for (const changes of [[], [{"address": "terraform_data.one", "type": "terraform_data"}]]) {
             this.load('-', {input_plan: {"format_version": "1.2", "resource_changes": changes}});
             this.assertFalse(this.driver.execute_script("return !!document.querySelector('[data-view-coverage]')"));
-            this.assertNotIn('Diagram Coverage', this.find('svg').text);
+            this.assertNotIn('Diagram Coverage', this.find('#viewport > svg').text);
         }
     }
     test_hidden_relationship_legend_reclaims_space_and_keeps_annotations_clear() {
         this.load('tests/fixtures/routes-plan.json');
-        let [full_height, full_legend] = this.driver.execute_script("return [document.querySelector('svg').viewBox.baseVal.height, +document.querySelector('#relationship-legend rect').getAttribute('height')]");
+        let [full_height, full_legend] = this.driver.execute_script("return [document.querySelector('#viewport > svg').viewBox.baseVal.height, +document.querySelector('#relationship-legend rect').getAttribute('height')]");
         this.load('tests/fixtures/routes-plan.json', '--hide-relationship-legend');
         let compact = this.driver.execute_script(`
-            const svg = document.querySelector('svg');
+            const svg = document.querySelector('#viewport > svg');
             const actions = document.querySelector('#relationship-actions');
             const bounds = actions.getBoundingClientRect();
             const annotations = [...svg.querySelectorAll('[data-annotation-section]')];
@@ -921,7 +1040,7 @@ class ViewerTests {
         this.assertGreater(compact['entries'], 0);
         this.assertEqual(compact['explanations'], 0);
         this.load('tests/fixtures/routes-plan.json', '--omit-relationship-legend');
-        this.assertEqual(this.driver.execute_script("return document.querySelector('svg').viewBox.baseVal.height"), full_height - full_legend - 12);
+        this.assertEqual(this.driver.execute_script("return document.querySelector('#viewport > svg').viewBox.baseVal.height"), full_height - full_legend - 12);
         this.assertEqual(this.driver.find_elements(By.CSS_SELECTOR, '#relationship-legend, #relationship-actions'), []);
         this.assertEqual(this.driver.execute_script("return document.querySelectorAll('[data-relationship-entry]').length"), compact['entries']);
         const omittedBox = this.view_box();
@@ -1027,6 +1146,14 @@ class ViewerTests {
     }
     test_maintained_multi_account_example_search_selection_and_fit() {
         this.driver.get(pathToFileURL(join(ROOT, 'examples/multi-account/diagram.html')).href);
+        this.overview_frame();
+        this.assertLessEqual(this.driver.find_elements(By.CSS_SELECTOR, '#overview-shapes rect').length, 256);
+        this.driver.execute_script(`window.largeOverviewShapes=[...document.querySelectorAll('#overview-shapes rect')];window.largeDiagram=document.querySelector('#viewport > svg').innerHTML;`);
+        const timing = this.driver.execute_script(`const start=performance.now(); for(let i=0;i<100;i++)document.getElementById('overview-map').dispatchEvent(new KeyboardEvent('keydown',{key:i%2?'ArrowLeft':'ArrowRight',cancelable:true}));return performance.now()-start;`);
+        console.log('Large overview: 100 navigation updates in ' + timing.toFixed(1) + ' ms; at most 256 outlines');
+        this.driver.drag(this.find('#overview-map'), 30, 25); this.overview_frame();
+        this.assertTrue(this.driver.execute_script(`return window.largeOverviewShapes.every((el,i)=>el===document.querySelectorAll('#overview-shapes rect')[i]) && window.largeDiagram===document.querySelector('#viewport > svg').innerHTML;`));
+        this.find('#fit').click();
         let before = this.view_box();
         let matches = this.search('module.network.aws_vpc.main');
         this.assertEqual(len(matches), 3);
@@ -1054,6 +1181,9 @@ class ViewerTests {
         let rect = this.find('[data-hotspot-overlay] rect');
         this.assertEqual(Number(rect.get_attribute('x')), data['hotspots'][0]['bounds'][0] - 6);
         this.assertEqual(Number(rect.get_attribute('y')), data['hotspots'][0]['bounds'][1] - 6);
+        const overlays = this.driver.execute_script("return [...document.querySelectorAll('[data-hotspot-overlay]')].map(el=>el.outerHTML)");
+        this.find('#overview-map').send_keys(Keys.ARROW_RIGHT); this.overview_frame();
+        this.assertEqual(this.driver.execute_script("return [...document.querySelectorAll('[data-hotspot-overlay]')].map(el=>el.outerHTML)"), overlays);
         let rects = this.driver.find_elements(By.CSS_SELECTOR, '[data-hotspot-overlay] rect');
         this.assertEqual(len(rects), len(data['hotspots']));
         for (const [rect, hotspot] of rects.map((rect, i) => [rect, data.hotspots[i]])) {
