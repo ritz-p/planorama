@@ -2310,3 +2310,51 @@ Contracts use pinned AWS Provider 6.70.0
 [HTML](../examples/autoscaling-network.html) cover the configuration paths.
 Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/autoscaling-network-plan.json --format html -o examples/autoscaling-network.html`.
+
+## Security group rule relationships (#899)
+
+The six exact managed types in #899 use the AWS Provider 6.70.0
+[pinned EC2 implementation](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2)
+and the inventory schema (SHA-256 `f04a44109a82886c3e392ae88e73dfa533f677ccd8a1b253d7d7b0e3d3ea9857`).
+The implementation is `security_group_rules.rs`; existing SG VPC containment and
+workload attachment proofs retain their previous contracts.
+
+| Source | Input path and shape | Accepted endpoint output |
+| --- | --- | --- |
+| `aws_security_group` | Optional/computed `ingress` / `egress` sets of objects; `security_groups` string sets and `prefix_list_ids` string lists | Managed `aws_security_group.id` or `aws_ec2_managed_prefix_list.id`, respectively |
+| `aws_security_group_rule` | Required scalar `security_group_id`; optional/computed scalar `source_security_group_id`; optional string list `prefix_list_ids` | Managed SG `id` for owner/peer; managed prefix-list `id` |
+| `aws_vpc_security_group_ingress_rule`, `aws_vpc_security_group_egress_rule` | Required scalar `security_group_id`; optional scalar `referenced_security_group_id` / `prefix_list_id` | Managed SG `id` for owner/peer; managed prefix-list `id` |
+| `aws_vpc_security_group_rules_exclusive` | Required scalar `security_group_id`; required string sets `ingress_rule_ids` / `egress_rule_ids` | Managed SG `id`; corresponding modern ingress/egress rule `id` or `security_group_rule_id` |
+| `aws_vpc_security_group_vpc_association` | Required scalar `security_group_id` / `vpc_id` | Managed SG `id` / VPC `id` |
+
+Legacy rules require known `type = ingress` or `egress`. Peer SG references reject
+conflicting CIDRs or `self`; prefix lists may coexist with other legacy selectors.
+Modern peer references require known `ip_protocol` and no competing selector.
+Their resource type supplies direction. Inline paths retain ingress/egress
+direction and require complete known collections across the corresponding block.
+Names accepted by AWS in a default VPC are not accepted as universal SG IDs.
+
+Each relationship requires explicit, unambiguous Terraform output references,
+matching known nonempty values, current managed AWS identities and compatible
+provider/account/region evidence. Unknown, literal-only, partial, mismatched,
+ambiguous, data, deleted or deposed endpoints retain fallback presentation.
+Collections use one output attribute consistently and must contain exactly the
+referenced endpoint values. Different
+endpoints with the same value are ambiguous. No resources are synthesized from
+CIDRs, IPs, names, policies or service-created prefix-list outputs.
+
+Rules are presentation members of their verified SG, retaining separate actions
+and coverage. The SG remains shared configuration. Modern rule `id` and
+`security_group_rule_id` are computed string outputs; legacy `id` represents a
+different, potentially multi-CIDR identity and is not accepted in exclusive sets.
+An exclusive helper requires both direction sets, including known empty sets;
+every referenced rule must have the same independently verified SG owner.
+The helper belongs to the SG and never takes ownership of its rules.
+
+The additional-VPC helper lowers only with both verified endpoints, preserving
+its action and exactly-once coverage. It does not move or clone the SG or alter
+its original VPC containment. Its computed `state` is runtime status and does not
+gate configuration display. Filtering and named-state identity stay independent;
+the shared engine applies these rules to native and Wasm SVG/HTML generation.
+Descriptions, ports, protocol summaries, CIDR contents and runtime reachability
+are not exposed by this change. Existing deferred summaries remain deferred.

@@ -61,6 +61,7 @@ pub(crate) use placement::owner_affinities;
 mod routes;
 pub(crate) mod s3;
 mod scope;
+mod security_group_rules;
 mod security_groups;
 mod service_members;
 mod vpc_gateways;
