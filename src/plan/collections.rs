@@ -25,6 +25,44 @@ fn resources<'a>(module: &'a Value, found: &mut BTreeMap<&'a str, &'a Value>) {
     }
 }
 
+fn sensitivities<'a>(module: &'a Value, found: &mut BTreeMap<&'a str, &'a Value>) {
+    for resource in module["resources"].as_array().into_iter().flatten() {
+        if let Some(address) = resource["address"].as_str() {
+            found.insert(address, &resource["sensitive_values"]);
+        }
+    }
+    for child in module["child_modules"].as_array().into_iter().flatten() {
+        sensitivities(child, found);
+    }
+}
+
+fn merge_masks(left: &Value, right: &Value) -> Value {
+    if left == &Value::Bool(true) || right == &Value::Bool(true) {
+        return Value::Bool(true);
+    }
+    match (left, right) {
+        (Value::Object(left), Value::Object(right)) => {
+            let mut merged = left.clone();
+            for (key, value) in right {
+                merged.insert(
+                    key.clone(),
+                    merge_masks(merged.get(key).unwrap_or(&Value::Null), value),
+                );
+            }
+            Value::Object(merged)
+        }
+        (Value::Array(left), Value::Array(right)) if left.len() == right.len() => Value::Array(
+            left.iter()
+                .zip(right)
+                .map(|(l, r)| merge_masks(l, r))
+                .collect(),
+        ),
+        (Value::Null | Value::Bool(false), _) => right.clone(),
+        (_, Value::Null | Value::Bool(false)) => left.clone(),
+        _ => Value::Bool(true),
+    }
+}
+
 fn id<'a>(value: &'a Value, unknown: &Value) -> Option<Id<'a>> {
     if unknown.as_bool() == Some(true) {
         Some(Id::Unknown)
@@ -159,6 +197,34 @@ pub(super) fn annotate(
         &before_evidence,
     );
     crate::provider::aws::service_references::annotate(nodes, references, &evidence);
+    let mut sensitive = BTreeMap::new();
+    sensitivities(&plan["planned_values"]["root_module"], &mut sensitive);
+    let masks: Vec<_> = nodes
+        .iter()
+        .zip(&evidence)
+        .map(|(node, (_, unknown))| {
+            let change = changes.get(&(node.address.as_str(), node.deposed_key.as_deref()));
+            let mask = merge_masks(
+                unknown,
+                change
+                    .map(|c| &c["change"]["after_sensitive"])
+                    .unwrap_or(&Value::Null),
+            );
+            merge_masks(
+                &mask,
+                sensitive
+                    .get(node.address.as_str())
+                    .copied()
+                    .unwrap_or(&Value::Null),
+            )
+        })
+        .collect();
+    let elbv2_evidence: Vec<_> = evidence
+        .iter()
+        .zip(&masks)
+        .map(|((value, _), mask)| (*value, mask))
+        .collect();
+    crate::provider::aws::elbv2::annotate(nodes, references, &elbv2_evidence);
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()

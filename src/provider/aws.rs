@@ -23,6 +23,7 @@ pub(super) mod diagnostics;
 mod dynamodb;
 mod efs;
 mod elasticache;
+pub(crate) mod elbv2;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
@@ -142,7 +143,9 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_s3_bucket_policy"
         | "aws_s3_bucket_notification"
         | "aws_s3_bucket_replication_configuration" => crate::model::Placement::Logical,
-        "aws_wafv2_web_acl_association" => crate::model::Placement::Logical,
+        "aws_wafv2_web_acl_association" | "aws_lb_target_group_attachment" => {
+            crate::model::Placement::Logical
+        }
         "aws_cloudfront_origin_access_control"
         | "aws_cloudfront_origin_access_identity"
         | "aws_cloudfront_cache_policy"

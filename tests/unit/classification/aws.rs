@@ -88,8 +88,8 @@ fn large_example_has_classified_architecture_resources_and_only_spatial_containe
     let raw =
         crate::plan::parse(include_str!("../../../examples/terraform-large/plan.json")).unwrap();
     let graph = crate::semantic::transform(&raw);
-    assert_eq!(graph.nodes.len(), 44);
-    assert_eq!(graph.edges.len(), 83);
+    assert_eq!(graph.nodes.len(), 48);
+    assert_eq!(graph.edges.len(), 87);
     assert_eq!(
         graph
             .nodes

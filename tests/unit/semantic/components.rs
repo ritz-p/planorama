@@ -219,13 +219,28 @@ fn aliases_must_preserve_exact_target_selection() {
 #[test]
 fn target_attachments_are_compatible_but_do_not_establish_ownership() {
     let mut input = forwarding_input();
+    input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
+    input["resource_changes"][3]["change"]["after"]["target_type"] = json!("instance");
     input["resource_changes"].as_array_mut().unwrap().extend([
-        json!({"address":"aws_lb_target_group_attachment.app", "type":"aws_lb_target_group_attachment"}),
-        json!({"address":"aws_instance.worker", "type":"aws_instance"}),
+        json!({"address":"aws_lb_target_group_attachment.app", "type":"aws_lb_target_group_attachment", "change":{"after":{"target_group_arn":"PRIVATE_TARGET","target_id":"worker"}}}),
+        json!({"address":"aws_instance.worker", "type":"aws_instance", "change":{"after":{"id":"worker"}}}),
     ]);
     input["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"aws_lb_target_group_attachment.app", "expressions":{
         "target_group_arn":{"references":["aws_lb_target_group.shared.arn"]}, "target_id":{"references":["aws_instance.worker.id"]}
     }}));
+    input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .extend([
+            json!({"address":"aws_lb_target_group.shared"}),
+            json!({"address":"aws_instance.worker"}),
+        ]);
+    for resource in input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+    {
+        resource["provider_config_key"] = json!("aws");
+    }
     let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
     assert!(contains_target(&graph, "aws_lb_target_group.shared"));
     assert!(

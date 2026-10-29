@@ -130,6 +130,7 @@
         ],
         "after": {
           "arn": "group-example",
+          "target_type": "instance",
           "vpc_id": "vpc-example"
         }
       }
