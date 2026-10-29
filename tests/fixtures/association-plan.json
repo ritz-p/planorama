@@ -1,16 +1,85 @@
 {
   "format_version": "1.2",
   "resource_changes": [
-    {"address": "aws_subnet.private", "type": "aws_subnet", "change": {"actions": ["create"]}},
-    {"address": "aws_route_table.private", "type": "aws_route_table", "change": {"actions": ["create"]}},
-    {"address": "aws_route_table_association.private", "type": "aws_route_table_association", "change": {"actions": ["create"]}}
+    {
+      "address": "aws_subnet.private",
+      "type": "aws_subnet",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-private",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_route_table.private",
+      "type": "aws_route_table",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rtb-private",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_route_table_association.private",
+      "type": "aws_route_table_association",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "route_table_id": "rtb-private",
+          "subnet_id": "subnet-private"
+        }
+      }
+    }
   ],
-  "configuration": {"root_module": {"resources": [
-    {"address": "aws_subnet.private"},
-    {"address": "aws_route_table.private"},
-    {"address": "aws_route_table_association.private", "expressions": {
-      "subnet_id": {"references": ["aws_subnet.private.id"]},
-      "route_table_id": {"references": ["aws_route_table.private.id"]}
-    }}
-  ]}}
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_subnet.private",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_route_table.private",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_route_table_association.private",
+          "expressions": {
+            "subnet_id": {
+              "references": [
+                "aws_subnet.private.id"
+              ]
+            },
+            "route_table_id": {
+              "references": [
+                "aws_route_table.private.id"
+              ]
+            }
+          },
+          "provider_config_key": "aws"
+        }
+      ]
+    },
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        },
+        "name": "aws"
+      }
+    }
+  }
 }

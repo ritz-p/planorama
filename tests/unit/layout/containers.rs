@@ -383,6 +383,7 @@ fn relationship_names_distinguish_same_named_subnets_after_reparsing() {
                 ]}
             });
         }
+        crate::association_evidence::known_associations(&mut input);
         let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
         let calls = input["configuration"]["root_module"]["module_calls"]
             .as_object_mut()
@@ -482,6 +483,7 @@ fn reparsed_parallel_associations_keep_ports_when_modules_are_renamed() {
                 }]}
             });
         }
+        crate::association_evidence::known_associations(&mut input);
         let original = semantic::transform(&plan::parse(&input.to_string()).unwrap()).0;
         let calls = input["configuration"]["root_module"]["module_calls"]
             .as_object_mut()
@@ -680,7 +682,7 @@ fn large_aws_example_keeps_cross_module_containment_and_multi_subnet_relationshi
             .iter()
             .filter(|edge| edge.kind == EdgeKind::Association)
             .count(),
-        10
+        6
     );
     for role in [
         ResourceRole::Container,

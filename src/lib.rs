@@ -1,6 +1,9 @@
 #![cfg_attr(target_arch = "wasm32", allow(dead_code, unused_imports))]
 
 #[cfg(test)]
+#[path = "../tests/support/association_evidence.rs"]
+mod association_evidence;
+#[cfg(test)]
 #[path = "../tests/benchmarks.rs"]
 mod benchmarks;
 mod classification;

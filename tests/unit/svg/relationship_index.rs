@@ -4,15 +4,56 @@ use crate::model::{EdgeKind, RelationshipProvenance};
 use crate::{plan, semantic, svg};
 
 fn graph() -> Graph {
-    semantic::transform(&plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap())
-        .0
+    let mut graph = semantic::transform(
+        &plan::parse(include_str!("../../fixtures/association-plan.json")).unwrap(),
+    )
+    .0;
+    for node in &mut graph.nodes {
+        node.entity.scope = None;
+    }
+    graph
 }
 
 #[test]
 fn provenance_scope_survives_lowering_and_stays_separate_from_endpoint_scopes() {
     let input = include_str!("../../fixtures/relationship-scopes-plan.json");
-    let mut graph =
-        semantic::transform(&crate::plan::evidence::tests::parse_fixture(input).unwrap()).0;
+    let incompatible =
+        semantic::transform(&crate::plan::evidence::tests::parse_fixture(input).unwrap());
+    assert_eq!(incompatible.nodes.len(), 3);
+    assert!(
+        incompatible
+            .edges
+            .iter()
+            .all(|e| e.kind != EdgeKind::Association)
+    );
+    let table_scope = incompatible
+        .nodes
+        .iter()
+        .find(|n| n.resource_type == "aws_route_table")
+        .unwrap()
+        .entity
+        .scope
+        .clone();
+    let mut configured: serde_json::Value = serde_json::from_str(input).unwrap();
+    configured["configuration"]["root_module"]["resources"][1]["provider_config_key"] =
+        serde_json::json!("aws.tokyo");
+    configured["resource_changes"][0]["change"]["after"] =
+        serde_json::json!({"id":"subnet", "vpc_id":"vpc"});
+    configured["resource_changes"][1]["change"]["after"] =
+        serde_json::json!({"id":"table", "vpc_id":"vpc"});
+    configured["resource_changes"][2]["change"]["after"] =
+        serde_json::json!({"subnet_id":"subnet", "route_table_id":"table"});
+    let mut graph = semantic::transform(
+        &crate::plan::evidence::tests::parse_fixture(&configured.to_string()).unwrap(),
+    )
+    .0;
+    graph
+        .nodes
+        .iter_mut()
+        .find(|n| n.resource_type == "aws_route_table")
+        .unwrap()
+        .entity
+        .scope = table_scope;
     assert_eq!(graph.nodes.len(), 2);
     let RelationshipProvenance::Resource { deployment, .. } = &graph.relationships[0].provenance[0]
     else {

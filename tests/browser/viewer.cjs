@@ -1349,7 +1349,7 @@ class ViewerTests {
         }
     }
     test_impact_associations_and_cross_state_metadata() {
-        this.load('tests/fixtures/relationship-scopes-plan.json');
+        this.load('tests/fixtures/association-plan.json');
         let edge = this.find('path[data-edge-kind="association"]');
         this.driver.execute_script("document.getElementById(arguments[0]).dispatchEvent(new MouseEvent('click', {bubbles:true}))", edge.get_attribute('data-source'));
         this.find('#impact-explore').click();
@@ -1367,9 +1367,10 @@ class ViewerTests {
         this.assertIn('consumer:', this.find('#impact-results').text);
     }
     test_lowered_resource_search_highlights_only_its_parallel_relationship() {
-        let plan = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/relationship-scopes-plan.json'), 'utf8'));
+        let plan = JSON.parse(readFileSync(join(ROOT, 'tests/fixtures/association-plan.json'), 'utf8'));
         let second = 'aws_route_table_association.second';
-        plan['resource_changes'].push({'address': second, 'type': 'aws_route_table_association', 'change': {'actions': ['delete']}});
+        plan.resource_changes.push({...plan.resource_changes.at(-1), address: second,
+            change: {...plan.resource_changes.at(-1).change, actions: ['update']}});
         let config = {...plan.configuration.root_module.resources.at(-1), address: second};
         plan['configuration']['root_module']['resources'].push(config);
         this.load('-', { input_plan: plan });
@@ -1381,7 +1382,7 @@ class ViewerTests {
         let before = this.driver.execute_script("return Array.from(document.querySelectorAll('path[data-edge-kind]')).map(e=>[e.getAttribute('d'),e.getAttribute('stroke'),e.getAttribute('stroke-dasharray'),e.getAttribute('marker-end')])");
         let entry = this.find('[data-relationship-entry="2"]');
         let text = entry.find_elements(By.TAG_NAME, 'tspan').map(n => n.get_attribute('textContent')).join('');
-        this.assertIn('Resource scope: Region: ap-northeast-1', text);
+        this.assertIn('Resource scope: Region: us-east-1', text);
         this.assertIn('aws_route_table.private · Region: us-east-1', text);
         let number = entry.find_element(By.CSS_SELECTOR, '[data-relationship-select]');
         this.driver.execute_script('arguments[0].focus()', number);
@@ -1421,7 +1422,7 @@ class ViewerTests {
         this.assertTrue(this.find('[data-viewer-selected]').get_attribute('data-terraform-address'));
     }
     test_number_selection_stays_within_its_state() {
-        this.load('--state', 'one=tests/fixtures/relationship-scopes-plan.json', '--state', 'two=tests/fixtures/relationship-scopes-plan.json');
+        this.load('--state', 'one=tests/fixtures/association-plan.json', '--state', 'two=tests/fixtures/association-plan.json');
         for (const state of ['one', 'two']) {
             let marker = this.find(`[data-state-id="${state}"] [data-relationship-marker] a`);
             this.driver.execute_script('arguments[0].focus()', marker);

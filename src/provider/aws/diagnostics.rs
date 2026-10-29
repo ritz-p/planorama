@@ -185,7 +185,20 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 }
             }
         }
-        let association = super::associations::rule(&node.resource_type)
+        let association_rule = if node.resource_type == "aws_route_table_association"
+            && raw
+                .attributes
+                .iter()
+                .any(|r| r.target == target && r.attribute == "gateway_id")
+        {
+            Some([
+                ("gateway_id", "aws_internet_gateway"),
+                ("route_table_id", "aws_route_table"),
+            ])
+        } else {
+            super::associations::rule(&node.resource_type)
+        };
+        let association = association_rule
             .map(|rule| rule.map(|(attribute, endpoint)| (attribute, endpoint, false, false)));
         let vpc_scope = super::containment::vpc_scope_attribute(&node.resource_type)
             .filter(|attribute| {

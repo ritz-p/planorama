@@ -183,12 +183,24 @@ fn shared_legend_collects_later_state_actions_and_omits_empty_height() {
     let empty = crate::semantic::transform(
         &crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[]}"#).unwrap(),
     );
-    let mut input: serde_json::Value =
+    let input: serde_json::Value =
         serde_json::from_str(include_str!("../../fixtures/association-plan.json")).unwrap();
-    for resource in input["resource_changes"].as_array_mut().unwrap() {
-        resource["change"]["actions"] = serde_json::json!(["delete"]);
+    let mut later = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+    for node in &mut later.0.nodes {
+        node.action = crate::model::Action::Delete;
     }
-    let later = crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+    for edge in &mut later.0.edges {
+        if let Some(change) = &mut edge.change {
+            change.action = crate::model::Action::Delete;
+        }
+    }
+    for relationship in &mut later.0.relationships {
+        for provenance in &mut relationship.provenance {
+            if let crate::model::RelationshipProvenance::Resource { change, .. } = provenance {
+                change.action = crate::model::Action::Delete;
+            }
+        }
+    }
     let first_id = StateId::new("a").unwrap();
     let later_id = StateId::new("z").unwrap();
     for first in [empty.clone(), crate::semantic::transform(&crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.single","type":"test"}]}"#).unwrap())] {
@@ -666,7 +678,12 @@ fn named_states_reflow_indexes_at_shared_width_and_keep_cross_state_offsets() {
         previous = address;
     }
     let graph = |input: &serde_json::Value| {
-        crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap())
+        let mut graph =
+            crate::semantic::transform(&crate::plan::parse(&input.to_string()).unwrap());
+        for node in &mut graph.0.nodes {
+            node.entity.scope = None;
+        }
+        graph
     };
     let narrow = graph(&narrow_input);
     let standalone_view = crate::view::single(&narrow, &Default::default()).unwrap();

@@ -308,7 +308,7 @@ fn referenced_ids_with_different_planned_values_keep_route_cards() {
 fn route_fallback_diagnostics_explain_rejections_without_exposing_values() {
     for (case, reason) in [
         (0, "attribute has no resolvable resource reference"),
-        (1, "unsupported route target"),
+        (1, "planned endpoint value is not proven"),
         (2, "missing expected attribute"),
         (4, "multiple route target attributes"),
     ] {
@@ -476,8 +476,8 @@ fn replacement_reasons_are_escaped_and_visible_on_cards_and_lowered_edges() {
         serde_json::from_slice(include_bytes!("../fixtures/association-plan.json")).unwrap();
     input["resource_changes"][2]["action_reason"] =
         serde_json::json!("replace_because_cannot_update");
-    input["resource_changes"][2]["change"] =
-        serde_json::json!({"actions":["delete","create"],"replace_paths":[["subnet_id"]]});
+    input["resource_changes"][2]["change"]["actions"] = serde_json::json!(["delete", "create"]);
+    input["resource_changes"][2]["change"]["replace_paths"] = serde_json::json!([["subnet_id"]]);
     let svg = render(input.to_string().as_bytes());
     assert!(svg.contains("data-action-reason=\"replace_because_cannot_update\""));
     assert!(svg.contains("data-replace-paths=\"[[&quot;subnet_id&quot;]]\""));
@@ -1007,14 +1007,13 @@ fn rds_subnet_group_fixture_preserves_cards_and_infers_common_scope() {
 }
 
 #[test]
-fn mixed_aws_relationships_render_actions_without_helper_cards() {
+fn mixed_aws_relationships_preserve_unproven_helper_cards_and_actions() {
     let input = include_bytes!("../fixtures/aws-relationships-plan.json");
     let svg = render(input);
-    assert!(svg.contains("9 resources (6 cards), 7 relationships"));
-    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 3);
+    assert!(svg.contains("9 resources (7 cards), 8 relationships"));
+    assert_eq!(svg.matches("data-edge-kind=\"association\"").count(), 2);
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
     for (kind, action) in [
-        ("aws_route_table_association", "create"),
         ("aws_lb_target_group_attachment", "replace"),
         ("aws_vpc_endpoint_route_table_association", "delete"),
     ] {
@@ -1023,4 +1022,6 @@ fn mixed_aws_relationships_render_actions_without_helper_cards() {
         assert!(svg.contains(&format!("association; {action}: module.root.{kind}.main")));
         assert!(svg.contains(&format!("{action} (1)")));
     }
+    assert!(svg.contains("data-terraform-address=\"aws_route_table_association.main\""));
+    assert!(svg.contains("create (1)"));
 }

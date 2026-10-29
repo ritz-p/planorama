@@ -62,6 +62,7 @@ pub(crate) mod s3;
 mod scope;
 mod security_groups;
 mod service_members;
+mod vpc_routes;
 pub(crate) mod waf;
 
 #[cfg(test)]
