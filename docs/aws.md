@@ -2152,3 +2152,51 @@ unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
 [HTML](../examples/fsx-lustre.html) examples. Regenerate HTML in Docker with
 `cargo run --locked -- tests/fixtures/fsx-lustre-plan.json --format html -o examples/fsx-lustre.html`.
 Native/Wasm parity covers the same fixture and conservative fallbacks.
+
+## Auto Scaling configuration (#810)
+
+Auto Scaling groups retain Spatial cards and existing Launch Template and scaling
+policy presentation. A complete explicit `vpc_zone_identifier` subnet set supplies
+VPC context only when every subnet proves the same current managed VPC. No subnet
+is selected as the group owner; AZ names cannot identify default subnets.
+
+Launch configurations stay Logical. Their `image_id`, `security_groups`,
+`iam_instance_profile` and `key_name` reference managed AMI IDs, complete Security
+Group IDs, instance-profile names and key-pair names respectively. Group
+`launch_configuration` references the configuration name. These relationships
+never create instances or transfer network placement to a launch configuration.
+
+Group `load_balancers` and attachment `elb` reference Classic ELB names;
+`target_group_arns` and `lb_target_group_arn` reference ELBv2 target-group ARNs.
+`traffic_source.identifier` requires a known matching `type`: `elb` for a Classic
+ELB name, `elbv2` for an ELBv2 target-group ARN, or `vpc-lattice` for a VPC Lattice
+target-group ARN. Every entry must match; omitted or unknown type remains
+unverified. Collections mixing Classic names with ARN outputs remain unverified
+because the reference model does not retain per-endpoint output-field provenance.
+Attachment helpers retain their own identity and reference ASG
+`name` or `id` (the group name).
+
+Explicit group placement-group names, service-linked-role ARNs, Lambda-only
+termination-policy lists and complete mixed-policy override template IDs/names
+also receive configuration references. Built-in termination policies mixed with
+Lambda references and overrides without explicit templates remain unverified.
+Direct/base Launch Template handling is unchanged.
+
+All new relationships require known matching values, unique explicit references,
+current managed AWS endpoints and compatible provider/account/region evidence.
+IAM endpoints are global within the compatible account. Data sources, deleted or
+deposed endpoints, literals, unknowns and partial collections retain conservative
+fallback. Selection and named-state boundaries preserve coverage; private user
+data, runtime capacity and health are neither interpreted nor emitted.
+
+Contracts use pinned AWS Provider 6.70.0
+[ASG](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/autoscaling_group.html.markdown),
+[launch configuration](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/launch_configuration.html.markdown),
+[attachment](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/autoscaling_attachment.html.markdown), and
+[traffic attachment](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/autoscaling_traffic_source_attachment.html.markdown).
+[Tests](../tests/unit/semantic/autoscaling_network.rs),
+[fixture](../tests/fixtures/autoscaling-network-plan.json),
+[SVG](../examples/autoscaling-network.svg) and
+[HTML](../examples/autoscaling-network.html) cover the configuration paths.
+Regenerate HTML in Docker with
+`cargo run --locked -- tests/fixtures/autoscaling-network-plan.json --format html -o examples/autoscaling-network.html`.

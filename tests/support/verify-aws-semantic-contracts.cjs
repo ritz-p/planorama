@@ -1,8 +1,8 @@
 const fs=require('node:fs');
 if(process.argv.length!==4)throw Error('Usage: node tests/support/verify-aws-semantic-contracts.cjs SCHEMA SOURCE');
 require('../../scripts/aws-semantic-audit.cjs').buildEvidence(fs.readFileSync(process.argv[2]));
-const providerSchema=JSON.parse(fs.readFileSync(process.argv[2])).provider_schemas['registry.terraform.io/hashicorp/aws'];
-const schema=providerSchema.resource_schemas;
+const provider=JSON.parse(fs.readFileSync(process.argv[2])).provider_schemas['registry.terraform.io/hashicorp/aws'];
+const schema=provider.resource_schemas;
 const text=fs.readFileSync('docs/aws-semantic-audit.md','utf8');
 for(const line of text.split('\n').filter(l=>l.startsWith('| `aws_'))){
  const cells=line.split('|');const type=cells[1].match(/`([^`]+)`/)[1];
@@ -18,11 +18,6 @@ const reviewed=JSON.parse(fs.readFileSync('docs/aws-semantic-decisions.json')).t
 for(const [type,{review}] of Object.entries(reviewed)) {
  if(!review) continue;
  const doc=fs.readFileSync(process.argv[3]+'/'+review.officialDocumentation,'utf8');
- if(review.dataContracts) {
-  const data=providerSchema.data_source_schemas[type];
-  const actual=Object.fromEntries(Object.entries(data?.block.attributes||{}).filter(([,a])=>a.optional||a.required).map(([p,a])=>[p,{shape:a.type,contract:a.required?'required':'optional'+(a.computed?'/computed':'')}]));
-  if(JSON.stringify(actual)!==JSON.stringify(review.dataContracts)) throw Error('Data selector mismatch '+type);
- }
  for(const [path,expected] of Object.entries(review.shapes)) {
   let block=schema[type].block; const actual=[]; const parts=path.split('.');
   for(const part of parts.slice(0,-1)) {
@@ -43,4 +38,10 @@ for(const [type,{review}] of Object.entries(reviewed)) {
   }
  }
  console.log(type+' reviewed shapes verified');
+ if(review.dataContracts) {
+  const data=provider.data_source_schemas[type];
+  const actual=Object.fromEntries(Object.entries(data?.block.attributes||{}).filter(([,a])=>a.optional||a.required).map(([p,a])=>[p,{shape:a.type,contract:a.required?'required':'optional'+(a.computed?'/computed':'')}]));
+  if(JSON.stringify(actual)!==JSON.stringify(review.dataContracts))throw Error('Data selector mismatch '+type);
+ }
+ for(const file of review.implementationEvidence||[])if(!fs.existsSync(file))throw Error('Missing implementation evidence '+file);
 }

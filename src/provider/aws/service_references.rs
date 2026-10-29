@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::autoscaling_network::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::sagemaker::label(resource, attribute) {
         return Some(label);
     }
@@ -510,6 +513,7 @@ pub(crate) fn annotate(
     super::sagemaker::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
+    super::autoscaling_network::annotate(nodes, references, evidence);
     super::fsx::annotate(nodes, references, evidence);
     super::networkfirewall::annotate(nodes, references, evidence);
     super::lambda::annotate(nodes, references, evidence);
@@ -532,6 +536,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::autoscaling_network::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::autoscaling_network::bindings(raw, reference))
         && (super::sagemaker::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

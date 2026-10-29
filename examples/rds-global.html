@@ -26,6 +26,12 @@ p { line-height: 1.5; }
 #selection { overflow-wrap: anywhere; }
 #generation-info { margin-bottom: 16px; overflow-wrap: anywhere; }
 #generation-info summary { cursor: pointer; font-weight: 650; }
+#overview { margin-bottom: 16px; }
+#overview summary { cursor: pointer; font-weight: 650; }
+#overview p { font-size: 12px; color: #475569; }
+#overview-map { display: block; width: 100%; height: 160px; border: 1px solid #94a3b8; background: white; touch-action: none; cursor: crosshair; }
+#overview-shapes rect { fill: #e2e8f0; fill-opacity: .35; stroke: #64748b; stroke-width: 1; vector-effect: non-scaling-stroke; }
+#overview-frame { fill: #2563eb; fill-opacity: .12; stroke: #1d4ed8; stroke-width: 2; vector-effect: non-scaling-stroke; pointer-events: none; }
 #generation-info dt { font-weight: 650; }
 #generation-info dd { margin: 4px 0 12px; }
 #selection h2 { font-size: 16px; }
@@ -72,6 +78,11 @@ p { line-height: 1.5; }
 <main>
 <aside aria-label="Resources and relationships">
 <details id="generation-info"><summary>Generation information</summary><div id="generation-details"></div></details>
+<details id="overview" hidden><summary>Overview map</summary>
+<p id="overview-help">Click or drag to move the view. Focus the map and use arrow keys to pan, +/− to zoom, F to fit, or Escape to close. The blue frame marks the current view.</p>
+<div id="overview-content"></div>
+<p id="overview-status"></p>
+</details>
 <nav aria-label="Diagram sections"><label for="section-destination">Diagram section</label><select id="section-destination"></select><button id="section-go" type="button">Go to section</button><p id="section-status" role="status"></p></nav>
 <section aria-label="Export diagram"><button id="export-viewport" type="button">Export viewport SVG</button><p id="export-status" role="status"></p></section>
 <section aria-label="Export resource neighborhood">
@@ -301,7 +312,7 @@ Global Cluster membership: module.root.aws_rds_global_cluster.world[0] [global_c
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_rds_cluster.east","context":[],"deposed":null,"id":"resource-6177735f7264735f636c75737465722e65617374-current","identity":"terraform:6177735f7264735f636c75737465722e65617374-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster.east","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_rds_cluster"},{"action":"unchanged","address":"aws_rds_cluster.literal","context":[],"deposed":null,"id":"resource-6177735f7264735f636c75737465722e6c69746572616c-current","identity":"terraform:6177735f7264735f636c75737465722e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_rds_cluster"},{"action":"unchanged","address":"aws_rds_cluster.west","context":[],"deposed":null,"id":"resource-6177735f7264735f636c75737465722e77657374-current","identity":"terraform:6177735f7264735f636c75737465722e77657374-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster.west","scope":{"account":null,"global":false,"provider":"AWS","region":"eu-west-1"},"state":"","type":"aws_rds_cluster"},{"action":"unchanged","address":"aws_rds_cluster_instance.east[0]","context":["resource-6177735f7264735f636c75737465722e65617374-current"],"deposed":null,"id":"resource-6177735f7264735f636c75737465725f696e7374616e63652e656173745b305d-current","identity":"terraform:6177735f7264735f636c75737465725f696e7374616e63652e656173745b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster_instance.east[0]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_rds_cluster_instance"},{"action":"unchanged","address":"aws_rds_cluster_instance.west[0]","context":["resource-6177735f7264735f636c75737465722e77657374-current"],"deposed":null,"id":"resource-6177735f7264735f636c75737465725f696e7374616e63652e776573745b305d-current","identity":"terraform:6177735f7264735f636c75737465725f696e7374616e63652e776573745b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster_instance.west[0]","scope":{"account":null,"global":false,"provider":"AWS","region":"eu-west-1"},"state":"","type":"aws_rds_cluster_instance"},{"action":"unchanged","address":"aws_rds_global_cluster.world[0]","context":[],"deposed":null,"id":"resource-6177735f7264735f676c6f62616c5f636c75737465722e776f726c645b305d-current","identity":"terraform:6177735f7264735f676c6f62616c5f636c75737465722e776f726c645b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_global_cluster.world[0]","scope":{"account":null,"global":true,"provider":"AWS","region":null},"state":"","type":"aws_rds_global_cluster"}]</script>
+<script id="viewer-data" type="application/json">[{"action":"unchanged","address":"aws_rds_cluster.east","changed_paths":{"available":true,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7264735f636c75737465722e65617374-current","identity":"terraform:6177735f7264735f636c75737465722e65617374-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster.east","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_rds_cluster"},{"action":"unchanged","address":"aws_rds_cluster.literal","changed_paths":{"available":true,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7264735f636c75737465722e6c69746572616c-current","identity":"terraform:6177735f7264735f636c75737465722e6c69746572616c-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster.literal","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_rds_cluster"},{"action":"unchanged","address":"aws_rds_cluster.west","changed_paths":{"available":true,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7264735f636c75737465722e77657374-current","identity":"terraform:6177735f7264735f636c75737465722e77657374-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster.west","scope":{"account":null,"global":false,"provider":"AWS","region":"eu-west-1"},"state":"","type":"aws_rds_cluster"},{"action":"unchanged","address":"aws_rds_cluster_instance.east[0]","changed_paths":{"available":true,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7264735f636c75737465722e65617374-current"],"deposed":null,"id":"resource-6177735f7264735f636c75737465725f696e7374616e63652e656173745b305d-current","identity":"terraform:6177735f7264735f636c75737465725f696e7374616e63652e656173745b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster_instance.east[0]","scope":{"account":null,"global":false,"provider":"AWS","region":"us-east-1"},"state":"","type":"aws_rds_cluster_instance"},{"action":"unchanged","address":"aws_rds_cluster_instance.west[0]","changed_paths":{"available":true,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":["resource-6177735f7264735f636c75737465722e77657374-current"],"deposed":null,"id":"resource-6177735f7264735f636c75737465725f696e7374616e63652e776573745b305d-current","identity":"terraform:6177735f7264735f636c75737465725f696e7374616e63652e776573745b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_cluster_instance.west[0]","scope":{"account":null,"global":false,"provider":"AWS","region":"eu-west-1"},"state":"","type":"aws_rds_cluster_instance"},{"action":"unchanged","address":"aws_rds_global_cluster.world[0]","changed_paths":{"available":true,"paths":[],"replacement_available":false,"replacement_paths":[],"sensitive_omitted":false,"truncated":false,"unknown_paths":[]},"context":[],"deposed":null,"id":"resource-6177735f7264735f676c6f62616c5f636c75737465722e776f726c645b305d-current","identity":"terraform:6177735f7264735f676c6f62616c5f636c75737465722e776f726c645b305d-current","mode":"managed","module":"root","provider":"registry.terraform.io/hashicorp/aws","qualified":"module.root.aws_rds_global_cluster.world[0]","scope":{"account":null,"global":true,"provider":"AWS","region":null},"state":"","type":"aws_rds_global_cluster"}]</script>
 <script id="viewer-generation" type="application/json">{"generator":{"name":"Planorama","revision":null,"version":"0.1.0"},"schema_version":1,"selected_view":false,"setting_origins":null,"settings":{"address_format":"qualified","changed_only":false,"focus":null,"focus_depth":null,"html_diagnostics":false,"html_semantic_diagnostics":false,"icon_mode":"service-name","modules":[],"relationship_legend":"full","remote_state_mappings":[],"spatial_types":[],"states":[]}}</script>
 <script id="viewer-provider-data" type="application/json">[]</script>
 
@@ -339,6 +350,7 @@ function metadata(svg, byId) {
   const resources = JSON.parse(byId('viewer-data').textContent).filter(r => byId(r.id));
   const resourceIds = new Set(resources.map(r => r.id));
   const providers = new Map(JSON.parse(byId('viewer-provider-data').textContent).map(([state, address, deposed, provider]) => [JSON.stringify([state, address, deposed]), provider]));
+  const changedPaths = new Map(JSON.parse(byId('viewer-provider-data').textContent).map(([state, address, deposed, , paths]) => [JSON.stringify([state, address, deposed]), paths]));
   const hex = text => Array.from(new TextEncoder().encode(text), byte => byte.toString(16).padStart(2, '0')).join('');
   const addressParts = address => {
     const parts = []; let start = 0, depth = 0, quoted = false, escaped = false;
@@ -378,6 +390,7 @@ function metadata(svg, byId) {
       }
     }
   }
+  for (const resource of resources) resource.changed_paths ||= changedPaths.get(JSON.stringify([resource.state, resource.address, resource.deposed]));
   const targets = new Map(resources.map(r => [r.id, r]));
   const title = el => el.querySelector(':scope > title')?.textContent || '';
   const label = r => `${r.state ? r.state + ':' : ''}${r.address} · ${r.mode}${r.deposed ? ' · deposed: ' + r.deposed : ''}`;
@@ -669,9 +682,11 @@ function exportPresentation(context, index, requested, provenanceSeeds) {
 function navigation(svg, viewport, byId) {
   let box = [svg.viewBox.baseVal.x, svg.viewBox.baseVal.y, svg.viewBox.baseVal.width, svg.viewBox.baseVal.height];
   const original = box.slice();
+  const listeners = new Set();
   function updateView() {
     svg.setAttribute('viewBox', box.join(' '));
     byId('zoom-level').textContent = Math.round(original[2] / box[2] * 100) + '%';
+    for (const listener of listeners) listener(false);
   }
   function fit() { box = original.slice(); updateView(); }
   function zoom(factor) {
@@ -729,8 +744,88 @@ function navigation(svg, viewport, byId) {
   function resize(height) {
     original[3] = height;
     fit();
+    for (const listener of listeners) listener(true);
   }
-  return { fit, zoom, reveal, updateView, keydown, resize, snapshot: () => box.slice(), restore, wasDragged: () => dragged };
+  function center(x, y) {
+    box = [x - box[2] / 2, y - box[3] / 2, box[2], box[3]];
+    updateView();
+  }
+  return { fit, zoom, reveal, updateView, keydown, resize, center, bounds: () => original.slice(), subscribe: listener => listeners.add(listener), snapshot: () => box.slice(), restore, wasDragged: () => dragged };
+}
+
+function overview({ svg, byId }, view) {
+  const panel = byId('overview');
+  function element(name, attributes) {
+    const el = document.createElementNS(svg.namespaceURI, name);
+    for (const [key, value] of Object.entries(attributes)) el.setAttribute(key, value);
+    return el;
+  }
+  const map = element('svg', { id: 'overview-map', tabindex: '0', role: 'group', 'aria-label': 'Diagram overview navigation', 'aria-describedby': 'overview-help overview-status', preserveAspectRatio: 'xMidYMid meet' });
+  const shapes = element('g', { id: 'overview-shapes', 'aria-hidden': 'true' });
+  const frame = element('rect', { id: 'overview-frame', 'aria-hidden': 'true' });
+  map.append(shapes, frame); byId('overview-content').append(map); panel.hidden = false;
+  const limit = 256;
+  let dirty = true, pending = false, pointer = null;
+  panel.open = !matchMedia('(max-width: 700px)').matches;
+  function rect(el, box) {
+    for (const [i, name] of ['x', 'y', 'width', 'height'].entries()) el.setAttribute(name, box[i]);
+  }
+  function rebuild() {
+    map.setAttribute('viewBox', view.bounds().join(' '));
+    const candidates = [...svg.querySelectorAll('[data-deployment-scope] > rect, [data-terraform-address] > rect:first-of-type, [data-annotation-card] > rect:first-of-type')]
+      .filter(el => !el.closest('[data-html-filtered]'));
+    const count = Math.min(limit, candidates.length), fragment = document.createDocumentFragment();
+    const inverse = svg.getScreenCTM().inverse();
+    for (let i = 0; i < count; i++) {
+      const source = candidates[Math.floor(i * candidates.length / count)];
+      const bounds = source.getBBox(), matrix = inverse.multiply(source.getScreenCTM());
+      const points = [[bounds.x, bounds.y], [bounds.x + bounds.width, bounds.y], [bounds.x, bounds.y + bounds.height], [bounds.x + bounds.width, bounds.y + bounds.height]]
+        .map(([x, y]) => new DOMPoint(x, y).matrixTransform(matrix));
+      const xs = points.map(p => p.x), ys = points.map(p => p.y);
+      const box = [Math.min(...xs), Math.min(...ys), Math.max(...xs) - Math.min(...xs), Math.max(...ys) - Math.min(...ys)];
+      if (!box.every(Number.isFinite) || box[2] <= 0 || box[3] <= 0) continue;
+      const shape = document.createElementNS(svg.namespaceURI, 'rect');
+      rect(shape, box); fragment.append(shape);
+    }
+    shapes.replaceChildren(fragment);
+    byId('overview-status').textContent = `${shapes.childElementCount} of ${candidates.length} scope/card outlines shown${candidates.length > limit ? ' (sampled across the diagram; some omitted)' : ''}. Labels, rows and relationships are omitted. This is navigation, not a resource count.`;
+    dirty = false;
+  }
+  function schedule(changed = false) {
+    dirty ||= changed;
+    if (pending || !panel.open) return;
+    pending = true;
+    requestAnimationFrame(() => {
+      pending = false;
+      if (!panel.open) return;
+      if (dirty) rebuild();
+      rect(frame, view.snapshot());
+    });
+  }
+  view.subscribe(schedule);
+  panel.addEventListener('toggle', () => { pointer = null; schedule(); });
+  function move(event) {
+    const point = new DOMPoint(event.clientX, event.clientY).matrixTransform(map.getScreenCTM().inverse());
+    const [x, y, width, height] = view.bounds();
+    view.center(Math.max(x, Math.min(x + width, point.x)), Math.max(y, Math.min(y + height, point.y)));
+  }
+  map.addEventListener('pointerdown', event => {
+    if (event.button !== 0 || pointer !== null) return;
+    event.preventDefault(); map.focus({ preventScroll: true });
+    pointer = event.pointerId; map.setPointerCapture(pointer); move(event);
+  });
+  map.addEventListener('pointermove', event => { if (pointer === event.pointerId) move(event); });
+  map.addEventListener('pointerup', event => {
+    if (pointer !== event.pointerId) return;
+    move(event); pointer = null; map.releasePointerCapture(event.pointerId);
+  });
+  for (const name of ['pointercancel', 'lostpointercapture']) map.addEventListener(name, () => { pointer = null; });
+  map.addEventListener('keydown', event => {
+    if (event.key === 'Escape') {
+      event.preventDefault(); event.stopPropagation(); panel.open = false; panel.querySelector('summary').focus({ preventScroll: true });
+    } else view.keydown(event);
+  });
+  schedule();
 }
 
 function highlighting(svg, viewport) {
@@ -793,6 +888,28 @@ function selection(context, index, navigation, highlights, coordinator) {
     });
     copy.setAttribute('aria-label', `Copy Terraform address: ${resource.address} · ${caption.textContent}`);
     group.append(caption, field, copy, status); details.append(group);
+    const paths = resource.changed_paths;
+    const changeDetails = document.createElement('details');
+    const summary = document.createElement('summary'); summary.textContent = 'Changed attribute paths';
+    changeDetails.append(summary);
+    const message = text => { const p = document.createElement('p'); p.textContent = text; changeDetails.append(p); };
+    const list = (heading, entries) => {
+      if (!entries?.length) return;
+      const h = document.createElement('h4'); h.textContent = heading;
+      const ul = document.createElement('ul');
+      for (const entry of entries) { const li = document.createElement('li'); li.textContent = entry; ul.append(li); }
+      changeDetails.append(h, ul);
+    };
+    if (!paths?.available) message('Change information unavailable. This does not mean no attributes changed.');
+    else if (!paths.paths?.length && !paths.unknown_paths?.length && !paths.sensitive_omitted && !paths.truncated) message('No changed paths in the supplied before/after metadata.');
+    list('Changed paths', paths?.paths);
+    list('Unknown after values (change cannot be determined)', paths?.unknown_paths);
+    list('Replacement-trigger paths (separate from changed paths)', paths?.replacement_paths);
+    if (!paths?.replacement_available) message('Replacement-trigger information unavailable.');
+    if (paths?.sensitive_omitted) message('Sensitive subtrees omitted; this list is incomplete.');
+    if (paths?.truncated) message('Path or byte limit reached; this list is truncated.');
+    message('Paths only. Collection indices are positional; set elements are not matched by identity.');
+    details.append(changeDetails);
   }
   function select(id, restoring = false) {
     const el = byId(id);
@@ -1478,6 +1595,7 @@ function impact(context, index, selection, coordinator) {
   const index = metadata(svg, byId);
   const { resources, label, title, components } = index;
   const view = navigation(svg, viewport, byId);
+  overview(context, view);
   const exporter = diagramExport(context);
   const highlights = highlighting(svg, viewport);
   const adapters = lifecycle();
