@@ -168,11 +168,13 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         };
         let direct = direct_rule
             .filter(|(attribute, _)| {
-                crate::provider::aws::aliases::node_type(node) != "aws_lb_target_group"
-                    || raw
-                        .attributes
-                        .iter()
-                        .any(|r| r.target == target && r.attribute == *attribute)
+                !matches!(
+                    crate::provider::aws::aliases::node_type(node),
+                    "aws_lb_target_group" | "aws_internet_gateway"
+                ) || raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target == target && r.attribute == *attribute)
             })
             .map(|(attribute, parent)| [(attribute, parent, false, true)]);
         if let Some(attribute) = super::security_groups::attribute(&node.resource_type) {
