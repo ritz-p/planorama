@@ -1277,4 +1277,3 @@ current/deposed/deleted and filtered fallback. Credentials, personal data, SQL,
 scripts, schema contents, policy effects and runtime health remain excluded.
 This audit changes no rendering/input/geometry. Docker contract verification,
 register/tests and support-matrix checks apply; SVG/Layout quality do not.
-
