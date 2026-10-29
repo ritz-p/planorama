@@ -28,6 +28,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::privatelink::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::peering::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::vpc_gateways::label(resource, attribute) {
         return Some(label);
     }
@@ -600,6 +603,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::privatelink::bindings(raw, reference))
+        && (super::peering::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::peering::bindings(raw, reference))
         && (super::vpc_gateways::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

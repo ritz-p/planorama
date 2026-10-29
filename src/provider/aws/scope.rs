@@ -42,7 +42,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_fsx_lustre_file_system"
+            "aws_vpc_peering_connection_accepter"
+                | "aws_vpc_peering_connection_options"
+                | "aws_fsx_lustre_file_system"
                 | "aws_security_group_rule"
                 | "aws_vpc_security_group_ingress_rule"
                 | "aws_vpc_security_group_egress_rule"
@@ -183,6 +185,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_cloudwatch_log_group"
                 | "aws_launch_template"
                 | "aws_internet_gateway"
+                | "aws_vpc_peering_connection"
                 | "aws_nat_gateway"
                 | "aws_route_table"
                 | "aws_route"

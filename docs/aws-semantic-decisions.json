@@ -39490,10 +39490,10 @@
       }
     },
     "aws_vpc_peering_connection": {
-      "status": "Partial",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 903,
-      "gap": "#710 audit: Partial: incoming route next-hop supported; missing requester/accepter VPC association with independent account/region proof. Follow-up #903.",
+      "gap": "Implemented #903: explicit VPC and helper ID proof with independent requester/accepter scope. No network containment or DNS/reachability inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39507,8 +39507,8 @@
         "placement": "Supported: retain Connector / Spatial default for aws_vpc_peering_connection; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: shared cross-scope connection remains independent.",
         "network": "Intentionally unsupported: peering connects VPCs; neither contains the other.",
-        "references": "Partial: incoming route next-hop supported; missing requester/accepter VPC association with independent account/region proof.",
-        "scope": "Partial: current scope.rs has no dedicated peering region branch despite Spatial Connector classification. Add requester control scope and distinct peer_owner_id/peer_region evidence in follow-up.",
+        "references": "Supported: explicit unique managed ID references with known matching non-sensitive values and current lifecycle; requester and peer proof remain distinct. Computed accepter fields never originate VPC links.",
+        "scope": "Supported: requester control region; peer_owner_id and peer_region validate independently against peer provider evidence. Accepter peer_region is always the accepter region, following provider read orientation.",
         "summaries": "Not applicable: aws_vpc_peering_connection is reviewed for identity and navigation only. Selected vpc_id, peer_vpc_id, peer_owner_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_peering_connection.html.markdown",
         "shapes": {
@@ -39545,16 +39545,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/peering.rs",
+          "tests/unit/semantic/peering.rs"
         ],
         "managedDataContract": "Separate data lookup: cidr_block (optional/computed), id (optional/computed), owner_id (optional/computed), peer_cidr_block (optional/computed), peer_owner_id (optional/computed), peer_vpc_id (optional/computed), status (optional/computed), vpc_id (optional/computed); filter is a lookup selector, not configured managed topology. Managed ownership/containment does not transfer to data mode."
       }
     },
     "aws_vpc_peering_connection_accepter": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 903,
-      "gap": "#710 audit: Missing: accepter view of configured connection; computed requester/accepter fields must not be interpreted with requester orientation. Follow-up #903.",
+      "gap": "Implemented #903: explicit VPC and helper ID proof with independent requester/accepter scope. No network containment or DNS/reachability inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39567,10 +39569,10 @@
           "peer_region"
         ],
         "placement": "Supported: retain Association / Logical default for aws_vpc_peering_connection_accepter; basic classification is not dedicated semantics.",
-        "ownership": "Missing: verified acceptance helper for one connection; no duplicate connection identity.",
+        "ownership": "Supported: verified connection owner navigation. Embedding additionally requires matching presentation scope; cross-scope helpers stay independent Logical resources.",
         "network": "Intentionally unsupported: acceptance does not create network containment.",
-        "references": "Missing: accepter view of configured connection; computed requester/accepter fields must not be interpreted with requester orientation.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: explicit unique managed ID references with known matching non-sensitive values and current lifecycle; requester and peer proof remain distinct. Computed accepter fields never originate VPC links.",
+        "scope": "Supported: requester control region; peer_owner_id and peer_region validate independently against peer provider evidence. Accepter peer_region is always the accepter region, following provider read orientation.",
         "summaries": "Not applicable: aws_vpc_peering_connection_accepter is reviewed for identity and navigation only. Selected vpc_peering_connection_id, peer_vpc_id, vpc_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_peering_connection_accepter.html.markdown",
         "shapes": {
@@ -39611,16 +39613,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/peering.rs",
+          "tests/unit/semantic/peering.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_vpc_peering_connection_options": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 903,
-      "gap": "#710 audit: Missing: connection owner with side-specific option scope; DNS option does not identify hosted zones. Follow-up #903.",
+      "gap": "Implemented #903: explicit VPC and helper ID proof with independent requester/accepter scope. No network containment or DNS/reachability inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39631,10 +39635,10 @@
           "requester.allow_remote_vpc_dns_resolution"
         ],
         "placement": "Supported: retain Controller / Logical default for aws_vpc_peering_connection_options; basic classification is not dedicated semantics.",
-        "ownership": "Missing: connection-owned options helper.",
+        "ownership": "Supported: verified connection owner navigation. Embedding additionally requires matching presentation scope; cross-scope helpers stay independent Logical resources.",
         "network": "Intentionally unsupported: DNS settings never imply reachability or containment.",
-        "references": "Missing: connection owner with side-specific option scope; DNS option does not identify hosted zones.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: explicit unique managed ID references with known matching non-sensitive values and current lifecycle; requester and peer proof remain distinct. Computed accepter fields never originate VPC links.",
+        "scope": "Supported: requester control region; peer_owner_id and peer_region validate independently against peer provider evidence. Accepter peer_region is always the accepter region, following provider read orientation.",
         "summaries": "Not applicable: aws_vpc_peering_connection_options is reviewed for identity and navigation only. Selected vpc_peering_connection_id, accepter.allow_remote_vpc_dns_resolution, requester.allow_remote_vpc_dns_resolution fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_peering_connection_options.html.markdown",
         "shapes": {
@@ -39669,7 +39673,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/peering.rs",
+          "tests/unit/semantic/peering.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
