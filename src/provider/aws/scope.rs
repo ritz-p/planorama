@@ -74,6 +74,11 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_networkfirewall_firewall_policy"
                 | "aws_networkfirewall_rule_group"
                 | "aws_networkfirewall_logging_configuration"
+                | "aws_eip_association"
+                | "aws_egress_only_internet_gateway"
+                | "aws_eip_domain_name"
+                | "aws_internet_gateway_attachment"
+                | "aws_nat_gateway_eip_association"
         )
     {
         account = None;

@@ -171,7 +171,7 @@ test('#710 retains exactly its 83 managed types and six evidenced decisions',()=
   for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
   for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),type+': '+path);
   assert.ok(r.managedDataContract);
-  assert.match(gap,/#710 audit:|Implemented #897:/);
+  assert.match(gap,/#710 audit:|Implemented #(897|895):/);
   if(dimensions.some(k=>/Missing:|missing[: ]/i.test(r[k])))assert.ok(Number.isInteger(issue)&&issue>0,type+' missing follow-up');
  }
 });

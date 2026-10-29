@@ -15,7 +15,9 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
         | "aws_route_table"
         | "aws_security_group"
         | "aws_network_acl"
-        | "aws_lb_target_group" => Some(("vpc_id", "aws_vpc")),
+        | "aws_lb_target_group"
+        | "aws_internet_gateway"
+        | "aws_egress_only_internet_gateway" => Some(("vpc_id", "aws_vpc")),
         "aws_instance" | "aws_nat_gateway" | "aws_efs_mount_target" => {
             Some(("subnet_id", "aws_subnet"))
         }
@@ -40,10 +42,24 @@ pub(super) fn infer(raw: &Input) -> Graph {
         {
             continue;
         }
-        let Some((attribute, parent_type)) = direct_rule(&child.resource_type) else {
+        let rule = if child.resource_type == "aws_nat_gateway" && reference.attribute == "vpc_id" {
+            Some(("vpc_id", "aws_vpc"))
+        } else {
+            direct_rule(&child.resource_type)
+        };
+        let Some((attribute, parent_type)) = rule else {
             continue;
         };
         if reference.attribute != attribute {
+            continue;
+        }
+        if matches!(
+            child.resource_type.as_str(),
+            "aws_internet_gateway" | "aws_egress_only_internet_gateway" | "aws_nat_gateway"
+        ) && (!reference.service_reference_verified
+            || (reference.attribute != "subnet_id"
+                && !super::service_references::verified(raw, reference)))
+        {
             continue;
         }
         if child.resource_type == "aws_efs_mount_target" && !reference.service_reference_verified {

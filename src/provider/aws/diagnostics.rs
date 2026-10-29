@@ -158,13 +158,23 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
         {
             continue;
         }
-        let direct = super::containment::direct_rule(&node.resource_type)
+        let direct_rule = if node.resource_type == "aws_nat_gateway"
+            && raw.attributes.iter().any(|r| {
+                r.target == target && r.attribute == "vpc_id" && r.service_reference_verified
+            }) {
+            Some(("vpc_id", "aws_vpc"))
+        } else {
+            super::containment::direct_rule(&node.resource_type)
+        };
+        let direct = direct_rule
             .filter(|(attribute, _)| {
-                crate::provider::aws::aliases::node_type(node) != "aws_lb_target_group"
-                    || raw
-                        .attributes
-                        .iter()
-                        .any(|r| r.target == target && r.attribute == *attribute)
+                !matches!(
+                    crate::provider::aws::aliases::node_type(node),
+                    "aws_lb_target_group" | "aws_internet_gateway"
+                ) || raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target == target && r.attribute == *attribute)
             })
             .map(|(attribute, parent)| [(attribute, parent, false, true)]);
         if let Some(attribute) = super::security_groups::attribute(&node.resource_type) {
@@ -185,7 +195,17 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
                 }
             }
         }
-        let association_rule = if node.resource_type == "aws_route_table_association"
+        let association_rule = if node.resource_type == "aws_eip_association"
+            && raw
+                .attributes
+                .iter()
+                .any(|r| r.target == target && r.attribute == "network_interface_id")
+        {
+            Some([
+                ("allocation_id", "aws_eip"),
+                ("network_interface_id", "aws_network_interface"),
+            ])
+        } else if node.resource_type == "aws_route_table_association"
             && raw
                 .attributes
                 .iter()

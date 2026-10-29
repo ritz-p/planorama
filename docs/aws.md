@@ -2158,6 +2158,51 @@ unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
 `cargo run --locked -- tests/fixtures/fsx-lustre-plan.json --format html -o examples/fsx-lustre.html`.
 Native/Wasm parity covers the same fixture and conservative fallbacks.
 
+## VPC gateways and Elastic IPs (#895)
+
+Internet gateways and Spatial egress-only gateways use an explicit `vpc_id`
+reference to a known matching managed VPC `id` for VPC context. An internet
+gateway attachment connects independent gateway/VPC IDs; its composite helper
+ID is never an endpoint ID. Ordering dependencies do not establish attachment.
+
+EIP `instance` / `network_interface` references require a known VPC `domain`,
+exactly one known endpoint and a known absent alternative. IPAM `ipam_pool_id`
+references managed IPAM pool `id`. `public_ipv4_pool` remains unverified: the
+pinned inventory has no managed public IPv4 pool endpoint contract. Computed
+values and `amazon` literals do not establish pool relationships. EIPs never inherit subnet
+containment from an association or advertisement border group.
+
+EIP association helpers connect `allocation_id` to EIP `allocation_id` and
+exactly one instance/ENI `id`. Reverse-DNS helpers use that same allocation
+output for EIP-owned configuration. Domain/PTR strings do not identify Route53
+resources. EIP `id`, public IP and association IDs are not accepted in place of
+the selected `allocation_id` output contract.
+
+New NAT allocation references require known `availability_mode` and
+`connectivity_type`. Public zonal NAT accepts scalar `allocation_id` and the
+complete `secondary_allocation_ids` set. Public regional NAT accepts `vpc_id`
+and the complete `availability_zone_address` set, with unique known
+`availability_zone_id` values and complete nonempty `allocation_ids` sets.
+AZ-name-only or partially unknown blocks retain fallback. Regional mode rejects
+subnet, primary and secondary zonal allocation inputs. Private NAT does not gain
+EIP references. NAT/EIP association helpers require a public zonal NAT endpoint;
+their computed association IDs do not establish allocation identity. Generated
+NAT route tables and ENIs do not establish configured ownership.
+
+Legacy NAT `subnet_id` reference containment is retained for zonal or absent
+mode; explicitly regional, invalid or unknown mode cannot enter a subnet.
+This legacy path does not acquire the stricter value checks of new references.
+All new paths require complete unique explicit references, matching known
+endpoint outputs, current managed instances and compatible provider/account/
+region evidence. Unknowns, literals, data/deleted/deposed or filtered endpoints
+retain independent cards and ordinary dependencies. Helpers preserve action and
+exactly-once resource coverage when embedded or lowered.
+
+Contracts were checked against the schema/source and docs of
+[AWS Provider 6.70.0](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2),
+including optional/computed EIP fields and the nested NAT sets. See
+[regressions](../tests/unit/semantic/vpc_gateways.rs).
+
 ## Auto Scaling configuration (#810)
 
 Auto Scaling groups retain Spatial cards and existing Launch Template and scaling

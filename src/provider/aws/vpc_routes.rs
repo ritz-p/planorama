@@ -73,7 +73,7 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     })
 }
 
-fn eligible(nodes: &[TerraformEntity], r: &AttributeReference) -> bool {
+pub(super) fn eligible(nodes: &[TerraformEntity], r: &AttributeReference) -> bool {
     let current = |n: &TerraformEntity| {
         n.provider.is_aws()
             && n.mode == crate::model::EntityMode::Managed
