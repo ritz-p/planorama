@@ -37225,7 +37225,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 899,
-      "gap": "#710 audit: Partial: VPC containment and use as workload SG endpoint retained (#106/#182); missing typed inline peer-SG/prefix-list navigation. Names accepted in default VPC are not universal IDs. Follow-up #899.",
+      "gap": "Implemented #899: verified SG rule ownership, typed inline/standalone peer SG and managed prefix-list references, complete direction-specific exclusive sets with parent agreement, and additional-VPC associations. See aws.md#security-group-rule-relationships-899. Legacy and modern rule identities remain distinct; data endpoints, service-created prefix lists, CIDR interpretation and summary deferrals remain excluded. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37336,10 +37336,10 @@
       }
     },
     "aws_security_group_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 899,
-      "gap": "#710 audit: Missing: SG owner, type-gated peer SG and prefix-list references; legacy multi-CIDR rule is not alias of one-rule VPC resources. Follow-up #899.",
+      "gap": "Implemented #899: verified SG rule ownership, typed inline/standalone peer SG and managed prefix-list references, complete direction-specific exclusive sets with parent agreement, and additional-VPC associations. See aws.md#security-group-rule-relationships-899. Legacy and modern rule identities remain distinct; data endpoints, service-created prefix lists, CIDR interpretation and summary deferrals remain excluded. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39766,10 +39766,10 @@
       }
     },
     "aws_vpc_security_group_egress_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 899,
-      "gap": "#710 audit: Missing: SG owner and egress peer-SG/prefix-list navigation; CIDR selectors are not resources. Follow-up #899.",
+      "gap": "Implemented #899: verified SG rule ownership, typed inline/standalone peer SG and managed prefix-list references, complete direction-specific exclusive sets with parent agreement, and additional-VPC associations. See aws.md#security-group-rule-relationships-899. Legacy and modern rule identities remain distinct; data endpoints, service-created prefix lists, CIDR interpretation and summary deferrals remain excluded. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39832,10 +39832,10 @@
       }
     },
     "aws_vpc_security_group_ingress_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 899,
-      "gap": "#710 audit: Missing: SG owner and ingress peer-SG/prefix-list navigation; CIDR selectors are not resources. Follow-up #899.",
+      "gap": "Implemented #899: verified SG rule ownership, typed inline/standalone peer SG and managed prefix-list references, complete direction-specific exclusive sets with parent agreement, and additional-VPC associations. See aws.md#security-group-rule-relationships-899. Legacy and modern rule identities remain distinct; data endpoints, service-created prefix lists, CIDR interpretation and summary deferrals remain excluded. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39898,10 +39898,10 @@
       }
     },
     "aws_vpc_security_group_rules_exclusive": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 899,
-      "gap": "#710 audit: Missing: owner and complete direction-specific rule-ID sets with parent agreement. Empty sets are meaningful; do not duplicate existing rule ownership. Follow-up #899.",
+      "gap": "Implemented #899: verified SG rule ownership, typed inline/standalone peer SG and managed prefix-list references, complete direction-specific exclusive sets with parent agreement, and additional-VPC associations. See aws.md#security-group-rule-relationships-899. Legacy and modern rule identities remain distinct; data endpoints, service-created prefix lists, CIDR interpretation and summary deferrals remain excluded. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39960,10 +39960,10 @@
       }
     },
     "aws_vpc_security_group_vpc_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 899,
-      "gap": "#710 audit: Missing: SG/additional-VPC association; original SG ownership/VPC must remain distinct. Follow-up #899.",
+      "gap": "Implemented #899: verified SG rule ownership, typed inline/standalone peer SG and managed prefix-list references, complete direction-specific exclusive sets with parent agreement, and additional-VPC associations. See aws.md#security-group-rule-relationships-899. Legacy and modern rule identities remain distinct; data endpoints, service-created prefix lists, CIDR interpretation and summary deferrals remain excluded. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

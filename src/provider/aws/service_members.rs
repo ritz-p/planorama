@@ -15,6 +15,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_security_group_rule"
+            | "aws_vpc_security_group_ingress_rule"
+            | "aws_vpc_security_group_egress_rule" => {
+                ("security_group_id", "Security group owner", "Rules")
+            }
+            "aws_vpc_security_group_rules_exclusive" => (
+                "security_group_id",
+                "Security group owner",
+                "Rule management",
+            ),
             "aws_vpc_endpoint_policy" => ("vpc_endpoint_id", "Configured endpoint", "Policies"),
             "aws_vpc_endpoint_private_dns" => {
                 ("vpc_endpoint_id", "Configured endpoint", "Private DNS")

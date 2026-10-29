@@ -13,6 +13,10 @@ mod ebs_tests;
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
     let resource_type = super::aliases::canonical(resource_type);
     match resource_type {
+        "aws_vpc_security_group_vpc_association" => Some([
+            ("security_group_id", "aws_security_group"),
+            ("vpc_id", "aws_vpc"),
+        ]),
         "aws_vpc_endpoint_connection_accepter" => Some([
             ("vpc_endpoint_id", "aws_vpc_endpoint"),
             ("vpc_endpoint_service_id", "aws_vpc_endpoint_service"),
@@ -81,7 +85,9 @@ pub(super) fn lower(raw: &Input) -> Graph {
         {
             continue;
         }
-        let endpoints = if matches!(
+        let endpoints = if node.resource_type == "aws_vpc_security_group_vpc_association" {
+            super::security_group_rules::association(raw, index)
+        } else if matches!(
             node.resource_type.as_str(),
             "aws_vpc_endpoint_connection_accepter"
                 | "aws_vpc_endpoint_subnet_association"
