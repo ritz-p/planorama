@@ -1,6 +1,6 @@
 # AWS APIs and messaging
 
-[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## API Gateway integrations and deployment context
 
@@ -56,7 +56,7 @@ embedded. Activity resources do not imply workers or execution success.
 
 The [synthetic fixture](../tests/fixtures/step-functions-plan.json) produces
 [SVG](../examples/step-functions.svg) and [offline HTML](../examples/step-functions.html).
-Regenerate HTML with `cargo run --locked -- tests/fixtures/step-functions-plan.json --format html -o examples/step-functions.html` in Docker.
+
 The AWS Provider 5.100.0 [State Machine](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/sfn_state_machine)
 and [Activity](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/sfn_activity)
 schema defines regional resources and a scalar `role_arn`; ASL is an opaque string.
@@ -166,8 +166,7 @@ The pinned Provider 6.70.0 contracts and collection shapes are recorded in the
 [#721 audit](aws-semantic-history.md#streaming-messaging-and-workflows-review-721).
 The [fixture](../tests/fixtures/msk-plan.json) and [SVG](../examples/msk.svg)
 show separate client/cluster VPCs, a multi-subnet cluster, Serverless, shared
-configuration and both SCRAM association forms. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/msk-plan.json --format html -o examples/msk.html`.
+configuration and both SCRAM association forms.
 
 ## Scheduler and Pipes configuration (#692)
 
@@ -213,8 +212,7 @@ Contracts were checked against AWS Provider 6.70.0 at
 and [pipe](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/pipes_pipe.html.markdown).
 The [fixture](../tests/fixtures/eventbridge-configuration-plan.json) and
 [SVG](../examples/eventbridge-configuration.svg) include verified links and a
-literal universal-target fallback. Regenerate its HTML in Docker with
-`cargo run --locked -- tests/fixtures/eventbridge-configuration-plan.json --format html -o examples/eventbridge-configuration.html`.
+literal universal-target fallback.
 
 ## SNS subscriptions
 

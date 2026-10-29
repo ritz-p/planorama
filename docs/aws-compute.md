@@ -1,6 +1,6 @@
 # AWS Compute and containers
 
-[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## Batch compute environments and queues (#700)
 
@@ -82,22 +82,7 @@ Official contracts: [Alias](https://github.com/hashicorp/terraform-provider-aws/
 [Layer permission](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/lambda_layer_version_permission.html.markdown),
 [Function URL](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/lambda_function_url.html.markdown).
 The synthetic [SVG](../examples/lambda.svg) / [HTML](../examples/lambda.html) includes
-two Layers, two Aliases and a literal-only URL fallback. Generate HTML in Docker with
-`cargo run --locked -- tests/fixtures/lambda-plan.json --format html -o examples/lambda.html`.
-
-AWS rules live in `src/provider/aws`. Dispatch uses provider source identity and
-exact resource types; a custom provider's lookalike type does not acquire AWS
-semantics. Provider source and configuration identity are described in [models](models.md).
-The six [verified `aws_alb*` resource aliases](aws-inventory.md#verified-resource-aliases)
-reuse their canonical `aws_lb*` rules, subject to the documented mode limits,
-while preserving their original Terraform identities.
-The generated [resource support matrix](resource-support.md) lists exact-type
-roles, display modes, service classification and scope eligibility. This document defines the
-conditional relationship and placement proofs behind that catalog.
-
-The [AWS managed inventory](aws-inventory.md) supplies basic capabilities for all
-registered Provider 6.70.0 managed types. These defaults add no dedicated
-relationships or containment. Existing rules below retain their evidence contracts.
+two Layers, two Aliases and a literal-only URL fallback.
 
 ## App Runner networking (#694)
 
@@ -272,8 +257,6 @@ Contracts use pinned AWS Provider 6.70.0
 [fixture](../tests/fixtures/autoscaling-network-plan.json),
 [SVG](../examples/autoscaling-network.svg) and
 [HTML](../examples/autoscaling-network.html) cover the configuration paths.
-Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/autoscaling-network-plan.json --format html -o examples/autoscaling-network.html`.
 
 ## Workload references and monitoring
 

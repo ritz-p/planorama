@@ -1,6 +1,6 @@
 # AWS Storage and backup
 
-[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## S3 bucket configuration
 
@@ -21,8 +21,6 @@ AWS Provider 5.100.0/6.0.0 installed schemas and the
 [policy contract](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/s3_bucket_policy.html.markdown)
 define the initial scope. See the synthetic [fixture](../tests/fixtures/s3-policy-plan.json),
 [SVG](../examples/s3-policy.svg) and [offline HTML](../examples/s3-policy.html).
-Regenerate HTML with
-`docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-policy-plan.json --format html -o examples/s3-policy.html`.
 
 Bucket notifications are regional Logical Controllers. The independent
 `Notification bucket reference` uses the same Bucket identity proof.
@@ -44,8 +42,7 @@ Filter prefixes/suffixes, IDs, events and payloads are not emitted.
 The official [notification contract](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/s3_bucket_notification.html.markdown),
 synthetic [fixture](../tests/fixtures/s3-notification-plan.json),
 [SVG](../examples/s3-notification.svg) and [offline HTML](../examples/s3-notification.html)
-show two queue entries, SNS/Lambda references and a literal fallback. Regenerate HTML with
-`docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-notification-plan.json --format html -o examples/s3-notification.html`.
+show two queue entries, SNS/Lambda references and a literal fallback.
 
 Replication configurations are separate regional Logical Controllers.
 `Replication source bucket reference` proves the `bucket` reference to Bucket
@@ -68,8 +65,7 @@ expressions and the official
 [replication contract](https://github.com/hashicorp/terraform-provider-aws/blob/v6.0.0/website/docs/r/s3_bucket_replication_configuration.html.markdown).
 The synthetic [fixture](../tests/fixtures/s3-replication-plan.json),
 [SVG](../examples/s3-replication.svg) and [offline HTML](../examples/s3-replication.html)
-show two rules, regional separation and a literal fallback. Regenerate HTML with
-`docker compose exec -T dev cargo run --locked -- tests/fixtures/s3-replication-plan.json --format html -o examples/s3-replication.html`.
+show two rules, regional separation and a literal fallback.
 
 ## AWS Backup
 
@@ -100,8 +96,7 @@ Configured references do not prove execution, recoverability or retention.
 Rule contents, tag/condition values and recovery point contents are not emitted.
 The [synthetic fixture](../tests/fixtures/backup-plan.json),
 [SVG](../examples/backup.svg) and [offline HTML](../examples/backup.html) contrast
-explicit and tag-based selections. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/backup-plan.json --format html -o examples/backup.html`.
+explicit and tag-based selections.
 See the AWS Provider 5.100.0 [Vault](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/backup_vault),
 [Plan](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/backup_plan)
 and [Selection](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/backup_selection)
@@ -133,8 +128,7 @@ The AWS Provider 5.100.0 [File System](https://github.com/hashicorp/terraform-pr
 [Mount Target](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_mount_target.html.markdown)
 and [Access Point](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/efs_access_point.html.markdown)
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
-fields and reference shapes. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/efs-plan.json --format html -o examples/efs.html`.
+fields and reference shapes.
 
 ## EBS
 
@@ -155,8 +149,7 @@ See the synthetic [SVG](../examples/ebs.svg) / [HTML](../examples/ebs.html).
 The AWS Provider 5.100.0 [Volume](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ebs_volume.html.markdown)
 and [Attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/volume_attachment.html.markdown)
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
-fields and reference shapes. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/ebs-plan.json --format html -o examples/ebs.html`.
+fields and reference shapes.
 
 ## FSx Lustre networking and encryption (#702)
 
@@ -192,6 +185,5 @@ and schema distinguish the subnet list, SG set and persistent-only KMS ARN.
 [Tests](../tests/unit/semantic/fsx.rs) and the synthetic
 [fixture](../tests/fixtures/fsx-lustre-plan.json) cover verified, literal and
 unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
-[HTML](../examples/fsx-lustre.html) examples. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/fsx-lustre-plan.json --format html -o examples/fsx-lustre.html`.
+[HTML](../examples/fsx-lustre.html) examples.
 Native/Wasm parity covers the same fixture and conservative fallbacks.

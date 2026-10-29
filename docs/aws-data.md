@@ -1,6 +1,6 @@
 # AWS Databases and analytics
 
-[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## OpenSearch Serverless (#696)
 
@@ -67,8 +67,6 @@ Checked against Terraform 1.9.8 plan output and AWS Provider 5.100.0's schema an
 The synthetic [fixture](../tests/fixtures/rds-global-plan.json),
 [SVG](../examples/rds-global.svg) and [offline HTML](../examples/rds-global.html)
 show two regional clusters, embedded instances and an unresolved literal ID.
-Regenerate HTML with
-`docker compose exec -T dev cargo run --locked -- tests/fixtures/rds-global-plan.json --format html -o examples/rds-global.html`.
 
 ## Redshift provisioned clusters
 
@@ -93,7 +91,7 @@ each resource's identity and coverage.
 
 See the [synthetic fixture](../tests/fixtures/redshift-plan.json),
 [SVG](../examples/redshift.svg) and [offline HTML](../examples/redshift.html).
-Regenerate HTML in Docker with `cargo run --locked -- tests/fixtures/redshift-plan.json --format html -o examples/redshift.html`.
+
 The AWS 5.100.0 schema and official [Cluster](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_cluster),
 [Subnet Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_subnet_group)
 and [Parameter Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_parameter_group)
@@ -132,8 +130,7 @@ nested configuration and map-expression shapes. The synthetic
 [fixture](../tests/fixtures/athena-plan.json), [SVG](../examples/athena.svg) and
 [offline HTML](../examples/athena.html) contrast explicit S3/KMS references with
 literal-only settings, multiple indexed instances and independent Athena/Glue
-catalogs. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/athena-plan.json --format html -o examples/athena.html`.
+catalogs.
 
 ## Glue Catalog, Crawler and Job
 
@@ -177,8 +174,7 @@ definitions were checked with Terraform 1.9.8 and its
 [plan JSON representation](https://developer.hashicorp.com/terraform/internals/json-format).
 The synthetic [fixture](../tests/fixtures/glue-plan.json), [SVG](../examples/glue.svg)
 and [offline HTML](../examples/glue.html) contrast explicit configuration with
-literal-only values. Regenerate HTML inside Docker with
-`cargo run --locked -- tests/fixtures/glue-plan.json --format html -o examples/glue.html`.
+literal-only values.
 
 ## Aurora cluster instances
 
@@ -354,9 +350,7 @@ Contracts were checked against the pinned Provider 6.70.0
 and [subnet group](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/docdb_subnet_group.html.markdown)
 docs and schema. Network collections are sets; instance subnet-group output is
 computed. See [fixture](../tests/fixtures/docdb-plan.json), [SVG](../examples/docdb.svg)
-and [HTML](../examples/docdb.html). Regenerate HTML with
-`cargo run --locked -- tests/fixtures/docdb-plan.json --format html -o examples/docdb.html`
-inside Docker. Native/Wasm parity includes both output formats.
+and [HTML](../examples/docdb.html). Native/Wasm parity includes both output formats.
 
 ## Neptune (#698)
 
@@ -383,8 +377,7 @@ Analytics, snapshots, global databases, parameters and encryption summaries rema
 outside this scope. Credentials, graph data and endpoint strings are not rendered.
 
 See [fixture](../tests/fixtures/neptune-plan.json), [SVG](../examples/neptune.svg)
-and [HTML](../examples/neptune.html). Regenerate HTML inside Docker with
-`cargo run --locked -- tests/fixtures/neptune-plan.json --format html -o examples/neptune.html`.
+and [HTML](../examples/neptune.html).
 Native/Wasm parity covers SVG and HTML; lifecycle, named-state and filtering
 boundaries follow the DocumentDB contract.
 
@@ -430,8 +423,6 @@ Schema confirms subnet/SG sets; subnet group source assigns Terraform `id` from 
 configured identifier. Instance and endpoint ARN output names differ from generic
 `arn`. See [fixture](../tests/fixtures/dms-plan.json), [SVG](../examples/dms.svg)
 and [HTML](../examples/dms.html), with positive/negative native/Wasm parity tests.
-Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/dms-plan.json --format html -o examples/dms.html`.
 
 ## Redshift Serverless (#695)
 
@@ -470,8 +461,7 @@ contracts and schema were checked: all network collections are sets; endpoint SG
 input is `vpc_security_group_ids`, while workgroup uses `security_group_ids`.
 See [fixture](../tests/fixtures/redshift-serverless-plan.json),
 [SVG](../examples/redshift-serverless.svg) and [HTML](../examples/redshift-serverless.html).
-Regenerate HTML inside Docker with
-`cargo run --locked -- tests/fixtures/redshift-serverless-plan.json --format html -o examples/redshift-serverless.html`.
+
 Both output formats are covered by native/Wasm parity.
 
 ## SageMaker inference configuration (#701)
@@ -517,5 +507,3 @@ Pinned Provider 6.70.0 contracts:
 [fixture](../tests/fixtures/sagemaker-plan.json) cover positive/negative evidence;
 native/Wasm parity covers SVG/HTML and incomplete model/network collections.
 Examples: [SVG](../examples/sagemaker.svg), [HTML](../examples/sagemaker.html).
-Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/sagemaker-plan.json --format html -o examples/sagemaker.html`.

@@ -11,7 +11,9 @@ Each type's [review record](aws-semantic-decisions.json) separates placement,
 ownership, network, references, scope and safe summaries, recording inspected
 fields, collection ancestry, input/output flags, managed/data differences,
 official documentation and applicable implementation/test paths.
-The runtime matrix and inventory tests prove basic defaults, not dedicated semantics.
+The [runtime matrix](resource-support.md) and [inventory tests](../tests/unit/aws_inventory.rs)
+prove basic defaults, not dedicated semantics; shared service labels confer no
+behavioral guarantees. Generic dependencies do not prove dedicated semantics.
 Historical conclusions stay tied to each checkout; later implementations update
 current status/gap text. Source/helper issues own their listed paths; endpoint
 audits do not duplicate them or reopen completed #688–#702 scopes.
@@ -47,8 +49,7 @@ Reviewed planorama commit: `f7f5d8bfb39ded416c786a21037935232b8f1eda`.
 `globalaccelerator`, `route53`, `route53domains`, `route53profiles`, `route53resolver`.
 
 Additional evidence: [components](../src/provider/aws/components.rs), [CloudFront](../src/provider/aws/cloudfront.rs), [WAF](../src/provider/aws/waf.rs).
-Per-type test paths establish the applicable bounded behavior; inventory and
-support-matrix tests establish defaults only. The support matrix already agrees
+The support matrix already agrees
 with runtime defaults, so no source classification or matrix correction is needed.
 
 Preserve #489 Route 53 zone and paired alias references, #510 singleton CloudFront
@@ -462,10 +463,7 @@ Reviewed planorama commit: `d906716ae153a3d5bd320e64a6205f835850489b`.
 `vpclattice`, `networkflowmonitor`, `networkmonitor`.
 
 All 68 types have basic Logical presentation at this commit.
-The [runtime matrix](resource-support.md) and
-[inventory tests](../tests/unit/aws_inventory.rs) verify basic support; there
-are no dedicated behavioral tests to borrow from adjacent services. Generic
-Terraform dependencies do not establish dedicated service semantics.
+No dedicated behavioral tests exist for these types.
 
 Existing #693 owns VPC Firewall placement, policy/rule-group references and logging
 ownership/destinations. Other actionable gaps are #786 (Direct Connect), #787
@@ -525,8 +523,6 @@ Reviewed planorama commit: `09b71007288ddc6a7d8662e750acc39278f64ba6`.
 65 managed types: `opensearch`, `opensearchserverless`, `elasticsearch`,
 `cloudsearch`, `osis`, `kendra`, `qbusiness`, `quicksight`, `finspace`.
 
-The [runtime matrix](resource-support.md) and
-[inventory tests](../tests/unit/aws_inventory.rs) establish basic behavior.
 OpenSearch domain retains its Spatial card, common-VPC subnet placement #181
 and SG connections #182, covered by
 [VPC tests](../tests/unit/semantic/vpc_scope.rs) and
@@ -847,8 +843,6 @@ Reviewed planorama commit: `514c17316e596fbbd0a8c7aa4942a91e3462e09d`.
 `backup`, `dlm`, `rbin`, `drs`.
 
 Additional evidence: [EFS ownership](../src/provider/aws/efs.rs), [Backup selection](../src/provider/aws/backup.rs).
-The [runtime matrix](resource-support.md) and
-[inventory tests](../tests/unit/aws_inventory.rs) establish basic defaults.
 EFS #497/#548 is covered by [EFS tests](../tests/unit/semantic/efs.rs) and
 [reference tests](../tests/unit/semantic/service_references.rs); Backup #508 by
 [Backup tests](../tests/unit/semantic/backup.rs). Other types cannot borrow those
@@ -990,8 +984,6 @@ named-state evidence. Current/deposed/deleted/filtered identities stay conservat
 Credentials, query/script/schema bodies, arbitrary maps, policy interpretation and
 runtime reachability/health are excluded. Safe capacity summaries are deferred until
 configured-versus-observed and unknown-value display contracts are selected.
-
-Verification follows the shared audit method.
 
 ## Analytics and data governance review, batch 2 (#723)
 

@@ -29,7 +29,7 @@
 | 全文書参照・言語 | 関連文書確認を基本とし、全体監査は必要時に目的を明示。Issue・PR・報告は日本語を基本とし、原文の識別子等と利用者指定を尊重 |
 | CI・監査の履歴分離 | 採用。現行判断・復旧・baseline 理由を入口に残し、比較条件・対象 commit・証拠・未対応範囲・再検討条件は履歴へ |
 | AWS・Browser の分割 | AWS は共通契約と6サービス群、Browser は利用/API・組み込み・開発検証へ。UI と API の共通 options は重複定義しない |
-| 重複本文の集約 | 監査の固定版・検証・参照先・証拠条件、CI の cache/dispatch、Browser の lifecycle を共通化。AWS の表示条件は短文化し、サービス固有の型・値・scope・lifecycle・例外を保持 |
+| 重複本文の集約 | 監査の固定版・検証・参照先・証拠条件、CI の cache/dispatch、Browser の lifecycle を共通化。AWS の表示条件・30例の HTML 生成手順を短文化し、サービス固有の型・値・scope・lifecycle・例外を保持 |
 | 証拠・旧リンク・生成表の削除 | 不採用。既存見出しはリンク付き見出しで維持。証拠本文を外部リンクだけにせず、生成表は元の正本・検証を維持。重複する目次と作業説明は削減 |
 
 ### 規模と検証
@@ -38,13 +38,13 @@
 
 | 文書群 | 作業開始前 | 初回 PR | 最終 |
 | --- | ---: | ---: | ---: |
-| AWS | 161,362 | 174,050 | 163,802 |
+| AWS | 161,362 | 174,050 | 160,460 |
 | CI | 61,204 | 63,184 | 54,882 |
 | Browser | 42,092 | 43,755 | 38,460 |
-| Audit | 96,707 | 101,318 | 85,399 |
-| Guide | 0 | 4,961 | 3,291 |
-| 合計 | 361,365 | 387,268 | 345,834 |
+| Audit | 96,707 | 101,318 | 84,944 |
+| Guide | 0 | 4,961 | 3,306 |
+| 合計 | 361,365 | 387,268 | 342,052 |
 
-56文書の内部リンク1,377件・旧見出し・外部参照の保持と変更段落を確認しました。Docker 内で `sh scripts/update-resource-support.sh --check`、`node scripts/aws-semantic-audit.cjs --check`、audit/inventory の既存テストを実行し、計32件成功。`git diff --check` も成功しています。Markdown のみの変更なので SVG 再生成・Layout quality は対象外です。
+56文書の内部リンク1,379件・旧見出し・外部参照の保持と変更段落を確認しました。Docker 内で `sh scripts/update-resource-support.sh --check`、`node scripts/aws-semantic-audit.cjs --check`、audit/inventory の既存テストを実行し、計32件成功。`git diff --check` も成功しています。Markdown のみの変更なので SVG 再生成・Layout quality は対象外です。
 
 CI の比較 PR #408・#410・#411・#675・#886、run `38224372411`・`38225451104`、旧文書 commit `8fb4aef052f7d941b0a5da6b08a4fc610661a504`、baseline 判断の PR #661・#671・#672・#663 は2026-10-29に取得確認済みです。判断条件はリンク先の保存期限に依存せず本文にも残しています。

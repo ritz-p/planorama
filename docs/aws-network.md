@@ -1,6 +1,6 @@
 # AWS Network and edge
 
-[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## Network Firewall (#693)
 
@@ -90,8 +90,6 @@ Checked against AWS Provider 5.100.0 and 6.0.0 schemas and the official
 The synthetic [fixture](../tests/fixtures/cloudfront-plan.json),
 [SVG](../examples/cloudfront.svg) and [offline HTML](../examples/cloudfront.html)
 show S3/ALB origins, OAC/OAI, policies and an unresolved custom origin.
-Regenerate HTML with
-`docker compose exec -T dev cargo run --locked -- tests/fixtures/cloudfront-plan.json --format html -o examples/cloudfront.html`.
 
 ## WAFv2
 
@@ -125,8 +123,7 @@ Verified against AWS Provider 5.100.0/6.0.0 schemas and the official
 and [association](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/wafv2_web_acl_association.html.markdown)
 contracts. The synthetic [fixture](../tests/fixtures/waf-plan.json),
 [SVG](../examples/waf.svg) and [offline HTML](../examples/waf.html) cover both scopes,
-ALB/stage associations and unresolved configuration. Regenerate HTML with
-`docker compose exec -T dev cargo run --locked -- tests/fixtures/waf-plan.json --format html -o examples/waf.html`.
+ALB/stage associations and unresolved configuration.
 
 ## Route 53
 

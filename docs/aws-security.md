@@ -1,6 +1,6 @@
 # AWS Identity and security
 
-[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。
+[AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## AWS Private CA
 
@@ -57,8 +57,7 @@ The AWS Provider 5.100.0
 [certificate](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate.html.markdown)
 and [installation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acmpca_certificate_authority_certificate.html.markdown)
 contracts were checked against the installed schema and a Terraform 1.9.8
-offline plan. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/private-ca-plan.json --format html -o examples/private-ca.html`.
+offline plan.
 
 ## Cognito
 
@@ -110,7 +109,7 @@ emitted. References do not claim logging permissions or organization membership.
 Unsupported configurations retain ordinary Terraform references and fallback.
 The [synthetic fixture](../tests/fixtures/cloudtrail-plan.json) produces
 [SVG](../examples/cloudtrail.svg) and [offline HTML](../examples/cloudtrail.html).
-Regenerate HTML in Docker with `cargo run --locked -- tests/fixtures/cloudtrail-plan.json --format html -o examples/cloudtrail.html`.
+
 The AWS Provider 5.100.0 schema and [official trail contract](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/cloudtrail)
 define the home-region requirement and scalar destination references.
 
@@ -190,8 +189,6 @@ installed schemas and Terraform 1.9.8 offline plan were checked for the initial
 scope. The synthetic [fixture](../tests/fixtures/identity-providers-plan.json),
 [SVG](../examples/identity-providers.svg) and [offline HTML](../examples/identity-providers.html)
 contrast explicit OIDC/SAML references with literal policy and EKS issuer matches.
-Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/identity-providers-plan.json --format html -o examples/identity-providers.html`.
 
 ## SSM Parameter Store
 
@@ -207,8 +204,7 @@ Automation remain outside this scope. See [SVG](../examples/ssm.svg) /
 [HTML](../examples/ssm.html) and the checked AWS Provider 5.100.0
 [Parameter schema](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ssm_parameter.html.markdown).
 The installed schema and Terraform 1.9.8 fixture plan confirmed the value fields
-and ECS reference shape. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/ssm-plan.json --format html -o examples/ssm.html`.
+and ECS reference shape.
 
 ## Secrets Manager
 
@@ -240,8 +236,6 @@ No arbitrary JSON/definition parsing or expression evaluation is added. The
 [Version](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/secretsmanager_secret_version.html.markdown)
 and [ECS](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/ecs_task_definition.html.markdown)
 contracts were checked against the installed schema and a real fixture plan.
-Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/secrets-manager-plan.json --format html -o examples/secrets-manager.html`.
 
 ## KMS
 
@@ -272,8 +266,7 @@ See [SVG](../examples/kms.svg) / [HTML](../examples/kms.html). The allowlist fol
 AWS Provider 5.100.0 [Key](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kms_key.html.markdown),
 [Alias](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/kms_alias.html.markdown)
 and [S3 encryption](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/s3_bucket_server_side_encryption_configuration.html.markdown)
-schemas, checked with Terraform 1.9.8. Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/kms-plan.json --format html -o examples/kms.html`.
+schemas, checked with Terraform 1.9.8.
 
 ## ACM
 
@@ -291,8 +284,6 @@ See [SVG](../examples/acm.svg) / [offline HTML](../examples/acm.html) and the
 AWS Provider 5.100.0 [certificate](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acm_certificate.html.markdown)
 and [validation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acm_certificate_validation.html.markdown)
 contracts, checked against the installed schema and a Terraform 1.9.8 plan.
-Regenerate HTML in Docker with
-`cargo run --locked -- tests/fixtures/acm-plan.json --format html -o examples/acm.html`.
 
 ## Organizations hierarchy
 

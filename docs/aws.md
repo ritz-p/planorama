@@ -14,7 +14,30 @@ AWS の共通契約とサービス別の証拠条件の正本です。型ごと�
 - [APIs and messaging](aws-messaging.md)
 - [DynamoDB](dynamodb.md)、[Route](routes.md)、[暗号化表示](encryption.md) は既存の専用契約を参照。
 
+## HTML example generation
+
+For the following examples, use the example basename as `name`; inputs are
+`tests/fixtures/<name>-plan.json` and outputs `examples/<name>.html`. Run from the
+repository root with the development container running:
+
+```sh
+name=lambda
+docker compose exec -T dev cargo run --locked -- "tests/fixtures/$name-plan.json" --format html -o "examples/$name.html"
+```
+
+`acm`, `athena`, `autoscaling-network`, `backup`, `cloudfront`, `cloudtrail`, `dms`, `docdb`, `ebs`, `efs`, `eventbridge-configuration`, `fsx-lustre`, `glue`, `identity-providers`, `kms`, `lambda`, `msk`, `neptune`, `private-ca`, `rds-global`, `redshift`, `redshift-serverless`, `s3-notification`, `s3-policy`, `s3-replication`, `sagemaker`, `secrets-manager`, `ssm`, `step-functions`, `waf`.
+
+For SVG generation and prerequisites, see [CONTRIBUTING](../CONTRIBUTING.md).
+
 ## Resource roles and data
+
+AWS rules in `src/provider/aws` dispatch by provider source and exact type; custom
+provider lookalikes receive no AWS semantics. See [provider identity](models.md).
+The six [verified `aws_alb*` aliases](aws-inventory.md#verified-resource-aliases)
+reuse canonical `aws_lb*` rules within their mode limits, retaining Terraform identities.
+The [managed inventory](aws-inventory.md) covers registered Provider 6.70.0 managed
+types with basic defaults only; dedicated relationships and containment require
+the service-specific proofs below.
 
 VPC/Subnet are Spatial `Container` resources. Other types use dedicated
 classification or the [basic capability table](aws-inventory.md); unknown types
