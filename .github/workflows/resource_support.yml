@@ -16,7 +16,6 @@ on:
       - 'tests/support/verify-aws-semantic-contracts.cjs'
       - 'docs/aws-semantic-*'
       - 'scripts/prepare-aws-inventory.sh'
-      - 'docs/resource-support.md'
       - 'scripts/update-resource-support.sh'
       - 'Cargo.*'
       - 'build.rs'
@@ -47,8 +46,8 @@ jobs:
           prefix-key: v1-rust-dependencies
           shared-key: ${{ hashFiles('build.rs', 'assets/**') }}-tests
           cache-workspace-crates: 'false'
-      - name: Check generated resource support
-        run: sh scripts/update-resource-support.sh --check
+      - name: Check resource type discovery
+        run: cargo test --locked --lib provider::aws::resource_support::discovers_type_literals_in_rust_expressions_and_macros_only -- --exact
       - name: Check managed inventory and extractor
         run: |
           cargo test --locked --lib provider::aws::basic

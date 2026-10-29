@@ -2,7 +2,7 @@
 
 利用者向けの導入・生成手順は [README](README.md)、開発ルールは [AGENTS.md](AGENTS.md) を参照してください。
 CI の起動条件・公開チェック・復旧手順の正本は [docs/ci.md](docs/ci.md) です。
-作業ごとの参照範囲と生成文書の正本は [文書案内](docs/README.md) から選べます。
+必要な仕様は対象語で検索するか、[文書案内](docs/README.md) から選べます。
 
 ## 開発環境
 
@@ -16,19 +16,11 @@ docker compose exec -T dev cargo run --locked -- examples/plan.json -o output/di
 docker compose exec -T dev cargo run --locked -- --help
 ```
 
-開発ツールチェーンは Rust 1.85.1、MSRV は 1.85.0 です。Dockerfile と `rust-toolchain.toml` を揃え、依存関係の更新時は `Cargo.lock` もコミットします。
-ソースをコンテナへバインドマウントし、Cargo registry/git とビルド成果物は named volume に保存します。
-`docker compose stop dev` / `docker compose start dev` で停止・再開し、Dockerfile の変更後は `docker compose up -d --build dev` で再作成します。
-
-開発イメージには Terraform 1.9.8、SVG 描画確認用の `rsvg-convert` と DejaVu フォント、HTML 操作テスト用の Chromium・ChromeDriver・Node.js を含みます。
-Wasm 用には `wasm32-unknown-unknown` と wasm-bindgen-cli 0.2.100 を含みます。[ビルド・ブラウザ検証](docs/browser.md)では同じ Docker 環境を使用します。
+ツール・依存の固定版は Dockerfile、rust-toolchain.toml、Cargo.lock を正本とします。
+Dockerfile 変更後は上記の build を再実行し、依存更新時は lockfile もコミットします。
 実環境の plan/state や認証情報をコミットしないでください。
-
-Linux x86_64 の Compose は mold 2.40.4 と sccache 0.10.0 を使います。
-compiler cache は 2 GiB 上限の named volume に保存し、ローカルの incremental compilation は Cargo の既定を維持します。
-統計は `docker compose exec -T dev sccache --show-stats`、無効化は
-`docker compose exec -T -e RUSTC_WRAPPER= dev cargo build --locked` です。
-linker の切替・Docker 外での導入・cache 削除・測定条件は [build performance](docs/build-performance.md) を参照してください。
+キャッシュの診断・リセットは [build performance](docs/build-performance.md)、
+Wasm のビルドは [browser development](docs/browser-development.md) を参照してください。
 
 ## Build provenance
 
@@ -79,23 +71,22 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 
 CI は [standard / large の2 suite](docs/ci.md#parallel-rust-test-suites) の成功を `Tests` に集約します。
 通常実行で ignore する大型回帰は [Routing regressions](docs/ci.md#deferred-routing-regressions-253) を参照してください。
-`cargo test` を継続する理由と nextest の比較は [計測結果](docs/ci-history.md#test-runner-evaluation-254) にあります。
 
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
 [Layout stability](docs/layout-stability.md) を参照してください。
 
 ## リソース対応一覧の更新
 
-provider の型定義・分類・表示・scope・サービス名を変更したら、Docker 内で次を実行します。
+型ごとの実行時の分類を調べる場合、Docker 内で必要な prefix を指定します。
 
 ```sh
-docker compose exec -T dev sh scripts/update-resource-support.sh
-docker compose exec -T dev sh scripts/update-resource-support.sh --check
+docker compose exec -T dev sh scripts/update-resource-support.sh aws_lambda_
 ```
 
-生成先は [docs/resource-support.md](docs/resource-support.md) です。型名は provider と remote-output 解決の Rust ソースの文字列リテラルから収集し、分類・表示・scope・サービス名は実装関数で評価します。確認済み resource alias の関係ルールは canonical 型の参照先を使います。新しい定義形式や provider を追加する場合は `tests/unit/resource_support.rs` の収集処理も更新してください。関係ルールのリンクは条件付き処理の参照先であり、無条件の対応保証ではありません。
-AWS managed resource の正本は固定 Provider inventory です。全型との差分、基本分類表の追加方法、schema・登録コード・公式 docs の再採取手順は [AWS inventory](docs/aws-inventory.md) を参照してください。基本表示の baseline と保存済み plan の provider evidence の検証版は別の契約です。
-CI の `Resource support` は一覧・[semantic gap 台帳](docs/aws-semantic-audit.md)の一致検証と inventory 抽出・差分比較のオフラインテストを実行します。固定版どうしの取得・比較は [baseline 比較手順](docs/aws-inventory.md#compare-candidate-baselines) を参照してください。図を生成しないため、この一覧や比較ツールだけの更新に SVG 再生成や Layout quality は不要です。
+型ごとの確認は [必要な範囲の生成](docs/resource-support.md)、固定 Provider の更新は
+[AWS inventory](docs/aws-inventory.md)、監査データは [対象型の問い合わせ](docs/aws-semantic-audit.md) を使います。
+生成した表は output 配下の一時ファイルで、コミットや一致チェックは不要です。
+基本分類の検証は `cargo test --locked --lib provider::aws::basic` で実行します。
 
 ## SVG の更新
 

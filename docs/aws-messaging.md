@@ -163,7 +163,7 @@ topic contents, replication, CA/log/encryption extensions and runtime health are
 outside this scope. No new arbitrary value summaries are emitted.
 
 The pinned Provider 6.70.0 contracts and collection shapes are recorded in the
-[#721 audit](aws-semantic-history.md#streaming-messaging-and-workflows-review-721).
+[type-specific review data](aws-semantic-audit.md).
 The [fixture](../tests/fixtures/msk-plan.json) and [SVG](../examples/msk.svg)
 show separate client/cluster VPCs, a multi-subnet cluster, Serverless, shared
 configuration and both SCRAM association forms.

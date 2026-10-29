@@ -2,7 +2,8 @@
 const test=require('node:test');
 const assert=require('node:assert/strict');
 const fs=require('node:fs');
-const {extract,buildEvidence,render}=require('../../scripts/aws-semantic-audit.cjs');
+const {spawnSync}=require('node:child_process');
+const {extract,buildEvidence,validate,query}=require('../../scripts/aws-semantic-audit.cjs');
 const read=p=>JSON.parse(fs.readFileSync(p));
 const ec2VpcExpected=[
   "aws_default_network_acl",
@@ -486,16 +487,36 @@ test('application audit preserves qualifiers, API families and nested attribute 
 test('untrusted schema bytes cannot replace pinned evidence',()=>{
  assert.throws(()=>buildEvidence(Buffer.from('{}')),/SHA-256/);
 });
-test('register covers every exact managed type once and rejects incomplete evidence',()=>{
+test('queries select exact types or services and validate the full evidence inventory',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const evidence=read('docs/aws-semantic-evidence.json');
- const output=render(evidence);
- const names=[...output.matchAll(/^\| \[`(aws_[^`]+)`\]/gm)].map(m=>m[1]);
- assert.deepEqual(names.sort(),inventory.resources.map(r=>r.type).sort());
- assert.equal(output,fs.readFileSync('docs/aws-semantic-gaps.md','utf8'));
+ validate(evidence);
+ assert.deepEqual(query(evidence,'kafka').map(r=>r.type),inventory.resources.filter(r=>r.service==='kafka').map(r=>r.type));
+ const rows=query(evidence,'aws_msk_cluster');
+ assert.equal(rows.length,1);
+ assert.equal(rows[0].type,'aws_msk_cluster');
+ assert.deepEqual(rows[0].candidates,evidence.candidates.aws_msk_cluster);
+ assert.deepEqual(rows[0].decision,read('docs/aws-semantic-decisions.json').types.aws_msk_cluster);
+ assert.throws(()=>query(evidence,'aws_msk_'),/Unknown managed type/);
  delete evidence.candidates.aws_msk_cluster;
- assert.throws(()=>render(evidence),/inventory mismatch/);
+ assert.throws(()=>validate(evidence),/inventory mismatch/);
 });
+
+test('CLI checks without output and returns bounded JSON queries instead of Markdown',()=>{
+ const run=(...args)=>spawnSync(process.execPath,['scripts/aws-semantic-audit.cjs',...args],{encoding:'utf8'});
+ const checked=run('--check');
+ assert.equal(checked.status,0,checked.stderr);
+ assert.equal(checked.stdout,'');
+ const selected=run('aws_msk_cluster');
+ assert.equal(selected.status,0,selected.stderr);
+ assert.deepEqual(JSON.parse(selected.stdout).map(r=>r.type),['aws_msk_cluster']);
+ for(const args of [[],['--check','unexpected'],['--schema'],['aws_missing_type']]) {
+  const invalid=run(...args);
+  assert.notEqual(invalid.status,0);
+  assert.equal(invalid.stdout,'');
+ }
+});
+
 test('representative evidence includes nested network paths without asserting implementation',()=>{
  const {candidates}=read('docs/aws-semantic-evidence.json');
  assert.ok(candidates.aws_msk_cluster.includes('broker_node_group_info.client_subnets'));

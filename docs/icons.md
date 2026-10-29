@@ -28,31 +28,7 @@ Terraform artwork, including the original Planorama state-file SVG, and its
 associated source licenses and notices are no longer bundled.
 Cargo dependency notices and the repository licenses remain in release packages.
 
-## Existing distributions and site follow-up
-
-On 2026-10-25, GitHub Releases for ritz-p/planorama contained no releases
-(`gh release list --limit 100`). Branch and tag history has been rewritten to remove
-AWS and Terraform artwork and older diagrams that embedded it. GitHub-managed PR
-references, old-SHA caches and local backups can still retain previous artwork.
-The Actions artifact inventory on that date contained 557 entries: 160 native
-archives (40 per supported target), 168 layout-quality bundles, 92 SVG-example
-bundles, 27 spacing-calibration bundles and 110 routing-regression logs. Native
-archives and diagram bundles from icon-enabled revisions are retirement targets;
-routing logs require a content check before deciding whether removal is needed.
-This inventory is metadata-based, not a claim that every archive was extracted.
-Use the repository Actions artifact API to identify IDs, source runs and expiration
-before separately authorizing deletion. Old Actions artifacts and local build
-outputs must not be republished as current builds. Rebuild native binaries, Wasm
-bindings and archives from this revision, and retire any retained old build
-artifacts through a separately authorized cleanup.
-
-After a history rewrite, rebuild planorama-site using one resolved new `main`
-commit consistently for the engine, bindings, samples and build metadata. Preserve
-unrelated local work. Check the deployed asset URLs after publishing; a local
-rebuild alone does not retire an existing deployment or browser cache.
-
-User-supplied or remote artwork is a separate feature and permission question;
-it is not an alternative implementation of removal.
+Old icon-enabled artifacts must not be republished as current builds. Rebuild native/Wasm distributions from the selected revision; local rebuilding alone does not replace deployed assets.
 
 ## Resource and service labels (#641)
 
