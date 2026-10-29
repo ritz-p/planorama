@@ -35894,7 +35894,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Partial: accepted incoming aws_route.egress_only_gateway_id target in routes.rs; missing originating vpc_id context. Missing: Logical fallback hides architecture-bearing IPv6 egress gateway. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -35945,7 +35945,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Missing: discriminated configured instance/network_interface association and IPAM pool reference; optional/computed values alone are not provenance. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36013,10 +36013,10 @@
       }
     },
     "aws_eip_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Missing: allocation_id and exactly one instance/ENI endpoint; public_ip is deprecated EC2-Classic contract, not an ID. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36074,10 +36074,10 @@
       }
     },
     "aws_eip_domain_name": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Missing: allocation_id to EIP allocation_id; domain_name/PTR never reconstruct Route53 resources. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36224,7 +36224,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Partial: incoming gateway_id route target supported; missing configured vpc_id attachment. depends_on is ordering only. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36272,10 +36272,10 @@
       }
     },
     "aws_internet_gateway_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Missing: gateway/VPC association; helper id is composite VPC:gateway, not either endpoint. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36387,7 +36387,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Partial: direct subnet_id containment and incoming route next-hop supported. Missing: regional vpc_id context and zonal/regional EIP collection proof; generated route_table_id is not configured ownership. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36479,10 +36479,10 @@
       }
     },
     "aws_nat_gateway_eip_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 895,
-      "gap": "#710 audit: Missing: NAT/EIP allocation pair with mode compatibility; association_id is not allocation identity. Follow-up #895.",
+      "gap": "Implemented #895: verified gateway VPC context, discriminated EIP/pool references, allocation-output helper relationships and mode-gated zonal/regional NAT sets as applicable. Independent endpoint identity and conservative fallback remain; generated IDs and IP/DNS inference are excluded. See aws.md#vpc-gateways-and-elastic-ips-895. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

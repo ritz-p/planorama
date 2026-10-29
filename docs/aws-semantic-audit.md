@@ -239,8 +239,9 @@ Runtime evidence includes classification/basic defaults, scope and aliases,
 service members and summary allowlists. Per-type evidence paths identify the
 applicable tests; inventory and support-matrix tests establish defaults only.
 The [support matrix](resource-support.md) already agrees with runtime defaults.
-In particular, an ENI or egress-only gateway mentioned in routes.rs is an incoming
-next-hop target, not proof of originating subnet/VPC or attachment support.
+An incoming route target alone does not prove originating network context.
+#895 now adds verified gateway VPC, NAT allocation and EIP/helper contracts;
+see [the implemented scope](aws.md#vpc-gateways-and-elastic-ips-895).
 
 Preserve #19/#173 explicit containment, #106/#182 SG connections and #107/#296
 route ownership/presentation. Route ownership and standalone next hops require
@@ -268,7 +269,8 @@ Contract distinctions checked:
   `aws_nat_gateway_eip_association.association_id` is computed in
   `internal/service/ec2/vpc_nat_gateway_eip_association.go`, omitted from its docs.
   EIP `allocation_id`, association ID and deprecated EC2-Classic `public_ip`
-  are distinct contracts.
+  are distinct contracts. #895 implements these bounded references with explicit
+  mode/value proof; automatic output and IP/DNS inference remain excluded.
 - ENI `attachment` is a set with `instance`, while standalone attachment uses
   `instance_id`. ENI SG sets are not covered by the workload SG allowlist.
   Instance Connect generated ENI IDs do not prove Terraform ownership.
