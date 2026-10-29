@@ -279,6 +279,9 @@ for consumers, `aws_acm_certificate_validation.certificate_arn`, and matching kn
 planned values. They do not claim issuance, validation success or validity.
 CloudFront keeps Global scope; each certificate keeps its own regional scope.
 Certificate bodies, private keys, domains and validation DNS values are omitted.
+The [ELBv2 TLS contract](aws.md#elbv2-certificates-and-trust-stores-908) adds IAM
+server certificates, listener-certificate helpers and verify-mode trust stores;
+it preserves the ACM validation reference path and requires compatible scope.
 Route 53 is not required. The conservative [service-link proof rules](aws-network.md#route-53) also apply.
 See [SVG](../examples/acm.svg) / [offline HTML](../examples/acm.html) and the
 AWS Provider 5.100.0 [certificate](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/acm_certificate.html.markdown)

@@ -60,6 +60,10 @@ pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str);
             ("target_group_arn", "aws_lb_target_group"),
             ("target_id", "aws_instance"),
         ]),
+        "aws_lb_listener_certificate" => Some([
+            ("listener_arn", "aws_lb_listener"),
+            ("certificate_arn", "aws_acm_certificate"),
+        ]),
         "aws_vpc_endpoint_route_table_association" => Some([
             ("vpc_endpoint_id", "aws_vpc_endpoint"),
             ("route_table_id", "aws_route_table"),
@@ -87,6 +91,8 @@ pub(super) fn lower(raw: &Input) -> Graph {
         }
         let endpoints = if super::aliases::node_type(node) == "aws_lb_target_group_attachment" {
             super::elbv2::association(raw, index)
+        } else if super::aliases::node_type(node) == "aws_lb_listener_certificate" {
+            super::elbv2_tls::association(raw, index)
         } else if node.resource_type == "aws_vpc_security_group_vpc_association" {
             super::security_group_rules::association(raw, index)
         } else if matches!(
@@ -233,6 +239,9 @@ pub(super) fn endpoint_type_matches(
     actual: &str,
 ) -> bool {
     super::aliases::canonical(actual) == super::aliases::canonical(expected)
+        || (super::aliases::canonical(resource) == "aws_lb_listener_certificate"
+            && attribute == "certificate_arn"
+            && actual == "aws_iam_server_certificate")
         || (super::aliases::canonical(resource) == "aws_lb_target_group_attachment"
             && attribute == "target_id"
             && matches!(

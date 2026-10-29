@@ -43858,7 +43858,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 908,
-      "gap": "#715 audit: Partial: component membership/proximity and ACM certificate proof retained. Missing: IAM server certificate, verify-mode trust store and Cognito action references; retain direct/weighted target group proof, never interpret OIDC/JWT URLs. Follow-up #908, #909. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #908: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -43879,7 +43879,7 @@
         "placement": "Supported: retain Spatial Connector for aws_lb_listener; this presentation alone does not prove relationships.",
         "ownership": "Partial: components.rs groups listener by a unique LB reference; verified ARN-value proof gates target-group ownership. Listener remains independent Spatial, not embedded.",
         "network": "Not applicable: LB proximity preference is not containment; listeners do not inherit LB subnet membership.",
-        "references": "Partial: component membership/proximity and ACM certificate proof retained. Missing: IAM server certificate, verify-mode trust store and Cognito action references; retain direct/weighted target group proof, never interpret OIDC/JWT URLs.",
+        "references": "Partial: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_lb_listener attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener.html.markdown",
@@ -43960,7 +43960,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_tls.rs",
+          "tests/unit/semantic/elbv2_tls.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), id (optional/computed), load_balancer_arn (optional/computed), port (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -44107,10 +44109,10 @@
       }
     },
     "aws_lb_listener_certificate": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 908,
-      "gap": "#715 audit: Missing: listener ARN plus ACM/IAM server-certificate ARN association; canonical alias alone supplies no dedicated relationship. Follow-up #908. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #908: Listener ARN plus ACM/IAM server-certificate ARN proofs lower an isolated helper to an association, preserving actions and provenance; additional relationships keep its Logical card. Shared certificates remain independent; IAM stays Global without moving the regional listener.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44119,10 +44121,10 @@
           "listener_arn",
           "certificate_arn"
         ],
-        "placement": "Supported: retain Logical Controller for aws_lb_listener_certificate; this presentation alone does not prove relationships.",
+        "placement": "Supported: Association; unproven or additionally referenced helpers remain Logical with original identity and actions.",
         "ownership": "Missing: unique listener context for certificate attachment helper; shared certificate must not be embedded.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: listener ARN plus ACM/IAM server-certificate ARN association; canonical alias alone supplies no dedicated relationship.",
+        "references": "Supported: Listener ARN plus ACM/IAM server-certificate ARN proofs lower an isolated helper to an association, preserving actions and provenance; additional relationships keep its Logical card. Shared certificates remain independent; IAM stays Global without moving the regional listener.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_lb_listener_certificate attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener_certificate.html.markdown",
@@ -44154,7 +44156,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_tls.rs",
+          "tests/unit/semantic/elbv2_tls.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -44329,10 +44333,10 @@
       }
     },
     "aws_lb_trust_store": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 908,
-      "gap": "#715 audit: Missing: CA bundle bucket identity and object/version-qualified provenance; no certificate content parsing. Trust store ARN/id is distinct from CloudFront trust-store ID. Follow-up #908. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #908: ELBv2 trust-store ARN/id and explicit S3 bucket identity are verified. Object key provenance requires a matching bucket and current managed S3 object; configured object version must reference the same object version_id with matching known values. Omitted version means latest, not a pinned version. No certificate contents, revocation effectiveness, CloudFront trust-store identity, ownership or network containment inference.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44346,7 +44350,7 @@
         "placement": "Supported: retain Logical Node for aws_lb_trust_store; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: CA bundle bucket identity and object/version-qualified provenance; no certificate content parsing. Trust store ARN/id is distinct from CloudFront trust-store ID.",
+        "references": "Supported: ELBv2 trust-store ARN/id and explicit S3 bucket identity are verified. Object key provenance requires a matching bucket and current managed S3 object; configured object version must reference the same object version_id with matching known values. Omitted version means latest, not a pinned version. No certificate contents, revocation effectiveness, CloudFront trust-store identity, ownership or network containment inference.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_lb_trust_store attribute summary.",
         "officialDocumentation": "website/docs/r/lb_trust_store.html.markdown",
@@ -44386,7 +44390,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_tls.rs",
+          "tests/unit/semantic/elbv2_tls.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), id (optional/computed), name (optional/computed), region (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -44410,10 +44416,10 @@
       }
     },
     "aws_lb_trust_store_revocation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 908,
-      "gap": "#715 audit: Missing: trust store ARN and revocation source bucket/object references. revocation_id is computed; no revocation effectiveness inference. Follow-up #908. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #908: ELBv2 trust-store ARN/id and explicit S3 bucket identity are verified. Object key provenance requires a matching bucket and current managed S3 object; configured object version must reference the same object version_id with matching known values. Omitted version means latest, not a pinned version. No certificate contents, revocation effectiveness, CloudFront trust-store identity, ownership or network containment inference.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44428,7 +44434,7 @@
         "placement": "Supported: retain Logical Node for aws_lb_trust_store_revocation; this presentation alone does not prove relationships.",
         "ownership": "Missing: unique trust store ownership proof before embedding revocation helper; S3 source remains independent.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: trust store ARN and revocation source bucket/object references. revocation_id is computed; no revocation effectiveness inference.",
+        "references": "Supported: ELBv2 trust-store ARN/id and explicit S3 bucket identity are verified. Object key provenance requires a matching bucket and current managed S3 object; configured object version must reference the same object version_id with matching known values. Omitted version means latest, not a pinned version. No certificate contents, revocation effectiveness, CloudFront trust-store identity, ownership or network containment inference.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_lb_trust_store_revocation attribute summary.",
         "officialDocumentation": "website/docs/r/lb_trust_store_revocation.html.markdown",
@@ -44472,7 +44478,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_tls.rs",
+          "tests/unit/semantic/elbv2_tls.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -48261,7 +48269,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 908,
-      "gap": "#715 audit: Partial: component membership/proximity and ACM certificate proof retained. Missing: IAM server certificate, verify-mode trust store and Cognito action references; retain direct/weighted target group proof, never interpret OIDC/JWT URLs. Follow-up #908, #909. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #908: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48282,7 +48290,7 @@
         "placement": "Supported: retain Spatial Connector for aws_alb_listener; this presentation alone does not prove relationships.",
         "ownership": "Partial: components.rs groups listener by a unique LB reference; verified ARN-value proof gates target-group ownership. Listener remains independent Spatial, not embedded.",
         "network": "Not applicable: LB proximity preference is not containment; listeners do not inherit LB subnet membership.",
-        "references": "Partial: component membership/proximity and ACM certificate proof retained. Missing: IAM server certificate, verify-mode trust store and Cognito action references; retain direct/weighted target group proof, never interpret OIDC/JWT URLs.",
+        "references": "Partial: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_alb_listener attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener.html.markdown",
@@ -48363,7 +48371,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_tls.rs",
+          "tests/unit/semantic/elbv2_tls.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb_listener; preserve original identity. Registered lookup alias only for LB/listener/target group. Same-name data selectors: arn (optional/computed), id (optional/computed), load_balancer_arn (optional/computed), port (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -48398,10 +48408,10 @@
       }
     },
     "aws_alb_listener_certificate": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 908,
-      "gap": "#715 audit: Missing: listener ARN plus ACM/IAM server-certificate ARN association; canonical alias alone supplies no dedicated relationship. Follow-up #908. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #908: Listener ARN plus ACM/IAM server-certificate ARN proofs lower an isolated helper to an association, preserving actions and provenance; additional relationships keep its Logical card. Shared certificates remain independent; IAM stays Global without moving the regional listener.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48410,10 +48420,10 @@
           "listener_arn",
           "certificate_arn"
         ],
-        "placement": "Supported: retain Logical Controller for aws_alb_listener_certificate; this presentation alone does not prove relationships.",
+        "placement": "Supported: Association; unproven or additionally referenced helpers remain Logical with original identity and actions.",
         "ownership": "Missing: unique listener context for certificate attachment helper; shared certificate must not be embedded.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: listener ARN plus ACM/IAM server-certificate ARN association; canonical alias alone supplies no dedicated relationship.",
+        "references": "Supported: Listener ARN plus ACM/IAM server-certificate ARN proofs lower an isolated helper to an association, preserving actions and provenance; additional relationships keep its Logical card. Shared certificates remain independent; IAM stays Global without moving the regional listener.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_alb_listener_certificate attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener_certificate.html.markdown",
@@ -48445,7 +48455,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_tls.rs",
+          "tests/unit/semantic/elbv2_tls.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb_listener_certificate; preserve original identity. No same-name data registration; managed alias rules do not invent one. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
