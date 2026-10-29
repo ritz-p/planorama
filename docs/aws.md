@@ -1,6 +1,6 @@
 # AWS architecture relationships
 
-AWS の共通契約とサービス別の証拠条件の正本です。型ごとの現行分類は [生成一覧](resource-support.md)、対応の限界・未対応項目は [監査ガイド](aws-semantic-audit.md) を参照してください。
+AWS の共通契約とサービス別の証拠条件の正本です。型ごとの現行分類は [型ごとの対応確認](resource-support.md)、対応の限界・未対応項目は [監査ガイド](aws-semantic-audit.md) を参照してください。
 
 ## 読む範囲
 
@@ -25,9 +25,20 @@ name=lambda
 docker compose exec -T dev cargo run --locked -- "tests/fixtures/$name-plan.json" --format html -o "examples/$name.html"
 ```
 
-`acm`, `athena`, `autoscaling-network`, `backup`, `cloudfront`, `cloudtrail`, `dms`, `docdb`, `ebs`, `efs`, `eventbridge-configuration`, `fsx-lustre`, `glue`, `identity-providers`, `kms`, `lambda`, `msk`, `neptune`, `private-ca`, `rds-global`, `redshift`, `redshift-serverless`, `s3-notification`, `s3-policy`, `s3-replication`, `sagemaker`, `secrets-manager`, `ssm`, `step-functions`, `waf`.
 
 For SVG generation and prerequisites, see [CONTRIBUTING](../CONTRIBUTING.md).
+
+## Dedicated reference proof
+
+For the pinned Provider 6.70.0 contracts, dedicated configured links require
+unique explicit Terraform provenance, matching known non-sensitive values,
+correct endpoint output attributes, compatible provider/account/region and
+current endpoints. Collections must be complete and element-correlated.
+Literal equality, dynamic selection and partial or ambiguous evidence do not
+prove links. Current configuration cannot prove deleted/deposed relationships;
+filtering must not restore endpoints or borrow another state's identity.
+Service sections specify mode and scope exceptions. Legacy relationship rules
+may have narrower proof: do not generalize a new service's guarantees to them.
 
 ## Resource roles and data
 
@@ -311,125 +322,3 @@ Deleted helpers remain cards. See the [typed route contracts](routes.md#typed-ro
 `aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:
 [association.svg](../examples/association.svg), [aws-relationships.svg](../examples/aws-relationships.svg).
-
-## 旧見出しからの参照
-
-既存の外部リンク用の案内です。仕様の本文はリンク先だけで管理します。
-
-### [Batch compute environments and queues (#700)](aws-compute.md#batch-compute-environments-and-queues-700)
-
-### [OpenSearch Serverless (#696)](aws-data.md#opensearch-serverless-696)
-
-### [Network Firewall (#693)](aws-network.md#network-firewall-693)
-
-### [API Gateway integrations and deployment context](aws-messaging.md#api-gateway-integrations-and-deployment-context)
-
-### [Lambda aliases, layers and function URLs](aws-compute.md#lambda-aliases-layers-and-function-urls)
-
-### [Lambda configuration and network proof](aws-compute.md#lambda-configuration-and-network-proof-949)
-
-### [RDS Global Clusters](aws-data.md#rds-global-clusters)
-
-### [CloudFront origins and policies](aws-network.md#cloudfront-origins-and-policies)
-
-### [WAFv2](aws-network.md#wafv2)
-
-### [S3 bucket configuration](aws-storage.md#s3-bucket-configuration)
-
-### [AWS Private CA](aws-security.md#aws-private-ca)
-
-### [Cognito](aws-security.md#cognito)
-
-### [Step Functions](aws-messaging.md#step-functions)
-
-### [Redshift provisioned clusters](aws-data.md#redshift-provisioned-clusters)
-
-### [CloudTrail](aws-security.md#cloudtrail)
-
-### [AWS Backup](aws-storage.md#aws-backup)
-
-### [Athena Workgroup and Data Catalog](aws-data.md#athena-workgroup-and-data-catalog)
-
-### [Glue Catalog, Crawler and Job](aws-data.md#glue-catalog-crawler-and-job)
-
-### [IAM users and groups](aws-security.md#iam-users-and-groups)
-
-### [IAM identity providers](aws-security.md#iam-identity-providers)
-
-### [EFS](aws-storage.md#efs)
-
-### [EBS](aws-storage.md#ebs)
-
-### [SSM Parameter Store](aws-security.md#ssm-parameter-store)
-
-### [Secrets Manager](aws-security.md#secrets-manager)
-
-### [KMS](aws-security.md#kms)
-
-### [ACM](aws-security.md#acm)
-
-### [Route 53](aws-network.md#route-53)
-
-### [EventBridge buses and rules](aws-messaging.md#eventbridge-buses-and-rules)
-
-### [Aurora cluster instances](aws-data.md#aurora-cluster-instances)
-
-### [SQS and SNS](aws-messaging.md#sqs-and-sns)
-
-### [Amazon MQ network and configuration (#689)](aws-messaging.md#amazon-mq-network-and-configuration-689)
-
-### [MSK network and configuration (#688)](aws-messaging.md#msk-network-and-configuration-688)
-
-### [Scheduler and Pipes configuration (#692)](aws-messaging.md#scheduler-and-pipes-configuration-692)
-
-### [SNS subscriptions](aws-messaging.md#sns-subscriptions)
-
-### [Lambda event source mappings](aws-messaging.md#lambda-event-source-mappings)
-
-### [Kinesis Data Streams](aws-messaging.md#kinesis-data-streams)
-
-### [Amazon Data Firehose](aws-messaging.md#amazon-data-firehose)
-
-### [EventBridge targets](aws-messaging.md#eventbridge-targets)
-
-### [App Runner networking (#694)](aws-compute.md#app-runner-networking-694)
-
-### [ECR repositories](aws-compute.md#ecr-repositories)
-
-### [ECS Cluster membership](aws-compute.md#ecs-cluster-membership)
-
-### [EKS configuration and membership](aws-compute.md#eks-configuration-and-membership)
-
-### [RDS Proxy](aws-data.md#rds-proxy)
-
-### [ElastiCache configuration references (#691)](aws-data.md#elasticache-configuration-references-691)
-
-### [ElastiCache Serverless](aws-data.md#elasticache-serverless)
-
-### [Organizations hierarchy](aws-security.md#organizations-hierarchy)
-
-### [Organizations policies and direct attachments](aws-security.md#organizations-policies-and-direct-attachments)
-
-### [Organizations member Account deployment navigation](aws-security.md#organizations-member-account-deployment-navigation)
-
-### [DocumentDB (#697)](aws-data.md#documentdb-697)
-
-### [Neptune (#698)](aws-data.md#neptune-698)
-
-### [DMS replication configuration (#699)](aws-data.md#dms-replication-configuration-699)
-
-### [Redshift Serverless (#695)](aws-data.md#redshift-serverless-695)
-
-### [SageMaker inference configuration (#701)](aws-data.md#sagemaker-inference-configuration-701)
-
-### [FSx Lustre networking and encryption (#702)](aws-storage.md#fsx-lustre-networking-and-encryption-702)
-
-### [PrivateLink endpoints and services (#902)](aws-network.md#privatelink-endpoints-and-services-902)
-
-### [VPC gateways and Elastic IPs (#895)](aws-network.md#vpc-gateways-and-elastic-ips-895)
-
-### [Auto Scaling configuration (#810)](aws-compute.md#auto-scaling-configuration-810)
-
-### [Security group rule relationships (#899)](aws-network.md#security-group-rule-relationships-899)
-
-### [Workload references and monitoring](aws-compute.md#workload-references-and-monitoring)

@@ -40,34 +40,8 @@ docker compose exec -T dev sh scripts/build-wasm.sh
 docker compose exec -T dev node tests/browser/wasm.cjs
 ```
 
-`Browser Wasm` runs these steps in CI. The browser test requires exact native/Wasm
-output equality (including identity, action, relationships and geometry), covers
-SVG/HTML downloads, selections, invalid input/options, markup-bearing addresses,
-all UI defaults/changes/reset, empty/single/multiple spatial selections, focus/depth validation, special-character module
-rows and duplicates, native/Wasm inventory counts, root/empty/configuration rows,
-data/deposed objects, resource-picker/manual/native focus parity, ambiguous and
-non-rendered addresses, inspection without generation stages, search/pagination
-and selection retention, keyboard focus,
-safe error announcements, settings changes
-during file reads and Worker execution, stale completions, repeated generation,
-cancellation/retry, sandbox isolation and empty browser
-storage. After asset loading it disables network access and asserts zero HTTP
-requests through Chrome's network log. Large-fixture elapsed time, linear memory
-and output sizes are printed as observations, without timing thresholds in CI.
 
-One run on 2026-10-18 in Docker Desktop Linux, Rust 1.85.1, Chromium
-155.0.8059.79 (with native tests running concurrently) measured:
-
-| Fixture / output | Input bytes | Generation | Wasm linear memory | Output bytes |
-| --- | ---: | ---: | ---: | ---: |
-| `viewer-plan.json` / SVG | 1,565 | 36.1 ms | 1.56 MiB | 40,558 |
-| `viewer-plan.json` / HTML | 1,565 | 4.5 ms | 2.19 MiB | 112,082 |
-| `terraform-large/plan.json` / SVG | 52,927 | 31.53 s | 44.06 MiB | 332,046 |
-
-Each run used a fresh Worker. Timings include parsing through serialization and
-exclude asset loading, Worker startup, transfer and preview. Small-result timing
-differences include browser JIT warmup; these are observations, not a comparison
-of SVG versus HTML performance or device-independent capacity claims.
-The large fixture contains 50 resource changes; even this input can take tens of
-seconds because routing cost depends on relationships and geometry. The compiled
-Wasm asset was 3,139,308 bytes before HTTP compression.
+For the complete CI path run `sh scripts/wasm-ci.sh` inside Docker. Browser tests
+compare native/Wasm SVG and HTML, exercise selection, cancellation and retries,
+and verify sandbox/storage isolation with networking disabled after asset loading.
+Timings and linear-memory capacity are observations, not performance thresholds.

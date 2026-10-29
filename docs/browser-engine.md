@@ -250,19 +250,9 @@ an end-of-case sample, not a browser peak. It does not measure preview or claim
 equivalence to a low-performance physical machine. Browser/site measurements
 must additionally cover transfer, preview, UI response, cancellation and retries.
 
-An initial Docker/Node 18 observation on `terraform-plan.json` (15,740 bytes)
-reduced uninterrupted SVG generation from 2.51 s to a longest observed step of
-22.3 ms, with 3.29 s active work over 83.9 s elapsed and 12 MiB Wasm memory.
-HTML's longest observed step was 67.5 ms. These are single observations during
-development, not calibrated capacity guarantees or completed site#30 results.
-Budget and scheduling choices remain conservative provisional values until
-representative browser stress measurements and low-performance hardware results
-are available.
-
 After building the release CLI with `--no-default-features` and standalone engine,
 run `node tests/browser/wasm-engine.cjs` to verify it with Chromium: archive contents,
 provenance/hashes, JS/Wasm artwork exclusion, AWS/Terraform native SVG/HTML parity,
 `viewer-plan` omitted/explicit icon options and archive reproducibility.
 The focused native check is `cargo test --locked --no-default-features --lib artwork_free::`.
-PR/full-library selection is defined in [CI](ci.md#browser-wasm-432), with
-[coverage rationale and measurements](ci-history.md#browser-wasm-test-scope-audit-885).
+PR/full-library selection is defined in [CI](ci.md#browser-wasm-432).
