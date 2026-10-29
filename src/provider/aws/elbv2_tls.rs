@@ -147,8 +147,8 @@ fn verify(
     let resource = super::aliases::entity_type(&nodes[r.target]);
     match (resource, r.attribute.as_str()) {
         ("aws_lb_listener" | "aws_lb_listener_certificate", "certificate_arn") => {
-            (matches!(kind, "aws_acm_certificate" | "aws_iam_server_certificate")
-                && matches(evidence, r, source, &["arn"]))
+            (kind == "aws_acm_certificate" && matches(evidence, r, source, &["arn", "id"]))
+                || (kind == "aws_iam_server_certificate" && matches(evidence, r, source, &["arn"]))
                 || (resource == "aws_lb_listener"
                     && kind == "aws_acm_certificate_validation"
                     && matches(evidence, r, source, &["certificate_arn"]))

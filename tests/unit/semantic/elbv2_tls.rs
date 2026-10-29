@@ -110,6 +110,15 @@ fn listener_certificates_and_trust_sources_preserve_independent_resources() {
         "aws_lb_listener.app",
         "Certificate reference"
     ));
+    input["resource_changes"][1]["change"]["after"]["id"] = json!("PRIVATE_CERT");
+    input["resource_changes"][0]["change"]["after"]["certificate_arn"] = json!("PRIVATE_CERT");
+    input["configuration"]["root_module"]["resources"][0]["expressions"]["certificate_arn"] =
+        json!({"references":["aws_acm_certificate.app.id"]});
+    assert!(complete(
+        &input,
+        "aws_lb_listener.app",
+        "Certificate reference"
+    ));
 }
 
 #[test]
