@@ -170,9 +170,10 @@ presentation only; AppSync has no dedicated backend/owner rules at this baseline
 Preserved completed scopes: #513 function/alias/version, layer and URL navigation;
 #509 REST/v2 API context, Lambda/private integration, stage and VPC-link proofs;
 #394/#502 SQS/Kinesis event-source lowering; #181/#182 Lambda network context.
-The older Lambda subnet/SG paths do not enforce every modern known-value,
-provider and lifecycle gate. Strengthening those proofs is a bounded extension,
-not a claim that all new contracts already exist. #688–#702 remain separate.
+At this audit baseline, the older Lambda subnet/SG paths did not enforce every
+modern known-value, provider and lifecycle gate. [#949](aws-compute.md#lambda-configuration-and-network-proof-949)
+subsequently strengthens these proofs and adds bounded configuration references.
+#688–#702 remain separate.
 
 Contract distinctions checked:
 

@@ -33,6 +33,7 @@ mod glue;
 mod iam;
 mod icons;
 mod lambda;
+pub(crate) mod lambda_config;
 mod members;
 mod messaging;
 mod monitoring;

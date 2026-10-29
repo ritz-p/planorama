@@ -36,7 +36,10 @@ fn unknown_non_id_traversals_cannot_prove_security_group_attachments() {
                         .iter()
                         .filter(|e| e.kind == EdgeKind::Connection)
                         .count(),
-                    usize::from(field == "id" && kind != "aws_vpc_endpoint"),
+                    usize::from(
+                        field == "id"
+                            && !matches!(kind, "aws_vpc_endpoint" | "aws_lambda_function")
+                    ),
                     "{kind} {field} alias={alias}"
                 );
             }
@@ -97,7 +100,7 @@ fn nested_workload_attachments_do_not_borrow_block_or_sibling_references() {
                     .iter()
                     .filter(|e| e.kind == EdgeKind::Connection)
                     .count(),
-                usize::from(scenario == 3),
+                usize::from(scenario == 3 && kind != "aws_lambda_function"),
                 "{kind} scenario {scenario}"
             );
             assert_eq!(
@@ -155,7 +158,10 @@ fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shap
                     .iter()
                     .filter(|e| e.kind == EdgeKind::Connection)
                     .count(),
-                usize::from(scenario == "known_match" && kind != "aws_vpc_endpoint"),
+                usize::from(
+                    scenario == "known_match"
+                        && !matches!(kind, "aws_vpc_endpoint" | "aws_lambda_function")
+                ),
                 "{kind} {scenario}"
             );
             assert!(!format!("{raw:?}").contains("TOP_SECRET"));
@@ -165,7 +171,7 @@ fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shap
                         .iter()
                         .any(|d| d.attribute == attribute(kind).unwrap()
                             && d.reason
-                                == if kind == "aws_vpc_endpoint" {
+                                == if matches!(kind, "aws_vpc_endpoint" | "aws_lambda_function") {
                                     DiagnosticReason::UnprovenEndpointValue
                                 } else {
                                     DiagnosticReason::PartialResourceProvenance
@@ -194,6 +200,20 @@ fn supported_families_keep_single_and_multiple_security_groups_and_containment()
             json!(["aws_security_group.a.id", "aws_security_group.b.id"]),
         ] {
             let mut input = fixture(kind, json!({"references":refs}));
+            if kind == "aws_lambda_function" {
+                input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
+                for resource in input["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                {
+                    resource["provider_config_key"] = json!("aws");
+                }
+                for (i, id) in [(1, "sg-a"), (2, "sg-b")] {
+                    input["resource_changes"][i]["change"] =
+                        json!({"after":{"id":id,"vpc_id":"vpc-main"}});
+                }
+                input["resource_changes"][3]["change"] = json!({"after":attachment(kind, if refs.as_array().unwrap().len() == 1 {json!(["sg-a"])} else {json!(["sg-a","sg-b"])})});
+            }
             if kind == "aws_vpc_endpoint" {
                 input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
                 for resource in input["configuration"]["root_module"]["resources"]

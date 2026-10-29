@@ -225,6 +225,7 @@ pub(super) fn annotate(
         .map(|((value, _), mask)| (*value, mask))
         .collect();
     crate::provider::aws::elbv2::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::lambda_config::annotate(nodes, references, &elbv2_evidence);
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()

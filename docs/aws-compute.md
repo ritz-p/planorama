@@ -84,6 +84,45 @@ Official contracts: [Alias](https://github.com/hashicorp/terraform-provider-aws/
 The synthetic [SVG](../examples/lambda.svg) / [HTML](../examples/lambda.html) includes
 two Layers, two Aliases and a literal-only URL fallback.
 
+## Lambda configuration and network proof (#949)
+
+Function configuration links require explicit, unique managed-resource provenance,
+matching known values, compatible account/provider/region evidence and current,
+non-deleted endpoints. Unknown or sensitive values, literals, ambiguous instances
+and incomplete collections retain an unresolved row and ordinary dependencies.
+
+| Function input | Referenced output |
+| --- | --- |
+| `role` | IAM Role `arn` (global endpoint) |
+| `code_signing_config_arn` | Lambda Code Signing Config `arn` |
+| `dead_letter_config.target_arn` | SNS Topic or SQS Queue `arn` |
+| `file_system_config.arn` | EFS or S3 Files Access Point `arn` |
+| `logging_config.log_group` | CloudWatch Log Group `name` |
+| `kms_key_arn`, `source_kms_key_arn` | KMS Key `arn` |
+| `capacity_provider_config.lambda_managed_instances_capacity_provider_config.capacity_provider_arn` | Lambda Capacity Provider `arn` |
+
+Code Signing Config `allowed_publishers.signing_profile_version_arns` must match
+the complete set of Signer Profile `version_arn` outputs; unversioned `arn` is not
+accepted. Single-item nested blocks and known collection masks are checked.
+Code Signing Config remains an independent Logical Controller. References do not
+embed shared resources, change their placement or establish signature validity,
+authorization, logging delivery or runtime connectivity. Artifact URIs and extra
+configuration summaries remain outside this contract.
+
+Function `vpc_config.subnet_ids` and `vpc_config.security_group_ids` require complete
+known ID collections. VPC placement additionally requires each current managed
+Subnet to prove its matching `vpc_id` reference to the same current managed VPC.
+Unknown-only subnet/SG provenance no longer establishes placement or connections.
+State identities, actions, filtering and exactly-once coverage are preserved.
+
+The input shapes and outputs were checked against AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+[Function schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/lambda/function.go),
+[Code Signing Config schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/lambda/code_signing_config.go),
+and the corresponding versioned resource documentation, including Signer Profile
+`version_arn`. The synthetic [SVG](../examples/lambda-config.svg) and
+[HTML](../examples/lambda-config.html) exercise these reference fields.
+
 ## App Runner networking (#694)
 
 The service remains Spatial; VPC connector and VPC ingress connection remain
@@ -274,9 +313,10 @@ data and deposed groups retain separate identities; consumers never become their
 network parents or presentation owners. Existing complete, explicit references to
 groups remain navigable on spatial and Logical consumers, with unavailable targets
 after filtering and unresolved rows for partial or ambiguous references. These are
-ordinary `References` or `Dependency` rows, including Lambda logging configuration
-and ECS container-definition references; they do not prove configured logging or
-delivery success. Tags and `depends_on` receive no logging semantics or dedicated
+ordinary `References` or `Dependency` rows for ECS container-definition references.
+Lambda's verified `logging_config.log_group` additionally shows a configured log
+group link under the contract above; neither proves delivery success.
+Tags and `depends_on` receive no logging semantics or dedicated
 delivery edge. The [Log Group example](../examples/log-groups.svg) covers shared
 consumers, data lookup and unknown scope. Alarm monitoring is
 separate from a dependency: the initial supported proof requires AWS/RDS, a known

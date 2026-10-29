@@ -44,7 +44,7 @@ fn log_group_cards_preserve_reference_meaning_scope_and_selection() {
         parsed
             .attributes
             .iter()
-            .all(|r| !r.service_reference_verified)
+            .all(|r| !r.service_reference_verified || r.attribute == "logging_config.log_group")
     );
     for node in &graph.nodes {
         if node.resource_type == "aws_cloudwatch_log_group" {
@@ -77,7 +77,10 @@ fn log_group_cards_preserve_reference_meaning_scope_and_selection() {
         assert!(
             rows.iter()
                 .filter(|r| r.reference.kind != crate::model::ReferenceKind::Information)
-                .all(|r| matches!(r.reference.label, "References" | "Dependency"))
+                .all(|r| matches!(
+                    r.reference.label,
+                    "References" | "Dependency" | "Configured log group"
+                ))
         );
         let selected = view::single(
             &graph,

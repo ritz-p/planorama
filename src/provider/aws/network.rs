@@ -3,6 +3,8 @@ use serde_json::Value;
 
 pub(super) fn endpoint_type(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_lambda_function", "vpc_config.subnet_ids") => Some("aws_subnet"),
+        ("aws_lambda_function", "vpc_config.security_group_ids") => Some("aws_security_group"),
         ("aws_redshift_subnet_group", "subnet_ids") => Some("aws_subnet"),
         ("aws_redshift_cluster", "vpc_security_group_ids") => Some("aws_security_group"),
         ("aws_elasticache_serverless_cache", "subnet_ids") => Some("aws_subnet"),

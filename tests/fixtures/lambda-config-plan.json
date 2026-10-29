@@ -1,0 +1,370 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_lambda_function.app",
+      "type": "aws_lambda_function",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "role": "PRIVATE_ROLE",
+          "code_signing_config_arn": "PRIVATE_SIGNING",
+          "dead_letter_config": [
+            {
+              "target_arn": "PRIVATE_QUEUE"
+            }
+          ],
+          "file_system_config": [
+            {
+              "arn": "PRIVATE_ACCESS"
+            }
+          ],
+          "logging_config": [
+            {
+              "log_group": "PRIVATE_LOG"
+            }
+          ],
+          "kms_key_arn": "PRIVATE_KEY",
+          "source_kms_key_arn": "PRIVATE_KEY",
+          "capacity_provider_config": [
+            {
+              "lambda_managed_instances_capacity_provider_config": [
+                {
+                  "capacity_provider_arn": "PRIVATE_CAPACITY"
+                }
+              ]
+            }
+          ],
+          "vpc_config": [
+            {
+              "subnet_ids": [
+                "subnet-a"
+              ],
+              "security_group_ids": [
+                "sg-a"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.app",
+      "type": "aws_iam_role",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_ROLE"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_code_signing_config.app",
+      "type": "aws_lambda_code_signing_config",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_SIGNING",
+          "allowed_publishers": [
+            {
+              "signing_profile_version_arns": [
+                "PRIVATE_PROFILE_VERSION"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.app",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_QUEUE"
+        }
+      }
+    },
+    {
+      "address": "aws_efs_access_point.app",
+      "type": "aws_efs_access_point",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_ACCESS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.app",
+      "type": "aws_cloudwatch_log_group",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_LOG"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.app",
+      "type": "aws_kms_key",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_capacity_provider.app",
+      "type": "aws_lambda_capacity_provider",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_CAPACITY"
+        }
+      }
+    },
+    {
+      "address": "aws_signer_signing_profile.app",
+      "type": "aws_signer_signing_profile",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_PROFILE",
+          "version_arn": "PRIVATE_PROFILE_VERSION"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.app",
+      "type": "aws_vpc",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.app",
+      "type": "aws_subnet",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.app",
+      "type": "aws_security_group",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-a",
+          "vpc_id": "vpc-main"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lambda_function.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role": {
+              "references": [
+                "aws_iam_role.app.arn"
+              ]
+            },
+            "code_signing_config_arn": {
+              "references": [
+                "aws_lambda_code_signing_config.app.arn"
+              ]
+            },
+            "dead_letter_config": [
+              {
+                "target_arn": {
+                  "references": [
+                    "aws_sqs_queue.app.arn"
+                  ]
+                }
+              }
+            ],
+            "file_system_config": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_efs_access_point.app.arn"
+                  ]
+                }
+              }
+            ],
+            "logging_config": [
+              {
+                "log_group": {
+                  "references": [
+                    "aws_cloudwatch_log_group.app.name"
+                  ]
+                }
+              }
+            ],
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.app.arn"
+              ]
+            },
+            "source_kms_key_arn": {
+              "references": [
+                "aws_kms_key.app.arn"
+              ]
+            },
+            "capacity_provider_config": [
+              {
+                "lambda_managed_instances_capacity_provider_config": [
+                  {
+                    "capacity_provider_arn": {
+                      "references": [
+                        "aws_lambda_capacity_provider.app.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "vpc_config": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.app.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.app.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_code_signing_config.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "allowed_publishers": [
+              {
+                "signing_profile_version_arns": {
+                  "references": [
+                    "aws_signer_signing_profile.app.version_arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_sqs_queue.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_efs_access_point.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_capacity_provider.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_signer_signing_profile.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.app.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

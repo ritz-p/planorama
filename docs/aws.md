@@ -326,6 +326,8 @@ Other Association-role resources remain cards. Examples:
 
 ### [Lambda aliases, layers and function URLs](aws-compute.md#lambda-aliases-layers-and-function-urls)
 
+### [Lambda configuration and network proof](aws-compute.md#lambda-configuration-and-network-proof-949)
+
 ### [RDS Global Clusters](aws-data.md#rds-global-clusters)
 
 ### [CloudFront origins and policies](aws-network.md#cloudfront-origins-and-policies)
