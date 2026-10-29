@@ -3,6 +3,7 @@ mod api_gateway;
 mod apprunner;
 mod associations;
 mod autoscaling;
+mod autoscaling_network;
 mod backup;
 mod basic;
 mod batch;
@@ -221,6 +222,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
+    autoscaling_network::present(&raw, &mut graph);
     fsx::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);

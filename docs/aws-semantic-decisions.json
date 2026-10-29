@@ -16260,10 +16260,10 @@
       }
     },
     "aws_autoscaling_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 810,
-      "gap": "#712 reviewed: Missing: #810 ASG name plus exclusive Classic ELB name or ELBv2 target-group ARN. See per-dimension review; Intentionally unsupported: attachment does not establish health or runtime traffic.",
+      "gap": "Implemented #810: verified complete subnet/common-VPC, launch configuration, typed traffic and explicit configuration references in autoscaling_network.rs. ASG stays Spatial; launch configuration and attachment helpers stay independent Logical resources. Known values, complete collections and compatible current managed endpoints are required. No inferred instances, default subnets, ownership, payload summaries or runtime traffic. See aws.md#auto-scaling-configuration-810. The #712 review records the historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -16297,7 +16297,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 810,
-      "gap": "#712 reviewed: Partial: #361 direct/base mixed-template Uses labels (aws.rs; tests/unit/svg/logical.rs) and #362 inverse policy context (autoscaling.rs/tests) remain. #810 owns launch configuration, typed traffic, role and placement-group references; override templates require separate complete evidence. Missing: #810 complete subnet-set common-VPC proof; availability_zones do not identify default subnets. See per-dimension review; Intentionally unsupported: desired/predicted capacity and warm pools cannot synthesize instances or health.",
+      "gap": "Implemented #810: verified complete subnet/common-VPC, launch configuration, typed traffic and explicit configuration references in autoscaling_network.rs. ASG stays Spatial; launch configuration and attachment helpers stay independent Logical resources. Known values, complete collections and compatible current managed endpoints are required. No inferred instances, default subnets, ownership, payload summaries or runtime traffic. See aws.md#auto-scaling-configuration-810. The #712 review records the historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -16576,10 +16576,10 @@
       }
     },
     "aws_autoscaling_traffic_source_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 810,
-      "gap": "#712 reviewed: Missing: #810 type discriminates elb name, elbv2 ARN and vpc-lattice ARN; not aliases of each other. See per-dimension review; Intentionally unsupported: traffic-source attachment is not reachability.",
+      "gap": "Implemented #810: verified complete subnet/common-VPC, launch configuration, typed traffic and explicit configuration references in autoscaling_network.rs. ASG stays Spatial; launch configuration and attachment helpers stay independent Logical resources. Known values, complete collections and compatible current managed endpoints are required. No inferred instances, default subnets, ownership, payload summaries or runtime traffic. See aws.md#auto-scaling-configuration-810. The #712 review records the historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -17214,10 +17214,10 @@
       }
     },
     "aws_launch_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 810,
-      "gap": "#712 reviewed: Missing: #810 AMI ID, complete SG IDs, instance-profile name and key-pair name; configuration is not an instance. See per-dimension review; Intentionally unsupported: user_data/base64, spot price and metadata payloads remain opaque.",
+      "gap": "Implemented #810: verified complete subnet/common-VPC, launch configuration, typed traffic and explicit configuration references in autoscaling_network.rs. ASG stays Spatial; launch configuration and attachment helpers stay independent Logical resources. Known values, complete collections and compatible current managed endpoints are required. No inferred instances, default subnets, ownership, payload summaries or runtime traffic. See aws.md#auto-scaling-configuration-810. The #712 review records the historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",

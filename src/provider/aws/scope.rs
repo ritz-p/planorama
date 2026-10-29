@@ -43,6 +43,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_fsx_lustre_file_system"
+                | "aws_launch_configuration"
+                | "aws_autoscaling_attachment"
+                | "aws_autoscaling_traffic_source_attachment"
                 | "aws_sagemaker_endpoint"
                 | "aws_sagemaker_endpoint_configuration"
                 | "aws_sagemaker_model"
