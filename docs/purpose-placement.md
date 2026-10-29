@@ -58,28 +58,6 @@ does not fabricate owner assignments or misleading attached-card screenshots.
 Federation has only configuration dependencies. References, membership, trust,
 monitoring and display ownership must not be substituted for one another.
 
-Measured with the #568 projection, canvases below are in pixels
-(Logical → independent). Reference rows count the shared visible reference
-projection, not graph-edge count:
-
-| Scenario | Resources, 1 / 4 copies | Canvas, 1 copy | Canvas, 4 copies | Reference rows, 1 copy |
-| --- | --- | --- | --- | --- |
-| Infrastructure | 8 / 32 | 1188×2452 → 1188×2470 | 1284×5006 → 1284×5648 | 5 → 5 |
-| Monitoring | 3 / 12 | 1040×1694 → 1216×1230 | 1040×3308 → 1312×2406 | 3 → 3 |
-| IAM | 11 / 44 | 1040×3046 → 1040×2902 | 1040×6484 → 1040×6958 | 13 → 13 |
-| Federation | 6 / 24 | 1100×2094 → 1100×1482 | 1100×4712 → 2060×2258 | 2 → 2 |
-| Configuration | 3 / 12 | 1040×1536 → 1100×1570 | 1040×2390 → 1100×2340 | 1 → 1 |
-
-Visual review of all five small pairs found Logical type headings useful for
-action/mode comparison. Independent IAM cards move principals away from their
-membership/attachment rows; at four copies the diagram becomes taller. Standalone
-parameters show their region and external/data identity clearly but do not improve
-the small overview's size. Independent alarms and federation endpoints are compact,
-and retain verified monitor labels and explicit reference details.
-Ordinary dependency arrows cannot replace those meanings. Canvas area alone
-therefore cannot justify promotion. Four-copy measurements are a bounded growth
-comparison, not a performance or readability guarantee for arbitrary plans.
-
 ## Generation-time contract
 
 The exact allowlist applies to HashiCorp AWS, including the existing inferred AWS

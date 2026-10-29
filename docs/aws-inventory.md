@@ -10,7 +10,7 @@ Data-source, list-resource, ephemeral-resource and action registrations do not
 enter the managed denominator. The inventory records actual data-source names,
 schema deprecation, service category/name and aliases sharing a registration factory.
 
-The [generated support matrix](resource-support.md) evaluates runtime behavior and
+The [on-demand support report](resource-support.md) evaluates runtime behavior and
 links the pinned resource documentation. Its baseline notes distinguish existing
 classifications from basic-only display; conditional relationship links remain
 separate. No managed types are missing basic role, presentation and service
@@ -18,7 +18,7 @@ capabilities. Neutral presentation and unresolved scope are explicit fallbacks, 
 claims of full relationship support. Counts here describe types; input coverage
 continues to count state-qualified resource instances and lifecycle objects.
 
-The [semantic audit](aws-semantic-audit.md) and [exact-type gap register](aws-semantic-gaps.md)
+The [semantic review data](aws-semantic-audit.md)
 track missing ownership, network, reference, scope and summary capabilities separately
 from basic classification, including prioritized issues and deferred cases.
 
@@ -118,7 +118,6 @@ Inside the development container:
 ```sh
 sh scripts/prepare-aws-inventory.sh
 sh scripts/update-resource-support.sh
-sh scripts/update-resource-support.sh --check
 cargo test --locked --lib provider::aws::basic
 ```
 
@@ -155,11 +154,11 @@ empty, keeping old/new schemas and Terraform lock files separate.
 ```sh
 sh scripts/prepare-aws-inventory.sh 6.70.0 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f /tmp/aws-before
 sh scripts/prepare-aws-inventory.sh "$NEW_VERSION" "$NEW_COMMIT" /tmp/aws-after
-sh scripts/update-resource-support.sh --check
+sh scripts/update-resource-support.sh
 node scripts/aws-inventory-diff.cjs \
   /tmp/aws-before/inventory.json /tmp/aws-after/inventory.json \
   /tmp/aws-before/schema.json /tmp/aws-after/schema.json \
-  docs/resource-support.md > /tmp/aws-inventory-diff.json
+  output/resource-support.md > /tmp/aws-inventory-diff.json
 ```
 
 No credentials, AWS API calls or apply are needed. The no-argument prepare command
@@ -168,7 +167,7 @@ does not replace the committed inventory. Keep both original schema files: each
 inventory's SHA-256 binds the comparator to its exact schema bytes. The JSON report
 records both version/commit/hash tuples and the support matrix hash, with sorted
 types and JSON Pointer change paths. Reusing these inputs reproduces the report.
-The matrix describes the current checkout, so run its consistency check first.
+Regenerate the full report from the checkout being compared; a filtered or stale report cannot establish its capabilities.
 
 `managed.added`, `managed.removed` and `managed.changed` cover exact managed types.
 Changed entries separate inventory metadata (service, region, factory, alias and

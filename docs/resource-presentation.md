@@ -1,22 +1,13 @@
 # Resource presentation policy
 
 This defines shared presentation requirements; service-specific proofs are in
-[AWS relationships](aws.md), [Route cards](routes.md) and [encryption](encryption.md). The [generated support matrix](resource-support.md)
+[AWS relationships](aws.md), [Route cards](routes.md) and [encryption](encryption.md). The [on-demand support report](resource-support.md)
 records current defaults. Role, placement, deployment scope, network containment,
 semantic membership and presentation ownership are independent.
 
 The [purpose-dependent review](purpose-placement.md) covers SSM Parameter,
 CloudWatch Alarm and the five IAM Identity types. Their defaults remain Logical;
 optional independent presentation uses the shared [Spatial type option](configuration.md#explicit-spatial-types).
-
-## Audit of the 42 AWS Logical types
-
-The [original 42-type audit](https://github.com/ritz-p/planorama/blob/8fb4aef052f7d941b0a5da6b08a4fc610661a504/docs/resource-presentation.md#audit-of-the-42-aws-logical-types)
-and [PR #552](https://github.com/ritz-p/planorama/pull/552) record defaults at
-`ac700bb` and the reasons for proposed migrations. Those proposals are historical;
-use the support matrix for current defaults and the service contracts above for
-implemented ownership. The seven purpose-dependent types retain their separate
-[comparison and decision](purpose-placement.md).
 
 ## Provider and selection contract
 
