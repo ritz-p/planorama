@@ -3229,7 +3229,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 949,
-      "gap": "#714 audit: Partial: #513 verifies complete versioned layers; missing execution role, signing config, dead-letter SNS/SQS, access point, logging group, KMS and capacity-provider references. Artifact URI interpretation remains deferred. Partial: #181 subnet-derived common-VPC placement and #182 SG relationships exist (vpc_scope.rs/security_groups.rs tests); these older paths do not share all modern known-value/provider/lifecycle proof gates. Follow-up strengthens proof without reopening original scope. Follow-up #949. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #949: verified execution-role, signing-config, dead-letter SNS/SQS, EFS/S3 Files access-point, logging-group, KMS and capacity-provider references; complete known subnet/SG values and current compatible managed endpoints now gate network proof. Existing #513 layer/version behavior remains. Shared endpoints stay independent. Artifact URI interpretation and extra summaries remain deferred. See aws-compute.md#lambda-configuration-and-network-proof-949; the #714 review is historical.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42339,10 +42339,10 @@
       }
     },
     "aws_lambda_code_signing_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 949,
-      "gap": "#714 audit: Missing: complete Signer signing-profile VERSION ARN references, not unversioned profile ARN; no signature validity interpretation. Follow-up #949. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #949: complete known Signer signing-profile version_arn references with unique current managed provenance and compatible scope. Unversioned arn is rejected. Independent Logical Controller; no signature validity interpretation or new summaries. See aws-compute.md#lambda-configuration-and-network-proof-949; the #714 review is historical.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

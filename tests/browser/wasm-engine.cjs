@@ -46,7 +46,7 @@ async function main() {
     assert.deepEqual(JSON.parse(driver.execute_script('return window.engine.memory_capabilities();')), manifest.memory);
     require('./memory-chromium.cjs')(driver, fs.readFileSync(join(temp, 'planorama.js'), 'utf8'), `/v${version}/planorama_bg.wasm`, fs.readFileSync('tests/fixtures/viewer-plan.json', 'utf8'));
     const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
-    for (const fixture of ['viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan']) {
+    for (const fixture of ['viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan', 'lambda-config-plan']) {
       const json = fs.readFileSync(`tests/fixtures/${fixture}.json`, 'utf8');
       for (const format of ['svg', 'html']) {
         for (const icon_mode of fixture === 'viewer-plan' ? [undefined, 'service-name'] : [undefined]) {

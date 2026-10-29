@@ -8,7 +8,7 @@ mod support;
 fn workload_security_groups_keep_policy_cards_and_individual_connections() {
     let input = include_bytes!("../fixtures/workload-security-groups-plan.json");
     let svg = render(input);
-    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 6);
+    assert_eq!(svg.matches("data-edge-kind=\"connection\"").count(), 4);
     assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 2);
     assert_eq!(svg.matches("data-role=\"policy\"").count(), 2);
     for kind in [
@@ -17,9 +17,12 @@ fn workload_security_groups_keep_policy_cards_and_individual_connections() {
         "aws_opensearch_domain",
     ] {
         for group in ["a", "b"] {
-            assert!(svg.contains(&format!(
-                "module.root.aws_security_group.{group} ↔ module.root.{kind}.main (connection)"
-            )));
+            assert_eq!(
+                svg.contains(&format!(
+                    "module.root.aws_security_group.{group} ↔ module.root.{kind}.main (connection)"
+                )),
+                kind != "aws_lambda_function"
+            );
         }
     }
     assert_eq!(
@@ -31,8 +34,8 @@ fn workload_security_groups_keep_policy_cards_and_individual_connections() {
 #[test]
 fn vpc_workloads_keep_subnet_references_and_show_derived_placement() {
     let svg = render(include_bytes!("../fixtures/vpc-workloads-plan.json"));
-    assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 3);
-    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 5);
+    assert_eq!(svg.matches("data-placement=\"inferred\"").count(), 2);
+    assert_eq!(svg.matches("data-edge-kind=\"containment\"").count(), 4);
     assert_eq!(svg.matches("data-edge-kind=\"dependency\"").count(), 6);
     assert_eq!(
         svg,

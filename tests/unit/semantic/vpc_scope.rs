@@ -148,7 +148,7 @@ fn workloads_use_only_complete_nested_subnet_references() {
                 .collect();
             assert_eq!(
                 parents.len(),
-                usize::from(matches!(scenario, 0 | 1 | 10)),
+                usize::from(kind != "aws_lambda_function" && matches!(scenario, 0 | 1 | 10)),
                 "{kind} scenario {scenario}"
             );
             if let Some(edge) = parents.first() {
