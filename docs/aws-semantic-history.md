@@ -1046,3 +1046,56 @@ Contract distinctions checked against official docs, schema and source:
 
 No reviewed type is a runtime alias. Personal data, SQL, scripts and schema
 contents remain excluded under the shared proof, privacy and verification rules.
+
+## Monitoring, logging and observability review (#730)
+
+Reviewed runtime `00bf0c990596acc196f37c10baf11d2b379c7eaa` against AWS Provider
+6.70.0 at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. All 77 exact managed types
+in the 13 assigned service packages have six separate decisions, pinned input/output
+shapes, data-source selectors, official documentation and implementation/test evidence
+in [the decisions](aws-semantic-decisions.json). Internet Monitor's undocumented
+nested bucket-name field is additionally checked against the pinned Provider source.
+
+Existing RDS `Monitors` / `Monitored by` proof remains limited to a known metric,
+AWS/RDS namespace, one DBInstanceIdentifier, matching provider and explicit current
+DB instance evidence, without metric queries. These rows do not imply ownership,
+spatial edges or health. Log Groups retain #544 independent regional cards and
+incoming CloudTrail/Network Firewall/Lambda contracts; #549/#568 alarm placement
+and #601's existing encryption allowlist are unchanged.
+
+Follow-ups cover [application monitoring #985](https://github.com/ritz-p/planorama/issues/985),
+[alarms #986](https://github.com/ritz-p/planorama/issues/986),
+[metric delivery #987](https://github.com/ritz-p/planorama/issues/987),
+[log helpers #988](https://github.com/ritz-p/planorama/issues/988),
+[log delivery #989](https://github.com/ritz-p/planorama/issues/989),
+[Observability Admin #990](https://github.com/ritz-p/planorama/issues/990),
+[Omni #991](https://github.com/ritz-p/planorama/issues/991),
+[Grafana helpers #992](https://github.com/ritz-p/planorama/issues/992),
+[Grafana network/workspace #993](https://github.com/ritz-p/planorama/issues/993),
+[OAM #994](https://github.com/ritz-p/planorama/issues/994),
+[AMP workspace #995](https://github.com/ritz-p/planorama/issues/995),
+[AMP scraper #996](https://github.com/ritz-p/planorama/issues/996),
+[RUM #997](https://github.com/ritz-p/planorama/issues/997),
+[Synthetics #998](https://github.com/ritz-p/planorama/issues/998) and
+[X-Ray KMS #999](https://github.com/ritz-p/planorama/issues/999).
+
+The pinned detailed resource-metrics contract supports only ElastiCache replication
+groups. Grafana data-source VPC access differs from workspace ingress restrictions.
+AMP EKS/VPC sources and AMP/CloudWatch destinations are exclusive alternatives;
+logging ARNs require an explicit `:*` normalization contract, not unrestricted
+string matching. OAM accounts remain independent. Omni spaces may be in a different
+region from their domain. Computed table buckets, scraper roles, RUM log groups and
+canary Lambda/layer outputs cannot synthesize managed resources.
+
+Evidently is deprecated and is not an AppConfig alias; its follow-ups concern retained
+plans. RUM's Evidently destination is an experiment ARN, not a project or launch.
+The pinned managed inventory has no Evidently experiment or Identity Center instance
+resource, so those endpoint contracts remain explicitly deferred. X-Ray `NONE`
+means default encryption, not disabled encryption. Grafana token keys, query/SQL/YAML
+bodies, policy effects, runtime status and telemetry contents are excluded. Singleton
+prerequisites and resource selectors remain ordinary dependencies unless an exact
+configuration identity contract is separately established.
+
+This audit changes no runtime behavior or rendering input. SVG regeneration and
+Layout quality are not applicable. The audit test, generated-register check, full
+pinned contract verifier and generated support-matrix check run in Docker.

@@ -91,6 +91,48 @@ const ec2VpcExpected=[
 ];
 const dimensions=['placement','ownership','network','references','scope','summaries'];
 
+test('#730 covers exactly 77 observability types with bounded evidence',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services='cloudwatch logs cloudwatchomni amp grafana oam observabilityadmin xray synthetics rum evidently internetmonitor applicationinsights'.split(' ');
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===730);
+ assert.equal(expected.length,77);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'00bf0c990596acc196f37c10baf11d2b379c7eaa');
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),path);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#730 audit:/);
+  if(dimensions.some(k=>/Missing:/.test(r[k])))assert.ok(issue>=985&&issue<=999,type);
+ }
+});
+
+test('#730 keeps monitoring, selectors, credentials and computed outputs separate',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.match(r('cloudwatch_metric_alarm').references,/AWS\/RDS.*exactly one DBInstanceIdentifier.*no metric_query/);
+ assert.deepEqual(r('cloudwatch_metric_alarm').shapes['metric_query.metric.dimensions'],['set','list',['map','string']]);
+ assert.deepEqual(r('cloudwatch_alarm_mute_rule').shapes['mute_targets.alarm_names'],['list',['set','string']]);
+ assert.match(r('cloudwatch_resource_metrics_configuration').references,/ElastiCache replication-group.*exclude serverless caches/);
+ assert.match(r('grafana_workspace').network,/data-source access.*prefix-list/);
+ assert.deepEqual(r('prometheus_scraper').shapes['source.eks.subnet_ids'],['list','list',['set','string']]);
+ assert.equal(r('prometheus_scraper').contracts.role_arn,'computed');
+ assert.match(r('prometheus_workspace').references,/required :\* suffix/);
+ assert.equal(r('observabilityadmin_s3_table_integration').contracts.destination_table_bucket_arn,'computed');
+ assert.match(r('cloudwatchomni_space').references,/different region/);
+ assert.match(r('rum_metrics_destination').references,/experiment ARN, not project\/launch ARN/);
+ assert.match(r('evidently_feature').managedDataContract,/deprecated.*not an AppConfig alias/);
+ assert.match(r('xray_encryption_config').summaries,/NONE must never.*disabled/);
+ assert.ok(r('internetmonitor_monitor').sourceContracts['internet_measurements_log_delivery.s3_config.bucket_name']);
+ assert.ok(!r('grafana_workspace_service_account_token').fields.includes('key'));
+});
+
 test('#715 covers exactly 86 edge and DNS types with pinned evidence and bounded follow-ups',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const services=['elb','elbv2','cloudfront','cloudfrontkeyvaluestore','globalaccelerator','route53','route53domains','route53profiles','route53resolver'];

@@ -124,3 +124,5 @@ The extractor rejects a schema hash or managed-type denominator mismatch. Ordina
 ### [Analytics and data governance review, batch 1 (#722)](aws-semantic-history.md#analytics-and-data-governance-review-batch-1-722)
 
 ### [Analytics and data governance review, batch 2 (#723)](aws-semantic-history.md#analytics-and-data-governance-review-batch-2-723)
+
+### [Monitoring, logging and observability review (#730)](aws-semantic-history.md#monitoring-logging-and-observability-review-730)
