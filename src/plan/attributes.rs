@@ -76,6 +76,22 @@ pub(super) fn collect(
                     .map(|r| contextualize(r, &node.address))
                     .collect();
                 let resolution = resolve(&refs, &instances, &aliases);
+                let source_attributes_by_instance = resolution
+                    .sources
+                    .iter()
+                    .map(|&source| {
+                        (
+                            source,
+                            refs.iter()
+                                .filter_map(|reference: &String| {
+                                    reference
+                                        .strip_prefix(&format!("{}.", nodes[source].address))
+                                        .map(str::to_owned)
+                                })
+                                .collect(),
+                        )
+                    })
+                    .collect();
                 let source_attributes = resolution
                     .sources
                     .iter()
@@ -102,6 +118,7 @@ pub(super) fn collect(
                     messaging_endpoint_verified: false,
                     monitoring_verified: false,
                     source_attributes,
+                    source_attributes_by_instance,
                     service_reference_verified: false,
                     service_reference_owner_account: None,
                     ids_only: resolution.ids_only,

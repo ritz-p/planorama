@@ -72,7 +72,7 @@ Line patterns and arrowheads describe relationship kind and direction:
 | Connection | Thicker circular dots and hollow endpoint circles, without arrowheads | An inferred architectural connection; it does not guarantee network reachability. |
 | Containment | Nested boxes | Parent/child membership. An edge represented by nesting receives no redundant line. |
 | Subscription | Dashed directed line with matching endpoint numbers | Terraform-proven Topic → endpoint subscription; delivery and access policies are not verified. |
-| Event source | Dashed directed line with matching endpoint numbers | Terraform-proven SQS/Kinesis → Lambda event-consumer mapping; active state and processing success are not verified. |
+| Event source | Dashed directed line with matching endpoint numbers | Terraform-proven typed event source → Lambda Function/Alias mapping; active state and processing success are not verified. |
 | Event target | Dashed directed line with matching endpoint numbers | Terraform-proven Rule → SQS/Lambda target configuration; delivery, permissions and reachability are not verified. |
 
 Hollow circles identify card attachment points; filled dots within a path identify

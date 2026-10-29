@@ -48,7 +48,8 @@ not invent a separate index owner.
 Remaining gaps are recorded by the #718 review in the
 [semantic gap register](aws-semantic-gaps.md): table export/import/restore references (#744), deliberately excluded item contents,
 inline replica/GSI identity expansion, stream-policy targets, transformed replica
-tag ARNs, Lambda DynamoDB stream lowering and at-rest summaries remain deferred.
+tag ARNs and at-rest summaries remain deferred. Lambda mappings support explicit
+managed Table `stream_arn` references under the [#950 contract](aws-messaging.md#additional-managed-sources-and-configuration-950).
 
 `tests/fixtures/dynamodb-plan.json` and `tests/unit/semantic/dynamodb.rs` cover
 positive and conservative cases. `examples/dynamodb.svg` is maintained by

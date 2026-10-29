@@ -1,0 +1,713 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_lambda_function.app",
+      "type": "aws_lambda_function",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "app",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:app",
+          "qualified_arn": "arn:aws:lambda:us-east-1:123456789012:function:app:3",
+          "version": "3"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_alias.live",
+      "type": "aws_lambda_alias",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "live",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:app:live",
+          "function_name": "app",
+          "function_version": "3"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.app",
+      "type": "aws_dynamodb_table",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:dynamodb:us-east-1:123456789012:table/app",
+          "stream_arn": "arn:aws:dynamodb:us-east-1:123456789012:table/app/stream/2026-10-01T00:00:00.000"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_cluster.app",
+      "type": "aws_msk_cluster",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:123456789012:cluster/app/123"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_serverless_cluster.app",
+      "type": "aws_msk_serverless_cluster",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:123456789012:cluster/serverless/456"
+        }
+      }
+    },
+    {
+      "address": "aws_mq_broker.app",
+      "type": "aws_mq_broker",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:mq:us-east-1:123456789012:broker:app:123"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster.app",
+      "type": "aws_docdb_cluster",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:rds:us-east-1:123456789012:cluster:docdb"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.failed",
+      "type": "aws_sqs_queue",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:123456789012:failed"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.failed",
+      "type": "aws_s3_bucket",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::failed"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.filter",
+      "type": "aws_kms_key",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/filter"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.auth",
+      "type": "aws_secretsmanager_secret",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:auth-123"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.access",
+      "type": "aws_subnet",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-access"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.access",
+      "type": "aws_security_group",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-access"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_registry.app",
+      "type": "aws_glue_registry",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:glue:us-east-1:123456789012:registry/app"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.ddb",
+      "type": "aws_lambda_event_source_mapping",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "arn:aws:dynamodb:us-east-1:123456789012:table/app/stream/2026-10-01T00:00:00.000",
+          "function_name": "arn:aws:lambda:us-east-1:123456789012:function:app:3",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/filter",
+          "destination_config": [
+            {
+              "on_failure": [
+                {
+                  "destination_arn": "arn:aws:sqs:us-east-1:123456789012:failed"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.msk",
+      "type": "aws_lambda_event_source_mapping",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "arn:aws:kafka:us-east-1:123456789012:cluster/app/123",
+          "function_name": "arn:aws:lambda:us-east-1:123456789012:function:app:live",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/filter",
+          "destination_config": [
+            {
+              "on_failure": [
+                {
+                  "destination_arn": "arn:aws:sqs:us-east-1:123456789012:failed"
+                }
+              ]
+            }
+          ],
+          "amazon_managed_kafka_event_source_config": [
+            {
+              "schema_registry_config": [
+                {
+                  "schema_registry_uri": "arn:aws:glue:us-east-1:123456789012:registry/app"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.serverless",
+      "type": "aws_lambda_event_source_mapping",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "arn:aws:kafka:us-east-1:123456789012:cluster/serverless/456",
+          "function_name": "arn:aws:lambda:us-east-1:123456789012:function:app:live",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/filter",
+          "destination_config": [
+            {
+              "on_failure": [
+                {
+                  "destination_arn": "arn:aws:sqs:us-east-1:123456789012:failed"
+                }
+              ]
+            }
+          ],
+          "amazon_managed_kafka_event_source_config": [
+            {
+              "schema_registry_config": [
+                {
+                  "schema_registry_uri": "arn:aws:glue:us-east-1:123456789012:registry/app"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.mq",
+      "type": "aws_lambda_event_source_mapping",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "arn:aws:mq:us-east-1:123456789012:broker:app:123",
+          "function_name": "arn:aws:lambda:us-east-1:123456789012:function:app:live",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/filter",
+          "source_access_configuration": [
+            {
+              "type": "BASIC_AUTH",
+              "uri": "arn:aws:secretsmanager:us-east-1:123456789012:secret:auth-123"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.docdb",
+      "type": "aws_lambda_event_source_mapping",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "arn:aws:rds:us-east-1:123456789012:cluster:docdb",
+          "function_name": "arn:aws:lambda:us-east-1:123456789012:function:app:live",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/filter",
+          "source_access_configuration": [
+            {
+              "type": "BASIC_AUTH",
+              "uri": "arn:aws:secretsmanager:us-east-1:123456789012:secret:auth-123"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_event_source_mapping.self",
+      "type": "aws_lambda_event_source_mapping",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "app",
+          "self_managed_event_source": [
+            {
+              "endpoints": {
+                "KAFKA_BOOTSTRAP_SERVERS": "kafka.invalid:9092"
+              }
+            }
+          ],
+          "self_managed_kafka_event_source_config": [
+            {
+              "schema_registry_config": [
+                {
+                  "schema_registry_uri": "arn:aws:glue:us-east-1:123456789012:registry/app"
+                }
+              ]
+            }
+          ],
+          "destination_config": [
+            {
+              "on_failure": [
+                {
+                  "destination_arn": "arn:aws:s3:::failed"
+                }
+              ]
+            }
+          ],
+          "source_access_configuration": [
+            {
+              "type": "SASL_SCRAM_512_AUTH",
+              "uri": "arn:aws:secretsmanager:us-east-1:123456789012:secret:auth-123"
+            },
+            {
+              "type": "VPC_SUBNET",
+              "uri": "subnet:subnet-access"
+            },
+            {
+              "type": "VPC_SECURITY_GROUP",
+              "uri": "security_group:sg-access"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lambda_function.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_alias.live",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name"
+              ]
+            },
+            "function_version": {
+              "references": [
+                "aws_lambda_function.app.version"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_table.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_msk_cluster.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_msk_serverless_cluster.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_mq_broker.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_docdb_cluster.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sqs_queue.failed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.failed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.filter",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.auth",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.access",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_security_group.access",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_registry.app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.ddb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_dynamodb_table.app.stream_arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.qualified_arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.filter.arn"
+              ]
+            },
+            "destination_config": [
+              {
+                "on_failure": [
+                  {
+                    "destination_arn": {
+                      "references": [
+                        "aws_sqs_queue.failed.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.msk",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_msk_cluster.app.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_alias.live.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.filter.arn"
+              ]
+            },
+            "destination_config": [
+              {
+                "on_failure": [
+                  {
+                    "destination_arn": {
+                      "references": [
+                        "aws_sqs_queue.failed.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "amazon_managed_kafka_event_source_config": [
+              {
+                "schema_registry_config": [
+                  {
+                    "schema_registry_uri": {
+                      "references": [
+                        "aws_glue_registry.app.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.serverless",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_msk_serverless_cluster.app.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_alias.live.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.filter.arn"
+              ]
+            },
+            "destination_config": [
+              {
+                "on_failure": [
+                  {
+                    "destination_arn": {
+                      "references": [
+                        "aws_sqs_queue.failed.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "amazon_managed_kafka_event_source_config": [
+              {
+                "schema_registry_config": [
+                  {
+                    "schema_registry_uri": {
+                      "references": [
+                        "aws_glue_registry.app.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.mq",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_mq_broker.app.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_alias.live.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.filter.arn"
+              ]
+            },
+            "source_access_configuration": [
+              {
+                "uri": {
+                  "references": [
+                    "aws_secretsmanager_secret.auth.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.docdb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_docdb_cluster.app.arn"
+              ]
+            },
+            "function_name": {
+              "references": [
+                "aws_lambda_alias.live.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.filter.arn"
+              ]
+            },
+            "source_access_configuration": [
+              {
+                "uri": {
+                  "references": [
+                    "aws_secretsmanager_secret.auth.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_event_source_mapping.self",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name"
+              ]
+            },
+            "destination_config": [
+              {
+                "on_failure": [
+                  {
+                    "destination_arn": {
+                      "references": [
+                        "aws_s3_bucket.failed.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "self_managed_kafka_event_source_config": [
+              {
+                "schema_registry_config": [
+                  {
+                    "schema_registry_uri": {
+                      "references": [
+                        "aws_glue_registry.app.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "source_access_configuration": [
+              {
+                "type": {
+                  "constant_value": "SASL_SCRAM_512_AUTH"
+                },
+                "uri": {
+                  "references": [
+                    "aws_secretsmanager_secret.auth.arn"
+                  ]
+                }
+              },
+              {
+                "type": {
+                  "constant_value": "VPC_SUBNET"
+                },
+                "uri": {
+                  "references": [
+                    "aws_subnet.access.id"
+                  ]
+                }
+              },
+              {
+                "type": {
+                  "constant_value": "VPC_SECURITY_GROUP"
+                },
+                "uri": {
+                  "references": [
+                    "aws_security_group.access.id"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

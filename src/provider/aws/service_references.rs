@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::lambda_events::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::lambda_config::label(resource, attribute) {
         return Some(label);
     }
@@ -561,6 +564,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::lambda_events::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::lambda_config::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
