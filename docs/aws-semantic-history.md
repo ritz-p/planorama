@@ -1046,3 +1046,47 @@ Contract distinctions checked against official docs, schema and source:
 
 No reviewed type is a runtime alias. Personal data, SQL, scripts and schema
 contents remain excluded under the shared proof, privacy and verification rules.
+
+## S3 and object storage review (#719)
+
+Reviewed implementation `00bf0c990596acc196f37c10baf11d2b379c7eaa` against AWS Provider
+6.70.0, commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, for all 61 managed types in
+`s3`, `s3control`, `s3outposts`, `s3tables`, `s3vectors`, `s3files` and `glacier`.
+The exact-type decisions record six dimensions, official documentation, selected
+input/output paths, full collection shapes, data-source selectors and implementation/test evidence.
+The pinned schema hash is checked by the contract verifier; these are historical
+audited decisions, not additional runtime support.
+
+Existing #511 bucket policy, list-indexed notification and replication bucket
+references remain supported. Replication IAM role and destination KMS navigation
+are gaps, correcting the former blanket claim of implemented role references.
+#601 retains verified encryption-configuration embedding and configured at-rest
+summaries; #950 supplies incoming Lambda references to S3 Files access points,
+not filesystem ownership. Independent configuration actions and coverage remain.
+
+Follow-ups: [Glacier #973](https://github.com/ritz-p/planorama/issues/973),
+[bucket configuration/directory buckets #974](https://github.com/ritz-p/planorama/issues/974),
+[exports/replication/Storage Lens #975](https://github.com/ritz-p/planorama/issues/975),
+[objects #976](https://github.com/ritz-p/planorama/issues/976),
+[access points/Outposts #977](https://github.com/ritz-p/planorama/issues/977),
+[Access Grants #978](https://github.com/ritz-p/planorama/issues/978),
+[MRAP #979](https://github.com/ritz-p/planorama/issues/979),
+[S3 Files #980](https://github.com/ritz-p/planorama/issues/980),
+[Tables #981](https://github.com/ritz-p/planorama/issues/981) and
+[Vectors #982](https://github.com/ritz-p/planorama/issues/982).
+These own source/helper relationships, preserving the endpoint work in other audits.
+
+General-purpose bucket names, Outposts bucket ARNs, table-bucket ARNs and vector
+bucket names are distinct contracts. Tables encryption is a single object; Vectors
+uses a list of objects. Table replication has list rules and set destinations.
+Computed metadata-table destinations cannot synthesize managed tables. Deprecated
+S3 bucket objects are not verified aliases of S3 objects. Directory-bucket AZ IDs
+and access-point VPC restrictions do not imply subnet containment. MRAP scope
+remains unresolved independently of its control-plane region.
+
+Account singleton policies without configured owners, URI/copy-source parsing,
+legacy inline configuration expansion and new setting summaries have concrete
+revisit conditions in the per-type decisions. Policy effects, payloads, customer
+keys, effective public access and runtime replication/health remain excluded.
+No rendering behavior or fixture changed; SVG regeneration and Layout quality
+are not applicable to this audit.
