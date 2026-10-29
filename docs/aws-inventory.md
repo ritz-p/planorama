@@ -86,8 +86,8 @@ is used.
 | `aws_alb_target_group_attachment` | `aws_lb_target_group_attachment` | `resourceTargetGroupAttachment` | Neither registered |
 
 Only the three verified data aliases inherit data capabilities. Unregistered data
-aliases retain their fallback classification. Listener certificates retain the
-canonical basic display; this does not add a dedicated certificate relationship.
+aliases retain their fallback classification. Listener certificate aliases share
+the verified listener/certificate association contract described in [AWS](aws.md#elbv2-certificates-and-trust-stores-908).
 The support matrix follows canonical rule source references for verified managed
 aliases, while displaying the original type and separate managed/data capabilities.
 

@@ -245,6 +245,33 @@ These relationships do not describe firewall rules or reachability.
 Examples: [security-groups.svg](../examples/security-groups.svg),
 [workload-security-groups.svg](../examples/workload-security-groups.svg).
 
+## ELBv2 certificates and trust stores (#908)
+
+Listeners reference ACM or IAM server certificates by explicit ARN reference and
+matching known value. Listener-certificate helpers additionally prove the listener
+ARN; helpers with only those two dependencies become associations with original
+actions and provenance. Otherwise they remain Logical resources. Certificates stay
+independent, and Global IAM scope never changes the listener's regional scope.
+
+A single complete `mutual_authentication` list element must have known `mode=verify`
+and a matching explicit ELBv2 trust-store `arn`/`id` reference. Other modes, incomplete
+lists and CloudFront trust stores do not prove this relationship. Existing listener
+proximity and forward ownership are unchanged; Cognito actions remain separate.
+
+Trust stores and revocations can reference an S3 bucket by `bucket`/`id`. CA-bundle
+and revocation object provenance additionally requires an explicit managed
+`aws_s3_object` or `aws_s3_bucket_object` `key` reference, matching bucket and key,
+and, when configured, a `version_id` reference to the same object. An omitted version
+means latest and does not identify a pinned version. A literal version or mismatched
+object cannot prove object provenance; independent bucket proof remains available.
+
+These relationships require compatible provider/account/region, unique current
+managed endpoints and known non-sensitive values. Shared resources remain visible;
+unknown, dynamic, data, deleted/deposed and filtered endpoints remain conservative.
+No certificate contents, S3 payloads, effective revocation, authentication, traffic,
+network containment or arbitrary attribute summaries are inferred. The contracts
+follow AWS Provider 6.70.0 schemas and official sources in the semantic decision ledger.
+
 ## Association resources
 
 | Resource | Endpoint attributes | Relationship |
@@ -253,6 +280,7 @@ Examples: [security-groups.svg](../examples/security-groups.svg),
 | `aws_main_route_table_association` | `vpc_id`, `route_table_id` | VPC ↔ Main Route Table |
 | `aws_volume_attachment` | `instance_id`, `volume_id`, with known ID proof | EC2 Instance ↔ EBS Volume |
 | `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance / Lambda Function / Application Load Balancer |
+| `aws_lb_listener_certificate` | `listener_arn`, `certificate_arn` | Listener ↔ ACM / IAM Server Certificate |
 
 Target-group attachments (including verified `aws_alb_*` aliases) require unique
 explicit managed references and matching known evaluated values. The group's known

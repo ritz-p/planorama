@@ -73,6 +73,7 @@ pub(crate) fn annotate(
     for (reference, verified) in references.iter_mut().zip(verified) {
         reference.service_reference_verified = verified;
     }
+    super::elbv2_tls::annotate(nodes, references, evidence);
 }
 
 pub(super) fn association(raw: &Input, index: usize) -> Option<(usize, usize)> {
