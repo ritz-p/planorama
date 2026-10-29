@@ -75,6 +75,26 @@ fn mapping_sets_match_each_configured_pair_even_when_reordered() {
         let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
         assert!(g.edges.iter().any(|e| e.kind == EdgeKind::Connection));
         assert_eq!(g.coverage.selected.resources, 5);
+        let mut optional = v.clone();
+        optional["resource_changes"][1]["change"]["after"]["subnet_mapping"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("allocation_id");
+        optional["configuration"]["root_module"]["resources"][1]["expressions"]["subnet_mapping"]
+            [1]
+        .as_object_mut()
+        .unwrap()
+        .remove("allocation_id");
+        assert!(verified(&optional, "subnet_mapping.allocation_id"));
+        let graph = semantic::transform(&plan::parse(&optional.to_string()).unwrap());
+        assert!(graph.nodes.iter().any(|n| {
+            n.references
+                .iter()
+                .any(|r| r.label == "Mapped Elastic IPs" && r.complete)
+        }));
+        optional["resource_changes"][1]["change"]["after_unknown"] =
+            json!({"subnet_mapping":[{"allocation_id":true},{}]});
+        assert!(!verified(&optional, "subnet_mapping.allocation_id"));
         for case in 0..9 {
             let mut bad = v.clone();
             match case {

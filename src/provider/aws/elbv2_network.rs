@@ -179,7 +179,9 @@ pub(crate) fn annotate(
         .iter()
         .map(|r| {
             if label(&nodes[r.target].resource_type, &r.attribute).is_none()
-                || !super::vpc_routes::eligible(nodes, r)
+                || !r.issues.is_empty()
+                || (!r.attribute.starts_with("subnet_mapping.")
+                    && !super::vpc_routes::eligible(nodes, r))
             {
                 return false;
             }
@@ -250,6 +252,9 @@ pub(crate) fn annotate(
     for (r, verified) in refs.iter_mut().zip(results) {
         if label(&nodes[r.target].resource_type, &r.attribute).is_some() {
             r.service_reference_verified = verified;
+            if verified {
+                r.complete = true;
+            }
         }
     }
 }
