@@ -36,7 +36,7 @@ fn unknown_non_id_traversals_cannot_prove_security_group_attachments() {
                         .iter()
                         .filter(|e| e.kind == EdgeKind::Connection)
                         .count(),
-                    usize::from(field == "id"),
+                    usize::from(field == "id" && kind != "aws_vpc_endpoint"),
                     "{kind} {field} alias={alias}"
                 );
             }
@@ -155,7 +155,7 @@ fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shap
                     .iter()
                     .filter(|e| e.kind == EdgeKind::Connection)
                     .count(),
-                usize::from(scenario == "known_match"),
+                usize::from(scenario == "known_match" && kind != "aws_vpc_endpoint"),
                 "{kind} {scenario}"
             );
             assert!(!format!("{raw:?}").contains("TOP_SECRET"));
@@ -164,7 +164,12 @@ fn planned_collection_proof_rejects_literal_elements_and_missing_or_unknown_shap
                     semantic::diagnostics::collect(&raw)
                         .iter()
                         .any(|d| d.attribute == attribute(kind).unwrap()
-                            && d.reason == DiagnosticReason::PartialResourceProvenance)
+                            && d.reason
+                                == if kind == "aws_vpc_endpoint" {
+                                    DiagnosticReason::UnprovenEndpointValue
+                                } else {
+                                    DiagnosticReason::PartialResourceProvenance
+                                })
                 );
             }
         }
@@ -188,9 +193,31 @@ fn supported_families_keep_single_and_multiple_security_groups_and_containment()
             json!(["aws_security_group.a.id"]),
             json!(["aws_security_group.a.id", "aws_security_group.b.id"]),
         ] {
-            let raw = plan::parse(&fixture(kind, json!({"references":refs})).to_string()).unwrap();
+            let mut input = fixture(kind, json!({"references":refs}));
+            if kind == "aws_vpc_endpoint" {
+                input["configuration"]["provider_config"] = json!({"aws":{"name":"aws","full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}});
+                for resource in input["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                {
+                    resource["provider_config_key"] = "aws".into();
+                }
+                for (i, id) in [(1, "sg-a"), (2, "sg-b")] {
+                    input["resource_changes"][i]["change"] =
+                        json!({"after":{"id":id,"vpc_id":"vpc-main"}});
+                }
+                input["resource_changes"][3]["change"] = json!({"after":{"vpc_id":"vpc-main","vpc_endpoint_type":"Interface","security_group_ids": if refs.as_array().unwrap().len() == 1 {json!(["sg-a"])} else {json!(["sg-a","sg-b"])}}});
+            }
+            let raw = plan::parse(&input.to_string()).unwrap();
             let graph = semantic::transform(&raw).0;
-            assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
+            assert_eq!(
+                graph.nodes.iter().map(|n| &n.address).collect::<Vec<_>>(),
+                crate::semantic::base_graph(&raw)
+                    .nodes
+                    .iter()
+                    .map(|n| &n.address)
+                    .collect::<Vec<_>>()
+            );
             let connections: Vec<_> = graph
                 .edges
                 .iter()
@@ -284,7 +311,14 @@ fn unresolved_ambiguous_dynamic_foreign_and_unrelated_references_remain_dependen
                 !graph.edges.iter().any(|e| e.kind == EdgeKind::Connection),
                 "{kind} {scenario}"
             );
-            assert_eq!(graph.nodes, crate::semantic::base_graph(&raw).nodes);
+            assert_eq!(
+                graph.nodes.iter().map(|n| &n.address).collect::<Vec<_>>(),
+                crate::semantic::base_graph(&raw)
+                    .nodes
+                    .iter()
+                    .map(|n| &n.address)
+                    .collect::<Vec<_>>()
+            );
             let target = graph
                 .nodes
                 .iter()

@@ -2158,6 +2158,66 @@ unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
 `cargo run --locked -- tests/fixtures/fsx-lustre-plan.json --format html -o examples/fsx-lustre.html`.
 Native/Wasm parity covers the same fixture and conservative fallbacks.
 
+## PrivateLink endpoints and services (#902)
+
+Endpoint network references require a known `vpc_endpoint_type`: `route_table_ids`
+for Gateway; `subnet_ids` for Interface, GatewayLoadBalancer, Resource and
+ServiceNetwork; `security_group_ids` for Interface, Resource and ServiceNetwork.
+Every ID must match a complete unique explicit managed reference and the same
+known VPC ID. GatewayLoadBalancer accepts one subnet. `subnet_configuration` is
+a set: all known `subnet_id` entries must be unique members of the known
+`subnet_ids` set. IP fields are not displayed or used to discover ENIs. These
+references retain independent subnet/SG/table identities and the endpoint's VPC
+context; they do not assign subnet ownership to a shared service.
+
+`service_name` matches endpoint-service `service_name`, with Interface or
+GatewayLoadBalancer subtype agreement. A known `service_region` must equal the
+producer service region; a known absent value uses the consumer region.
+Endpoint and service provider/account/region scopes remain independent.
+Cross-account references require known non-conflicting accounts on both bindings
+(or the identical binding); unknown account aliases cannot establish the pair.
+Resource `resource_configuration_arn` and ServiceNetwork `service_network_arn`
+match the corresponding managed VPC Lattice `arn` in the same region, also
+allowing independently proven accounts. The three service selectors are
+exclusive. AWS service-name literals do not invent endpoint-service resources.
+
+Endpoint services are independent Spatial connectors. Complete
+`network_load_balancer_arns` / `gateway_load_balancer_arns` sets require network /
+gateway LB types and Interface / GatewayLoadBalancer service types respectively;
+the other LB set must be known absent. `allowed_principals` and permission-helper
+`principal_arn` accept explicitly referenced managed IAM role/user ARNs only.
+Account roots, wildcards and STS sessions do not identify IAM resources.
+`supported_regions` does not create network placement or copy producer scopes.
+
+Route-table, subnet and SG association helpers require known endpoint/peer IDs,
+compatible scopes, subtype agreement and the same known VPC ID. This replaces
+the legacy reference-only endpoint/route-table lowering: unknown, deleted or
+incompatible endpoints preserve the original helper card and dependencies.
+Connection accepters pair endpoint/service IDs in the service provider's scope,
+while preserving the consumer's independent account/region; matching service
+name, subtype and service region are required. Acceptance is not connectivity.
+
+Policy and Interface-only private-DNS helpers belong to their verified endpoint.
+Notification helpers select exactly one endpoint/service owner and independently
+reference SNS topic `arn`; events remain configuration. Permission and private
+DNS verification helpers belong to endpoint-service `id` through
+`vpc_endpoint_service_id` and `service_id` respectively. All retain independent
+action/identity coverage. Policy bodies, DNS strings, generated ENIs and hosted
+zones never establish additional ownership or expose payloads.
+
+New paths require current managed resources, explicit unique output provenance,
+known matching values and complete sets. Unresolved, literal-only, ambiguous,
+data/deleted/deposed and filtered endpoints preserve conservative fallback.
+Legacy direct endpoint VPC containment is unchanged; endpoint SG connections
+now additionally require the subtype/VPC/value checks above.
+
+The [fixed Provider 6.70.0 source](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2)
+defines optional/computed network sets and generated outputs. Resource and
+ServiceNetwork subnet/SG support is also shown in the
+[AWS creation examples](https://docs.aws.amazon.com/ec2/latest/devguide/example_ec2_CreateVpcEndpoint_section.html),
+beyond the older Interface-only wording in Provider docs. See
+[regressions](../tests/unit/semantic/privatelink.rs).
+
 ## VPC gateways and Elastic IPs (#895)
 
 Internet gateways and Spatial egress-only gateways use an explicit `vpc_id`

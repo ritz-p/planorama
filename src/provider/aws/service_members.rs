@@ -15,6 +15,30 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_vpc_endpoint_policy" => ("vpc_endpoint_id", "Configured endpoint", "Policies"),
+            "aws_vpc_endpoint_private_dns" => {
+                ("vpc_endpoint_id", "Configured endpoint", "Private DNS")
+            }
+            "aws_vpc_endpoint_service_allowed_principal" => (
+                "vpc_endpoint_service_id",
+                "Configured service",
+                "Allowed principals",
+            ),
+            "aws_vpc_endpoint_service_private_dns_verification" => {
+                ("service_id", "Configured service", "DNS verification")
+            }
+            "aws_vpc_endpoint_connection_notification" => {
+                let field = if raw.attributes.iter().any(|r| {
+                    r.target == index
+                        && r.attribute == "vpc_endpoint_id"
+                        && super::service_references::verified(raw, r)
+                }) {
+                    "vpc_endpoint_id"
+                } else {
+                    "vpc_endpoint_service_id"
+                };
+                (field, "Notification owner", "Notifications")
+            }
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")

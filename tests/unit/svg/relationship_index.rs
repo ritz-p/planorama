@@ -1558,7 +1558,7 @@ fn multiple_sources_long_addresses_and_xml_are_preserved_without_values() {
 
 #[test]
 fn numbering_comes_from_sources_and_survives_reordered_edges_and_provenance() {
-    let raw = plan::parse(include_str!("../../fixtures/aws-relationships-plan.json")).unwrap();
+    let raw = plan::parse(include_str!("../../fixtures/relationship-index-plan.json")).unwrap();
     let mut graph = semantic::transform(&raw).0;
     let keys = |graph: &Graph| {
         let layout = Layout::new(graph);
