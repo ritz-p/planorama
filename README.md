@@ -85,3 +85,4 @@ planorama plan.json --config planorama.toml --preset review -o review.html
 | リソース対応・サービスラベル・出典 | [生成された対応一覧](docs/resource-support.md)、[サービスラベルと旧設定からの移行](docs/icons.md) |
 | 開発・設計・性能計測 | [CONTRIBUTING](CONTRIBUTING.md)、[Architecture](docs/architecture.md)、[Routing](docs/routing.md)、[Benchmarks](docs/benchmarks.md) |
 | CI・配布 | [CI 運用](docs/ci.md)、[リリース手順](docs/releases.md) |
+| 文書の正本・参照範囲 | [文書案内](docs/README.md) |

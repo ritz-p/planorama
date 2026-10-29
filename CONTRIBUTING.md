@@ -2,6 +2,7 @@
 
 利用者向けの導入・生成手順は [README](README.md)、開発ルールは [AGENTS.md](AGENTS.md) を参照してください。
 CI の起動条件・公開チェック・復旧手順の正本は [docs/ci.md](docs/ci.md) です。
+作業ごとの参照範囲と生成文書の正本は [文書案内](docs/README.md) から選べます。
 
 ## 開発環境
 
@@ -78,7 +79,7 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 
 CI は [standard / large の2 suite](docs/ci.md#parallel-rust-test-suites) の成功を `Tests` に集約します。
 通常実行で ignore する大型回帰は [Routing regressions](docs/ci.md#deferred-routing-regressions-253) を参照してください。
-`cargo test` を継続する理由と nextest の比較は [計測結果](docs/ci.md#test-runner-evaluation-254) にあります。
+`cargo test` を継続する理由と nextest の比較は [計測結果](docs/ci-history.md#test-runner-evaluation-254) にあります。
 
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
 [Layout stability](docs/layout-stability.md) を参照してください。

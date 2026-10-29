@@ -114,15 +114,15 @@ and ECS Cluster cards. Links target the individual resource, not its group card.
 use Cluster, Task definition, Instance profile, AMI, Launch template,
 Role, Execution role or Task role. Verified [AWS service references](aws.md) use
 their service-specific labels, such as File system; other references use References.
-[Firehose references](aws.md#amazon-data-firehose) distinguish Kinesis source,
+[Firehose references](aws-messaging.md#amazon-data-firehose) distinguish Kinesis source,
 S3 delivery destination and S3 backup destination. Their dependency arrows retain
 Terraform reference semantics; these labels do not add runtime-delivery edges.
-[IAM membership and direct policy references](aws.md#iam-users-and-groups) retain
+[IAM membership and direct policy references](aws-security.md#iam-users-and-groups) retain
 each membership/attachment resource and its action; they do not evaluate inherited
 or effective permissions.
-[IAM identity provider references](aws.md#iam-identity-providers) are configuration
+[IAM identity provider references](aws-security.md#iam-identity-providers) are configuration
 dependencies only; trust-policy JSON and matching issuer URLs do not create edges.
-Verified [ECS membership](aws.md#ecs-cluster-membership) uses `Cluster membership`
+Verified [ECS membership](aws-compute.md#ecs-cluster-membership) uses `Cluster membership`
 without creating network containment or display ownership. Unproven Service
 membership keeps the ordinary `Cluster` reference and an unresolved membership row.
 Graph-only references such as
