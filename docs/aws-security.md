@@ -77,6 +77,9 @@ references remain distinct from these configured associations. Literal ID/URL
 matches alone never create associations; filtered endpoints become unavailable.
 External IdP and role configuration retain ordinary Terraform references only.
 
+ELBv2 listeners and rules can reference User Pools, Clients and Domains through
+[verified Cognito authentication actions](aws.md#elbv2-cognito-authentication-references-909).
+
 No client secret, user schema, callback URL, credentials or provider attribute
 values are included in the diagram. References do not prove authentication flow,
 user counts or effective permissions. The [synthetic fixture](../tests/fixtures/cognito-plan.json)

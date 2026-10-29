@@ -44057,8 +44057,8 @@
     "aws_lb_listener": {
       "status": "Partial",
       "priority": "P1",
-      "issue": 908,
-      "gap": "#715 audit: Implemented #908: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
+      "issue": 909,
+      "gap": "#715 audit: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44079,7 +44079,7 @@
         "placement": "Supported: retain Spatial Connector for aws_lb_listener; this presentation alone does not prove relationships.",
         "ownership": "Partial: components.rs groups listener by a unique LB reference; verified ARN-value proof gates target-group ownership. Listener remains independent Spatial, not embedded.",
         "network": "Not applicable: LB proximity preference is not containment; listeners do not inherit LB subnet membership.",
-        "references": "Partial: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
+        "references": "Partial: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_lb_listener attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener.html.markdown",
@@ -44162,7 +44162,9 @@
           "tests/unit/semantic/associations.rs",
           "tests/unit/semantic/spanning.rs",
           "src/provider/aws/elbv2_tls.rs",
-          "tests/unit/semantic/elbv2_tls.rs"
+          "tests/unit/semantic/elbv2_tls.rs",
+          "src/provider/aws/elbv2_cognito.rs",
+          "tests/unit/semantic/elbv2_cognito.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), id (optional/computed), load_balancer_arn (optional/computed), port (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -44200,7 +44202,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 909,
-      "gap": "#715 audit: Partial: listener logical-component membership and known-ARN forward target-group ownership retained. Missing: type-gated Cognito pool/client/domain references. Redirect/JWT/OIDC strings and conditions do not prove endpoints. Follow-up #909. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44218,7 +44220,7 @@
         "placement": "Supported: retain Spatial Policy for aws_lb_listener_rule; this presentation alone does not prove relationships.",
         "ownership": "Partial: components.rs retains rule identity in synthetic LB membership; this is not service_members.rs embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Partial: listener logical-component membership and known-ARN forward target-group ownership retained. Missing: type-gated Cognito pool/client/domain references. Redirect/JWT/OIDC strings and conditions do not prove endpoints.",
+        "references": "Partial: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: OIDC secrets, JWT claims, condition/transform bodies and effective authentication; no arbitrary aws_lb_listener_rule attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener_rule.html.markdown",
@@ -44285,7 +44287,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_cognito.rs",
+          "tests/unit/semantic/elbv2_cognito.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), listener_arn (optional/computed), priority (optional/computed), region (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -48468,8 +48472,8 @@
     "aws_alb_listener": {
       "status": "Partial",
       "priority": "P1",
-      "issue": 908,
-      "gap": "#715 audit: Implemented #908: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
+      "issue": 909,
+      "gap": "#715 audit: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48490,7 +48494,7 @@
         "placement": "Supported: retain Spatial Connector for aws_alb_listener; this presentation alone does not prove relationships.",
         "ownership": "Partial: components.rs groups listener by a unique LB reference; verified ARN-value proof gates target-group ownership. Listener remains independent Spatial, not embedded.",
         "network": "Not applicable: LB proximity preference is not containment; listeners do not inherit LB subnet membership.",
-        "references": "Partial: ACM and IAM server-certificate ARN references and singleton verify-mode ELBv2 trust-store ARN/id references require explicit unique current compatible endpoints and known matching values. Existing listener proximity and forward ownership retained. Cognito action references remain a separate follow-up; no OIDC/JWT URL interpretation.",
+        "references": "Partial: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: CA/CRL contents, client certificate validation and TLS effectiveness; no arbitrary aws_alb_listener attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener.html.markdown",
@@ -48573,7 +48577,9 @@
           "tests/unit/semantic/associations.rs",
           "tests/unit/semantic/spanning.rs",
           "src/provider/aws/elbv2_tls.rs",
-          "tests/unit/semantic/elbv2_tls.rs"
+          "tests/unit/semantic/elbv2_tls.rs",
+          "src/provider/aws/elbv2_cognito.rs",
+          "tests/unit/semantic/elbv2_cognito.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb_listener; preserve original identity. Registered lookup alias only for LB/listener/target group. Same-name data selectors: arn (optional/computed), id (optional/computed), load_balancer_arn (optional/computed), port (optional/computed), region (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -48667,7 +48673,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 909,
-      "gap": "#715 audit: Partial: listener logical-component membership and known-ARN forward target-group ownership retained. Missing: type-gated Cognito pool/client/domain references. Redirect/JWT/OIDC strings and conditions do not prove endpoints. Follow-up #909. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48685,7 +48691,7 @@
         "placement": "Supported: retain Spatial Policy for aws_alb_listener_rule; this presentation alone does not prove relationships.",
         "ownership": "Partial: components.rs retains rule identity in synthetic LB membership; this is not service_members.rs embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Partial: listener logical-component membership and known-ARN forward target-group ownership retained. Missing: type-gated Cognito pool/client/domain references. Redirect/JWT/OIDC strings and conditions do not prove endpoints.",
+        "references": "Partial: Implemented #909: action/default_action authenticate-cognito references verify complete indexed lists and singleton authentication blocks against explicit unique current compatible Cognito user-pool ARN, client ID and domain outputs with known non-sensitive matching values. Existing listener components, forwarding ownership and TLS references remain unchanged. OIDC/JWT/redirect strings and conditions do not prove endpoints.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; account requires provider evidence. Require known resource/provider region and compatible account/state; names do not supply scope.",
         "summaries": "Intentionally unsupported: OIDC secrets, JWT claims, condition/transform bodies and effective authentication; no arbitrary aws_alb_listener_rule attribute summary.",
         "officialDocumentation": "website/docs/r/lb_listener_rule.html.markdown",
@@ -48752,7 +48758,9 @@
           "tests/unit/aws_aliases.rs",
           "tests/unit/semantic/components.rs",
           "tests/unit/semantic/associations.rs",
-          "tests/unit/semantic/spanning.rs"
+          "tests/unit/semantic/spanning.rs",
+          "src/provider/aws/elbv2_cognito.rs",
+          "tests/unit/semantic/elbv2_cognito.rs"
         ],
         "managedDataContract": "Verified managed alias of aws_lb_listener_rule; preserve original identity. No same-name data registration; managed alias rules do not invent one. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}

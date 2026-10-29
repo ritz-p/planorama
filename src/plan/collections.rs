@@ -225,6 +225,7 @@ pub(super) fn annotate(
         .map(|((value, _), mask)| (*value, mask))
         .collect();
     crate::provider::aws::elbv2::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::elbv2_cognito::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_config::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_events::annotate(nodes, references, &elbv2_evidence);
     for reference in references {

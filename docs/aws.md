@@ -268,7 +268,7 @@ independent, and Global IAM scope never changes the listener's regional scope.
 A single complete `mutual_authentication` list element must have known `mode=verify`
 and a matching explicit ELBv2 trust-store `arn`/`id` reference. Other modes, incomplete
 lists and CloudFront trust stores do not prove this relationship. Existing listener
-proximity and forward ownership are unchanged; Cognito actions remain separate.
+proximity and forward ownership are unchanged.
 
 Trust stores and revocations can reference an S3 bucket by `bucket`/`id`. CA-bundle
 and revocation object provenance additionally requires an explicit managed
@@ -283,6 +283,32 @@ unknown, dynamic, data, deleted/deposed and filtered endpoints remain conservati
 No certificate contents, S3 payloads, effective revocation, authentication, traffic,
 network containment or arbitrary attribute summaries are inferred. The contracts
 follow AWS Provider 6.70.0 schemas and official sources in the semantic decision ledger.
+
+## ELBv2 Cognito authentication references (#909)
+
+Listeners and listener rules, including `aws_alb_*` aliases, support
+`default_action.authenticate_cognito` and `action.authenticate_cognito` references
+when the corresponding action has known `type=authenticate-cognito`:
+
+| Input | Explicit endpoint output |
+| --- | --- |
+| `user_pool_arn` | `aws_cognito_user_pool.arn` |
+| `user_pool_client_id` | `aws_cognito_user_pool_client.id` |
+| `user_pool_domain` | `aws_cognito_user_pool_domain.domain` |
+
+The action lists must match configuration lengths and positions, and each
+authentication block must be a singleton list. Every participating element must
+resolve uniquely to a current managed endpoint with matching known, non-sensitive
+values and compatible provider/account/region in the same named state. An unproven
+element keeps that entire field's collection conservative. Pool, client and domain
+remain independent resources; these references do not establish ownership or
+network containment. Existing forwarding, listener components and TLS rules still
+apply independently.
+
+Literal strings, OIDC/JWT/redirect attributes, conditions and dynamic, unknown,
+sensitive, deleted/deposed or filtered references do not prove Cognito endpoints.
+Session settings, secrets, credentials and effective authentication are not shown.
+The contract follows AWS Provider 6.70.0's listener and listener-rule list schemas.
 
 ## Association resources
 
