@@ -347,3 +347,254 @@ fn cloudfront_access_and_policy_references_reject_unproven_outputs() {
         }
     }
 }
+
+#[test]
+fn cloudfront_multiple_origins_require_correlated_complete_evidence() {
+    let mut value = fixture();
+    let second_value = value["resource_changes"][8]["change"]["after"]["origin"][0].clone();
+    let second_expression =
+        value["configuration"]["root_module"]["resources"][8]["expressions"]["origin"][0].clone();
+    value["resource_changes"][7]["change"]["after"]["origin"]
+        .as_array_mut()
+        .unwrap()
+        .push(second_value);
+    value["configuration"]["root_module"]["resources"][7]["expressions"]["origin"]
+        .as_array_mut()
+        .unwrap()
+        .push(second_expression);
+    let result = graph(&value);
+    assert!(origin(&result).complete);
+    assert_eq!(origin(&result).targets.len(), 2);
+    for case in 0..5 {
+        let mut invalid = value.clone();
+        match case {
+            0 => invalid["resource_changes"][7]["change"]["after_unknown"] = json!({"origin":true}),
+            1 => {
+                invalid["resource_changes"][7]["change"]["after_sensitive"] = json!({"origin":true})
+            }
+            2 => {
+                invalid["resource_changes"][7]["change"]["after"]["origin"][1]["domain_name"] =
+                    json!("wrong")
+            }
+            3 => {
+                invalid["configuration"]["root_module"]["resources"][7]["expressions"]["origin"]
+                    .as_array_mut()
+                    .unwrap()
+                    .pop();
+            }
+            _ => invalid["resource_changes"][1]["change"]["actions"] = json!(["delete"]),
+        }
+        assert!(!origin(&graph(&invalid)).complete, "case {case}");
+    }
+}
+
+fn nested(path: &[&str], value: Value) -> Value {
+    if let Some((field, rest)) = path.split_first() {
+        let child = nested(rest, value);
+        if rest.is_empty() {
+            json!({*field:child})
+        } else {
+            json!({*field:[child]})
+        }
+    } else {
+        value
+    }
+}
+
+#[test]
+fn cloudfront_auxiliary_paths_require_typed_current_matching_outputs() {
+    for (path, kind, output) in [
+        (
+            "origin.vpc_origin_config.vpc_origin_id",
+            "aws_cloudfront_vpc_origin",
+            "id",
+        ),
+        (
+            "origin.custom_origin_config.origin_mtls_config.client_certificate_arn",
+            "aws_acm_certificate",
+            "arn",
+        ),
+        (
+            "continuous_deployment_policy_id",
+            "aws_cloudfront_continuous_deployment_policy",
+            "id",
+        ),
+        ("anycast_ip_list_id", "aws_cloudfront_anycast_ip_list", "id"),
+        (
+            "connection_function_association.id",
+            "aws_cloudfront_connection_function",
+            "id",
+        ),
+        (
+            "viewer_mtls_config.trust_store_config.trust_store_id",
+            "aws_cloudfront_trust_store",
+            "id",
+        ),
+        (
+            "viewer_certificate.iam_certificate_id",
+            "aws_iam_server_certificate",
+            "id",
+        ),
+        (
+            "logging_config.bucket",
+            "aws_s3_bucket",
+            "bucket_domain_name",
+        ),
+        (
+            "default_cache_behavior.function_association.function_arn",
+            "aws_cloudfront_function",
+            "arn",
+        ),
+        (
+            "ordered_cache_behavior.lambda_function_association.lambda_arn",
+            "aws_lambda_function",
+            "qualified_arn",
+        ),
+        (
+            "default_cache_behavior.trusted_key_groups",
+            "aws_cloudfront_key_group",
+            "id",
+        ),
+        (
+            "ordered_cache_behavior.field_level_encryption_id",
+            "aws_cloudfront_field_level_encryption_config",
+            "id",
+        ),
+        (
+            "ordered_cache_behavior.realtime_log_config_arn",
+            "aws_cloudfront_realtime_log_config",
+            "arn",
+        ),
+    ] {
+        let mut value = fixture();
+        let address = format!("{kind}.extra");
+        value["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({
+                "address":address,"type":kind,"mode":"managed",
+                "change":{"actions":["no-op"],"after":{output:"endpoint"}}
+            }));
+        value["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({
+                "address":address,"provider_config_key":"aws"
+            }));
+        let parts: Vec<_> = path.split('.').collect();
+        let actual = if path.ends_with("trusted_key_groups") {
+            json!(["endpoint"])
+        } else {
+            json!("endpoint")
+        };
+        value["resource_changes"][7]["change"]["after"] = nested(&parts, actual);
+        value["configuration"]["root_module"]["resources"][7]["expressions"] = nested(
+            &parts,
+            json!({"references":[format!("{address}.{output}")]}),
+        );
+        for case in 0..6 {
+            let mut input = value.clone();
+            match case {
+                1 => input["resource_changes"][11]["change"]["after"][output] = json!("wrong"),
+                2 => {
+                    input["resource_changes"][11]["change"]["after_sensitive"] =
+                        json!({output:true})
+                }
+                3 => input["resource_changes"][11]["change"]["actions"] = json!(["delete"]),
+                4 => input["resource_changes"][11]["mode"] = json!("data"),
+                5 => {
+                    input["resource_changes"][7]["change"]["after_unknown"] = json!({parts[0]:true})
+                }
+                _ => {}
+            }
+            let result = graph(&input);
+            let node = result
+                .nodes
+                .iter()
+                .find(|n| n.address == "aws_cloudfront_distribution.assets")
+                .unwrap();
+            assert_eq!(
+                node.references
+                    .iter()
+                    .any(|r| r.attribute == path && r.label != "References" && r.complete),
+                case == 0,
+                "{path} case {case}"
+            );
+        }
+    }
+}
+
+#[test]
+fn cloudfront_staging_requires_complete_quantity_consistent_collection() {
+    let mut value = fixture();
+    value["resource_changes"][7]["change"]["after"]["domain_name"] = json!("staging.example");
+    value["resource_changes"].as_array_mut().unwrap().push(json!({
+        "address":"aws_cloudfront_continuous_deployment_policy.test",
+        "type":"aws_cloudfront_continuous_deployment_policy","mode":"managed",
+        "change":{"actions":["no-op"],"after":{"staging_distribution_dns_names":[{"items":["staging.example"],"quantity":1}]}}
+    }));
+    value["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({
+        "address":"aws_cloudfront_continuous_deployment_policy.test","provider_config_key":"aws",
+        "expressions":{"staging_distribution_dns_names":[{"items":{"references":["aws_cloudfront_distribution.assets.domain_name"]}}]}
+    }));
+    for case in 0..4 {
+        let mut input = value.clone();
+        match case {
+            1 => {
+                input["resource_changes"][11]["change"]["after"]["staging_distribution_dns_names"]
+                    [0]["quantity"] = json!(2)
+            }
+            2 => {
+                input["resource_changes"][11]["change"]["after"]["staging_distribution_dns_names"]
+                    [0]["items"] = json!(["staging.example", "literal.example"])
+            }
+            3 => {
+                input["resource_changes"][11]["change"]["after_unknown"] =
+                    json!({"staging_distribution_dns_names":[{"quantity":true}]})
+            }
+            _ => {}
+        }
+        let result = graph(&input);
+        let node = result
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_cloudfront_continuous_deployment_policy.test")
+            .unwrap();
+        assert_eq!(
+            node.references
+                .iter()
+                .any(|r| r.label == "Staging distribution reference" && r.complete),
+            case == 0,
+            "case {case}"
+        );
+    }
+}
+
+#[test]
+fn cloudfront_vpc_origin_owner_account_requires_endpoint_account_evidence() {
+    let mut value = fixture();
+    value["resource_changes"].as_array_mut().unwrap().push(json!({
+        "address":"aws_cloudfront_vpc_origin.test","type":"aws_cloudfront_vpc_origin","mode":"managed",
+        "change":{"actions":["no-op"],"after":{"id":"vo-test"}}
+    }));
+    value["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_cloudfront_vpc_origin.test","provider_config_key":"aws"
+        }));
+    value["resource_changes"][7]["change"]["after"]["origin"] = json!([{
+        "vpc_origin_config":[{"vpc_origin_id":"vo-test","owner_account_id":"123456789012"}]
+    }]);
+    value["configuration"]["root_module"]["resources"][7]["expressions"]["origin"] = json!([{
+        "vpc_origin_config":[{"vpc_origin_id":{"references":["aws_cloudfront_vpc_origin.test.id"]}}]
+    }]);
+    let result = graph(&value);
+    assert!(
+        !result
+            .nodes
+            .iter()
+            .flat_map(|n| &n.references)
+            .any(|r| r.label == "VPC origin reference" && r.complete)
+    );
+}
