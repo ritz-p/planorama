@@ -16,6 +16,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::lambda_config::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::elbv2_network::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::elbv2_tls::label(resource, attribute) {
         return Some(label);
     }
@@ -582,6 +585,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::lambda_config::bindings(raw, reference))
+        && (super::elbv2_network::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::elbv2_tls::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -851,7 +860,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::s3::aggregate(raw, reference) || super::networkfirewall::aggregate(raw, reference)
+        if super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
+            || super::s3::aggregate(raw, reference)
+            || super::networkfirewall::aggregate(raw, reference)
         {
             graph.nodes[reference.target]
                 .references
