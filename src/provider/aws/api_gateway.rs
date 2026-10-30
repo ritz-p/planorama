@@ -51,6 +51,20 @@ fn basic(
         return expected.len() == 1
             && known(evidence, r.target, &r.attribute) == expected.first().copied();
     }
+    if r.attribute == "endpoint_configuration.vpc_endpoint_ids" {
+        let (value, unknown) = evidence[r.target];
+        return super::streaming::values(value, unknown, &r.attribute, true).is_some_and(
+            |actual| {
+                actual.len() == expected.len()
+                    && expected.iter().all(|value| actual.contains(value))
+                    && expected
+                        .iter()
+                        .collect::<std::collections::BTreeSet<_>>()
+                        .len()
+                        == expected.len()
+            },
+        );
+    }
     let (value, unknown) = evidence[r.target];
     if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_)) {
         return false;

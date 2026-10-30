@@ -2,6 +2,129 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn private_rest_endpoint_sets_require_complete_known_private_configuration() {
+    for case in [
+        "valid",
+        "reordered",
+        "partial",
+        "duplicate",
+        "unknown_id",
+        "unknown_types",
+        "unknown_block",
+        "regional",
+        "mixed_types",
+        "multiple_blocks",
+        "gateway",
+        "literal",
+        "data",
+        "deleted",
+        "deposed",
+        "wrong_provider",
+        "unknown_region",
+    ] {
+        let mut value: Value =
+            serde_json::from_str(include_str!("../../fixtures/api-gateway-rest-plan.json"))
+                .unwrap();
+        for (name, id) in [("one", "vpce-one"), ("two", "vpce-two")] {
+            value["resource_changes"].as_array_mut().unwrap().push(json!({"address":format!("aws_vpc_endpoint.{name}"),"mode":"managed","type":"aws_vpc_endpoint","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"id":id,"vpc_endpoint_type":"Interface"}}}));
+            value["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":format!("aws_vpc_endpoint.{name}"),"mode":"managed","type":"aws_vpc_endpoint","name":name,"provider_config_key":"aws","expressions":{}}));
+        }
+        let api = value["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|r| r["address"] == "aws_api_gateway_rest_api.app")
+            .unwrap();
+        api["change"]["after"]["endpoint_configuration"] =
+            json!([{"types":["PRIVATE"],"vpc_endpoint_ids":["vpce-one","vpce-two"]}]);
+        let config = &mut api["change"]["after"]["endpoint_configuration"];
+        match case {
+            "reordered" => config[0]["vpc_endpoint_ids"] = json!(["vpce-two", "vpce-one"]),
+            "partial" => {
+                config[0]["vpc_endpoint_ids"] = json!(["vpce-one", "vpce-two", "vpce-other"])
+            }
+            "duplicate" => config[0]["vpc_endpoint_ids"] = json!(["vpce-one", "vpce-one"]),
+            "regional" => config[0]["types"] = json!(["REGIONAL"]),
+            "mixed_types" => config[0]["types"] = json!(["PRIVATE", "REGIONAL"]),
+            "multiple_blocks" => config
+                .as_array_mut()
+                .unwrap()
+                .push(json!({"types":["PRIVATE"],"vpc_endpoint_ids":["vpce-one"]})),
+            _ => {}
+        }
+        match case {
+            "unknown_id" => {
+                api["change"]["after_unknown"] =
+                    json!({"endpoint_configuration":[{"vpc_endpoint_ids":[false,true]}]})
+            }
+            "unknown_types" => {
+                api["change"]["after_unknown"] =
+                    json!({"endpoint_configuration":[{"types":[true]}]})
+            }
+            "unknown_block" => {
+                api["change"]["after_unknown"] = json!({"endpoint_configuration":true})
+            }
+            _ => {}
+        }
+        let endpoint = value["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .last_mut()
+            .unwrap();
+        match case {
+            "gateway" => endpoint["change"]["after"]["vpc_endpoint_type"] = json!("Gateway"),
+            "data" => endpoint["mode"] = json!("data"),
+            "deleted" => endpoint["change"]["actions"] = json!(["delete"]),
+            "deposed" => endpoint["deposed"] = json!("old"),
+            "wrong_provider" => endpoint["provider_name"] = json!("example.invalid/custom/aws"),
+            _ => {}
+        }
+        let api = value["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|r| r["address"] == "aws_api_gateway_rest_api.app")
+            .unwrap();
+        api["expressions"]["endpoint_configuration"] = if case == "literal" {
+            json!([{"vpc_endpoint_ids":{"constant_value":["vpce-one","vpce-two"]}}])
+        } else {
+            json!([{"vpc_endpoint_ids":{"references":["aws_vpc_endpoint.one.id","aws_vpc_endpoint.two.id"]}}])
+        };
+        if case == "unknown_region" {
+            value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                json!({"references":["var.region"]});
+        }
+        let raw = plan::parse(&value.to_string()).unwrap();
+        let graph = semantic::transform(&raw);
+        let api = graph
+            .nodes
+            .iter()
+            .find(|n| n.address == "aws_api_gateway_rest_api.app")
+            .unwrap();
+        assert!(api.member_owner.is_none());
+        assert!(
+            !graph
+                .edges
+                .iter()
+                .any(|edge| edge.kind == crate::model::EdgeKind::Containment
+                    && graph.nodes[edge.to].address == "aws_api_gateway_rest_api.app")
+        );
+        assert_eq!(
+            api.references
+                .iter()
+                .any(|r| r.label == "Private REST endpoints" && r.complete),
+            matches!(case, "valid" | "reordered"),
+            "{case}: {:?}",
+            raw.attributes
+        );
+        assert_eq!(
+            graph.coverage.selected.resources,
+            value["resource_changes"].as_array().unwrap().len()
+        );
+    }
+}
+
+#[test]
 fn rest_v2_backend_and_role_require_matching_explicit_context() {
     for role in [false, true] {
         for case in [

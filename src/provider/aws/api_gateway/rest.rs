@@ -3,6 +3,11 @@ use crate::model::AttributeReference;
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
     let (label, targets, list): (_, &[_], _) = match (resource, attribute) {
+        ("aws_api_gateway_rest_api", "endpoint_configuration.vpc_endpoint_ids") => (
+            "Private REST endpoints",
+            &[("aws_vpc_endpoint", "id")],
+            true,
+        ),
         (
             "aws_api_gateway_integration"
             | "aws_api_gateway_stage"
@@ -104,6 +109,22 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         context.nodes[r.target].resource_type.as_str(),
         r.attribute.as_str(),
     ) {
+        ("aws_api_gateway_rest_api", "endpoint_configuration.vpc_endpoint_ids") => {
+            let (value, unknown) = context.evidence[r.target];
+            value["endpoint_configuration"]
+                .as_array()
+                .is_some_and(|blocks| blocks.len() == 1)
+                && super::super::streaming::values(
+                    value,
+                    unknown,
+                    "endpoint_configuration.types",
+                    true,
+                )
+                .is_some_and(|types| types.len() == 1 && types.contains("PRIVATE"))
+                && r.sources.iter().all(|&endpoint| {
+                    context.value(endpoint, "vpc_endpoint_type") == Some("Interface")
+                })
+        }
         ("aws_api_gateway_integration" | "aws_api_gateway_method", "resource_id") => {
             resource_matches(context, r.target, source)
         }
