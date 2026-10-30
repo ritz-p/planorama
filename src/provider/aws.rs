@@ -9,6 +9,7 @@ mod basic;
 mod batch;
 mod classification;
 pub(crate) mod cloudfront;
+pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
 mod cloudtrail_tests;
@@ -248,6 +249,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     autoscaling::present(&raw, &mut graph);
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
+    cloudfront_vpc_origin::present(&raw, &mut graph);
     efs::present(&raw, &mut graph);
     service_members::present(&raw, &mut graph);
     encryption::present(&raw, &mut graph);

@@ -150,7 +150,7 @@ fn current(node: &TerraformEntity) -> bool {
         && node.deposed_key.is_none()
 }
 
-fn compatible(left: &TerraformEntity, right: &TerraformEntity) -> bool {
+pub(super) fn compatible(left: &TerraformEntity, right: &TerraformEntity) -> bool {
     let (Some(left), Some(right)) = (&left.provider_configuration, &right.provider_configuration)
     else {
         return false;

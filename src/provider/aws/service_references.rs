@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if resource == "aws_cloudfront_vpc_origin" && attribute == "vpc_origin_endpoint_config.arn" {
+        return Some("VPC origin endpoint");
+    }
     if let Some(label) = super::cloudfront::reference_label(resource, attribute) {
         return Some(label);
     }
