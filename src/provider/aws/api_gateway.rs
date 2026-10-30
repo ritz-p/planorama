@@ -32,7 +32,9 @@ fn basic(
             || (matches!(
                 nodes[r.target].resource_type.as_str(),
                 "aws_apigatewayv2_api" | "aws_apigatewayv2_integration"
-            ) && r.attribute == "credentials_arn"),
+            ) && r.attribute == "credentials_arn")
+            || (nodes[r.target].resource_type == "aws_apigatewayv2_authorizer"
+                && r.attribute == "authorizer_credentials_arn"),
     ) || r.source_attributes.len() != 1
     {
         return false;
@@ -51,6 +53,40 @@ fn basic(
     let Some(mut expected) = expected else {
         return false;
     };
+    if nodes[r.target].resource_type == "aws_apigatewayv2_route" {
+        if r.attribute == "target" {
+            return expected.len() == 1
+                && known(evidence, r.target, "target")
+                    .is_some_and(|value| value == format!("integrations/{}", expected[0]));
+        }
+        if r.attribute == "request_models" {
+            let (value, unknown) = evidence[r.target];
+            if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_)) {
+                return false;
+            }
+            let Some(map) = value["request_models"].as_object() else {
+                return false;
+            };
+            let mask = &unknown["request_models"];
+            if !matches!(mask, Value::Null | Value::Bool(false))
+                && !mask.as_object().is_some_and(|m| {
+                    m.values()
+                        .all(|v| matches!(v, Value::Null | Value::Bool(false)))
+                })
+            {
+                return false;
+            }
+            let Some(actual) = map
+                .values()
+                .map(Value::as_str)
+                .collect::<Option<std::collections::BTreeSet<_>>>()
+            else {
+                return false;
+            };
+            let unique: std::collections::BTreeSet<_> = expected.iter().copied().collect();
+            return !actual.is_empty() && actual == unique && unique.len() == expected.len();
+        }
+    }
     if !rule.list {
         return expected.len() == 1
             && known(evidence, r.target, &r.attribute) == expected.first().copied();

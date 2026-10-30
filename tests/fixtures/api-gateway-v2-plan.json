@@ -73,7 +73,8 @@
           "integration_type": "AWS_PROXY",
           "connection_type": "INTERNET",
           "integration_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations",
-          "credentials_arn": "arn:aws:iam::123456789012:role/backend"
+          "credentials_arn": "arn:aws:iam::123456789012:role/backend",
+          "id": "integration-lambda"
         }
       }
     },
@@ -190,7 +191,9 @@
           "api_id": "v2-synthetic",
           "authorizer_type": "REQUEST",
           "name": "synthetic-authorizer",
-          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations"
+          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations",
+          "id": "auth-request",
+          "authorizer_credentials_arn": "arn:aws:iam::123456789012:role/backend"
         }
       }
     },
@@ -285,6 +288,90 @@
           "connection_type": "VPC_LINK",
           "connection_id": "v2-link",
           "integration_uri": "arn:aws:servicediscovery:us-east-1:123456789012:service/srv-synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_route.http",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_route",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "authorization_type": "CUSTOM",
+          "authorizer_id": "auth-request",
+          "target": "integrations/integration-lambda",
+          "route_key": "GET /synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_api.socket",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "socket-api",
+          "protocol_type": "WEBSOCKET",
+          "name": "synthetic-socket"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_model.one",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_model",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "socket-api",
+          "name": "Modelone"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_model.two",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_model",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "socket-api",
+          "name": "Modeltwo"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_route.socket",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_route",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "socket-api",
+          "authorization_type": "NONE",
+          "route_key": "$default",
+          "request_models": {
+            "one": "Modelone",
+            "two": "Modeltwo"
+          }
         }
       }
     }
@@ -453,6 +540,11 @@
                 "aws_lambda_function.app.invoke_arn",
                 "aws_lambda_function.app"
               ]
+            },
+            "authorizer_credentials_arn": {
+              "references": [
+                "aws_iam_role.backend.arn"
+              ]
             }
           }
         },
@@ -539,6 +631,81 @@
             "integration_uri": {
               "references": [
                 "aws_service_discovery_service.backend.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_route.http",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_route",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id"
+              ]
+            },
+            "authorizer_id": {
+              "references": [
+                "aws_apigatewayv2_authorizer.request.id"
+              ]
+            },
+            "target": {
+              "references": [
+                "aws_apigatewayv2_integration.lambda.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_api.socket",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_api",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_model.one",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_model",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.socket.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_model.two",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_model",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.socket.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_route.socket",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_route",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.socket.id"
+              ]
+            },
+            "request_models": {
+              "references": [
+                "aws_apigatewayv2_model.one.name",
+                "aws_apigatewayv2_model.two.name"
               ]
             }
           }

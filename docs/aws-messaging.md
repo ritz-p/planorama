@@ -20,6 +20,9 @@ remain unchanged. VPC Link references do not place an API inside a subnet.
 | v2 | Quick-create Lambda | HTTP API with an explicit Function or verified Alias reference matching its raw ARN; generated integrations, routes and stages are not Terraform nodes |
 | v2 | Integration role | Explicit IAM Role ARN; quick-create requires a verified Lambda target, integrations require HTTP AWS_PROXY or WebSocket AWS/AWS_PROXY |
 | v2 | Link subnet / security groups | Entire known list/set matches unique explicitly referenced instances |
+| v2 | Authorizer role | Known HTTP/WebSocket API and REQUEST authorizer with an explicit matching IAM Role ARN |
+| v2 | Route integration / authorizer | Same explicitly referenced API; target exactly equals `integrations/` plus the referenced Integration ID; CUSTOM requires REQUEST, JWT requires HTTP and a JWT Authorizer |
+| v2 | Route request models | WebSocket API; the entire known map matches unique explicitly referenced Model names with the same API parent |
 
 These are configuration reference links, not runtime reachability or permission
 claims. No URI substring matching, external endpoint reconstruction, API body,
@@ -40,6 +43,10 @@ The quick-create and Cloud Map extensions use the scalar fields in the pinned
 and [Integration schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/apigatewayv2/integration.go).
 Service-action request maps remain opaque. A present or unknown integration subtype
 does not establish a Lambda backend; role references are independently verified.
+Route contracts also follow the pinned [route schema and tests](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/apigatewayv2/route_test.go)
+and [authorizer documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/apigatewayv2_authorizer.html.markdown).
+Routes, models and authorizers retain independent logical rows. JWT issuer URLs,
+model schemas and request payloads are not interpreted or displayed.
 Synthetic examples: REST [SVG](../examples/api-gateway-rest.svg) /
 [HTML](../examples/api-gateway-rest.html), v2 [SVG](../examples/api-gateway-v2.svg) /
 [HTML](../examples/api-gateway-v2.html). Generate HTML in Docker using

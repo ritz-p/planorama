@@ -2,6 +2,181 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn v2_route_qualifiers_and_model_map_are_conservative() {
+    for case in [
+        "jwt_http",
+        "jwt_websocket",
+        "none",
+        "wrong_authorizer",
+        "partial_map",
+        "unknown_entry",
+        "duplicate_model",
+        "http_models",
+        "target_suffix",
+    ] {
+        let mut value: Value =
+            serde_json::from_str(include_str!("../../fixtures/api-gateway-v2-plan.json")).unwrap();
+        for r in value["resource_changes"].as_array_mut().unwrap() {
+            if r["address"] == "aws_apigatewayv2_route.http" {
+                if case.starts_with("jwt_") {
+                    r["change"]["after"]["authorization_type"] = json!("JWT");
+                }
+                if case == "none" {
+                    r["change"]["after"]["authorization_type"] = json!("NONE");
+                }
+                if case == "target_suffix" {
+                    r["change"]["after"]["target"] = json!("integrations/integration-lambda/extra");
+                }
+            }
+            if r["address"] == "aws_apigatewayv2_authorizer.request"
+                && (case.starts_with("jwt_") || case == "wrong_authorizer")
+            {
+                r["change"]["after"]["authorizer_type"] = json!("JWT");
+            }
+            if r["address"] == "aws_apigatewayv2_api.app" && case == "jwt_websocket" {
+                r["change"]["after"]["protocol_type"] = json!("WEBSOCKET");
+            }
+            if r["address"] == "aws_apigatewayv2_api.socket" && case == "http_models" {
+                r["change"]["after"]["protocol_type"] = json!("HTTP");
+            }
+            if r["address"] == "aws_apigatewayv2_model.two" && case == "duplicate_model" {
+                r["change"]["after"]["name"] = json!("Modelone");
+            }
+            if r["address"] == "aws_apigatewayv2_route.socket" {
+                if case == "partial_map" {
+                    r["change"]["after"]["request_models"]["extra"] = json!("Unreferenced");
+                }
+                if case == "unknown_entry" {
+                    r["change"]["after_unknown"]["request_models"] = json!({"one":true});
+                }
+                if case == "duplicate_model" {
+                    r["change"]["after"]["request_models"]["two"] = json!("Modelone");
+                }
+            }
+        }
+        let (address, field) = if matches!(
+            case,
+            "partial_map" | "unknown_entry" | "duplicate_model" | "http_models"
+        ) {
+            ("aws_apigatewayv2_route.socket", "request_models")
+        } else {
+            (
+                "aws_apigatewayv2_route.http",
+                if case == "target_suffix" {
+                    "target"
+                } else {
+                    "authorizer_id"
+                },
+            )
+        };
+        let raw = plan::parse(&value.to_string()).unwrap();
+        let target = raw.nodes.iter().position(|n| n.address == address).unwrap();
+        assert_eq!(
+            raw.attributes.iter().any(|r| r.target == target
+                && r.attribute == field
+                && r.service_reference_verified),
+            case == "jwt_http",
+            "{case}"
+        );
+    }
+}
+
+#[test]
+fn v2_routes_and_authorizer_roles_require_complete_qualified_endpoints() {
+    for (address, field, endpoint) in [
+        (
+            "aws_apigatewayv2_authorizer.request",
+            "authorizer_credentials_arn",
+            "aws_iam_role.backend",
+        ),
+        (
+            "aws_apigatewayv2_route.http",
+            "target",
+            "aws_apigatewayv2_integration.lambda",
+        ),
+        (
+            "aws_apigatewayv2_route.http",
+            "authorizer_id",
+            "aws_apigatewayv2_authorizer.request",
+        ),
+        (
+            "aws_apigatewayv2_route.socket",
+            "request_models",
+            "aws_apigatewayv2_model.two",
+        ),
+    ] {
+        for case in [
+            "valid",
+            "unknown",
+            "literal",
+            "deleted",
+            "data",
+            "deposed",
+            "wrong_parent",
+            "wrong_provider",
+            "mismatch",
+        ] {
+            let mut value: Value =
+                serde_json::from_str(include_str!("../../fixtures/api-gateway-v2-plan.json"))
+                    .unwrap();
+            for r in value["resource_changes"].as_array_mut().unwrap() {
+                if r["address"] == address {
+                    if case == "unknown" {
+                        r["change"]["after_unknown"][field] = json!(true);
+                    }
+                    if case == "mismatch" {
+                        r["change"]["after"][field] = if field == "request_models" {
+                            json!({"one":"Modelone","two":"other"})
+                        } else {
+                            json!("other")
+                        };
+                    }
+                    if case == "wrong_parent" && field == "authorizer_credentials_arn" {
+                        r["change"]["after"]["authorizer_type"] = json!("JWT");
+                    }
+                }
+                if r["address"] == endpoint {
+                    match case {
+                        "deleted" => r["change"]["actions"] = json!(["delete"]),
+                        "data" => r["mode"] = json!("data"),
+                        "deposed" => r["deposed"] = json!("old"),
+                        "wrong_provider" => {
+                            r["provider_name"] = json!("example.invalid/custom/aws")
+                        }
+                        "wrong_parent" if field != "authorizer_credentials_arn" => {
+                            r["change"]["after"]["api_id"] = json!("other")
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            if case == "literal" {
+                value["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .find(|r| r["address"] == address)
+                    .unwrap()["expressions"][field] = json!({"constant_value":"opaque"});
+            }
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let target = raw.nodes.iter().position(|n| n.address == address).unwrap();
+            assert_eq!(
+                raw.attributes.iter().any(|r| r.target == target
+                    && r.attribute == field
+                    && r.service_reference_verified),
+                case == "valid",
+                "{field}: {case}"
+            );
+            let graph = semantic::transform(&raw);
+            assert_eq!(
+                graph.coverage.selected.resources,
+                value["resource_changes"].as_array().unwrap().len()
+            );
+        }
+    }
+}
+
+#[test]
 fn v2_new_references_preserve_independent_coverage_filtering_and_named_states() {
     let input = include_str!("../../fixtures/api-gateway-v2-plan.json");
     let raw = plan::parse(input).unwrap();
