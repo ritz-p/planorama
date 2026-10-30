@@ -97,6 +97,7 @@ pub(super) fn parent(
             let p = unique(refs, source, "function_name")?;
             (p.service_reference_verified
                 && eligible(nodes, p)
+                && (equal(evidence, p, "function_name") || equal(evidence, p, "arn"))
                 && nodes[p.sources[0]].resource_type == "aws_lambda_function")
                 .then_some(p.sources[0])
         }
@@ -176,9 +177,11 @@ fn qualifier(
         _ => false,
     };
     if special {
-        return !refs
-            .iter()
-            .any(|r| r.target == target && r.attribute == "qualifier");
+        return !refs.iter().any(|r| {
+            r.target == target
+                && r.attribute == "qualifier"
+                && (r.has_references || !r.sources.is_empty() || !r.issues.is_empty())
+        });
     }
     let Some(r) = unique(refs, target, "qualifier") else {
         return false;

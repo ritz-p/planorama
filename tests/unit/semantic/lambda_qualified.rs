@@ -186,7 +186,7 @@ fn qualifier_special_values_and_aliases_are_api_specific() {
             .unwrap()["expressions"]
             .as_object_mut()
             .unwrap()
-            .remove("qualifier");
+            .insert("qualifier".into(), json!({"constant_value":selected}));
         assert_eq!(verified(&v, "function_name"), expected, "{kind} {selected}");
     }
     for kind in [
@@ -268,5 +268,28 @@ fn qualified_alias_parent_and_sensitive_incomplete_evidence_stay_unresolved() {
             }
         }
         assert!(!verified(&v, "qualifier"), "{case}");
+    }
+}
+
+#[test]
+fn alias_function_name_indirection_rechecks_masked_parent_outputs() {
+    for sensitive in [false, true] {
+        let mut v = fixture("aws_lambda_invocation");
+        let last = v["resource_changes"].as_array().unwrap().len() - 1;
+        let config = v["configuration"]["root_module"]["resources"]
+            .as_array()
+            .unwrap()
+            .len()
+            - 1;
+        let arn = v["resource_changes"][0]["change"]["after"]["arn"].clone();
+        v["resource_changes"][3]["change"]["after"]["function_name"] = arn.clone();
+        v["resource_changes"][last]["change"]["after"]["function_name"] = arn;
+        v["resource_changes"][last]["change"]["after"]["qualifier"] = Value::Null;
+        v["configuration"]["root_module"]["resources"][2]["expressions"]["function_name"] =
+            json!({"references":["aws_lambda_function.app.arn"]});
+        v["configuration"]["root_module"]["resources"][config]["expressions"] =
+            json!({"function_name":{"references":["aws_lambda_alias.live.function_name"]}});
+        v["resource_changes"][0]["change"]["after_sensitive"] = json!({"arn":sensitive});
+        assert_eq!(verified(&v, "function_name"), !sensitive);
     }
 }
