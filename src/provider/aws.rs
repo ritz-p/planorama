@@ -40,6 +40,7 @@ mod icons;
 mod lambda;
 pub(crate) mod lambda_config;
 pub(crate) mod lambda_events;
+pub(crate) mod lambda_policy;
 pub(crate) mod lambda_qualified;
 mod members;
 mod messaging;

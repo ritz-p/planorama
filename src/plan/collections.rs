@@ -237,6 +237,7 @@ pub(super) fn annotate(
     crate::provider::aws::elbv2_cognito::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_config::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_qualified::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::lambda_policy::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_events::annotate(nodes, references, &elbv2_evidence);
     for reference in references {
         let consumer = &nodes[reference.target];

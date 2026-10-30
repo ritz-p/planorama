@@ -1,0 +1,239 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_lambda_function.app",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function",
+          "version": "7",
+          "environment": [
+            {
+              "variables": {
+                "SECRET": "SYNTHETIC_SECRET_NOT_FOR_OUTPUT"
+              }
+            }
+          ],
+          "qualified_arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function:7"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_alias.live",
+      "mode": "managed",
+      "type": "aws_lambda_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "function_version": "7",
+          "name": "live",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function:live"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api.api",
+      "type": "aws_api_gateway_rest_api",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "synthetic-api",
+          "execution_arn": "arn:aws:execute-api:us-east-1:123456789012:synthetic-api"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_permission.config",
+      "type": "aws_lambda_permission",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "qualifier": "live",
+          "principal": "apigateway.amazonaws.com",
+          "source_arn": "arn:aws:execute-api:us-east-1:123456789012:synthetic-api/*/*/*",
+          "source_account": "123456789012",
+          "principal_org_id": "PRIVATE_ORG"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_resource_policy.function",
+      "type": "aws_lambda_resource_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_resource_policy.version",
+      "type": "aws_lambda_resource_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function:7",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_resource_policy.alias",
+      "type": "aws_lambda_resource_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function:live",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lambda_function.app",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_alias.live",
+          "mode": "managed",
+          "type": "aws_lambda_alias",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name",
+                "aws_lambda_function.app"
+              ]
+            },
+            "function_version": {
+              "references": [
+                "aws_lambda_function.app.version",
+                "aws_lambda_function.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_rest_api.api",
+          "type": "aws_api_gateway_rest_api",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_permission.config",
+          "type": "aws_lambda_permission",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name"
+              ]
+            },
+            "qualifier": {
+              "references": [
+                "aws_lambda_alias.live.name"
+              ]
+            },
+            "source_arn": {
+              "references": [
+                "aws_api_gateway_rest_api.api.execution_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_resource_policy.function",
+          "type": "aws_lambda_resource_policy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_lambda_function.app.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_resource_policy.version",
+          "type": "aws_lambda_resource_policy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_lambda_function.app.qualified_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_resource_policy.alias",
+          "type": "aws_lambda_resource_policy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_lambda_alias.live.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -100,6 +100,30 @@ Unknown, sensitive, ambiguous or incompatible endpoints remain unresolved.
 These links establish neither delivery nor permissions, ownership or containment.
 Examples: [SVG](../examples/lambda-async.svg), [HTML](../examples/lambda-async.html).
 
+## Lambda permission and resource policy references (#953)
+
+Permissions and resource policies remain independent logical Policy rows.
+Permission `function_name` and `qualifier` use exact function and same-parent
+published-version/alias proof. A qualified function ARN or alias ARN can instead
+identify the owner directly when the separate qualifier is absent. `$LATEST`
+permission qualifiers and conflicting qualification remain unresolved.
+Resource policy `resource_arn` accepts function `arn`, verified `qualified_arn`,
+or a verified alias `arn`; runtime-version ARNs are not function versions.
+
+Permission `source_arn` has a bounded allowlist: S3 bucket, SNS topic, EventBridge
+rule, CloudWatch log group, Cognito user pool and Lambda-target ALB target group `arn`, plus
+REST/v2 API `execution_arn`. Each requires its corresponding service principal
+and compatible scope. API suffixes must begin at the exact referenced execution
+ARN's slash boundary and contain only path characters or `*`; matching an ARN
+substring is insufficient. Log groups additionally accept the exact `:*` suffix.
+An explicit `source_account` must match the ARN account, or the proven provider
+account for S3. Unknown account evidence retains unresolved source references.
+Source and owner references are verified independently. Principal organization
+IDs and policy text are not interpreted or displayed; links establish no grant,
+delivery, runtime reachability or containment.
+
+Examples: [SVG](../examples/lambda-policy.svg), [HTML](../examples/lambda-policy.html).
+
 ## Lambda configuration and network proof (#949)
 
 Function configuration links require explicit, unique managed-resource provenance,
