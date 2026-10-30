@@ -46723,7 +46723,7 @@
           "resource_record_set.health_check_id",
           "resource_record_set.traffic_policy_instance_id"
         ],
-        "placement": "Supported: retain Logical Controller for aws_route53_records_exclusive; this presentation alone does not prove relationships.",
+        "placement": "Supported: retain Logical Controller fallback; display in the proven hosted zone record-management section only with unique compatible ownership.",
         "ownership": "Supported: embed only under one proven compatible hosted zone; preserve controller identity and do not synthesize managed records.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: Implemented #920: Typed zone ownership and complete element-correlated resource_record_set health-check, CIDR, traffic-policy-instance and alias_target references. No synthetic managed records.",

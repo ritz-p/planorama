@@ -159,6 +159,7 @@ fn route53_record_references_and_exclusive_sets_preserve_distinct_identities() {
     }
     let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
     assert_eq!(g.coverage.selected.resources, 10);
+    assert!(crate::svg::render(&g, &crate::layout::Layout::new(&g)).contains("Record management"));
     assert!(
         g.nodes
             .iter()

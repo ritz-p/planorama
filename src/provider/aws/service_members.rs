@@ -111,7 +111,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if node.resource_type == "aws_networkfirewall_logging_configuration" {
+        if matches!(
+            node.resource_type.as_str(),
+            "aws_networkfirewall_logging_configuration" | "aws_route53_records_exclusive"
+        ) {
             graph.nodes[index].placement = crate::model::Placement::Spatial;
         }
     }
