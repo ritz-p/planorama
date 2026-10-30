@@ -42894,10 +42894,10 @@
       }
     },
     "aws_lambda_permission": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 953,
-      "gap": "#714 audit: Missing: function/qualifier owner context and typed explicit source ARN references; wildcard API ARN suffixes require exact provenance and cannot be matched by substring. Follow-up #953. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #953 implements exact qualified owner and typed explicit source references; policy and principal interpretation remains excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42913,7 +42913,7 @@
         "placement": "Supported: retain Logical Policy for aws_lambda_permission; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_permission identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_permission has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function/qualifier owner context and typed explicit source ARN references; wildcard API ARN suffixes require exact provenance and cannot be matched by substring.",
+        "references": "Supported: Unique explicit function/version/alias provenance and matching ARN values. Permission sources use a bounded typed allowlist and exact API execution ARN boundaries, never substring matching.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_permission attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_permission.html.markdown",
@@ -42960,7 +42960,9 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_policy.rs",
+          "tests/unit/semantic/lambda_policy.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
@@ -43022,10 +43024,10 @@
       }
     },
     "aws_lambda_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 953,
-      "gap": "#714 audit: Missing: resource ARN references function, version or alias; retain qualification and helper identity, no policy interpretation. Follow-up #953. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #953 implements exact qualified owner and typed explicit source references; policy and principal interpretation remains excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -43036,7 +43038,7 @@
         "placement": "Supported: retain Logical Policy for aws_lambda_resource_policy; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_resource_policy identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_resource_policy has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: resource ARN references function, version or alias; retain qualification and helper identity, no policy interpretation.",
+        "references": "Supported: Unique explicit function/version/alias provenance and matching ARN values. Permission sources use a bounded typed allowlist and exact API execution ARN boundaries, never substring matching.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_resource_policy attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_resource_policy.html.markdown",
@@ -43063,7 +43065,9 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_policy.rs",
+          "tests/unit/semantic/lambda_policy.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}

@@ -18,6 +18,7 @@ fn supported(kind: &str) -> bool {
             | "aws_lambda_provisioned_concurrency_config"
             | "aws_lambda_runtime_management_config"
             | "aws_lambda_function_event_invoke_config"
+            | "aws_lambda_permission"
     )
 }
 
@@ -61,7 +62,7 @@ fn equal(evidence: &[(&Value, &Value)], r: &AttributeReference, field: &str) -> 
             .is_some_and(|v| Some(v) == known(evidence, r.sources[0], field))
 }
 
-fn parent(
+pub(super) fn parent(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     evidence: &[(&Value, &Value)],
@@ -72,6 +73,20 @@ fn parent(
         return None;
     }
     let source = r.sources[0];
+    if nodes[target].resource_type == "aws_lambda_permission" {
+        if nodes[source].resource_type == "aws_lambda_function"
+            && equal(evidence, r, "qualified_arn")
+            && function_arn(nodes, refs, evidence, source, "qualified_arn")
+        {
+            return Some(source);
+        }
+        if nodes[source].resource_type == "aws_lambda_alias"
+            && equal(evidence, r, "arn")
+            && function_arn(nodes, refs, evidence, source, "arn")
+        {
+            return parent(nodes, refs, evidence, source);
+        }
+    }
     match nodes[source].resource_type.as_str() {
         "aws_lambda_function"
             if equal(evidence, r, "function_name") || equal(evidence, r, "arn") =>
@@ -137,7 +152,22 @@ fn qualifier(
         return false;
     }
     let selected = known(evidence, target, "qualifier");
+    if kind == "aws_lambda_permission" {
+        let Some(r) = unique(refs, target, "function_name") else {
+            return false;
+        };
+        let qualified = r.source_attributes.contains("qualified_arn")
+            || (nodes[r.sources[0]].resource_type == "aws_lambda_alias"
+                && r.source_attributes.contains("arn"));
+        if qualified {
+            return value["qualifier"].is_null()
+                && !refs
+                    .iter()
+                    .any(|r| r.target == target && r.attribute == "qualifier");
+        }
+    }
     let special = match kind {
+        "aws_lambda_permission" => value["qualifier"].is_null(),
         "aws_lambda_function_scaling_config" => selected == Some("$LATEST.PUBLISHED"),
         "aws_lambda_invocation"
         | "aws_lambda_runtime_management_config"
@@ -170,6 +200,7 @@ fn qualifier(
                 "aws_lambda_invocation"
                     | "aws_lambda_provisioned_concurrency_config"
                     | "aws_lambda_function_event_invoke_config"
+                    | "aws_lambda_permission"
             ) =>
         {
             equal(evidence, r, "name") && parent(nodes, refs, evidence, source) == Some(function)
@@ -253,15 +284,31 @@ fn destination(
         }
         "aws_cloudwatch_event_bus" => field == "arn",
         "aws_s3_bucket" => field == "arn" && branch == "on_failure",
+        "aws_lambda_function" | "aws_lambda_alias" => {
+            function_arn(nodes, refs, evidence, source, field)
+        }
+        _ => false,
+    }
+}
+
+pub(super) fn function_arn(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    source: usize,
+    field: &str,
+) -> bool {
+    match nodes[source].resource_type.as_str() {
         "aws_lambda_function" => {
             field == "arn"
-                || known(evidence, source, "version")
-                    .filter(|v| version(v))
-                    .zip(known(evidence, source, "arn"))
-                    .is_some_and(|(v, arn)| {
-                        known(evidence, source, "qualified_arn")
-                            == Some(format!("{arn}:{v}").as_str())
-                    })
+                || (field == "qualified_arn"
+                    && known(evidence, source, "version")
+                        .filter(|v| version(v))
+                        .zip(known(evidence, source, "arn"))
+                        .is_some_and(|(v, arn)| {
+                            known(evidence, source, "qualified_arn")
+                                == Some(format!("{arn}:{v}").as_str())
+                        }))
         }
         "aws_lambda_alias" => {
             field == "arn"
