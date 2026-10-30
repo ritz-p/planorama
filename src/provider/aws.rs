@@ -62,6 +62,7 @@ mod streaming;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]
 mod rds_global_tests;
+pub(crate) mod resolver;
 pub(crate) mod route53;
 pub(crate) mod route53_records;
 mod service_evidence;

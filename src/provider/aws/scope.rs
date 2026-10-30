@@ -43,6 +43,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_vpc_peering_connection_accepter"
+                | "aws_route53_resolver_rule"
+                | "aws_route53_resolver_rule_association"
                 | "aws_route53_records_exclusive"
                 | "aws_vpc_peering_connection_options"
                 | "aws_fsx_lustre_file_system"
@@ -113,6 +115,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         || matches!(
             resource,
             "aws_vpc"
+                | "aws_route53_resolver_endpoint"
                 | "aws_cognito_user_pool"
                 | "aws_cognito_user_pool_client"
                 | "aws_cognito_identity_pool"

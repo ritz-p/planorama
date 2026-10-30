@@ -47402,10 +47402,10 @@
       }
     },
     "aws_route53_resolver_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 924,
-      "gap": "#715 audit: Missing: complete configured IP-address subnet set and SG ID set with same-VPC proof. host_vpc_id is computed cross-check, not configuration provenance. Missing: current Logical Node omits independent Resolver endpoint architecture. Missing: complete known subnet/SG values, compatible region/account and common VPC; no generated ENI or IP-address matching. Follow-up #924. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #924: Dedicated current managed references require explicit ID provenance and matching known values. Data lookups, cross-account/state shared-rule inference, generated ENIs and runtime DNS behavior remain unsupported.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47419,11 +47419,11 @@
           "host_vpc_id",
           "resolver_endpoint_type"
         ],
-        "placement": "Missing: current Logical Node omits independent Resolver endpoint architecture.",
+        "placement": "Supported: independent Spatial Node retaining original identity and regional scope.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
-        "network": "Missing: complete known subnet/SG values, compatible region/account and common VPC; no generated ENI or IP-address matching.",
-        "references": "Missing: complete configured IP-address subnet set and SG ID set with same-VPC proof. host_vpc_id is computed cross-check, not configuration provenance.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "network": "Supported: VPC containment requires complete subnet and SG sets whose members all explicitly reference the same managed VPC. No generated ENI or IP matching.",
+        "references": "Supported: complete explicit subnet and security-group ID sets with known matching values. IP-address blocks are checked individually and set order is irrelevant; host_vpc_id is only a computed cross-check.",
+        "scope": "Supported: preserve regional provider account scope; known compatible region/account bindings are required. Named states never supply missing endpoints.",
         "summaries": "Intentionally unsupported: IP targets and effective query resolution; no arbitrary aws_route53_resolver_endpoint attribute summary.",
         "officialDocumentation": "website/docs/r/route53_resolver_endpoint.html.markdown",
         "shapes": {
@@ -47469,7 +47469,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resolver.rs",
+          "tests/unit/semantic/resolver.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), region (optional/computed), resolver_endpoint_id (optional). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -47489,10 +47491,10 @@
       }
     },
     "aws_route53_resolver_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 924,
-      "gap": "#715 audit: Missing: FORWARD rule endpoint ID proof against outbound endpoint; SYSTEM/RECURSIVE and target IPs must not imply managed endpoint links. Follow-up #924. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #924: Dedicated current managed references require explicit ID provenance and matching known values. Data lookups, cross-account/state shared-rule inference, generated ENIs and runtime DNS behavior remain unsupported.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47503,13 +47505,14 @@
           "resolver_endpoint_id",
           "target_ip.ip",
           "target_ip.ipv6",
-          "owner_id"
+          "owner_id",
+          "share_status"
         ],
         "placement": "Supported: retain Logical Policy for aws_route53_resolver_rule; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: FORWARD rule endpoint ID proof against outbound endpoint; SYSTEM/RECURSIVE and target IPs must not imply managed endpoint links.",
-        "scope": "Partial: Regional conditional scope; shared rule owner_id is producer account, not automatically the consumer binding.",
+        "references": "Supported: FORWARD rules reference a proven OUTBOUND endpoint by id. SYSTEM/RECURSIVE and target IP values never infer endpoint links. Present owner_id must match the provider account after saved-plan evidence is applied; shared receiver rules stay unproven.",
+        "scope": "Supported: preserve regional provider account scope; known compatible region/account bindings are required. Named states never supply missing endpoints.",
         "summaries": "Intentionally unsupported: IP targets and effective query resolution; no arbitrary aws_route53_resolver_rule attribute summary.",
         "officialDocumentation": "website/docs/r/route53_resolver_rule.html.markdown",
         "shapes": {
@@ -47532,6 +47535,9 @@
           ],
           "owner_id": [
             "string"
+          ],
+          "share_status": [
+            "string"
           ]
         },
         "contracts": {
@@ -47540,7 +47546,8 @@
           "resolver_endpoint_id": "optional",
           "target_ip.ip": "optional",
           "target_ip.ipv6": "optional",
-          "owner_id": "computed"
+          "owner_id": "computed",
+          "share_status": "computed"
         },
         "implementationEvidence": [
           "src/provider/aws/classification.rs",
@@ -47549,7 +47556,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resolver.rs",
+          "tests/unit/semantic/resolver.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: domain_name (optional/computed), id (optional/computed), name (optional/computed), region (optional/computed), resolver_endpoint_id (optional/computed), resolver_rule_id (optional/computed), rule_type (optional/computed), tags (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -47598,10 +47607,10 @@
       }
     },
     "aws_route53_resolver_rule_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 924,
-      "gap": "#715 audit: Missing: resolver rule ID and VPC ID association with shared-rule scope proof. Follow-up #924. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #924: Dedicated current managed references require explicit ID provenance and matching known values. Data lookups, cross-account/state shared-rule inference, generated ENIs and runtime DNS behavior remain unsupported.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47613,8 +47622,8 @@
         "placement": "Supported: retain Logical Association for aws_route53_resolver_rule_association; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: shared rule association does not transfer ownership.",
         "network": "Intentionally unsupported: associated VPC does not contain the rule or endpoint.",
-        "references": "Missing: resolver rule ID and VPC ID association with shared-rule scope proof.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: explicit rule ID and VPC ID references with compatible account/region. SHARED_BY_ME requires matching known owner_id; SHARED_WITH_ME and cross-account inference stay unproven.",
+        "scope": "Supported: preserve regional provider account scope; known compatible region/account bindings are required. Named states never supply missing endpoints.",
         "summaries": "Intentionally unsupported: IP targets and effective query resolution; no arbitrary aws_route53_resolver_rule_association attribute summary.",
         "officialDocumentation": "website/docs/r/route53_resolver_rule_association.html.markdown",
         "shapes": {
@@ -47636,7 +47645,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resolver.rs",
+          "tests/unit/semantic/resolver.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
