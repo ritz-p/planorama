@@ -107,7 +107,8 @@ VPC/Subnet containment stays intact and cross-region routes draw above them.
 Spatial IAM, CloudFront and supported Route 53 share `AWS Global` when region panels
 exist or account is known. IAM Role/Policy/Role Policy/Instance Profile keep global
 metadata as Logical rows outside panels. `provider/aws/scope.rs` classifies scopes;
-layout/SVG consume them generically. Unsupported types, cross-region peering and
+layout/SVG consume them generically. Peering connections retain requester control scope; their verified peer references
+may cross account/region boundaries. Unsupported types and
 unknown regions stay outside regional panels (inside proven accounts if available).
 Aliases, names, tags, ARNs and IDs never establish region.
 
@@ -290,6 +291,8 @@ follow AWS Provider 6.70.0 schemas and official sources in the semantic decision
 | --- | --- | --- |
 | `aws_route_table_association` | exactly one `subnet_id` / `gateway_id`, `route_table_id` | Subnet or Internet/VPN Gateway ↔ Route Table |
 | `aws_main_route_table_association` | `vpc_id`, `route_table_id` | VPC ↔ Main Route Table |
+| `aws_network_interface_attachment` | `network_interface_id`, `instance_id` | ENI ? EC2 Instance |
+| `aws_network_interface_sg_attachment` | `network_interface_id`, `security_group_id` | ENI ? Security Group |
 | `aws_volume_attachment` | `instance_id`, `volume_id`, with known ID proof | EC2 Instance ↔ EBS Volume |
 | `aws_lb_target_group_attachment` | `target_group_arn`, `target_id` | Target Group ↔ EC2 Instance / Lambda Function / Application Load Balancer |
 | `aws_lb_listener_certificate` | `listener_arn`, `certificate_arn` | Listener ↔ ACM / IAM Server Certificate |
@@ -322,6 +325,42 @@ Deleted helpers remain cards. See the [typed route contracts](routes.md#typed-ro
 `aws_route` remains a graph node and uses verified [Route Table child-card ownership](routes.md).
 Other Association-role resources remain cards. Examples:
 [association.svg](../examples/association.svg), [aws-relationships.svg](../examples/aws-relationships.svg).
+
+## ENI and Instance Connect endpoints (#890)
+
+`aws_network_interface` and `aws_ec2_instance_connect_endpoint` are independent
+spatial connectors. Required scalar `subnet_id` references must uniquely identify
+an `aws_subnet.id` with the same known evaluated value. Attachment never changes
+this placement. Inline `security_groups` (ENI) and `security_group_ids` (Instance
+Connect) are optional/computed sets: only explicitly configured, complete sets
+matching managed `aws_security_group.id` outputs qualify. Each SG must share the
+known VPC of the explicitly referenced subnet. A known Instance Connect `vpc_id`
+must agree; computed `network_interface_ids` never create managed children.
+
+ENI `attachment` is an optional/computed set. A single complete configured entry
+may reference `aws_instance.id` through `attachment.instance`; required
+`device_index` must be a known nonnegative integer. Optional/computed
+`network_card_index` may be absent, otherwise it must be known and nonnegative.
+Multiple entries conservatively retain generic references. The instance and ENI
+remain independent. `aws_network_interface_attachment` requires both scalar
+`instance_id` and `network_interface_id` references to matching managed `id`
+outputs and the same index checks before lowering to an association.
+`attachment_id` identifies the attachment, never the ENI.
+
+`aws_network_interface_sg_attachment` requires the complete explicit ENI/SG pair,
+compatible provider/account/region and matching known subnet/SG VPC. It does not
+merge either resource or reinterpret inline security groups.
+`aws_network_interface_permission.network_interface_id` may establish one ENI
+owner; `aws_account_id` is the grantee, not source account evidence or an IAM
+endpoint. Permission effects remain opaque. All new paths reject unknown or
+sensitive values, deleted/deposed or data endpoints, incomplete and ambiguous
+references. Named states and filtering retain their independent identities.
+No IP, CIDR, DNS, service-created output, SSH reachability or runtime-health
+inference is performed. `ip_address_type` does not change these relationships.
+
+These shapes and flags were checked against AWS Provider 6.70.0, commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, in the EC2 resource schemas and their
+[official resource documentation](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r).
 
 ## ELBv2 subnet mappings and destinations (#907)
 

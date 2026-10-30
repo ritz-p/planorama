@@ -35268,10 +35268,10 @@
       }
     },
     "aws_ec2_instance_connect_endpoint": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 890,
-      "gap": "#710 audit: Missing: required subnet_id and complete configured security_group_ids; generated ENI IDs are outputs, not managed children. Missing: current Logical connector is a subnet architecture endpoint. Follow-up #890.",
+      "gap": "Implemented #890: explicit managed ID references with known values, current lifecycle and compatible scope. Generated ENIs, permission effects and runtime reachability remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -35283,10 +35283,10 @@
           "vpc_id",
           "ip_address_type"
         ],
-        "placement": "Missing: current Logical connector is a subnet architecture endpoint.",
+        "placement": "Supported: independent Spatial Connector with verified subnet containment.",
         "ownership": "Not applicable: aws_ec2_instance_connect_endpoint remains independently tracked configuration; references alone do not prove embedded ownership.",
-        "network": "Missing: explicit subnet placement and coherent SG/VPC proof; no SSH reachability inference.",
-        "references": "Missing: required subnet_id and complete configured security_group_ids; generated ENI IDs are outputs, not managed children.",
+        "network": "Supported: explicit subnet placement and complete configured SG IDs with matching known subnet/SG VPC; attachments do not relocate the interface.",
+        "references": "Supported: exact ID output and complete configured references; subnet/SG collections and attachment pairs reject unknown, sensitive, ambiguous, filtered and incompatible evidence. See src/provider/aws/eni.rs.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_ec2_instance_connect_endpoint is reviewed for identity and navigation only. Selected subnet_id, security_group_ids, network_interface_ids fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_instance_connect_endpoint.html.markdown",
@@ -35334,7 +35334,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/eni.rs",
+          "tests/unit/semantic/eni.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
@@ -36955,10 +36957,10 @@
       }
     },
     "aws_network_interface": {
-      "status": "Partial",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 890,
-      "gap": "#710 audit: Partial: incoming aws_route.network_interface_id supported; missing originating subnet, complete SG and attachment.instance proof. Missing: current Logical ENI needs explicit network endpoint presentation. Follow-up #890.",
+      "gap": "Implemented #890: explicit managed ID references with known values, current lifecycle and compatible scope. Generated ENIs, permission effects and runtime reachability remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36970,10 +36972,10 @@
           "attachment.device_index",
           "attachment.network_card_index"
         ],
-        "placement": "Missing: current Logical ENI needs explicit network endpoint presentation.",
+        "placement": "Supported: independent Spatial Connector with verified subnet containment.",
         "ownership": "Not applicable: detachable ENI remains independent of instance; attachment set does not embed ENI.",
-        "network": "Missing: required subnet_id containment and SG compatibility; attaching to instance does not change subnet.",
-        "references": "Partial: incoming aws_route.network_interface_id supported; missing originating subnet, complete SG and attachment.instance proof.",
+        "network": "Supported: explicit subnet placement and complete configured SG IDs with matching known subnet/SG VPC; attachments do not relocate the interface.",
+        "references": "Supported: exact ID output and complete configured references; subnet/SG collections and attachment pairs reject unknown, sensitive, ambiguous, filtered and incompatible evidence. See src/provider/aws/eni.rs. Existing incoming aws_route.network_interface_id behavior is retained.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_network_interface is reviewed for identity and navigation only. Selected subnet_id, security_groups, attachment.instance fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/network_interface.html.markdown",
@@ -37021,16 +37023,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/eni.rs",
+          "tests/unit/semantic/eni.rs"
         ],
         "managedDataContract": "Separate data lookup: id (optional/computed); filter is a lookup selector, not configured managed topology. Managed ownership/containment does not transfer to data mode."
       }
     },
     "aws_network_interface_attachment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 890,
-      "gap": "#710 audit: Missing: explicit instance/ENI pair with device index metadata; attachment_id differs from ENI id. Follow-up #890.",
+      "gap": "Implemented #890: explicit managed ID references with known values, current lifecycle and compatible scope. Generated ENIs, permission effects and runtime reachability remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37045,7 +37049,7 @@
         "placement": "Supported: retain Association / Logical default for aws_network_interface_attachment; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: detachable network association, not instance-owned child.",
         "network": "Not applicable: aws_network_interface_attachment is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: explicit instance/ENI pair with device index metadata; attachment_id differs from ENI id.",
+        "references": "Supported: exact ID output and complete configured references; subnet/SG collections and attachment pairs reject unknown, sensitive, ambiguous, filtered and incompatible evidence. See src/provider/aws/eni.rs.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_network_interface_attachment is reviewed for identity and navigation only. Selected instance_id, network_interface_id, device_index fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/network_interface_attachment.html.markdown",
@@ -37087,16 +37091,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/eni.rs",
+          "tests/unit/semantic/eni.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_network_interface_permission": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 890,
-      "gap": "#710 audit: Missing: ENI owner navigation; aws_account_id is grantee selector, not source account or IAM ARN. Follow-up #890.",
+      "gap": "Implemented #890: explicit managed ID references with known values, current lifecycle and compatible scope. Generated ENIs, permission effects and runtime reachability remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37108,9 +37114,9 @@
           "network_interface_permission_id"
         ],
         "placement": "Supported: retain Policy / Logical default for aws_network_interface_permission; basic classification is not dedicated semantics.",
-        "ownership": "Missing: permission helper for ENI; permission effect remains opaque.",
+        "ownership": "Supported: unique verified ENI owner; aws_account_id remains an opaque grantee selector.",
         "network": "Not applicable: aws_network_interface_permission is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: ENI owner navigation; aws_account_id is grantee selector, not source account or IAM ARN.",
+        "references": "Supported: exact ID output and complete configured references; subnet/SG collections and attachment pairs reject unknown, sensitive, ambiguous, filtered and incompatible evidence. See src/provider/aws/eni.rs.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_network_interface_permission is reviewed for identity and navigation only. Selected network_interface_id, aws_account_id, permission fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/network_interface_permission.html.markdown",
@@ -37148,16 +37154,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/eni.rs",
+          "tests/unit/semantic/eni.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_network_interface_sg_attachment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 890,
-      "gap": "#710 audit: Missing: complete ENI/SG pair with compatible scope and VPC, separate from inline security_groups. Follow-up #890.",
+      "gap": "Implemented #890: explicit managed ID references with known values, current lifecycle and compatible scope. Generated ENIs, permission effects and runtime reachability remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37169,7 +37177,7 @@
         "placement": "Supported: retain Association / Logical default for aws_network_interface_sg_attachment; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: shared SG association does not embed either endpoint.",
         "network": "Not applicable: aws_network_interface_sg_attachment is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: complete ENI/SG pair with compatible scope and VPC, separate from inline security_groups.",
+        "references": "Supported: exact ID output and complete configured references; subnet/SG collections and attachment pairs reject unknown, sensitive, ambiguous, filtered and incompatible evidence. See src/provider/aws/eni.rs.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_network_interface_sg_attachment is reviewed for identity and navigation only. Selected network_interface_id, security_group_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/network_interface_sg_attachment.html.markdown",
@@ -37199,7 +37207,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/eni.rs",
+          "tests/unit/semantic/eni.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
@@ -39490,10 +39500,10 @@
       }
     },
     "aws_vpc_peering_connection": {
-      "status": "Partial",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 903,
-      "gap": "#710 audit: Partial: incoming route next-hop supported; missing requester/accepter VPC association with independent account/region proof. Follow-up #903.",
+      "gap": "Implemented #903: explicit VPC and helper ID proof with independent requester/accepter scope. No network containment or DNS/reachability inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39507,8 +39517,8 @@
         "placement": "Supported: retain Connector / Spatial default for aws_vpc_peering_connection; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: shared cross-scope connection remains independent.",
         "network": "Intentionally unsupported: peering connects VPCs; neither contains the other.",
-        "references": "Partial: incoming route next-hop supported; missing requester/accepter VPC association with independent account/region proof.",
-        "scope": "Partial: current scope.rs has no dedicated peering region branch despite Spatial Connector classification. Add requester control scope and distinct peer_owner_id/peer_region evidence in follow-up.",
+        "references": "Supported: explicit unique managed ID references with known matching non-sensitive values and current lifecycle; requester and peer proof remain distinct. Computed accepter fields never originate VPC links.",
+        "scope": "Supported: requester control region; peer_owner_id and peer_region validate independently against peer provider evidence. Accepter peer_region is always the accepter region, following provider read orientation.",
         "summaries": "Not applicable: aws_vpc_peering_connection is reviewed for identity and navigation only. Selected vpc_id, peer_vpc_id, peer_owner_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_peering_connection.html.markdown",
         "shapes": {
@@ -39545,16 +39555,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/peering.rs",
+          "tests/unit/semantic/peering.rs"
         ],
         "managedDataContract": "Separate data lookup: cidr_block (optional/computed), id (optional/computed), owner_id (optional/computed), peer_cidr_block (optional/computed), peer_owner_id (optional/computed), peer_vpc_id (optional/computed), status (optional/computed), vpc_id (optional/computed); filter is a lookup selector, not configured managed topology. Managed ownership/containment does not transfer to data mode."
       }
     },
     "aws_vpc_peering_connection_accepter": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 903,
-      "gap": "#710 audit: Missing: accepter view of configured connection; computed requester/accepter fields must not be interpreted with requester orientation. Follow-up #903.",
+      "gap": "Implemented #903: explicit VPC and helper ID proof with independent requester/accepter scope. No network containment or DNS/reachability inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39567,10 +39579,10 @@
           "peer_region"
         ],
         "placement": "Supported: retain Association / Logical default for aws_vpc_peering_connection_accepter; basic classification is not dedicated semantics.",
-        "ownership": "Missing: verified acceptance helper for one connection; no duplicate connection identity.",
+        "ownership": "Supported: verified connection owner navigation. Embedding additionally requires matching presentation scope; cross-scope helpers stay independent Logical resources.",
         "network": "Intentionally unsupported: acceptance does not create network containment.",
-        "references": "Missing: accepter view of configured connection; computed requester/accepter fields must not be interpreted with requester orientation.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: explicit unique managed ID references with known matching non-sensitive values and current lifecycle; requester and peer proof remain distinct. Computed accepter fields never originate VPC links.",
+        "scope": "Supported: requester control region; peer_owner_id and peer_region validate independently against peer provider evidence. Accepter peer_region is always the accepter region, following provider read orientation.",
         "summaries": "Not applicable: aws_vpc_peering_connection_accepter is reviewed for identity and navigation only. Selected vpc_peering_connection_id, peer_vpc_id, vpc_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_peering_connection_accepter.html.markdown",
         "shapes": {
@@ -39611,16 +39623,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/peering.rs",
+          "tests/unit/semantic/peering.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_vpc_peering_connection_options": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 903,
-      "gap": "#710 audit: Missing: connection owner with side-specific option scope; DNS option does not identify hosted zones. Follow-up #903.",
+      "gap": "Implemented #903: explicit VPC and helper ID proof with independent requester/accepter scope. No network containment or DNS/reachability inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39631,10 +39645,10 @@
           "requester.allow_remote_vpc_dns_resolution"
         ],
         "placement": "Supported: retain Controller / Logical default for aws_vpc_peering_connection_options; basic classification is not dedicated semantics.",
-        "ownership": "Missing: connection-owned options helper.",
+        "ownership": "Supported: verified connection owner navigation. Embedding additionally requires matching presentation scope; cross-scope helpers stay independent Logical resources.",
         "network": "Intentionally unsupported: DNS settings never imply reachability or containment.",
-        "references": "Missing: connection owner with side-specific option scope; DNS option does not identify hosted zones.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: explicit unique managed ID references with known matching non-sensitive values and current lifecycle; requester and peer proof remain distinct. Computed accepter fields never originate VPC links.",
+        "scope": "Supported: requester control region; peer_owner_id and peer_region validate independently against peer provider evidence. Accepter peer_region is always the accepter region, following provider read orientation.",
         "summaries": "Not applicable: aws_vpc_peering_connection_options is reviewed for identity and navigation only. Selected vpc_peering_connection_id, accepter.allow_remote_vpc_dns_resolution, requester.allow_remote_vpc_dns_resolution fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_peering_connection_options.html.markdown",
         "shapes": {
@@ -39669,7 +39683,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/peering.rs",
+          "tests/unit/semantic/peering.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }

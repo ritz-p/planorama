@@ -307,3 +307,34 @@ gate configuration display. Filtering and named-state identity stay independent;
 the shared engine applies these rules to native and Wasm SVG/HTML generation.
 Descriptions, ports, protocol summaries, CIDR contents and runtime reachability
 are not exposed by this change. Existing deferred summaries remain deferred.
+
+## VPC peering (#903)
+
+`aws_vpc_peering_connection.vpc_id` and `peer_vpc_id` accept explicit unique
+managed `aws_vpc.id` references with matching known non-sensitive values. The
+connection keeps requester control scope. Peer account and region are checked
+independently against the peer provider; optional/computed `peer_owner_id` and
+`peer_region` never overwrite requester scope. Absent selectors require compatible
+same-account/region evidence, while unknown selectors do not imply defaults.
+Incoming route next-hop behavior is unchanged. Peering does not imply containment.
+
+Accepter and options helpers reference one managed connection's `id` through
+required scalar `vpc_peering_connection_id`. Both configured VPC endpoints must be
+proven before helper navigation is established. The accepter uses peer control
+scope. Computed accepter `vpc_id`, `peer_vpc_id` and `peer_owner_id`, when present,
+must follow the provider read orientation: cross-account reads reverse requester
+and accepter; same-account reads retain requester orientation. Its `peer_region`
+is always the accepter region. Computed fields never originate new endpoint links.
+
+Options `requester` and `accepter` are optional/computed singleton lists with a
+boolean `allow_remote_vpc_dns_resolution`. Only configured blocks select the side
+to validate; computed blocks do not request management of the other side. Configured
+blocks require known booleans and matching side scope. Helpers embed only when
+presentation scope matches the connection; cross-scope helpers retain independent
+Logical identities and verified navigation. DNS options never identify hosted
+zones or imply reachability. Data, deleted/deposed, filtered, ambiguous, unknown,
+sensitive and incompatible endpoints retain conservative fallback.
+
+Contracts follow AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, including the shared
+`resourceVPCPeeringConnectionRead` implementation for requester and accepter.

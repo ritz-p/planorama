@@ -49,6 +49,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 };
                 (field, "Notification owner", "Notifications")
             }
+            "aws_network_interface_permission" => {
+                ("network_interface_id", "Network interface", "Permissions")
+            }
+            "aws_vpc_peering_connection_accepter" => (
+                "vpc_peering_connection_id",
+                "Peering connection",
+                "Acceptance",
+            ),
+            "aws_vpc_peering_connection_options" => {
+                ("vpc_peering_connection_id", "Peering connection", "Options")
+            }
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")

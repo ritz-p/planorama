@@ -29,6 +29,14 @@ pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str);
             ("vpc_endpoint_id", "aws_vpc_endpoint"),
             ("security_group_id", "aws_security_group"),
         ]),
+        "aws_network_interface_attachment" => Some([
+            ("network_interface_id", "aws_network_interface"),
+            ("instance_id", "aws_instance"),
+        ]),
+        "aws_network_interface_sg_attachment" => Some([
+            ("network_interface_id", "aws_network_interface"),
+            ("security_group_id", "aws_security_group"),
+        ]),
         "aws_eip_association" => Some([
             ("allocation_id", "aws_eip"),
             ("instance_id", "aws_instance"),
@@ -93,6 +101,11 @@ pub(super) fn lower(raw: &Input) -> Graph {
             super::elbv2::association(raw, index)
         } else if super::aliases::node_type(node) == "aws_lb_listener_certificate" {
             super::elbv2_tls::association(raw, index)
+        } else if matches!(
+            node.resource_type.as_str(),
+            "aws_network_interface_attachment" | "aws_network_interface_sg_attachment"
+        ) {
+            super::eni::association(raw, index)
         } else if node.resource_type == "aws_vpc_security_group_vpc_association" {
             super::security_group_rules::association(raw, index)
         } else if matches!(
