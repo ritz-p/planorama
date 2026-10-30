@@ -49,6 +49,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 };
                 (field, "Notification owner", "Notifications")
             }
+            "aws_network_interface_permission" => {
+                ("network_interface_id", "Network interface", "Permissions")
+            }
             "aws_vpc_peering_connection_accepter" => (
                 "vpc_peering_connection_id",
                 "Peering connection",

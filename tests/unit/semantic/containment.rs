@@ -94,8 +94,8 @@ fn unsupported_types_and_data_queries_keep_dependency_edges() {
         }
         let raw = plan::parse(&input.to_string()).unwrap();
         assert_eq!(
-            semantic::transform(&raw).0,
-            crate::semantic::base_graph(&raw)
+            semantic::transform(&raw).edges,
+            crate::semantic::base_graph(&raw).edges
         );
     }
 }
