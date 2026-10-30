@@ -52978,10 +52978,10 @@
       }
     },
     "aws_cloudwatch_log_anomaly_detector": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: complete single-log-group ARN list and KMS identifier; do not assume key ID and ARN are interchangeable. Anomaly contents and query/filter text excluded. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53036,10 +53036,10 @@
       }
     },
     "aws_cloudwatch_log_data_protection_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: log-group-name navigation for data_protection_policy; retain helper identity; no policy or log content interpretation. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53081,10 +53081,10 @@
       }
     },
     "aws_cloudwatch_log_index_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: log-group-name navigation for index_policy; retain helper identity; no policy or log content interpretation. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53126,10 +53126,10 @@
       }
     },
     "aws_cloudwatch_log_metric_filter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: log-group-name navigation for metric_filter; metric name/namespace are generated time-series selectors, not Terraform resources. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53188,10 +53188,10 @@
       }
     },
     "aws_cloudwatch_log_stream": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: log-group-name navigation for stream; retain helper identity; no policy or log content interpretation. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53572,7 +53572,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Partial: #544 independent regional card, existing incoming CloudTrail/Network Firewall/Lambda references retained. Missing: outgoing KMS key ARN; Log Group output arn removes :*. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53657,10 +53657,10 @@
       }
     },
     "aws_cloudwatch_log_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: resource-scoped log-group ARN only when configured; account policy_name branch has no resource owner. id switches between policy name and log-group ARN. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53868,10 +53868,10 @@
       }
     },
     "aws_cloudwatch_log_transformer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: log-group ARN owner navigation; transformer processors operate on log fields, not resource relationships. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -54143,10 +54143,10 @@
       }
     },
     "aws_cloudwatch_query_definition": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "#730 audit: Missing: complete log-group name list; query_string remains opaque, no SQL/query resource synthesis. Follow-up #988. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",

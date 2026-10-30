@@ -1,0 +1,327 @@
+{
+    "format_version":  "1.2",
+    "terraform_version":  "1.9.8",
+    "resource_changes":  [
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "key_id":  "12345678-1234-1234-1234-123456789012",
+                                                              "arn":  "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
+                                                          }
+                                            },
+                                 "type":  "aws_kms_key",
+                                 "address":  "aws_kms_key.key",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "name":  "synthetic",
+                                                              "kms_key_id":  "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012",
+                                                              "arn":  "arn:aws:logs:us-east-1:123456789012:log-group:synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_group",
+                                 "address":  "aws_cloudwatch_log_group.group",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "filter_pattern":  "PRIVATE_FILTER",
+                                                              "policy_document":  "PRIVATE_POLICY",
+                                                              "name":  "synthetic",
+                                                              "log_group_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_stream",
+                                 "address":  "aws_cloudwatch_log_stream.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "filter_pattern":  "PRIVATE_FILTER",
+                                                              "policy_document":  "PRIVATE_POLICY",
+                                                              "name":  "synthetic",
+                                                              "log_group_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_metric_filter",
+                                 "address":  "aws_cloudwatch_log_metric_filter.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "filter_pattern":  "PRIVATE_FILTER",
+                                                              "policy_document":  "PRIVATE_POLICY",
+                                                              "name":  "synthetic",
+                                                              "log_group_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_index_policy",
+                                 "address":  "aws_cloudwatch_log_index_policy.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "filter_pattern":  "PRIVATE_FILTER",
+                                                              "policy_document":  "PRIVATE_POLICY",
+                                                              "name":  "synthetic",
+                                                              "log_group_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_data_protection_policy",
+                                 "address":  "aws_cloudwatch_log_data_protection_policy.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "kms_key_id":  "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012",
+                                                              "log_group_arn_list":  [
+                                                                                         "arn:aws:logs:us-east-1:123456789012:log-group:synthetic"
+                                                                                     ]
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_anomaly_detector",
+                                 "address":  "aws_cloudwatch_log_anomaly_detector.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "log_group_names":  [
+                                                                                      "synthetic"
+                                                                                  ],
+                                                              "query_string":  "PRIVATE_QUERY"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_query_definition",
+                                 "address":  "aws_cloudwatch_query_definition.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "log_group_arn":  "arn:aws:logs:us-east-1:123456789012:log-group:synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_transformer",
+                                 "address":  "aws_cloudwatch_log_transformer.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "policy_document":  "PRIVATE_POLICY",
+                                                              "policy_scope":  "RESOURCE",
+                                                              "resource_arn":  "arn:aws:logs:us-east-1:123456789012:log-group:synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_resource_policy",
+                                 "address":  "aws_cloudwatch_log_resource_policy.helper",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             }
+                         ],
+    "configuration":  {
+                          "provider_config":  {
+                                                  "aws":  {
+                                                              "full_name":  "registry.terraform.io/hashicorp/aws",
+                                                              "expressions":  {
+                                                                                  "region":  {
+                                                                                                 "constant_value":  "us-east-1"
+                                                                                             }
+                                                                              },
+                                                              "name":  "aws"
+                                                          }
+                                              },
+                          "root_module":  {
+                                              "resources":  [
+                                                                {
+                                                                    "name":  "key",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_kms_key",
+                                                                    "address":  "aws_kms_key.key",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "group",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_group",
+                                                                    "address":  "aws_cloudwatch_log_group.group",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "kms_key_id":  {
+                                                                                                           "references":  [
+                                                                                                                              "aws_kms_key.key.arn"
+                                                                                                                          ]
+                                                                                                       }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_stream",
+                                                                    "address":  "aws_cloudwatch_log_stream.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_name":  {
+                                                                                                               "references":  [
+                                                                                                                                  "aws_cloudwatch_log_group.group.name"
+                                                                                                                              ]
+                                                                                                           }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_metric_filter",
+                                                                    "address":  "aws_cloudwatch_log_metric_filter.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_name":  {
+                                                                                                               "references":  [
+                                                                                                                                  "aws_cloudwatch_log_group.group.name"
+                                                                                                                              ]
+                                                                                                           }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_index_policy",
+                                                                    "address":  "aws_cloudwatch_log_index_policy.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_name":  {
+                                                                                                               "references":  [
+                                                                                                                                  "aws_cloudwatch_log_group.group.name"
+                                                                                                                              ]
+                                                                                                           }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_data_protection_policy",
+                                                                    "address":  "aws_cloudwatch_log_data_protection_policy.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_name":  {
+                                                                                                               "references":  [
+                                                                                                                                  "aws_cloudwatch_log_group.group.name"
+                                                                                                                              ]
+                                                                                                           }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_anomaly_detector",
+                                                                    "address":  "aws_cloudwatch_log_anomaly_detector.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "kms_key_id":  {
+                                                                                                           "references":  [
+                                                                                                                              "aws_kms_key.key.arn"
+                                                                                                                          ]
+                                                                                                       },
+                                                                                        "log_group_arn_list":  {
+                                                                                                                   "references":  [
+                                                                                                                                      "aws_cloudwatch_log_group.group.arn"
+                                                                                                                                  ]
+                                                                                                               }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_query_definition",
+                                                                    "address":  "aws_cloudwatch_query_definition.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_names":  {
+                                                                                                                "references":  [
+                                                                                                                                   "aws_cloudwatch_log_group.group.name"
+                                                                                                                               ]
+                                                                                                            }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_transformer",
+                                                                    "address":  "aws_cloudwatch_log_transformer.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_arn":  {
+                                                                                                              "references":  [
+                                                                                                                                 "aws_cloudwatch_log_group.group.arn"
+                                                                                                                             ]
+                                                                                                          }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "helper",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_resource_policy",
+                                                                    "address":  "aws_cloudwatch_log_resource_policy.helper",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "resource_arn":  {
+                                                                                                             "references":  [
+                                                                                                                                "aws_cloudwatch_log_group.group.arn"
+                                                                                                                            ]
+                                                                                                         }
+                                                                                    }
+                                                                }
+                                                            ]
+                                          }
+                      }
+}
