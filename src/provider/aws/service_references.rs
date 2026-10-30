@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::route53_records::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::route53::label(resource, attribute) {
         return Some(label);
     }
@@ -585,6 +588,20 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && ((super::route53_records::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            && !(raw.nodes[reference.target].resource_type == "aws_route53_record"
+                && reference.attribute == "alias.name"
+                && reference.sources.iter().any(|&s| {
+                    matches!(
+                        raw.nodes[s].resource_type.as_str(),
+                        "aws_elb" | "aws_globalaccelerator_accelerator"
+                    )
+                })))
+            || super::route53_records::bindings(raw, reference))
         && (super::route53::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -884,7 +901,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::route53::indexed(&node.resource_type, &reference.attribute)
+        if super::route53_records::indexed(&node.resource_type, &reference.attribute)
+            || super::route53::indexed(&node.resource_type, &reference.attribute)
             || super::cloudfront::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
@@ -911,7 +929,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 kind: if verified
                     && (matches!(
                         label,
-                        "Cluster membership"
+                        "CIDR collection membership"
+                            | "Cluster membership"
                             | "Global Cluster membership"
                             | "V2 table membership"
                             | "Legacy V1 table membership"

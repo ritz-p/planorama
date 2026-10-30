@@ -60,6 +60,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_vpc_peering_connection_options" => {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
+            "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")
@@ -110,7 +111,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if node.resource_type == "aws_networkfirewall_logging_configuration" {
+        if matches!(
+            node.resource_type.as_str(),
+            "aws_networkfirewall_logging_configuration" | "aws_route53_records_exclusive"
+        ) {
             graph.nodes[index].placement = crate::model::Placement::Spatial;
         }
     }

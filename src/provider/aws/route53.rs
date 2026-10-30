@@ -65,13 +65,13 @@ fn current(n: &TerraformEntity) -> bool {
         && n.deposed_key.is_none()
 }
 
-fn configured(left: &TerraformEntity, right: &TerraformEntity) -> bool {
+pub(super) fn configured(left: &TerraformEntity, right: &TerraformEntity) -> bool {
     [&left.provider_configuration, &right.provider_configuration]
         .iter()
         .all(|c| c.as_ref().is_some_and(|c| !c.account_conflict))
 }
 
-fn endpoint(
+pub(super) fn endpoint(
     nodes: &[TerraformEntity],
     r: &AttributeReference,
     kind: &str,
@@ -86,7 +86,7 @@ fn endpoint(
         && r.complete
         && r.instances_explicit
         && r.issues.is_empty()
-        && nodes[*s].resource_type == kind
+        && super::aliases::entity_type(&nodes[*s]) == kind
         && r.source_attributes.len() == 1
         && fields.iter().any(|f| r.source_attributes.contains(*f)))
     .then_some(*s)

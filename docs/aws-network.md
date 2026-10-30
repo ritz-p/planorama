@@ -159,6 +159,25 @@ equal known planned values. `Alias target` requires both `alias.name` and
 `alias.zone_id` to reference the same managed ALB/NLB (`dns_name`, `zone_id`) or
 CloudFront distribution (`domain_name`, `hosted_zone_id`) with matching values.
 The LB type must be known as `application` or `network`.
+Classic ELB uses `dns_name` / `zone_id`; Global Accelerator uses `dns_name` or
+`dual_stack_dns_name` / `hosted_zone_id`. These extensions require compatible
+provider/account evidence and preserve the endpoint's independent scope.
+Other alias endpoint families remain unsupported.
+
+Records can reference a health check by `id`, a CIDR collection by `id`, and a
+CIDR location by `name` only with a proven reference to that same collection.
+The location's deprecated composite `id` is not a collection or location-name
+identity. CIDR locations expose collection membership. Traffic policy instances
+reference their hosted zone and a policy `id` with an equal known positive numeric
+`version`; policy documents and service-generated records are not interpreted.
+
+Exclusive record controllers use `resource_record_set.alias_target.dns_name` /
+`hosted_zone_id`, distinct from a record's `alias.name` / `zone_id`. Their complete
+sets are correlated through explicit typed endpoint references, including nested
+health-check, CIDR, traffic-policy-instance and alias references. Ambiguous rows,
+literal-only endpoint values and incomplete lists remain unproven. A unique proven
+zone reference permits the controller to appear under that zone's record-management
+section. No managed record identities are synthesized; shared endpoints stay visible.
 
 Private-zone VPC sets require a complete explicit ID reference for every element,
 matched uniquely by evaluated ID regardless of set order. Each VPC region must
