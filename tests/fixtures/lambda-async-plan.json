@@ -1,0 +1,202 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_lambda_function.app",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:synthetic-function",
+          "version": "7",
+          "environment": [
+            {
+              "variables": {
+                "SECRET": "SYNTHETIC_SECRET_NOT_FOR_OUTPUT"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_alias.live",
+      "mode": "managed",
+      "type": "aws_lambda_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "function_version": "7",
+          "name": "live"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.failure",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:123456789012:failure",
+          "fifo_queue": false
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.success",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:success",
+          "fifo_topic": false
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function_event_invoke_config.config",
+      "type": "aws_lambda_function_event_invoke_config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "synthetic-function",
+          "qualifier": "live",
+          "destination_config": [
+            {
+              "on_success": [
+                {
+                  "destination": "arn:aws:sns:us-east-1:123456789012:success"
+                }
+              ],
+              "on_failure": [
+                {
+                  "destination": "arn:aws:sqs:us-east-1:123456789012:failure"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lambda_function.app",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_alias.live",
+          "mode": "managed",
+          "type": "aws_lambda_alias",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name",
+                "aws_lambda_function.app"
+              ]
+            },
+            "function_version": {
+              "references": [
+                "aws_lambda_function.app.version",
+                "aws_lambda_function.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sqs_queue.failure",
+          "type": "aws_sqs_queue",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.success",
+          "type": "aws_sns_topic",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function_event_invoke_config.config",
+          "type": "aws_lambda_function_event_invoke_config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "function_name": {
+              "references": [
+                "aws_lambda_function.app.function_name"
+              ]
+            },
+            "qualifier": {
+              "references": [
+                "aws_lambda_alias.live.name"
+              ]
+            },
+            "destination_config": [
+              {
+                "on_success": [
+                  {
+                    "destination": {
+                      "references": [
+                        "aws_sns_topic.success.arn"
+                      ]
+                    }
+                  }
+                ],
+                "on_failure": [
+                  {
+                    "destination": {
+                      "references": [
+                        "aws_sqs_queue.failure.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -42625,10 +42625,10 @@
       }
     },
     "aws_lambda_function_event_invoke_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 951,
-      "gap": "#714 audit: Missing: function plus alias/published qualifier context and destination-type-specific success/failure ARN refs; same qualifier must belong to the function. Follow-up #951. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #951 implements qualified function and typed asynchronous destination references; runtime delivery and payload summaries remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42642,7 +42642,7 @@
         "placement": "Supported: retain Logical Controller for aws_lambda_function_event_invoke_config; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_function_event_invoke_config identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_function_event_invoke_config has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function plus alias/published qualifier context and destination-type-specific success/failure ARN refs; same qualifier must belong to the function.",
+        "references": "Supported: Exact function and same-parent published version/alias references; singleton success/failure destinations match standard SQS/SNS, EventBridge bus or Lambda ARNs; S3 is failure-only. Incomplete or incompatible evidence stays unresolved.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_function_event_invoke_config attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_function_event_invoke_config.html.markdown",
@@ -42685,7 +42685,9 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_qualified.rs",
+          "tests/unit/semantic/lambda_qualified.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}

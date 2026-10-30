@@ -84,6 +84,22 @@ or additional resources. No new attribute summaries are emitted.
 Contracts use the pinned AWS Provider 6.70.0 schema and documentation. Examples:
 [SVG](../examples/lambda-qualified.svg), [HTML](../examples/lambda-qualified.html).
 
+## Lambda asynchronous destinations (#951)
+
+`aws_lambda_function_event_invoke_config` retains an independent logical row.
+Its function and qualifier use the same explicit parent proof as qualified
+configuration; omitted qualifiers and `$LATEST` are accepted API selectors.
+`destination_config.on_success.destination` and `on_failure.destination` require
+singleton blocks, complete explicit references and exact known ARN values.
+Supported endpoints are standard SQS queues, standard SNS topics, EventBridge
+buses and Lambda functions (including verified published versions and aliases).
+SQS/SNS require a known false FIFO flag. S3 buckets are supported only for failure,
+following the [AWS destination contract](https://docs.aws.amazon.com/lambda/latest/dg/invocation-async-retain-records.html).
+This resolves the conflicting S3-success example in the pinned Provider docs.
+Unknown, sensitive, ambiguous or incompatible endpoints remain unresolved.
+These links establish neither delivery nor permissions, ownership or containment.
+Examples: [SVG](../examples/lambda-async.svg), [HTML](../examples/lambda-async.html).
+
 ## Lambda configuration and network proof (#949)
 
 Function configuration links require explicit, unique managed-resource provenance,
