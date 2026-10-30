@@ -3,6 +3,24 @@ use crate::model::AttributeReference;
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
     let (label, targets, list): (_, &[_], _) = match (resource, attribute) {
+        ("aws_apigatewayv2_authorizer", "authorizer_credentials_arn") => {
+            ("V2 authorizer role", &[("aws_iam_role", "arn")], false)
+        }
+        ("aws_apigatewayv2_route", "authorizer_id") => (
+            "V2 route authorizer",
+            &[("aws_apigatewayv2_authorizer", "id")],
+            false,
+        ),
+        ("aws_apigatewayv2_route", "target") => (
+            "V2 route integration",
+            &[("aws_apigatewayv2_integration", "id")],
+            false,
+        ),
+        ("aws_apigatewayv2_route", "request_models") => (
+            "V2 request models",
+            &[("aws_apigatewayv2_model", "name")],
+            true,
+        ),
         ("aws_apigatewayv2_api", "target") => (
             "V2 quick-create Lambda",
             &[("aws_lambda_function", "arn"), ("aws_lambda_alias", "arn")],
@@ -15,6 +33,8 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
             "aws_apigatewayv2_integration"
             | "aws_apigatewayv2_stage"
             | "aws_apigatewayv2_authorizer"
+            | "aws_apigatewayv2_route"
+            | "aws_apigatewayv2_model"
             | "aws_apigatewayv2_deployment",
             "api_id",
         ) => ("V2 API context", &[("aws_apigatewayv2_api", "id")], false),
@@ -71,6 +91,34 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         context.nodes[r.target].resource_type.as_str(),
         r.attribute.as_str(),
     ) {
+        ("aws_apigatewayv2_authorizer", "authorizer_credentials_arn") => {
+            matches!(protocol, Some("HTTP" | "WEBSOCKET"))
+                && context.value(r.target, "authorizer_type") == Some("REQUEST")
+        }
+        ("aws_apigatewayv2_route", "target") => {
+            matches!(protocol, Some("HTTP" | "WEBSOCKET"))
+                && api.is_some_and(|api| context.source(source, "api_id") == Some(api))
+        }
+        ("aws_apigatewayv2_route", "authorizer_id") => {
+            api.is_some_and(|api| context.source(source, "api_id") == Some(api))
+                && matches!(
+                    (
+                        protocol,
+                        context.value(r.target, "authorization_type"),
+                        context.value(source, "authorizer_type")
+                    ),
+                    (Some("HTTP" | "WEBSOCKET"), Some("CUSTOM"), Some("REQUEST"))
+                        | (Some("HTTP"), Some("JWT"), Some("JWT"))
+                )
+        }
+        ("aws_apigatewayv2_route", "request_models") => {
+            protocol == Some("WEBSOCKET")
+                && api.is_some_and(|api| {
+                    r.sources
+                        .iter()
+                        .all(|&model| context.source(model, "api_id") == Some(api))
+                })
+        }
         ("aws_apigatewayv2_api", "target") => {
             context.value(r.target, "protocol_type") == Some("HTTP") && context.lambda(source)
         }
