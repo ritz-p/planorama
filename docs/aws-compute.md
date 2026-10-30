@@ -448,3 +448,33 @@ used as ownership evidence. Multiple verified policies remain separate and sort
 by Terraform identity. Filtering can leave either endpoint unavailable without
 emitting a dangling link. See
 [autoscaling-policy.svg](../examples/autoscaling-policy.svg).
+
+## CloudWatch Logs configuration references (#988)
+
+The fixed AWS Provider 6.70.0 [registration and schema sources](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/logs)
+and corresponding resource documentation define these navigation contracts:
+
+| Resource | Input | Explicit target output |
+| --- | --- | --- |
+| Log anomaly detector | `log_group_arn_list` (complete one-element list) | Log Group `arn` |
+| Data protection policy, index policy, metric filter, stream | `log_group_name` | Log Group `name` |
+| Resource policy | `resource_arn`, with known `policy_scope = RESOURCE` | Log Group `arn` |
+| Transformer | `log_group_arn` | Log Group `arn` |
+| Query definition | complete `log_group_names` list | Log Group `name` |
+| Log Group | `kms_key_id` | KMS Key `arn` |
+| Log anomaly detector | `kms_key_id` | KMS Key `arn` or `key_id`, matched exactly to the referenced output |
+
+Names and ARNs must equal known, non-sensitive values on explicitly referenced,
+current managed AWS resources in compatible provider/account/region scope. Log Group
+ARNs use the provider output without the API's `:*` suffix; key IDs and ARNs are
+not converted. Unknown, incomplete, ambiguous, mismatched, deleted, deposed or
+wrong-type evidence falls back to ordinary unresolved references. State boundaries
+remain independent, and filtered targets cannot become dangling links.
+
+Helpers keep their own identity, action and coverage; these links do not embed
+helpers, relocate shared groups, infer network containment or prove delivery.
+Account policies have no resource owner. Query/filter/policy/processor contents
+remain opaque; metric names and namespaces do not create resources. Retention,
+class and computed identifiers do not synthesize endpoints. Existing RDS alarm
+monitoring and incoming workload references retain their separate contracts.
+The [example](../examples/cloudwatch-logs.svg) contains synthetic configuration only.

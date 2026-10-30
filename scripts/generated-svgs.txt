@@ -113,3 +113,4 @@ examples/ecs-workloads.svg
 examples/lambda-qualified.svg
 examples/lambda-async.svg
 examples/lambda-policy.svg
+examples/cloudwatch-logs.svg
