@@ -244,3 +244,61 @@ fn cloudfront_vpc_origin_uses_verified_nlb_subnet_mappings() {
             .any(|r| r.label == "Endpoint subnet context")
     );
 }
+
+#[test]
+fn cloudfront_vpc_origin_context_uses_known_effective_subnet_regions() {
+    for kind in ["aws_lb", "aws_instance"] {
+        for (default, override_region, unknown, expected) in [
+            ("us-east-1", "us-west-2", false, true),
+            ("us-west-2", "us-east-1", false, false),
+            ("us-west-2", "us-west-2", true, false),
+            ("us-west-2", "us-west-2", false, true),
+        ] {
+            let mut value = fixture(kind);
+            value["terraform_version"] = json!("1.9.8");
+            let provider = value["configuration"]["provider_config"]["aws"].clone();
+            value["configuration"]["provider_config"]["aws.subnet"] = provider;
+            value["configuration"]["provider_config"]["aws.subnet"]["version_constraint"] =
+                json!("6.0.0");
+            value["configuration"]["provider_config"]["aws.subnet"]["expressions"]["region"] =
+                json!({"constant_value":default});
+            let resource = &mut value["configuration"]["root_module"]["resources"][2];
+            resource["provider_config_key"] = json!("aws.subnet");
+            resource["mode"] = json!("managed");
+            resource["type"] = json!("aws_subnet");
+            resource["expressions"] = json!({"region":{"constant_value":override_region}});
+            value["resource_changes"][2]["change"]["after"]["region"] = json!(override_region);
+            value["resource_changes"][2]["change"]["after_unknown"] = json!({"region":unknown});
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let mut nodes = raw.nodes.clone();
+            for node in &mut nodes {
+                node.provider_configuration.as_mut().unwrap().account =
+                    AwsAccountScope::new("123456789012");
+            }
+            assert!(nodes[2].has_region_override);
+            assert_eq!(nodes[2].region_override.is_some(), !unknown);
+            let evidence: Vec<_> = value["resource_changes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| (&r["change"]["after"], &r["change"]["after_unknown"]))
+                .collect();
+            assert_eq!(
+                super::context(&nodes, &raw.attributes, &evidence, 1).is_some(),
+                expected,
+                "{kind}: {default}/{override_region}, unknown={unknown}"
+            );
+        }
+    }
+}
+
+#[test]
+fn cloudfront_vpc_origin_rejects_unknown_effective_endpoint_region() {
+    let mut value = fixture("aws_instance");
+    value["configuration"]["root_module"]["resources"][1]["expressions"]["region"] =
+        json!({"references":["var.region"]});
+    let result = graph(&value);
+    assert!(!result.nodes[0].references.iter().any(
+        |r| r.complete && matches!(r.label, "VPC origin endpoint" | "Endpoint subnet context")
+    ));
+}

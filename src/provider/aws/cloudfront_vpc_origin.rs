@@ -45,8 +45,7 @@ fn verify(
     }
     let endpoint = &nodes[*source];
     let kind = super::aliases::entity_type(endpoint);
-    if !matches!(kind, "aws_lb" | "aws_instance")
-        || endpoint.provider_configuration.as_ref()?.region.is_none()
+    if !matches!(kind, "aws_lb" | "aws_instance") || super::scope::scope(endpoint)?.region.is_none()
     {
         return None;
     }
@@ -91,6 +90,7 @@ fn context(
     evidence: &[(&Value, &Value)],
     endpoint: usize,
 ) -> Option<Vec<usize>> {
+    let region = super::scope::scope(&nodes[endpoint])?.region?;
     let kind = super::aliases::entity_type(&nodes[endpoint]);
     let field = if kind == "aws_instance" {
         "subnet_id"
@@ -109,7 +109,13 @@ fn context(
             let mapping = mappings.next()?;
             return (mappings.next().is_none()
                 && mapping.service_reference_verified
-                && eligible(nodes, mapping))
+                && eligible(nodes, mapping)
+                && mapping.sources.iter().all(|&source| {
+                    super::scope::scope(&nodes[source])
+                        .and_then(|s| s.region)
+                        .as_ref()
+                        == Some(&region)
+                }))
             .then(|| mapping.sources.clone());
         }
         None => return None,
@@ -137,8 +143,7 @@ fn context(
     for &subnet in &reference.sources {
         let node = &nodes[subnet];
         if node.resource_type != "aws_subnet"
-            || node.provider_configuration.as_ref()?.region
-                != nodes[endpoint].provider_configuration.as_ref()?.region
+            || super::scope::scope(node)?.region.as_ref() != Some(&region)
         {
             return None;
         }
