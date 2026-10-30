@@ -6,6 +6,8 @@ on:
       - tests/fixtures/compatibility/**
       - scripts/terraform-compatibility.cjs
       - scripts/terraform-compatibility-inputs.cjs
+      - scripts/compatibility-provider.cjs
+      - tests/ci/compatibility-provider.test.cjs
       - tests/ci/terraform-compatibility.test.cjs
       - tests/fixtures/aws-captured/**
       - tests/fixtures/aws-region-overrides/**
@@ -50,6 +52,7 @@ jobs:
           persist-credentials: false
       - run: node scripts/terraform-compatibility.cjs check
       - run: node --test tests/ci/terraform-compatibility.test.cjs
+      - run: node --test tests/ci/compatibility-provider.test.cjs
   capture:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest

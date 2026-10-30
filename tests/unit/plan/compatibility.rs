@@ -55,9 +55,9 @@ fn real_core_versions_preserve_identity_actions_references_and_coverage() {
 
 #[test]
 fn provider_versions_preserve_semantics_for_the_common_configuration() {
-    for version in ["1.9.8", "1.16.6"] {
+    for (version, case) in [("1.9.8", "aws6"), ("1.16.6", "aws6"), ("1.9.8", "aws670")] {
         let mut old = plan::parse(&fixture(version, "aws5")).unwrap();
-        let mut new = plan::parse(&fixture(version, "aws6")).unwrap();
+        let mut new = plan::parse(&fixture(version, case)).unwrap();
         for raw in [&mut old, &mut new] {
             for node in &mut raw.nodes {
                 node.metadata.changed_paths = Default::default();

@@ -119,15 +119,13 @@ regions stay in one group without a shared region claim. See the maintained
 [this fixture](../tests/fixtures/logical-regions-plan.json).
 Static resource-level `region` overrides are supported for managed `aws_vpc`,
 `aws_subnet` and `aws_cloudwatch_log_group`, verified with Terraform **1.9.8** or
-**1.16.6** and HashiCorp AWS **6.0.0**. The configuration must pin
-`version_constraint` to `6.0.0`
-(optionally prefixed by `= `); a range, missing version or another version does
-not prove this schema. AWS v5 fixtures do not support these overrides.
-These are exact Core versions, not a minimum-version range. A JSON constraint is
-not a selected-version/lock attestation: only the exact AWS 6.0.0 constraint
-matches the schema contract checked with real locked plans. The
-[compatibility matrix](terraform-compatibility.md) records both Core captures;
-other Core versions and Provider releases remain unverified.
+**1.16.6** with HashiCorp AWS **6.0.0**, and Terraform **1.9.8** with AWS **6.70.0**.
+The configuration must pin `version_constraint` to the corresponding exact provider
+version (optionally prefixed by `= `). Ranges and missing versions do not prove the
+schema. AWS v5 does not support these overrides. These are exact verified pairs,
+not minimum-version ranges. A JSON constraint is not a selected-version/lock
+attestation; the [compatibility matrix](terraform-compatibility.md) records the
+real locked captures. Other combinations remain unverified.
 The reference-free literal must equal the unique current resource change's known,
 non-sensitive `after.region`. Initial accepted literals are `us-east-1`, `us-east-2`,
 `us-west-1`, `us-west-2`, `eu-west-1`, `eu-west-2`, `eu-west-3`, `eu-central-1`,

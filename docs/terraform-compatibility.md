@@ -6,14 +6,17 @@ Terraform language feature or provider release.
 
 | Boundary | Verified versions | Limits |
 | --- | --- | --- |
-| JSON interpretation | Terraform 1.9.8, 1.10.5, 1.11.4, 1.12.2, 1.13.5, 1.14.9, 1.15.9, 1.16.6; AWS 5.100.0 / 6.0.0 in selected combinations; JSON 1.2 | The committed cases below, not every resource or language feature |
-| Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
-| Saved-plan provider evidence | Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md); AWS 6.0.0 is excluded |
+| JSON interpretation | Terraform 1.9.8, 1.10.5, 1.11.4, 1.12.2, 1.13.5, 1.14.9, 1.15.9, 1.16.6; AWS 5.100.0 / 6.0.0 / 6.70.0 in selected combinations; JSON 1.2 | The committed cases below, not every resource or language feature |
+| Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0; Terraform 1.9.8 / AWS 6.70.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
+| Saved-plan provider evidence | Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md); AWS 6.x is excluded |
 
 Fixed Core archives and checksums are pinned in
 [`matrix.json`](../tests/fixtures/compatibility/matrix.json), which also selects
 the cases for each Core. Provider versions and checksums are pinned in each
 case's `.terraform.lock.hcl`. CI never resolves a floating release.
+
+The [AWS inventory](aws-inventory.md) schema audit uses AWS 6.70.0; its resource
+coverage is separate from these real-plan compatibility cases.
 
 ## Reproduction
 
@@ -26,6 +29,9 @@ docker compose exec -T dev node scripts/terraform-compatibility.cjs check
 docker compose exec -T dev cargo test --locked --lib compatibility_tests
 docker compose exec -T dev cargo test --locked --test terraform_plan
 ```
+
+To prepare or capture only selected cases, append their names, for example
+`node scripts/terraform-compatibility.cjs prepare aws670 overrides670`.
 
 On PowerShell, use `source="${PWD}"` for the bind mount.
 `prepare` downloads checksum-verified linux_amd64 archives and initializes exact
@@ -54,7 +60,12 @@ Review JSON before committing; this capture is not an arbitrary-plan sanitizer.
 the provider. Each named case varies only Core across versions. `overrides` is
 a separate AWS 6-only configuration; AWS 5 has no such deployment override.
 `language` uses the built-in provider. Additional Core versions run `aws5` and
-`language`; AWS 6 and override cases retain the two original Core versions.
+`language`; AWS 6.0.0 and override cases retain the two original Core versions.
+`aws670` and `overrides670` vary only Provider against the corresponding AWS 6.0.0
+case on Core 1.9.8. Region schema is identical for the three checked managed types;
+IAM Role remains a global negative control. Known ALB, subnet IPAM/IPv6 and Log Group
+computed-field changes are asserted before comparison, including HTML path metadata.
+The source plan retains every field. No other resource's Region support is implied.
 
 The Node check compares planned values, changes, configuration, checks and
 extracted schema contracts across Core versions, excluding volatile metadata.
