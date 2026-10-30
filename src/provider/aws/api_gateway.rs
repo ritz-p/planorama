@@ -1,4 +1,4 @@
-use super::service_evidence::{eligible, known};
+use super::service_evidence::{eligible_with_global_role, known};
 use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 mod rest;
@@ -24,7 +24,13 @@ fn basic(
     evidence: &[(&Value, &Value)],
     rule: &Rule,
 ) -> bool {
-    if !eligible(nodes, r) || r.source_attributes.len() != 1 {
+    if !eligible_with_global_role(
+        nodes,
+        r,
+        nodes[r.target].resource_type == "aws_api_gateway_integration"
+            && r.attribute == "credentials",
+    ) || r.source_attributes.len() != 1
+    {
         return false;
     }
     let field = r.source_attributes.iter().next().unwrap();
