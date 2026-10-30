@@ -1,6 +1,70 @@
 use super::*;
 use crate::layout::metrics::measure;
 
+fn hidden_length(path: &[Point], occluders: &[Bounds]) -> usize {
+    path.windows(2)
+        .map(|p| {
+            let mut intervals: Vec<_> = occluders
+                .iter()
+                .filter(|&&b| crate::layout::routing_shared::crosses(p[0], p[1], b))
+                .map(|b| {
+                    if p[0].x == p[1].x {
+                        (
+                            p[0].y.min(p[1].y).max(b.origin.y),
+                            p[0].y.max(p[1].y).min(b.origin.y + b.height),
+                        )
+                    } else {
+                        (
+                            p[0].x.min(p[1].x).max(b.origin.x),
+                            p[0].x.max(p[1].x).min(b.right()),
+                        )
+                    }
+                })
+                .collect();
+            intervals.sort_unstable();
+            let mut end = 0;
+            intervals
+                .into_iter()
+                .map(|(start, next)| {
+                    let length = next.saturating_sub(start.max(end));
+                    end = end.max(next);
+                    length
+                })
+                .sum::<usize>()
+        })
+        .sum()
+}
+
+#[test]
+fn gateway_occlusion_is_not_diluted_by_visible_route_length() {
+    let bounds = Bounds {
+        origin: Point { x: 10, y: 10 },
+        width: 20,
+        height: 20,
+    };
+    let path = |points: &[(usize, usize)]| {
+        points
+            .iter()
+            .map(|&(x, y)| Point { x, y })
+            .collect::<Vec<_>>()
+    };
+    let short = path(&[(0, 20), (40, 20)]);
+    let long = path(&[(0, 20), (400, 20)]);
+    assert_eq!(hidden_length(&short, &[bounds]), 20);
+    assert_eq!(hidden_length(&long, &[bounds]), 20);
+    assert_eq!(hidden_length(&short, &[bounds, bounds]), 20);
+    assert_eq!(hidden_length(&path(&[(20, 40), (20, 0)]), &[bounds]), 20);
+    assert_eq!(hidden_length(&path(&[(20, 20), (20, 40)]), &[bounds]), 10);
+    let overlapping = Bounds {
+        origin: Point { x: 20, y: 10 },
+        ..bounds
+    };
+    assert_eq!(hidden_length(&long, &[bounds, overlapping]), 30);
+    assert_eq!(hidden_length(&path(&[(0, 10), (40, 10)]), &[bounds]), 0);
+    let clear = path(&[(0, 0), (40, 0)]);
+    assert!(hidden_length(&short, &[bounds]) > hidden_length(&clear, &[bounds]));
+}
+
 fn border_aware_shape_fits(
     path: &[Point],
     obstacle_only: &[Point],
@@ -110,6 +174,11 @@ fn deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_str
     let snapshot = |graph: &Graph| {
         let started = std::time::Instant::now();
         let layout = Layout::new(graph);
+        let mut scene = crate::layout::diagnostics::Scene::default();
+        scene.add_state(graph, &layout, None, 0, serde_json::Value::Null);
+        let diagnostics = scene.finish(layout.width, layout.height);
+        assert_eq!(diagnostics["limits"]["pair_metrics_complete"], true);
+        assert_eq!(diagnostics["limits"]["findings_complete"], true);
         let parallel = crate::layout::routing_shared::spacing::measure(graph, &layout.paths);
         eprintln!(
             "parallel: {:?}; layout_ms={}",
@@ -275,7 +344,21 @@ fn deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_str
                 );
                 if from.contains("aws_subnet.private_") {
                     assert!(own.total_path_length <= 600 && own.bend_count <= 3);
-                    assert_eq!(overlap, 0);
+                    let identifies_edge = |value: &serde_json::Value| {
+                        let identity: serde_json::Value =
+                            serde_json::from_str(value.as_str().unwrap()).unwrap();
+                        identity["source"]["id"] == graph.nodes[edge.from].entity.id.as_str()
+                            && identity["target"]["id"] == graph.nodes[edge.to].entity.id.as_str()
+                    };
+                    for finding in diagnostics["findings"].as_array().unwrap() {
+                        if finding["category"] == "independent_overlap" {
+                            assert!(
+                                !identifies_edge(&finding["edge"])
+                                    && !identifies_edge(&finding["peer"]),
+                                "visible overlap: {finding}"
+                            );
+                        }
+                    }
                     let source = layout.bounds[edge.from];
                     assert!(
                         path.windows(2)
@@ -283,35 +366,22 @@ fn deferred_regression_large_fixture_limits_each_edges_bends_and_valid_route_str
                         "source re-entry: {path:?}"
                     );
                 } else {
-                    let hidden: usize = layout
+                    let occluders: Vec<_> = layout
                         .occluders(edge)
-                        .iter()
-                        .map(|&node| {
-                            let b = layout.bounds[node];
-                            path.windows(2)
-                                .filter(|p| crate::layout::routing_shared::crosses(p[0], p[1], b))
-                                .map(|p| {
-                                    if p[0].x == p[1].x {
-                                        p[0].y
-                                            .max(p[1].y)
-                                            .min(b.origin.y + b.height)
-                                            .saturating_sub(p[0].y.min(p[1].y).max(b.origin.y))
-                                    } else {
-                                        p[0].x
-                                            .max(p[1].x)
-                                            .min(b.right())
-                                            .saturating_sub(p[0].x.min(p[1].x).max(b.origin.x))
-                                    }
-                                })
-                                .sum::<usize>()
-                        })
-                        .sum();
+                        .into_iter()
+                        .map(|node| layout.bounds[node])
+                        .collect();
+                    let hidden = hidden_length(path, &occluders);
+                    let reference_hidden = hidden_length(&reference, &occluders);
                     eprintln!("gateway hidden length={hidden}");
                     assert!(
                         own.total_path_length <= metrics.shortest_valid_length + 128
                             && own.bend_count <= 3
                     );
-                    assert!(hidden as u128 * 3 < own.total_path_length);
+                    assert!(
+                        hidden <= reference_hidden,
+                        "gateway adds occlusion: hidden={hidden}, shortest_hidden={reference_hidden}; path={path:?}; reference={reference:?}"
+                    );
                     let foreign = graph
                         .nodes
                         .iter()
