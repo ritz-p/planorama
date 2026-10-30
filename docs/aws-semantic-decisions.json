@@ -46638,7 +46638,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 920,
-      "gap": "#715 audit: Partial: #489 known-value zone and paired ALB/NLB/CloudFront alias proof retained. Missing: explicit Classic ELB/Global Accelerator alias pairs, health-check ID, CIDR collection/location references. Defer other alias endpoint families until service-specific DNS output pairs are verified; never decode records into topology. Follow-up #920. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #920: Retain #489 known-value zone and paired ALB/NLB/CloudFront aliases. Add paired Classic ELB and Global Accelerator aliases, typed health-check IDs and collection-qualified CIDR location references. Other alias endpoint families remain deferred.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46654,7 +46654,7 @@
         "placement": "Supported: retain Spatial Node for aws_route53_record; this presentation alone does not prove relationships.",
         "ownership": "Supported: Hosted zone reference describes membership while retaining independent Spatial record; no embedding.",
         "network": "Intentionally unsupported: alias targets do not contain records or establish reachability.",
-        "references": "Partial: #489 known-value zone and paired ALB/NLB/CloudFront alias proof retained. Missing: explicit Classic ELB/Global Accelerator alias pairs, health-check ID, CIDR collection/location references. Defer other alias endpoint families until service-specific DNS output pairs are verified; never decode records into topology.",
+        "references": "Supported: Implemented #920: Retain #489 known-value zone and paired ALB/NLB/CloudFront aliases. Add paired Classic ELB and Global Accelerator aliases, typed health-check IDs and collection-qualified CIDR location references. Other alias endpoint families remain deferred.",
         "scope": "Partial: Global eligibility in scope.rs; account requires provider evidence. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: record contents and DNS routing decisions; no arbitrary aws_route53_record attribute summary.",
         "officialDocumentation": "website/docs/r/route53_record.html.markdown",
@@ -46698,17 +46698,19 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53_records.rs",
+          "tests/unit/semantic/route53_records.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_route53_records_exclusive": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 920,
-      "gap": "#715 audit: Missing: zone ownership and typed nested health-check/CIDR/traffic-policy/alias references; resource_record_set uses alias_target.dns_name/hosted_zone_id, not record alias.name/zone_id. Do not synthesize managed records. Follow-up #920. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #920: Typed zone ownership and complete element-correlated resource_record_set health-check, CIDR, traffic-policy-instance and alias_target references. No synthetic managed records.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46722,9 +46724,9 @@
           "resource_record_set.traffic_policy_instance_id"
         ],
         "placement": "Supported: retain Logical Controller for aws_route53_records_exclusive; this presentation alone does not prove relationships.",
-        "ownership": "Missing: verified zone context for reconciliation controller; default NS/SOA and separately managed records are not owned children.",
+        "ownership": "Supported: embed only under one proven compatible hosted zone; preserve controller identity and do not synthesize managed records.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: zone ownership and typed nested health-check/CIDR/traffic-policy/alias references; resource_record_set uses alias_target.dns_name/hosted_zone_id, not record alias.name/zone_id. Do not synthesize managed records.",
+        "references": "Supported: Implemented #920: Typed zone ownership and complete element-correlated resource_record_set health-check, CIDR, traffic-policy-instance and alias_target references. No synthetic managed records.",
         "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: record values, DNS resolution and exclusive enforcement outcomes; destroy stops reconciliation without deleting records.",
         "officialDocumentation": "website/docs/r/route53_records_exclusive.html.markdown",
@@ -46770,7 +46772,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53_records.rs",
+          "tests/unit/semantic/route53_records.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -46827,10 +46831,10 @@
       }
     },
     "aws_route53_cidr_location": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 920,
-      "gap": "#715 audit: Missing: collection ID membership with collection-qualified location name; deprecated composite id must not substitute for collection identity. Follow-up #920. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #920: Collection ID membership; consumer location-name references require the same proven collection. Deprecated composite id is not collection identity.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46844,7 +46848,7 @@
         "placement": "Supported: retain Logical Node for aws_route53_cidr_location; this presentation alone does not prove relationships.",
         "ownership": "Missing: verified collection ID owner; CIDR blocks do not create network children.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: collection ID membership with collection-qualified location name; deprecated composite id must not substitute for collection identity.",
+        "references": "Supported: Implemented #920: Collection ID membership; consumer location-name references require the same proven collection. Deprecated composite id is not collection identity.",
         "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: record contents and DNS routing decisions; no arbitrary aws_route53_cidr_location attribute summary.",
         "officialDocumentation": "website/docs/r/route53_cidr_location.html.markdown",
@@ -46879,7 +46883,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53_records.rs",
+          "tests/unit/semantic/route53_records.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -47016,10 +47022,10 @@
       }
     },
     "aws_route53_traffic_policy_instance": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 920,
-      "gap": "#715 audit: Missing: hosted-zone ID plus traffic-policy ID and matching version; do not invent the service-generated record set. Follow-up #920. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #920: Hosted-zone ID and traffic-policy ID references with a matching known positive numeric policy version. No service-generated records or policy-document interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47032,7 +47038,7 @@
         "placement": "Supported: retain Logical Policy for aws_route53_traffic_policy_instance; this presentation alone does not prove relationships.",
         "ownership": "Missing: verified zone membership; policy remains shared and version-qualified.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: hosted-zone ID plus traffic-policy ID and matching version; do not invent the service-generated record set.",
+        "references": "Supported: Implemented #920: Hosted-zone ID and traffic-policy ID references with a matching known positive numeric policy version. No service-generated records or policy-document interpretation.",
         "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: record contents and DNS routing decisions; no arbitrary aws_route53_traffic_policy_instance attribute summary.",
         "officialDocumentation": "website/docs/r/route53_traffic_policy_instance.html.markdown",
@@ -47060,7 +47066,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53_records.rs",
+          "tests/unit/semantic/route53_records.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
