@@ -52981,7 +52981,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53039,7 +53039,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53084,7 +53084,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53129,7 +53129,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53191,7 +53191,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53572,7 +53572,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53660,7 +53660,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53871,7 +53871,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -54146,7 +54146,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 988,
-      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. The review below records the historical #730 baseline; opaque payloads and runtime monitoring remain excluded.",
+      "gap": "Implemented #988: bounded explicit log-group and KMS configuration navigation; independent helper identity and conservative scope/value checks. See aws-compute.md#cloudwatch-logs-configuration-references-988. #730 audit: the historical baseline remains in the review below; opaque payloads and runtime monitoring remain excluded.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
