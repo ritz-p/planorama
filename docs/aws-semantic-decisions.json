@@ -42692,10 +42692,10 @@
       }
     },
     "aws_lambda_function_recursion_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 952,
-      "gap": "#714 audit: Missing: function name reference; recursion enum is configuration, not runtime execution proof. Follow-up #952. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: Qualified function configuration references implemented in #952; configuration summaries and runtime effects remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42707,7 +42707,7 @@
         "placement": "Supported: retain Logical Controller for aws_lambda_function_recursion_config; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_function_recursion_config identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_function_recursion_config has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function name reference; recursion enum is configuration, not runtime execution proof.",
+        "references": "Supported: Explicit matching function and same-parent alias/published version references; scaling uses $LATEST.PUBLISHED, invocation/runtime use $LATEST. Unknown or incompatible evidence stays unresolved.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_function_recursion_config attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_function_recursion_config.html.markdown",
@@ -42738,17 +42738,19 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_qualified.rs",
+          "tests/unit/semantic/lambda_qualified.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_lambda_function_scaling_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 952,
-      "gap": "#714 audit: Missing: function reference with numeric or $LATEST.PUBLISHED qualifier; this qualifier differs from alias/$LATEST APIs; no execution-environment nodes. Follow-up #952. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: Qualified function configuration references implemented in #952; configuration summaries and runtime effects remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42761,7 +42763,7 @@
         "placement": "Supported: retain Logical Controller for aws_lambda_function_scaling_config; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_function_scaling_config identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_function_scaling_config has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function reference with numeric or $LATEST.PUBLISHED qualifier; this qualifier differs from alias/$LATEST APIs; no execution-environment nodes.",
+        "references": "Supported: Explicit matching function and same-parent alias/published version references; scaling uses $LATEST.PUBLISHED, invocation/runtime use $LATEST. Unknown or incompatible evidence stays unresolved.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_function_scaling_config attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_function_scaling_config.html.markdown",
@@ -42796,17 +42798,19 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_qualified.rs",
+          "tests/unit/semantic/lambda_qualified.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_lambda_invocation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 952,
-      "gap": "#714 audit: Missing: function and version selector context only; Terraform invocation is a logical action, not persistent runtime service. Input/result payload excluded. Follow-up #952. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: Qualified function configuration references implemented in #952; configuration summaries and runtime effects remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42819,7 +42823,7 @@
         "placement": "Supported: retain Logical Controller for aws_lambda_invocation; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_invocation identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_invocation has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function and version selector context only; Terraform invocation is a logical action, not persistent runtime service. Input/result payload excluded.",
+        "references": "Supported: Explicit matching function and same-parent alias/published version references; scaling uses $LATEST.PUBLISHED, invocation/runtime use $LATEST. Unknown or incompatible evidence stays unresolved.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_invocation attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_invocation.html.markdown",
@@ -42854,7 +42858,9 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_qualified.rs",
+          "tests/unit/semantic/lambda_qualified.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. Same-name data lookup is separately registered; selector/output contracts below do not establish managed ownership.",
         "dataContracts": {
@@ -42959,10 +42965,10 @@
       }
     },
     "aws_lambda_provisioned_concurrency_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 952,
-      "gap": "#714 audit: Missing: function plus alias/published version context; capacity count is not a Terraform instance count. Follow-up #952. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: Qualified function configuration references implemented in #952; configuration summaries and runtime effects remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42974,7 +42980,7 @@
         "placement": "Supported: retain Logical Controller for aws_lambda_provisioned_concurrency_config; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_provisioned_concurrency_config identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_provisioned_concurrency_config has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function plus alias/published version context; capacity count is not a Terraform instance count.",
+        "references": "Supported: Explicit matching function and same-parent alias/published version references; scaling uses $LATEST.PUBLISHED, invocation/runtime use $LATEST. Unknown or incompatible evidence stays unresolved.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_provisioned_concurrency_config attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_provisioned_concurrency_config.html.markdown",
@@ -43005,7 +43011,9 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_qualified.rs",
+          "tests/unit/semantic/lambda_qualified.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
@@ -43060,10 +43068,10 @@
       }
     },
     "aws_lambda_runtime_management_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 952,
-      "gap": "#714 audit: Missing: function/published-version context; runtime_version_arn is AWS runtime metadata with no managed endpoint, not Lambda version identity. Follow-up #952. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: Qualified function configuration references implemented in #952; configuration summaries and runtime effects remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -43077,7 +43085,7 @@
         "placement": "Supported: retain Logical Controller for aws_lambda_runtime_management_config; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_lambda_runtime_management_config identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambda_runtime_management_config has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: function/published-version context; runtime_version_arn is AWS runtime metadata with no managed endpoint, not Lambda version identity.",
+        "references": "Supported: Explicit matching function and same-parent alias/published version references; scaling uses $LATEST.PUBLISHED, invocation/runtime use $LATEST. Unknown or incompatible evidence stays unresolved.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_runtime_management_config attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_runtime_management_config.html.markdown",
@@ -43116,7 +43124,9 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_qualified.rs",
+          "tests/unit/semantic/lambda_qualified.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
