@@ -10,7 +10,8 @@ pub(crate) fn has_indexed_service_references(
             || aws::elbv2_cognito::block(resource).is_some()
             || aws::s3::indexed_resource(resource)
             || resource == "aws_networkfirewall_logging_configuration"
-            || aws::elbv2_network::resource(resource))
+            || aws::elbv2_network::resource(resource)
+            || resource == "aws_route53_zone")
 }
 
 pub(crate) fn indexed_service_reference(
@@ -23,7 +24,8 @@ pub(crate) fn indexed_service_reference(
             || aws::elbv2_cognito::indexed(resource, attribute)
             || aws::s3::indexed_attribute(resource, attribute).is_some()
             || aws::networkfirewall::indexed_attribute(resource, attribute)
-            || aws::elbv2_network::indexed(resource, attribute))
+            || aws::elbv2_network::indexed(resource, attribute)
+            || aws::route53::indexed(resource, attribute))
 }
 
 pub(crate) fn reference_label(

@@ -62,6 +62,7 @@ mod streaming;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]
 mod rds_global_tests;
+pub(crate) mod route53;
 mod service_evidence;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
