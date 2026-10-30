@@ -18,9 +18,11 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
         | "aws_lb_target_group"
         | "aws_internet_gateway"
         | "aws_egress_only_internet_gateway" => Some(("vpc_id", "aws_vpc")),
-        "aws_instance" | "aws_nat_gateway" | "aws_efs_mount_target" => {
-            Some(("subnet_id", "aws_subnet"))
-        }
+        "aws_network_interface"
+        | "aws_ec2_instance_connect_endpoint"
+        | "aws_instance"
+        | "aws_nat_gateway"
+        | "aws_efs_mount_target" => Some(("subnet_id", "aws_subnet")),
         _ => None,
     }
 }
@@ -59,6 +61,13 @@ pub(super) fn infer(raw: &Input) -> Graph {
         ) && (!reference.service_reference_verified
             || (reference.attribute != "subnet_id"
                 && !super::service_references::verified(raw, reference)))
+        {
+            continue;
+        }
+        if matches!(
+            child.resource_type.as_str(),
+            "aws_network_interface" | "aws_ec2_instance_connect_endpoint"
+        ) && !super::service_references::verified(raw, reference)
         {
             continue;
         }

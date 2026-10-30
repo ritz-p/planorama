@@ -19,6 +19,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::elbv2_cognito::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::elbv2_network::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::elbv2_tls::label(resource, attribute) {
         return Some(label);
     }
@@ -29,6 +32,12 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     if let Some(label) = super::privatelink::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::eni::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::peering::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::vpc_gateways::label(resource, attribute) {
@@ -585,6 +594,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::streaming::bindings(raw, reference))
+        && (super::elbv2_network::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::elbv2_tls::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -609,6 +624,18 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::privatelink::bindings(raw, reference))
+        && (super::eni::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::vpc_routes::bindings(raw, reference))
+        && (super::peering::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::peering::bindings(raw, reference))
         && (super::vpc_gateways::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -843,6 +870,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         if super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
+            || super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
             || super::s3::aggregate(raw, reference)
             || super::networkfirewall::aggregate(raw, reference)
         {

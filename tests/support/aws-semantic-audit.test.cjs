@@ -253,7 +253,7 @@ test('#710 retains exactly its 83 managed types and six evidenced decisions',()=
   for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
   for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),type+': '+path);
   assert.ok(r.managedDataContract);
-  assert.match(gap,/#710 audit:|Implemented #(897|895|899|902):/);
+  assert.match(gap,/#710 audit:|Implemented #(897|895|899|902|890|903):/);
   if(dimensions.some(k=>/Missing:|missing[: ]/i.test(r[k])))assert.ok(Number.isInteger(issue)&&issue>0,type+' missing follow-up');
  }
 });
@@ -280,7 +280,7 @@ test('#710 preserves adoption, mode, collection and identity distinctions',()=>{
  assert.match(r('vpc_endpoint').references,/service_region differs/);
  assert.deepEqual(r('vpc_security_group_rules_exclusive').shapes.ingress_rule_ids,[['set','string']]);
  assert.match(r('vpc_ipam_organization_admin_account').scope,/Global/);
- assert.match(r('vpc_peering_connection').scope,/no dedicated peering region/);
+ assert.match(r('vpc_peering_connection').scope,/Supported: requester control region/);
  assert.match(r('vpc_route_server').references,/no generic id/);
  assert.equal(r('vpc_ipam_pool_cidr_allocation').contracts.resource_id,'computed');
  assert.deepEqual(r('ec2_network_insights_access_scope').shapes['match_paths.source.resource_statement.resources'],['list','list','list',['list','string']]);
