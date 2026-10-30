@@ -22,6 +22,7 @@ mod data;
 mod databases;
 pub(super) mod diagnostics;
 mod dynamodb;
+mod ecs_capacity;
 mod efs;
 mod elasticache;
 pub(crate) mod elbv2;
