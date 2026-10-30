@@ -97,6 +97,8 @@ do not merge/release unresolved work or poll indefinitely.
 relevant PRs; fixed-tool capture is manual. The separate provider-evidence job
 verifies saved plans against local STS with external networking disabled. Its
 [contract](provider-evidence.md) is distinct from ordinary JSON compatibility.
+**Compatibility output** builds once and compares committed matrix SVG/HTML only
+on pushes to `release`; its SHA-named artifact records outputs and per-case results.
 
 ## Deferred routing regressions (#253)
 

@@ -6,17 +6,14 @@ Terraform language feature or provider release.
 
 | Boundary | Verified versions | Limits |
 | --- | --- | --- |
-| JSON interpretation | Terraform 1.9.8 and 1.16.6; AWS 5.100.0 and 6.0.0; JSON 1.2 | The committed cases below, not every resource or language feature |
+| JSON interpretation | Terraform 1.9.8, 1.10.5, 1.11.4, 1.12.2, 1.13.5, 1.14.9, 1.15.9, 1.16.6; AWS 5.100.0 / 6.0.0 in selected combinations; JSON 1.2 | The committed cases below, not every resource or language feature |
 | Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
 | Saved-plan provider evidence | Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md); AWS 6.0.0 is excluded |
 
-The candidate 1.16.6 was the stable release returned by the official
-[release API](https://api.github.com/repos/hashicorp/terraform/releases/latest)
-on 2026-10-20. The [fixed release](https://releases.hashicorp.com/terraform/1.16.6/)
-and SHA-256 values are pinned in
-[`matrix.json`](../tests/fixtures/compatibility/matrix.json). CI never resolves a
-floating release. Provider selections and checksums are recorded in each case's
-committed `.terraform.lock.hcl`.
+Fixed Core archives and checksums are pinned in
+[`matrix.json`](../tests/fixtures/compatibility/matrix.json), which also selects
+the cases for each Core. Provider versions and checksums are pinned in each
+case's `.terraform.lock.hcl`. CI never resolves a floating release.
 
 ## Reproduction
 
@@ -56,7 +53,8 @@ Review JSON before committing; this capture is not an arbitrary-plan sanitizer.
 `aws5` and `aws6` use identical HCL and state at each Core version, varying only
 the provider. Each named case varies only Core across versions. `overrides` is
 a separate AWS 6-only configuration; AWS 5 has no such deployment override.
-`language` uses the built-in provider.
+`language` uses the built-in provider. Additional Core versions run `aws5` and
+`language`; AWS 6 and override cases retain the two original Core versions.
 
 The Node check compares planned values, changes, configuration, checks and
 extracted schema contracts across Core versions, excluding volatile metadata.
@@ -78,13 +76,13 @@ explain those additions. This matrix does not implement identity-based import or
 the new write-only store functionality.
 
 The language case also broadens remote-state `relevant_attributes` from
-`outputs.network_id` to `outputs` on 1.16.6. The check asserts that precise
+`outputs.network_id` to `outputs` on 1.13.5, 1.14.9, 1.15.9 and 1.16.6. The check asserts that precise
 difference; Planorama retains the emitted provenance. Language-case metadata is
 therefore not a byte-identical rendering contract across versions.
 
-Both Core versions and both AWS providers preserve ECS `jsonencode` dependencies
+Captured Core/Provider combinations preserve ECS `jsonencode` dependencies
 only at `container_definitions.references`; nested environment provenance is not
-serialized. Both omit dynamic ingress expressions while retaining the two planned
+serialized. The captures omit dynamic ingress expressions while retaining the two planned
 ingress rules. Neither upgrade recovers that lost provenance. Generic references
 remain conservative. Provider 6 adds default deployment-region attributes; explicit
 override semantics are compared separately with the three-type schema contract
@@ -111,9 +109,19 @@ defect or validate newer internal binary-plan archive formats.
 ## CI
 
 Ordinary Rust tests use committed JSON without Terraform execution.
-**Terraform compatibility** checks fixture contracts on relevant PRs.
-Manual dispatch also regenerates with fixed tools and disabled capture networking,
-checks the result and runs the rendering regression. It does not run large routing
-suites or regenerate all SVGs on every PR.
-The manual lane also runs the library compatibility tests for language/override
-semantics. Source directories are included in the PR workflow trigger.
+**Terraform compatibility** checks fixture contracts on relevant PRs; manual
+capture uses fixed tools with external networking disabled.
+**Compatibility output** runs only on pushes to `release`. It builds the checked-out
+CLI once and processes the matrix's committed JSON with that same binary, without
+Terraform downloads or capture. SVG and HTML are compared across equivalent inputs;
+language metadata differences are checked explicitly. Generation metadata comes from
+the same binary and settings and remains part of the comparison.
+The `compatibility-output-<SHA>` artifact contains outputs and `report.json` with
+the checkout revision, case, input version, format and failures. A failure fails CI.
+This workflow does not create tags, publish releases or upload distribution binaries.
+
+Local output comparison after building the CLI:
+
+```sh
+docker compose exec -T dev node scripts/compatibility-output.cjs
+```

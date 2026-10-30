@@ -1,31 +1,6 @@
 mod support;
 
 #[test]
-fn captured_compatibility_matrix_reproduces_svg_and_html_across_core_versions() {
-    for case in ["aws5", "aws6", "overrides"] {
-        let inputs: Vec<_> = ["1.9.8", "1.16.6"]
-            .map(|version| {
-                std::fs::read_to_string(format!(
-                    "{}/tests/fixtures/compatibility/{version}/{case}/plan.json",
-                    env!("CARGO_MANIFEST_DIR")
-                ))
-                .unwrap()
-            })
-            .into();
-        for format in [planorama::OutputFormat::Svg, planorama::OutputFormat::Html] {
-            let options = planorama::Options {
-                format,
-                ..Default::default()
-            };
-            let first = planorama::generate(&inputs[0], &options).unwrap();
-            let second = planorama::generate(&inputs[1], &options).unwrap();
-            assert_eq!(first.content, second.content, "{case}");
-            assert_eq!(first.diagnostics, second.diagnostics, "{case}");
-        }
-    }
-}
-
-#[test]
 fn real_plan_renders_module_and_data_source_dependencies() {
     let output = support::run(include_bytes!("../fixtures/terraform-plan.json"));
     assert!(
