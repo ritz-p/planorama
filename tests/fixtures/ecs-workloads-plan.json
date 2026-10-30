@@ -1,0 +1,757 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_ecs_cluster.main",
+      "mode": "managed",
+      "type": "aws_ecs_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_CLUSTER",
+          "arn": "arn:aws:ecs:us-east-1:123456789012:cluster/PRIVATE_CLUSTER"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.pool",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:autoscaling:us-east-1:123456789012:autoScalingGroup:PRIVATE_POOL"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.infrastructure",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_instance_profile.instances",
+      "mode": "managed",
+      "type": "aws_iam_instance_profile",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:instance-profile/PRIVATE_PROFILE"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_capacity_provider.asg",
+      "mode": "managed",
+      "type": "aws_ecs_capacity_provider",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_ASG",
+          "auto_scaling_group_provider": [
+            {
+              "auto_scaling_group_arn": "arn:aws:autoscaling:us-east-1:123456789012:autoScalingGroup:PRIVATE_POOL"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_capacity_provider.managed",
+      "mode": "managed",
+      "type": "aws_ecs_capacity_provider",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_MANAGED",
+          "cluster": "PRIVATE_CLUSTER",
+          "managed_instances_provider": [
+            {
+              "infrastructure_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE",
+              "instance_launch_template": [
+                {
+                  "ec2_instance_profile_arn": "arn:aws:iam::123456789012:instance-profile/PRIVATE_PROFILE",
+                  "network_configuration": [
+                    {
+                      "subnets": [
+                        "subnet-a",
+                        "subnet-b"
+                      ],
+                      "security_groups": [
+                        "sg-main"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "arn": "arn:aws:ecs:us-east-1:123456789012:capacity-provider/PRIVATE_MANAGED"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_cluster_capacity_providers.main",
+      "mode": "managed",
+      "type": "aws_ecs_cluster_capacity_providers",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "PRIVATE_CLUSTER",
+          "capacity_providers": [
+            "PRIVATE_ASG",
+            "PRIVATE_MANAGED"
+          ],
+          "default_capacity_provider_strategy": [
+            {
+              "capacity_provider": "PRIVATE_ASG",
+              "weight": 1
+            },
+            {
+              "capacity_provider": "PRIVATE_MANAGED",
+              "weight": 1
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_service.app",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster": "arn:aws:ecs:us-east-1:123456789012:cluster/PRIVATE_CLUSTER",
+          "capacity_provider_strategy": [
+            {
+              "capacity_provider": "PRIVATE_MANAGED",
+              "weight": 1
+            }
+          ],
+          "arn": "arn:aws:ecs:us-east-1:123456789012:service/PRIVATE_CLUSTER/PRIVATE_SERVICE",
+          "name": "PRIVATE_SERVICE",
+          "task_definition": "arn:aws:ecs:us-east-1:123456789012:task-definition/PRIVATE_TASK:3",
+          "service_registries": [
+            {
+              "registry_arn": "arn:aws:servicediscovery:us-east-1:123456789012:service/PRIVATE_REGISTRY"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_task_definition.app",
+      "mode": "managed",
+      "type": "aws_ecs_task_definition",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ecs:us-east-1:123456789012:task-definition/PRIVATE_TASK:3",
+          "execution_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE",
+          "task_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_daemon_task_definition.agent",
+      "mode": "managed",
+      "type": "aws_ecs_daemon_task_definition",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ecs:us-east-1:123456789012:daemon-task-definition/PRIVATE_DAEMON:2",
+          "execution_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE",
+          "task_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_daemon.agent",
+      "mode": "managed",
+      "type": "aws_ecs_daemon",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_arn": "arn:aws:ecs:us-east-1:123456789012:cluster/PRIVATE_CLUSTER",
+          "capacity_provider_arns": [
+            "arn:aws:ecs:us-east-1:123456789012:capacity-provider/PRIVATE_MANAGED"
+          ],
+          "daemon_task_definition_arn": "arn:aws:ecs:us-east-1:123456789012:daemon-task-definition/PRIVATE_DAEMON:2"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_express_gateway_service.web",
+      "mode": "managed",
+      "type": "aws_ecs_express_gateway_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster": "arn:aws:ecs:us-east-1:123456789012:cluster/PRIVATE_CLUSTER",
+          "execution_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE",
+          "infrastructure_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE",
+          "task_role_arn": "arn:aws:iam::123456789012:role/PRIVATE_ROLE",
+          "network_configuration": [
+            {
+              "subnets": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_groups": [
+                "sg-main"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_service_discovery_service.app",
+      "mode": "managed",
+      "type": "aws_service_discovery_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:servicediscovery:us-east-1:123456789012:service/PRIVATE_REGISTRY"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_task_set.canary",
+      "mode": "managed",
+      "type": "aws_ecs_task_set",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster": "arn:aws:ecs:us-east-1:123456789012:cluster/PRIVATE_CLUSTER",
+          "service": "arn:aws:ecs:us-east-1:123456789012:service/PRIVATE_CLUSTER/PRIVATE_SERVICE",
+          "task_definition": "arn:aws:ecs:us-east-1:123456789012:task-definition/PRIVATE_TASK:3",
+          "network_configuration": [
+            {
+              "subnets": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_groups": [
+                "sg-main"
+              ]
+            }
+          ],
+          "service_registries": [
+            {
+              "registry_arn": "arn:aws:servicediscovery:us-east-1:123456789012:service/PRIVATE_REGISTRY"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ecs_cluster.main",
+          "mode": "managed",
+          "type": "aws_ecs_cluster",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_autoscaling_group.pool",
+          "mode": "managed",
+          "type": "aws_autoscaling_group",
+          "name": "pool",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.infrastructure",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "infrastructure",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_instance_profile.instances",
+          "mode": "managed",
+          "type": "aws_iam_instance_profile",
+          "name": "instances",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecs_capacity_provider.asg",
+          "mode": "managed",
+          "type": "aws_ecs_capacity_provider",
+          "name": "asg",
+          "provider_config_key": "aws",
+          "expressions": {
+            "auto_scaling_group_provider": [
+              {
+                "auto_scaling_group_arn": {
+                  "references": [
+                    "aws_autoscaling_group.pool.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ecs_capacity_provider.managed",
+          "mode": "managed",
+          "type": "aws_ecs_capacity_provider",
+          "name": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster": {
+              "references": [
+                "aws_ecs_cluster.main.name"
+              ]
+            },
+            "managed_instances_provider": [
+              {
+                "infrastructure_role_arn": {
+                  "references": [
+                    "aws_iam_role.infrastructure.arn"
+                  ]
+                },
+                "instance_launch_template": [
+                  {
+                    "ec2_instance_profile_arn": {
+                      "references": [
+                        "aws_iam_instance_profile.instances.arn"
+                      ]
+                    },
+                    "network_configuration": [
+                      {
+                        "subnets": {
+                          "references": [
+                            "aws_subnet.a.id",
+                            "aws_subnet.b.id"
+                          ]
+                        },
+                        "security_groups": {
+                          "references": [
+                            "aws_security_group.main.id"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ecs_cluster_capacity_providers.main",
+          "mode": "managed",
+          "type": "aws_ecs_cluster_capacity_providers",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_ecs_cluster.main.name"
+              ]
+            },
+            "capacity_providers": {
+              "references": [
+                "aws_ecs_capacity_provider.asg.name",
+                "aws_ecs_capacity_provider.managed.name"
+              ]
+            },
+            "default_capacity_provider_strategy": [
+              {
+                "capacity_provider": {
+                  "references": [
+                    "aws_ecs_capacity_provider.asg.name"
+                  ]
+                }
+              },
+              {
+                "capacity_provider": {
+                  "references": [
+                    "aws_ecs_capacity_provider.managed.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ecs_service.app",
+          "mode": "managed",
+          "type": "aws_ecs_service",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster": {
+              "references": [
+                "aws_ecs_cluster.main.arn"
+              ]
+            },
+            "capacity_provider_strategy": [
+              {
+                "capacity_provider": {
+                  "references": [
+                    "aws_ecs_capacity_provider.managed.name"
+                  ]
+                }
+              }
+            ],
+            "task_definition": {
+              "references": [
+                "aws_ecs_task_definition.app.arn"
+              ]
+            },
+            "service_registries": [
+              {
+                "registry_arn": {
+                  "references": [
+                    "aws_service_discovery_service.app.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ecs_task_definition.app",
+          "mode": "managed",
+          "type": "aws_ecs_task_definition",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            },
+            "task_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecs_daemon_task_definition.agent",
+          "mode": "managed",
+          "type": "aws_ecs_daemon_task_definition",
+          "name": "agent",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            },
+            "task_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecs_daemon.agent",
+          "mode": "managed",
+          "type": "aws_ecs_daemon",
+          "name": "agent",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_ecs_cluster.main.arn"
+              ]
+            },
+            "capacity_provider_arns": {
+              "references": [
+                "aws_ecs_capacity_provider.managed.arn"
+              ]
+            },
+            "daemon_task_definition_arn": {
+              "references": [
+                "aws_ecs_daemon_task_definition.agent.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecs_express_gateway_service.web",
+          "mode": "managed",
+          "type": "aws_ecs_express_gateway_service",
+          "name": "web",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster": {
+              "references": [
+                "aws_ecs_cluster.main.arn"
+              ]
+            },
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            },
+            "infrastructure_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            },
+            "task_role_arn": {
+              "references": [
+                "aws_iam_role.infrastructure.arn"
+              ]
+            },
+            "network_configuration": [
+              {
+                "subnets": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_groups": {
+                  "references": [
+                    "aws_security_group.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_service_discovery_service.app",
+          "mode": "managed",
+          "type": "aws_service_discovery_service",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_task_set.canary",
+          "mode": "managed",
+          "type": "aws_ecs_task_set",
+          "name": "canary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster": {
+              "references": [
+                "aws_ecs_cluster.main.arn"
+              ]
+            },
+            "service": {
+              "references": [
+                "aws_ecs_service.app.arn"
+              ]
+            },
+            "task_definition": {
+              "references": [
+                "aws_ecs_task_definition.app.arn"
+              ]
+            },
+            "network_configuration": [
+              {
+                "subnets": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_groups": {
+                  "references": [
+                    "aws_security_group.main.id"
+                  ]
+                }
+              }
+            ],
+            "service_registries": [
+              {
+                "registry_arn": {
+                  "references": [
+                    "aws_service_discovery_service.app.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

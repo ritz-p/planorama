@@ -58,6 +58,8 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         ) {
             ("aws_lb", "subnet_mapping.subnet_id")
                 if super::super::service_references::verified(raw, reference) => {}
+            ("aws_ecs_express_gateway_service", "network_configuration.subnets")
+                if super::super::service_references::verified(raw, reference) => {}
             ("aws_lb", "subnets") | ("aws_ecs_service", "network_configuration.subnets") => {}
             _ => continue,
         }

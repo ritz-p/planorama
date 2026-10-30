@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::ecs_workloads::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::ecs_capacity::label(resource, attribute) {
         return Some(label);
     }
@@ -572,6 +575,7 @@ pub(crate) fn annotate(
     super::opensearch_serverless::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
+    super::ecs_workloads::annotate(nodes, references, evidence);
     super::autoscaling_network::annotate(nodes, references, evidence);
     super::fsx::annotate(nodes, references, evidence);
     super::networkfirewall::annotate(nodes, references, evidence);
@@ -595,6 +599,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::ecs_workloads::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::ecs_workloads::bindings(raw, reference))
         && (super::ecs_capacity::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -938,6 +948,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         };
         let verified = verified(raw, reference);
+        if !verified
+            && super::ecs_workloads::label(&node.resource_type, &reference.attribute).is_some()
+        {
+            continue;
+        }
         if verified {
             graph.nodes[reference.target]
                 .references

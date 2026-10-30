@@ -109,3 +109,4 @@ examples/dms.svg
 examples/sagemaker.svg
 examples/autoscaling-network.svg
 examples/ecs-capacity.svg
+examples/ecs-workloads.svg
