@@ -158,16 +158,29 @@ unique explicit `zone_id` reference to a managed Zone's `zone_id` or `id`, with
 equal known planned values. `Alias target` requires both `alias.name` and
 `alias.zone_id` to reference the same managed ALB/NLB (`dns_name`, `zone_id`) or
 CloudFront distribution (`domain_name`, `hosted_zone_id`) with matching values.
-The LB type must be known as `application` or `network`. A single private-zone
-`vpc.vpc_id` reference can show `Associated VPC`; this is not network containment.
+The LB type must be known as `application` or `network`.
+
+Private-zone VPC sets require a complete explicit ID reference for every element,
+matched uniquely by evaluated ID regardless of set order. Each VPC region must
+match `vpc_region`, or the provider region when omitted. Unknown and sensitive
+IDs/regions remain unresolved. The original singleton contract without provider
+configuration is retained; it does not extend to multiple VPCs.
+`delegation_set_id` accepts a managed delegation set's `id`. Standalone zone
+associations and authorizations expose independently verified zone and VPC
+references. Authorization uses `Authorized VPC`, never evidence of an established
+association. These extensions require compatible provider/account identities;
+`owning_account` is not provider identity. Cross-account and cross-state inference
+is unsupported. Zones remain global and independent; helpers remain logical and
+do not establish ownership or network containment. These contracts were checked
+against the pinned AWS Provider 6.70.0 schema and official source.
 
 These service links supplement ordinary Terraform references. They preserve
 source identity, state, actions, provenance, coverage and selection. Incomplete,
 dynamic, ambiguous, literal-only, wrong-type/provider and unknown-value proofs
 remain unresolved with `UnprovenEndpointValue`; filtered targets are unavailable.
 Deleting/deposed objects do not borrow current configuration to prove historical
-service links. Local/module aliases without a direct attribute traversal and
-multi-VPC blocks remain ordinary references. DNS values are compared transiently
+service links. Local/module aliases without a direct attribute traversal
+remain ordinary references. DNS values are compared transiently
 and never displayed. Records, DNSSEC, routing policies and DNS resolution are not
 evaluated. Links do not guarantee reachability or successful DNS configuration.
 The field contract follows the AWS Provider 5.100.0

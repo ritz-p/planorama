@@ -46374,10 +46374,10 @@
       }
     },
     "aws_route53_zone": {
-      "status": "Partial",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 919,
-      "gap": "#715 audit: Partial: #489 singleton known-value VPC association retained. Missing: multi-VPC collection and delegation-set ID references; global zone remains independent. Follow-up #919. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #919: Complete element-correlated VPC sets and delegation-set ID references; independent global zone.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46392,8 +46392,8 @@
         "placement": "Supported: retain Spatial Node for aws_route53_zone; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Intentionally unsupported: private hosted-zone VPC associations do not contain the zone.",
-        "references": "Partial: #489 singleton known-value VPC association retained. Missing: multi-VPC collection and delegation-set ID references; global zone remains independent.",
-        "scope": "Partial: Global eligibility in scope.rs; account requires provider evidence. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: Implemented #919: Complete element-correlated VPC sets and delegation-set ID references; independent global zone.",
+        "scope": "Supported: Global service scope; compatible provider/account identity and independently verified VPC region. Cross-account and cross-state inference remains unsupported.",
         "summaries": "Intentionally unsupported: DNS names and effective cross-account resolution; no arbitrary aws_route53_zone attribute summary.",
         "officialDocumentation": "website/docs/r/route53_zone.html.markdown",
         "shapes": {
@@ -46430,7 +46430,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53.rs",
+          "tests/unit/semantic/route53.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: enable_accelerated_recovery (optional), id (optional/computed), name (optional/computed), private_zone (optional), tags (optional/computed), vpc_id (optional), zone_id (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -46469,10 +46471,10 @@
       }
     },
     "aws_route53_zone_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 919,
-      "gap": "#715 audit: Missing: zone ID plus VPC ID/region proof; standalone association has no dedicated lowering rule; owning_account is output, not provider identity. Follow-up #919. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #919: Typed zone and VPC ID/region references; authorization is prerequisite context, not an established association.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46485,8 +46487,8 @@
         "placement": "Supported: retain Logical Association for aws_route53_zone_association; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: shared private-zone association is not VPC ownership.",
         "network": "Intentionally unsupported: global hosted zone is not contained by associated VPCs.",
-        "references": "Missing: zone ID plus VPC ID/region proof; standalone association has no dedicated lowering rule; owning_account is output, not provider identity.",
-        "scope": "Partial: Global helper with independently verified VPC region/account; cross-account references need explicit compatible scope.",
+        "references": "Supported: Implemented #919: Typed zone and VPC ID/region references; authorization is prerequisite context, not evidence the association exists.",
+        "scope": "Supported: Global service scope; compatible provider/account identity and independently verified VPC region. Cross-account and cross-state inference remains unsupported.",
         "summaries": "Intentionally unsupported: DNS names and effective cross-account resolution; no arbitrary aws_route53_zone_association attribute summary.",
         "officialDocumentation": "website/docs/r/route53_zone_association.html.markdown",
         "shapes": {
@@ -46513,17 +46515,19 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53.rs",
+          "tests/unit/semantic/route53.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_route53_vpc_association_authorization": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 919,
-      "gap": "#715 audit: Missing: zone ID plus VPC ID/region proof; authorization is a prerequisite, not evidence the association exists. Follow-up #919. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #919: Typed zone and VPC ID/region references; authorization is prerequisite context, not an established association.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46536,8 +46540,8 @@
         "placement": "Supported: retain Logical Association for aws_route53_vpc_association_authorization; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: shared private-zone association is not VPC ownership.",
         "network": "Intentionally unsupported: global hosted zone is not contained by associated VPCs.",
-        "references": "Missing: zone ID plus VPC ID/region proof; authorization is a prerequisite, not evidence the association exists.",
-        "scope": "Partial: Global helper with independently verified VPC region/account; cross-account references need explicit compatible scope.",
+        "references": "Supported: Implemented #919: Typed zone and VPC ID/region references; authorization is prerequisite context, not evidence the association exists.",
+        "scope": "Supported: Global service scope; compatible provider/account identity and independently verified VPC region. Cross-account and cross-state inference remains unsupported.",
         "summaries": "Intentionally unsupported: DNS names and effective cross-account resolution; no arbitrary aws_route53_vpc_association_authorization attribute summary.",
         "officialDocumentation": "website/docs/r/route53_vpc_association_authorization.html.markdown",
         "shapes": {
@@ -46564,7 +46568,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "tests/unit/semantic/service_references.rs"
+          "tests/unit/semantic/service_references.rs",
+          "src/provider/aws/route53.rs",
+          "tests/unit/semantic/route53.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
