@@ -108,3 +108,4 @@ examples/fsx-lustre.svg
 examples/dms.svg
 examples/sagemaker.svg
 examples/autoscaling-network.svg
+examples/ecs-capacity.svg

@@ -198,6 +198,37 @@ identities never join equally named Clusters across states.
 The [ECS example](../examples/ecs-clusters.svg) includes shared membership across
 two VPCs, a multi-subnet Service, data lookup and an unknown-scope Cluster.
 
+## ECS capacity providers
+
+Capacity providers and cluster-capacity associations remain logical selectors.
+The [capacity example](../examples/ecs-capacity.svg) shows both provider variants,
+cluster associations and service strategies. No cluster or capacity-provider VPC
+inheritance, managed EC2 instance synthesis or runtime scheduling is inferred.
+
+The contract uses AWS Provider 6.70.0 at
+[`5e13eed`](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ecs).
+Auto Scaling providers accept only `auto_scaling_group_provider.auto_scaling_group_arn`
+to a managed Auto Scaling group's `arn`. Managed Instances providers accept
+`cluster` to cluster `name`, infrastructure role and instance-profile ARNs, and
+explicit launch-template subnet/security-group ID collections. Exactly one provider
+variant must be known and present; `cluster` is required only for Managed Instances.
+
+Cluster-capacity associations accept `cluster_name` to cluster `name`, complete
+`capacity_providers` and `default_capacity_provider_strategy.capacity_provider`
+collections to capacity-provider `name`. Services accept the corresponding
+`capacity_provider_strategy.capacity_provider` collection. Every member must have
+explicit unique current managed provenance and an equal known nonempty output.
+Unknown, partial, duplicate or mismatched collections do not establish a proof.
+`FARGATE` and `FARGATE_SPOT` never become managed endpoints; collections containing
+them retain ordinary references. Literal names, dependencies, data resources,
+deleted/deposed endpoints and incompatible provider/account/region evidence also
+retain ordinary references. IAM endpoints use account compatibility without a
+regional-resource requirement. State-local identities and filtering are preserved.
+
+Cluster execute-command KMS/log configuration remains deferred until its enabled
+variant contract is implemented. Container payloads and effective permissions are
+not interpreted.
+
 ## EKS configuration and membership
 
 Cluster and Node Group retain spatial cards. Fargate Profile is a regional spatial
