@@ -30,8 +30,19 @@ pub struct AttributeReference {
         std::collections::BTreeMap<usize, std::collections::BTreeSet<String>>,
     pub service_reference_verified: bool,
     pub service_reference_owner_account: Option<super::AwsAccountScope>,
+    pub peering_proof: Option<PeeringProof>,
     pub ids_only: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct PeeringProof {
+    pub peer_account: Option<super::AwsAccountScope>,
+    pub helper_peer_account: Option<super::AwsAccountScope>,
+    pub requester_options: bool,
+    pub accepter_options: bool,
+    pub requester_orientation: bool,
+    pub accepter_orientation: bool,
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]

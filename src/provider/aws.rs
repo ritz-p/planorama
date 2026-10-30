@@ -63,6 +63,7 @@ mod service_evidence;
 pub(crate) mod service_references;
 pub(crate) use placement::owner_affinities;
 pub(crate) mod eni;
+pub(crate) mod peering;
 mod routes;
 pub(crate) mod s3;
 mod scope;

@@ -121,6 +121,7 @@ pub(super) fn collect(
                     source_attributes_by_instance,
                     service_reference_verified: false,
                     service_reference_owner_account: None,
+                    peering_proof: None,
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

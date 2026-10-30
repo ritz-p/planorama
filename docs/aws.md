@@ -107,7 +107,8 @@ VPC/Subnet containment stays intact and cross-region routes draw above them.
 Spatial IAM, CloudFront and supported Route 53 share `AWS Global` when region panels
 exist or account is known. IAM Role/Policy/Role Policy/Instance Profile keep global
 metadata as Logical rows outside panels. `provider/aws/scope.rs` classifies scopes;
-layout/SVG consume them generically. Unsupported types, cross-region peering and
+layout/SVG consume them generically. Peering connections retain requester control scope; their verified peer references
+may cross account/region boundaries. Unsupported types and
 unknown regions stay outside regional panels (inside proven accounts if available).
 Aliases, names, tags, ARNs and IDs never establish region.
 
