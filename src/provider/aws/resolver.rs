@@ -20,17 +20,12 @@ fn eligible(nodes: &[TerraformEntity], r: &AttributeReference) -> bool {
         && r.sources.iter().all(|&s| {
             s != r.target
                 && current(&nodes[s])
-                && super::eventbridge::bindings(
-                    nodes[r.target].provider_configuration.as_ref(),
-                    nodes[s].provider_configuration.as_ref(),
-                    super::scope::scope(&nodes[r.target])
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    super::scope::scope(&nodes[s])
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    false,
-                )
+                && super::route53::configured(&nodes[r.target], &nodes[s])
+                && super::scope::scope(&nodes[r.target])
+                    .and_then(|s| s.region)
+                    .is_some()
+                && super::scope::scope(&nodes[r.target]).and_then(|s| s.region)
+                    == super::scope::scope(&nodes[s]).and_then(|s| s.region)
         })
 }
 
