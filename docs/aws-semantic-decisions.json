@@ -53243,10 +53243,10 @@
       }
     },
     "aws_cloudwatch_log_delivery": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: delivery source name and delivery-destination ARN; delivery keeps independent association identity. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53298,10 +53298,10 @@
       }
     },
     "aws_cloudwatch_log_delivery_destination": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: type-gated S3/CloudWatch Logs/Firehose target ARN; XRAY may omit destination configuration and must not fabricate an endpoint. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53359,10 +53359,10 @@
       }
     },
     "aws_cloudwatch_log_delivery_destination_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: delivery-destination name; policy remains separate and opaque. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53404,10 +53404,10 @@
       }
     },
     "aws_cloudwatch_log_delivery_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: allowlisted producing-resource ARN with source service/log_type compatibility; arbitrary ARN does not establish log flow. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53464,10 +53464,10 @@
       }
     },
     "aws_cloudwatch_log_destination": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: IAM role ARN and Kinesis stream target ARN; old subscription destination differs from new log_delivery_destination. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53524,10 +53524,10 @@
       }
     },
     "aws_cloudwatch_log_destination_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: old log-destination name, not delivery-destination name; policy JSON does not prove cross-account permission. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53813,10 +53813,10 @@
       }
     },
     "aws_cloudwatch_log_subscription_filter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "#730 audit: Missing: log-group name, typed Lambda/Kinesis/Firehose/log-destination ARN and optional role ARN with cross-account destination rules; no delivery success claims. Follow-up #989. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",

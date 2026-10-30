@@ -478,3 +478,33 @@ remain opaque; metric names and namespaces do not create resources. Retention,
 class and computed identifiers do not synthesize endpoints. Existing RDS alarm
 monitoring and incoming workload references retain their separate contracts.
 The [example](../examples/cloudwatch-logs.svg) contains synthetic configuration only.
+## CloudWatch Logs delivery references (#989)
+
+Delivery and subscription helpers retain independent identities, actions and coverage.
+The fixed Provider 6.70.0 Logs registration/schema sources linked above define:
+
+| Resource | Input | Explicit target |
+| --- | --- | --- |
+| Delivery | `delivery_source_name`, `delivery_destination_arn` | Delivery Source `name`, Delivery Destination `arn` |
+| Delivery Destination | singleton `delivery_destination_configuration.destination_resource_arn` | S3 Bucket, Log Group or Firehose stream `arn`, matching known `delivery_destination_type` S3/CWL/FH |
+| Delivery Destination Policy | `delivery_destination_name` | Delivery Destination `name` |
+| Delivery Source | `resource_arn` | CloudFront Distribution `arn` with ACCESS_LOGS, or Bedrock Knowledge Base `arn` with APPLICATION_LOGS |
+| Log Destination | `target_arn`, `role_arn` | Kinesis Stream `arn`, IAM Role `arn` |
+| Log Destination Policy | `destination_name` | Log Destination `name` |
+| Subscription Filter | `log_group_name`, `destination_arn` | Log Group `name`; Lambda Function, Kinesis Stream, Firehose stream or Log Destination `arn` |
+| Subscription Filter | optional `role_arn` | IAM Role `arn`, only with a known Kinesis/Firehose destination ARN |
+
+Each link requires one explicit current managed AWS endpoint, the exact referenced
+output, known non-sensitive matching values and compatible provider scope. Old Log
+Destination and new Delivery Destination types are never interchangeable. XRAY does
+not create an endpoint. Unsupported producer types/log types and unknown destination
+discriminators retain generic references. Producers are allowlisted from the fixed
+provider examples; ARN service must match their resource type.
+
+Known different accounts are allowed only for explicit Log Destination subscription
+and Delivery Destination links in the same proven region. Unknown/conflicting account
+bindings fail closed; other regional targets require matching account and region.
+IAM roles, S3 buckets and CloudFront keep their own global scope. Lambda and logical
+Log Destination subscriptions require an absent role input. No endpoint is moved into
+a consumer scope, and no policy interpretation, permission or delivery-success claim
+is made. See the [synthetic example](../examples/cloudwatch-delivery.svg).
