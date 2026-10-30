@@ -8,7 +8,7 @@ mod backup;
 mod basic;
 mod batch;
 mod classification;
-mod cloudfront;
+pub(crate) mod cloudfront;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
 mod cloudtrail_tests;

@@ -224,6 +224,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::cloudfront::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::eni::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::peering::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2_network::annotate(nodes, references, &elbv2_evidence);

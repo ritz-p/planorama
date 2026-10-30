@@ -3991,7 +3991,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 911,
-      "gap": "#715 audit: Partial: #510 singleton S3/ALB/OAC/OAI/policy proof, ACM and #496 WAFv2 retained. Missing: multi-origin/behavior collections and remaining explicit function, key-group, field-encryption, realtime log, staging, anycast, connection-function, trust-store, VPC-origin, origin mTLS, IAM certificate and legacy logging references. Ordered behaviors need the same typed paths; no generated inline resources. Follow-up #911, #913, #914, #915, #916. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #911: complete element-correlated distribution origin/behavior and auxiliary typed references; staging DNS items require explicit domain_name evidence and matching quantity. Independent endpoint scope and identity preserved; no runtime traffic inference. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -4024,7 +4024,7 @@
         "placement": "Supported: retain Spatial Connector for aws_cloudfront_distribution; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Intentionally unsupported: regional origin, Origin Shield and VPC-origin references do not put the Global distribution inside a VPC.",
-        "references": "Partial: #510 singleton S3/ALB/OAC/OAI/policy proof, ACM and #496 WAFv2 retained. Missing: multi-origin/behavior collections and remaining explicit function, key-group, field-encryption, realtime log, staging, anycast, connection-function, trust-store, VPC-origin, origin mTLS, IAM certificate and legacy logging references. Ordered behaviors need the same typed paths; no generated inline resources.",
+        "references": "Supported: implemented #911: complete element-correlated distribution origin/behavior and auxiliary typed references; staging DNS items require explicit domain_name evidence and matching quantity. Independent endpoint scope and identity preserved; no runtime traffic inference. See aws-network.md.",
         "scope": "Partial: Global eligibility in scope.rs; account requires provider evidence. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: origin/header/URL values and effective edge delivery; no arbitrary aws_cloudfront_distribution attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_distribution.html.markdown",
@@ -44709,10 +44709,10 @@
       }
     },
     "aws_cloudfront_continuous_deployment_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 911,
-      "gap": "#715 audit: Missing: staging_distribution_dns_names.items requires explicit distribution.domain_name evidence and complete quantity-consistent collection. No DNS-name lookup or traffic-allocation inference. Follow-up #911. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #911: complete element-correlated distribution origin/behavior and auxiliary typed references; staging DNS items require explicit domain_name evidence and matching quantity. Independent endpoint scope and identity preserved; no runtime traffic inference. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44726,7 +44726,7 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_continuous_deployment_policy; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: staging_distribution_dns_names.items requires explicit distribution.domain_name evidence and complete quantity-consistent collection. No DNS-name lookup or traffic-allocation inference.",
+        "references": "Supported: implemented #911: complete element-correlated distribution origin/behavior and auxiliary typed references; staging DNS items require explicit domain_name evidence and matching quantity. Independent endpoint scope and identity preserved; no runtime traffic inference. See aws-network.md.",
         "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: origin/header/URL values and effective edge delivery; no arbitrary aws_cloudfront_continuous_deployment_policy attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_continuous_deployment_policy.html.markdown",

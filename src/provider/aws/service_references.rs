@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::cloudfront::reference_label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::lambda_events::label(resource, attribute) {
         return Some(label);
     }
@@ -869,7 +872,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
+        if super::cloudfront::indexed(&node.resource_type, &reference.attribute)
+            || super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
             || super::s3::aggregate(raw, reference)
             || super::networkfirewall::aggregate(raw, reference)
