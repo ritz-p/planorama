@@ -55,7 +55,10 @@ pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> 
                 let index = if r.attribute == "resolver_endpoint_id" {
                     r.target
                 } else {
-                    r.sources[0]
+                    let Some(&source) = r.sources.first() else {
+                        return false;
+                    };
+                    source
                 };
                 raw.nodes[index]
                     .provider_configuration
