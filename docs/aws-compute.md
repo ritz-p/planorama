@@ -229,6 +229,39 @@ Cluster execute-command KMS/log configuration remains deferred until its enabled
 variant contract is implemented. Container payloads and effective permissions are
 not interpreted.
 
+## ECS workload variants
+
+The [workload example](../examples/ecs-workloads.svg) uses AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. Daemons and Express Gateway Services
+have independent spatial cards. Daemons never inherit cluster or capacity-provider
+network placement. Express placement uses only a complete verified explicit subnet
+collection; omitted/default subnets and security groups are never synthesized.
+Task definitions remain logical configuration. A task set becomes a service child
+only when its explicit `service` and both resources' `cluster` references prove the
+same current managed cluster. Ownership adds no service/VPC containment inference.
+
+Daemon `cluster_arn`, complete `capacity_provider_arns` and
+`daemon_task_definition_arn` target exact managed `arn` outputs. Express `cluster`
+accepts cluster `name` or `arn`; task sets accept the same cluster fields and service
+`name` or `arn`. Standard and daemon task definitions expose execution/task role
+references; Express also exposes its infrastructure role. Network references use
+complete subnet/security-group `id` collections. Service and task-set
+`service_registries.registry_arn` target Cloud Map service `arn`.
+
+Service/task-set task definitions and daemon task definitions require the full
+revision-qualified ARN from the matching task-definition family's `arn` output.
+Family-only identifiers, formatted family/revision strings, revisionless ARNs and
+other revisions retain ordinary references. All new proofs require explicit unique
+current managed endpoints, known matching nonempty values and compatible provider,
+account and regional evidence. IAM endpoints are account-scoped. Unknown, partial,
+literal, deleted, deposed and incompatible evidence retains ordinary navigation.
+Existing Service cluster/network behavior is preserved, including state boundaries,
+filtering and exactly-once resource coverage.
+
+Container JSON, runtime instances, deployment health, image URLs, secret maps,
+load-balancer extensions and task-set capacity scheduling remain deferred. No
+managed EC2 tasks or effective permissions are inferred.
+
 ## EKS configuration and membership
 
 Cluster and Node Group retain spatial cards. Fargate Profile is a regional spatial

@@ -72,6 +72,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")
             }
+            "aws_ecs_task_set" => ("service", "Task set service", "Task sets"),
             "aws_kms_alias" => ("target_key_id", "Alias key", "Aliases"),
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
             "aws_glue_catalog_table" => {
@@ -120,7 +121,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         });
         if matches!(
             node.resource_type.as_str(),
-            "aws_networkfirewall_logging_configuration" | "aws_route53_records_exclusive"
+            "aws_networkfirewall_logging_configuration"
+                | "aws_route53_records_exclusive"
+                | "aws_ecs_task_set"
         ) {
             graph.nodes[index].placement = crate::model::Placement::Spatial;
         }
