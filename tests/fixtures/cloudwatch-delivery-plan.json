@@ -1,0 +1,350 @@
+{
+    "format_version":  "1.2",
+    "terraform_version":  "1.9.8",
+    "resource_changes":  [
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "arn":  "arn:aws:logs:us-east-1:123456789012:log-group:synthetic",
+                                                              "name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_group",
+                                 "address":  "aws_cloudwatch_log_group.group",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "arn":  "arn:aws:kinesis:us-east-1:123456789012:stream/synthetic",
+                                                              "name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_kinesis_stream",
+                                 "address":  "aws_kinesis_stream.stream",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "arn":  "arn:aws:iam::123456789012:role/synthetic",
+                                                              "name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_iam_role",
+                                 "address":  "aws_iam_role.role",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "arn":  "arn:aws:bedrock:us-east-1:123456789012:knowledge-base/synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_bedrockagent_knowledge_base",
+                                 "address":  "aws_bedrockagent_knowledge_base.producer",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "name":  "synthetic",
+                                                              "resource_arn":  "arn:aws:bedrock:us-east-1:123456789012:knowledge-base/synthetic",
+                                                              "log_type":  "APPLICATION_LOGS"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_delivery_source",
+                                 "address":  "aws_cloudwatch_log_delivery_source.source",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "name":  "synthetic",
+                                                              "delivery_destination_configuration":  [
+                                                                                                         {
+                                                                                                             "destination_resource_arn":  "arn:aws:logs:us-east-1:123456789012:log-group:synthetic"
+                                                                                                         }
+                                                                                                     ],
+                                                              "delivery_destination_type":  "CWL",
+                                                              "arn":  "arn:aws:logs:us-east-1:123456789012:delivery-destination:synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_delivery_destination",
+                                 "address":  "aws_cloudwatch_log_delivery_destination.destination",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "delivery_destination_policy":  "PRIVATE_POLICY",
+                                                              "delivery_destination_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_delivery_destination_policy",
+                                 "address":  "aws_cloudwatch_log_delivery_destination_policy.policy",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "delivery_destination_arn":  "arn:aws:logs:us-east-1:123456789012:delivery-destination:synthetic",
+                                                              "delivery_source_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_delivery",
+                                 "address":  "aws_cloudwatch_log_delivery.delivery",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "target_arn":  "arn:aws:kinesis:us-east-1:123456789012:stream/synthetic",
+                                                              "name":  "synthetic",
+                                                              "role_arn":  "arn:aws:iam::123456789012:role/synthetic",
+                                                              "arn":  "arn:aws:logs:us-east-1:123456789012:destination:synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_destination",
+                                 "address":  "aws_cloudwatch_log_destination.destination",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "destination_name":  "synthetic",
+                                                              "access_policy":  "PRIVATE_POLICY"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_destination_policy",
+                                 "address":  "aws_cloudwatch_log_destination_policy.policy",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             },
+                             {
+                                 "mode":  "managed",
+                                 "change":  {
+                                                "actions":  [
+                                                                "create"
+                                                            ],
+                                                "after":  {
+                                                              "filter_pattern":  "PRIVATE_FILTER",
+                                                              "destination_arn":  "arn:aws:logs:us-east-1:123456789012:destination:synthetic",
+                                                              "log_group_name":  "synthetic"
+                                                          }
+                                            },
+                                 "type":  "aws_cloudwatch_log_subscription_filter",
+                                 "address":  "aws_cloudwatch_log_subscription_filter.filter",
+                                 "provider_name":  "registry.terraform.io/hashicorp/aws"
+                             }
+                         ],
+    "configuration":  {
+                          "provider_config":  {
+                                                  "aws":  {
+                                                              "full_name":  "registry.terraform.io/hashicorp/aws",
+                                                              "expressions":  {
+                                                                                  "region":  {
+                                                                                                 "constant_value":  "us-east-1"
+                                                                                             }
+                                                                              },
+                                                              "name":  "aws"
+                                                          }
+                                              },
+                          "root_module":  {
+                                              "resources":  [
+                                                                {
+                                                                    "name":  "group",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_group",
+                                                                    "address":  "aws_cloudwatch_log_group.group",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "stream",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_kinesis_stream",
+                                                                    "address":  "aws_kinesis_stream.stream",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "role",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_iam_role",
+                                                                    "address":  "aws_iam_role.role",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "producer",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_bedrockagent_knowledge_base",
+                                                                    "address":  "aws_bedrockagent_knowledge_base.producer",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "source",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_delivery_source",
+                                                                    "address":  "aws_cloudwatch_log_delivery_source.source",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "resource_arn":  {
+                                                                                                             "references":  [
+                                                                                                                                "aws_bedrockagent_knowledge_base.producer.arn"
+                                                                                                                            ]
+                                                                                                         }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "destination",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_delivery_destination",
+                                                                    "address":  "aws_cloudwatch_log_delivery_destination.destination",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "delivery_destination_configuration.destination_resource_arn":  {
+                                                                                                                                                            "references":  [
+                                                                                                                                                                               "aws_cloudwatch_log_group.group.arn"
+                                                                                                                                                                           ]
+                                                                                                                                                        }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "policy",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_delivery_destination_policy",
+                                                                    "address":  "aws_cloudwatch_log_delivery_destination_policy.policy",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "delivery_destination_name":  {
+                                                                                                                          "references":  [
+                                                                                                                                             "aws_cloudwatch_log_delivery_destination.destination.name"
+                                                                                                                                         ]
+                                                                                                                      }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "delivery",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_delivery",
+                                                                    "address":  "aws_cloudwatch_log_delivery.delivery",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "delivery_destination_arn":  {
+                                                                                                                         "references":  [
+                                                                                                                                            "aws_cloudwatch_log_delivery_destination.destination.arn"
+                                                                                                                                        ]
+                                                                                                                     },
+                                                                                        "delivery_source_name":  {
+                                                                                                                     "references":  [
+                                                                                                                                        "aws_cloudwatch_log_delivery_source.source.name"
+                                                                                                                                    ]
+                                                                                                                 }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "destination",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_destination",
+                                                                    "address":  "aws_cloudwatch_log_destination.destination",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "role_arn":  {
+                                                                                                         "references":  [
+                                                                                                                            "aws_iam_role.role.arn"
+                                                                                                                        ]
+                                                                                                     },
+                                                                                        "target_arn":  {
+                                                                                                           "references":  [
+                                                                                                                              "aws_kinesis_stream.stream.arn"
+                                                                                                                          ]
+                                                                                                       }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "policy",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_destination_policy",
+                                                                    "address":  "aws_cloudwatch_log_destination_policy.policy",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "destination_name":  {
+                                                                                                                 "references":  [
+                                                                                                                                    "aws_cloudwatch_log_destination.destination.name"
+                                                                                                                                ]
+                                                                                                             }
+                                                                                    }
+                                                                },
+                                                                {
+                                                                    "name":  "filter",
+                                                                    "provider_config_key":  "aws",
+                                                                    "type":  "aws_cloudwatch_log_subscription_filter",
+                                                                    "address":  "aws_cloudwatch_log_subscription_filter.filter",
+                                                                    "mode":  "managed",
+                                                                    "expressions":  {
+                                                                                        "log_group_name":  {
+                                                                                                               "references":  [
+                                                                                                                                  "aws_cloudwatch_log_group.group.name"
+                                                                                                                              ]
+                                                                                                           },
+                                                                                        "destination_arn":  {
+                                                                                                                "references":  [
+                                                                                                                                   "aws_cloudwatch_log_destination.destination.arn"
+                                                                                                                               ]
+                                                                                                            }
+                                                                                    }
+                                                                }
+                                                            ]
+                                          }
+                      }
+}
