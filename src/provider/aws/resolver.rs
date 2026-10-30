@@ -20,17 +20,12 @@ fn eligible(nodes: &[TerraformEntity], r: &AttributeReference) -> bool {
         && r.sources.iter().all(|&s| {
             s != r.target
                 && current(&nodes[s])
-                && super::eventbridge::bindings(
-                    nodes[r.target].provider_configuration.as_ref(),
-                    nodes[s].provider_configuration.as_ref(),
-                    super::scope::scope(&nodes[r.target])
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    super::scope::scope(&nodes[s])
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    false,
-                )
+                && super::route53::configured(&nodes[r.target], &nodes[s])
+                && super::scope::scope(&nodes[r.target])
+                    .and_then(|s| s.region)
+                    .is_some()
+                && super::scope::scope(&nodes[r.target]).and_then(|s| s.region)
+                    == super::scope::scope(&nodes[s]).and_then(|s| s.region)
         })
 }
 
@@ -60,7 +55,10 @@ pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> 
                 let index = if r.attribute == "resolver_endpoint_id" {
                     r.target
                 } else {
-                    r.sources[0]
+                    let Some(&source) = r.sources.first() else {
+                        return false;
+                    };
+                    source
                 };
                 raw.nodes[index]
                     .provider_configuration
@@ -164,8 +162,18 @@ fn network(
 #[path = "../../../tests/unit/semantic/resolver.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/resolver_config.rs"]
+mod config_tests;
+
 pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
     match (kind, field) {
+        (
+            "aws_route53_resolver_config"
+            | "aws_route53_resolver_dnssec_config"
+            | "aws_route53_resolver_firewall_config",
+            "resource_id",
+        ) => Some("Resolver VPC owner"),
         (ENDPOINT, SUBNETS) => Some("Configured subnets"),
         (ENDPOINT, "security_group_ids") => Some("Configured security groups"),
         ("aws_route53_resolver_rule", "resolver_endpoint_id") => Some("Outbound resolver endpoint"),
@@ -204,7 +212,7 @@ pub(crate) fn annotate(
         let kind = match r.attribute.as_str() {
             "resolver_endpoint_id" => "aws_route53_resolver_endpoint",
             "resolver_rule_id" => "aws_route53_resolver_rule",
-            "vpc_id" => "aws_vpc",
+            "vpc_id" | "resource_id" => "aws_vpc",
             _ => continue,
         };
         let Some(source) = super::route53::endpoint(nodes, r, kind, &["id"]) else {

@@ -47654,10 +47654,10 @@
       }
     },
     "aws_route53_resolver_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 925,
-      "gap": "#715 audit: Missing: resource_id is VPC ID; explicit unique VPC-owner navigation. autodefined_reverse_flag does not prove effective DNS behavior. Follow-up #925. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #925: explicit unique resource_id-to-managed-VPC id ownership navigation with matching known values and compatible provider/account/region. Unknown, sensitive, ambiguous, data, deleted/deposed and cross-state references stay unproven. Effective DNS behavior is intentionally unsupported.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47667,10 +47667,10 @@
           "autodefined_reverse_flag"
         ],
         "placement": "Supported: retain Logical Controller for aws_route53_resolver_config; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique VPC configuration-helper ownership; not physical containment.",
-        "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: resource_id is VPC ID; explicit unique VPC-owner navigation. autodefined_reverse_flag does not prove effective DNS behavior.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "ownership": "Supported: a unique proven resource_id reference provides VPC owner navigation and a Resolver configuration member section; original identity, provenance, coverage and actions are preserved.",
+        "network": "Intentionally unsupported: helper ownership is presentation only, not network containment or effective DNS behavior.",
+        "references": "Supported: resource_id references a managed VPC id with matching known non-sensitive values. No literal matching, lookup adoption or arbitrary attribute summary.",
+        "scope": "Supported: preserve regional provider account scope. Owner compatibility is checked after saved-plan account evidence; another named state cannot supply a missing VPC.",
         "summaries": "Deferred: autodefined_reverse_flag summary until requested-versus-computed DNS configuration states have an allowlist; no compliance claims.",
         "officialDocumentation": "website/docs/r/route53_resolver_config.html.markdown",
         "shapes": {
@@ -47692,17 +47692,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resolver.rs",
+          "tests/unit/semantic/resolver_config.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_route53_resolver_dnssec_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 925,
-      "gap": "#715 audit: Missing: resource_id is VPC ID; explicit unique VPC-owner navigation. validation_status does not prove effective DNS behavior. Follow-up #925. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #925: explicit unique resource_id-to-managed-VPC id ownership navigation with matching known values and compatible provider/account/region. Unknown, sensitive, ambiguous, data, deleted/deposed and cross-state references stay unproven. Effective DNS behavior is intentionally unsupported.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47712,10 +47714,10 @@
           "validation_status"
         ],
         "placement": "Supported: retain Logical Controller for aws_route53_resolver_dnssec_config; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique VPC configuration-helper ownership; not physical containment.",
-        "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: resource_id is VPC ID; explicit unique VPC-owner navigation. validation_status does not prove effective DNS behavior.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "ownership": "Supported: a unique proven resource_id reference provides VPC owner navigation and a Resolver configuration member section; original identity, provenance, coverage and actions are preserved.",
+        "network": "Intentionally unsupported: helper ownership is presentation only, not network containment or effective DNS behavior.",
+        "references": "Supported: resource_id references a managed VPC id with matching known non-sensitive values. No literal matching, lookup adoption or arbitrary attribute summary.",
+        "scope": "Supported: preserve regional provider account scope. Owner compatibility is checked after saved-plan account evidence; another named state cannot supply a missing VPC.",
         "summaries": "Deferred: validation_status summary until requested-versus-computed DNS configuration states have an allowlist; no compliance claims.",
         "officialDocumentation": "website/docs/r/route53_resolver_dnssec_config.html.markdown",
         "shapes": {
@@ -47737,17 +47739,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resolver.rs",
+          "tests/unit/semantic/resolver_config.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_route53_resolver_firewall_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 925,
-      "gap": "#715 audit: Missing: resource_id is VPC ID; explicit unique VPC-owner navigation. firewall_fail_open does not prove effective DNS behavior. Follow-up #925. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #925: explicit unique resource_id-to-managed-VPC id ownership navigation with matching known values and compatible provider/account/region. Unknown, sensitive, ambiguous, data, deleted/deposed and cross-state references stay unproven. Effective DNS behavior is intentionally unsupported.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47757,10 +47761,10 @@
           "firewall_fail_open"
         ],
         "placement": "Supported: retain Logical Controller for aws_route53_resolver_firewall_config; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique VPC configuration-helper ownership; not physical containment.",
-        "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: resource_id is VPC ID; explicit unique VPC-owner navigation. firewall_fail_open does not prove effective DNS behavior.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "ownership": "Supported: a unique proven resource_id reference provides VPC owner navigation and a Resolver configuration member section; original identity, provenance, coverage and actions are preserved.",
+        "network": "Intentionally unsupported: helper ownership is presentation only, not network containment or effective DNS behavior.",
+        "references": "Supported: resource_id references a managed VPC id with matching known non-sensitive values. No literal matching, lookup adoption or arbitrary attribute summary.",
+        "scope": "Supported: preserve regional provider account scope. Owner compatibility is checked after saved-plan account evidence; another named state cannot supply a missing VPC.",
         "summaries": "Deferred: firewall_fail_open summary until requested-versus-computed DNS configuration states have an allowlist; no compliance claims.",
         "officialDocumentation": "website/docs/r/route53_resolver_firewall_config.html.markdown",
         "shapes": {
@@ -47782,7 +47786,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resolver.rs",
+          "tests/unit/semantic/resolver_config.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), region (optional/computed), resource_id (required). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
