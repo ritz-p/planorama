@@ -15,6 +15,7 @@ mod mq_tests;
 
 pub(super) fn network(resource: &str) -> Option<(&'static str, &'static str)> {
     match resource {
+        "aws_route53_resolver_endpoint" => Some(("ip_address.subnet_id", "security_group_ids")),
         "aws_msk_cluster" => Some((
             "broker_node_group_info.client_subnets",
             "broker_node_group_info.security_groups",

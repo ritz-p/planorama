@@ -225,6 +225,7 @@ pub(super) fn annotate(
         .map(|((value, _), mask)| (*value, mask))
         .collect();
     crate::provider::aws::route53::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::resolver::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route53_records::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudfront::annotate(nodes, references, &elbv2_evidence);
 

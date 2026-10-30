@@ -13,7 +13,9 @@ pub(crate) fn has_indexed_service_references(
             || aws::elbv2_network::resource(resource)
             || matches!(
                 resource,
-                "aws_route53_zone" | "aws_route53_records_exclusive"
+                "aws_route53_zone"
+                    | "aws_route53_records_exclusive"
+                    | "aws_route53_resolver_endpoint"
             ))
 }
 
@@ -29,6 +31,7 @@ pub(crate) fn indexed_service_reference(
             || aws::networkfirewall::indexed_attribute(resource, attribute)
             || aws::elbv2_network::indexed(resource, attribute)
             || aws::route53::indexed(resource, attribute)
+            || aws::resolver::indexed(resource, attribute)
             || aws::route53_records::indexed(resource, attribute))
 }
 
