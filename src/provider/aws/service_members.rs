@@ -61,6 +61,13 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_route53_resolver_config"
+            | "aws_route53_resolver_dnssec_config"
+            | "aws_route53_resolver_firewall_config" => (
+                "resource_id",
+                "Resolver VPC owner",
+                "Resolver configuration",
+            ),
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")

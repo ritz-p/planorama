@@ -162,8 +162,18 @@ fn network(
 #[path = "../../../tests/unit/semantic/resolver.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/resolver_config.rs"]
+mod config_tests;
+
 pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
     match (kind, field) {
+        (
+            "aws_route53_resolver_config"
+            | "aws_route53_resolver_dnssec_config"
+            | "aws_route53_resolver_firewall_config",
+            "resource_id",
+        ) => Some("Resolver VPC owner"),
         (ENDPOINT, SUBNETS) => Some("Configured subnets"),
         (ENDPOINT, "security_group_ids") => Some("Configured security groups"),
         ("aws_route53_resolver_rule", "resolver_endpoint_id") => Some("Outbound resolver endpoint"),
@@ -202,7 +212,7 @@ pub(crate) fn annotate(
         let kind = match r.attribute.as_str() {
             "resolver_endpoint_id" => "aws_route53_resolver_endpoint",
             "resolver_rule_id" => "aws_route53_resolver_rule",
-            "vpc_id" => "aws_vpc",
+            "vpc_id" | "resource_id" => "aws_vpc",
             _ => continue,
         };
         let Some(source) = super::route53::endpoint(nodes, r, kind, &["id"]) else {
