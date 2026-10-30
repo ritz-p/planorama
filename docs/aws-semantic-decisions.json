@@ -2244,7 +2244,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 934,
-      "gap": "#714 audit: Partial: #509 verifies API/resource/method, Lambda invoke ARN and REST NLB VPC-link context; missing VPC Link V2 integration_target ALB/NLB ARN and IAM credentials. URLs and passthrough caller credential wildcard are not endpoints. Follow-up #934. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #934: explicit VPC Link V2 IDs, ALB/NLB integration_target ARNs and IAM role credentials extend the existing API/resource/method and Lambda contracts. Require matching known outputs, compatible provider/account scope and current managed endpoints. URLs and caller identity passthrough do not establish endpoints. Integration helpers retain independent logical placement; arbitrary summaries remain unsupported. The #714 review below records its historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

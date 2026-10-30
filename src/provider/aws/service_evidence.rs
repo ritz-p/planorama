@@ -9,6 +9,14 @@ fn current(node: &TerraformEntity) -> bool {
 }
 
 pub(super) fn eligible(nodes: &[TerraformEntity], reference: &AttributeReference) -> bool {
+    eligible_with_global_role(nodes, reference, false)
+}
+
+pub(super) fn eligible_with_global_role(
+    nodes: &[TerraformEntity],
+    reference: &AttributeReference,
+    global_role: bool,
+) -> bool {
     let node = &nodes[reference.target];
     current(node)
         && reference.complete
@@ -18,16 +26,30 @@ pub(super) fn eligible(nodes: &[TerraformEntity], reference: &AttributeReference
         && reference.sources.iter().all(|&source| {
             let endpoint = &nodes[source];
             current(endpoint)
-                && super::service_references::cluster_binding_matches(
-                    node.provider_configuration.as_ref(),
-                    endpoint.provider_configuration.as_ref(),
-                    super::scope::scope(node)
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    super::scope::scope(endpoint)
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                )
+                && if global_role && endpoint.resource_type == "aws_iam_role" {
+                    super::eventbridge::bindings(
+                        node.provider_configuration.as_ref(),
+                        endpoint.provider_configuration.as_ref(),
+                        super::scope::scope(node)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        super::scope::scope(endpoint)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        true,
+                    )
+                } else {
+                    super::service_references::cluster_binding_matches(
+                        node.provider_configuration.as_ref(),
+                        endpoint.provider_configuration.as_ref(),
+                        super::scope::scope(node)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        super::scope::scope(endpoint)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                    )
+                }
         })
 }
 

@@ -36,9 +36,18 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
         ),
         ("aws_api_gateway_integration", "connection_id") => (
             "REST VPC link",
-            &[("aws_api_gateway_vpc_link", "id")],
+            &[
+                ("aws_api_gateway_vpc_link", "id"),
+                ("aws_apigatewayv2_vpc_link", "id"),
+            ],
             false,
         ),
+        ("aws_api_gateway_integration", "integration_target") => {
+            ("REST private backend", &[("aws_lb", "arn")], false)
+        }
+        ("aws_api_gateway_integration", "credentials") => {
+            ("REST integration role", &[("aws_iam_role", "arn")], false)
+        }
         ("aws_api_gateway_integration", "uri") => (
             "REST Lambda backend",
             &[
@@ -106,6 +115,28 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
             matches!(context.value(r.target, "type"), Some("AWS" | "AWS_PROXY"))
                 && context.value(r.target, "integration_http_method") == Some("POST")
                 && context.lambda(source)
+                && context
+                    .source(r.target, "http_method")
+                    .is_some_and(|method| method_matches(context, r.target, method))
+        }
+        ("aws_api_gateway_integration", "credentials") => {
+            matches!(context.value(r.target, "type"), Some("AWS" | "AWS_PROXY"))
+                && context
+                    .source(r.target, "http_method")
+                    .is_some_and(|method| method_matches(context, r.target, method))
+        }
+        ("aws_api_gateway_integration", "integration_target") => {
+            context.value(r.target, "connection_type") == Some("VPC_LINK")
+                && matches!(context.value(r.target, "type"), Some("HTTP" | "HTTP_PROXY"))
+                && matches!(
+                    context.value(source, "load_balancer_type"),
+                    Some("application" | "network")
+                )
+                && context
+                    .source(r.target, "connection_id")
+                    .is_some_and(|link| {
+                        context.nodes[link].resource_type == "aws_apigatewayv2_vpc_link"
+                    })
                 && context
                     .source(r.target, "http_method")
                     .is_some_and(|method| method_matches(context, r.target, method))

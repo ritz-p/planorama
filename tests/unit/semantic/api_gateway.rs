@@ -2,6 +2,146 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn rest_v2_backend_and_role_require_matching_explicit_context() {
+    for role in [false, true] {
+        for case in [
+            "valid",
+            "unknown",
+            "literal",
+            "mismatch",
+            "wrong_type",
+            "wrong_method",
+            "legacy_link",
+            "deleted",
+            "data",
+            "deposed",
+            "application",
+            "wrong_provider",
+            "unknown_region",
+            "unknown_endpoint",
+        ] {
+            let mut value: Value =
+                serde_json::from_str(include_str!("../../fixtures/api-gateway-rest-plan.json"))
+                    .unwrap();
+            let address = if role {
+                "aws_api_gateway_integration.lambda"
+            } else {
+                "aws_api_gateway_integration.private"
+            };
+            let field = if role {
+                "credentials"
+            } else {
+                "integration_target"
+            };
+            let endpoint = if role {
+                "aws_iam_role.backend"
+            } else {
+                "aws_lb.backend"
+            };
+            let arn = if role {
+                "arn:aws:iam::123456789012:role/backend"
+            } else {
+                "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/synthetic/123"
+            };
+            if role {
+                value["resource_changes"].as_array_mut().unwrap().push(json!({"address":endpoint,"mode":"managed","type":"aws_iam_role","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"arn":arn}}}));
+                value["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":endpoint,"mode":"managed","type":"aws_iam_role","name":"backend","provider_config_key":"aws","expressions":{}}));
+            }
+            for r in value["resource_changes"].as_array_mut().unwrap() {
+                if r["address"] == address {
+                    r["change"]["after"][field] = json!(arn);
+                    if case == "unknown" {
+                        r["change"]["after_unknown"][field] = json!(true);
+                    }
+                    if case == "mismatch" {
+                        r["change"]["after"][field] = json!("other");
+                    }
+                    if case == "wrong_type" {
+                        r["change"]["after"]["type"] = json!("MOCK");
+                    }
+                    if case == "wrong_method" {
+                        r["change"]["after"]["http_method"] = json!("PATCH");
+                    }
+                }
+                if r["address"] == "aws_api_gateway_vpc_link.private" && case != "legacy_link" {
+                    r["type"] = json!("aws_apigatewayv2_vpc_link");
+                }
+                if r["address"] == endpoint {
+                    if case == "application" && !role {
+                        r["change"]["after"]["load_balancer_type"] = json!("application");
+                    }
+                    if case == "wrong_provider" {
+                        r["provider_name"] = json!("example.invalid/custom/aws");
+                    }
+                    if case == "unknown_endpoint" {
+                        r["change"]["after_unknown"]["arn"] = json!(true);
+                    }
+                    if case == "deleted" {
+                        r["change"]["actions"] = json!(["delete"]);
+                    }
+                    if case == "data" {
+                        r["mode"] = json!("data");
+                    }
+                    if case == "deposed" {
+                        r["deposed"] = json!("old");
+                    }
+                }
+            }
+            for r in value["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+            {
+                if r["address"] == address {
+                    r["expressions"][field] = if case == "literal" {
+                        json!({"constant_value":arn})
+                    } else {
+                        json!({"references":[format!("{endpoint}.arn")]})
+                    };
+                }
+            }
+            if case != "legacy_link" {
+                value = serde_json::from_str(
+                    &value
+                        .to_string()
+                        .replace("aws_api_gateway_vpc_link", "aws_apigatewayv2_vpc_link"),
+                )
+                .unwrap();
+            }
+            if case == "unknown_region" {
+                value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                    json!({"references":["var.region"]});
+            }
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let target = raw.nodes.iter().position(|n| n.address == address).unwrap();
+            assert_eq!(
+                raw.attributes.iter().any(|r| r.target == target
+                    && r.attribute == field
+                    && r.service_reference_verified),
+                matches!(case, "valid" | "application") || (role && case == "legacy_link"),
+                "{field}: {case}"
+            );
+            let graph = semantic::transform(&raw);
+            assert_eq!(
+                graph.coverage.selected.resources,
+                value["resource_changes"].as_array().unwrap().len()
+            );
+            let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
+            assert_eq!(
+                node.references.iter().any(|r| r.complete
+                    && r.label
+                        == if role {
+                            "REST integration role"
+                        } else {
+                            "REST private backend"
+                        }),
+                matches!(case, "valid" | "application") || (role && case == "legacy_link"),
+                "presentation: {field}: {case}"
+            );
+        }
+    }
+}
+
+#[test]
 fn api_gateway_rejects_incompatible_context_and_partial_indexed_sets() {
     for (family, address, attribute, changed, field, replacement) in [
         (
