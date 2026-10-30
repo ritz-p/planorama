@@ -121,6 +121,42 @@ fn private_rest_endpoint_sets_require_complete_known_private_configuration() {
             graph.coverage.selected.resources,
             value["resource_changes"].as_array().unwrap().len()
         );
+        if case == "valid" {
+            let selected = crate::view::single(
+                &graph,
+                &crate::view::Options {
+                    focus: Some("aws_api_gateway_rest_api.app".into()),
+                    depth: Some(0),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            assert_eq!(selected.coverage.selected.resources, 1);
+            let mut missing = value.clone();
+            missing["resource_changes"].as_array_mut().unwrap().pop();
+            for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+                let out = crate::generate_named(
+                    &[
+                        crate::NamedInput {
+                            state: "one".into(),
+                            json: value.to_string(),
+                        },
+                        crate::NamedInput {
+                            state: "two".into(),
+                            json: missing.to_string(),
+                        },
+                    ],
+                    &crate::Options {
+                        format,
+                        ..Default::default()
+                    },
+                )
+                .unwrap()
+                .content;
+                assert!(!out.contains("<metadata id=\"cross-state-relationships\">"));
+                assert!(!out.contains("SYNTHETIC_SECRET_NOT_FOR_OUTPUT"));
+            }
+        }
     }
 }
 
