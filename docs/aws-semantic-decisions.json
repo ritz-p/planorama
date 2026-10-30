@@ -53246,7 +53246,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53301,7 +53301,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53362,7 +53362,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53407,7 +53407,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53467,7 +53467,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53527,7 +53527,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53816,7 +53816,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 989,
-      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded; review below records the historical #730 baseline.",
+      "gap": "Implemented #989: typed delivery and subscription navigation with known matching values, discriminator checks and independent helper identities. See aws-compute.md#cloudwatch-logs-delivery-references-989. Unsupported producers and opaque policy contents remain excluded. #730 audit: the historical baseline remains in the review below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
