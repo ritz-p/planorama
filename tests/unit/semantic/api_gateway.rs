@@ -2,6 +2,210 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn v2_new_references_preserve_independent_coverage_filtering_and_named_states() {
+    let input = include_str!("../../fixtures/api-gateway-v2-plan.json");
+    let raw = plan::parse(input).unwrap();
+    let graph = semantic::transform(&raw);
+    for address in [
+        "aws_apigatewayv2_api.app",
+        "aws_service_discovery_service.backend",
+        "aws_iam_role.backend",
+    ] {
+        let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
+        assert!(node.member_owner.is_none());
+    }
+    let selected = crate::view::single(
+        &graph,
+        &crate::view::Options {
+            focus: Some("aws_apigatewayv2_api.app".into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(selected.coverage.selected.resources, 1);
+    let mut missing: Value = serde_json::from_str(input).unwrap();
+    missing["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .retain(|r| r["address"] != "aws_service_discovery_service.backend");
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate_named(
+            &[
+                crate::NamedInput {
+                    state: "one".into(),
+                    json: input.into(),
+                },
+                crate::NamedInput {
+                    state: "two".into(),
+                    json: missing.to_string(),
+                },
+            ],
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap()
+        .content;
+        assert!(!output.contains("<metadata id=\"cross-state-relationships\">"));
+        assert!(!output.contains("SYNTHETIC_SECRET_NOT_FOR_OUTPUT"));
+    }
+}
+
+#[test]
+fn v2_service_action_or_unknown_subtype_does_not_claim_lambda_backend() {
+    for unknown in [false, true] {
+        let mut value: Value =
+            serde_json::from_str(include_str!("../../fixtures/api-gateway-v2-plan.json")).unwrap();
+        let integration = value["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|r| r["address"] == "aws_apigatewayv2_integration.lambda")
+            .unwrap();
+        integration["change"]["after"]["integration_subtype"] = json!("SQS-SendMessage");
+        if unknown {
+            integration["change"]["after_unknown"]["integration_subtype"] = json!(true);
+        }
+        let raw = plan::parse(&value.to_string()).unwrap();
+        let target = raw
+            .nodes
+            .iter()
+            .position(|n| n.address == "aws_apigatewayv2_integration.lambda")
+            .unwrap();
+        assert!(
+            raw.attributes
+                .iter()
+                .filter(|r| r.target == target && r.attribute == "integration_uri")
+                .all(|r| !r.service_reference_verified)
+        );
+        assert!(raw.attributes.iter().any(|r| r.target == target
+            && r.attribute == "credentials_arn"
+            && r.service_reference_verified));
+    }
+}
+
+#[test]
+fn v2_quick_create_roles_and_cloud_map_require_explicit_matching_evidence() {
+    for kind in ["quick", "quick_role", "role", "cloud_map"] {
+        for case in [
+            "valid",
+            "unknown",
+            "literal",
+            "mismatch",
+            "deleted",
+            "data",
+            "deposed",
+            "wrong_protocol",
+            "wrong_provider",
+        ] {
+            let mut value: Value =
+                serde_json::from_str(include_str!("../../fixtures/api-gateway-v2-plan.json"))
+                    .unwrap();
+            let (address, field, endpoint, resource_type, arn) = match kind {
+                "quick" => (
+                    "aws_apigatewayv2_api.app",
+                    "target",
+                    "aws_lambda_function.app",
+                    "aws_lambda_function",
+                    "arn:aws:lambda:us-east-1:123456789012:function:synthetic",
+                ),
+                "quick_role" => (
+                    "aws_apigatewayv2_api.app",
+                    "credentials_arn",
+                    "aws_iam_role.backend",
+                    "aws_iam_role",
+                    "arn:aws:iam::123456789012:role/backend",
+                ),
+                "role" => (
+                    "aws_apigatewayv2_integration.lambda",
+                    "credentials_arn",
+                    "aws_iam_role.backend",
+                    "aws_iam_role",
+                    "arn:aws:iam::123456789012:role/backend",
+                ),
+                _ => (
+                    "aws_apigatewayv2_integration.private",
+                    "integration_uri",
+                    "aws_service_discovery_service.backend",
+                    "aws_service_discovery_service",
+                    "arn:aws:servicediscovery:us-east-1:123456789012:service/srv-synthetic",
+                ),
+            };
+            if !value["resource_changes"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .any(|r| r["address"] == endpoint)
+            {
+                value["resource_changes"].as_array_mut().unwrap().push(json!({"address":endpoint,"mode":"managed","type":resource_type,"provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"arn":arn}}}));
+                value["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":endpoint,"mode":"managed","type":resource_type,"provider_config_key":"aws","expressions":{}}));
+            }
+            for r in value["resource_changes"].as_array_mut().unwrap() {
+                if r["address"] == "aws_apigatewayv2_api.app" {
+                    r["change"]["after"]["target"] =
+                        json!("arn:aws:lambda:us-east-1:123456789012:function:synthetic");
+                    if case == "wrong_protocol" {
+                        r["change"]["after"]["protocol_type"] = json!("INVALID");
+                    }
+                }
+                if r["address"] == address {
+                    r["change"]["after"][field] = json!(arn);
+                    if case == "unknown" {
+                        r["change"]["after_unknown"][field] = json!(true);
+                    }
+                    if case == "mismatch" {
+                        r["change"]["after"][field] = json!("other");
+                    }
+                }
+                if r["address"] == endpoint {
+                    match case {
+                        "deleted" => r["change"]["actions"] = json!(["delete"]),
+                        "data" => r["mode"] = json!("data"),
+                        "deposed" => r["deposed"] = json!("old"),
+                        "wrong_provider" => {
+                            r["provider_name"] = json!("example.invalid/custom/aws")
+                        }
+                        _ => {}
+                    }
+                }
+            }
+            for r in value["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+            {
+                if r["address"] == "aws_apigatewayv2_api.app" {
+                    r["expressions"]["target"] =
+                        json!({"references":["aws_lambda_function.app.arn"]});
+                }
+                if r["address"] == address {
+                    r["expressions"][field] = if case == "literal" {
+                        json!({"constant_value":arn})
+                    } else {
+                        json!({"references":[format!("{endpoint}.arn")]})
+                    };
+                }
+            }
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let target = raw.nodes.iter().position(|n| n.address == address).unwrap();
+            assert_eq!(
+                raw.attributes.iter().any(|r| r.target == target
+                    && r.attribute == field
+                    && r.service_reference_verified),
+                case == "valid",
+                "{kind}: {case}"
+            );
+            let graph = semantic::transform(&raw);
+            assert_eq!(
+                graph.coverage.selected.resources,
+                value["resource_changes"].as_array().unwrap().len()
+            );
+        }
+    }
+}
+
+#[test]
 fn private_rest_endpoint_sets_require_complete_known_private_configuration() {
     for case in [
         "valid",
