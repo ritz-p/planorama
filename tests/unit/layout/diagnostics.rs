@@ -61,6 +61,21 @@ fn report(edges: Vec<Route>) -> Value {
 }
 
 #[test]
+fn corner_rounding_removes_raw_overlap_but_preserves_visible_overlap() {
+    for (turn, expected) in [(29, 0), (10, 8)] {
+        let a = route("a", &[(100, 5), (100, 31), (609, 31)]);
+        let b = route("b", &[(100, 45), (100, turn), (109, turn), (109, 0)]);
+        let raw = crate::layout::metrics::measure(&[a.path.clone(), b.path.clone()]);
+        assert!(raw.overlap_distance > 0);
+        let value = report(vec![a, b]);
+        assert_eq!(
+            value["summary"]["visible_straight_sections"]["independent_overlap_length"],
+            expected
+        );
+    }
+}
+
+#[test]
 fn collection_completeness_tracks_omissions_not_exact_caps() {
     for (pair_limit, finding_limit, pair_complete, findings_complete, count) in [
         (3, 3, true, true, 3),
