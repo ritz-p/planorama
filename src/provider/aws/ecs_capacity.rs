@@ -107,7 +107,9 @@ fn variant(value: &Value, mask: &Value, managed: bool) -> bool {
             .as_array()
             .is_some_and(|v| v.len() == 1 && v[0].is_object())
         && (value[inactive].is_null() || value[inactive].as_array().is_some_and(Vec::is_empty))
-        && matches!(&mask[inactive], Value::Null | Value::Bool(false))
+        && (matches!(&mask[inactive], Value::Null | Value::Bool(false))
+            || (value[inactive].as_array().is_some_and(Vec::is_empty)
+                && mask[inactive].as_array().is_some_and(Vec::is_empty)))
         && if managed {
             super::streaming::values(value, mask, "cluster", false).is_some()
         } else {

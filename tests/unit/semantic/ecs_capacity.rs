@@ -351,3 +351,39 @@ fn capacity_selection_keeps_state_local_links_and_resource_coverage() {
     }
     assert!(!output.contains("PRIVATE_"));
 }
+
+#[test]
+fn inactive_variant_accepts_known_empty_collection_masks() {
+    for (target, inactive, path) in [
+        (
+            8,
+            "managed_instances_provider",
+            "auto_scaling_group_provider.auto_scaling_group_arn",
+        ),
+        (9, "auto_scaling_group_provider", "cluster"),
+    ] {
+        for (mask, expected) in [
+            (json!([]), true),
+            (json!(true), false),
+            (json!([true]), false),
+        ] {
+            let mut value: Value =
+                serde_json::from_str(include_str!("../../fixtures/ecs-capacity-plan.json"))
+                    .unwrap();
+            value["resource_changes"][target]["change"]["after"][inactive] = json!([]);
+            value["resource_changes"][target]["change"]["after_unknown"] = json!({inactive:mask});
+            let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
+            let address = value["resource_changes"][target]["address"]
+                .as_str()
+                .unwrap();
+            let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
+            assert_eq!(
+                node.references.iter().any(|r| r.attribute == path
+                    && r.complete
+                    && Some(r.label) == super::label(&node.resource_type, path)),
+                expected,
+                "{inactive}"
+            );
+        }
+    }
+}
