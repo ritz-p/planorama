@@ -53,7 +53,9 @@
           "id": "v2-synthetic",
           "name": "synthetic-http",
           "protocol_type": "HTTP",
-          "api_endpoint": "https://SYNTHETIC_ENDPOINT_NOT_FOR_OUTPUT"
+          "api_endpoint": "https://SYNTHETIC_ENDPOINT_NOT_FOR_OUTPUT",
+          "target": "arn:aws:lambda:us-east-1:123456789012:function:synthetic",
+          "credentials_arn": "arn:aws:iam::123456789012:role/backend"
         }
       }
     },
@@ -70,7 +72,8 @@
           "api_id": "v2-synthetic",
           "integration_type": "AWS_PROXY",
           "connection_type": "INTERNET",
-          "integration_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations"
+          "integration_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations",
+          "credentials_arn": "arn:aws:iam::123456789012:role/backend"
         }
       }
     },
@@ -238,6 +241,52 @@
           "auto_deploy": true
         }
       }
+    },
+    {
+      "address": "aws_iam_role.backend",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/backend"
+        }
+      }
+    },
+    {
+      "address": "aws_service_discovery_service.backend",
+      "mode": "managed",
+      "type": "aws_service_discovery_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:servicediscovery:us-east-1:123456789012:service/srv-synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_integration.discovery",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_integration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "v2-synthetic",
+          "integration_type": "HTTP_PROXY",
+          "connection_type": "VPC_LINK",
+          "connection_id": "v2-link",
+          "integration_uri": "arn:aws:servicediscovery:us-east-1:123456789012:service/srv-synthetic"
+        }
+      }
     }
   ],
   "configuration": {
@@ -273,7 +322,18 @@
           "mode": "managed",
           "type": "aws_apigatewayv2_api",
           "provider_config_key": "aws",
-          "expressions": {}
+          "expressions": {
+            "target": {
+              "references": [
+                "aws_lambda_function.app.arn"
+              ]
+            },
+            "credentials_arn": {
+              "references": [
+                "aws_iam_role.backend.arn"
+              ]
+            }
+          }
         },
         {
           "address": "aws_apigatewayv2_integration.lambda",
@@ -291,6 +351,11 @@
               "references": [
                 "aws_lambda_function.app.invoke_arn",
                 "aws_lambda_function.app"
+              ]
+            },
+            "credentials_arn": {
+              "references": [
+                "aws_iam_role.backend.arn"
               ]
             }
           }
@@ -435,6 +500,45 @@
               "references": [
                 "aws_apigatewayv2_api.app.id",
                 "aws_apigatewayv2_api.app"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.backend",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_service_discovery_service.backend",
+          "mode": "managed",
+          "type": "aws_service_discovery_service",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_integration.discovery",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_integration",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.app.id",
+                "aws_apigatewayv2_api.app"
+              ]
+            },
+            "connection_id": {
+              "references": [
+                "aws_apigatewayv2_vpc_link.private.id",
+                "aws_apigatewayv2_vpc_link.private"
+              ]
+            },
+            "integration_uri": {
+              "references": [
+                "aws_service_discovery_service.backend.arn"
               ]
             }
           }

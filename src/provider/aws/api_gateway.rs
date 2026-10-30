@@ -27,8 +27,12 @@ fn basic(
     if !eligible_with_global_role(
         nodes,
         r,
-        nodes[r.target].resource_type == "aws_api_gateway_integration"
-            && r.attribute == "credentials",
+        (nodes[r.target].resource_type == "aws_api_gateway_integration"
+            && r.attribute == "credentials")
+            || (matches!(
+                nodes[r.target].resource_type.as_str(),
+                "aws_apigatewayv2_api" | "aws_apigatewayv2_integration"
+            ) && r.attribute == "credentials_arn"),
     ) || r.source_attributes.len() != 1
     {
         return false;

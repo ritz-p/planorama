@@ -2481,10 +2481,10 @@
       }
     },
     "aws_apigatewayv2_api": {
-      "status": "Partial",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 937,
-      "gap": "#714 audit: Missing: HTTP quick-create target Lambda ARN and credentials; URLs stay opaque, generated route/integration/stage are not Terraform nodes. Follow-up #937. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #937: Explicit HTTP quick-create Lambda, integration IAM role and HTTP private Cloud Map references are verified using matching known outputs and compatible Terraform provenance. URLs and service action request maps remain opaque; no generated resources or containment.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2499,7 +2499,7 @@
         "placement": "Supported: retain Spatial Connector for aws_apigatewayv2_api; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_apigatewayv2_api identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_apigatewayv2_api has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: HTTP quick-create target Lambda ARN and credentials; URLs stay opaque, generated route/integration/stage are not Terraform nodes.",
+        "references": "Supported: #937: Explicit HTTP quick-create Lambda, integration IAM role and HTTP private Cloud Map references are verified using matching known outputs and compatible Terraform provenance. URLs and service action request maps remain opaque; no generated resources or containment.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; account requires existing provider evidence. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_apigatewayv2_api attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/apigatewayv2_api.html.markdown",
@@ -2683,10 +2683,10 @@
       }
     },
     "aws_apigatewayv2_integration": {
-      "status": "Partial",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 937,
-      "gap": "#714 audit: Partial: #509 protocol-gated Lambda/listener and VPC-link references; missing explicit Cloud Map service ARN for HTTP private integration and IAM credentials. Service action request maps remain opaque. Follow-up #937. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #937: Explicit HTTP quick-create Lambda, integration IAM role and HTTP private Cloud Map references are verified using matching known outputs and compatible Terraform provenance. URLs and service action request maps remain opaque; no generated resources or containment.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2703,7 +2703,7 @@
         "placement": "Supported: retain Logical Controller for aws_apigatewayv2_integration; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_apigatewayv2_integration identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_apigatewayv2_integration has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Partial: #509 protocol-gated Lambda/listener and VPC-link references; missing explicit Cloud Map service ARN for HTTP private integration and IAM credentials. Service action request maps remain opaque.",
+        "references": "Supported: #937: Explicit HTTP quick-create Lambda, integration IAM role and HTTP private Cloud Map references are verified using matching known outputs and compatible Terraform provenance. URLs and service action request maps remain opaque; no generated resources or containment.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; account requires existing provider evidence. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_apigatewayv2_integration attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/apigatewayv2_integration.html.markdown",

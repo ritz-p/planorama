@@ -16,7 +16,9 @@ remain unchanged. VPC Link references do not place an API inside a subnet.
 | REST | Private Integration and NLB | HTTP/HTTP_PROXY with VPC_LINK and matching Method context; VPC Link has exactly one matching NLB ARN |
 | v2 | API and explicit Stage deployment | Exact IDs and same API owner; deployment navigation requires known `auto_deploy = false` |
 | v2 | Lambda Integration / Authorizer | Known HTTP/WebSocket API; AWS_PROXY and INTERNET for Integration, REQUEST for Authorizer; exact invoke ARN, or raw Lambda ARN for HTTP Integration |
-| v2 | Private Integration | HTTP API, HTTP_PROXY, VPC_LINK and exact listener ARN; listener explicitly identifies an ALB/NLB |
+| v2 | Private Integration | HTTP API, HTTP_PROXY, VPC_LINK and exact listener or Cloud Map service ARN; listener explicitly identifies an ALB/NLB |
+| v2 | Quick-create Lambda | HTTP API with an explicit Function or verified Alias reference matching its raw ARN; generated integrations, routes and stages are not Terraform nodes |
+| v2 | Integration role | Explicit IAM Role ARN; quick-create requires a verified Lambda target, integrations require HTTP AWS_PROXY or WebSocket AWS/AWS_PROXY |
 | v2 | Link subnet / security groups | Entire known list/set matches unique explicitly referenced instances |
 
 These are configuration reference links, not runtime reachability or permission
@@ -33,6 +35,11 @@ Terraform 1.9.8 `plan -refresh=false`. See the official
 [REST VPC Link](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/api_gateway_vpc_link.html.markdown),
 [v2 Integration](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/apigatewayv2_integration.html.markdown)
 and [v2 Stage](https://github.com/hashicorp/terraform-provider-aws/blob/v6.70.0/website/docs/r/apigatewayv2_stage.html.markdown) contracts.
+The quick-create and Cloud Map extensions use the scalar fields in the pinned
+[v2 API](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/apigatewayv2/api.go)
+and [Integration schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/apigatewayv2/integration.go).
+Service-action request maps remain opaque. A present or unknown integration subtype
+does not establish a Lambda backend; role references are independently verified.
 Synthetic examples: REST [SVG](../examples/api-gateway-rest.svg) /
 [HTML](../examples/api-gateway-rest.html), v2 [SVG](../examples/api-gateway-v2.svg) /
 [HTML](../examples/api-gateway-v2.html). Generate HTML in Docker using
