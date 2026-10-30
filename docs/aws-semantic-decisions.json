@@ -1880,7 +1880,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 935,
-      "gap": "#714 audit: Missing: PRIVATE-only complete endpoint IDs; API remains outside endpoint subnets. Follow-up #935. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #935: PRIVATE-only complete endpoint ID sets resolve explicit current managed Interface endpoint references with matching known outputs and compatible provider/account/region evidence. Unknown, partial, duplicate and literal-only sets remain unverified. The API remains outside endpoint subnets and endpoints retain independent identity. The #714 review below records its historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
