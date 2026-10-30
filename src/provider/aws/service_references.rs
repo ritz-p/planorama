@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::lambda_qualified::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::ecs_workloads::label(resource, attribute) {
         return Some(label);
     }
@@ -599,6 +602,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::lambda_qualified::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::lambda_qualified::bindings(raw, reference))
         && (super::ecs_workloads::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

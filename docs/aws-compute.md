@@ -66,6 +66,24 @@ Filtering removes unavailable destinations without reconstructing excluded resou
 Layer `version` is a string while permission `version_number` is numeric.
 Examples: [SVG](../examples/lambda.svg), [HTML](../examples/lambda.html).
 
+## Qualified Lambda configuration (#952)
+
+Recursion, scaling, invocation, provisioned concurrency and runtime management
+configuration retain independent logical Controller rows. Explicit function name
+or ARN references require a unique current managed function and matching values.
+Alias `function_name` references additionally require that alias's verified parent.
+Published version selectors require the same function's explicit `version` output;
+invocation and provisioned concurrency also accept a same-parent alias `name`.
+Scaling accepts `$LATEST.PUBLISHED`; invocation and runtime management accept
+`$LATEST` or an omitted qualifier. These API selectors create no version nodes.
+Unknown, literal-only numeric/alias selectors, incompatible scopes and historical
+endpoints retain unresolved references. Capacity counts, invocation input/results,
+runtime metadata ARNs and configuration enums do not establish runtime behavior
+or additional resources. No new attribute summaries are emitted.
+
+Contracts use the pinned AWS Provider 6.70.0 schema and documentation. Examples:
+[SVG](../examples/lambda-qualified.svg), [HTML](../examples/lambda-qualified.html).
+
 ## Lambda configuration and network proof (#949)
 
 Function configuration links require explicit, unique managed-resource provenance,
