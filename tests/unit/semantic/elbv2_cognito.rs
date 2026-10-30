@@ -77,6 +77,45 @@ fn listener_and_rule_aliases_have_typed_cognito_references() {
 }
 
 #[test]
+fn empty_non_authentication_blocks_accept_only_empty_or_known_masks() {
+    for kind in [
+        "aws_lb_listener",
+        "aws_alb_listener",
+        "aws_lb_listener_rule",
+        "aws_alb_listener_rule",
+    ] {
+        let block = super::block(kind).unwrap();
+        let mut v = fixture(kind);
+        v["resource_changes"][0]["change"]["after"][block][1]["authenticate_cognito"] = json!([]);
+        for masks in [
+            (json!([]), json!([])),
+            (json!([]), json!(false)),
+            (json!(false), json!([])),
+        ] {
+            v["resource_changes"][0]["change"]["after_unknown"] =
+                json!({block:[{}, {"authenticate_cognito":masks.0}]});
+            v["resource_changes"][0]["change"]["after_sensitive"] =
+                json!({block:[{}, {"authenticate_cognito":masks.1}]});
+            for field in ["user_pool_arn", "user_pool_client_id", "user_pool_domain"] {
+                assert!(verified(&v, field), "{kind} {field} {masks:?}");
+                for mask in [json!(true), json!([false]), json!([{}]), json!({})] {
+                    for mask_field in ["after_unknown", "after_sensitive"] {
+                        let mut bad = v.clone();
+                        bad["resource_changes"][0]["change"][mask_field][block][1]["authenticate_cognito"] =
+                            mask.clone();
+                        assert!(!verified(&bad, field), "{kind} {field} {mask_field} {mask}");
+                    }
+                }
+            }
+        }
+        v["resource_changes"][0]["change"]["after"][block][1]["authenticate_cognito"] = Value::Null;
+        assert!(!verified(&v, "user_pool_arn"));
+        v["resource_changes"][0]["change"]["after"][block][1]["authenticate_cognito"] = json!([{}]);
+        assert!(!verified(&v, "user_pool_arn"));
+    }
+}
+
+#[test]
 fn action_lists_require_element_correlated_complete_references() {
     for kind in ["aws_lb_listener", "aws_lb_listener_rule"] {
         let block = super::block(kind).unwrap();

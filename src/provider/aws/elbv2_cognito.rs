@@ -98,16 +98,18 @@ fn verify(
             .filter(|s| s.target == r.target && s.attribute == path);
         let reference = found.next();
         if action_type != "authenticate-cognito" {
-            if reference.is_some()
-                || !matches!(
-                    &mask["authenticate_cognito"],
-                    Value::Null | Value::Bool(false)
-                )
-                || !(action["authenticate_cognito"].is_null()
-                    || action["authenticate_cognito"]
-                        .as_array()
-                        .is_some_and(Vec::is_empty))
-            {
+            let absent = match (
+                &action["authenticate_cognito"],
+                &mask["authenticate_cognito"],
+            ) {
+                (Value::Null, Value::Null | Value::Bool(false)) => true,
+                (Value::Array(values), Value::Null | Value::Bool(false)) => values.is_empty(),
+                (Value::Array(values), Value::Array(masks)) => {
+                    values.is_empty() && masks.is_empty()
+                }
+                _ => false,
+            };
+            if reference.is_some() || !absent {
                 return None;
             }
             continue;
