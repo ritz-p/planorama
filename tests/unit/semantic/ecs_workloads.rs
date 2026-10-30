@@ -291,3 +291,64 @@ fn unproven_existing_service_task_definition_keeps_one_ordinary_reference() {
         assert!(!refs[0].targets.is_empty());
     }
 }
+
+#[test]
+fn task_set_ownership_preserves_known_account_scope() {
+    let mut parsed = plan::parse(FIXTURE).unwrap();
+    for node in &mut parsed.nodes {
+        node.provider_configuration.as_mut().unwrap().account =
+            crate::model::AwsAccountScope::new("123456789012");
+    }
+    let graph = semantic::transform(&parsed);
+    let task = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_ecs_task_set.canary")
+        .unwrap();
+    let service = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_ecs_service.app")
+        .unwrap();
+    assert!(service.entity.scope.as_ref().unwrap().account.is_some());
+    assert_eq!(task.entity.scope, service.entity.scope);
+    assert_eq!(
+        task.member_owner.as_ref().unwrap().target.address,
+        service.address
+    );
+    for address in ["aws_ecs_task_set.canary", "aws_ecs_service.app"] {
+        for case in [
+            "unknown-account",
+            "different-account",
+            "conflicting-account",
+        ] {
+            let mut input = parsed.clone();
+            let config = input
+                .nodes
+                .iter_mut()
+                .find(|n| n.address == address)
+                .unwrap()
+                .provider_configuration
+                .as_mut()
+                .unwrap();
+            match case {
+                "conflicting-account" => config.account_conflict = true,
+                "different-account" => {
+                    config.account = crate::model::AwsAccountScope::new("999999999999")
+                }
+                _ => config.account = None,
+            }
+            let graph = semantic::transform(&input);
+            assert!(
+                graph
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == "aws_ecs_task_set.canary")
+                    .unwrap()
+                    .member_owner
+                    .is_none(),
+                "{case} {address}"
+            );
+        }
+    }
+}

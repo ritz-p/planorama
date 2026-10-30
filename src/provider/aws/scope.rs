@@ -42,7 +42,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_vpc_peering_connection_accepter"
+            "aws_ecs_task_set"
+                | "aws_vpc_peering_connection_accepter"
                 | "aws_route53_resolver_rule"
                 | "aws_route53_resolver_rule_association"
                 | "aws_route53_resolver_config"
