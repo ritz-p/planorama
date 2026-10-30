@@ -228,6 +228,7 @@ pub(super) fn annotate(
     crate::provider::aws::peering::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2_network::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::elbv2_cognito::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_config::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_events::annotate(nodes, references, &elbv2_evidence);
     for reference in references {

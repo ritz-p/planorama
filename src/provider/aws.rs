@@ -24,6 +24,7 @@ mod dynamodb;
 mod efs;
 mod elasticache;
 pub(crate) mod elbv2;
+pub(crate) mod elbv2_cognito;
 pub(crate) mod elbv2_network;
 mod elbv2_tls;
 pub(crate) mod encryption;
