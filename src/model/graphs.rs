@@ -31,6 +31,7 @@ pub struct AttributeReference {
     pub service_reference_verified: bool,
     pub service_reference_owner_account: Option<super::AwsAccountScope>,
     pub peering_proof: Option<PeeringProof>,
+    pub endpoint_network_context: Vec<usize>,
     pub ids_only: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
 }

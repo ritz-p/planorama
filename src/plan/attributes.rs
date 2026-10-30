@@ -122,6 +122,7 @@ pub(super) fn collect(
                     service_reference_verified: false,
                     service_reference_owner_account: None,
                     peering_proof: None,
+                    endpoint_network_context: Vec::new(),
                     ids_only: resolution.ids_only,
                     issues: resolution.issues,
                 });

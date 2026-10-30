@@ -99,6 +99,22 @@ The synthetic [fixture](../tests/fixtures/cloudfront-plan.json),
 [SVG](../examples/cloudfront.svg) and [offline HTML](../examples/cloudfront.html)
 show S3/ALB origins, OAC/OAI, policies and an unresolved custom origin.
 
+## CloudFront VPC-origin endpoint context (#916)
+
+A VPC origin retains its Global logical connector identity. Its singleton
+vpc_origin_endpoint_config.arn can reference a current managed ALB, NLB or EC2
+instance's arn with matching known, non-sensitive values and compatible account
+evidence. The VPC-origin output arn and id are never endpoint evidence.
+Verified ALB aliases follow the same contract; data, gateway LBs, ambiguous,
+deleted/deposed, foreign-provider and incomplete references remain unresolved.
+
+Endpoint subnet context is informational: it requires complete explicit endpoint
+subnet references, matching known subnet IDs, compatible regional/account evidence
+and a common known VPC. NLB subnet_mapping uses the existing correlated mapping
+proof. Missing network evidence does not invalidate a proven endpoint ARN.
+No ENI is invented and no Global control resource or regional endpoint is moved.
+Selection and named-state identity apply to both endpoint and context references.
+
 ## WAFv2
 
 Exact AWS Web ACLs and Rule Groups are spatial Policy cards with the AWS WAF

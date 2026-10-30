@@ -45866,10 +45866,10 @@
       }
     },
     "aws_cloudfront_vpc_origin": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 916,
-      "gap": "#715 audit: Missing: typed ALB/NLB/EC2 origin endpoint ARN; input endpoint ARN differs from VPC-origin output ARN/id. Preserve independent endpoint scope. Missing: verified endpoint-derived regional network context; no direct subnet input and no fabricated service-created ENI. Global control identity must not force endpoint into Global scope. Follow-up #916. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #916: typed ALB/NLB/EC2 endpoint ARN proof with independent regional endpoint scope and verified informational subnet context. Global control identity retained; no service-created ENI or direct subnet containment. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45882,8 +45882,8 @@
         ],
         "placement": "Supported: retain Logical origin configuration; show verified endpoint context without a duplicate workload card.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
-        "network": "Missing: verified endpoint-derived regional network context; no direct subnet input and no fabricated service-created ENI. Global control identity must not force endpoint into Global scope.",
-        "references": "Missing: typed ALB/NLB/EC2 origin endpoint ARN; input endpoint ARN differs from VPC-origin output ARN/id. Preserve independent endpoint scope.",
+        "network": "Supported: implemented #916: typed ALB/NLB/EC2 endpoint ARN proof with independent regional endpoint scope and verified informational subnet context. Global control identity retained; no service-created ENI or direct subnet containment. See aws-network.md.",
+        "references": "Supported: implemented #916: typed ALB/NLB/EC2 endpoint ARN proof with independent regional endpoint scope and verified informational subnet context. Global control identity retained; no service-created ENI or direct subnet containment. See aws-network.md.",
         "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
         "summaries": "Intentionally unsupported: generated ENIs, origin addresses and connectivity; no arbitrary aws_cloudfront_vpc_origin attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_vpc_origin.html.markdown",
