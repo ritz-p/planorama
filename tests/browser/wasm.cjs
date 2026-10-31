@@ -144,7 +144,7 @@ async function main() {
       assert.equal(result.content, nativeReference(input, ['--format', format, '--focus', 'aws_cloudwatch_log_delivery.delivery', '--focus-depth', '0']), 'CloudWatch incomplete/filtered native/Wasm '+format);
       assert.ok(!result.content.includes('PRIVATE_'));
     }
-    for (const fixture of ['api-gateway-v2-plan', 'dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'database-endpoints-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'autoscaling-network-plan', 'dms-plan', 'sagemaker-plan', 'cloudwatch-delivery-plan', 'cloudwatch-logs-plan', 'lambda-policy-plan', 'lambda-async-plan', 'lambda-qualified-plan', 'lambda-config-plan', 'lambda-events-plan', 'ecs-capacity-plan', 'ecs-workloads-plan']) {
+    for (const fixture of ['api-gateway-v2-plan', 'dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'database-endpoints-plan', 'database-configuration-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'autoscaling-network-plan', 'dms-plan', 'sagemaker-plan', 'cloudwatch-delivery-plan', 'cloudwatch-logs-plan', 'lambda-policy-plan', 'lambda-async-plan', 'lambda-qualified-plan', 'lambda-config-plan', 'lambda-events-plan', 'ecs-capacity-plan', 'ecs-workloads-plan']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
       for (const format of ['svg', 'html']) {
         const result = run(input, {format});

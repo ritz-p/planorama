@@ -515,3 +515,11 @@ Examples: [SVG](../examples/sagemaker.svg), [HTML](../examples/sagemaker.html).
 RDS and Neptune custom cluster endpoints remain Logical configuration. `cluster_identifier` must reference the matching cluster `cluster_identifier`. `static_members` and `excluded_members` reference instance `identifier` outputs and require each instance to explicitly reference the same cluster. References require known matching nonempty values, current managed resources and compatible bindings. Unknown, ambiguous, filtered, deleted and deposed proof is rejected. Endpoint hostnames and runtime balancing are excluded.
 
 Contracts were checked against AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: `website/docs/r/{db_proxy_endpoint,rds_cluster_endpoint,neptune_cluster_endpoint}.html.markdown` and `internal/service/{rds,neptune}/*endpoint.go`. See [fixture](../tests/fixtures/database-endpoints-plan.json), [SVG](../examples/database-endpoints.svg) and [HTML](../examples/database-endpoints.html).
+
+## Database configuration references (#762)
+
+RDS, DocumentDB and Neptune parameter-group inputs link only to the exact service-specific group `name`; RDS option groups use `name` as well. Family, name prefixes, parameter bodies and nested option values are not evidence. Shared groups remain independent Logical resources and never provide network placement or service ownership.
+
+RDS monitoring roles, RDS/Neptune `iam_roles` and RDS instance/cluster role associations link to exact IAM role `arn` outputs. Role associations identify their database using `identifier` or `cluster_identifier`, respectively. Complete collections, known matching nonempty values, current managed identities and compatible provider/account bindings are required. IAM roles are global; regional parameter groups must match the consumer region. Unknown, ambiguous, deleted/deposed and filtered evidence is rejected. Existing database membership and network contracts remain unchanged. AD/CA, restore/replication and parameter contents are excluded.
+
+The resource docs and schema/read implementations were checked at AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. See [fixture](../tests/fixtures/database-configuration-plan.json), [SVG](../examples/database-configuration.svg) and [HTML](../examples/database-configuration.html).
