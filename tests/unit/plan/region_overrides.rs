@@ -1,10 +1,11 @@
 use crate::{coverage::Coverage, model::ProviderIdentity, plan, semantic};
 use serde_json::{Value, json};
 
-fn fixtures() -> [Value; 2] {
+fn fixtures() -> [Value; 3] {
     [
         include_str!("../../fixtures/aws-region-overrides/plan.json"),
         include_str!("../../fixtures/compatibility/1.16.6/overrides/plan.json"),
+        include_str!("../../fixtures/compatibility/1.9.8/overrides670/plan.json"),
     ]
     .map(|input| serde_json::from_str(input).unwrap())
 }
@@ -13,7 +14,7 @@ fn fixtures() -> [Value; 2] {
 fn region_core_allowlist_has_real_plan_evidence_for_every_entry() {
     let captured =
         fixtures().map(|fixture| fixture["terraform_version"].as_str().unwrap().to_owned());
-    assert_eq!(super::REGION_OVERRIDE_CORE_VERSIONS, captured);
+    assert_eq!(super::REGION_OVERRIDE_CORE_VERSIONS, &captured[..2]);
 }
 
 #[test]
@@ -73,7 +74,7 @@ fn verified_current_override_evidence_survives_update_noop_and_replacement() {
 #[test]
 fn overrides_reject_unverified_dynamic_ambiguous_and_historical_evidence() {
     for fixture in fixtures() {
-        for case in 0..30 {
+        for case in 0..31 {
             let mut value = fixture.clone();
             match case {
                 0 => {
@@ -154,7 +155,12 @@ fn overrides_reject_unverified_dynamic_ambiguous_and_historical_evidence() {
                     value["configuration"]["provider_config"]["aws"]["version_constraint"] =
                         json!("~> 6.0")
                 }
-                _ => value["resource_changes"][0]["change"]["after_sensitive"] = json!(true),
+                29 => value["resource_changes"][0]["change"]["after_sensitive"] = json!(true),
+                _ => {
+                    value["terraform_version"] = json!("1.16.6");
+                    value["configuration"]["provider_config"]["aws"]["version_constraint"] =
+                        json!("6.70.0");
+                }
             }
             let raw = plan::parse(&value.to_string()).unwrap();
             let node = raw

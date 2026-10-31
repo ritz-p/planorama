@@ -2,17 +2,26 @@ const fs = require('node:fs');
 const path = require('node:path');
 const assert = require('node:assert/strict');
 const crypto = require('node:crypto');
+const { normalizeProviderOutput } = require('./compatibility-provider.cjs');
 const { execFileSync } = require('node:child_process');
 
 const root = path.resolve(__dirname, '..');
 const matrix = require('../tests/fixtures/compatibility/matrix.json');
+const selected = process.argv.slice(2);
+for (const name of selected) assert(matrix.cases.some(item => item.name === name), `unknown case: ${name}`);
+const requested = new Set(selected);
+for (const item of matrix.cases) if (requested.has(item.name) && item.compare) requested.add(item.compare);
 const output = path.join(root, 'output/compatibility-output');
 fs.mkdirSync(output, { recursive: true });
 const binary = process.env.PLANORAMA_BIN || path.join(root, 'target/debug/planorama');
 const report = { revision: process.env.COMPATIBILITY_REVISION || execFileSync('git', ['-c', `safe.directory=${root}`, 'rev-parse', 'HEAD'], { cwd: root, encoding: 'utf8' }).trim(), results: [] };
 let failed = false;
+const baselines = new Map();
 for (const item of matrix.cases) {
-  const baseline = new Map();
+  if (selected.length && !requested.has(item.name)) continue;
+  const key = item.compare || item.name;
+  if (!baselines.has(key)) baselines.set(key, new Map());
+  const baseline = baselines.get(key);
   for (const version of item.cores || Object.keys(matrix.terraform)) {
     for (const format of ['svg', 'html']) {
       const entry = { version, case: item.name, format };
@@ -24,6 +33,7 @@ for (const item of matrix.cases) {
         entry.input_sha256 = crypto.createHash('sha256').update(fs.readFileSync(input)).digest('hex');
         execFileSync(binary, [input, '--format', format, '-o', destination], { cwd: root, timeout: 300000 });
         let content = fs.readFileSync(destination, 'utf8');
+        if (item.provider === '6.70.0') content = normalizeProviderOutput(content);
         if (item.name === 'language') {
           const plan = JSON.parse(fs.readFileSync(input, 'utf8'));
           const broad = plan.relevant_attributes.filter(entry =>

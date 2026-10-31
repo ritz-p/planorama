@@ -3,6 +3,7 @@ const path = require('node:path');
 const crypto = require('node:crypto');
 const { execFileSync } = require('node:child_process');
 const assert = require('node:assert/strict');
+const { normalizeProvider } = require('./compatibility-provider.cjs');
 const { readInputs, sourceInputs, digest, recreateInputs } = require('./terraform-compatibility-inputs.cjs');
 
 const root = path.resolve(__dirname, '..');
@@ -10,8 +11,10 @@ const fixtures = path.join(root, 'tests/fixtures/compatibility');
 const matrix = JSON.parse(fs.readFileSync(path.join(fixtures, 'matrix.json')));
 const work = path.join(root, 'output/terraform-compatibility');
 const phase = process.argv[2];
+const selected = process.argv.slice(3);
+for (const name of selected) assert(matrix.cases.some(item => item.name === name), `unknown case: ${name}`);
 if (!['prepare', 'capture', 'check'].includes(phase)) {
-  throw new Error('Usage: node scripts/terraform-compatibility.cjs prepare|capture|check');
+  throw new Error('Usage: node scripts/terraform-compatibility.cjs prepare|capture|check [case ...]');
 }
 const cache = path.join(work, 'plugins');
 if (phase === 'prepare') fs.mkdirSync(cache, { recursive: true });
@@ -48,6 +51,8 @@ function schemaContract(schema) {
       region: aws.resource_schemas[type].block.attributes.region ?? null }]));
 }
 for (const [version, checksum] of Object.entries(matrix.terraform)) {
+  const cases = matrix.cases.filter(item => (!selected.length || selected.includes(item.name)) && (!item.cores || item.cores.includes(version)));
+  if (!cases.length) continue;
   assert.match(version, /^\d+\.\d+\.\d+$/);
   const binDir = path.join(work, 'bin', version);
   const binary = path.join(binDir, 'terraform');
@@ -60,12 +65,12 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
     assert.equal(crypto.createHash('sha256').update(fs.readFileSync(archive)).digest('hex'), checksum);
     run('unzip', ['-oq', archive, '-d', binDir]);
   }
-  for (const item of matrix.cases) {
+  for (const item of cases) {
     if (item.cores && !item.cores.includes(version)) continue;
     assert.match(item.name, /^[a-z][a-z0-9-]*$/);
     const cwd = path.join(work, version, item.name);
     const destination = path.join(fixtures, version, item.name);
-    const extra = path.join(fixtures, 'inputs', `${item.name === 'aws5' || item.name === 'aws6' ? 'aws' : item.name}.tf`);
+    const extra = path.join(fixtures, 'inputs', `${item.input || (item.name === 'aws5' || item.name === 'aws6' ? 'aws' : item.name)}.tf`);
     const inputs = sourceInputs(path.join(root, item.source), extra, version, item.provider);
     if (phase === 'prepare') {
       recreateInputs(work, cwd, inputs);
@@ -102,7 +107,7 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
         assert.match(fs.readFileSync(path.join(destination, '.terraform.lock.hcl'), 'utf8'),
           new RegExp(`version\\s*=\\s*"${item.provider.replaceAll('.', '\\.')}"`));
       }
-      if (item.name === 'aws5' || item.name === 'aws6') {
+      if (item.name === 'aws5' || item.name === 'aws6' || item.name === 'aws670') {
         assert.equal(plan.resource_changes.length, 9);
         const resources = plan.configuration.root_module.resources;
         assert.deepEqual(resources.find(resource => resource.type === 'aws_ecs_task_definition')
@@ -112,7 +117,7 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
         assert.equal(resources.find(resource => resource.type === 'aws_security_group').expressions.ingress, undefined);
         assert.equal(plan.resource_changes.find(resource => resource.type === 'aws_security_group').change.after.ingress.length, 2);
       }
-      const base = path.join(fixtures, '1.9.8', item.name);
+      const base = path.join(fixtures, '1.9.8', item.compare || item.name);
       const schema = JSON.parse(fs.readFileSync(path.join(destination, 'schema.json')));
       assert.deepEqual(schema,
         JSON.parse(fs.readFileSync(path.join(base, 'schema.json'))));
@@ -128,6 +133,7 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
         }
       }
       const baseline = JSON.parse(fs.readFileSync(path.join(base, 'plan.json')));
+      if (item.provider === '6.70.0') normalizeProvider(plan);
       const relevance = entries => (entries ?? []).map(entry => JSON.stringify(entry)).sort();
       if (['1.13.5', '1.14.9', '1.15.9', '1.16.6'].includes(version) && item.name === 'language') {
         for (const address of ['data.terraform_remote_state.after_ready', 'data.terraform_remote_state.existing']) {

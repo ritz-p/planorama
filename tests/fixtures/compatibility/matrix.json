@@ -39,6 +39,26 @@
       "name": "language",
       "source": "examples/terraform",
       "provider": null
+    },
+    {
+      "name": "aws670",
+      "source": "tests/fixtures/aws-captured",
+      "provider": "6.70.0",
+      "cores": [
+        "1.9.8"
+      ],
+      "input": "aws",
+      "compare": "aws6"
+    },
+    {
+      "name": "overrides670",
+      "source": "tests/fixtures/aws-region-overrides",
+      "provider": "6.70.0",
+      "cores": [
+        "1.9.8"
+      ],
+      "input": "overrides",
+      "compare": "overrides"
     }
   ]
 }
