@@ -25,11 +25,64 @@ mod dms_tests;
 #[path = "../../../tests/unit/semantic/database_endpoints.rs"]
 mod endpoint_tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/database_configuration.rs"]
+mod configuration_tests;
+
 fn rule(
     resource: &str,
     attribute: &str,
 ) -> Option<(&'static str, &'static str, bool, &'static str)> {
     match (resource, attribute) {
+        ("aws_db_instance", "parameter_group_name")
+        | ("aws_rds_cluster", "db_instance_parameter_group_name")
+        | ("aws_rds_cluster_instance", "db_parameter_group_name") => {
+            Some(("aws_db_parameter_group", "name", false, "Parameter group"))
+        }
+        ("aws_db_instance", "option_group_name") => {
+            Some(("aws_db_option_group", "name", false, "Option group"))
+        }
+        ("aws_rds_cluster", "db_cluster_parameter_group_name") => Some((
+            "aws_rds_cluster_parameter_group",
+            "name",
+            false,
+            "Cluster parameter group",
+        )),
+        ("aws_docdb_cluster", "db_cluster_parameter_group_name") => Some((
+            "aws_docdb_cluster_parameter_group",
+            "name",
+            false,
+            "Cluster parameter group",
+        )),
+        ("aws_neptune_cluster", "neptune_cluster_parameter_group_name") => Some((
+            "aws_neptune_cluster_parameter_group",
+            "name",
+            false,
+            "Cluster parameter group",
+        )),
+        ("aws_neptune_cluster", "neptune_instance_parameter_group_name")
+        | ("aws_neptune_cluster_instance", "neptune_parameter_group_name") => Some((
+            "aws_neptune_parameter_group",
+            "name",
+            false,
+            "Parameter group",
+        )),
+        (
+            "aws_db_instance" | "aws_rds_cluster" | "aws_rds_cluster_instance",
+            "monitoring_role_arn",
+        ) => Some(("aws_iam_role", "arn", false, "Monitoring role")),
+        ("aws_rds_cluster" | "aws_neptune_cluster", "iam_roles") => {
+            Some(("aws_iam_role", "arn", true, "Associated IAM roles"))
+        }
+        ("aws_db_instance_role_association" | "aws_rds_cluster_role_association", "role_arn") => {
+            Some(("aws_iam_role", "arn", false, "Associated IAM role"))
+        }
+        ("aws_db_instance_role_association", "db_instance_identifier") => {
+            Some(("aws_db_instance", "identifier", false, "DB instance"))
+        }
+        ("aws_rds_cluster_role_association", "db_cluster_identifier") => {
+            Some(("aws_rds_cluster", "cluster_identifier", false, "DB cluster"))
+        }
         ("aws_db_proxy_endpoint", "db_proxy_name") => {
             Some(("aws_db_proxy", "name", false, "Proxy owner"))
         }
@@ -229,7 +282,7 @@ pub(super) fn annotate(
                     super::scope::scope(endpoint)
                         .as_ref()
                         .and_then(|s| s.region.as_ref()),
-                    false,
+                    kind == "aws_iam_role",
                 ) {
                     return None;
                 }
@@ -311,8 +364,21 @@ pub(super) fn annotate(
 }
 
 pub(super) fn bindings(raw: &Input, reference: &AttributeReference) -> bool {
-    super::streaming::bindings(raw, reference)
-        && endpoint_members(raw, reference)
+    reference.sources.iter().all(|&source| {
+        let node = &raw.nodes[reference.target];
+        let endpoint = &raw.nodes[source];
+        super::eventbridge::bindings(
+            node.provider_configuration.as_ref(),
+            endpoint.provider_configuration.as_ref(),
+            node.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
+            endpoint
+                .entity
+                .scope
+                .as_ref()
+                .and_then(|s| s.region.as_ref()),
+            endpoint.resource_type == "aws_iam_role",
+        )
+    }) && endpoint_members(raw, reference)
         && reference
             .service_reference_owner_account
             .as_ref()

@@ -116,3 +116,4 @@ examples/lambda-policy.svg
 examples/cloudwatch-logs.svg
 examples/cloudwatch-delivery.svg
 examples/database-endpoints.svg
+examples/database-configuration.svg
