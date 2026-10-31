@@ -29,10 +29,10 @@ test('deferred filter selects only the three classified ignored regressions', ()
 
 test('deferred regressions run after merge and nightly without executing PR heads or manual benchmarks', () => {
   const workflow = read('.github/workflows/routing_regressions.yml');
-  assert.match(workflow, /pull_request_target:\s+types: \[closed\]\s+branches: \[main\]/);
+  assert.match(workflow, /push:\s+branches: \[main\]/);
   assert.match(workflow, /schedule:\s+- cron:/);
   assert.match(workflow, /workflow_dispatch:/);
-  assert.match(workflow, /github.event.pull_request.merged == true/);
+  assert.doesNotMatch(workflow, /pull_request_target/);
   assert.match(workflow, /contents: read/);
   assert.match(workflow, /persist-credentials: false/);
   assert.doesNotMatch(workflow, /ref:|: write|continue-on-error|pull_request.head|--include-ignored/);

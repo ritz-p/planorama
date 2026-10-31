@@ -43,7 +43,7 @@ jobs:
         run: echo "key=wasm-ci-v2-${{ runner.os }}-${{ runner.arch }}-$CONFIG" >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v3
       - name: Build pinned environment
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7.4.0
         with:
           context: .
           load: true
