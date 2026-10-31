@@ -88,6 +88,7 @@ async function main() {
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
     checkpoint('viewer-parity');
+    require('./wasm-s3.cjs')({root, run, native: nativeReference});
     const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
     const serverless = JSON.parse(readFileSync(join(root, 'tests/fixtures/opensearch-serverless-plan.json'), 'utf8'));
     serverless.resource_changes[4].change.after_unknown = {subnet_ids: [false, true]};

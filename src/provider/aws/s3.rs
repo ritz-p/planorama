@@ -40,6 +40,20 @@ pub(crate) fn indexed_resource(resource: &str) -> bool {
 pub(crate) fn indexed_attribute(resource: &str, attribute: &str) -> Option<&'static str> {
     let parts: Vec<_> = attribute.split('.').collect();
     match (resource, parts.as_slice()) {
+        (
+            "aws_s3_bucket_replication_configuration",
+            [
+                "rule",
+                rule,
+                "destination",
+                "0",
+                "encryption_configuration",
+                "0",
+                "replica_kms_key_id",
+            ],
+        ) if rule.parse::<usize>().is_ok() => {
+            Some("rule.destination.encryption_configuration.replica_kms_key_id")
+        }
         ("aws_s3_bucket_metric", ["filter", "0", "access_point"]) => Some("filter.access_point"),
         (
             "aws_s3_bucket_replication_configuration",
@@ -65,7 +79,7 @@ pub(super) fn list_shape(resource: &str, lengths: &[usize]) -> bool {
     match resource {
         "aws_s3_bucket_metric" => lengths == [1],
         "aws_s3_bucket_notification" => lengths.len() == 1,
-        "aws_s3_bucket_replication_configuration" => matches!(lengths, [_, 1]),
+        "aws_s3_bucket_replication_configuration" => matches!(lengths, [_, 1] | [_, 1, 1]),
         _ => false,
     }
 }
@@ -78,6 +92,10 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         resource,
         indexed_attribute(resource, attribute).unwrap_or(attribute),
     ) {
+        (
+            "aws_s3_bucket_replication_configuration",
+            "rule.destination.encryption_configuration.replica_kms_key_id",
+        ) => Some("Replication KMS reference"),
         ("aws_s3_bucket_metric", "filter.access_point") => Some("Metric access point reference"),
         ("aws_s3_bucket_policy", "bucket") => Some("Policy bucket reference"),
         ("aws_s3_bucket_replication_configuration", "bucket") => {
@@ -112,6 +130,11 @@ pub(super) fn source_fields(
     }
     let indexed = indexed_attribute(resource, attribute);
     match (resource, indexed.unwrap_or(attribute), source) {
+        (
+            "aws_s3_bucket_replication_configuration",
+            "rule.destination.encryption_configuration.replica_kms_key_id",
+            "aws_kms_key" | "aws_kms_alias",
+        ) if indexed.is_some() => &["arn"],
         ("aws_s3_bucket_metric", "filter.access_point", "aws_s3_access_point")
             if indexed.is_some() =>
         {
@@ -148,7 +171,8 @@ pub(super) fn aggregate(
     if !indexed_resource(resource)
         || !matches!(
             reference.attribute.as_str(),
-            "filter.access_point"
+            "rule.destination.encryption_configuration.replica_kms_key_id"
+                | "filter.access_point"
                 | "queue.queue_arn"
                 | "topic.topic_arn"
                 | "lambda_function.lambda_function_arn"
