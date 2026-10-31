@@ -244,3 +244,88 @@ fn s3_policy_indexed_ambiguity_and_foreign_consumers_keep_safe_fallbacks() {
             .any(|r| r.label == "Policy bucket reference")
     );
 }
+
+#[test]
+fn bucket_configurations_require_explicit_matching_general_bucket() {
+    for kind in [
+        "aws_s3_bucket_abac",
+        "aws_s3_bucket_accelerate_configuration",
+        "aws_s3_bucket_acl",
+        "aws_s3_bucket_cors_configuration",
+        "aws_s3_bucket_intelligent_tiering_configuration",
+        "aws_s3_bucket_lifecycle_configuration",
+        "aws_s3_bucket_object_lock_configuration",
+        "aws_s3_bucket_ownership_controls",
+        "aws_s3_bucket_public_access_block",
+        "aws_s3_bucket_request_payment_configuration",
+        "aws_s3_bucket_versioning",
+        "aws_s3_bucket_website_configuration",
+        "aws_s3_bucket_metric",
+    ] {
+        for invalid in [false, true] {
+            let mut value = policy();
+            value["resource_changes"][1]["type"] = json!(kind);
+            if invalid {
+                value["resource_changes"][0]["change"]["after"]["id"] = json!("mismatch");
+            }
+            let result = graph(&value);
+            let bucket = reference(&result, "aws_s3_bucket_policy.assets", "bucket");
+            assert_eq!(bucket.label, "Configuration bucket reference", "{kind}");
+            assert_eq!(bucket.complete, !invalid, "{kind}");
+            assert_eq!(result.coverage.selected.resources, 3);
+        }
+    }
+}
+
+#[test]
+fn s3_metric_filter_requires_singleton_explicit_access_point_arn() {
+    for invalid in 0..5 {
+        let mut value = policy();
+        value["resource_changes"][1]["type"] = json!("aws_s3_bucket_metric");
+        value["resource_changes"][0]["type"] = json!("aws_s3_access_point");
+        value["resource_changes"][0]["change"]["after"]["arn"] =
+            json!("arn:aws:s3:us-west-2:123456789012:accesspoint/test");
+        value["resource_changes"][1]["change"]["after"]["filter"] =
+            json!([{"access_point":"arn:aws:s3:us-west-2:123456789012:accesspoint/test"}]);
+        value["configuration"]["root_module"]["resources"][1]["expressions"]["filter"] =
+            json!([{ "access_point":{"references":["aws_s3_bucket.assets[0].arn"]}}]);
+        match invalid {
+            1 => value["resource_changes"][0]["change"]["after"]["arn"] = json!("different"),
+            2 => value["resource_changes"][0]["type"] = json!("aws_s3_bucket"),
+            3 => value["resource_changes"][0]["change"]["after_unknown"] = json!({"arn":true}),
+            4 => value["resource_changes"][0]["mode"] = json!("data"),
+            _ => (),
+        }
+        let result = graph(&value);
+        assert_eq!(
+            reference(
+                &result,
+                "aws_s3_bucket_policy.assets",
+                "filter.0.access_point"
+            )
+            .complete,
+            invalid == 0,
+            "case {invalid}"
+        );
+    }
+}
+
+#[test]
+fn s3_directory_bucket_is_spatial_without_subnet_inference() {
+    let mut value = policy();
+    value["resource_changes"][0]["type"] = json!("aws_s3_directory_bucket");
+    value["resource_changes"][0]["change"]["after"]["location"] =
+        json!([{"name":"usw2-az1","type":"AvailabilityZone"}]);
+    value["resource_changes"][1]["type"] = json!("aws_s3_bucket_metric");
+    let result = graph(&value);
+    let bucket = result
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_s3_bucket.assets[0]")
+        .unwrap();
+    assert_eq!(bucket.placement, Placement::Spatial);
+    assert!(reference(&result, "aws_s3_bucket_policy.assets", "bucket").complete);
+    assert_eq!(result.nodes.len(), 3);
+    value["resource_changes"][1]["type"] = json!("aws_s3_bucket_acl");
+    assert!(!reference(&graph(&value), "aws_s3_bucket_policy.assets", "bucket").complete);
+}

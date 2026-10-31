@@ -22,6 +22,26 @@ AWS Provider 5.100.0/6.0.0 installed schemas and the
 define the initial scope. See the synthetic [fixture](../tests/fixtures/s3-policy-plan.json),
 [SVG](../examples/s3-policy.svg) and [offline HTML](../examples/s3-policy.html).
 
+The bucket configuration resources `aws_s3_bucket_abac`,
+`aws_s3_bucket_accelerate_configuration`, `aws_s3_bucket_acl`,
+`aws_s3_bucket_cors_configuration`, `aws_s3_bucket_intelligent_tiering_configuration`,
+`aws_s3_bucket_lifecycle_configuration`, `aws_s3_bucket_object_lock_configuration`,
+`aws_s3_bucket_ownership_controls`, `aws_s3_bucket_public_access_block`,
+`aws_s3_bucket_request_payment_configuration`, `aws_s3_bucket_versioning`,
+`aws_s3_bucket_website_configuration` and `aws_s3_bucket_metric` expose
+`Configuration bucket reference` for explicit `bucket` inputs to general-purpose
+Bucket `id`/`bucket`. They retain independent identities, actions and coverage.
+The same current managed type/value proof and unresolved fallback apply.
+Metric additionally accepts Directory Bucket `id`/`bucket` and a singleton
+`filter.0.access_point` reference to Access Point `arn`; the filter is not ownership.
+No ACL grantee, CORS origin, lifecycle transition, website host, credential or
+configuration status becomes an endpoint or an assertion of effective access.
+
+Directory buckets are independent regional Spatial storage resources. Location
+zone IDs and name suffixes do not identify customer subnets or VPC containers;
+Directory Bucket is not an alias of general-purpose Bucket.
+These additions use AWS Provider 6.70.0's
+[Metric contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_bucket_metric.html.markdown).
 Bucket notifications are regional Logical Controllers. The independent
 `Notification bucket reference` uses the same Bucket identity proof.
 Queue, topic and Lambda function references accept only exact managed AWS

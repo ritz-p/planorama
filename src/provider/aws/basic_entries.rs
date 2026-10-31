@@ -1336,7 +1336,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_s3_bucket_server_side_encryption_configuration", "Amazon S3", Controller, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3_bucket_versioning", "Amazon S3", Node, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3_bucket_website_configuration", "Amazon S3", Controller, Logical, Regional, Some(ResourceIcon::Storage)),
-    entry!("aws_s3_directory_bucket", "Amazon S3", Node, Logical, Regional, Some(ResourceIcon::Storage)),
+    entry!("aws_s3_directory_bucket", "Amazon S3", Node, Spatial, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3_object", "Amazon S3", Node, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3_object_copy", "Amazon S3", Node, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3control_access_grant", "Amazon S3", Policy, Logical, Regional, Some(ResourceIcon::Storage)),
