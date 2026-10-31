@@ -226,9 +226,15 @@ demonstrate the complete trusted default-branch cycle.
 
 ## Validation after merging
 
-Tests/Clippy seed caches after merged PR events using the default-branch commit,
-read-only permissions and no PR-head execution. After a direct push, dispatch
-Tests/Clippy on main with PR inputs empty. Formatting/MSRV retain PR/manual triggers.
+Tests/Clippy seed caches on relevant pushes to `main`, including merges and direct
+pushes, using the pushed commit and read-only permissions. Routing regressions
+also run on `main` pushes, nightly and manually. These workflows do not use
+`pull_request_target` and need no execution policy exception.
+
+[Skip directives](https://docs.github.com/en/actions/how-tos/manage-workflow-runs/skip-workflow-runs)
+such as `[skip ci]` suppress push validation if retained in a squash-merge message.
+Remove them before merging, or dispatch Tests/Clippy and Routing regressions on
+`main` afterward with PR inputs empty. Formatting/MSRV retain PR/manual triggers.
 
 ## Browser Wasm (#432)
 
