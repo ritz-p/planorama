@@ -246,3 +246,22 @@ fn storage_lens_destination_owner_must_be_known_and_match() {
         );
     }
 }
+
+#[test]
+fn analytics_destination_account_unknown_stays_unresolved() {
+    let kind = "aws_s3_bucket_analytics_configuration";
+    let path = "storage_class_analysis.data_export.destination.s3_bucket_destination.bucket_arn";
+    let account_path = path.replace("bucket_arn", "bucket_account_id");
+    for mask in [json!(true), json!({"invalid":false})] {
+        let mut value = fixture(kind, path, "aws_s3_bucket", false);
+        value["resource_changes"][1]["change"]["after_unknown"] = nested(&account_path, mask);
+        let graph = build_graph(&value);
+        let reference = graph
+            .nodes
+            .iter()
+            .flat_map(|node| &node.references)
+            .find(|reference| reference.attribute == path && reference.label != "References")
+            .unwrap();
+        assert!(!reference.complete);
+    }
+}

@@ -106,6 +106,9 @@ fn optional_scalar<'a>(
     if let Some((field, rest)) = path.split_first() {
         return optional_scalar(&value[*field], &unknown[*field], rest);
     }
+    if !matches!(unknown, Value::Null | Value::Bool(false)) {
+        return None;
+    }
     if value.is_null() {
         Some(None)
     } else {
