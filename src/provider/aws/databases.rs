@@ -273,17 +273,32 @@ pub(super) fn annotate(
                 if !current(endpoint) || endpoint.resource_type != kind {
                     return None;
                 }
-                if !super::eventbridge::bindings(
-                    node.provider_configuration.as_ref(),
-                    endpoint.provider_configuration.as_ref(),
-                    super::scope::scope(node)
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    super::scope::scope(endpoint)
-                        .as_ref()
-                        .and_then(|s| s.region.as_ref()),
-                    kind == "aws_iam_role",
-                ) {
+                let configuration = matches!(
+                    kind,
+                    "aws_iam_role"
+                        | "aws_db_parameter_group"
+                        | "aws_db_option_group"
+                        | "aws_rds_cluster_parameter_group"
+                        | "aws_docdb_cluster_parameter_group"
+                        | "aws_neptune_cluster_parameter_group"
+                        | "aws_neptune_parameter_group"
+                ) || matches!(
+                    node.resource_type.as_str(),
+                    "aws_db_instance_role_association" | "aws_rds_cluster_role_association"
+                );
+                if !configuration
+                    && !super::eventbridge::bindings(
+                        node.provider_configuration.as_ref(),
+                        endpoint.provider_configuration.as_ref(),
+                        super::scope::scope(node)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        super::scope::scope(endpoint)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        kind == "aws_iam_role",
+                    )
+                {
                     return None;
                 }
                 let (value, mask) = evidence[source];

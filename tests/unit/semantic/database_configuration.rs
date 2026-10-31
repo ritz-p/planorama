@@ -5,25 +5,36 @@ const FIXTURE: &str = include_str!("../../fixtures/database-configuration-plan.j
 
 #[test]
 fn database_iam_roles_are_global_but_require_matching_accounts() {
-    for account in ["123456789012", "999999999999"] {
-        let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
-        v["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
-            json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Test"}}]);
-        v["configuration"]["provider_config"]["other"] = json!({"full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-west-2"},"assume_role":[{"role_arn":{"constant_value":format!("arn:aws:iam::{account}:role/Test")}}]}});
-        v["configuration"]["root_module"]["resources"][6]["provider_config_key"] = json!("other");
-        let parsed = crate::plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
-        let g = semantic::transform(&parsed);
-        let db = g
-            .nodes
-            .iter()
-            .find(|n| n.address == "aws_db_instance.main")
-            .unwrap();
-        assert_eq!(
-            db.references
+    for region in ["us-east-1", "us-west-2"] {
+        for account in ["123456789012", "999999999999"] {
+            let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
+            v["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+                json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Test"}}]);
+            v["configuration"]["provider_config"]["aws.other"] = json!({"full_name":"registry.terraform.io/hashicorp/aws","alias":"other","expressions":{"region":{"constant_value":region},"assume_role":[{"role_arn":{"constant_value":format!("arn:aws:iam::{account}:role/Test")}}]}});
+            v["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+                json!("aws.other");
+            v["configuration"]["root_module"]["resources"][6]["provider_config_key"] =
+                json!("aws.other");
+            let parsed = crate::plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
+            let g = semantic::transform(&parsed);
+            let db = g
+                .nodes
                 .iter()
-                .any(|r| r.label == "Monitoring role" && r.complete),
-            account == "123456789012"
-        );
+                .find(|n| n.address == "aws_db_instance.main")
+                .unwrap();
+            assert_eq!(
+                db.references
+                    .iter()
+                    .any(|r| r.label == "Monitoring role" && r.complete),
+                account == "123456789012"
+            );
+            assert_eq!(
+                db.references
+                    .iter()
+                    .any(|r| r.label == "Parameter group" && r.complete),
+                account == "123456789012" && region == "us-east-1"
+            );
+        }
     }
 }
 
