@@ -43,6 +43,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_ecs_task_set"
+                | "aws_db_proxy_endpoint"
                 | "aws_vpc_peering_connection_accepter"
                 | "aws_route53_resolver_rule"
                 | "aws_route53_resolver_rule_association"

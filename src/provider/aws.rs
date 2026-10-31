@@ -144,6 +144,7 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     let resource_type = aliases::canonical(resource_type);
     match resource_type {
+        "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
         "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
             crate::model::Placement::Spatial
         }
