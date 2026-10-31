@@ -1,3 +1,21 @@
+fn bucket_configuration(resource: &str) -> bool {
+    matches!(
+        resource,
+        "aws_s3_bucket_abac"
+            | "aws_s3_bucket_accelerate_configuration"
+            | "aws_s3_bucket_acl"
+            | "aws_s3_bucket_cors_configuration"
+            | "aws_s3_bucket_intelligent_tiering_configuration"
+            | "aws_s3_bucket_lifecycle_configuration"
+            | "aws_s3_bucket_object_lock_configuration"
+            | "aws_s3_bucket_ownership_controls"
+            | "aws_s3_bucket_public_access_block"
+            | "aws_s3_bucket_request_payment_configuration"
+            | "aws_s3_bucket_versioning"
+            | "aws_s3_bucket_website_configuration"
+            | "aws_s3_bucket_metric"
+    )
+}
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/s3.rs"]
 mod tests;
@@ -13,13 +31,16 @@ mod replication_tests;
 pub(crate) fn indexed_resource(resource: &str) -> bool {
     matches!(
         resource,
-        "aws_s3_bucket_notification" | "aws_s3_bucket_replication_configuration"
+        "aws_s3_bucket_notification"
+            | "aws_s3_bucket_replication_configuration"
+            | "aws_s3_bucket_metric"
     )
 }
 
 pub(crate) fn indexed_attribute(resource: &str, attribute: &str) -> Option<&'static str> {
     let parts: Vec<_> = attribute.split('.').collect();
     match (resource, parts.as_slice()) {
+        ("aws_s3_bucket_metric", ["filter", "0", "access_point"]) => Some("filter.access_point"),
         (
             "aws_s3_bucket_replication_configuration",
             ["rule", rule, "destination", destination, "bucket"],
@@ -42,6 +63,7 @@ pub(crate) fn indexed_attribute(resource: &str, attribute: &str) -> Option<&'sta
 
 pub(super) fn list_shape(resource: &str, lengths: &[usize]) -> bool {
     match resource {
+        "aws_s3_bucket_metric" => lengths == [1],
         "aws_s3_bucket_notification" => lengths.len() == 1,
         "aws_s3_bucket_replication_configuration" => matches!(lengths, [_, 1]),
         _ => false,
@@ -49,10 +71,14 @@ pub(super) fn list_shape(resource: &str, lengths: &[usize]) -> bool {
 }
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if bucket_configuration(resource) && attribute == "bucket" {
+        return Some("Configuration bucket reference");
+    }
     match (
         resource,
         indexed_attribute(resource, attribute).unwrap_or(attribute),
     ) {
+        ("aws_s3_bucket_metric", "filter.access_point") => Some("Metric access point reference"),
         ("aws_s3_bucket_policy", "bucket") => Some("Policy bucket reference"),
         ("aws_s3_bucket_replication_configuration", "bucket") => {
             Some("Replication source bucket reference")
@@ -75,8 +101,22 @@ pub(super) fn source_fields(
     attribute: &str,
     source: &str,
 ) -> &'static [&'static str] {
+    if bucket_configuration(resource) && attribute == "bucket" && source == "aws_s3_bucket" {
+        return &["id", "bucket"];
+    }
+    if resource == "aws_s3_bucket_metric"
+        && attribute == "bucket"
+        && source == "aws_s3_directory_bucket"
+    {
+        return &["id", "bucket"];
+    }
     let indexed = indexed_attribute(resource, attribute);
     match (resource, indexed.unwrap_or(attribute), source) {
+        ("aws_s3_bucket_metric", "filter.access_point", "aws_s3_access_point")
+            if indexed.is_some() =>
+        {
+            &["arn"]
+        }
         (
             "aws_s3_bucket_policy"
             | "aws_s3_bucket_notification"
@@ -108,7 +148,8 @@ pub(super) fn aggregate(
     if !indexed_resource(resource)
         || !matches!(
             reference.attribute.as_str(),
-            "queue.queue_arn"
+            "filter.access_point"
+                | "queue.queue_arn"
                 | "topic.topic_arn"
                 | "lambda_function.lambda_function_arn"
                 | "rule.destination.bucket"
