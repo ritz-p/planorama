@@ -75,7 +75,7 @@ configuration resource contributes one identity/action and coverage count.
 
 References describe configuration whether a rule is enabled or disabled; they
 do not assert replication activity, permission, versioning or transfer success.
-IAM role dependencies remain ordinary Terraform references. Rule IDs, filter
+The explicit `role` reference requires a current managed IAM Role `arn`. Rule IDs, filter
 values, payloads and policy bodies are not emitted. Missing/filtered, ambiguous,
 dynamic, unknown, wrong-provider/type and deleted/deposed endpoints cannot be
 resolved from names or matching ARN strings alone.
@@ -207,3 +207,24 @@ and schema distinguish the subnet list, SG set and persistent-only KMS ARN.
 unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
 [HTML](../examples/fsx-lustre.html) examples.
 Native/Wasm parity covers the same fixture and conservative fallbacks.
+
+AWS Provider 6.70.0 export references additionally cover:
+
+| Resource | Configured paths and managed targets |
+| --- | --- |
+| Bucket analytics | `bucket` → Bucket `id`/`bucket`; `storage_class_analysis.data_export.destination.s3_bucket_destination.bucket_arn` → Bucket `arn` |
+| Bucket inventory | `bucket` → general-purpose or Directory Bucket `id`/`bucket`; `destination.bucket.bucket_arn` → general-purpose Bucket `arn`; `destination.bucket.encryption.sse_kms.key_id` → KMS Key `arn` |
+| Bucket logging | `bucket`, `target_bucket` → Bucket `id`/`bucket` |
+| Bucket metadata | `bucket` → Bucket `id`/`bucket`; inventory/journal table `encryption_configuration.kms_key_arn` → KMS Key `arn` only with `sse_algorithm = aws:kms` |
+| Bucket replication | `role` → IAM Role `arn`; indexed `rule.destination.encryption_configuration.replica_kms_key_id` → KMS Key or Alias `arn`, with matching `key/` or `alias/` discriminator |
+| Storage Lens | `storage_lens_configuration.data_export.s3_bucket_destination.arn` and `expanded_prefixes_data_export.s3_bucket_destination.arn` → Bucket `arn`; data-export `encryption.sse_kms.key_id` → KMS Key `arn`; `aws_org.arn` → Organization `arn`; `include.buckets` / `exclude.buckets` → complete Bucket ARN sets |
+
+Nested export blocks require singleton list shapes. Bucket selectors require the
+whole evaluated set to match explicit unique current managed references; partial,
+unknown or ambiguous sets stay unresolved. Optional analytics/inventory destination
+account IDs constrain the endpoint when present; unknown account evidence cannot
+prove the destination. Storage Lens export requires a matching known owner account.
+Targets keep their own scope, including cross-region replication KMS keys.
+Computed metadata destinations, table-export flags, prefixes and retention settings
+do not synthesize resources, ownership or runtime guarantees. Unproven inputs retain
+ordinary Terraform navigation independently of dedicated references.

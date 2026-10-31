@@ -122,6 +122,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::lambda::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::s3_exports::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::s3::label(resource, attribute) {
         return Some(label);
     }
@@ -518,6 +521,12 @@ pub(crate) fn annotate(
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
         reference.service_reference_verified &= super::dynamodb::verify(nodes, reference, evidence);
+        if node.resource_type == "aws_s3_bucket_replication_configuration"
+            && reference.attribute.ends_with("replica_kms_key_id")
+        {
+            reference.service_reference_verified &=
+                actual.is_some_and(|arn| super::s3_exports::kms_arn(&endpoint.resource_type, arn));
+        }
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
             || node.resource_type == "aws_redshift_cluster"
             || (node.resource_type == "aws_backup_plan"
@@ -576,6 +585,7 @@ pub(crate) fn annotate(
             );
         }
     }
+    super::s3_exports::annotate(nodes, references, evidence);
     super::streaming::annotate(nodes, references, evidence);
     super::vpc_routes::annotate(nodes, references, evidence);
     super::vpc_gateways::annotate(nodes, references, evidence);

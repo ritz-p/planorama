@@ -59,6 +59,7 @@ mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+mod s3_exports;
 mod sagemaker;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
