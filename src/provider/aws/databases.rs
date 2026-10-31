@@ -21,11 +21,50 @@ mod redshift_serverless_tests;
 #[path = "../../../tests/unit/semantic/dms.rs"]
 mod dms_tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/database_endpoints.rs"]
+mod endpoint_tests;
+
 fn rule(
     resource: &str,
     attribute: &str,
 ) -> Option<(&'static str, &'static str, bool, &'static str)> {
     match (resource, attribute) {
+        ("aws_db_proxy_endpoint", "db_proxy_name") => {
+            Some(("aws_db_proxy", "name", false, "Proxy owner"))
+        }
+        ("aws_rds_cluster_endpoint", "cluster_identifier") => Some((
+            "aws_rds_cluster",
+            "cluster_identifier",
+            false,
+            "Endpoint cluster",
+        )),
+        ("aws_neptune_cluster_endpoint", "cluster_identifier") => Some((
+            "aws_neptune_cluster",
+            "cluster_identifier",
+            false,
+            "Endpoint cluster",
+        )),
+        ("aws_rds_cluster_endpoint", "static_members" | "excluded_members") => Some((
+            "aws_rds_cluster_instance",
+            "identifier",
+            true,
+            if attribute == "excluded_members" {
+                "Excluded endpoint members"
+            } else {
+                "Static endpoint members"
+            },
+        )),
+        ("aws_neptune_cluster_endpoint", "static_members" | "excluded_members") => Some((
+            "aws_neptune_cluster_instance",
+            "identifier",
+            true,
+            if attribute == "excluded_members" {
+                "Excluded endpoint members"
+            } else {
+                "Static endpoint members"
+            },
+        )),
         ("aws_dms_replication_instance", "replication_subnet_group_id") => Some((
             "aws_dms_replication_subnet_group",
             "id",
@@ -213,6 +252,42 @@ pub(super) fn annotate(
         r.service_reference_verified = expected
             .is_some_and(|expected| expected.len() == r.sources.len() && actual == expected);
     }
+    let invalid_members: BTreeSet<_> = references
+        .iter()
+        .enumerate()
+        .filter_map(|(index, r)| {
+            if !matches!(
+                nodes[r.target].resource_type.as_str(),
+                "aws_rds_cluster_endpoint" | "aws_neptune_cluster_endpoint"
+            ) || !matches!(r.attribute.as_str(), "static_members" | "excluded_members")
+            {
+                return None;
+            }
+            let valid = r.sources.iter().all(|&source| {
+                let (value, mask) = evidence[source];
+                let actual =
+                    super::service_references::scalar(value, mask, &["cluster_identifier"]);
+                let mut refs = references
+                    .iter()
+                    .filter(|r| r.target == source && r.attribute == "cluster_identifier");
+                let Some(member) = refs.next() else {
+                    return false;
+                };
+                let [cluster] = member.sources.as_slice() else {
+                    return false;
+                };
+                let (value, mask) = evidence[*cluster];
+                refs.next().is_none()
+                    && actual.is_some()
+                    && actual
+                        == super::service_references::scalar(value, mask, &["cluster_identifier"])
+            });
+            (!valid).then_some(index)
+        })
+        .collect();
+    for index in invalid_members {
+        references[index].service_reference_verified = false;
+    }
     let groups = references
         .iter()
         .filter(|r| r.attribute == "neptune_subnet_group_name" && r.service_reference_verified)
@@ -237,6 +312,7 @@ pub(super) fn annotate(
 
 pub(super) fn bindings(raw: &Input, reference: &AttributeReference) -> bool {
     super::streaming::bindings(raw, reference)
+        && endpoint_members(raw, reference)
         && reference
             .service_reference_owner_account
             .as_ref()
@@ -249,6 +325,47 @@ pub(super) fn bindings(raw: &Input, reference: &AttributeReference) -> bool {
                         == Some(account)
                 })
             })
+}
+
+fn endpoint_members(raw: &Input, reference: &AttributeReference) -> bool {
+    let kind = match raw.nodes[reference.target].resource_type.as_str() {
+        "aws_rds_cluster_endpoint" => "aws_rds_cluster",
+        "aws_neptune_cluster_endpoint" => "aws_neptune_cluster",
+        _ => return true,
+    };
+    if !matches!(
+        reference.attribute.as_str(),
+        "static_members" | "excluded_members"
+    ) {
+        return true;
+    }
+    let Some(owner) = proof(raw, reference.target, "cluster_identifier") else {
+        return false;
+    };
+    reference.sources.iter().all(|&source| {
+        let mut refs = raw
+            .attributes
+            .iter()
+            .filter(|r| r.target == source && r.attribute == "cluster_identifier");
+        let Some(member) = refs.next() else {
+            return false;
+        };
+        refs.next().is_none()
+            && member.complete
+            && member.instances_explicit
+            && member.issues.is_empty()
+            && member.sources == owner.sources
+            && member.source_attributes.len() == 1
+            && member.source_attributes.contains("cluster_identifier")
+            && member.sources.iter().all(|&i| {
+                raw.nodes[i].provider.is_aws()
+                    && raw.nodes[i].mode == EntityMode::Managed
+                    && raw.nodes[i].action != Action::Delete
+                    && raw.nodes[i].deposed_key.is_none()
+                    && raw.nodes[i].resource_type == kind
+            })
+            && super::streaming::bindings(raw, member)
+    })
 }
 
 fn proof<'a>(raw: &'a Input, target: usize, attribute: &str) -> Option<&'a AttributeReference> {

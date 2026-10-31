@@ -507,3 +507,11 @@ Pinned Provider 6.70.0 contracts:
 [fixture](../tests/fixtures/sagemaker-plan.json) cover positive/negative evidence;
 native/Wasm parity covers SVG/HTML and incomplete model/network collections.
 Examples: [SVG](../examples/sagemaker.svg), [HTML](../examples/sagemaker.html).
+
+## Database custom endpoints (#765)
+
+`aws_db_proxy_endpoint` is an independent Spatial card. Its `db_proxy_name` references the proxy `name`; complete explicit `vpc_subnet_ids` and `vpc_security_group_ids` references must prove one common VPC. Proxy ownership never supplies network placement.
+
+RDS and Neptune custom cluster endpoints remain Logical configuration. `cluster_identifier` must reference the matching cluster `cluster_identifier`. `static_members` and `excluded_members` reference instance `identifier` outputs and require each instance to explicitly reference the same cluster. References require known matching nonempty values, current managed resources and compatible bindings. Unknown, ambiguous, filtered, deleted and deposed proof is rejected. Endpoint hostnames and runtime balancing are excluded.
+
+Contracts were checked against AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: `website/docs/r/{db_proxy_endpoint,rds_cluster_endpoint,neptune_cluster_endpoint}.html.markdown` and `internal/service/{rds,neptune}/*endpoint.go`. See [fixture](../tests/fixtures/database-endpoints-plan.json), [SVG](../examples/database-endpoints.svg) and [HTML](../examples/database-endpoints.html).
