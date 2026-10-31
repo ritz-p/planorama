@@ -61,6 +61,7 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
     run('unzip', ['-oq', archive, '-d', binDir]);
   }
   for (const item of matrix.cases) {
+    if (item.cores && !item.cores.includes(version)) continue;
     assert.match(item.name, /^[a-z][a-z0-9-]*$/);
     const cwd = path.join(work, version, item.name);
     const destination = path.join(fixtures, version, item.name);
@@ -128,7 +129,7 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
       }
       const baseline = JSON.parse(fs.readFileSync(path.join(base, 'plan.json')));
       const relevance = entries => (entries ?? []).map(entry => JSON.stringify(entry)).sort();
-      if (version === '1.16.6' && item.name === 'language') {
+      if (['1.13.5', '1.14.9', '1.15.9', '1.16.6'].includes(version) && item.name === 'language') {
         for (const address of ['data.terraform_remote_state.after_ready', 'data.terraform_remote_state.existing']) {
           const before = baseline.relevant_attributes.find(entry => entry.resource === address);
           const after = plan.relevant_attributes.find(entry => entry.resource === address);

@@ -1,14 +1,44 @@
 {
   "platform": "linux_amd64",
-  "verified_on": "2026-10-20",
+  "verified_on": "2026-10-31",
   "terraform": {
     "1.9.8": "186e0145f5e5f2eb97cbd785bc78f21bae4ef15119349f6ad4fa535b83b10df8",
-    "1.16.6": "38034b38d03096399a7a1264a14561a8029b2b496fd1f169452656e53968f1b7"
+    "1.16.6": "38034b38d03096399a7a1264a14561a8029b2b496fd1f169452656e53968f1b7",
+    "1.10.5": "0566a24f5332098b15716ebc394be503f4094acba5ba529bf5eb0698ed5e2a90",
+    "1.11.4": "1ce994251c00281d6845f0f268637ba50c0005657eb3cf096b92f753b42ef4dc",
+    "1.12.2": "1eaed12ca41fcfe094da3d76a7e9aa0639ad3409c43be0103ee9f5a1ff4b7437",
+    "1.13.5": "0dbe3fcc268eb670801af6a6456799d1ae26e72e73797f6c6167e18aafd1fd9a",
+    "1.14.9": "2e5cffc20a0b48a67a76268723bd5a10b8666f69b2aa4f04906e206726bedd63",
+    "1.15.9": "76edd0b22d2f27d3d2e097cd793209646f719cf60f02ff3af626b07361137da1"
   },
   "cases": [
-    {"name": "aws5", "source": "tests/fixtures/aws-captured", "provider": "5.100.0"},
-    {"name": "aws6", "source": "tests/fixtures/aws-captured", "provider": "6.0.0"},
-    {"name": "overrides", "source": "tests/fixtures/aws-region-overrides", "provider": "6.0.0"},
-    {"name": "language", "source": "examples/terraform", "provider": null}
+    {
+      "name": "aws5",
+      "source": "tests/fixtures/aws-captured",
+      "provider": "5.100.0"
+    },
+    {
+      "name": "aws6",
+      "source": "tests/fixtures/aws-captured",
+      "provider": "6.0.0",
+      "cores": [
+        "1.9.8",
+        "1.16.6"
+      ]
+    },
+    {
+      "name": "overrides",
+      "source": "tests/fixtures/aws-region-overrides",
+      "provider": "6.0.0",
+      "cores": [
+        "1.9.8",
+        "1.16.6"
+      ]
+    },
+    {
+      "name": "language",
+      "source": "examples/terraform",
+      "provider": null
+    }
   ]
 }
