@@ -6,6 +6,48 @@ fn fixture() -> Value {
 }
 
 #[test]
+fn proxy_endpoint_preserves_verified_account_panel() {
+    let mut v = fixture();
+    v["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Test"}}]);
+    let parsed = crate::plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    let endpoint = graph
+        .nodes
+        .iter()
+        .position(|n| n.address == "aws_db_proxy_endpoint.custom")
+        .unwrap();
+    let vpc = graph
+        .nodes
+        .iter()
+        .position(|n| n.address == "aws_vpc.main")
+        .unwrap();
+    assert!(graph.edges.iter().any(|e| e.from == vpc
+        && e.to == endpoint
+        && e.kind == crate::model::EdgeKind::Containment));
+    assert_eq!(
+        graph.nodes[endpoint].entity.scope,
+        graph.nodes[vpc].entity.scope
+    );
+    let groups = crate::view::scope::groups(&graph, &crate::layout::ContainmentTree::new(&graph));
+    let (scope, _) = groups
+        .iter()
+        .find(|(_, roots)| roots.contains(&vpc))
+        .unwrap();
+    assert_eq!(
+        scope.as_ref().unwrap().account.as_ref().unwrap().as_str(),
+        "123456789012"
+    );
+    let output = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    let doc = roxmltree::Document::parse(&output).unwrap();
+    assert!(
+        doc.descendants()
+            .any(|n| n.attribute("data-account") == Some("123456789012")
+                && n.attribute("data-region") == Some("us-east-1"))
+    );
+}
+
+#[test]
 fn endpoint_named_states_preserve_coverage_and_privacy() {
     let v = fixture();
     let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
