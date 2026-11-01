@@ -37,6 +37,7 @@ mod elbv2_tls;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
+pub(crate) mod flow_logs;
 mod fsx;
 mod glue;
 mod iam;

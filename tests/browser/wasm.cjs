@@ -70,6 +70,7 @@ async function main() {
       native: nativeReference,
     });
     checkpoint('resources');
+    require('./wasm-flow-logs.cjs')({run, native: nativeReference});
     require('./wasm-options.cjs')({
       driver, small, run, submit, status,
       native: nativeReference,

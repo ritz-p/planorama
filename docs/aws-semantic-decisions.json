@@ -36332,10 +36332,10 @@
       }
     },
     "aws_flow_log": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 896,
-      "gap": "#710 audit: Missing: one configured monitored resource; type-gated CloudWatch/S3/Firehose destination and delivery IAM roles. S3 prefix is not bucket identity; cross-account delivery role scope differs. Follow-up #896.",
+      "gap": "Implemented #896: verified unique monitored-resource ownership, type-gated exact CloudWatch/S3/Firehose ARN references and source/cross-account delivery roles. Managed endpoints only; TGW attachment support is bounded to VPC attachments. Prefix destinations and summaries remain excluded. See aws.md#flow-log-references-896.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
