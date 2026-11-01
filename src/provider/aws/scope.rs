@@ -43,6 +43,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_ecs_task_set"
+                | "aws_db_event_subscription"
+                | "aws_docdb_event_subscription"
+                | "aws_neptune_event_subscription"
                 | "aws_db_snapshot"
                 | "aws_db_cluster_snapshot"
                 | "aws_docdb_cluster_snapshot"
