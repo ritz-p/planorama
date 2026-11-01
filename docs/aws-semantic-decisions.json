@@ -2043,7 +2043,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 931,
-      "gap": "Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
+      "gap": "#714 audit; Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2333,7 +2333,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 931,
-      "gap": "Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
+      "gap": "#714 audit; Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40396,7 +40396,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
+      "gap": "#714 audit; Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40554,7 +40554,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
+      "gap": "#714 audit; Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40667,7 +40667,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
+      "gap": "#714 audit; Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
