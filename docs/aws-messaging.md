@@ -90,7 +90,8 @@ Interface endpoint. Certificate registration names and truststore URLs stay opaq
 V2 domain mappings (#939) require a REGIONAL domain and an explicitly referenced
 REST, HTTP or WebSocket API with a stage from that same API family and owner.
 V2 domain certificate blocks must be single and REGIONAL. Routing-rule actions
-require exactly one invoke_api block targeting a REST API and its stage; the V2
+require exactly one invoke_api block targeting an explicitly EDGE/REGIONAL REST API
+and its stage; PRIVATE, unknown or missing endpoint types remain unresolved. The V2
 resource name does not permit HTTP/WebSocket targets. Conditions remain opaque.
 
 ## Step Functions

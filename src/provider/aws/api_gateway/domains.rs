@@ -132,6 +132,10 @@ fn single_action(context: &Context<'_>, index: usize) -> bool {
         })
 }
 
+fn public_rest_api(context: &Context<'_>, index: usize) -> bool {
+    matches!(endpoint_type(context, index), Some("EDGE" | "REGIONAL"))
+}
+
 pub(super) fn edge_eligible(nodes: &[TerraformEntity], r: &AttributeReference) -> bool {
     if nodes[r.target].resource_type != "aws_api_gateway_domain_name"
         || r.attribute != "certificate_arn"
@@ -181,7 +185,8 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
             regional_domain(context, source)
         }
         ("aws_apigatewayv2_api_mapping", "api_id") => {
-            context.nodes[source].resource_type == "aws_api_gateway_rest_api"
+            (context.nodes[source].resource_type == "aws_api_gateway_rest_api"
+                && public_rest_api(context, source))
                 || matches!(
                     context.value(source, "protocol_type"),
                     Some("HTTP" | "WEBSOCKET")
@@ -194,7 +199,8 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
                 && context.source(r.target, "api_id").is_some_and(|api| {
                     match context.nodes[api].resource_type.as_str() {
                         "aws_api_gateway_rest_api" => {
-                            context.nodes[source].resource_type == "aws_api_gateway_stage"
+                            public_rest_api(context, api)
+                                && context.nodes[source].resource_type == "aws_api_gateway_stage"
                                 && context.source(source, "rest_api_id") == Some(api)
                         }
                         "aws_apigatewayv2_api" => {
@@ -210,6 +216,7 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         }
         ("aws_apigatewayv2_routing_rule", "action.invoke_api.api_id") => {
             single_action(context, r.target)
+                && public_rest_api(context, source)
                 && context
                     .source(r.target, "domain_name")
                     .is_some_and(|d| regional_domain(context, d))
@@ -221,7 +228,10 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
                     .is_some_and(|d| regional_domain(context, d))
                 && context
                     .source(r.target, "action.invoke_api.api_id")
-                    .is_some_and(|api| context.source(source, "rest_api_id") == Some(api))
+                    .is_some_and(|api| {
+                        public_rest_api(context, api)
+                            && context.source(source, "rest_api_id") == Some(api)
+                    })
         }
         ("aws_api_gateway_base_path_mapping", "domain_name" | "domain_name_id") => {
             mapping_domain(context, r.target)
