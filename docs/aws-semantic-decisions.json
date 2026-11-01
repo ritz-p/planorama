@@ -52820,10 +52820,10 @@
       }
     },
     "aws_cloudwatch_contributor_managed_insight_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 987,
-      "gap": "#730 audit: Missing: explicit supported resource ARN paired with managed rule template; computed rule_name is not a separate managed rule. Follow-up #987. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #987: typed Firehose/role, exact PrivateLink template/resource and ElastiCache replication-group configuration references. See aws-compute.md#cloudwatch-metric-configuration-references-987. Selectors and computed rule names do not identify managed targets. #730 audit: historical evidence is retained below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -54021,10 +54021,10 @@
       }
     },
     "aws_cloudwatch_metric_stream": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 987,
-      "gap": "#730 audit: Missing: Firehose and role ARN; namespace/metric filters are selectors, not resource identity. Follow-up #987. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #987: typed Firehose/role, exact PrivateLink template/resource and ElastiCache replication-group configuration references. See aws-compute.md#cloudwatch-metric-configuration-references-987. Selectors and computed rule names do not identify managed targets. #730 audit: historical evidence is retained below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -54196,10 +54196,10 @@
       }
     },
     "aws_cloudwatch_resource_metrics_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 987,
-      "gap": "#730 audit: Missing: ElastiCache replication-group ARN for detailed monitoring; pinned docs explicitly exclude serverless caches and cache clusters; metric names do not identify managed resources. Follow-up #987. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #987: typed Firehose/role, exact PrivateLink template/resource and ElastiCache replication-group configuration references. See aws-compute.md#cloudwatch-metric-configuration-references-987. Selectors and computed rule names do not identify managed targets. #730 audit: historical evidence is retained below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",

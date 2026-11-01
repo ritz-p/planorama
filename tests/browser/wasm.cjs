@@ -92,6 +92,23 @@ async function main() {
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
     checkpoint('viewer-parity');
+    for (const scenario of ['complete', 'incomplete', 'filtered']) {
+      const metrics = JSON.parse(readFileSync(join(root, 'tests/fixtures/cloudwatch-metrics-plan.json'), 'utf8'));
+      if (scenario === 'incomplete') {
+        metrics.resource_changes[4].change.after_unknown = {firehose_arn: true};
+        metrics.resource_changes[5].change.after_unknown = {template_name: true};
+      }
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(metrics);
+        const options = scenario === 'filtered' ? {format, focus: 'aws_cloudwatch_metric_stream.metrics', focus_depth: 0} : {format};
+        const args = scenario === 'filtered' ? ['--format', format, '--focus', options.focus, '--focus-depth', '0'] : ['--format', format];
+        const result = run(input, options);
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, args), `CloudWatch metrics native/Wasm ${format}/${scenario}`);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
+    }
+    checkpoint('cloudwatch-metrics');
     if (full) {
       require('./wasm-s3.cjs')({root, run, native: nativeReference});
       const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');

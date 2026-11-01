@@ -15,6 +15,7 @@ pub(crate) mod cloudfront_vpc_origin;
 mod cloudtrail_tests;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;
+pub(crate) mod cloudwatch_metrics;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
