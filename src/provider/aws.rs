@@ -26,6 +26,7 @@ mod data;
 mod database_events;
 mod database_snapshots;
 mod databases;
+mod dax;
 pub(super) mod diagnostics;
 mod dynamodb;
 mod ecs_capacity;
@@ -252,6 +253,7 @@ pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIco
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     streaming::present(&raw, &mut graph);
+    dax::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);

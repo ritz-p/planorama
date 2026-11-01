@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::dax::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloudwatch_metrics::label(resource, attribute) {
         return Some(label);
     }
@@ -458,6 +461,10 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::dax::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified = super::dax::verify(nodes, reference, evidence);
+            continue;
+        }
         if super::eventbridge::label(&node.resource_type, &reference.attribute).is_some() {
             reference.service_reference_verified =
                 super::eventbridge::verify(nodes, reference, evidence);
@@ -642,6 +649,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::dax::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::dax::bindings(raw, reference))
         && (super::flow_logs::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

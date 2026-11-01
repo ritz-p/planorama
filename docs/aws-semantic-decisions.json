@@ -7063,10 +7063,10 @@
       }
     },
     "aws_dax_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 739,
-      "gap": "Missing: subnet/parameter/role/SNS references. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #739: verified subnet-group, subnet/SG, parameter-group, IAM role and SNS references with complete common-VPC placement. See aws-data.md#dax-references-739. Computed nodes, table ownership and encryption summaries remain excluded. Review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7108,10 +7108,10 @@
       }
     },
     "aws_dax_parameter_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 739,
-      "gap": "Missing: inbound cluster parameter reference. Parameter values intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #739: verified subnet-group, subnet/SG, parameter-group, IAM role and SNS references with complete common-VPC placement. See aws-data.md#dax-references-739. Computed nodes, table ownership and encryption summaries remain excluded. Review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7138,10 +7138,10 @@
       }
     },
     "aws_dax_subnet_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 739,
-      "gap": "Missing: cluster/subnet references; computed vpc_id alone is insufficient. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #739: verified subnet-group, subnet/SG, parameter-group, IAM role and SNS references with complete common-VPC placement. See aws-data.md#dax-references-739. Computed nodes, table ownership and encryption summaries remain excluded. Review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
