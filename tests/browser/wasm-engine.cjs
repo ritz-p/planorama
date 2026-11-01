@@ -48,7 +48,7 @@ async function main() {
     require('./memory-chromium.cjs')(driver, fs.readFileSync(join(temp, 'planorama.js'), 'utf8'), `/v${version}/planorama_bg.wasm`, fs.readFileSync('tests/fixtures/viewer-plan.json', 'utf8'));
     const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
     const fixtures = full
-      ? ['api-gateway-v2-plan', 'viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan', 'lambda-config-plan', 'lambda-events-plan']
+      ? ['api-gateway-rest-plan', 'api-gateway-v2-plan', 'viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan', 'lambda-config-plan', 'lambda-events-plan']
       : ['viewer-plan', 'changed-paths-plan'];
     for (const fixture of fixtures) {
       const json = fs.readFileSync(`tests/fixtures/${fixture}.json`, 'utf8');

@@ -2168,7 +2168,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 930,
-      "gap": "#714 audit: Partial: #509 API/deployment same-parent proof; missing client certificate, API-qualified documentation/canary deployment and typed log group/Firehose destination. Follow-up #930. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit follow-up implemented in #930: explicit client certificate, same-API documentation/canary deployment and typed single-block access-log references. Existing placement and conservative fallback remain; summaries are unsupported.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2185,7 +2185,7 @@
         "placement": "Supported: retain Spatial Node for aws_api_gateway_stage; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_api_gateway_stage identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_api_gateway_stage has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Partial: #509 API/deployment same-parent proof; missing client certificate, API-qualified documentation/canary deployment and typed log group/Firehose destination.",
+        "references": "Supported: within #930 scope, explicit matching certificate ID, same-API documentation version and canary deployment, CloudWatch Logs or qualified Firehose destination.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; account requires existing provider evidence. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_api_gateway_stage attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/api_gateway_stage.html.markdown",
@@ -40232,10 +40232,10 @@
       }
     },
     "aws_api_gateway_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 930,
-      "gap": "#714 audit: Missing: account CloudWatch role ARN; this is regional singleton configuration, not an IAM role owner. Follow-up #930. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit follow-up implemented in #930: explicit matching CloudWatch IAM role ARN with compatible provider binding and known region; regional singleton configuration remains independent.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40246,7 +40246,7 @@
         "placement": "Supported: retain Logical Controller for aws_api_gateway_account; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_api_gateway_account identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_api_gateway_account has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: account CloudWatch role ARN; this is regional singleton configuration, not an IAM role owner.",
+        "references": "Supported: within #930 scope, explicit matching CloudWatch IAM role ARN; regional singleton configuration does not own the role.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_api_gateway_account attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/api_gateway_account.html.markdown",

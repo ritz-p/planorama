@@ -3,6 +3,34 @@ use crate::model::AttributeReference;
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
     let (label, targets, list): (_, &[_], _) = match (resource, attribute) {
+        ("aws_api_gateway_account", "cloudwatch_role_arn") => (
+            "API Gateway logging role",
+            &[("aws_iam_role", "arn")],
+            false,
+        ),
+        ("aws_api_gateway_stage", "client_certificate_id") => (
+            "REST client certificate",
+            &[("aws_api_gateway_client_certificate", "id")],
+            false,
+        ),
+        ("aws_api_gateway_stage", "documentation_version") => (
+            "REST documentation version",
+            &[("aws_api_gateway_documentation_version", "version")],
+            false,
+        ),
+        ("aws_api_gateway_stage", "canary_settings.deployment_id") => (
+            "REST canary deployment",
+            &[("aws_api_gateway_deployment", "id")],
+            false,
+        ),
+        ("aws_api_gateway_stage", "access_log_settings.destination_arn") => (
+            "REST access logs",
+            &[
+                ("aws_cloudwatch_log_group", "arn"),
+                ("aws_kinesis_firehose_delivery_stream", "arn"),
+            ],
+            false,
+        ),
         ("aws_api_gateway_rest_api", "endpoint_configuration.vpc_endpoint_ids") => (
             "Private REST endpoints",
             &[("aws_vpc_endpoint", "id")],
@@ -14,7 +42,8 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
             | "aws_api_gateway_authorizer"
             | "aws_api_gateway_resource"
             | "aws_api_gateway_method"
-            | "aws_api_gateway_deployment",
+            | "aws_api_gateway_deployment"
+            | "aws_api_gateway_documentation_version",
             "rest_api_id",
         ) => (
             "REST API context",
@@ -129,9 +158,22 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
             resource_matches(context, r.target, source)
         }
         ("aws_api_gateway_integration", "http_method") => method_matches(context, r.target, source),
-        ("aws_api_gateway_stage", "deployment_id") => context
+        (
+            "aws_api_gateway_stage",
+            "deployment_id" | "canary_settings.deployment_id" | "documentation_version",
+        ) => context
             .source(r.target, "rest_api_id")
             .is_some_and(|api| context.source(source, "rest_api_id") == Some(api)),
+        ("aws_api_gateway_stage", "client_certificate_id") => {
+            context.source(r.target, "rest_api_id").is_some()
+        }
+        ("aws_api_gateway_stage", "access_log_settings.destination_arn") => {
+            context.source(r.target, "rest_api_id").is_some()
+                && (context.nodes[source].resource_type != "aws_kinesis_firehose_delivery_stream"
+                    || context
+                        .value(source, "name")
+                        .is_some_and(|name| name.starts_with("amazon-apigateway-")))
+        }
         ("aws_api_gateway_integration", "uri") => {
             matches!(context.value(r.target, "type"), Some("AWS" | "AWS_PROXY"))
                 && context.value(r.target, "integration_http_method") == Some("POST")
