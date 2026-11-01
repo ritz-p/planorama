@@ -64,6 +64,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_vpc_peering_connection_options"
                 | "aws_fsx_lustre_file_system"
                 | "aws_security_group_rule"
+                | "aws_network_acl_rule"
+                | "aws_network_acl_association"
                 | "aws_vpc_security_group_ingress_rule"
                 | "aws_vpc_security_group_egress_rule"
                 | "aws_vpc_security_group_rules_exclusive"

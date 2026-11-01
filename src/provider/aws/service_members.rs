@@ -15,6 +15,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_network_acl_rule" => ("network_acl_id", "Network ACL owner", "Rules"),
             "aws_security_group_rule"
             | "aws_vpc_security_group_ingress_rule"
             | "aws_vpc_security_group_egress_rule" => {

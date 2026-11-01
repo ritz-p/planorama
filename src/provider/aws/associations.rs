@@ -57,6 +57,10 @@ pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str);
             ("instance_id", "aws_instance"),
             ("volume_id", "aws_ebs_volume"),
         ]),
+        "aws_network_acl_association" => Some([
+            ("network_acl_id", "aws_network_acl"),
+            ("subnet_id", "aws_subnet"),
+        ]),
         "aws_route_table_association" => Some([
             ("subnet_id", "aws_subnet"),
             ("route_table_id", "aws_route_table"),
@@ -106,6 +110,8 @@ pub(super) fn lower(raw: &Input) -> Graph {
             "aws_network_interface_attachment" | "aws_network_interface_sg_attachment"
         ) {
             super::eni::association(raw, index)
+        } else if node.resource_type == "aws_network_acl_association" {
+            super::network_acl::association(raw, index)
         } else if node.resource_type == "aws_vpc_security_group_vpc_association" {
             super::security_group_rules::association(raw, index)
         } else if matches!(
