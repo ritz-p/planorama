@@ -46,6 +46,41 @@ encryption summaries or health/reachability claims are added.
 See the [fixture](../tests/fixtures/memorydb-plan.json) and
 [SVG](../examples/memorydb.svg).
 
+## DAX references (#739)
+
+DAX clusters remain Spatial; shared subnet and parameter groups remain independent
+Logical resources. Verified configuration navigation supports:
+
+| Input | Managed endpoint output |
+| --- | --- |
+| Cluster `subnet_group_name` | `aws_dax_subnet_group.name` / `id` |
+| Subnet group `subnet_ids` set | `aws_subnet.id` |
+| Cluster `security_group_ids` set | `aws_security_group.id` |
+| Cluster `parameter_group_name` | `aws_dax_parameter_group.name` / `id` |
+| Cluster `iam_role_arn` | `aws_iam_role.arn` |
+| Cluster `notification_topic_arn` | `aws_sns_topic.arn` |
+
+These contracts use AWS Provider 6.70.0, commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, checked against the official
+[cluster schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/dax/cluster.go),
+[subnet group schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/dax/subnet_group.go),
+[parameter group schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/dax/parameter_group.go)
+and their resource documentation. Group IDs equal their names. Cluster subnet,
+parameter and security group inputs are optional/computed; defaults alone prove
+no managed target. IAM role is required; notification topic is optional.
+
+References require explicit unique current managed resources, equal known values
+and compatible provider/account/region evidence within one named state. Sets
+must be complete, nonempty and duplicate-free. Cluster placement additionally
+requires every referenced subnet and SG to prove the same current managed VPC.
+Missing, transformed, unknown, ambiguous, deleted, deposed or filtered evidence
+stays unresolved; individual proven configuration links remain independent of
+placement. IAM roles retain global scope. Lifecycle actions, imports, moves and
+coverage remain attached exactly once. No computed nodes, table ownership,
+credentials, parameters, policy content, encryption summaries or reachability
+are inferred. See the [fixture](../tests/fixtures/dax-plan.json) and
+[SVG](../examples/dax.svg).
+
 ## OpenSearch Serverless (#696)
 
 Collections retain independent Spatial cards. VPC endpoints remain Logical,
