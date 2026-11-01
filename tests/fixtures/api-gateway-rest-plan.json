@@ -617,6 +617,114 @@
           "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnameaccessassociations/synthetic"
         }
       }
+    },
+    {
+      "address": "aws_apigatewayv2_domain_name.mapping",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "v2.example.invalid",
+          "domain_name": "v2.example.invalid",
+          "domain_name_configuration": [
+            {
+              "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic",
+              "ownership_verification_certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic",
+              "endpoint_type": "REGIONAL",
+              "security_policy": "TLS_1_2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_api.mapping",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "http-mapping",
+          "protocol_type": "HTTP",
+          "name": "mapping"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_stage.mapping",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_stage",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "http-mapping",
+          "name": "live",
+          "id": "live",
+          "auto_deploy": true
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_api_mapping.http",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api_mapping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "http-mapping",
+          "domain_name": "v2.example.invalid",
+          "stage": "live"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_routing_rule.rest",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_routing_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "v2.example.invalid",
+          "priority": 1,
+          "action": [
+            {
+              "invoke_api": [
+                {
+                  "api_id": "rest-synthetic",
+                  "stage": "live"
+                }
+              ]
+            }
+          ],
+          "condition": [
+            {
+              "match_base_paths": [
+                {
+                  "any_of": [
+                    "example"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration": {
@@ -1219,6 +1327,107 @@
                 "aws_vpc_endpoint.domain.id"
               ]
             }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_domain_name.mapping",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_domain_name",
+          "name": "mapping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name_configuration": [
+              {
+                "certificate_arn": {
+                  "references": [
+                    "aws_acm_certificate.domain.arn"
+                  ]
+                },
+                "ownership_verification_certificate_arn": {
+                  "references": [
+                    "aws_acm_certificate.domain.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_api.mapping",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_api",
+          "name": "mapping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_stage.mapping",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_stage",
+          "name": "mapping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.mapping.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_api_mapping.http",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_api_mapping",
+          "name": "http",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.mapping.id"
+              ]
+            },
+            "domain_name": {
+              "references": [
+                "aws_apigatewayv2_domain_name.mapping.id"
+              ]
+            },
+            "stage": {
+              "references": [
+                "aws_apigatewayv2_stage.mapping.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_routing_rule.rest",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_routing_rule",
+          "name": "rest",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name": {
+              "references": [
+                "aws_apigatewayv2_domain_name.mapping.domain_name"
+              ]
+            },
+            "action": [
+              {
+                "invoke_api": [
+                  {
+                    "api_id": {
+                      "references": [
+                        "aws_api_gateway_rest_api.app.id"
+                      ]
+                    },
+                    "stage": {
+                      "references": [
+                        "aws_api_gateway_stage.live.stage_name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
           }
         }
       ]

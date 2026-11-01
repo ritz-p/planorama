@@ -1934,3 +1934,107 @@ fn rest_domains_reject_private_id_endpoint_type_and_certificate_mismatches() {
         }
     }
 }
+
+#[test]
+fn v2_domains_and_rest_routing_require_single_qualified_actions() {
+    for (address, field) in [
+        (
+            "aws_apigatewayv2_domain_name.mapping",
+            "domain_name_configuration.certificate_arn",
+        ),
+        ("aws_apigatewayv2_api_mapping.http", "stage"),
+        (
+            "aws_apigatewayv2_routing_rule.rest",
+            "action.invoke_api.api_id",
+        ),
+        (
+            "aws_apigatewayv2_routing_rule.rest",
+            "action.invoke_api.stage",
+        ),
+    ] {
+        for case in [
+            "valid",
+            "unknown",
+            "literal",
+            "wrong_api",
+            "extra_block",
+            "wrong_domain",
+            "deleted",
+        ] {
+            let mut v: Value =
+                serde_json::from_str(include_str!("../../fixtures/api-gateway-rest-plan.json"))
+                    .unwrap();
+            let target = v["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .find(|r| r["address"] == address)
+                .unwrap();
+            let root = field.split('.').next().unwrap();
+            if case == "unknown" {
+                target["change"]["after_unknown"][root] = json!(true);
+            }
+            if case == "extra_block" && field.contains('.') {
+                let array = target["change"]["after"][root].as_array_mut().unwrap();
+                array.push(array[0].clone());
+            }
+            if case == "deleted" {
+                target["change"]["actions"] = json!(["delete"]);
+            }
+            if case == "literal" {
+                v["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .find(|r| r["address"] == address)
+                    .unwrap()["expressions"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove(root);
+            }
+            if case == "wrong_domain" {
+                v["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .find(|r| r["address"] == "aws_apigatewayv2_domain_name.mapping")
+                    .unwrap()["change"]["after"]["domain_name_configuration"][0]["endpoint_type"] =
+                    json!("EDGE");
+            }
+            if case == "wrong_api" {
+                if address.contains("api_mapping") {
+                    v["resource_changes"]
+                        .as_array_mut()
+                        .unwrap()
+                        .iter_mut()
+                        .find(|r| r["address"] == "aws_apigatewayv2_stage.mapping")
+                        .unwrap()["change"]["after"]["api_id"] = json!("other");
+                } else if field.ends_with("stage") {
+                    v["resource_changes"]
+                        .as_array_mut()
+                        .unwrap()
+                        .iter_mut()
+                        .find(|r| r["address"] == "aws_api_gateway_stage.live")
+                        .unwrap()["change"]["after"]["rest_api_id"] = json!("other");
+                }
+            }
+            let raw = plan::parse(&v.to_string()).unwrap();
+            let expected = case == "valid"
+                || (case == "extra_block" && !field.contains('.'))
+                || (case == "wrong_api" && !field.ends_with("stage"));
+            assert_eq!(
+                raw.attributes
+                    .iter()
+                    .any(|r| raw.nodes[r.target].address == address
+                        && r.attribute == field
+                        && r.service_reference_verified),
+                expected,
+                "{address} {field} {case}"
+            );
+            assert_eq!(
+                semantic::transform(&raw).coverage.selected.resources,
+                v["resource_changes"].as_array().unwrap().len()
+            );
+        }
+    }
+}

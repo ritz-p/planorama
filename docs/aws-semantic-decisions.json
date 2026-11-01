@@ -41253,10 +41253,10 @@
       }
     },
     "aws_apigatewayv2_api_mapping": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "#714 audit: Missing: API/domain/stage references with same-API stage; REST and HTTP API endpoint types require explicit compatible identities. Follow-up #939. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41307,10 +41307,10 @@
       }
     },
     "aws_apigatewayv2_domain_name": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "#714 audit: Missing: REGIONAL ACM certificate and ownership verification references; truststore URL remains opaque. Follow-up #939. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41601,10 +41601,10 @@
       }
     },
     "aws_apigatewayv2_routing_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "#714 audit: Missing: routing domain plus REST API/stage tuple despite apigatewayv2 resource name; rule conditions are not endpoint evidence. Follow-up #939. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
