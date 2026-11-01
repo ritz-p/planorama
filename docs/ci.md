@@ -241,16 +241,28 @@ Remove them before merging, or dispatch Tests/Clippy and Routing regressions on
 **Browser Wasm** checks native/Wasm builds, UI parity and standalone distribution.
 Use [browser verification](browser-development.md#verification) and
 [engine memory contracts](browser-engine.md#per-generation-memory-selection).
-PR no-default native tests select `artwork_free::` plus CLI help; complete
-all-feature Rust tests remain in ordinary CI. Feature-specific implementation
-outside that selection requires reassessment. Run the full library with manual
-`full_library: true` or `WASM_CI_FULL_LIB=1 sh scripts/wasm-ci.sh`; engine releases
-retain the complete suite. Service parity and large completion remain on PRs
-because native tests do not cover Wasm/worker boundaries.
+`WASM_CI_SUITE=pr sh scripts/wasm-ci.sh` runs representative SVG/HTML parity,
+UI generation/downloads, selection, CSP/sandbox/offline checks, memory/trap recovery,
+and cancellation during real large-input Wasm routing followed by retry and stale
+notification checks. Settings/reset/file-change/error transitions use a controlled
+Worker. Native `artwork_free::` and CLI help tests run in ordinary all-feature Rust
+CI: default features are empty and `icon-artwork` is a no-op, with no conditional
+implementations or test exclusions. Reassess this if feature behavior changes.
+
+`WASM_CI_SUITE=full` (also the script default) additionally runs service-specific
+SVG/HTML comparisons, large generation completion/native parity, all standalone
+fixtures, and the complete no-default-feature library suite plus CLI help tests.
+**Wasm engine release** runs this scope on every `release` branch update and manual
+invocation. It does not publish on push. Manual **Browser Wasm** accepts `suite:
+full` for the same validation. Invalid scope values fail rather than skip checks.
+
+Both distributions share one explicit no-default-feature native reference and one
+Wasm build, binding generation and memory adapter. Their copied engine files are
+checked for byte equality before browser and extracted-package validation.
 
 ### Browser Wasm caches and measurements (#674)
 
-Cache hits never bypass build or validation. Delete affected `wasm-ci-v2-*` entries
+Cache hits never bypass build or validation. Delete affected `wasm-ci-v3-*` entries
 (or bump the prefix) for Cargo recovery; delete the `browser-wasm` BuildKit cache
 for environment reset. Bindings/archives must use freshly built workspace code.
 No external cache service or secrets are needed.
