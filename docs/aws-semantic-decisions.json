@@ -18568,7 +18568,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18604,7 +18604,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18642,7 +18642,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18709,7 +18709,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
