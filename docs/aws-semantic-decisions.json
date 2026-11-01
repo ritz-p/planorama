@@ -52628,10 +52628,10 @@
       }
     },
     "aws_cloudwatch_alarm_mute_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 986,
-      "gap": "#730 audit: Missing: complete account/region-qualified metric/composite alarm names; schedule is configuration, never evidence of current suppression. Follow-up #986. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #986: complete typed action sets, scoped suppressor and mute-target configuration references. See aws-compute.md#cloudwatch-alarm-configuration-references-986. Unsupported action forms, alarm-rule evaluation and runtime suppression remain excluded. #730 audit: historical evidence is retained below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52682,10 +52682,10 @@
       }
     },
     "aws_cloudwatch_composite_alarm": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 986,
-      "gap": "#730 audit: Missing: typed action ARN sets and suppressor alarm reference. Deferred: alarm_rule expression parsing until explicit expression provenance and cycle handling are designed; no state evaluation. Follow-up #986. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #986: complete typed action sets, scoped suppressor and mute-target configuration references. See aws-compute.md#cloudwatch-alarm-configuration-references-986. Unsupported action forms, alarm-rule evaluation and runtime suppression remain excluded. #730 audit: historical evidence is retained below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53916,7 +53916,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 986,
-      "gap": "#730 audit: Partial: existing Monitors/Monitored by requires AWS/RDS, known metric, exactly one DBInstanceIdentifier equal to one explicit current DB instance identifier, matching provider, no metric_query; inverse rows are not edges. Missing: typed action ARNs. Defer other namespaces/metric-query/PromQL target inference until exact metric and account contracts are defined. Follow-up #986. Supported: Logical default and explicit independent view from #549/#568; preserve diagnostics for unverified monitoring. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "Implemented #986: complete typed action sets, scoped suppressor and mute-target configuration references. See aws-compute.md#cloudwatch-alarm-configuration-references-986. Unsupported action forms, alarm-rule evaluation and runtime suppression remain excluded. #730 audit: historical evidence is retained below.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
