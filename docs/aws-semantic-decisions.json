@@ -36746,7 +36746,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 898,
-      "gap": "#710 audit: Partial: direct VPC containment exists; missing complete subnet_ids associations and inline rule summary contract without policy evaluation. Follow-up #898.",
+      "gap": "Implemented #898: complete configured subnet ID references with matching known VPC, verified ACL/subnet association lowering and qualified rule ownership retaining Terraform action and identity. Inline summaries remain deferred; no policy/reachability interpretation. See aws.md#network-acl-relationships-898. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36840,10 +36840,10 @@
       }
     },
     "aws_network_acl_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 898,
-      "gap": "#710 audit: Missing: ACL/subnet pair with compatible VPC proof; does not place shared ACL inside each subnet. Follow-up #898.",
+      "gap": "Implemented #898: complete configured subnet ID references with matching known VPC, verified ACL/subnet association lowering and qualified rule ownership retaining Terraform action and identity. Inline summaries remain deferred; no policy/reachability interpretation. See aws.md#network-acl-relationships-898. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36891,10 +36891,10 @@
       }
     },
     "aws_network_acl_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 898,
-      "gap": "#710 audit: Missing: ACL owner proof and safe rule identity; direction/rule number qualify a rule, not traffic reachability. Follow-up #898.",
+      "gap": "Implemented #898: complete configured subnet ID references with matching known VPC, verified ACL/subnet association lowering and qualified rule ownership retaining Terraform action and identity. Inline summaries remain deferred; no policy/reachability interpretation. See aws.md#network-acl-relationships-898. Historical #710 review retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

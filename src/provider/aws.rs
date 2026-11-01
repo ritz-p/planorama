@@ -50,6 +50,7 @@ mod members;
 mod messaging;
 mod monitoring;
 mod network;
+mod network_acl;
 pub(crate) mod networkfirewall;
 mod opensearch_serverless;
 pub(crate) mod organization_accounts;

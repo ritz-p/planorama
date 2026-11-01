@@ -67,6 +67,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::elbv2::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::network_acl::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::security_group_rules::label(resource, attribute) {
         return Some(label);
     }
@@ -597,6 +600,7 @@ pub(crate) fn annotate(
     super::vpc_gateways::annotate(nodes, references, evidence);
     super::privatelink::annotate(nodes, references, evidence);
     super::security_group_rules::annotate(nodes, references, evidence);
+    super::network_acl::annotate(nodes, references, evidence);
     super::databases::annotate(nodes, references, evidence);
     super::database_events::annotate(nodes, references, evidence);
     super::database_snapshots::annotate(nodes, references, evidence);
@@ -629,6 +633,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::network_acl::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::database_events::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

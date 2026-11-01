@@ -417,3 +417,43 @@ deleted/deposed objects, sensitive values and data-mode boundaries remain intact
 No health, traffic, successful log delivery or effective permission is inferred.
 Contracts follow AWS Provider 6.70.0 schema and `load_balancer.go` at
 `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
+## Network ACL relationships (#898)
+
+`aws_network_acl.subnet_ids` accepts a complete set of explicit managed
+`aws_subnet.id` references whose known IDs exactly match the complete input set.
+Every subnet must have the same known `vpc_id` as the ACL. This adds configured
+association navigation; the shared ACL retains its own identity and VPC placement.
+Existing `vpc_id` containment is unchanged and is not claimed to use these new checks.
+
+`aws_network_acl_association.network_acl_id` and `subnet_id` require unique
+managed `aws_network_acl.id` and `aws_subnet.id` references and matching known
+endpoint outputs. Both endpoints must have the same known VPC. A complete pair
+with exactly its two dependency edges becomes an association edge retaining the
+helper's Terraform address, action and change metadata. Additional consumers or
+unproven pairs retain the independent helper.
+
+`aws_network_acl_rule.network_acl_id` accepts only a unique managed
+`aws_network_acl.id` owner. Known `rule_number` (integer 1–32766), `egress`
+(boolean), `protocol` (tcp/udp/icmp/icmpv6/all or numeric string -1–255), and
+`rule_action` (allow/deny) qualify ownership. Other protocol names conservatively
+fall back. Rules retain their Terraform identity and action under the owner's
+Rules section; direction/number never identify a traffic endpoint or merge two
+Terraform resources. Unknown or invalid identity fields retain standalone rules.
+
+All new links require explicit instances, complete references, current non-deposed
+managed resources, compatible independent provider/account/region evidence and
+known matching output `id` strings. Literal-only values, data sources, ambiguous
+references, incomplete collections, mismatched VPCs and deleted endpoints do not
+prove a link. Named-state identity and filtering use the existing reference and
+coverage pipeline. No CIDR, IP, policy or computed-only endpoint inference occurs.
+The default ACL resource and data-source variants are not aliases.
+
+The pinned AWS Provider 6.70.0 source at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` defines `subnet_ids` as optional/computed
+set(string), despite the documentation calling it a list. `ingress`/`egress` are
+optional/computed attribute-as-blocks sets of objects; inline `rule_no`/`action`
+differ from standalone `rule_number`/`rule_action`. Inline rules create no synthetic
+resource identities. Their summaries remain deferred: no raw rule values, CIDRs,
+policy effects or runtime reachability are displayed in SVG or HTML. This issue
+selects identity/navigation only, not a new configuration-summary display.
