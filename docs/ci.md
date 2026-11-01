@@ -94,8 +94,9 @@ do not merge/release unresolved work or poll indefinitely.
 ## Terraform compatibility (#525)
 
 [Compatibility checks](terraform-compatibility.md) validate committed fixtures on
-relevant PRs; fixed-tool capture is manual. The separate provider-evidence job
-verifies saved plans against local STS with external networking disabled. Its
+relevant PRs; fixed-tool capture is manual. The release-branch Compatibility output
+job also verifies committed saved plans with external networking disabled, using
+the same CLI build. Manual capture uses a local STS fixture. Its
 [contract](provider-evidence.md) is distinct from ordinary JSON compatibility.
 **Compatibility output** builds once and compares committed matrix SVG/HTML only
 on pushes to `release`; its SHA-named artifact records outputs and per-case results.

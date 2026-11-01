@@ -7,9 +7,12 @@ const { execFileSync, spawn } = require('node:child_process');
 const root = path.resolve(__dirname, '../..');
 const work = path.join(root, 'output/provider-plan');
 const versions = ['1.9.8', '1.16.6'];
+const pairs = [['1.9.8', '5.100.0', 'aws5'], ['1.16.6', '5.100.0', 'aws5'], ['1.9.8', '6.0.0', 'aws6'], ['1.9.8', '6.70.0', 'aws670']];
 const checksums = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/compatibility/matrix.json'))).terraform;
 const phase = process.argv[2];
-assert.ok(['prepare', 'verify'].includes(phase), 'Usage: node tests/support/provider_plan.cjs prepare|verify');
+assert.ok(['prepare', 'capture', 'verify'].includes(phase), 'Usage: node tests/support/provider_plan.cjs prepare|capture|verify');
+const selectedPairs = process.argv[3] ? pairs.filter(([core, provider]) => `${core}/${provider}` === process.argv[3]) : pairs;
+assert.ok(selectedPairs.length > 0, 'Unknown saved-plan evidence pair');
 const env = { ...process.env, CHECKPOINT_DISABLE: '1', TF_IN_AUTOMATION: '1',
   AWS_ACCESS_KEY_ID: 'fixture', AWS_SECRET_ACCESS_KEY: 'fixture', AWS_EC2_METADATA_DISABLED: 'true' };
 for (const key of Object.keys(env)) if (/^TF_(CLI_ARGS|LOG)/.test(key)) delete env[key];
@@ -25,7 +28,7 @@ async function main() {
   let server;
   let portFile;
   try {
-    if (phase === 'verify') {
+    if (phase === 'capture') {
       portFile = path.join(fs.mkdtempSync('/tmp/planorama-sts-'), 'port');
       server = spawn(process.execPath, [path.join(__dirname, 'sts_fixture.cjs'), portFile], { stdio: 'ignore' });
       for (let i = 0; !fs.existsSync(portFile); i++) {
@@ -33,8 +36,9 @@ async function main() {
         await new Promise(resolve => setTimeout(resolve, 100));
       }
     }
-    for (const version of versions) {
-      const cwd = path.join(work, version);
+    for (const [version, provider, fixture] of selectedPairs) {
+      const cwd = path.join(work, `${version}-${provider}`);
+      const captured = path.join(root, 'tests/fixtures/provider-plan/captured', `${version}-${provider}`);
       const binDir = path.join(work, 'bin', version);
       const binary = path.join(binDir, 'terraform');
       const tempDir = path.join(cwd, 'tmp');
@@ -42,7 +46,8 @@ async function main() {
       const cli = (input, saved, output, extra = {}) => run(path.join(root, 'target/debug/planorama'),
         [input, ...(saved ? ['--provider-plan', saved] : []), '-o', output], cwd, { ...localEnv, ...extra });
       const source = fs.readFileSync(path.join(root, 'tests/fixtures/provider-plan/main.tf'), 'utf8')
-        .replace('= 1.9.8', `= ${version}`);
+        .replace('= 1.9.8', `= ${version}`).replace('= 5.100.0', `= ${provider}`)
+        .replace('  alias', provider === '6.70.0' ? '  user_agent = ["fixture"]\n  alias' : '  alias');
       if (phase === 'prepare') {
         fs.mkdirSync(binDir, { recursive: true });
         fs.mkdirSync(cwd, { recursive: true });
@@ -53,7 +58,9 @@ async function main() {
         assert.equal(crypto.createHash('sha256').update(fs.readFileSync(archive)).digest('hex'), checksums[version]);
         run('unzip', ['-oq', archive, '-d', binDir]);
         fs.writeFileSync(path.join(cwd, 'main.tf'), source);
-        fs.copyFileSync(path.join(root, `tests/fixtures/compatibility/${version}/aws5/.terraform.lock.hcl`), path.join(cwd, '.terraform.lock.hcl'));
+        fs.mkdirSync(path.join(cwd, 'child'), { recursive: true });
+        fs.copyFileSync(path.join(root, 'tests/fixtures/provider-plan/child/main.tf'), path.join(cwd, 'child/main.tf'));
+        fs.copyFileSync(path.join(root, `tests/fixtures/compatibility/${version}/${fixture}/.terraform.lock.hcl`), path.join(cwd, '.terraform.lock.hcl'));
         run(binary, ['init', '-backend=false', '-input=false', '-lockfile=readonly'], cwd);
         continue;
       }
@@ -61,12 +68,18 @@ async function main() {
       fs.mkdirSync(tempDir, { recursive: true });
       const schema = JSON.parse(run(binary, ['providers', 'schema', '-json'], cwd))
         .provider_schemas['registry.terraform.io/hashicorp/aws'].provider.block;
-      assert.deepEqual(compact(schema), JSON.parse(fs.readFileSync(path.join(root, 'src/plan/evidence/aws-5.100.0.json'))));
-      const staticSource = source.replace('12345', fs.readFileSync(portFile, 'utf8').trim());
+      assert.deepEqual(compact(schema), JSON.parse(fs.readFileSync(path.join(root, `src/plan/evidence/aws-${provider}.json`))));
+      const staticSource = phase === 'capture' ? source.replace('12345', fs.readFileSync(portFile, 'utf8').trim()) : source;
       const plan = (name, text) => {
+        if (phase === 'verify') {
+          for (const extension of ['plan', 'json']) fs.copyFileSync(path.join(captured, `${name}.${extension}`), path.join(cwd, `${name}.${extension}`));
+          return;
+        }
         fs.writeFileSync(path.join(cwd, 'main.tf'), text);
         run(binary, ['plan', '-refresh=false', '-input=false', `-out=${name}.plan`], cwd);
         fs.writeFileSync(path.join(cwd, `${name}.json`), run(binary, ['show', '-json', `${name}.plan`], cwd));
+        fs.mkdirSync(captured, { recursive: true });
+        for (const extension of ['plan', 'json']) fs.copyFileSync(path.join(cwd, `${name}.${extension}`), path.join(captured, `${name}.${extension}`));
       };
       const hasAccount = name => /data-account-panel="true"/.test(fs.readFileSync(path.join(cwd, name), 'utf8'));
       plan('static', staticSource);
@@ -106,7 +119,7 @@ async function main() {
       const otherBinary = path.join(work, 'bin', versions.find(v => v !== version), 'terraform');
       assert.throws(() => run(otherBinary, ['show', '-json', 'static.plan'], cwd));
       assert.deepEqual(fs.readdirSync(tempDir), []);
-      console.log(`Verified saved-plan evidence: Terraform ${version} / AWS 5.100.0`);
+      console.log(`Verified saved-plan evidence: Terraform ${version} / AWS ${provider}`);
     }
   } finally {
     if (server) {

@@ -8,7 +8,7 @@ Terraform language feature or provider release.
 | --- | --- | --- |
 | JSON interpretation | Terraform 1.9.8, 1.10.5, 1.11.4, 1.12.2, 1.13.5, 1.14.9, 1.15.9, 1.16.6; AWS 5.100.0 / 6.0.0 / 6.70.0 in selected combinations; JSON 1.2 | The committed cases below, not every resource or language feature |
 | Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0; Terraform 1.9.8 / AWS 6.70.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
-| Saved-plan provider evidence | Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 | The separate [archive and account contract](provider-evidence.md); AWS 6.x is excluded |
+| Saved-plan provider evidence | Exact pairs in the [archive and account contract](provider-evidence.md) | Independently verified archives and authentication schemas |
 
 Fixed Core archives and checksums are pinned in
 [`matrix.json`](../tests/fixtures/compatibility/matrix.json), which also selects
@@ -124,7 +124,9 @@ Ordinary Rust tests use committed JSON without Terraform execution.
 capture uses fixed tools with external networking disabled.
 **Compatibility output** runs only on pushes to `release`. It builds the checked-out
 CLI once and processes the matrix's committed JSON with that same binary, without
-Terraform downloads or capture. SVG and HTML are compared across equivalent inputs;
+Terraform execution for JSON checks. The separate saved-plan checks initialize fixed
+Terraform/Provider environments and read committed archives without recapture.
+SVG and HTML are compared across equivalent inputs;
 language metadata differences are checked explicitly. Generation metadata comes from
 the same binary and settings and remains part of the comparison.
 The `compatibility-output-<SHA>` artifact contains outputs and `report.json` with
