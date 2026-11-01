@@ -92,7 +92,9 @@ impl Options {
         if !shown.status.success() {
             return Err("provider plan: terraform show failed; check Terraform version and installed provider schemas (details suppressed for privacy)".into());
         }
-        Evidence::validate(&bytes, json, &shown.stdout).map(Some)
+        let evidence = Evidence::validate(&bytes, json, &shown.stdout)?;
+        evidence.validate_installed(&version.stdout)?;
+        Ok(Some(evidence))
     }
 }
 
