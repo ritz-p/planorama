@@ -121,4 +121,5 @@ examples/database-endpoints.svg
 examples/database-configuration.svg
 examples/database-snapshots.svg
 examples/database-events.svg
+examples/memorydb.svg
 examples/dax.svg

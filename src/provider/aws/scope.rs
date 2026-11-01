@@ -43,6 +43,13 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_ecs_task_set"
+                | "aws_memorydb_cluster"
+                | "aws_memorydb_subnet_group"
+                | "aws_memorydb_parameter_group"
+                | "aws_memorydb_acl"
+                | "aws_memorydb_user"
+                | "aws_memorydb_snapshot"
+                | "aws_memorydb_multi_region_cluster"
                 | "aws_dax_cluster"
                 | "aws_dax_subnet_group"
                 | "aws_dax_parameter_group"

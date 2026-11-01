@@ -53,6 +53,7 @@ fn placement_available(
         "aws_docdb_cluster"
             | "aws_neptune_cluster"
             | "aws_dms_replication_instance"
+            | "aws_memorydb_cluster"
             | "aws_dax_cluster"
     ) {
         return graph

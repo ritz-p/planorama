@@ -7355,10 +7355,10 @@
       }
     },
     "aws_memorydb_acl": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: user_names set and inbound cluster acl_name references; open-access literal creates no endpoint. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7388,10 +7388,10 @@
       }
     },
     "aws_memorydb_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: ACL/parameter/global/KMS/SNS/snapshot references; distinguish restoration from active ownership. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7445,10 +7445,10 @@
       }
     },
     "aws_memorydb_multi_region_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: cluster reference must use computed multi_region_cluster_name, not suffix. No pinned multi-region parameter-group managed type; regional parameters cannot substitute. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7475,10 +7475,10 @@
       }
     },
     "aws_memorydb_parameter_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: inbound regional cluster reference; parameter values intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7509,10 +7509,10 @@
       }
     },
     "aws_memorydb_snapshot": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: source cluster/KMS and inbound restore references; never reconstruct nodes from computed snapshot configuration. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7539,10 +7539,10 @@
       }
     },
     "aws_memorydb_subnet_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: cluster/subnet references; computed vpc_id is not sufficient proof. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -7572,10 +7572,10 @@
       }
     },
     "aws_memorydb_user": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 740,
-      "gap": "Missing: inbound ACL user_names reference. access_string and passwords intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #740: verified network, configuration, ACL user and multi-region membership and historical snapshot references. Complete common-VPC proof is required for regional cluster placement. See aws-data.md#memorydb-references-740. Credentials, computed shards and encryption summaries remain excluded; review records the historical #718 baseline.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",

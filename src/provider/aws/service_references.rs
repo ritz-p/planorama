@@ -13,6 +13,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::dax::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::memorydb::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloudwatch_metrics::label(resource, attribute) {
         return Some(label);
     }
@@ -465,6 +468,11 @@ pub(crate) fn annotate(
             reference.service_reference_verified = super::dax::verify(nodes, reference, evidence);
             continue;
         }
+        if super::memorydb::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified =
+                super::memorydb::verify(nodes, reference, evidence);
+            continue;
+        }
         if super::eventbridge::label(&node.resource_type, &reference.attribute).is_some() {
             reference.service_reference_verified =
                 super::eventbridge::verify(nodes, reference, evidence);
@@ -655,6 +663,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::dax::bindings(raw, reference))
+        && (super::memorydb::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::memorydb::bindings(raw, reference))
         && (super::flow_logs::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1088,6 +1102,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                             | "Global datastore membership"
                             | "Cache replication group membership"
                             | "Cache user membership"
+                            | "MemoryDB user membership"
+                            | "MemoryDB multi-region membership"
                             | "Schedule group membership"
                     ) || matches!(
                         node.resource_type.as_str(),

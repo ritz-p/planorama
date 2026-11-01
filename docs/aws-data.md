@@ -2,6 +2,50 @@
 
 [AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
+## MemoryDB references (#740)
+
+MemoryDB clusters remain Spatial. Shared subnet/parameter groups, ACLs, users,
+snapshots and multi-region clusters remain independent Logical resources.
+
+| Input | Managed endpoint output |
+| --- | --- |
+| Cluster `subnet_group_name` | `aws_memorydb_subnet_group.name` / `id` |
+| Subnet group `subnet_ids` set | `aws_subnet.id` |
+| Cluster `security_group_ids` set | `aws_security_group.id` |
+| Cluster `acl_name` | `aws_memorydb_acl.name` / `id` |
+| ACL `user_names` set | `aws_memorydb_user.user_name` / `id` |
+| Cluster `parameter_group_name` | `aws_memorydb_parameter_group.name` / `id` |
+| Cluster `multi_region_cluster_name` | `aws_memorydb_multi_region_cluster.multi_region_cluster_name` |
+| Cluster or snapshot `kms_key_arn` | `aws_kms_key.arn` |
+| Cluster `sns_topic_arn` | `aws_sns_topic.arn` |
+| Cluster `snapshot_name` | `aws_memorydb_snapshot.name` / `id` |
+| Snapshot `cluster_name` | `aws_memorydb_cluster.name` / `id` |
+
+Contracts were checked against AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+[official schemas](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/memorydb)
+and [cluster documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/memorydb_cluster.html.markdown).
+Group, ACL, user, snapshot and cluster IDs equal their respective names. The
+Framework multi-region resource exposes its computed name, not an `id` output.
+Subnet IDs and user names are sets; cluster SGs are an optional/computed set.
+Default subnet groups, open-access ACL names and other literals prove no managed
+identity without explicit Terraform references and equal known output values.
+
+References require unique current managed endpoints with compatible
+provider/account/region evidence within one named state. Collections must be
+complete, nonempty and duplicate-free. Regional cluster placement requires all
+referenced subnets and SGs to prove one current managed VPC. Missing, transformed,
+unknown, ambiguous, deleted, deposed or filtered evidence remains unresolved.
+Multi-region membership permits different management regions in the same account;
+it does not relocate a regional cluster. Snapshot source and restore references
+are historical configuration links, never containment. Shared ACLs and users are
+not embedded. Actions, imports, moves and coverage remain attached exactly once.
+No password/access-string/parameter interpretation, snapshot S3 ARN parsing,
+computed shards, regional mapping of `multi_region_parameter_group_name`,
+encryption summaries or health/reachability claims are added.
+See the [fixture](../tests/fixtures/memorydb-plan.json) and
+[SVG](../examples/memorydb.svg).
+
 ## DAX references (#739)
 
 DAX clusters remain Spatial; shared subnet and parameter groups remain independent
