@@ -27,12 +27,14 @@ for file in planorama.js planorama_bg.wasm memory-capabilities.json; do
     cmp "output/browser/pkg/$file" "output/wasm-engine/$file"
 done
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
+measure browser-summary node tests/browser/input-summary.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs
 if [ "$WASM_CI_SUITE" = full ]; then
     measure standalone-lib cargo test --locked --no-default-features --lib
     measure standalone-cli cargo test --locked --no-default-features --test cli help_
 fi
 measure standalone-memory node tests/browser/memory.cjs
+measure standalone-summary node tests/browser/input-summary.cjs
 measure standalone-tests node tests/browser/wasm-engine.cjs
 sccache --show-stats > "$report/sccache.txt"
 du -sk /usr/local/cargo/registry /usr/local/cargo/git "$target" > "$report/cache-sizes.txt"

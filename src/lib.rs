@@ -38,10 +38,16 @@ mod artwork_free;
 mod generation;
 mod named_inputs;
 pub use named_inputs::{NamedInput, RemoteStateMapping, generate_named, inspect_named_inputs};
+mod input_summary;
 mod module_inventory;
 mod resource_inventory;
 pub use generation::{Error, Generated, Generator, Options, OutputFormat, generate};
 pub use icons::IconMode;
+pub use input_summary::{
+    ActionCounts, InputSummary, InspectionError, NamedInputSummary, NamedSummaryEntry,
+    ObjectCounts, ProviderEvidence, ProviderSummary, inspect_input_summary,
+    inspect_named_input_summaries,
+};
 pub use module_inventory::{ModuleInventoryEntry, inspect_modules};
 pub use resource_inventory::{
     InputInventory, ResourceInventoryEntry, inspect_input, inspect_resources,

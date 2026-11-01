@@ -47,3 +47,6 @@ without repeating compilation with `sh scripts/build-wasm-distributions.sh`. Bro
 compare native/Wasm SVG and HTML, exercise selection, cancellation and retries,
 and verify sandbox/storage isolation with networking disabled after asset loading.
 Timings and linear-memory capacity are observations, not performance thresholds.
+Both CI scopes run `tests/browser/input-summary.cjs` against each distribution
+for action/provider summaries, named-row failures, input/structure/memory limits
+and dedicated Worker cancellation.
