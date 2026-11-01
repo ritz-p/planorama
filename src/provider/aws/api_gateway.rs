@@ -1,6 +1,7 @@
 use super::service_evidence::{eligible_with_global_role, known};
 use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
+mod domains;
 mod rest;
 mod v2;
 
@@ -15,7 +16,9 @@ pub(super) struct Rule {
 }
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
-    rest::rule(resource, attribute).or_else(|| v2::rule(resource, attribute))
+    rest::rule(resource, attribute)
+        .or_else(|| v2::rule(resource, attribute))
+        .or_else(|| domains::rule(resource, attribute))
 }
 
 fn basic(
@@ -24,7 +27,7 @@ fn basic(
     evidence: &[(&Value, &Value)],
     rule: &Rule,
 ) -> bool {
-    if !eligible_with_global_role(
+    if !(eligible_with_global_role(
         nodes,
         r,
         (nodes[r.target].resource_type == "aws_api_gateway_account"
@@ -39,7 +42,8 @@ fn basic(
             ) && r.attribute == "credentials_arn")
             || (nodes[r.target].resource_type == "aws_apigatewayv2_authorizer"
                 && r.attribute == "authorizer_credentials_arn"),
-    ) || r.source_attributes.len() != 1
+    ) || domains::edge_eligible(nodes, r))
+        || r.source_attributes.len() != 1
     {
         return false;
     }
@@ -246,7 +250,12 @@ pub(super) fn annotate(
     let verified: Vec<_> = references
         .iter()
         .enumerate()
-        .map(|(i, r)| context.base[i] && rest::valid(&context, r) && v2::valid(&context, r))
+        .map(|(i, r)| {
+            context.base[i]
+                && rest::valid(&context, r)
+                && v2::valid(&context, r)
+                && domains::valid(&context, r)
+        })
         .collect();
     for (r, verified) in references.iter_mut().zip(verified) {
         if rule(&nodes[r.target].resource_type, &r.attribute).is_some() {

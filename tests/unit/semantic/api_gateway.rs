@@ -1816,3 +1816,121 @@ fn rest_authorization_models_and_pools_require_qualified_complete_evidence() {
         }
     }
 }
+
+#[test]
+fn rest_domains_reject_private_id_endpoint_type_and_certificate_mismatches() {
+    for (address, field, endpoint) in [
+        (
+            "aws_api_gateway_domain_name.regional",
+            "regional_certificate_arn",
+            "aws_acm_certificate.domain",
+        ),
+        (
+            "aws_api_gateway_domain_name.edge",
+            "certificate_arn",
+            "aws_acm_certificate.domain",
+        ),
+        (
+            "aws_api_gateway_base_path_mapping.private",
+            "domain_name",
+            "aws_api_gateway_domain_name.private",
+        ),
+        (
+            "aws_api_gateway_base_path_mapping.private",
+            "stage_name",
+            "aws_api_gateway_stage.live",
+        ),
+        (
+            "aws_api_gateway_domain_name_access_association.private",
+            "access_association_source",
+            "aws_vpc_endpoint.domain",
+        ),
+        (
+            "aws_api_gateway_domain_name_access_association.private",
+            "domain_name_arn",
+            "aws_api_gateway_domain_name.private",
+        ),
+    ] {
+        for case in [
+            "valid",
+            "unknown",
+            "literal",
+            "deleted",
+            "data",
+            "wrong_type",
+            "private_id",
+            "other_api",
+        ] {
+            let mut v: Value =
+                serde_json::from_str(include_str!("../../fixtures/api-gateway-rest-plan.json"))
+                    .unwrap();
+            let target = v["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .find(|r| r["address"] == address)
+                .unwrap();
+            if case == "unknown" {
+                target["change"]["after_unknown"][field] = json!(true);
+            }
+            if case == "private_id" && address.contains("base_path_mapping") {
+                target["change"]["after"]["domain_name_id"] = json!("other");
+            }
+            if case == "wrong_type" {
+                if address.starts_with("aws_api_gateway_domain_name.") {
+                    target["change"]["after"]["endpoint_configuration"] =
+                        json!([{"types":["UNKNOWN"]}]);
+                } else if field == "access_association_source" {
+                    target["change"]["after"]["access_association_source_type"] = json!("UNKNOWN");
+                }
+            }
+            let source = v["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .find(|r| r["address"] == endpoint)
+                .unwrap();
+            match case {
+                "deleted" => source["change"]["actions"] = json!(["delete"]),
+                "data" => source["mode"] = json!("data"),
+                "other_api" if field == "stage_name" => {
+                    source["change"]["after"]["rest_api_id"] = json!("other")
+                }
+                "wrong_type" if field == "domain_name_arn" || field == "domain_name" => {
+                    source["change"]["after"]["endpoint_configuration"] =
+                        json!([{"types":["UNKNOWN"]}])
+                }
+                _ => {}
+            }
+            if case == "literal" {
+                v["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .find(|r| r["address"] == address)
+                    .unwrap()["expressions"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove(field);
+            }
+            let raw = plan::parse(&v.to_string()).unwrap();
+            let expected = case == "valid"
+                || (case == "private_id" && !address.contains("base_path_mapping"))
+                || (case == "other_api" && field != "stage_name")
+                || (case == "wrong_type" && field == "stage_name");
+            assert_eq!(
+                raw.attributes
+                    .iter()
+                    .any(|r| raw.nodes[r.target].address == address
+                        && r.attribute == field
+                        && r.service_reference_verified),
+                expected,
+                "{address} {field} {case}"
+            );
+            assert_eq!(
+                semantic::transform(&raw).coverage.selected.resources,
+                v["resource_changes"].as_array().unwrap().len()
+            );
+        }
+    }
+}

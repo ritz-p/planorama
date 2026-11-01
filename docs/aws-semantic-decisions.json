@@ -40393,10 +40393,10 @@
       }
     },
     "aws_api_gateway_base_path_mapping": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "#714 audit: Missing: API/domain/stage tuple; stage name requires same API and private domain ID must agree. Follow-up #932. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40551,10 +40551,10 @@
       }
     },
     "aws_api_gateway_domain_name": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "#714 audit: Missing: endpoint-type-gated ACM references and domain presentation; certificate_name registration is not necessarily an existing IAM certificate. Follow-up #932. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40664,10 +40664,10 @@
       }
     },
     "aws_api_gateway_domain_name_access_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "#714 audit: Missing: private domain ARN and VPCE-discriminated VPC endpoint ID; deprecated id is not a substitute for arn. Follow-up #932. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
