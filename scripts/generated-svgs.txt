@@ -118,3 +118,4 @@ examples/cloudwatch-delivery.svg
 examples/database-endpoints.svg
 examples/database-configuration.svg
 examples/database-snapshots.svg
+examples/database-events.svg

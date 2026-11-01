@@ -549,3 +549,27 @@ Provider `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (6.70.0), under
 `website/docs/r/` and `internal/service/{rds,docdb,neptune}/`.
 See [fixture](../tests/fixtures/database-snapshots-plan.json),
 [SVG](../examples/database-snapshots.svg) and [HTML](../examples/database-snapshots.html).
+
+## Database event subscriptions (#764)
+
+RDS `sns_topic` and DocumentDB/Neptune `sns_topic_arn` reference exact SNS topic
+`arn` outputs. `source_ids` is a complete set of identifiers, selected by a known
+service-specific `source_type`: DB instances, clusters, parameter groups and
+supported snapshot types use their identifier/name outputs, never snapshot ARNs
+or RDS instance resource IDs. RDS snapshot copies can also be source endpoints.
+Every endpoint must be current, managed, explicit, uniquely identified and have
+matching known values and compatible provider/account/region and named-state
+identity. Incomplete, unknown, ambiguous, deleted/deposed and filtered proof is
+rejected. Empty sets represent service-wide subscriptions and do not expand to
+all Terraform nodes. SNS topics and subscriptions remain independent resources;
+no event delivery, category, payload, policy or runtime claims are inferred.
+
+The resource docs and schema/create/read implementations were checked at AWS
+Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+`website/docs/r/{db,docdb,neptune}_event_subscription.html.markdown` and
+`internal/service/{rds,docdb,neptune}/event_subscription.go`. DocumentDB's argument
+list says `sns_topic`, but its schema and example use `sns_topic_arn`; the schema
+is authoritative. Security-group and newer RDS event source families are outside
+this bounded contract.
+See [fixture](../tests/fixtures/database-events-plan.json),
+[SVG](../examples/database-events.svg) and [HTML](../examples/database-events.html).
