@@ -2038,3 +2038,45 @@ fn v2_domains_and_rest_routing_require_single_qualified_actions() {
         }
     }
 }
+
+#[test]
+fn public_routing_rejects_private_unknown_and_missing_rest_endpoint_types() {
+    for case in [
+        "REGIONAL", "EDGE", "PRIVATE", "unknown", "missing", "multiple",
+    ] {
+        let mut v: Value =
+            serde_json::from_str(include_str!("../../fixtures/api-gateway-rest-plan.json"))
+                .unwrap();
+        let api = v["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|r| r["address"] == "aws_api_gateway_rest_api.app")
+            .unwrap();
+        api["change"]["after"]["endpoint_configuration"] = json!([{"types":[case]}]);
+        if case == "unknown" {
+            api["change"]["after_unknown"]["endpoint_configuration"] = json!(true);
+        }
+        if case == "missing" {
+            api["change"]["after"]
+                .as_object_mut()
+                .unwrap()
+                .remove("endpoint_configuration");
+        }
+        if case == "multiple" {
+            api["change"]["after"]["endpoint_configuration"] =
+                json!([{"types":["REGIONAL","PRIVATE"]}]);
+        }
+        let raw = plan::parse(&v.to_string()).unwrap();
+        for field in ["action.invoke_api.api_id", "action.invoke_api.stage"] {
+            assert_eq!(
+                raw.attributes.iter().any(|r| raw.nodes[r.target].address
+                    == "aws_apigatewayv2_routing_rule.rest"
+                    && r.attribute == field
+                    && r.service_reference_verified),
+                matches!(case, "REGIONAL" | "EDGE"),
+                "{field}: {case}"
+            );
+        }
+    }
+}

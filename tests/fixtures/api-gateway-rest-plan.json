@@ -53,7 +53,14 @@
           "id": "rest-synthetic",
           "root_resource_id": "root-synthetic",
           "name": "synthetic-rest",
-          "body": "SYNTHETIC_BODY_NOT_FOR_OUTPUT"
+          "body": "SYNTHETIC_BODY_NOT_FOR_OUTPUT",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "REGIONAL"
+              ]
+            }
+          ]
         }
       }
     },
