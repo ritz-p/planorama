@@ -26,13 +26,20 @@ equal provider keys in different states do not share evidence.
 
 The verified pairs are explicit; other combinations are input errors:
 
-| Terraform Core | hashicorp/aws | Archive | Authentication schema |
-| --- | --- | --- | --- |
-| 1.9.8 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
-| 1.16.6 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
-| 1.9.8 | 6.0.0 | tfplan format 3, embedded configuration and lock | AWS 6.0.0 |
-| 1.9.8 | 6.70.0 | tfplan format 3, embedded configuration and lock | AWS 6.70.0 |
-| 1.10.5 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
+| Terraform Core | hashicorp/aws |
+| --- | --- |
+| 1.9.8 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.10.5 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.11.4 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.12.2 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.13.5 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.14.9 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.15.9 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.16.6 | 5.100.0, 6.0.0, 6.70.0 |
+
+Each row covers all three exact Provider versions (24 pairs total). All use tfplan
+format 3 with embedded configuration and lock, and the schema for the selected
+Provider version. Other patch releases are not implicitly accepted.
 
 The exact Terraform version used to create and export the plan must be on `PATH`.
 Initialize that plan's working directory and fixed provider version yourself
@@ -101,7 +108,10 @@ account, provider binding and Terraform state remain independent identities.
 The development Docker image defaults to Terraform 1.9.8. The evidence harness
 installs checksum-pinned binaries for the listed Core versions into separate directories in
 `output/provider-plan/bin`, with separate initialized work directories and pinned
-provider locks. It does not change the image's default executable. Run:
+provider locks. The three Provider locks are shared from the pinned 1.9.8 JSON
+fixtures; each Core initializes its own directory with the lock read-only. A local
+Provider cache avoids downloading each binary for every Core. The default
+executable in the image is unchanged. Run:
 
 ```sh
 docker compose exec -T dev cargo test --locked --lib plan::evidence
