@@ -1,0 +1,323 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.cache",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-cache",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_dax_subnet_group.shared",
+      "mode": "managed",
+      "type": "aws_dax_subnet_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_SUBNETS",
+          "name": "PRIVATE_SUBNETS",
+          "subnet_ids": [
+            "subnet-b",
+            "subnet-a"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dax_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_dax_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_PARAMS",
+          "name": "PRIVATE_PARAMS",
+          "parameters": [
+            {
+              "name": "PRIVATE_PARAM",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.cache",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111122223333:role/PRIVATE_ROLE",
+          "assume_role_policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.events",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:111122223333:PRIVATE_TOPIC"
+        }
+      }
+    },
+    {
+      "address": "aws_dax_cluster.cache",
+      "mode": "managed",
+      "type": "aws_dax_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "PRIVATE_CLUSTER",
+          "subnet_group_name": "PRIVATE_SUBNETS",
+          "security_group_ids": [
+            "sg-cache"
+          ],
+          "parameter_group_name": "PRIVATE_PARAMS",
+          "iam_role_arn": "arn:aws:iam::111122223333:role/PRIVATE_ROLE",
+          "notification_topic_arn": "arn:aws:sns:us-east-1:111122223333:PRIVATE_TOPIC",
+          "nodes": [
+            {
+              "address": "PRIVATE_HOST"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.cache",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dax_subnet_group.shared",
+          "mode": "managed",
+          "type": "aws_dax_subnet_group",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dax_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_dax_parameter_group",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.cache",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.events",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dax_cluster.cache",
+          "mode": "managed",
+          "type": "aws_dax_cluster",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_group_name": {
+              "references": [
+                "aws_dax_subnet_group.shared.name"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.cache.id"
+              ]
+            },
+            "parameter_group_name": {
+              "references": [
+                "aws_dax_parameter_group.shared.id"
+              ]
+            },
+            "iam_role_arn": {
+              "references": [
+                "aws_iam_role.cache.arn"
+              ]
+            },
+            "notification_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
