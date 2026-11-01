@@ -27,8 +27,10 @@ fn basic(
     if !eligible_with_global_role(
         nodes,
         r,
-        (nodes[r.target].resource_type == "aws_api_gateway_integration"
-            && r.attribute == "credentials")
+        (nodes[r.target].resource_type == "aws_api_gateway_account"
+            && r.attribute == "cloudwatch_role_arn")
+            || (nodes[r.target].resource_type == "aws_api_gateway_integration"
+                && r.attribute == "credentials")
             || (matches!(
                 nodes[r.target].resource_type.as_str(),
                 "aws_apigatewayv2_api" | "aws_apigatewayv2_integration"
@@ -88,6 +90,17 @@ fn basic(
         }
     }
     if !rule.list {
+        if r.attribute.contains('.') {
+            let (value, unknown) = evidence[r.target];
+            return expected.len() == 1
+                && r.attribute.split_once('.').is_some_and(|(block, _)| {
+                    value[block]
+                        .as_array()
+                        .is_some_and(|blocks| blocks.len() == 1)
+                })
+                && super::streaming::values(value, unknown, &r.attribute, false)
+                    .is_some_and(|actual| actual.len() == 1 && actual.contains(expected[0]));
+        }
         return expected.len() == 1
             && known(evidence, r.target, &r.attribute) == expected.first().copied();
     }

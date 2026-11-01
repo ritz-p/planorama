@@ -12,6 +12,9 @@ remain unchanged. VPC Link references do not place an API inside a subnet.
 | --- | --- | --- |
 | REST | API, Resource and Method context | Exact IDs and method output; Resource and Method must belong to the same explicitly referenced API |
 | REST | Stage deployment | Exact Deployment ID with the same API owner |
+| REST | Stage certificate, documentation and canary | Exact certificate ID; documentation version and canary Deployment ID require the same explicitly referenced REST API |
+| REST | Stage access logs | One known block with an exact Log Group or Firehose ARN; Firehose name starts with `amazon-apigateway-` |
+| REST | Account logging role | Explicit matching IAM Role ARN and compatible regional provider binding; the account configuration does not own the role |
 | REST | Lambda Integration / Authorizer | Exact Function or verified Alias `invoke_arn`; Integration requires AWS/AWS_PROXY, POST and matching Method context; Authorizer requires TOKEN/REQUEST |
 | REST | Private Integration and NLB | HTTP/HTTP_PROXY with VPC_LINK and matching Method context; VPC Link has exactly one matching NLB ARN |
 | v2 | API and explicit Stage deployment | Exact IDs and same API owner; deployment navigation requires known `auto_deploy = false` |
@@ -31,6 +34,9 @@ partial, ambiguous, wrong-provider/type, data, deleted and deposed evidence reta
 generic references and unresolved diagnostics. Provider bindings and known Regions
 must match. Filtering and named states retain their existing identity boundaries.
 An automatic v2 Stage does not acquire a synthetic Deployment.
+Stage logging and canary blocks require complete single-element lists. Stage,
+account configuration, certificates and logging destinations retain their existing
+independent placement. Log formats, certificates and stage variables are not displayed.
 
 The contracts were checked against AWS Provider 6.70.0 schema and a synthetic
 Terraform 1.9.8 `plan -refresh=false`. See the official
