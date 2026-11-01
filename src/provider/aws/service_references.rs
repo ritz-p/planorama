@@ -67,6 +67,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::elbv2::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::flow_logs::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::network_acl::label(resource, attribute) {
         return Some(label);
     }
@@ -633,6 +636,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::flow_logs::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::flow_logs::bindings(raw, reference))
         && (super::network_acl::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

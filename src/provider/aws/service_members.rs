@@ -15,6 +15,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_flow_log" => {
+                let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
+                    raw.attributes.iter().any(|r| {
+                        r.target == index
+                            && r.attribute == *field
+                            && super::service_references::verified(raw, r)
+                    })
+                }) else {
+                    continue;
+                };
+                (field, "Monitored resource", "Flow logs")
+            }
             "aws_network_acl_rule" => ("network_acl_id", "Network ACL owner", "Rules"),
             "aws_security_group_rule"
             | "aws_vpc_security_group_ingress_rule"
@@ -120,12 +132,15 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if matches!(
-            node.resource_type.as_str(),
-            "aws_networkfirewall_logging_configuration"
-                | "aws_route53_records_exclusive"
-                | "aws_ecs_task_set"
-        ) {
+        if (node.resource_type == "aws_flow_log"
+            && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_networkfirewall_logging_configuration"
+                    | "aws_route53_records_exclusive"
+                    | "aws_ecs_task_set"
+            )
+        {
             graph.nodes[index].placement = crate::model::Placement::Spatial;
         }
     }

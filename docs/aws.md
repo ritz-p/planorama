@@ -418,6 +418,59 @@ No health, traffic, successful log delivery or effective permission is inferred.
 Contracts follow AWS Provider 6.70.0 schema and `load_balancer.go` at
 `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
 
+## Flow log references (#896)
+
+`aws_flow_log` retains its Controller / Logical default. These scalar string
+inputs accept one explicit current managed endpoint and its known matching output:
+
+| Input | Endpoint output |
+| --- | --- |
+| `eni_id` | `aws_network_interface.id` |
+| `subnet_id` | `aws_subnet.id` |
+| `vpc_id` | `aws_vpc.id` |
+| `regional_nat_gateway_id` | `aws_nat_gateway.id`, with known `availability_mode=regional` |
+| `transit_gateway_id` | `aws_ec2_transit_gateway.id` |
+| `transit_gateway_attachment_id` | `aws_ec2_transit_gateway_vpc_attachment.id` |
+| `log_destination` | `aws_cloudwatch_log_group.arn`, `aws_s3_bucket.arn`, or `aws_kinesis_firehose_delivery_stream.arn` |
+| `iam_role_arn`, `deliver_cross_account_role` | `aws_iam_role.arn` |
+
+Exactly one of the six monitored-resource inputs must be present; the other five
+must be known absent. A verified spatial monitored resource embeds the Flow logs
+helper section while the flow log keeps its Terraform identity and action.
+Logical monitored resources retain ownership navigation and the logical flow log;
+neither resource is promoted to a spatial card in that case. Other transit
+gateway attachment types and data endpoints retain conservative fallback.
+
+Destination type must be known and match `cloud-watch-logs`, `s3`, or
+`kinesis-data-firehose`. No missing default is guessed. S3 prefix ARNs do not equal
+bucket ARNs and are not stripped to manufacture a match. The delivery role is
+supported for CloudWatch Logs and Firehose only. Cross-account roles require
+Firehose and a separately verified destination in the role's known account,
+different from the producer account. No policy or successful delivery is inferred.
+
+All links require unique explicit instances, complete references, known matching
+output values, non-deleted/non-deposed managed identities, and compatible independent
+provider/account/region evidence. Monitored resources and CloudWatch destinations
+stay in the producer account and region. Source delivery roles stay in its account
+but are global. S3 and Firehose destinations may cross independently known accounts;
+Firehose requires the same region, while S3 and IAM use their global scope. Named
+states, filtering and coverage retain the existing identity pipeline. Shared
+destinations and roles keep independent identities and never become contained in
+the monitored VPC/subnet/ENI. Unknown, literal-only, ambiguous, incomplete or
+incompatible evidence retains ordinary references without verified ownership.
+
+The pinned [AWS Provider 6.70.0 source](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_flow_log.go)
+defines the six monitor fields as optional strings with ExactlyOneOf, the role
+fields as optional strings, `log_destination` as optional/computed, and destination
+type as optional with a CloudWatch default. Computed values alone never prove a
+configured endpoint. Monitored endpoint `id` outputs and Firehose `arn` are
+optional/computed strings; other listed `arn` outputs are computed strings.
+Although those endpoint types have data-source registrations, this bounded
+contract supports managed endpoints only. Account evidence from a saved plan is
+checked after annotation and again when presenting references and ownership.
+Packet records, log format, tag keys and traffic effects are
+not summarized or exposed in SVG/HTML.
+
 ## Network ACL relationships (#898)
 
 `aws_network_acl.subnet_ids` accepts a complete set of explicit managed
