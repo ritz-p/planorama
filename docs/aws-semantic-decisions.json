@@ -2043,7 +2043,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 931,
-      "gap": "Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
+      "gap": "#714 audit; Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2333,7 +2333,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 931,
-      "gap": "Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
+      "gap": "#714 audit; Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -18314,10 +18314,10 @@
       }
     },
     "aws_appautoscaling_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 812,
-      "gap": "#712 reviewed: Missing: #812 matching full target tuple; policy/scheduled-action names are not resource identities. See per-dimension review; Intentionally unsupported: metric expressions, scheduling and capacity changes are not runtime architecture.",
+      "gap": "#712 audit; Implemented #812: exact namespace/dimension/resource-ID tuples for ECS, DynamoDB table/index and RDS targets; same-tuple policy/scheduled-action target references, IAM role and CloudFormation stack references; complete scaling-plan instruction sets additionally support Auto Scaling groups. Formatted IDs must exactly match explicit endpoint outputs; ECS requires explicit cluster provenance and DynamoDB indexes require known table index membership. Other namespaces, unknown or ambiguous endpoints, tag filters and metric payloads remain unresolved/opaque. Independent placement retained; historical review follows.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18348,10 +18348,10 @@
       }
     },
     "aws_appautoscaling_scheduled_action": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 812,
-      "gap": "#712 reviewed: Missing: #812 matching full target tuple; policy/scheduled-action names are not resource identities. See per-dimension review; Intentionally unsupported: metric expressions, scheduling and capacity changes are not runtime architecture.",
+      "gap": "#712 audit; Implemented #812: exact namespace/dimension/resource-ID tuples for ECS, DynamoDB table/index and RDS targets; same-tuple policy/scheduled-action target references, IAM role and CloudFormation stack references; complete scaling-plan instruction sets additionally support Auto Scaling groups. Formatted IDs must exactly match explicit endpoint outputs; ECS requires explicit cluster provenance and DynamoDB indexes require known table index membership. Other namespaces, unknown or ambiguous endpoints, tag filters and metric payloads remain unresolved/opaque. Independent placement retained; historical review follows.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18382,10 +18382,10 @@
       }
     },
     "aws_appautoscaling_target": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 812,
-      "gap": "#712 reviewed: Missing: #812 typed namespace/dimension/resource_id tuple and role ARN; formatted ECS/table IDs need complete provenance, not name suffix matching. See per-dimension review; Deferred: min/max capacity summary until units are qualified by scalable_dimension; no synthetic capacity.",
+      "gap": "#712 audit; Implemented #812: exact namespace/dimension/resource-ID tuples for ECS, DynamoDB table/index and RDS targets; same-tuple policy/scheduled-action target references, IAM role and CloudFormation stack references; complete scaling-plan instruction sets additionally support Auto Scaling groups. Formatted IDs must exactly match explicit endpoint outputs; ECS requires explicit cluster provenance and DynamoDB indexes require known table index membership. Other namespaces, unknown or ambiguous endpoints, tag filters and metric payloads remain unresolved/opaque. Independent placement retained; historical review follows.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18568,7 +18568,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18604,7 +18604,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18642,7 +18642,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18709,7 +18709,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 811,
-      "gap": "Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
+      "gap": "#712 audit; Implemented #811: explicit compatible current group-name references for tags, hooks and schedules; typed SNS/SQS notification and IAM role references; complete multi-group notification sets and SNS topic references. Helpers retain independent logical identities and coverage; tags, metadata and schedules stay opaque. The review records its historical baseline.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -18772,10 +18772,10 @@
       }
     },
     "aws_autoscalingplans_scaling_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 812,
-      "gap": "#712 reviewed: Missing: #812 stack ARN and typed instruction targets; tag filters cannot prove members. See per-dimension review; Intentionally unsupported: predictive metrics, tag selection and capacity policies are not topology.",
+      "gap": "#712 audit; Implemented #812: exact namespace/dimension/resource-ID tuples for ECS, DynamoDB table/index and RDS targets; same-tuple policy/scheduled-action target references, IAM role and CloudFormation stack references; complete scaling-plan instruction sets additionally support Auto Scaling groups. Formatted IDs must exactly match explicit endpoint outputs; ECS requires explicit cluster provenance and DynamoDB indexes require known table index membership. Other namespaces, unknown or ambiguous endpoints, tag filters and metric payloads remain unresolved/opaque. Independent placement retained; historical review follows.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -40396,7 +40396,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
+      "gap": "#714 audit; Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40554,7 +40554,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
+      "gap": "#714 audit; Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40667,7 +40667,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 932,
-      "gap": "Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
+      "gap": "#714 audit; Implemented #932: explicit domain/API/stage references with same-API stage and matching private domain ID; endpoint-type-qualified ACM certificates and PRIVATE domain/VPCE association references. EDGE certificates require us-east-1 and compatible account proof. Helpers and domains retain independent logical placement; URLs, certificate registration names and policies remain opaque. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41256,7 +41256,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
+      "gap": "#714 audit; Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41310,7 +41310,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
+      "gap": "#714 audit; Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41604,7 +41604,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
+      "gap": "#714 audit; Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

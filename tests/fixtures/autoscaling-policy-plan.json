@@ -159,6 +159,353 @@
           ]
         }
       }
+    },
+    {
+      "address": "aws_dynamodb_table.scaling",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "scaling",
+          "global_secondary_index": [
+            {
+              "name": "lookup"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.scaling",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "database",
+          "cluster_identifier": "database"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_cluster.scaling",
+      "mode": "managed",
+      "type": "aws_ecs_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "cluster",
+          "arn": "arn:aws:ecs:ap-northeast-1:123456789012:cluster/cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_service.scaling",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "service",
+          "cluster": "arn:aws:ecs:ap-northeast-1:123456789012:cluster/cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_target.table",
+      "mode": "managed",
+      "type": "aws_appautoscaling_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_id": "table/scaling",
+          "service_namespace": "dynamodb",
+          "scalable_dimension": "dynamodb:table:ReadCapacityUnits",
+          "min_capacity": 1,
+          "max_capacity": 5,
+          "role_arn": "arn:aws:iam::123456789012:role/scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_policy.table",
+      "mode": "managed",
+      "type": "aws_appautoscaling_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "table",
+          "resource_id": "table/scaling",
+          "service_namespace": "dynamodb",
+          "scalable_dimension": "dynamodb:table:ReadCapacityUnits"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_scheduled_action.table",
+      "mode": "managed",
+      "type": "aws_appautoscaling_scheduled_action",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "table",
+          "resource_id": "table/scaling",
+          "service_namespace": "dynamodb",
+          "scalable_dimension": "dynamodb:table:ReadCapacityUnits"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_target.index",
+      "mode": "managed",
+      "type": "aws_appautoscaling_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_id": "table/scaling/index/lookup",
+          "service_namespace": "dynamodb",
+          "scalable_dimension": "dynamodb:index:WriteCapacityUnits",
+          "min_capacity": 1,
+          "max_capacity": 5,
+          "role_arn": "arn:aws:iam::123456789012:role/scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_policy.index",
+      "mode": "managed",
+      "type": "aws_appautoscaling_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "index",
+          "resource_id": "table/scaling/index/lookup",
+          "service_namespace": "dynamodb",
+          "scalable_dimension": "dynamodb:index:WriteCapacityUnits"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_scheduled_action.index",
+      "mode": "managed",
+      "type": "aws_appautoscaling_scheduled_action",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "index",
+          "resource_id": "table/scaling/index/lookup",
+          "service_namespace": "dynamodb",
+          "scalable_dimension": "dynamodb:index:WriteCapacityUnits"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_target.database",
+      "mode": "managed",
+      "type": "aws_appautoscaling_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_id": "cluster:database",
+          "service_namespace": "rds",
+          "scalable_dimension": "rds:cluster:ReadReplicaCount",
+          "min_capacity": 1,
+          "max_capacity": 5,
+          "role_arn": "arn:aws:iam::123456789012:role/scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_policy.database",
+      "mode": "managed",
+      "type": "aws_appautoscaling_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "database",
+          "resource_id": "cluster:database",
+          "service_namespace": "rds",
+          "scalable_dimension": "rds:cluster:ReadReplicaCount"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_scheduled_action.database",
+      "mode": "managed",
+      "type": "aws_appautoscaling_scheduled_action",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "database",
+          "resource_id": "cluster:database",
+          "service_namespace": "rds",
+          "scalable_dimension": "rds:cluster:ReadReplicaCount"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_target.service",
+      "mode": "managed",
+      "type": "aws_appautoscaling_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_id": "service/cluster/service",
+          "service_namespace": "ecs",
+          "scalable_dimension": "ecs:service:DesiredCount",
+          "min_capacity": 1,
+          "max_capacity": 5,
+          "role_arn": "arn:aws:iam::123456789012:role/scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_policy.service",
+      "mode": "managed",
+      "type": "aws_appautoscaling_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "service",
+          "resource_id": "service/cluster/service",
+          "service_namespace": "ecs",
+          "scalable_dimension": "ecs:service:DesiredCount"
+        }
+      }
+    },
+    {
+      "address": "aws_appautoscaling_scheduled_action.service",
+      "mode": "managed",
+      "type": "aws_appautoscaling_scheduled_action",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "service",
+          "resource_id": "service/cluster/service",
+          "service_namespace": "ecs",
+          "scalable_dimension": "ecs:service:DesiredCount"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack.scaling",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/scaling/id",
+          "arn": "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/scaling/id"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscalingplans_scaling_plan.application",
+      "mode": "managed",
+      "type": "aws_autoscalingplans_scaling_plan",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "application",
+          "application_source": [
+            {
+              "cloudformation_stack_arn": "arn:aws:cloudformation:ap-northeast-1:123456789012:stack/scaling/id"
+            }
+          ],
+          "scaling_instruction": [
+            {
+              "service_namespace": "dynamodb",
+              "scalable_dimension": "dynamodb:table:ReadCapacityUnits",
+              "resource_id": "table/scaling",
+              "min_capacity": 1,
+              "max_capacity": 5
+            },
+            {
+              "service_namespace": "dynamodb",
+              "scalable_dimension": "dynamodb:index:WriteCapacityUnits",
+              "resource_id": "table/scaling/index/lookup",
+              "min_capacity": 1,
+              "max_capacity": 5
+            },
+            {
+              "service_namespace": "rds",
+              "scalable_dimension": "rds:cluster:ReadReplicaCount",
+              "resource_id": "cluster:database",
+              "min_capacity": 1,
+              "max_capacity": 5
+            },
+            {
+              "service_namespace": "ecs",
+              "scalable_dimension": "ecs:service:DesiredCount",
+              "resource_id": "service/cluster/service",
+              "min_capacity": 1,
+              "max_capacity": 5
+            },
+            {
+              "service_namespace": "autoscaling",
+              "scalable_dimension": "autoscaling:autoScalingGroup:DesiredCapacity",
+              "resource_id": "autoScalingGroup/app",
+              "min_capacity": 1,
+              "max_capacity": 5
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration": {
@@ -304,6 +651,407 @@
                 "aws_sns_topic.scaling.arn"
               ]
             }
+          }
+        },
+        {
+          "address": "aws_dynamodb_table.scaling",
+          "mode": "managed",
+          "type": "aws_dynamodb_table",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rds_cluster.scaling",
+          "mode": "managed",
+          "type": "aws_rds_cluster",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_cluster.scaling",
+          "mode": "managed",
+          "type": "aws_ecs_cluster",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_service.scaling",
+          "mode": "managed",
+          "type": "aws_ecs_service",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster": {
+              "references": [
+                "aws_ecs_cluster.scaling.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_target.table",
+          "mode": "managed",
+          "type": "aws_appautoscaling_target",
+          "name": "table",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_dynamodb_table.scaling.name"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.scaling.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_policy.table",
+          "mode": "managed",
+          "type": "aws_appautoscaling_policy",
+          "name": "table",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.table.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.table.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.table.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_scheduled_action.table",
+          "mode": "managed",
+          "type": "aws_appautoscaling_scheduled_action",
+          "name": "table",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.table.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.table.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.table.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_target.index",
+          "mode": "managed",
+          "type": "aws_appautoscaling_target",
+          "name": "index",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_dynamodb_table.scaling.name"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.scaling.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_policy.index",
+          "mode": "managed",
+          "type": "aws_appautoscaling_policy",
+          "name": "index",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.index.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.index.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.index.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_scheduled_action.index",
+          "mode": "managed",
+          "type": "aws_appautoscaling_scheduled_action",
+          "name": "index",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.index.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.index.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.index.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_target.database",
+          "mode": "managed",
+          "type": "aws_appautoscaling_target",
+          "name": "database",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_rds_cluster.scaling.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.scaling.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_policy.database",
+          "mode": "managed",
+          "type": "aws_appautoscaling_policy",
+          "name": "database",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.database.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.database.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.database.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_scheduled_action.database",
+          "mode": "managed",
+          "type": "aws_appautoscaling_scheduled_action",
+          "name": "database",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.database.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.database.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.database.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_target.service",
+          "mode": "managed",
+          "type": "aws_appautoscaling_target",
+          "name": "service",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_ecs_cluster.scaling.name",
+                "aws_ecs_service.scaling.name"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.scaling.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_policy.service",
+          "mode": "managed",
+          "type": "aws_appautoscaling_policy",
+          "name": "service",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.service.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.service.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.service.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appautoscaling_scheduled_action.service",
+          "mode": "managed",
+          "type": "aws_appautoscaling_scheduled_action",
+          "name": "service",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_appautoscaling_target.service.resource_id"
+              ]
+            },
+            "service_namespace": {
+              "references": [
+                "aws_appautoscaling_target.service.service_namespace"
+              ]
+            },
+            "scalable_dimension": {
+              "references": [
+                "aws_appautoscaling_target.service.scalable_dimension"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudformation_stack.scaling",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_autoscalingplans_scaling_plan.application",
+          "mode": "managed",
+          "type": "aws_autoscalingplans_scaling_plan",
+          "name": "application",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_source": [
+              {
+                "cloudformation_stack_arn": {
+                  "references": [
+                    "aws_cloudformation_stack.scaling.arn"
+                  ]
+                }
+              }
+            ],
+            "scaling_instruction": [
+              {
+                "service_namespace": {
+                  "constant_value": "dynamodb"
+                },
+                "scalable_dimension": {
+                  "constant_value": "dynamodb:table:ReadCapacityUnits"
+                },
+                "resource_id": {
+                  "references": [
+                    "aws_dynamodb_table.scaling.name"
+                  ]
+                }
+              },
+              {
+                "service_namespace": {
+                  "constant_value": "dynamodb"
+                },
+                "scalable_dimension": {
+                  "constant_value": "dynamodb:index:WriteCapacityUnits"
+                },
+                "resource_id": {
+                  "references": [
+                    "aws_dynamodb_table.scaling.name"
+                  ]
+                }
+              },
+              {
+                "service_namespace": {
+                  "constant_value": "rds"
+                },
+                "scalable_dimension": {
+                  "constant_value": "rds:cluster:ReadReplicaCount"
+                },
+                "resource_id": {
+                  "references": [
+                    "aws_rds_cluster.scaling.id"
+                  ]
+                }
+              },
+              {
+                "service_namespace": {
+                  "constant_value": "ecs"
+                },
+                "scalable_dimension": {
+                  "constant_value": "ecs:service:DesiredCount"
+                },
+                "resource_id": {
+                  "references": [
+                    "aws_ecs_cluster.scaling.name",
+                    "aws_ecs_service.scaling.name"
+                  ]
+                }
+              },
+              {
+                "service_namespace": {
+                  "constant_value": "autoscaling"
+                },
+                "scalable_dimension": {
+                  "constant_value": "autoscaling:autoScalingGroup:DesiredCapacity"
+                },
+                "resource_id": {
+                  "references": [
+                    "aws_autoscaling_group.app.name"
+                  ]
+                }
+              }
+            ]
           }
         }
       ]

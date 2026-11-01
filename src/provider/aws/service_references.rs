@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::application_scaling::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::scaling::label(resource, attribute) {
         return Some(label);
     }
@@ -643,6 +646,7 @@ pub(crate) fn annotate(
     super::lambda::annotate(nodes, references, evidence);
     super::api_gateway::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
+    super::application_scaling::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
     let aliases: Vec<_> = references
         .iter()
