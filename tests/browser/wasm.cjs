@@ -92,6 +92,19 @@ async function main() {
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
     checkpoint('viewer-parity');
+    for (const scenario of ['complete', 'incomplete', 'filtered']) {
+      const alarms = JSON.parse(readFileSync(join(root, 'tests/fixtures/cloudwatch-alarms-plan.json'), 'utf8'));
+      if (scenario === 'incomplete') alarms.resource_changes[3].change.after_unknown = {alarm_actions: [false, true, false]};
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(alarms);
+        const options = scenario === 'filtered' ? {format, focus: 'aws_cloudwatch_alarm_mute_rule.maintenance', focus_depth: 0} : {format};
+        const args = scenario === 'filtered' ? ['--format', format, '--focus', options.focus, '--focus-depth', '0'] : ['--format', format];
+        const result = run(input, options);
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, args), `CloudWatch alarms native/Wasm ${format}/${scenario}`);
+      }
+    }
+    checkpoint('cloudwatch-alarms');
     if (full) {
       require('./wasm-s3.cjs')({root, run, native: nativeReference});
       const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');

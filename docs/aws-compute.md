@@ -449,6 +449,28 @@ by Terraform identity. Filtering can leave either endpoint unavailable without
 emitting a dangling link. See
 [autoscaling-policy.svg](../examples/autoscaling-policy.svg).
 
+## CloudWatch alarm configuration references (#986)
+
+Metric and composite alarms expose configured ALARM, OK and INSUFFICIENT_DATA
+action references to SNS topics and Lambda functions/aliases (`arn`). Metric
+alarms additionally accept Auto Scaling and Application Auto Scaling policies.
+Each action set must be complete, uniquely referenced, typed and equal to known
+endpoint ARNs in the same provider/account/region scope. Unsupported action forms
+(including EC2 automation and Systems Manager action strings) retain unresolved
+configuration references; they do not synthesize resource nodes.
+
+Composite `actions_suppressor.alarm` accepts an explicit metric/composite alarm
+`alarm_name` or `arn`. Mute-rule `mute_targets.alarm_names` accepts a complete set
+of explicit metric/composite alarm names in the same scope. Both blocks must have
+exactly one entry. Unknown, sensitive, ambiguous, deleted, deposed, data-mode or
+mismatched endpoints cannot establish these links. Named states stay separate;
+selection removes unavailable link destinations.
+
+These are configuration navigation, not ownership, containment, execution or
+current suppression claims. Alarm rules and schedules are not evaluated. Existing
+RDS Monitors/Monitored by verification and independent alarm display remain
+unchanged. See the [synthetic example](../examples/cloudwatch-alarms.svg).
+
 ## CloudWatch Logs configuration references (#988)
 
 The fixed AWS Provider 6.70.0 [registration and schema sources](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/logs)
