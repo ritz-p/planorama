@@ -50,6 +50,7 @@ pub(crate) mod lambda_events;
 pub(crate) mod lambda_policy;
 pub(crate) mod lambda_qualified;
 mod members;
+mod memorydb;
 mod messaging;
 mod monitoring;
 mod network;
@@ -252,6 +253,7 @@ pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIco
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     streaming::present(&raw, &mut graph);
+    memorydb::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);
