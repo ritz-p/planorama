@@ -449,6 +449,29 @@ by Terraform identity. Filtering can leave either endpoint unavailable without
 emitting a dangling link. See
 [autoscaling-policy.svg](../examples/autoscaling-policy.svg).
 
+## CloudWatch metric configuration references (#987)
+
+Metric streams expose separate configured Firehose delivery-stream (`firehose_arn`)
+and IAM role (`role_arn`) references. Detailed resource metrics configurations
+accept only an ElastiCache replication-group `arn` through `resource_arn`; cache
+clusters and serverless caches are excluded by the pinned Provider contract.
+
+Managed Contributor Insights rules accept a VPC endpoint-service `arn` with one
+of the exact `VpcEndpointService-{ActiveConnections,Bytes,NewConnections,RstPackets}ByEndpointId-v1`
+templates documented for [PrivateLink](https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-cloudwatch-metrics.html).
+Unknown templates and other resource/template combinations remain unresolved.
+
+All links require a unique explicit current managed AWS reference, a known matching
+ARN, the expected type/output and compatible provider/account/region. IAM roles
+remain global. Unknown, sensitive, mismatched, deleted, deposed, data-mode or
+ambiguous endpoints do not verify a link. Helpers retain independent identity,
+action and coverage; named states and filtered targets remain separate.
+
+Namespace and metric filters are selectors, not resource identities. Computed
+`rule_name` never creates a managed rule. These references establish neither
+ownership/network containment nor delivery, collection or monitoring success.
+See the [synthetic example](../examples/cloudwatch-metrics.svg).
+
 ## CloudWatch alarm configuration references (#986)
 
 Metric and composite alarms expose configured ALARM, OK and INSUFFICIENT_DATA

@@ -1,0 +1,220 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.metrics",
+      "mode": "managed",
+      "type": "aws_kinesis_firehose_delivery_stream",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "metrics",
+          "arn": "arn:aws:firehose:us-east-1:123456789012:deliverystream/metrics"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.stream",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "stream",
+          "arn": "arn:aws:iam::123456789012:role/stream"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_endpoint_service.service",
+      "mode": "managed",
+      "type": "aws_vpc_endpoint_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:vpc-endpoint-service/vpce-svc-synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_elasticache_replication_group.cache",
+      "mode": "managed",
+      "type": "aws_elasticache_replication_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "replication_group_id": "cache",
+          "arn": "arn:aws:elasticache:us-east-1:123456789012:replicationgroup:cache"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_stream.metrics",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_stream",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "metrics",
+          "firehose_arn": "arn:aws:firehose:us-east-1:123456789012:deliverystream/metrics",
+          "role_arn": "arn:aws:iam::123456789012:role/stream",
+          "include_filter": [
+            {
+              "namespace": "AWS/EC2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_contributor_managed_insight_rule.insights",
+      "mode": "managed",
+      "type": "aws_cloudwatch_contributor_managed_insight_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:ec2:us-east-1:123456789012:vpc-endpoint-service/vpce-svc-synthetic",
+          "template_name": "VpcEndpointService-BytesByEndpointId-v1",
+          "rule_name": "PRIVATE_computed_rule",
+          "rule_state": "DISABLED"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_resource_metrics_configuration.detailed",
+      "mode": "managed",
+      "type": "aws_cloudwatch_resource_metrics_configuration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:elasticache:us-east-1:123456789012:replicationgroup:cache",
+          "metric_selection": [
+            {
+              "include_metrics": [
+                "valkey.memory.used"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kinesis_firehose_delivery_stream.metrics",
+          "mode": "managed",
+          "type": "aws_kinesis_firehose_delivery_stream",
+          "name": "metrics",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.stream",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "stream",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_endpoint_service.service",
+          "mode": "managed",
+          "type": "aws_vpc_endpoint_service",
+          "name": "service",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_elasticache_replication_group.cache",
+          "mode": "managed",
+          "type": "aws_elasticache_replication_group",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_metric_stream.metrics",
+          "mode": "managed",
+          "type": "aws_cloudwatch_metric_stream",
+          "name": "metrics",
+          "provider_config_key": "aws",
+          "expressions": {
+            "firehose_arn": {
+              "references": [
+                "aws_kinesis_firehose_delivery_stream.metrics.arn"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.stream.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_contributor_managed_insight_rule.insights",
+          "mode": "managed",
+          "type": "aws_cloudwatch_contributor_managed_insight_rule",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_vpc_endpoint_service.service.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_resource_metrics_configuration.detailed",
+          "mode": "managed",
+          "type": "aws_cloudwatch_resource_metrics_configuration",
+          "name": "detailed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_elasticache_replication_group.cache.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
