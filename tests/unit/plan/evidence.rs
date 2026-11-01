@@ -73,10 +73,10 @@ fn authentication_schema_is_selected_by_exact_provider_version() {
     }
     let input = fixture().to_string();
     for (core, provider) in [
-        ("1.16.6", "6.0.0"),
-        ("1.16.6", "6.70.0"),
-        ("1.10.5", "6.0.0"),
-        ("1.10.5", "6.70.0"),
+        ("1.16.5", "6.0.0"),
+        ("1.16.5", "6.70.0"),
+        ("1.10.4", "6.0.0"),
+        ("1.10.4", "6.70.0"),
     ] {
         let mut input: Value = serde_json::from_str(&input).unwrap();
         input["terraform_version"] = json!(core);

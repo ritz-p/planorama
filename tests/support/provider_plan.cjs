@@ -6,14 +6,15 @@ const { execFileSync, spawn } = require('node:child_process');
 
 const root = path.resolve(__dirname, '../..');
 const work = path.join(root, 'output/provider-plan');
-const versions = ['1.9.8', '1.16.6', '1.10.5'];
-const pairs = [['1.9.8', '5.100.0', 'aws5'], ['1.16.6', '5.100.0', 'aws5'], ['1.9.8', '6.0.0', 'aws6'], ['1.9.8', '6.70.0', 'aws670'], ['1.10.5', '5.100.0', 'aws5']];
+const versions = ['1.9.8', '1.10.5', '1.11.4', '1.12.2', '1.13.5', '1.14.9', '1.15.9', '1.16.6'];
+const pairs = versions.flatMap(core => [['5.100.0', 'aws5'], ['6.0.0', 'aws6'], ['6.70.0', 'aws670']].map(([provider, fixture]) => [core, provider, fixture]));
 const checksums = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/compatibility/matrix.json'))).terraform;
 const phase = process.argv[2];
 assert.ok(['prepare', 'capture', 'verify'].includes(phase), 'Usage: node tests/support/provider_plan.cjs prepare|capture|verify');
 const selectedPairs = process.argv[3] ? pairs.filter(([core, provider]) => `${core}/${provider}` === process.argv[3]) : pairs;
 assert.ok(selectedPairs.length > 0, 'Unknown saved-plan evidence pair');
 const env = { ...process.env, CHECKPOINT_DISABLE: '1', TF_IN_AUTOMATION: '1',
+  TF_PLUGIN_CACHE_DIR: path.join(work, 'provider-cache'),
   AWS_ACCESS_KEY_ID: 'fixture', AWS_SECRET_ACCESS_KEY: 'fixture', AWS_EC2_METADATA_DISABLED: 'true' };
 for (const key of Object.keys(env)) if (/^TF_(CLI_ARGS|LOG)/.test(key)) delete env[key];
 function run(binary, args, cwd, extra = {}) {
@@ -28,6 +29,7 @@ async function main() {
   let server;
   let portFile;
   try {
+    fs.mkdirSync(env.TF_PLUGIN_CACHE_DIR, { recursive: true });
     if (phase === 'capture') {
       portFile = path.join(fs.mkdtempSync('/tmp/planorama-sts-'), 'port');
       server = spawn(process.execPath, [path.join(__dirname, 'sts_fixture.cjs'), portFile], { stdio: 'ignore' });
@@ -60,7 +62,7 @@ async function main() {
         fs.writeFileSync(path.join(cwd, 'main.tf'), source);
         fs.mkdirSync(path.join(cwd, 'child'), { recursive: true });
         fs.copyFileSync(path.join(root, 'tests/fixtures/provider-plan/child/main.tf'), path.join(cwd, 'child/main.tf'));
-        fs.copyFileSync(path.join(root, `tests/fixtures/compatibility/${version}/${fixture}/.terraform.lock.hcl`), path.join(cwd, '.terraform.lock.hcl'));
+        fs.copyFileSync(path.join(root, `tests/fixtures/compatibility/1.9.8/${fixture}/.terraform.lock.hcl`), path.join(cwd, '.terraform.lock.hcl'));
         run(binary, ['init', '-backend=false', '-input=false', '-lockfile=readonly'], cwd);
         continue;
       }
