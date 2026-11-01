@@ -21,6 +21,7 @@ mod cognito_tests;
 mod components;
 mod containment;
 mod data;
+mod database_snapshots;
 mod databases;
 pub(super) mod diagnostics;
 mod dynamodb;
