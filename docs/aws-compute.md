@@ -553,3 +553,15 @@ IAM roles, S3 buckets and CloudFront keep their own global scope. Lambda and log
 Log Destination subscriptions require an absent role input. No endpoint is moved into
 a consumer scope, and no policy interpretation, permission or delivery-success claim
 is made. See the [synthetic example](../examples/cloudwatch-delivery.svg).
+
+## Auto Scaling auxiliary references (#811)
+
+Group tags, lifecycle hooks and schedules retain independent logical identities and
+link only to explicit matching current managed group names. Hooks additionally
+verify SNS/SQS notification ARNs and IAM role ARNs. Notification resources verify
+the entire group-name set and a separate SNS topic; a multi-group notification is
+not embedded into one owner. Shared endpoints remain independent. Literal, unknown,
+partial, incompatible and lifecycle-invalid references retain conservative fallback.
+Tag values, notification metadata and cron expressions are not interpreted or shown.
+Contracts follow the pinned AWS Provider 6.70.0 schema and documentation recorded
+in aws-semantic-decisions.json. Existing Auto Scaling policy behavior is unchanged.
