@@ -9299,7 +9299,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9337,7 +9337,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 764,
-      "gap": "Implemented #764: verified SNS topic ARN and complete source identifier sets with service-specific source_type and exact managed endpoints. Empty source sets never expand to Terraform nodes. No event delivery, categories or payload interpretation. See aws-data.md#database-event-subscriptions-764. Historical review below records the audited baseline.",
+      "gap": "Implemented #764: verified SNS topic ARN and complete source identifier sets with service-specific source_type and exact managed endpoints. Empty source sets never expand to Terraform nodes. No event delivery, categories or payload interpretation. See aws-data.md#database-event-subscriptions-764. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9625,7 +9625,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9663,7 +9663,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9790,7 +9790,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9828,7 +9828,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 764,
-      "gap": "Implemented #764: verified SNS topic ARN and complete source identifier sets with service-specific source_type and exact managed endpoints. Empty source sets never expand to Terraform nodes. No event delivery, categories or payload interpretation. See aws-data.md#database-event-subscriptions-764. Historical review below records the audited baseline.",
+      "gap": "Implemented #764: verified SNS topic ARN and complete source identifier sets with service-specific source_type and exact managed endpoints. Empty source sets never expand to Terraform nodes. No event delivery, categories or payload interpretation. See aws-data.md#database-event-subscriptions-764. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10150,7 +10150,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10188,7 +10188,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 764,
-      "gap": "Implemented #764: verified SNS topic ARN and complete source identifier sets with service-specific source_type and exact managed endpoints. Empty source sets never expand to Terraform nodes. No event delivery, categories or payload interpretation. See aws-data.md#database-event-subscriptions-764. Historical review below records the audited baseline.",
+      "gap": "Implemented #764: verified SNS topic ARN and complete source identifier sets with service-specific source_type and exact managed endpoints. Empty source sets never expand to Terraform nodes. No event delivery, categories or payload interpretation. See aws-data.md#database-event-subscriptions-764. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10920,7 +10920,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10988,7 +10988,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical review below records the audited baseline.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
