@@ -68,7 +68,7 @@ fn rest_stage_configuration_requires_current_explicit_matching_evidence() {
                     .unwrap();
             let endpoint = format!("{endpoint_type}.configuration");
             let stage = "aws_api_gateway_stage.live";
-            let account = "aws_api_gateway_account.logging";
+            let account = "aws_api_gateway_account.configuration";
             let address = if field == "cloudwatch_role_arn" {
                 account
             } else {
