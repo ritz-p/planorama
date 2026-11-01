@@ -41256,7 +41256,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
+      "gap": "#714 audit; Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41310,7 +41310,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
+      "gap": "#714 audit; Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41604,7 +41604,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 939,
-      "gap": "Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
+      "gap": "#714 audit; Implemented #939: explicit REGIONAL domain certificates, API mappings with same-API compatible stages, and single-action REST-only routing API/stage references. Unknown or repeated blocks, incompatible API families and literal endpoints remain unverified. Conditions and truststores are opaque, and independent logical placement is retained. Historical review follows.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
