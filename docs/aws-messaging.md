@@ -61,6 +61,19 @@ Synthetic examples: REST [SVG](../examples/api-gateway-rest.svg) /
 `cargo run --locked -- tests/fixtures/api-gateway-rest-plan.json --format html -o examples/api-gateway-rest.html`
 (replace `rest` with `v2` for the second example).
 
+REST helper references (#933) require explicit current managed endpoints and matching
+known values. Documentation parts/versions, gateway responses, models, validators,
+policies and API update helpers link to their REST API without interpreting payloads.
+Method/integration responses verify the same API/resource/method tuple; integration
+response status also identifies the matching method response. Response model maps
+must be complete and API-qualified; built-in `Empty`/`Error` are not managed models.
+Method settings link only to a same-API stage; wildcard paths do not infer methods.
+Resource parents require an unambiguous acyclic chain ending at the same API's root.
+These helpers retain independent logical cards, coverage and filtering behavior.
+Contracts use AWS Provider 6.70.0 at commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`; field shapes and source paths are recorded
+in `aws-semantic-decisions.json`.
+
 ## Step Functions
 
 `aws_sfn_state_machine` and `aws_sfn_activity` are independent regional spatial

@@ -43,6 +43,15 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
             | "aws_api_gateway_resource"
             | "aws_api_gateway_method"
             | "aws_api_gateway_deployment"
+            | "aws_api_gateway_documentation_part"
+            | "aws_api_gateway_gateway_response"
+            | "aws_api_gateway_integration_response"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_method_settings"
+            | "aws_api_gateway_model"
+            | "aws_api_gateway_request_validator"
+            | "aws_api_gateway_rest_api_policy"
+            | "aws_api_gateway_rest_api_put"
             | "aws_api_gateway_documentation_version",
             "rest_api_id",
         ) => (
@@ -50,7 +59,13 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
             &[("aws_api_gateway_rest_api", "id")],
             false,
         ),
-        ("aws_api_gateway_integration" | "aws_api_gateway_method", "resource_id") => (
+        (
+            "aws_api_gateway_integration"
+            | "aws_api_gateway_method"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_integration_response",
+            "resource_id",
+        ) => (
             "REST resource context",
             &[
                 ("aws_api_gateway_resource", "id"),
@@ -58,10 +73,38 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
             ],
             false,
         ),
-        ("aws_api_gateway_integration", "http_method") => (
+        (
+            "aws_api_gateway_integration"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_integration_response",
+            "http_method",
+        ) => (
             "REST method context",
             &[("aws_api_gateway_method", "http_method")],
             false,
+        ),
+        ("aws_api_gateway_resource", "parent_id") => (
+            "REST parent resource",
+            &[
+                ("aws_api_gateway_resource", "id"),
+                ("aws_api_gateway_rest_api", "root_resource_id"),
+            ],
+            false,
+        ),
+        ("aws_api_gateway_method_settings", "stage_name") => (
+            "REST settings stage",
+            &[("aws_api_gateway_stage", "stage_name")],
+            false,
+        ),
+        ("aws_api_gateway_integration_response", "status_code") => (
+            "REST method response",
+            &[("aws_api_gateway_method_response", "status_code")],
+            false,
+        ),
+        ("aws_api_gateway_method_response", "response_models") => (
+            "REST response models",
+            &[("aws_api_gateway_model", "name")],
+            true,
         ),
         ("aws_api_gateway_stage", "deployment_id") => (
             "REST deployment",
@@ -138,6 +181,43 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         context.nodes[r.target].resource_type.as_str(),
         r.attribute.as_str(),
     ) {
+        ("aws_api_gateway_resource", "parent_id") => {
+            let mut seen = std::collections::BTreeSet::from([r.target]);
+            let mut parent = source;
+            loop {
+                if !seen.insert(parent) || !resource_matches(context, r.target, parent) {
+                    return false;
+                }
+                if context.nodes[parent].resource_type == "aws_api_gateway_rest_api" {
+                    return true;
+                }
+                let Some(next) = context.source(parent, "parent_id") else {
+                    return false;
+                };
+                parent = next;
+            }
+        }
+        ("aws_api_gateway_method_settings", "stage_name") => context
+            .source(r.target, "rest_api_id")
+            .is_some_and(|api| context.source(source, "rest_api_id") == Some(api)),
+        ("aws_api_gateway_method_response", "response_models") => {
+            context
+                .source(r.target, "http_method")
+                .is_some_and(|method| method_matches(context, r.target, method))
+                && context.source(r.target, "rest_api_id").is_some_and(|api| {
+                    r.sources.iter().all(|&model| {
+                        context.source(model, "rest_api_id") == Some(api)
+                            && !matches!(context.value(model, "name"), Some("Empty" | "Error"))
+                    })
+                })
+        }
+        ("aws_api_gateway_integration_response", "status_code") => context
+            .source(r.target, "http_method")
+            .is_some_and(|method| {
+                method_matches(context, r.target, method)
+                    && context.source(source, "http_method") == Some(method)
+                    && method_matches(context, source, method)
+            }),
         ("aws_api_gateway_rest_api", "endpoint_configuration.vpc_endpoint_ids") => {
             let (value, unknown) = context.evidence[r.target];
             value["endpoint_configuration"]
@@ -154,10 +234,19 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
                     context.value(endpoint, "vpc_endpoint_type") == Some("Interface")
                 })
         }
-        ("aws_api_gateway_integration" | "aws_api_gateway_method", "resource_id") => {
-            resource_matches(context, r.target, source)
-        }
-        ("aws_api_gateway_integration", "http_method") => method_matches(context, r.target, source),
+        (
+            "aws_api_gateway_integration"
+            | "aws_api_gateway_method"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_integration_response",
+            "resource_id",
+        ) => resource_matches(context, r.target, source),
+        (
+            "aws_api_gateway_integration"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_integration_response",
+            "http_method",
+        ) => method_matches(context, r.target, source),
         (
             "aws_api_gateway_stage",
             "deployment_id" | "canary_settings.deployment_id" | "documentation_version",

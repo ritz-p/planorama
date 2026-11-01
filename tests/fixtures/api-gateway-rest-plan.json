@@ -69,7 +69,8 @@
         "after": {
           "id": "resource-synthetic",
           "rest_api_id": "rest-synthetic",
-          "path_part": "app"
+          "path_part": "app",
+          "parent_id": "root-synthetic"
         }
       }
     },
@@ -279,6 +280,164 @@
           "cloudwatch_role_arn": "arn:aws:iam::123456789012:role/logging"
         }
       }
+    },
+    {
+      "address": "aws_api_gateway_model.response",
+      "mode": "managed",
+      "type": "aws_api_gateway_model",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "name": "Response",
+          "id": "model-id",
+          "content_type": "application/json",
+          "schema": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_request_validator.request",
+      "mode": "managed",
+      "type": "aws_api_gateway_request_validator",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "id": "validator-id",
+          "name": "request"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_method_response.ok",
+      "mode": "managed",
+      "type": "aws_api_gateway_method_response",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "resource_id": "resource-synthetic",
+          "http_method": "GET",
+          "status_code": "200",
+          "response_models": {
+            "application/json": "Response"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_integration_response.ok",
+      "mode": "managed",
+      "type": "aws_api_gateway_integration_response",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "resource_id": "resource-synthetic",
+          "http_method": "GET",
+          "status_code": "200"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_method_settings.all",
+      "mode": "managed",
+      "type": "aws_api_gateway_method_settings",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "stage_name": "live",
+          "method_path": "*/*",
+          "settings": [
+            {
+              "logging_level": "OFF"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_documentation_part.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_documentation_part",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "location": [
+            {
+              "type": "API"
+            }
+          ],
+          "properties": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_gateway_response.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_gateway_response",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "response_type": "DEFAULT_4XX",
+          "status_code": "400"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api_policy.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_rest_api_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "policy": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api_put.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_rest_api_put",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "body": "{}"
+        }
+      }
     }
   ],
   "configuration": {
@@ -326,6 +485,11 @@
               "references": [
                 "aws_api_gateway_rest_api.app.id",
                 "aws_api_gateway_rest_api.app"
+              ]
+            },
+            "parent_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.root_resource_id"
               ]
             }
           }
@@ -560,6 +724,167 @@
             "cloudwatch_role_arn": {
               "references": [
                 "aws_iam_role.logging.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_model.response",
+          "mode": "managed",
+          "type": "aws_api_gateway_model",
+          "name": "response",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_request_validator.request",
+          "mode": "managed",
+          "type": "aws_api_gateway_request_validator",
+          "name": "request",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_method_response.ok",
+          "mode": "managed",
+          "type": "aws_api_gateway_method_response",
+          "name": "ok",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "resource_id": {
+              "references": [
+                "aws_api_gateway_resource.path.id"
+              ]
+            },
+            "http_method": {
+              "references": [
+                "aws_api_gateway_method.get.http_method"
+              ]
+            },
+            "response_models": {
+              "references": [
+                "aws_api_gateway_model.response.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_integration_response.ok",
+          "mode": "managed",
+          "type": "aws_api_gateway_integration_response",
+          "name": "ok",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "resource_id": {
+              "references": [
+                "aws_api_gateway_resource.path.id"
+              ]
+            },
+            "http_method": {
+              "references": [
+                "aws_api_gateway_method.get.http_method"
+              ]
+            },
+            "status_code": {
+              "references": [
+                "aws_api_gateway_method_response.ok.status_code"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_method_settings.all",
+          "mode": "managed",
+          "type": "aws_api_gateway_method_settings",
+          "name": "all",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "stage_name": {
+              "references": [
+                "aws_api_gateway_stage.live.stage_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_documentation_part.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_documentation_part",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_gateway_response.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_gateway_response",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_rest_api_policy.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_rest_api_policy",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_rest_api_put.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_rest_api_put",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
               ]
             }
           }
