@@ -6,8 +6,8 @@ const { execFileSync, spawn } = require('node:child_process');
 
 const root = path.resolve(__dirname, '../..');
 const work = path.join(root, 'output/provider-plan');
-const versions = ['1.9.8', '1.16.6'];
-const pairs = [['1.9.8', '5.100.0', 'aws5'], ['1.16.6', '5.100.0', 'aws5'], ['1.9.8', '6.0.0', 'aws6'], ['1.9.8', '6.70.0', 'aws670']];
+const versions = ['1.9.8', '1.16.6', '1.10.5'];
+const pairs = [['1.9.8', '5.100.0', 'aws5'], ['1.16.6', '5.100.0', 'aws5'], ['1.9.8', '6.0.0', 'aws6'], ['1.9.8', '6.70.0', 'aws670'], ['1.10.5', '5.100.0', 'aws5']];
 const checksums = JSON.parse(fs.readFileSync(path.join(root, 'tests/fixtures/compatibility/matrix.json'))).terraform;
 const phase = process.argv[2];
 assert.ok(['prepare', 'capture', 'verify'].includes(phase), 'Usage: node tests/support/provider_plan.cjs prepare|capture|verify');

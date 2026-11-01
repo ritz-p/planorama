@@ -32,6 +32,7 @@ The verified pairs are explicit; other combinations are input errors:
 | 1.16.6 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
 | 1.9.8 | 6.0.0 | tfplan format 3, embedded configuration and lock | AWS 6.0.0 |
 | 1.9.8 | 6.70.0 | tfplan format 3, embedded configuration and lock | AWS 6.70.0 |
+| 1.10.5 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
 
 The exact Terraform version used to create and export the plan must be on `PATH`.
 Initialize that plan's working directory and fixed provider version yourself
@@ -98,7 +99,7 @@ Account IDs are intentional deployment metadata visible in SVG/HTML. Region,
 account, provider binding and Terraform state remain independent identities.
 
 The development Docker image defaults to Terraform 1.9.8. The evidence harness
-installs checksum-pinned 1.9.8 and 1.16.6 binaries into separate directories in
+installs checksum-pinned binaries for the listed Core versions into separate directories in
 `output/provider-plan/bin`, with separate initialized work directories and pinned
 provider locks. It does not change the image's default executable. Run:
 
@@ -132,7 +133,8 @@ privacy failures.
 
 Inspect the target Core's `internal/plans/planproto/planfile.proto` and
 `internal/plans/planfile` implementation independently of the AWS authentication
-schema. The examined [1.9.8 protobuf](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/plans/planproto/planfile.proto)
+schema. The examined [1.9.8 protobuf](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/plans/planproto/planfile.proto),
+[1.10.5 protobuf](https://github.com/hashicorp/terraform/blob/v1.10.5/internal/plans/planproto/planfile.proto)
 and [1.16.6 protobuf](https://github.com/hashicorp/terraform/blob/v1.16.6/internal/plans/planproto/planfile.proto)
 store format at field 1 and Core version at field 14. Unknown top-level fields
 are skipped by wire type; malformed or duplicate version fields are rejected.

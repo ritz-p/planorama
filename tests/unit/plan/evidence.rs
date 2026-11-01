@@ -72,10 +72,15 @@ fn authentication_schema_is_selected_by_exact_provider_version() {
         );
     }
     let input = fixture().to_string();
-    for provider in ["6.0.0", "6.70.0"] {
+    for (core, provider) in [
+        ("1.16.6", "6.0.0"),
+        ("1.16.6", "6.70.0"),
+        ("1.10.5", "6.0.0"),
+        ("1.10.5", "6.70.0"),
+    ] {
         let mut input: Value = serde_json::from_str(&input).unwrap();
-        input["terraform_version"] = json!("1.16.6");
-        let runtime = json!({"terraform_version":"1.16.6","provider_selections":{"registry.terraform.io/hashicorp/aws":provider}});
+        input["terraform_version"] = json!(core);
+        let runtime = json!({"terraform_version":core,"provider_selections":{"registry.terraform.io/hashicorp/aws":provider}});
         assert!(
             Evidence::validate_runtime(&input.to_string(), &serde_json::to_vec(&runtime).unwrap())
                 .is_err()
