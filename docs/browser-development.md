@@ -41,7 +41,9 @@ docker compose exec -T dev node tests/browser/wasm.cjs
 ```
 
 
-For the complete CI path run `sh scripts/wasm-ci.sh` inside Docker. Browser tests
+For the complete CI path run `sh scripts/wasm-ci.sh` inside Docker; set
+`WASM_CI_SUITE=pr` for the [PR scope](ci.md#browser-wasm-432). Build both distributions
+without repeating compilation with `sh scripts/build-wasm-distributions.sh`. Browser tests
 compare native/Wasm SVG and HTML, exercise selection, cancellation and retries,
 and verify sandbox/storage isolation with networking disabled after asset loading.
 Timings and linear-memory capacity are observations, not performance thresholds.

@@ -1,9 +1,9 @@
 #!/bin/sh
 set -eu
-case ${WASM_CI_FULL_LIB:-0} in
-    0) set -- artwork_free:: ;;
-    1) set -- ;;
-    *) echo 'WASM_CI_FULL_LIB must be 0 or 1' >&2; exit 2 ;;
+export WASM_CI_SUITE=${WASM_CI_SUITE:-full}
+case $WASM_CI_SUITE in
+    pr|full) ;;
+    *) echo 'WASM_CI_SUITE must be pr or full' >&2; exit 2 ;;
 esac
 report=${WASM_CI_REPORT_DIR:-output/wasm-ci}
 mkdir -p "$report"
@@ -12,7 +12,7 @@ export WASM_BROWSER_TIMINGS="$PWD/$report/browser.tsv"
 : > "$report/timings.tsv"
 : > "$WASM_BUILD_TIMINGS"
 : > "$WASM_BROWSER_TIMINGS"
-printf 'full_library=%s\n' "${WASM_CI_FULL_LIB:-0}" > "$report/selection.txt"
+printf 'suite=%s\n' "$WASM_CI_SUITE" > "$report/selection.txt"
 measure() {
     name=$1
     shift
@@ -21,14 +21,17 @@ measure() {
 { rustc -vV; cargo -V; wasm-bindgen --version; sccache --version; node --version; chromium --version; uname -a; nproc; git -c safe.directory="$PWD" rev-parse HEAD; } > "$report/environment.txt"
 target=${CARGO_TARGET_DIR:-/workspace/target}
 export CARGO_TARGET_DIR="$target/shared"
-measure native cargo build --locked --release --bin planorama
-measure browser-build sh scripts/build-wasm.sh
+measure native cargo build --locked --release --bin planorama --no-default-features
+measure distributions-build sh scripts/build-wasm-distributions.sh
+for file in planorama.js planorama_bg.wasm memory-capabilities.json; do
+    cmp "output/browser/pkg/$file" "output/wasm-engine/$file"
+done
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs
-measure standalone-lib cargo test --locked --no-default-features --lib "$@"
-measure standalone-cli cargo test --locked --no-default-features --test cli help_
-measure standalone-native cargo build --locked --release --bin planorama --no-default-features
-measure standalone-build sh scripts/build-wasm-engine.sh
+if [ "$WASM_CI_SUITE" = full ]; then
+    measure standalone-lib cargo test --locked --no-default-features --lib
+    measure standalone-cli cargo test --locked --no-default-features --test cli help_
+fi
 measure standalone-memory node tests/browser/memory.cjs
 measure standalone-tests node tests/browser/wasm-engine.cjs
 sccache --show-stats > "$report/sccache.txt"
