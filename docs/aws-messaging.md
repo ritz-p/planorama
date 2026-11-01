@@ -18,6 +18,8 @@ remain unchanged. VPC Link references do not place an API inside a subnet.
 | REST | Lambda Integration / Authorizer | Exact Function or verified Alias `invoke_arn`; Integration requires AWS/AWS_PROXY, POST and matching Method context; Authorizer requires TOKEN/REQUEST |
 | REST | Private Integration and NLB | HTTP/HTTP_PROXY with VPC_LINK and matching Method context; VPC Link has exactly one matching NLB ARN |
 | v2 | API and explicit Stage deployment | Exact IDs and same API owner; deployment navigation requires known `auto_deploy = false` |
+| v2 | Stage client certificate | Explicit matching API Gateway client certificate ID and known WebSocket API |
+| v2 | Stage access logs | Known HTTP/WebSocket API and one complete block with an explicitly referenced matching CloudWatch Log Group ARN; independent of automatic deployment |
 | v2 | Lambda Integration / Authorizer | Known HTTP/WebSocket API; AWS_PROXY and INTERNET for Integration, REQUEST for Authorizer; exact invoke ARN, or raw Lambda ARN for HTTP Integration |
 | v2 | Private Integration | HTTP API, HTTP_PROXY, VPC_LINK and exact listener or Cloud Map service ARN; listener explicitly identifies an ALB/NLB |
 | v2 | Quick-create Lambda | HTTP API with an explicit Function or verified Alias reference matching its raw ARN; generated integrations, routes and stages are not Terraform nodes |

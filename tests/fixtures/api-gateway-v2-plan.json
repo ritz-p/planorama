@@ -241,7 +241,13 @@
         "after": {
           "api_id": "v2-synthetic",
           "name": "automatic",
-          "auto_deploy": true
+          "auto_deploy": true,
+          "access_log_settings": [
+            {
+              "destination_arn": "arn:aws:logs:us-east-1:123456789012:log-group:v2-access",
+              "format": "$context.requestId"
+            }
+          ]
         }
       }
     },
@@ -372,6 +378,57 @@
             "one": "Modelone",
             "two": "Modeltwo"
           }
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.stage",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "v2-access",
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:v2-access"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_client_certificate.stage",
+      "mode": "managed",
+      "type": "aws_api_gateway_client_certificate",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "v2-certificate"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_stage.socket",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_stage",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "socket-api",
+          "name": "socket",
+          "client_certificate_id": "v2-certificate",
+          "access_log_settings": [
+            {
+              "destination_arn": "arn:aws:logs:us-east-1:123456789012:log-group:v2-access",
+              "format": "$context.requestId"
+            }
+          ]
         }
       }
     }
@@ -593,7 +650,16 @@
                 "aws_apigatewayv2_api.app.id",
                 "aws_apigatewayv2_api.app"
               ]
-            }
+            },
+            "access_log_settings": [
+              {
+                "destination_arn": {
+                  "references": [
+                    "aws_cloudwatch_log_group.stage.arn"
+                  ]
+                }
+              }
+            ]
           }
         },
         {
@@ -708,6 +774,50 @@
                 "aws_apigatewayv2_model.two.name"
               ]
             }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_group.stage",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "stage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_client_certificate.stage",
+          "mode": "managed",
+          "type": "aws_api_gateway_client_certificate",
+          "name": "stage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_stage.socket",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_stage",
+          "name": "socket",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.socket.id"
+              ]
+            },
+            "client_certificate_id": {
+              "references": [
+                "aws_api_gateway_client_certificate.stage.id"
+              ]
+            },
+            "access_log_settings": [
+              {
+                "destination_arn": {
+                  "references": [
+                    "aws_cloudwatch_log_group.stage.arn"
+                  ]
+                }
+              }
+            ]
           }
         }
       ]
