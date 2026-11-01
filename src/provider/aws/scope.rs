@@ -43,6 +43,13 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_ecs_task_set"
+                | "aws_db_snapshot"
+                | "aws_db_cluster_snapshot"
+                | "aws_docdb_cluster_snapshot"
+                | "aws_neptune_cluster_snapshot"
+                | "aws_db_snapshot_copy"
+                | "aws_rds_cluster_snapshot_copy"
+                | "aws_rds_export_task"
                 | "aws_db_proxy_endpoint"
                 | "aws_vpc_peering_connection_accepter"
                 | "aws_route53_resolver_rule"

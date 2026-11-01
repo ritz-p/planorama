@@ -373,8 +373,10 @@ The pinned Provider 6.70.0 [cluster contract](https://github.com/hashicorp/terra
 and [subnet group contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/neptune_subnet_group.html.markdown)
 were checked against schema. Network collections are sets. RDS/DocumentDB types
 and cluster `id` are not accepted as substitutes for these exact contracts.
-Analytics, snapshots, global databases, parameters and encryption summaries remain
+Analytics, global databases, parameters and encryption summaries remain
 outside this scope. Credentials, graph data and endpoint strings are not rendered.
+
+Snapshot references use the separate [snapshot contract](#database-snapshots-and-export-763).
 
 See [fixture](../tests/fixtures/neptune-plan.json), [SVG](../examples/neptune.svg)
 and [HTML](../examples/neptune.html).
@@ -523,3 +525,27 @@ RDS, DocumentDB and Neptune parameter-group inputs link only to the exact servic
 RDS monitoring roles, RDS/Neptune `iam_roles` and RDS instance/cluster role associations link to exact IAM role `arn` outputs. Role associations identify their database using `identifier` or `cluster_identifier`, respectively. Complete collections, known matching nonempty values, current managed identities and compatible provider/account bindings are required. IAM roles are global; regional parameter groups must match the consumer region. Unknown, ambiguous, deleted/deposed and filtered evidence is rejected. Existing database membership and network contracts remain unchanged. AD/CA, restore/replication and parameter contents are excluded.
 
 The resource docs and schema/read implementations were checked at AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. See [fixture](../tests/fixtures/database-configuration-plan.json), [SVG](../examples/database-configuration.svg) and [HTML](../examples/database-configuration.html).
+
+## Database snapshots and export (#763)
+
+RDS instance snapshots reference instance `identifier`, never its resource ID.
+RDS, DocumentDB and Neptune cluster snapshots reference their exact service's
+`cluster_identifier` or `id`. Snapshot copies reference the matching RDS snapshot
+identifier or snapshot ARN output. Cross-region copies require an ARN whose region
+and account match the source, with compatible known accounts on both providers.
+The copy retains its own provider/resource region; source scope is not inherited.
+
+RDS export references snapshot ARN outputs, S3 bucket `id`/`bucket`, IAM role `arn`
+and KMS key `arn`/`key_id`. Every reference requires unique explicit current managed
+Terraform endpoints and matching known nonempty values. Unknown, ambiguous,
+deleted/deposed, filtered or incompatible provider evidence does not verify a link.
+Snapshots, copies and exports remain independent Logical resources; computed
+`vpc_id` does not imply containment. Restore chains, automatic backup replication,
+database/table selectors, policies, runtime status and computed encryption claims
+are excluded.
+
+The resource docs and schema/create/read implementations were checked at AWS
+Provider `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (6.70.0), under
+`website/docs/r/` and `internal/service/{rds,docdb,neptune}/`.
+See [fixture](../tests/fixtures/database-snapshots-plan.json),
+[SVG](../examples/database-snapshots.svg) and [HTML](../examples/database-snapshots.html).

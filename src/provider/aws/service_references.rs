@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::database_snapshots::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloudwatch_delivery::label(resource, attribute) {
         return Some(label);
     }
@@ -592,6 +595,7 @@ pub(crate) fn annotate(
     super::privatelink::annotate(nodes, references, evidence);
     super::security_group_rules::annotate(nodes, references, evidence);
     super::databases::annotate(nodes, references, evidence);
+    super::database_snapshots::annotate(nodes, references, evidence);
     super::apprunner::annotate(nodes, references, evidence);
     super::sagemaker::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
@@ -621,6 +625,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::database_snapshots::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::database_snapshots::bindings(raw, reference))
         && (super::cloudwatch_delivery::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

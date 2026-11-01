@@ -9296,10 +9296,10 @@
       }
     },
     "aws_db_cluster_snapshot": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.  Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9622,10 +9622,10 @@
       }
     },
     "aws_db_snapshot": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: db_instance_identifier -> DB identifier (not resource id) #763.  Not applicable: computed source VPC/AZ never places a snapshot.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9660,10 +9660,10 @@
       }
     },
     "aws_db_snapshot_copy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: snapshot source and copy navigation #763. Deferred: optional option group and key aliases until copy-specific identity forms are covered; destination_region is not source scope.  Not applicable: source snapshot VPC is provenance, not containment.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -9787,10 +9787,10 @@
       }
     },
     "aws_docdb_cluster_snapshot": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.  Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10147,10 +10147,10 @@
       }
     },
     "aws_neptune_cluster_snapshot": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: service-specific cluster_identifier source navigation #763; computed snapshot source/KMS/VPC outputs are not configured references.  Not applicable: computed vpc_id describes source snapshot provenance, not deployed network containment.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10917,10 +10917,10 @@
       }
     },
     "aws_rds_cluster_snapshot_copy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: snapshot source/copy reference #763; ID/ARN and cross-region semantics must remain separate.  Not applicable: copied VPC output does not establish deployed networking.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -10985,10 +10985,10 @@
       }
     },
     "aws_rds_export_task": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 763,
-      "gap": "#717 reviewed: Missing: snapshot/S3/IAM/KMS references #763; preserve key ID/ARN forms.  Not applicable: export operation does not place snapshot or bucket in VPC.",
+      "gap": "Implemented #763: explicit current managed snapshot/source and export endpoint references with matching known values and compatible bindings. Independent artifacts; no computed VPC containment or restore/runtime claims. See aws-data.md#database-snapshots-and-export-763. Historical #717 review below records the audited baseline.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
