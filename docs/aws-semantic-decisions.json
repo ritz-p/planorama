@@ -2043,7 +2043,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 931,
-      "gap": "#714 audit: Partial: #509 verifies API/resource context; missing authorization-gated authorizer, validator and complete API-qualified request model references. Built-in Error/Empty are not managed models. Follow-up #931. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2333,7 +2333,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 931,
-      "gap": "#714 audit: Partial: #509 validates REST API context and TOKEN/REQUEST Lambda invoke_arn; missing credentials IAM role and complete COGNITO_USER_POOLS pool ARN set. Follow-up #931. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #931: API-qualified method authorizer, validator and complete managed request-model maps; TOKEN/REQUEST authorizer IAM roles and complete COGNITO_USER_POOLS ARN sets. Authorization discriminators, explicit current compatible endpoints and known matching values are required. Independent placement and opaque payloads are retained; the review records the historical baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

@@ -87,7 +87,12 @@
           "rest_api_id": "rest-synthetic",
           "resource_id": "resource-synthetic",
           "http_method": "GET",
-          "authorization": "NONE"
+          "authorization": "CUSTOM",
+          "authorizer_id": "authorizer-id",
+          "request_validator_id": "validator-id",
+          "request_models": {
+            "application/json": "Response"
+          }
         }
       }
     },
@@ -161,7 +166,9 @@
           "rest_api_id": "rest-synthetic",
           "type": "REQUEST",
           "name": "synthetic-authorizer",
-          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations"
+          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations",
+          "id": "authorizer-id",
+          "authorizer_credentials": "arn:aws:iam::123456789012:role/logging"
         }
       }
     },
@@ -438,6 +445,42 @@
           "body": "{}"
         }
       }
+    },
+    {
+      "address": "aws_cognito_user_pool.users",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_synthetic",
+          "id": "us-east-1_synthetic",
+          "name": "users"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_authorizer.cognito",
+      "mode": "managed",
+      "type": "aws_api_gateway_authorizer",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cognito-id",
+          "name": "cognito",
+          "rest_api_id": "rest-synthetic",
+          "type": "COGNITO_USER_POOLS",
+          "provider_arns": [
+            "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_synthetic"
+          ]
+        }
+      }
     }
   ],
   "configuration": {
@@ -510,6 +553,21 @@
               "references": [
                 "aws_api_gateway_resource.path.id",
                 "aws_api_gateway_resource.path"
+              ]
+            },
+            "authorizer_id": {
+              "references": [
+                "aws_api_gateway_authorizer.request.id"
+              ]
+            },
+            "request_validator_id": {
+              "references": [
+                "aws_api_gateway_request_validator.request.id"
+              ]
+            },
+            "request_models": {
+              "references": [
+                "aws_api_gateway_model.response.name"
               ]
             }
           }
@@ -608,6 +666,11 @@
               "references": [
                 "aws_lambda_function.app.invoke_arn",
                 "aws_lambda_function.app"
+              ]
+            },
+            "authorizer_credentials": {
+              "references": [
+                "aws_iam_role.logging.arn"
               ]
             }
           }
@@ -885,6 +948,33 @@
             "rest_api_id": {
               "references": [
                 "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool.users",
+          "mode": "managed",
+          "type": "aws_cognito_user_pool",
+          "name": "users",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_authorizer.cognito",
+          "mode": "managed",
+          "type": "aws_api_gateway_authorizer",
+          "name": "cognito",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "provider_arns": {
+              "references": [
+                "aws_cognito_user_pool.users.arn"
               ]
             }
           }
