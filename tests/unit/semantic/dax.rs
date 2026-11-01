@@ -80,6 +80,13 @@ fn dax_preserves_shared_configuration_and_requires_common_vpc() {
         crate::svg::render(&filtered, &crate::layout::Layout::new(&filtered))
             .contains("Unavailable")
     );
+    assert!(
+        !filtered
+            .edges
+            .iter()
+            .any(|e| e.kind == EdgeKind::Containment
+                && filtered.nodes[e.to].resource_type == "aws_dax_cluster")
+    );
     for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
         let output = crate::generate(
             FIXTURE,
