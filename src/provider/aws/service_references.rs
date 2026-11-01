@@ -13,6 +13,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::cloudwatch_metrics::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::cloudwatch_alarms::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::database_events::label(resource, attribute) {
         return Some(label);
     }
@@ -675,6 +678,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::cloudwatch_metrics::bindings(raw, reference))
+        && (super::cloudwatch_alarms::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::cloudwatch_logs::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

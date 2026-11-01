@@ -238,6 +238,7 @@ pub(super) fn annotate(
     crate::provider::aws::lambda_config::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_qualified::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_policy::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::cloudwatch_alarms::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudwatch_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudwatch_metrics::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudwatch_delivery::annotate(nodes, references, &elbv2_evidence);
