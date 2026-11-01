@@ -2568,7 +2568,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 941,
-      "gap": "#714 audit: Partial: #509 same-API deployment requires known auto_deploy false; missing WebSocket client certificate and log destination references. Follow-up #941. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit follow-up implemented in #941: same-API explicit deployment, WebSocket client certificate and single-block CloudWatch Logs references. Independent placement and unknown-value fallback remain unchanged.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -2584,7 +2584,7 @@
         "placement": "Supported: retain Logical Node for aws_apigatewayv2_stage; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_apigatewayv2_stage identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_apigatewayv2_stage has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Partial: #509 same-API deployment requires known auto_deploy false; missing WebSocket client certificate and log destination references.",
+        "references": "Supported: explicit same-API deployment requires known auto_deploy false; client certificate requires WebSocket; single-block CloudWatch Logs references require known HTTP/WebSocket API.",
         "scope": "Partial: Regional (conditional) eligibility from scope.rs; account requires existing provider evidence. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
         "summaries": "Intentionally unsupported: no arbitrary aws_apigatewayv2_stage attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/apigatewayv2_stage.html.markdown",

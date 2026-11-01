@@ -2,6 +2,197 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn v2_stage_logging_and_certificates_require_protocol_and_explicit_evidence() {
+    for certificate in [false, true] {
+        for case in [
+            "valid",
+            "http",
+            "unknown_protocol",
+            "literal",
+            "unknown",
+            "extra_block",
+            "wrong_type",
+            "unknown_endpoint",
+            "deleted",
+            "data",
+            "deposed",
+            "wrong_provider",
+            "unknown_region",
+            "automatic",
+        ] {
+            let mut value: Value =
+                serde_json::from_str(include_str!("../../fixtures/api-gateway-v2-plan.json"))
+                    .unwrap();
+            let (kind, field, output, identity, label) = if certificate {
+                (
+                    "aws_api_gateway_client_certificate",
+                    "client_certificate_id",
+                    "id",
+                    "certificate",
+                    "V2 client certificate",
+                )
+            } else {
+                (
+                    "aws_cloudwatch_log_group",
+                    "access_log_settings.destination_arn",
+                    "arn",
+                    "arn:aws:logs:us-east-1:123456789012:log-group:access",
+                    "V2 access logs",
+                )
+            };
+            let endpoint = format!("{kind}.configuration");
+            let address = "aws_apigatewayv2_stage.live";
+            let mut resource = json!({"address":endpoint,"mode":"managed","type":kind,"provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{output:identity}}});
+            match case {
+                "wrong_type" => resource["type"] = json!("aws_kinesis_firehose_delivery_stream"),
+                "unknown_endpoint" => resource["change"]["after_unknown"][output] = json!(true),
+                "deleted" => resource["change"]["actions"] = json!(["delete"]),
+                "data" => resource["mode"] = json!("data"),
+                "deposed" => resource["deposed"] = json!("old"),
+                "wrong_provider" => resource["provider_name"] = json!("example.invalid/custom/aws"),
+                _ => {}
+            }
+            value["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .push(resource);
+            value["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":endpoint,"mode":"managed","type":kind,"name":"configuration","provider_config_key":"aws","expressions":{}}));
+            for r in value["resource_changes"].as_array_mut().unwrap() {
+                if r["address"] == "aws_apigatewayv2_api.app" {
+                    r["change"]["after"]["protocol_type"] =
+                        json!(if case == "http" { "HTTP" } else { "WEBSOCKET" });
+                    if case == "unknown_protocol" {
+                        r["change"]["after_unknown"]["protocol_type"] = json!(true);
+                    }
+                }
+                if r["address"] == address {
+                    if certificate {
+                        r["change"]["after"][field] = json!(identity);
+                        if case == "unknown" {
+                            r["change"]["after_unknown"][field] = json!(true);
+                        }
+                    } else {
+                        r["change"]["after"]["access_log_settings"] =
+                            json!([{"destination_arn":identity}]);
+                        if case == "unknown" {
+                            r["change"]["after_unknown"]["access_log_settings"] =
+                                json!([{"destination_arn":true}]);
+                        }
+                        if case == "extra_block" {
+                            r["change"]["after"]["access_log_settings"]
+                                .as_array_mut()
+                                .unwrap()
+                                .push(json!({"destination_arn":identity}));
+                        }
+                    }
+                    if case == "automatic" {
+                        r["change"]["after"]["auto_deploy"] = json!(true);
+                    }
+                }
+            }
+            let expressions = &mut value["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .find(|r| r["address"] == address)
+                .unwrap()["expressions"];
+            let expression = if case == "literal" {
+                json!({"constant_value":identity})
+            } else {
+                json!({"references":[format!("{endpoint}.{output}")]})
+            };
+            if certificate {
+                expressions[field] = expression;
+            } else {
+                expressions["access_log_settings"] = json!([{"destination_arn":expression}]);
+            }
+            if case == "unknown_region" {
+                value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                    json!({"references":["var.region"]});
+            }
+            let expected = matches!(case, "valid" | "automatic")
+                || (case == "http" && !certificate)
+                || (case == "extra_block" && certificate);
+            let raw = plan::parse(&value.to_string()).unwrap();
+            assert_eq!(
+                raw.attributes
+                    .iter()
+                    .any(|r| raw.nodes[r.target].address == address
+                        && r.attribute == field
+                        && r.service_reference_verified),
+                expected,
+                "{field} {case}"
+            );
+            let graph = semantic::transform(&raw);
+            if case == "valid" {
+                let selected = crate::view::single(
+                    &graph,
+                    &crate::view::Options {
+                        focus: Some(address.into()),
+                        depth: Some(0),
+                        ..Default::default()
+                    },
+                )
+                .unwrap();
+                assert_eq!(selected.coverage.selected.resources, 1);
+                let mut missing = value.clone();
+                missing["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .retain(|r| r["address"] != endpoint);
+                let missing_raw = plan::parse(&missing.to_string()).unwrap();
+                assert!(!missing_raw.attributes.iter().any(
+                    |r| missing_raw.nodes[r.target].address == address
+                        && r.attribute == field
+                        && r.service_reference_verified
+                ));
+                let out = crate::generate_named(
+                    &[
+                        crate::NamedInput {
+                            state: "one".into(),
+                            json: value.to_string(),
+                        },
+                        crate::NamedInput {
+                            state: "two".into(),
+                            json: missing.to_string(),
+                        },
+                    ],
+                    &crate::Options::default(),
+                )
+                .unwrap()
+                .content;
+                assert!(!out.contains("<metadata id=\"cross-state-relationships\">"));
+            }
+            assert_eq!(
+                graph.coverage.selected.resources,
+                value["resource_changes"].as_array().unwrap().len()
+            );
+            assert!(
+                graph
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == endpoint)
+                    .unwrap()
+                    .member_owner
+                    .is_none()
+            );
+            assert_eq!(
+                graph
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == address)
+                    .unwrap()
+                    .references
+                    .iter()
+                    .any(|r| r.complete && r.label == label),
+                expected,
+                "presentation {field} {case}"
+            );
+        }
+    }
+}
+
+#[test]
 fn rest_stage_configuration_requires_current_explicit_matching_evidence() {
     for (field, endpoint_type, output, identity, label) in [
         (

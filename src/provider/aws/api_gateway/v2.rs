@@ -3,6 +3,16 @@ use crate::model::AttributeReference;
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
     let (label, targets, list): (_, &[_], _) = match (resource, attribute) {
+        ("aws_apigatewayv2_stage", "client_certificate_id") => (
+            "V2 client certificate",
+            &[("aws_api_gateway_client_certificate", "id")],
+            false,
+        ),
+        ("aws_apigatewayv2_stage", "access_log_settings.destination_arn") => (
+            "V2 access logs",
+            &[("aws_cloudwatch_log_group", "arn")],
+            false,
+        ),
         ("aws_apigatewayv2_authorizer", "authorizer_credentials_arn") => {
             ("V2 authorizer role", &[("aws_iam_role", "arn")], false)
         }
@@ -137,6 +147,10 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         ("aws_apigatewayv2_stage", "deployment_id") => {
             context.known_false(r.target, "auto_deploy")
                 && api.is_some_and(|api| context.source(source, "api_id") == Some(api))
+        }
+        ("aws_apigatewayv2_stage", "client_certificate_id") => protocol == Some("WEBSOCKET"),
+        ("aws_apigatewayv2_stage", "access_log_settings.destination_arn") => {
+            matches!(protocol, Some("HTTP" | "WEBSOCKET"))
         }
         ("aws_apigatewayv2_integration", "connection_id") => {
             protocol == Some("HTTP")
