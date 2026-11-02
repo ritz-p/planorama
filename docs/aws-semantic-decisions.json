@@ -41369,10 +41369,10 @@
       }
     },
     "aws_apigatewayv2_integration_response": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 940,
-      "gap": "#714 audit: Missing: WEBSOCKET API/integration parent identity; response templates excluded. Follow-up #940. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #940 (follow-up #714): same-WebSocket-API integration/route/model references; see docs/aws-messaging.md. Bodies, templates and runtime behavior remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41423,10 +41423,10 @@
       }
     },
     "aws_apigatewayv2_model": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 940,
-      "gap": "#714 audit: Missing: API-qualified model identity; schema body excluded. Follow-up #940. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #940 (follow-up #714): same-WebSocket-API integration/route/model references; see docs/aws-messaging.md. Bodies, templates and runtime behavior remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41544,10 +41544,10 @@
       }
     },
     "aws_apigatewayv2_route_response": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 940,
-      "gap": "#714 audit: Missing: WEBSOCKET API/route identity and API-qualified response model map. Follow-up #940. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #940 (follow-up #714): same-WebSocket-API integration/route/model references; see docs/aws-messaging.md. Bodies, templates and runtime behavior remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

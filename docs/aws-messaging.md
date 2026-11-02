@@ -539,3 +539,24 @@ or filtered endpoints remain unresolved; named states remain isolated.
 No permissions, throttling effects or runtime access is inferred. See the
 [fixture](../tests/fixtures/api-usage-plan.json) and
 [tests](../tests/unit/semantic/api_usage.rs).
+
+
+## WebSocket response identities (#940)
+
+AWS Provider 6.70.0 commit 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f:
+integration responses use api_id and integration_id, with a known nonempty
+integration_response_key. Route responses use api_id and route_id, with the
+supported $default route_response_key. Both require a known WEBSOCKET API and
+an explicit parent whose independently proven API is that same endpoint.
+Models retain independent API-qualified identity. response_models is a complete
+string map of model names; the pinned route_response_test.go verifies model.name,
+not model.id. Every model and the response's route must prove that same API.
+
+All references require unique explicit current managed endpoints, exact output
+fields, equal known nonempty values and compatible provider/account/region.
+Unknown, conflicting, literal-only, partial, data, deleted/deposed and filtered
+endpoints retain fallback. Named states stay isolated. Helpers remain independent;
+no embedding or network containment is introduced. Model schema and response
+body/template values are excluded. See the
+[fixture](../tests/fixtures/api-responses-plan.json) and
+[tests](../tests/unit/semantic/api_responses.rs).
