@@ -75,6 +75,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
             "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
+            "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (
