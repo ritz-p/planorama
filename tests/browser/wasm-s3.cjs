@@ -3,7 +3,7 @@ const {readFileSync} = require('node:fs');
 const {join} = require('node:path');
 
 module.exports = ({root, run, native}) => {
-  for (const kind of ['aws_s3_bucket_versioning', 'aws_s3_bucket_metric', 'aws_s3_bucket_inventory', 'aws_s3_bucket_logging']) {
+  for (const kind of ['aws_s3_bucket_versioning', 'aws_s3_bucket_metric', 'aws_s3_bucket_inventory', 'aws_s3_bucket_logging', 'aws_s3_object', 'aws_s3_bucket_object', 'aws_s3_object_copy']) {
     const input = JSON.parse(readFileSync(join(root, 'tests/fixtures/s3-policy-plan.json'), 'utf8'));
     input.resource_changes[1].type = kind;
     if (kind === 'aws_s3_bucket_metric') input.resource_changes[0].type = 'aws_s3_directory_bucket';

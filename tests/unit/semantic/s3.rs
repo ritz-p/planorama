@@ -5,6 +5,113 @@ fn policy() -> Value {
     serde_json::from_str(include_str!("../../fixtures/s3-policy-plan.json")).unwrap()
 }
 
+#[test]
+fn object_destinations_and_keys_require_current_typed_known_references() {
+    for kind in [
+        "aws_s3_object",
+        "aws_s3_bucket_object",
+        "aws_s3_object_copy",
+    ] {
+        for (path, target, field, identifier) in [
+            ("bucket", "aws_s3_bucket", "id", "fixture-assets"),
+            (
+                "bucket",
+                "aws_s3_access_point",
+                "arn",
+                "arn:aws:s3:us-west-2:123456789012:accesspoint/assets",
+            ),
+            (
+                "kms_key_id",
+                "aws_kms_key",
+                "arn",
+                "arn:aws:kms:us-west-2:123456789012:key/test",
+            ),
+            (
+                "kms_key_id",
+                "aws_kms_alias",
+                "target_key_arn",
+                "arn:aws:kms:us-west-2:123456789012:key/test",
+            ),
+        ] {
+            for case in 0..12 {
+                let endpoint = format!("{target}.assets[0]");
+                let address = format!("{kind}.assets");
+                let mut value = policy();
+                value["resource_changes"]
+                    .as_array_mut()
+                    .unwrap()
+                    .truncate(2);
+                value["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .truncate(2);
+                value["resource_changes"][0]["address"] = json!(endpoint);
+                value["resource_changes"][0]["type"] = json!(target);
+                value["resource_changes"][0]["change"]["after"] = json!({field: identifier});
+                value["resource_changes"][1]["address"] = json!(address);
+                value["resource_changes"][1]["type"] = json!(kind);
+                value["resource_changes"][1]["change"]["after"] =
+                    json!({path: identifier,"key":"PRIVATE_KEY","source":"PRIVATE_PAYLOAD"});
+                value["configuration"]["root_module"]["resources"][0]["address"] =
+                    json!(format!("{target}.assets"));
+                value["configuration"]["root_module"]["resources"][1]["address"] = json!(address);
+                value["configuration"]["root_module"]["resources"][1]["expressions"] =
+                    json!({path:{"references":[format!("{endpoint}.{field}")]}});
+                match case {
+                    0 => {}
+                    1 => {
+                        value["resource_changes"][0]["provider_name"] =
+                            json!("registry.terraform.io/other/aws")
+                    }
+                    2 => value["resource_changes"][0]["type"] = json!("aws_sqs_queue"),
+                    3 => {
+                        value["resource_changes"][0]["change"]["after_unknown"] =
+                            json!({field:true})
+                    }
+                    4 => {
+                        value["resource_changes"][0]["change"]["after"][field] = json!("different")
+                    }
+                    5 => value["resource_changes"][0]["mode"] = json!("data"),
+                    6 => value["resource_changes"][0]["deposed"] = json!("old"),
+                    7 => value["resource_changes"][0]["change"]["actions"] = json!(["delete"]),
+                    8 => {
+                        value["resource_changes"][1]["change"]["after_unknown"] = json!({path:true})
+                    }
+                    9 => {
+                        value["configuration"]["root_module"]["resources"][1]["expressions"][path] =
+                            json!({"constant_value":identifier})
+                    }
+                    10 => {
+                        value["configuration"]["root_module"]["resources"][1]["expressions"][path] =
+                            json!({"references":[format!("{endpoint}.{field}"),"var.unknown"]})
+                    }
+                    _ => value["resource_changes"][1]["change"]["actions"] = json!(["delete"]),
+                }
+                let result = graph(&value);
+                let node = result
+                    .nodes
+                    .iter()
+                    .find(|node| node.address == address)
+                    .unwrap();
+                assert_eq!(
+                    node.references
+                        .iter()
+                        .any(|r| r.attribute == path && r.complete && r.label != "References"),
+                    case == 0 && !(kind == "aws_s3_object_copy" && target == "aws_s3_access_point"),
+                    "{kind} {path} {target} case {case}"
+                );
+                assert_eq!(result.coverage.selected.resources, 2);
+                assert!(
+                    result
+                        .edges
+                        .iter()
+                        .all(|edge| edge.kind == EdgeKind::Dependency)
+                );
+            }
+        }
+    }
+}
+
 fn graph(value: &Value) -> ArchitectureGraph {
     semantic::transform(&plan::parse(&value.to_string()).unwrap())
 }
