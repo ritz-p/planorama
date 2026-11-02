@@ -1,5 +1,22 @@
 # AWS APIs and messaging
 
+## AppSync GraphQL APIs (#947)
+
+GraphQL APIs have independent Spatial cards. Explicit current managed Lambda,
+Cognito and IAM role references require known equal output values and compatible
+provider/account/region evidence. Authentication and MERGED execution-role links
+are gated by their exact discriminator. Additional Cognito authentication uses a
+complete indexed list with element-correlated pool IDs and known region qualifiers.
+Unknown/sensitive, mismatched, dynamic and historical endpoints remain unproven.
+
+Source API associations require distinct GraphQL and MERGED endpoints. Only one
+configured ARN/ID alternative per endpoint is accepted; unconfigured computed
+counterparts may corroborate identity but cannot create a reference. ARN-based
+cross-account associations require explicit provider accounts and a matching
+endpoint ARN account/region. IDs alone cannot establish cross-account identity.
+Shared APIs, roles and authentication backends retain independent scope; no schema,
+token, policy, authentication result or runtime reachability interpretation occurs.
+
 [AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## API Gateway integrations and deployment context

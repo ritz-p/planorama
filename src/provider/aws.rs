@@ -3,6 +3,7 @@ mod api_gateway;
 mod api_usage;
 mod application_scaling;
 mod apprunner;
+pub(crate) mod appsync;
 mod associations;
 mod autoscaling;
 mod autoscaling_network;
@@ -164,6 +165,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
             crate::model::Placement::Spatial
         }
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
+        "aws_appsync_graphql_api" => crate::model::Placement::Spatial,
         "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
             crate::model::Placement::Spatial
         }
