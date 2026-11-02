@@ -5990,7 +5990,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Supported: explicit event_bus_name matches bus.name/arn and role_arn matches IAM role.arn. Omitted default bus is not synthesized. Complete unique current compatible endpoint evidence is required. See docs/aws-messaging.md.",
+      "gap": "Supported: explicit event_bus_name matches bus.name/arn and role_arn matches IAM role.arn. Omitted default bus is not synthesized. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
         "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -6028,7 +6028,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Supported: existing target-to-rule/SQS/Lambda proof plus explicit role_arn to IAM and dead_letter_config.arn to SQS. Other target kinds remain deferred. Complete unique current compatible endpoint evidence is required. See docs/aws-messaging.md.",
+      "gap": "Supported: existing target-to-rule/SQS/Lambda proof plus explicit role_arn to IAM and dead_letter_config.arn to SQS. Other target kinds remain deferred. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
         "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -7911,7 +7911,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Supported: explicit connection_arn matches connection.arn; shared connections retain independent identity. No URL endpoint reconstruction. Complete unique current compatible endpoint evidence is required. See docs/aws-messaging.md.",
+      "gap": "Supported: explicit connection_arn matches connection.arn; shared connections retain independent identity. No URL endpoint reconstruction. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
         "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -7941,7 +7941,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Supported: explicit event_source_arn matches bus.arn. KMS identifier variants remain deferred. Complete unique current compatible endpoint evidence is required. See docs/aws-messaging.md.",
+      "gap": "Supported: explicit event_source_arn matches bus.arn. KMS identifier variants remain deferred. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
         "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -7971,7 +7971,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Supported: explicit event_bus_name matches bus.name; policy bodies are not interpreted. Complete unique current compatible endpoint evidence is required. See docs/aws-messaging.md.",
+      "gap": "Supported: explicit event_bus_name matches bus.name; policy bodies are not interpreted. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
         "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -8084,7 +8084,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Supported: explicit event_bus_name matches bus.name; permission bodies are not interpreted. Complete unique current compatible endpoint evidence is required. See docs/aws-messaging.md.",
+      "gap": "Supported: explicit event_bus_name matches bus.name; permission bodies are not interpreted. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
         "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
