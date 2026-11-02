@@ -565,3 +565,17 @@ partial, incompatible and lifecycle-invalid references retain conservative fallb
 Tag values, notification metadata and cron expressions are not interpreted or shown.
 Contracts follow the pinned AWS Provider 6.70.0 schema and documentation recorded
 in aws-semantic-decisions.json. Existing Auto Scaling policy behavior is unchanged.
+
+## Application Auto Scaling and scaling plans (#812)
+
+Target resource IDs require exact namespace/dimension-qualified formats proven by
+explicit managed endpoint outputs: ECS service/cluster/service names, DynamoDB
+table/name (and known table index membership), or RDS cluster:identifier. ECS also
+requires an explicit matching service-to-cluster reference. Policies and scheduled
+actions identify the same resource ID, namespace and dimension of an explicit target.
+Scaling plans verify complete instruction collections; Auto Scaling group/name is
+additionally supported there. Unknown, duplicate, partial, ambiguous or incompatible
+collections remain unresolved. CloudFormation application stacks and IAM roles have
+separate exact ARN references. Tag filters, metric labels, capacity and metric
+expressions do not identify resources. All helpers retain independent placement.
+The pinned Provider 6.70.0 field contracts are in aws-semantic-decisions.json.
