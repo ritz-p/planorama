@@ -519,3 +519,23 @@ Filtering never borrows identity from another state; unavailable links become
 plain context. Parallel targets retain separate provenance and numbers, while
 each target is counted once across logical rows and the relationship index.
 See the [EventBridge target example](../examples/eventbridge-targets.svg).
+
+
+## Usage plans and keys (#936)
+
+Provider 6.70.0 commit 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f defines
+usage-plan api_stages as a set of required api_id/stage string pairs. Every row
+must match explicit REST API id and stage stage_name outputs, and each stage
+must independently prove that API via rest_api_id. Equal stage names in different
+APIs remain distinct. Missing rows, partial references, unknown values and
+conflicting qualifiers invalidate the pair collection. A shared usage plan stays
+independent and is never embedded under an arbitrary API.
+
+Usage-plan-key key_id and usage_plan_id reference API-key id and usage-plan id
+only when key_type is known API_KEY. The association retains its own identity;
+no key value is emitted. References require current managed explicit compatible
+provider/account/region evidence. Literal-only, ambiguous, data, deleted/deposed
+or filtered endpoints remain unresolved; named states remain isolated.
+No permissions, throttling effects or runtime access is inferred. See the
+[fixture](../tests/fixtures/api-usage-plan.json) and
+[tests](../tests/unit/semantic/api_usage.rs).

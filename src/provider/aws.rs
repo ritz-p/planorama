@@ -1,5 +1,6 @@
 mod aliases;
 mod api_gateway;
+mod api_usage;
 mod application_scaling;
 mod apprunner;
 mod associations;

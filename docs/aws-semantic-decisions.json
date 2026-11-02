@@ -41143,10 +41143,10 @@
       }
     },
     "aws_api_gateway_usage_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 936,
-      "gap": "#714 audit: Missing: complete API/stage pairs preserving all entries; shared usage plan cannot embed under one arbitrary API. Follow-up #936. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #936 (follow-up #714): complete API-qualified usage plan stages and API_KEY-discriminated key/plan references; see docs/aws-messaging.md. Secret values and runtime permissions remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41199,10 +41199,10 @@
       }
     },
     "aws_api_gateway_usage_plan_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 936,
-      "gap": "#714 audit: Missing: API_KEY-discriminated key and usage-plan IDs; association retains own identity; value is secret. Follow-up #936. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #936 (follow-up #714): complete API-qualified usage plan stages and API_KEY-discriminated key/plan references; see docs/aws-messaging.md. Secret values and runtime permissions remain excluded.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::api_usage::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloud_map::label(resource, attribute) {
         return Some(label);
     }
@@ -669,6 +672,7 @@ pub(crate) fn annotate(
     super::api_gateway::annotate(nodes, references, evidence);
     super::eks_auxiliary::annotate(nodes, references, evidence);
     super::cloud_map::annotate(nodes, references, evidence);
+    super::api_usage::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
     super::application_scaling::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
@@ -689,6 +693,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::api_usage::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::vpc_routes::bindings(raw, reference))
         && (super::cloud_map::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
