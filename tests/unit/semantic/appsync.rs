@@ -129,3 +129,64 @@ fn additional_cognito_auth_requires_complete_typed_collection_and_known_region()
         .swap(0, 1);
     assert!(!proven(&v, super::ADDITIONAL));
 }
+
+#[test]
+fn association_bindings_verify_both_endpoints_and_allow_same_provider_arns() {
+    for output in ["id", "arn"] {
+        let merged_field = format!("merged_api_{output}");
+        let source_field = format!("source_api_{output}");
+        let mut v = fixture(super::ASSOCIATION, &merged_field, super::API, output);
+        let merged = if output == "arn" {
+            "arn:aws:appsync:us-east-1:111111111111:apis/merged"
+        } else {
+            "merged"
+        };
+        let source = if output == "arn" {
+            "arn:aws:appsync:us-east-1:111111111111:apis/source"
+        } else {
+            "source"
+        };
+        v["resource_changes"][0]["change"]["after"] = json!({output:merged,"api_type":"MERGED"});
+        v["resource_changes"][1]["change"]["after"] =
+            json!({&merged_field:merged,&source_field:source});
+        v["resource_changes"].as_array_mut().unwrap().push(json!({"address":"aws_appsync_graphql_api.source","type":super::API,"change":{"actions":["create"],"after":{output:source,"api_type":"GRAPHQL"}}}));
+        v["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"aws_appsync_graphql_api.source","provider_config_key":"aws","expressions":{}}));
+        v["configuration"]["root_module"]["resources"][1]["expressions"][&source_field] =
+            json!({"references":[format!("aws_appsync_graphql_api.source.{output}")]});
+        assert!(proven(&v, &merged_field));
+        assert!(proven(&v, &source_field));
+        let verify = |v: &Value, expected: bool| {
+            let raw = crate::plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
+            let graph = crate::semantic::transform(&raw);
+            for field in [&merged_field, &source_field] {
+                assert_eq!(
+                    graph
+                        .nodes
+                        .iter()
+                        .flat_map(|n| &n.references)
+                        .any(|r| r.attribute == *field
+                            && r.complete
+                            && Some(r.label) == super::label(super::ASSOCIATION, field)),
+                    expected,
+                    "{field}"
+                );
+            }
+        };
+        v["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::111111111111:role/Test"}}]);
+        verify(&v, true);
+        v["configuration"]["provider_config"]["aws.other"] =
+            v["configuration"]["provider_config"]["aws"].clone();
+        v["configuration"]["provider_config"]["aws.other"]["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::222222222222:role/Test"}}]);
+        v["configuration"]["root_module"]["resources"][2]["provider_config_key"] =
+            json!("aws.other");
+        verify(&v, false);
+        if output == "arn" {
+            let other = "arn:aws:appsync:us-east-1:222222222222:apis/source";
+            v["resource_changes"][2]["change"]["after"]["arn"] = json!(other);
+            v["resource_changes"][1]["change"]["after"][&source_field] = json!(other);
+            verify(&v, true);
+        }
+    }
+}
