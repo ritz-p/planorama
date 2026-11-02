@@ -120,10 +120,58 @@ schema defines regional resources and a scalar `role_arn`; ASL is an opaque stri
 
 `aws_cloudwatch_event_bus` and `aws_cloudwatch_event_rule` are regional spatial
 nodes with the Amazon EventBridge service label. They preserve Terraform identities,
-managed/data mode, actions and lifecycle metadata. Explicit references remain
-ordinary dependencies; event patterns, names and policy text do not establish
+managed/data mode, actions and lifecycle metadata. Verified configuration links
+remain dependencies; event patterns, names and policy text do not establish
 message flow or VPC/Subnet containment. Literal-only and implicit default buses
 do not create resources or ownership. See the [EventBridge example](../examples/eventbridge.svg).
+
+### Bounded configuration references (#748)
+
+The following attributes require one complete, explicit managed AWS endpoint,
+the listed output field and equal known values. Consumer and endpoint must be
+current, non-deposed resources with compatible provider/account/region evidence;
+IAM roles are global. Unknown, ambiguous, literal-only, foreign, historical and
+missing endpoints remain unresolved. Selection and named states never borrow an
+endpoint from another state.
+Duplicate resource changes with the same address and deposed key are rejected
+before parsing can overwrite evidence. Distinct current and deposed identities
+can coexist; historical instances do not invalidate a valid current reference.
+
+| Consumer attribute | Endpoint output |
+| --- | --- |
+| Rule `event_bus_name` | Event bus `name` or `arn` |
+| Bus policy / permission `event_bus_name` | Event bus `name` |
+| Archive `event_source_arn` | Event bus `arn` |
+| API destination `connection_arn` | Event connection `arn` |
+| Rule / target `role_arn` | IAM role `arn` |
+| Target `dead_letter_config.arn` | SQS queue `arn` |
+
+Archives and API destinations retain independent regional logical identities;
+shared connections are not embedded. These links describe configuration, not
+delivery, permissions or health. They do not interpret policy/authentication
+bodies, HTTP URLs, event patterns or partner sources. Global endpoint bus pairs
+and connection VPC Lattice references remain deferred. Existing target-to-rule
+and SQS/Lambda relationships keep their separate proof contract.
+
+Contracts were checked against AWS Provider 6.70.0 at
+[`5e13eed`](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/events)
+and its resource documentation. The [fixture](../tests/fixtures/eventbridge-references-plan.json)
+covers each supported input/output pair; native and Wasm use the same verifier.
+
+### Schema registry navigation (#755)
+
+Schema and registry policy `registry_name` references must explicitly identify
+one registry's `name`; discoverer `source_arn` must identify an event bus `arn`.
+They use the same complete, unique, known-value and compatible provider/account/
+region checks described above. Registry, schema, policy and discoverer retain
+independent logical identities, including shared registries. Missing, filtered,
+historical and ambiguous endpoints never borrow another state's identity.
+
+Schema content, inferred event types, policy bodies and implicit AWS registries
+are not interpreted or synthesized. The contract was checked against the pinned
+[Schemas source](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/schemas)
+and resource documentation. The [fixture](../tests/fixtures/eventbridge-schemas-plan.json)
+is covered by semantic, safe SVG/HTML and native/Wasm parity tests.
 
 ## SQS and SNS
 

@@ -1,0 +1,280 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/test"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.main",
+      "type": "aws_cloudwatch_log_group",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-west-2:123456789012:log-group:prometheus"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_workspace.main",
+      "type": "aws_prometheus_workspace",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ws-example",
+          "arn": "arn:aws:aps:us-west-2:123456789012:workspace/ws-example",
+          "kms_key_arn": "arn:aws:kms:us-west-2:123456789012:key/test",
+          "logging_configuration": [
+            {
+              "log_group_arn": "arn:aws:logs:us-west-2:123456789012:log-group:prometheus:*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_alert_manager_definition.main",
+      "type": "aws_prometheus_alert_manager_definition",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "ws-example",
+          "data": "PRIVATE_YAML",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_anomaly_detector.main",
+      "type": "aws_prometheus_anomaly_detector",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "ws-example",
+          "data": "PRIVATE_YAML",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_resource_policy.main",
+      "type": "aws_prometheus_resource_policy",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "ws-example",
+          "data": "PRIVATE_YAML",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_rule_group_namespace.main",
+      "type": "aws_prometheus_rule_group_namespace",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "ws-example",
+          "data": "PRIVATE_YAML",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_workspace_configuration.main",
+      "type": "aws_prometheus_workspace_configuration",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "ws-example",
+          "data": "PRIVATE_YAML",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_query_logging_configuration.main",
+      "type": "aws_prometheus_query_logging_configuration",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "ws-example",
+          "data": "PRIVATE_YAML",
+          "policy": "PRIVATE_POLICY",
+          "destination": [
+            {
+              "cloudwatch_logs": [
+                {
+                  "log_group_arn": "arn:aws:logs:us-west-2:123456789012:log-group:prometheus:*"
+                }
+              ],
+              "filters": [
+                {
+                  "qsp_threshold": 1000
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_prometheus_workspace.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            },
+            "logging_configuration": [
+              {
+                "log_group_arn": {
+                  "references": [
+                    "aws_cloudwatch_log_group.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_prometheus_alert_manager_definition.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_prometheus_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_prometheus_anomaly_detector.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_prometheus_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_prometheus_resource_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_prometheus_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_prometheus_rule_group_namespace.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_prometheus_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_prometheus_workspace_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_prometheus_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_prometheus_query_logging_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_prometheus_workspace.main.id"
+              ]
+            },
+            "destination": [
+              {
+                "cloudwatch_logs": [
+                  {
+                    "log_group_arn": {
+                      "references": [
+                        "aws_cloudwatch_log_group.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

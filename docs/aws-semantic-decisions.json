@@ -5990,9 +5990,9 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Partial: target-to-rule identity exists. Missing: rule-to-bus and role references. Omitted default bus is not an entity. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit event_bus_name matches bus.name/arn and role_arn matches IAM role.arn. Omitted default bus is not synthesized. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
-        "issue": 721,
+        "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -6004,7 +6004,7 @@
         "placement": "Supported: retain Spatial presentation for this independent aws_cloudwatch_event_rule identity.",
         "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Partial: target-to-rule identity exists. Missing: rule-to-bus and role references. Omitted default bus is not an entity.",
+        "references": "Supported: explicit event_bus_name matches bus.name/arn and role_arn matches IAM role.arn. Omitted default bus is not synthesized.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Deferred: state summary until deprecated is_enabled versus state precedence is specified; schedule expressions/patterns are not interpreted.",
         "officialDocumentation": "website/docs/r/cloudwatch_event_rule.html.markdown",
@@ -6028,9 +6028,9 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Partial: rule/bus plus SQS/Lambda target references and configured edge exist. Missing: role/DLQ (#748). Other target families deferred until their discriminated nested parameters have endpoint-specific contracts. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: existing target-to-rule/SQS/Lambda proof plus explicit role_arn to IAM and dead_letter_config.arn to SQS. Other target kinds remain deferred. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
-        "issue": 721,
+        "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -6043,7 +6043,7 @@
         "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_target identity.",
         "ownership": "Supported: logical association retains action/provenance, parallel target identity and one coverage record.",
         "network": "Not applicable: ECS target subnets describe tasks, not placement of this rule target.",
-        "references": "Partial: rule/bus plus SQS/Lambda target references and configured edge exist. Missing: role/DLQ (#748). Other target families deferred until their discriminated nested parameters have endpoint-specific contracts.",
+        "references": "Supported: existing target-to-rule/SQS/Lambda proof plus explicit role_arn to IAM and dead_letter_config.arn to SQS. Other target kinds remain deferred.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: input/transforms/SQL/commands; no delivery guarantee.",
         "officialDocumentation": "website/docs/r/cloudwatch_event_target.html.markdown",
@@ -7908,12 +7908,12 @@
       }
     },
     "aws_cloudwatch_event_api_destination": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Missing: connection_arn -> connection.arn; URL does not identify a Terraform endpoint. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit connection_arn matches connection.arn; shared connections retain independent identity. No URL endpoint reconstruction. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
-        "issue": 721,
+        "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -7923,7 +7923,7 @@
         "placement": "Missing: review independent API destination card under #748; current Logical default retained by this audit.",
         "ownership": "Not applicable: shared connection must not be embedded.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: connection_arn -> connection.arn; URL does not identify a Terraform endpoint.",
+        "references": "Supported: explicit connection_arn matches connection.arn; shared connections retain independent identity. No URL endpoint reconstruction.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: invocation URL and HTTP/auth data; a connection link conveys the useful configuration without exporting request details.",
         "officialDocumentation": "website/docs/r/cloudwatch_event_api_destination.html.markdown",
@@ -7938,12 +7938,12 @@
       }
     },
     "aws_cloudwatch_event_archive": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Missing: event_source_arn -> bus.arn. Deferred: KMS identifier variants until encryption allowlist; aliases must not be mistaken for keys. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit event_source_arn matches bus.arn. KMS identifier variants remain deferred. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
-        "issue": 721,
+        "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -7951,9 +7951,9 @@
           "kms_key_identifier"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_archive identity.",
-        "ownership": "Missing: source-bus association under #748, not embedded archive content.",
+        "ownership": "Supported: source-bus configuration link; archive remains independent and is not embedded.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: event_source_arn -> bus.arn. Deferred: KMS identifier variants until encryption allowlist; aliases must not be mistaken for keys.",
+        "references": "Supported: explicit event_source_arn matches bus.arn. KMS identifier variants remain deferred.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Deferred: retention summary until finite versus indefinite values and unknown masks have a tested allowlist; event patterns are intentionally unsupported.",
         "officialDocumentation": "website/docs/r/cloudwatch_event_archive.html.markdown",
@@ -7968,12 +7968,12 @@
       }
     },
     "aws_cloudwatch_event_bus_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Missing: explicit bus name ownership navigation; default omission creates no bus. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit event_bus_name matches bus.name; policy bodies are not interpreted. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
-        "issue": 721,
+        "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -7981,9 +7981,9 @@
           "policy"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_bus_policy identity.",
-        "ownership": "Missing: policy-to-bus association in #748; retain policy identity.",
+        "ownership": "Supported: explicit bus configuration navigation; independent identity without embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit bus name ownership navigation; default omission creates no bus.",
+        "references": "Supported: explicit event_bus_name matches bus.name; policy bodies are not interpreted.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: policy JSON, principals and effective permission inference.",
         "officialDocumentation": "website/docs/r/cloudwatch_event_bus_policy.html.markdown",
@@ -8081,12 +8081,12 @@
       }
     },
     "aws_cloudwatch_event_permission": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 748,
-      "gap": "Missing: explicit bus-name association; principal account literal is not an IAM resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit event_bus_name matches bus.name; permission bodies are not interpreted. Complete unique current compatible endpoint evidence is required. See #748 and docs/aws-messaging.md.",
       "review": {
-        "issue": 721,
+        "issue": 748,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -8094,9 +8094,9 @@
           "principal"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_cloudwatch_event_permission identity.",
-        "ownership": "Missing: permission-to-bus navigation under #748, not embedding.",
+        "ownership": "Supported: explicit bus configuration navigation; independent identity without embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit bus-name association; principal account literal is not an IAM resource.",
+        "references": "Supported: explicit event_bus_name matches bus.name; permission bodies are not interpreted.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: permission semantics, organization conditions and principal values.",
         "officialDocumentation": "website/docs/r/cloudwatch_event_permission.html.markdown",
@@ -8808,21 +8808,21 @@
       }
     },
     "aws_schemas_discoverer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Missing: explicit event bus source #755; discovery is not runtime message flow. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit source_arn matches aws_cloudwatch_event_bus.arn with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
-        "issue": 721,
+        "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
           "source_arn"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_schemas_discoverer identity.",
-        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "ownership": "Supported: explicit configuration navigation with independent logical identity; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit event bus source #755; discovery is not runtime message flow.",
+        "references": "Supported: explicit source_arn matches aws_cloudwatch_event_bus.arn with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: discovered event content; status does not prove runtime discovery.",
         "officialDocumentation": "website/docs/r/schemas_discoverer.html.markdown",
@@ -8860,12 +8860,12 @@
       }
     },
     "aws_schemas_registry_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Missing: explicit registry name #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
-        "issue": 721,
+        "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -8873,9 +8873,9 @@
           "policy"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_schemas_registry_policy identity.",
-        "ownership": "Missing: policy association #755 without embedding.",
+        "ownership": "Supported: explicit configuration navigation with independent logical identity; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit registry name #755.",
+        "references": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: policy body/permissions.",
         "officialDocumentation": "website/docs/r/schemas_registry_policy.html.markdown",
@@ -8890,12 +8890,12 @@
       }
     },
     "aws_schemas_schema": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Missing: explicit registry name #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
-        "issue": 721,
+        "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -8903,9 +8903,9 @@
           "content"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_schemas_schema identity.",
-        "ownership": "Missing: registry membership #755 with independent schema identity.",
+        "ownership": "Supported: explicit configuration navigation with independent logical identity; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit registry name #755.",
+        "references": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: OpenAPI/JSON schema content and field values.",
         "officialDocumentation": "website/docs/r/schemas_schema.html.markdown",

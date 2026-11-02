@@ -224,6 +224,155 @@ fn grafana_name_references_require_account_qualification() {
 }
 
 #[test]
+fn prometheus_workspace_settings_preserve_identity_and_require_log_suffix_provenance() {
+    for case in 0..7 {
+        let mut input: Value =
+            serde_json::from_str(include_str!("../../fixtures/prometheus-plan.json")).unwrap();
+        match case {
+            0 => {}
+            1 => {
+                input["resource_changes"][8]["change"]["after"]["destination"][0]["cloudwatch_logs"]
+                    [0]["log_group_arn"] =
+                    input["resource_changes"][1]["change"]["after"]["arn"].clone()
+            }
+            2 => input["resource_changes"][1]["change"]["after_unknown"] = json!({"arn":true}),
+            3 => input["resource_changes"][1]["change"]["actions"] = json!(["delete"]),
+            4 => {
+                input["configuration"]["root_module"]["resources"][8]["expressions"]["destination"] =
+                    json!([])
+            }
+            5 => {
+                input["resource_changes"][8]["change"]["after_unknown"] =
+                    json!({"destination":true})
+            }
+            _ => input["resource_changes"][1]["type"] = json!("aws_sqs_queue"),
+        }
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        let graph = semantic::transform(&parsed);
+        assert_eq!(graph.coverage.selected.resources, 9);
+        let query = graph
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_prometheus_query_logging_configuration")
+            .unwrap();
+        assert_eq!(
+            query
+                .references
+                .iter()
+                .any(|r| r.label == "Query log groups" && r.complete),
+            case == 0,
+            "case {case}"
+        );
+        if case == 0 {
+            let workspace = graph
+                .nodes
+                .iter()
+                .find(|n| n.resource_type == "aws_prometheus_workspace")
+                .unwrap();
+            assert_eq!(workspace.placement, Placement::Spatial);
+            assert!(
+                workspace
+                    .references
+                    .iter()
+                    .any(|r| r.label == "Workspace log group" && r.complete)
+            );
+            for helper in graph.nodes.iter().filter(|n| {
+                n.resource_type.starts_with("aws_prometheus_")
+                    && n.resource_type != "aws_prometheus_workspace"
+            }) {
+                assert_eq!(helper.placement, Placement::Logical);
+                assert!(
+                    helper
+                        .references
+                        .iter()
+                        .any(|r| r.label == "Prometheus workspace owner" && r.complete)
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn prometheus_query_log_destinations_require_the_complete_collection() {
+    let mut input: Value =
+        serde_json::from_str(include_str!("../../fixtures/prometheus-plan.json")).unwrap();
+    let mut log = input["resource_changes"][1].clone();
+    log["address"] = json!("aws_cloudwatch_log_group.other");
+    log["change"]["after"]["arn"] = json!("arn:aws:logs:us-west-2:123456789012:log-group:other");
+    input["resource_changes"].as_array_mut().unwrap().push(log);
+    input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({"address":"aws_cloudwatch_log_group.other","provider_config_key":"aws"}));
+    input["resource_changes"][8]["change"]["after"]["destination"].as_array_mut().unwrap().push(json!({"cloudwatch_logs":[{"log_group_arn":"arn:aws:logs:us-west-2:123456789012:log-group:other:*"}]}));
+    input["configuration"]["root_module"]["resources"][8]["expressions"]["destination"].as_array_mut().unwrap().push(json!({"cloudwatch_logs":[{"log_group_arn":{"references":["aws_cloudwatch_log_group.other.arn"]}}]}));
+    for valid in [true, false] {
+        if !valid {
+            input["resource_changes"][8]["change"]["after_unknown"] =
+                json!({"destination":[{}, {"cloudwatch_logs":true}]});
+        }
+        let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+        let query = graph
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_prometheus_query_logging_configuration")
+            .unwrap();
+        assert_eq!(
+            query
+                .references
+                .iter()
+                .any(|r| r.label == "Query log groups" && r.complete && r.targets.len() == 2),
+            valid
+        );
+    }
+}
+
+#[test]
+fn prometheus_helper_owner_proof_is_typed_current_and_known() {
+    for kind in [
+        "aws_prometheus_alert_manager_definition",
+        "aws_prometheus_anomaly_detector",
+        "aws_prometheus_resource_policy",
+        "aws_prometheus_rule_group_namespace",
+        "aws_prometheus_workspace_configuration",
+        "aws_prometheus_query_logging_configuration",
+    ] {
+        for case in 0..5 {
+            let mut input = fixture(
+                kind,
+                "workspace_id",
+                "aws_prometheus_workspace",
+                "id",
+                false,
+            );
+            match case {
+                0 => {}
+                1 => input["resource_changes"][0]["type"] = json!("aws_grafana_workspace"),
+                2 => input["resource_changes"][0]["change"]["after_unknown"] = json!({"id":true}),
+                3 => input["resource_changes"][0]["change"]["actions"] = json!(["delete"]),
+                _ => {
+                    input["resource_changes"][0]["provider_name"] =
+                        json!("registry.terraform.io/other/aws")
+                }
+            }
+            let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+            let node = graph
+                .nodes
+                .iter()
+                .find(|n| n.resource_type == kind)
+                .unwrap();
+            assert_eq!(
+                node.references
+                    .iter()
+                    .any(|r| r.label == "Prometheus workspace owner" && r.complete),
+                case == 0,
+                "{kind} case {case}"
+            );
+        }
+    }
+}
+
+#[test]
 fn grafana_helpers_keep_actions_coverage_and_workspace_qualified_tokens() {
     for case in 0..7 {
         let mut input: Value =
