@@ -42,7 +42,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_service_discovery_http_namespace"
+            "aws_api_gateway_usage_plan"
+                | "aws_api_gateway_usage_plan_key"
+                | "aws_service_discovery_http_namespace"
                 | "aws_service_discovery_private_dns_namespace"
                 | "aws_service_discovery_public_dns_namespace"
                 | "aws_service_discovery_service"
