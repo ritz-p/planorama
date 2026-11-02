@@ -15,6 +15,10 @@ mod mq_tests;
 
 pub(super) fn network(resource: &str) -> Option<(&'static str, &'static str)> {
     match resource {
+        "aws_grafana_workspace" => Some((
+            "vpc_configuration.subnet_ids",
+            "vpc_configuration.security_group_ids",
+        )),
         "aws_db_proxy_endpoint" => Some(("vpc_subnet_ids", "vpc_security_group_ids")),
         "aws_route53_resolver_endpoint" => Some(("ip_address.subnet_id", "security_group_ids")),
         "aws_msk_cluster" => Some((
@@ -197,6 +201,13 @@ fn verify(
         return false;
     }
     let (value, unknown) = evidence[reference.target];
+    if node.resource_type == "aws_grafana_workspace"
+        && value["vpc_configuration"]
+            .as_array()
+            .is_none_or(|items| items.len() != 1)
+    {
+        return false;
+    }
     let Some(actual) = values(value, unknown, &reference.attribute, collection) else {
         return false;
     };
@@ -340,6 +351,10 @@ pub(super) fn diagnostics(raw: &Input) -> Vec<crate::model::Diagnostic> {
         .filter_map(|(target, node)| {
             let (subnets, _) = network(&node.resource_type)?;
             (node.provider.is_aws()
+                && (node.resource_type != "aws_grafana_workspace"
+                    || raw.attributes.iter().any(|r| {
+                        r.target == target && r.attribute.starts_with("vpc_configuration.")
+                    }))
                 && node.mode == EntityMode::Managed
                 && node.deposed_key.is_none()
                 && placement(raw, target).is_none())

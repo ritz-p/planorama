@@ -1,0 +1,224 @@
+use crate::{model::*, plan, semantic};
+use serde_json::{Value, json};
+
+fn nested(path: &str, leaf: Value) -> Value {
+    let fields: Vec<_> = path.split('.').collect();
+    let mut value = leaf;
+    for (index, field) in fields.iter().enumerate().rev() {
+        value = json!({*field:value});
+        if index != 0 {
+            value = json!([value]);
+        }
+    }
+    value
+}
+
+fn fixture(kind: &str, path: &str, target: &str, field: &str, collection: bool) -> Value {
+    let identifier = if target == "aws_kms_key" {
+        "arn:aws:kms:us-west-2:123456789012:key/test"
+    } else {
+        "fixture-id"
+    };
+    let source = format!("{target}.target");
+    let address = format!("{kind}.test");
+    let mut after = nested(
+        path,
+        if collection {
+            json!([identifier])
+        } else {
+            json!(identifier)
+        },
+    );
+    after["permission_type"] = json!("CUSTOMER_MANAGED");
+    after["account_access_type"] = json!("ORGANIZATION");
+    json!({"format_version":"1.2", "resource_changes":[
+        {"address":source,"type":target,"mode":"managed","change":{"actions":["no-op"],"after":{field:identifier,"vpc_endpoint_type":"Interface","service_name":"com.amazonaws.us-west-2.grafana-workspace"}}},
+        {"address":address,"type":kind,"mode":"managed","change":{"actions":["create"],"after":after}}
+    ],"configuration":{"provider_config":{"aws":{"full_name":"registry.terraform.io/hashicorp/aws","expressions":{"region":{"constant_value":"us-west-2"}}}},"root_module":{"resources":[
+        {"address":source,"provider_config_key":"aws"},
+        {"address":address,"provider_config_key":"aws","expressions":nested(path,json!({"references":[format!("{source}.{field}")]}))}
+    ]}}})
+}
+
+#[test]
+fn grafana_workspace_references_reject_unproven_endpoints() {
+    for (path, target, field, collection) in [
+        ("role_arn", "aws_iam_role", "arn", false),
+        ("kms_key_id", "aws_kms_key", "arn", false),
+        (
+            "organizational_units",
+            "aws_organizations_organizational_unit",
+            "id",
+            true,
+        ),
+        (
+            "network_access_control.prefix_list_ids",
+            "aws_ec2_managed_prefix_list",
+            "id",
+            true,
+        ),
+        (
+            "network_access_control.vpce_ids",
+            "aws_vpc_endpoint",
+            "id",
+            true,
+        ),
+        ("vpc_configuration.subnet_ids", "aws_subnet", "id", true),
+        (
+            "vpc_configuration.security_group_ids",
+            "aws_security_group",
+            "id",
+            true,
+        ),
+    ] {
+        for case in 0..10 {
+            let mut input = fixture("aws_grafana_workspace", path, target, field, collection);
+            match case {
+                0 => {}
+                1 => input["resource_changes"][0]["type"] = json!("aws_sqs_queue"),
+                2 => {
+                    input["resource_changes"][0]["provider_name"] =
+                        json!("registry.terraform.io/other/aws")
+                }
+                3 => input["resource_changes"][0]["mode"] = json!("data"),
+                4 => input["resource_changes"][0]["deposed"] = json!("old"),
+                5 => input["resource_changes"][0]["change"]["actions"] = json!(["delete"]),
+                6 => input["resource_changes"][0]["change"]["after"][field] = json!("mismatch"),
+                7 => input["resource_changes"][0]["change"]["after_unknown"] = json!({field:true}),
+                8 => {
+                    input["resource_changes"][1]["change"]["after_unknown"] =
+                        nested(path, json!(true))
+                }
+                _ => {
+                    input["configuration"]["root_module"]["resources"][1]["expressions"] = json!({})
+                }
+            }
+            let parsed = plan::parse(&input.to_string()).unwrap();
+            let graph = semantic::transform(&parsed);
+            let node = graph
+                .nodes
+                .iter()
+                .find(|n| n.address == "aws_grafana_workspace.test")
+                .unwrap();
+            assert_eq!(node.placement, Placement::Spatial);
+            assert_eq!(
+                node.references
+                    .iter()
+                    .any(|r| r.attribute == path && r.label != "References" && r.complete),
+                case == 0,
+                "{path} case {case}"
+            );
+            assert_eq!(graph.coverage.selected.resources, 2);
+        }
+    }
+}
+
+#[test]
+fn grafana_access_endpoints_require_grafana_interface_service() {
+    for (key, value) in [
+        ("vpc_endpoint_type", "Gateway"),
+        ("service_name", "com.amazonaws.us-west-2.s3"),
+    ] {
+        let mut input = fixture(
+            "aws_grafana_workspace",
+            "network_access_control.vpce_ids",
+            "aws_vpc_endpoint",
+            "id",
+            true,
+        );
+        input["resource_changes"][0]["change"]["after"][key] = json!(value);
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        assert!(
+            parsed
+                .attributes
+                .iter()
+                .filter(|r| r.attribute == "network_access_control.vpce_ids")
+                .all(|r| !r.service_reference_verified)
+        );
+    }
+}
+
+#[test]
+fn grafana_network_requires_complete_common_vpc_without_subnet_ownership() {
+    for case in 0..4 {
+        let text = include_str!("../../fixtures/msk-plan.json")
+            .replace("aws_msk_serverless_cluster", "aws_grafana_workspace")
+            .replace("vpc_config", "vpc_configuration");
+        let mut input: Value = serde_json::from_str(&text).unwrap();
+        match case {
+            0 => {}
+            1 => {
+                input["resource_changes"][11]["change"]["after"]["vpc_configuration"][0]["subnet_ids"] =
+                    json!(["subnet-a", "missing"])
+            }
+            2 => {
+                input["resource_changes"][11]["change"]["after_unknown"] =
+                    json!({"vpc_configuration":[{"security_group_ids":true}]})
+            }
+            _ => input["resource_changes"][5]["change"]["after"]["vpc_id"] = json!("vpc-client"),
+        }
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        let graph = semantic::transform(&parsed);
+        let parents: Vec<_> = graph
+            .edges
+            .iter()
+            .filter(|e| {
+                e.kind == EdgeKind::Containment
+                    && graph.nodes[e.to].address == "aws_grafana_workspace.serverless"
+            })
+            .map(|e| graph.nodes[e.from].address.as_str())
+            .collect();
+        assert_eq!(
+            parents,
+            if case == 0 {
+                vec!["aws_vpc.cluster"]
+            } else {
+                vec![]
+            },
+            "case {case}"
+        );
+    }
+}
+
+#[test]
+fn grafana_name_references_require_account_qualification() {
+    for (path, kind) in [
+        ("organization_role_name", "aws_iam_role"),
+        ("stack_set_name", "aws_cloudformation_stack_set"),
+    ] {
+        let input = fixture("aws_grafana_workspace", path, kind, "name", false);
+        let mut parsed = plan::parse(&input.to_string()).unwrap();
+        assert!(
+            parsed
+                .attributes
+                .iter()
+                .all(|r| !r.service_reference_verified)
+        );
+        for node in &mut parsed.nodes {
+            node.provider_configuration.as_mut().unwrap().account =
+                AwsAccountScope::new("123456789012");
+        }
+        let evidence = parsed
+            .nodes
+            .iter()
+            .map(|node| {
+                let n = input["resource_changes"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .find(|n| n["address"].as_str() == Some(&node.address))
+                    .unwrap();
+                (&n["change"]["after"], &n["change"]["after_unknown"])
+            })
+            .collect::<Vec<_>>();
+        super::annotate(&parsed.nodes, &mut parsed.attributes, &evidence);
+        assert!(
+            parsed
+                .attributes
+                .iter()
+                .any(|r| r.attribute == path && r.service_reference_verified),
+            "{path}: {:?}",
+            parsed.attributes
+        );
+    }
+}

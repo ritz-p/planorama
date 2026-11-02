@@ -751,7 +751,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_glue_workflow", "AWS Glue", Controller, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_grafana_license_association", "Amazon Managed Grafana", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),
     entry!("aws_grafana_role_association", "Amazon Managed Grafana", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),
-    entry!("aws_grafana_workspace", "Amazon Managed Grafana", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),
+    entry!("aws_grafana_workspace", "Amazon Managed Grafana", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),
     entry!("aws_grafana_workspace_api_key", "Amazon Managed Grafana", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),
     entry!("aws_grafana_workspace_saml_configuration", "Amazon Managed Grafana", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),
     entry!("aws_grafana_workspace_service_account", "Amazon Managed Grafana", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedGrafana))),

@@ -2,6 +2,38 @@
 
 [AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
+## Grafana workspace (#993)
+
+Grafana workspaces are independent Spatial dashboard services. The pinned AWS
+Provider 6.70.0 [workspace contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/grafana_workspace.html.markdown)
+and SDK schema define scalar role/KMS/name inputs, an organizational-unit ID list,
+and singleton VPC/access-control list blocks with subnet/SG/prefix-list/endpoint sets.
+
+| Input | Current managed endpoint output |
+| --- | --- |
+| `role_arn` | IAM Role `arn`, with known permission type |
+| `kms_key_id` | KMS Key `arn` |
+| `organizational_units` | Organizations Organizational Unit `id` |
+| `organization_role_name` | IAM Role `name`, with known matching account |
+| `stack_set_name` | CloudFormation StackSet `name`, with known matching account/region |
+| `vpc_configuration.subnet_ids` / `security_group_ids` | Subnet / Security Group `id` |
+| `network_access_control.prefix_list_ids` | EC2 Managed Prefix List `id` |
+| `network_access_control.vpce_ids` | VPC Endpoint `id`, Interface type and exact regional `grafana-workspace` service |
+
+Organization inputs require `account_access_type = ORGANIZATION`. Every dedicated
+reference requires explicit complete unique Terraform evidence and equal known
+values. Collections must resolve in full. Unknown, malformed, ambiguous, deleted,
+deposed, wrong provider/type or incompatible account/region bindings retain
+unresolved navigation. Filtered and named-state identities retain existing rules.
+Both complete VPC collections must prove the same VPC before adding VPC context;
+no individual subnet owns the workspace. Access restrictions are separate from
+data-source VPC connectivity. Shared role/key/OU/StackSet endpoints keep their scopes.
+
+Service-managed generated roles, enum destinations, workspace endpoint URLs and
+computed identifiers never create managed nodes. Credentials, configuration JSON
+and runtime reachability are not interpreted. See the [fixture](../tests/fixtures/grafana-plan.json)
+and [SVG](../examples/grafana.svg); HTML uses the shared generation procedure.
+
 ## MemoryDB references (#740)
 
 MemoryDB clusters remain Spatial. Shared subnet/parameter groups, ACLs, users,
