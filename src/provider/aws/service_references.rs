@@ -560,6 +560,10 @@ pub(crate) fn annotate(
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
         reference.service_reference_verified &= super::dynamodb::verify(nodes, reference, evidence);
+        if super::s3::object(&node.resource_type) {
+            reference.service_reference_verified &=
+                super::s3::verify_object(nodes, reference, evidence);
+        }
         if node.resource_type == "aws_s3_bucket_replication_configuration"
             && reference.attribute.ends_with("replica_kms_key_id")
         {

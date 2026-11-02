@@ -85,6 +85,13 @@ pub(super) fn list_shape(resource: &str, lengths: &[usize]) -> bool {
 }
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if object(resource) {
+        match attribute {
+            "bucket" => return Some("Object destination"),
+            "kms_key_id" => return Some("Object encryption key"),
+            _ => {}
+        }
+    }
     if bucket_configuration(resource) && attribute == "bucket" {
         return Some("Configuration bucket reference");
     }
@@ -119,6 +126,15 @@ pub(super) fn source_fields(
     attribute: &str,
     source: &str,
 ) -> &'static [&'static str] {
+    if object(resource) {
+        return match (attribute, source) {
+            ("bucket", "aws_s3_bucket" | "aws_s3_directory_bucket") => &["id", "bucket"],
+            ("bucket", "aws_s3_access_point") if resource != "aws_s3_object_copy" => &["arn"],
+            ("kms_key_id", "aws_kms_key") => &["arn"],
+            ("kms_key_id", "aws_kms_alias") => &["target_key_arn"],
+            _ => &[],
+        };
+    }
     if bucket_configuration(resource) && attribute == "bucket" && source == "aws_s3_bucket" {
         return &["id", "bucket"];
     }
@@ -161,6 +177,36 @@ pub(super) fn source_fields(
         }
         _ => &[],
     }
+}
+
+pub(super) fn object(resource: &str) -> bool {
+    matches!(
+        resource,
+        "aws_s3_object" | "aws_s3_bucket_object" | "aws_s3_object_copy"
+    )
+}
+
+pub(super) fn verify_object(
+    nodes: &[crate::model::TerraformEntity],
+    reference: &crate::model::AttributeReference,
+    evidence: &[(&serde_json::Value, &serde_json::Value)],
+) -> bool {
+    if !super::service_evidence::eligible(nodes, reference) {
+        return false;
+    }
+    if reference.attribute != "kms_key_id" {
+        return true;
+    }
+    let key = super::service_evidence::known(evidence, reference.target, "kms_key_id");
+    let (value, unknown) = evidence[reference.target];
+    let mode = super::service_evidence::known(evidence, reference.target, "server_side_encryption");
+    key.is_some_and(|arn| super::s3_exports::kms_arn("aws_kms_key", arn))
+        && (matches!(mode, Some("aws:kms" | "aws:kms:dsse"))
+            || (value["server_side_encryption"].is_null()
+                && matches!(
+                    unknown["server_side_encryption"],
+                    serde_json::Value::Null | serde_json::Value::Bool(false)
+                )))
 }
 
 pub(super) fn aggregate(

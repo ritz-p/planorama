@@ -4,6 +4,29 @@
 
 ## S3 bucket configuration
 
+### Object destinations and encryption (#976)
+
+`aws_s3_object`, `aws_s3_bucket_object` and `aws_s3_object_copy` retain independent
+Logical identities, actions and coverage. `bucket` accepts an explicit current
+managed Bucket or Directory Bucket `id`/`bucket` reference with an equal known
+value. Upload resources also accept Access Point `arn`; copy destinations do not.
+`kms_key_id` accepts Key `arn` or managed Alias `target_key_arn`, requiring a key
+ARN and absent or known KMS encryption mode. Alias ARNs and data sources are not
+accepted. Provider/account/region bindings must be compatible. Unknown, ambiguous,
+deleted/deposed, mismatched or unavailable endpoints retain conservative fallback.
+These references do not move resources or establish network ownership.
+
+The pinned AWS Provider 6.70.0
+[object contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_object.html.markdown),
+[legacy contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_bucket_object.html.markdown),
+and [copy contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_object_copy.html.markdown)
+and registered SDK schemas define scalar string bucket/key inputs and optional
+computed KMS inputs. Computed object ARN/version outputs do not synthesize nodes.
+Copy source parsing and version provenance remain deferred; local file source,
+content and object keys are not infrastructure endpoints or displayed payloads.
+
+### Bucket settings
+
 `aws_s3_bucket_policy` is a regional Logical Policy resource with the S3 service label,
 independent identity, action and coverage. Its `Policy bucket reference` requires
 a complete explicit unique current managed AWS Bucket reference to `id` or
