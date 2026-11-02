@@ -87,6 +87,13 @@ to the same domain's matching domain_name_id. ACM certificates require EDGE
 is regional. Private access associations require a PRIVATE domain ARN and VPCE
 Interface endpoint. Certificate registration names and truststore URLs stay opaque.
 
+V2 domain mappings (#939) require a REGIONAL domain and an explicitly referenced
+REST, HTTP or WebSocket API with a stage from that same API family and owner.
+V2 domain certificate blocks must be single and REGIONAL. Routing-rule actions
+require exactly one invoke_api block targeting an explicitly EDGE/REGIONAL REST API
+and its stage; PRIVATE, unknown or missing endpoint types remain unresolved. The V2
+resource name does not permit HTTP/WebSocket targets. Conditions remain opaque.
+
 ## Step Functions
 
 `aws_sfn_state_machine` and `aws_sfn_activity` are independent regional spatial
