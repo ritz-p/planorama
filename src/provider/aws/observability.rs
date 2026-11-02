@@ -112,9 +112,9 @@ fn verify(
     }
     let (value, mask) = evidence[r.target];
     if r.attribute.starts_with("network_access_control.")
-        && !value["network_access_control"]
+        && value["network_access_control"]
             .as_array()
-            .is_some_and(|items| items.len() == 1)
+            .is_none_or(|items| items.len() != 1)
     {
         return false;
     }
