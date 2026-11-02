@@ -9,12 +9,14 @@ mod tests;
 
 fn rule(kind: &str, field: &str) -> Option<(&'static str, bool)> {
     Some(match (kind, field) {
-        ("aws_security_group", "ingress.security_groups" | "egress.security_groups") => {
-            ("aws_security_group", true)
-        }
-        ("aws_security_group", "ingress.prefix_list_ids" | "egress.prefix_list_ids") => {
-            ("aws_ec2_managed_prefix_list", true)
-        }
+        (
+            "aws_security_group" | "aws_default_security_group",
+            "ingress.security_groups" | "egress.security_groups",
+        ) => ("aws_security_group", true),
+        (
+            "aws_security_group" | "aws_default_security_group",
+            "ingress.prefix_list_ids" | "egress.prefix_list_ids",
+        ) => ("aws_ec2_managed_prefix_list", true),
         (
             "aws_security_group_rule"
             | "aws_vpc_security_group_ingress_rule"
@@ -163,7 +165,10 @@ pub(super) fn annotate(
             .sources
             .iter()
             .map(|&s| {
-                if nodes[s].resource_type != endpoint {
+                if nodes[s].resource_type != endpoint
+                    && !(endpoint == "aws_security_group"
+                        && nodes[s].resource_type == "aws_default_security_group")
+                {
                     return None;
                 }
                 if rule_set

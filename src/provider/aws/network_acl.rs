@@ -9,7 +9,7 @@ mod tests;
 
 fn rule(kind: &str, field: &str) -> Option<(&'static str, bool)> {
     match (kind, field) {
-        ("aws_network_acl", "subnet_ids") => Some(("aws_subnet", true)),
+        ("aws_network_acl" | "aws_default_network_acl", "subnet_ids") => Some(("aws_subnet", true)),
         ("aws_network_acl_association", "subnet_id") => Some(("aws_subnet", false)),
         ("aws_network_acl_association" | "aws_network_acl_rule", "network_acl_id") => {
             Some(("aws_network_acl", false))
@@ -68,7 +68,8 @@ pub(super) fn annotate(
             .sources
             .iter()
             .map(|&s| {
-                (nodes[s].resource_type == endpoint)
+                (nodes[s].resource_type == endpoint
+                    || (endpoint == "aws_subnet" && nodes[s].resource_type == "aws_default_subnet"))
                     .then(|| super::service_evidence::known(evidence, s, "id"))
                     .flatten()
             })
@@ -79,7 +80,7 @@ pub(super) fn annotate(
         {
             continue;
         }
-        if kind == "aws_network_acl" {
+        if matches!(kind, "aws_network_acl" | "aws_default_network_acl") {
             let vpc = super::service_evidence::known(evidence, r.target, "vpc_id");
             if vpc.is_none()
                 || r.sources
