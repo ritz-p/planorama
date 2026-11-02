@@ -119,14 +119,28 @@ fn outposts_endpoint_placement_requires_matching_subnet_security_group_and_outpo
     v["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"aws_security_group.main","provider_config_key":"aws","expressions":{}}));
     assert!(proven(&v, "subnet_id"));
     assert!(proven(&v, "security_group_id"));
-    for case in 0..3 {
+    for case in 0..5 {
         let mut bad = v.clone();
         match case {
             0 => bad["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("other"),
             1 => bad["resource_changes"][1]["change"]["after"]["outpost_id"] = json!("other"),
-            _ => bad["resource_changes"][2]["change"]["after_sensitive"] = json!({"vpc_id":true}),
+            2 => bad["resource_changes"][2]["change"]["after_sensitive"] = json!({"vpc_id":true}),
+            _ => {
+                bad["configuration"]["provider_config"]["aws.other"] =
+                    bad["configuration"]["provider_config"]["aws"].clone();
+                let index = if case == 3 { 2 } else { 0 };
+                bad["configuration"]["root_module"]["resources"][index]["provider_config_key"] =
+                    json!("aws.other");
+            }
         }
         assert!(!proven(&bad, "subnet_id"));
         assert!(!proven(&bad, "security_group_id"));
+        let graph = crate::semantic::transform(&crate::plan::parse(&bad.to_string()).unwrap());
+        assert!(
+            !graph
+                .edges
+                .iter()
+                .any(|e| e.kind == crate::model::EdgeKind::Containment)
+        );
     }
 }

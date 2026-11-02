@@ -280,6 +280,23 @@ pub(crate) fn annotate(
 }
 
 pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> bool {
+    if raw.nodes[r.target].resource_type == ENDPOINT
+        && matches!(r.attribute.as_str(), "subnet_id" | "security_group_id")
+        && !["subnet_id", "security_group_id"].iter().all(|field| {
+            raw.attributes.iter().any(|peer| {
+                peer.target == r.target
+                    && peer.attribute == *field
+                    && peer.service_reference_verified
+                    && endpoint_binding(raw, peer)
+            })
+        })
+    {
+        return false;
+    }
+    endpoint_binding(raw, r)
+}
+
+fn endpoint_binding(raw: &crate::semantic::Input, r: &AttributeReference) -> bool {
     super::route53::bindings(raw, r)
         && r.service_reference_owner_account
             .as_ref()
