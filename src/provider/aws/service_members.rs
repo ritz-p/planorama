@@ -74,6 +74,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_s3control_access_point_policy" => (
+                "access_point_arn",
+                "Access point policy owner",
+                "Access point policy",
+            ),
+            "aws_s3control_bucket_policy" => ("bucket", "Outposts bucket owner", "Bucket policy"),
+            "aws_s3control_bucket_lifecycle_configuration" => {
+                ("bucket", "Outposts bucket owner", "Bucket lifecycle")
+            }
+            "aws_s3control_object_lambda_access_point_policy" => {
+                ("name", "Named access point owner", "Object Lambda policy")
+            }
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (

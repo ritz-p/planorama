@@ -73,6 +73,7 @@ mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+pub(crate) mod s3_access;
 mod s3_exports;
 mod sagemaker;
 mod scaling;
@@ -164,6 +165,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
             crate::model::Placement::Spatial
         }
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
+        "aws_s3control_bucket" | "aws_s3outposts_endpoint" => crate::model::Placement::Spatial,
         "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
             crate::model::Placement::Spatial
         }
