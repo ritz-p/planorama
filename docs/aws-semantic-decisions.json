@@ -12789,10 +12789,10 @@
       }
     },
     "aws_service_discovery_http_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "#713 reviewed: Missing: incoming namespace/service navigation #782; generated DNS hosted-zone outputs are not managed references.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12823,10 +12823,10 @@
       }
     },
     "aws_service_discovery_instance": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "#713 reviewed: Missing: service_id -> service.id #782; arbitrary attributes do not identify EC2 instances.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: attributes IP/port/custom data and health status.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12860,10 +12860,10 @@
       }
     },
     "aws_service_discovery_private_dns_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "#713 reviewed: Missing: incoming namespace/service navigation #782; explicit VPC ID #782.  Missing: verified VPC context #782; DNS scope never propagates to service/instance subnet containment. Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12898,10 +12898,10 @@
       }
     },
     "aws_service_discovery_public_dns_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "#713 reviewed: Missing: incoming namespace/service navigation #782; generated DNS hosted-zone outputs are not managed references.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: namespace DNS configuration does not prove record resolution or health.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12932,10 +12932,10 @@
       }
     },
     "aws_service_discovery_service": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "#713 reviewed: Missing: agreeing direct/DNS namespace ID variants #782; HTTP namespace requires API-only distinction.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: deprecated custom health checks and DNS routing policy are not runtime health summaries.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
