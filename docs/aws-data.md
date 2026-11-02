@@ -59,6 +59,35 @@ YAML receivers, PromQL, policy JSON, labels and runtime anomalies remain opaque.
 See the [fixture](../tests/fixtures/prometheus-plan.json), [SVG](../examples/prometheus.svg)
 and [HTML](../examples/prometheus.html).
 
+### Prometheus scraper (#996)
+
+Scrapers are independent Spatial collection services. The pinned 6.70.0
+[Scraper](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/prometheus_scraper.html.markdown)
+SDK schema defines singleton source/destination blocks with exclusive EKS/VPC
+and AMP/CloudWatch variants. EKS `cluster_arn`, AMP `workspace_arn`, OpenSearch
+exporter `domain_arn` and configured source/target role ARNs require explicit
+current managed matching endpoints. The default CloudWatch dataset and computed
+scraper `role_arn` never synthesize managed resources.
+
+Complete source subnet/SG collections must prove one common VPC before placement;
+subnet collections require at least two distinct IDs. EKS placement separately
+requires the referenced cluster's explicit complete subnet-to-VPC proof to agree.
+Missing optional SG evidence leaves the scraper independent. No customer subnet
+owns the scraper and no destination workspace is placed inside its source VPC.
+Unknown, ambiguous, incomplete, wrong-type/provider, deleted/deposed or filtered
+evidence retains the existing conservative fallback. Source/destination variants
+must be known and exclusive; access, Kubernetes permissions, scrape YAML and
+runtime reachability are not interpreted.
+
+Cross-account AMP destinations require known source/target accounts, the same
+region, explicit source/target role references, and a target role in the workspace
+account. Both endpoints retain their original scopes. Scraper Logging Configuration
+keeps an independent lifecycle and references Scraper `id` through `scraper_id`.
+Its singleton `logging_destination.cloudwatch_logs.log_group_arn` uses the same
+explicit Log Group `arn` plus mandatory `:*` proof as workspace logs. Component
+enums are not child resources. See the [fixture](../tests/fixtures/prometheus-scraper-plan.json),
+[SVG](../examples/prometheus-scraper.svg) and [HTML](../examples/prometheus-scraper.html).
+
 ## MemoryDB references (#740)
 
 MemoryDB clusters remain Spatial. Shared subnet/parameter groups, ACLs, users,

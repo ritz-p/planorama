@@ -1,0 +1,354 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-west-2a"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "sg-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/grafana",
+          "name": "grafana"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.second",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-second",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-west-2b"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_workspace.main",
+      "type": "aws_prometheus_workspace",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ws-example",
+          "arn": "arn:aws:aps:us-west-2:123456789012:workspace/ws-example"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_cluster.main",
+      "type": "aws_eks_cluster",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:eks:us-west-2:123456789012:cluster/main",
+          "vpc_config": [
+            {
+              "subnet_ids": [
+                "subnet-main"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.main",
+      "type": "aws_cloudwatch_log_group",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-west-2:123456789012:log-group:scraper"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_scraper.main",
+      "type": "aws_prometheus_scraper",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "s-example",
+          "source": [
+            {
+              "eks": [
+                {
+                  "cluster_arn": "arn:aws:eks:us-west-2:123456789012:cluster/main",
+                  "subnet_ids": [
+                    "subnet-main",
+                    "subnet-second"
+                  ],
+                  "security_group_ids": [
+                    "sg-main"
+                  ]
+                }
+              ]
+            }
+          ],
+          "destination": [
+            {
+              "amp": [
+                {
+                  "workspace_arn": "arn:aws:aps:us-west-2:123456789012:workspace/ws-example"
+                }
+              ]
+            }
+          ],
+          "role_configuration": [
+            {
+              "source_role_arn": "arn:aws:iam::123456789012:role/grafana",
+              "target_role_arn": "arn:aws:iam::123456789012:role/grafana"
+            }
+          ],
+          "role_arn": "PRIVATE_COMPUTED_ROLE",
+          "scrape_configuration": "PRIVATE_YAML"
+        }
+      }
+    },
+    {
+      "address": "aws_prometheus_scraper_logging_configuration.main",
+      "type": "aws_prometheus_scraper_logging_configuration",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scraper_id": "s-example",
+          "logging_destination": [
+            {
+              "cloudwatch_logs": [
+                {
+                  "log_group_arn": "arn:aws:logs:us-west-2:123456789012:log-group:scraper:*"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_subnet.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_subnet.second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_prometheus_workspace.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_eks_cluster.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_config": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_group.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_prometheus_scraper.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": [
+              {
+                "eks": [
+                  {
+                    "cluster_arn": {
+                      "references": [
+                        "aws_eks_cluster.main.arn"
+                      ]
+                    },
+                    "subnet_ids": {
+                      "references": [
+                        "aws_subnet.main.id",
+                        "aws_subnet.second.id"
+                      ]
+                    },
+                    "security_group_ids": {
+                      "references": [
+                        "aws_security_group.main.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "destination": [
+              {
+                "amp": [
+                  {
+                    "workspace_arn": {
+                      "references": [
+                        "aws_prometheus_workspace.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "role_configuration": [
+              {
+                "source_role_arn": {
+                  "references": [
+                    "aws_iam_role.main.arn"
+                  ]
+                },
+                "target_role_arn": {
+                  "references": [
+                    "aws_iam_role.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_prometheus_scraper_logging_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "scraper_id": {
+              "references": [
+                "aws_prometheus_scraper.main.id"
+              ]
+            },
+            "logging_destination": [
+              {
+                "cloudwatch_logs": [
+                  {
+                    "log_group_arn": {
+                      "references": [
+                        "aws_cloudwatch_log_group.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
