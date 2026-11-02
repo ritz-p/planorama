@@ -6,6 +6,9 @@ mod rest;
 mod v2;
 
 #[cfg(test)]
+#[path = "../../../tests/unit/semantic/api_responses.rs"]
+mod response_tests;
+#[cfg(test)]
 #[path = "../../../tests/unit/semantic/api_gateway.rs"]
 mod tests;
 
@@ -63,7 +66,10 @@ fn basic(
     };
     if matches!(
         nodes[r.target].resource_type.as_str(),
-        "aws_apigatewayv2_route" | "aws_api_gateway_method_response" | "aws_api_gateway_method"
+        "aws_apigatewayv2_route"
+            | "aws_apigatewayv2_route_response"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_method"
     ) {
         if r.attribute == "target" {
             return expected.len() == 1

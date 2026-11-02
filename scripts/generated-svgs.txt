@@ -131,3 +131,4 @@ examples/default-network.svg
 examples/eks-auxiliary.svg
 examples/cloud-map.svg
 examples/api-usage.svg
+examples/api-responses.svg
