@@ -86,6 +86,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_s3control_object_lambda_access_point_policy" => {
                 ("name", "Named access point owner", "Object Lambda policy")
             }
+            "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (

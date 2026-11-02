@@ -121,6 +121,7 @@ pub(super) fn collect(
                     source_attributes_by_instance,
                     service_reference_verified: false,
                     service_reference_owner_account: None,
+                    service_reference_shared: false,
                     peering_proof: None,
                     endpoint_network_context: Vec::new(),
                     ids_only: resolution.ids_only,
