@@ -58,6 +58,16 @@ fn cloud_map_references_require_current_explicit_matching_outputs() {
         v["configuration"]["root_module"]["resources"][1]["expressions"][field] =
             json!({"references":[format!("{endpoint}.peer.{output}")]});
         assert!(verified(&v, field), "{kind} {field}");
+        if kind == "aws_service_discovery_service" {
+            v["resource_changes"][1]["change"]["after"]["dns_config"] = json!([]);
+            v["resource_changes"][1]["change"]["after_unknown"]["dns_config"] = json!([]);
+            assert!(verified(&v, field));
+            for mask in [json!(true), json!([{}]), json!({}), json!([true])] {
+                let mut bad = v.clone();
+                bad["resource_changes"][1]["change"]["after_unknown"]["dns_config"] = mask;
+                assert!(!verified(&bad, field));
+            }
+        }
         assert_eq!(
             semantic::transform(&plan::parse(&v.to_string()).unwrap())
                 .coverage
@@ -93,6 +103,22 @@ fn dns_discriminators_and_alternative_namespaces_must_agree_without_containment(
     let v: Value =
         serde_json::from_str(include_str!("../../fixtures/cloud-map-plan.json")).unwrap();
     assert!(verified(&v, "dns_config.namespace_id"));
+    for (mask, expected) in [
+        (json!([{}]), true),
+        (json!([{"namespace_id":false,"dns_records":true}]), true),
+        (json!([{"namespace_id":true}]), false),
+        (json!([true]), false),
+        (json!([]), false),
+        (json!([{}, {}]), false),
+    ] {
+        let mut masked = v.clone();
+        masked["resource_changes"][2]["change"]["after_unknown"]["dns_config"] = mask;
+        assert_eq!(verified(&masked, "dns_config.namespace_id"), expected);
+        masked["resource_changes"][2]["change"]["after"]["namespace_id"] = json!("ns-main");
+        masked["configuration"]["root_module"]["resources"][2]["expressions"]["namespace_id"] =
+            json!({"references":["aws_service_discovery_private_dns_namespace.main.id"]});
+        assert_eq!(verified(&masked, "namespace_id"), expected);
+    }
     let graph = semantic::transform(&plan::parse(&v.to_string()).unwrap());
     assert_eq!(graph.coverage.selected.resources, 5);
     assert!(

@@ -56,9 +56,7 @@ pub(super) fn annotate(
             continue;
         }
         if kind == "aws_service_discovery_service" {
-            if !matches!(&unknown["dns_config"], Value::Null | Value::Bool(false))
-                || !matches!(&unknown["namespace_id"], Value::Null | Value::Bool(false))
-            {
+            if !matches!(&unknown["namespace_id"], Value::Null | Value::Bool(false)) {
                 continue;
             }
             let dns = value["dns_config"].as_array();
@@ -66,11 +64,17 @@ pub(super) fn annotate(
             if !(value["dns_config"].is_null() || dns.is_some_and(|rows| rows.len() <= 1)) {
                 continue;
             }
+            match &unknown["dns_config"] {
+                Value::Null | Value::Bool(false) => {}
+                Value::Array(masks) if masks.len() == dns.map_or(0, Vec::len) => {}
+                _ => continue,
+            }
             let service_type = super::service_evidence::known(evidence, r.target, "type");
             if has_dns {
                 if endpoint == "aws_service_discovery_http_namespace"
                     || !matches!(service_type, Some("DNS" | "DNS_HTTP"))
-                    || dns.unwrap()[0]["namespace_id"].as_str() != id
+                    || !super::streaming::values(value, unknown, "dns_config.namespace_id", false)
+                        .is_some_and(|ids| ids.len() == 1 && ids.first().copied() == id)
                 {
                     continue;
                 }
