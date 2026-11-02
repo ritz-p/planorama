@@ -123,3 +123,4 @@ examples/database-snapshots.svg
 examples/database-events.svg
 examples/memorydb.svg
 examples/dax.svg
+examples/grafana.svg

@@ -43,6 +43,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_ecs_task_set"
+                | "aws_grafana_workspace"
                 | "aws_memorydb_cluster"
                 | "aws_memorydb_subnet_group"
                 | "aws_memorydb_parameter_group"

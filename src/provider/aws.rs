@@ -58,6 +58,7 @@ mod monitoring;
 mod network;
 mod network_acl;
 pub(crate) mod networkfirewall;
+mod observability;
 mod opensearch_serverless;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
