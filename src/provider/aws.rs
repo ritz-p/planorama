@@ -9,6 +9,7 @@ mod backup;
 mod basic;
 mod batch;
 mod classification;
+mod cloud_map;
 pub(crate) mod cloudfront;
 pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]

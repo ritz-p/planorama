@@ -42,7 +42,12 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_eks_access_policy_association"
+            "aws_service_discovery_http_namespace"
+                | "aws_service_discovery_private_dns_namespace"
+                | "aws_service_discovery_public_dns_namespace"
+                | "aws_service_discovery_service"
+                | "aws_service_discovery_instance"
+                | "aws_eks_access_policy_association"
                 | "aws_eks_identity_provider_config"
                 | "aws_eks_pod_identity_association"
                 | "aws_eks_capability"

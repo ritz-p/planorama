@@ -610,3 +610,24 @@ The pinned official implementations are in internal/service/eks/{access_policy_a
 identity_provider_config,pod_identity_association,capability,addon,node_group}.go.
 See [fixture](../tests/fixtures/eks-auxiliary-plan.json) and
 [tests](../tests/unit/semantic/eks_auxiliary.rs).
+
+
+## Cloud Map identities (#782)
+
+Pinned AWS Provider 6.70.0 (5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f)
+servicediscovery source/schema contracts: private DNS namespace vpc references an
+explicit VPC id as logical DNS context. Public/HTTP namespaces have no VPC selector.
+Service namespace_id and singleton-list dns_config.namespace_id reference namespace
+id, with agreeing known alternatives. HTTP namespaces require HTTP service type
+and no DNS configuration; DNS configuration requires a private/public namespace
+and known DNS/DNS_HTTP type. A known HTTP-only service can use a DNS namespace.
+Instance service_id references service id. Each resource remains independent;
+namespace references establish neither embedding nor subnet/VPC containment.
+
+All links require unique current managed explicit Terraform endpoints, matching
+known nonempty values and compatible provider/account/region evidence. Unknown,
+literal-only, ambiguous, partial, conflicting or historical inputs keep fallback.
+Filtered endpoints and named states never borrow evidence. Attributes-map IP/port
+values, generated hosted zones, DNS health and deprecated custom health-check
+configuration are excluded. See [fixture](../tests/fixtures/cloud-map-plan.json)
+and [tests](../tests/unit/semantic/cloud_map.rs).
