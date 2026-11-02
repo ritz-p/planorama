@@ -151,6 +151,17 @@ ALB/stage associations and unresolved configuration.
 
 ## Route 53
 
+DNS Firewall rules reference a managed rule-group `id` and, for standard rules,
+a managed domain-list `id`. The domain-list link requires absent Advanced-rule
+threat/confidence fields, including the computed threat-protection ID; no managed
+endpoint is synthesized for that ID. A uniquely proven group owns the rule helper.
+Rule-group associations independently reference group and VPC IDs without moving
+the shared group into a VPC. Provider/account/region, current managed identity,
+explicit indexed provenance and known non-sensitive matching outputs are required.
+Shared-by-me owner evidence must match the group's provider account; shared-with-me
+or incompatible accounts remain unresolved. This does not infer DNS enforcement,
+effective policy or network containment.
+
 Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
 Amazon Route 53 service label. The [synthetic example](../examples/route53.svg) also has
 [offline HTML](../examples/route53.html). `Hosted zone` links require a complete,
