@@ -20,13 +20,16 @@ module.exports = function({driver, small, run, status, native}) {
   const child = `${selector}.module.child[0]`;
   const resource = {address: `${selector}.terraform_data.item`, type: 'terraform_data', change: {actions: ['create'], after: {}}};
   const json = JSON.stringify({format_version: '1.2', resource_changes: [
-    {address: 'terraform_data.root', type: 'terraform_data'}, resource, resource,
+    {address: 'terraform_data.root', type: 'terraform_data'}, resource,
     {...resource, deposed: 'old'},
     {address: `${child}.data.aws_region.current`, type: 'aws_region', mode: 'data'},
   ], planned_values: {root_module: {child_modules: [{address: 'module.empty[0]'}]}},
   configuration: {root_module: {module_calls: {app: {module: {}}, unknown: {module: {}}}}}});
   const result = run(json, {}, 'inspect');
   assert.equal(result.ok, true);
+  const duplicate = JSON.parse(json);
+  duplicate.resource_changes.push(resource);
+  assert.equal(run(JSON.stringify(duplicate), {}, 'inspect').ok, false);
   const lines = result.modules.map(row => `${row.selector ?? '(root; not selectable)'}\t${row.instance ? 'instance' : 'configuration (aggregate)'}\t${row.direct}\t${row.subtree}`).join('\n');
   assert.ok(native(json, ['--list-modules']).endsWith(lines + '\n'), 'Native and Wasm use identical original inventory');
   assert.deepEqual(result.modules.find(row => row.selector === selector), {selector, instance: true, direct: 2, subtree: 3});

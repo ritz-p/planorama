@@ -122,6 +122,15 @@ async function main() {
       }
     }
     checkpoint('cloudwatch-alarms');
+    for (const fixture of ['eventbridge-references-plan']) {
+      const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
+      for (const format of ['svg', 'html']) {
+        const result = run(input, {format});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), fixture+' native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
+    }
     if (full) {
       require('./wasm-s3.cjs')({root, run, native: nativeReference});
       const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
