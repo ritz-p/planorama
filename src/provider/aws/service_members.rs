@@ -74,6 +74,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (

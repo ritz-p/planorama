@@ -577,3 +577,19 @@ no embedding or network containment is introduced. Model schema and response
 body/template values are excluded. See the
 [fixture](../tests/fixtures/api-responses-plan.json) and
 [tests](../tests/unit/semantic/api_responses.rs).
+## AppSync data sources (#944)
+
+Provider 6.70.0 datasource.go uses singleton list blocks for typed backends.
+Data sources retain their Terraform identity and join a GraphQL API only through
+an explicit matching api_id reference. Backend references require this API context,
+the exact data-source type, a unique managed output and compatible accounts.
+Lambda and EventBridge use ARN outputs; DynamoDB uses table names, with delta
+tables requiring known versioned=true. Explicit backend regions must match;
+omitted regions use the data-source region. RDS_HTTP_ENDPOINT requires both a
+cluster identifier and secret ARN. Elasticsearch/OpenSearch accept an explicit
+endpoint output, optionally prefixed by https://, without hostname discovery.
+IAM roles remain independent, as do all shared backend resources.
+
+Unknown, sensitive, literal-only, conflicting and unavailable endpoints retain
+fallback. No HTTP URL, credentials, SQL/schema or runtime behavior is interpreted.
+See [tests](../tests/unit/semantic/appsync_datasource.rs).
