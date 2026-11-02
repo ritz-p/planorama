@@ -98,7 +98,11 @@ fn pipeline_uses_complete_ordered_function_ids_and_shared_api() {
             11 => {
                 bad["resource_changes"].as_array_mut().unwrap().remove(3);
             }
-            12 => bad["resource_changes"][3]["change"]["after"]["region"] = json!("us-west-2"),
+            12 => {
+                bad["resource_changes"][3]["change"]["after"]["region"] = json!("us-west-2");
+                bad["configuration"]["root_module"]["resources"][3]["expressions"]["region"] =
+                    json!({"constant_value":"us-west-2"});
+            }
             _ => {
                 bad["configuration"]["root_module"]["resources"][3]["provider_config_key"] =
                     json!("aws.missing")
