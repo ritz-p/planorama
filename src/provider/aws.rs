@@ -72,6 +72,7 @@ mod redshift_tests;
 mod s3_exports;
 mod sagemaker;
 mod scaling;
+mod scraper;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
@@ -257,6 +258,7 @@ pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIco
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     streaming::present(&raw, &mut graph);
+    scraper::present(&raw, &mut graph);
     memorydb::present(&raw, &mut graph);
     dax::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);

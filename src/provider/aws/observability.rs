@@ -11,6 +11,21 @@ type Rule = (&'static str, &'static str, bool, &'static str);
 
 fn rule(resource: &str, path: &str) -> Option<Rule> {
     match (resource, path) {
+        ("aws_prometheus_scraper_logging_configuration", "scraper_id") => Some((
+            "aws_prometheus_scraper",
+            "id",
+            false,
+            "Prometheus scraper owner",
+        )),
+        (
+            "aws_prometheus_scraper_logging_configuration",
+            "logging_destination.cloudwatch_logs.log_group_arn",
+        ) => Some((
+            "aws_cloudwatch_log_group",
+            "arn",
+            false,
+            "Scraper log group",
+        )),
         (
             "aws_prometheus_alert_manager_definition"
             | "aws_prometheus_anomaly_detector"
@@ -248,7 +263,7 @@ fn log_values<'a>(
     if items.is_empty()
         || (!multiple && items.len() != 1)
         || (!matches!(masks, Value::Null | Value::Bool(false))
-            && !masks.as_array().is_some_and(|m| m.len() == items.len()))
+            && masks.as_array().is_none_or(|m| m.len() != items.len()))
     {
         return None;
     }

@@ -45,6 +45,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             "aws_ecs_task_set"
                 | "aws_grafana_workspace"
                 | "aws_prometheus_workspace"
+                | "aws_prometheus_scraper"
+                | "aws_prometheus_scraper_logging_configuration"
                 | "aws_prometheus_alert_manager_definition"
                 | "aws_prometheus_anomaly_detector"
                 | "aws_prometheus_resource_policy"

@@ -125,3 +125,4 @@ examples/memorydb.svg
 examples/dax.svg
 examples/grafana.svg
 examples/prometheus.svg
+examples/prometheus-scraper.svg
