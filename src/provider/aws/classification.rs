@@ -11,7 +11,9 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         "aws_organizations_organization"
         | "aws_organizations_organizational_unit"
         | "aws_organizations_account" => ResourceRole::Node,
-        "aws_vpc" | "aws_subnet" => ResourceRole::Container,
+        "aws_vpc" | "aws_subnet" | "aws_default_vpc" | "aws_default_subnet" => {
+            ResourceRole::Container
+        }
         "aws_instance"
         | "aws_route53_resolver_endpoint"
         | "aws_cognito_user_pool"
@@ -72,6 +74,7 @@ pub(super) fn classify(resource_type: &str) -> ResourceRole {
         | "aws_internet_gateway"
         | "aws_nat_gateway"
         | "aws_route_table"
+        | "aws_default_route_table"
         | "aws_route"
         | "aws_vpc_endpoint"
         | "aws_ec2_transit_gateway"

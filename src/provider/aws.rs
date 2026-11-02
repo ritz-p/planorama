@@ -28,6 +28,7 @@ mod database_events;
 mod database_snapshots;
 mod databases;
 mod dax;
+mod default_network;
 pub(super) mod diagnostics;
 mod dynamodb;
 mod ecs_capacity;
@@ -156,6 +157,9 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     let resource_type = aliases::canonical(resource_type);
     match resource_type {
+        "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
+            crate::model::Placement::Spatial
+        }
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
         "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
             crate::model::Placement::Spatial

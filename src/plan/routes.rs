@@ -200,7 +200,10 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
     for node in nodes {
         if !node.provider.is_aws()
             || node.mode != crate::model::EntityMode::Managed
-            || !matches!(node.resource_type.as_str(), "aws_route" | "aws_route_table")
+            || !matches!(
+                node.resource_type.as_str(),
+                "aws_route" | "aws_route_table" | "aws_default_route_table"
+            )
         {
             continue;
         }

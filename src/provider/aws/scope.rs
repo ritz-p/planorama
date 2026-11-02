@@ -42,7 +42,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_ecs_task_set"
+            "aws_default_network_acl"
+                | "aws_default_security_group"
+                | "aws_ecs_task_set"
                 | "aws_grafana_workspace"
                 | "aws_grafana_license_association"
                 | "aws_grafana_role_association"
@@ -159,6 +161,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         || matches!(
             resource,
             "aws_vpc"
+                | "aws_default_vpc"
+                | "aws_default_subnet"
+                | "aws_default_route_table"
                 | "aws_route53_resolver_endpoint"
                 | "aws_cognito_user_pool"
                 | "aws_cognito_user_pool_client"

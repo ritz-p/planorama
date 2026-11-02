@@ -1,0 +1,166 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_default_vpc.main",
+      "type": "aws_default_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-default",
+          "default_network_acl_id": "acl-default",
+          "default_route_table_id": "rtb-default"
+        }
+      }
+    },
+    {
+      "address": "aws_default_subnet.main",
+      "type": "aws_default_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-default",
+          "vpc_id": "vpc-default",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_default_network_acl.main",
+      "type": "aws_default_network_acl",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "acl-default",
+          "vpc_id": "vpc-default",
+          "default_network_acl_id": "acl-default",
+          "subnet_ids": [
+            "subnet-default"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_default_route_table.main",
+      "type": "aws_default_route_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "rtb-default",
+          "vpc_id": "vpc-default",
+          "default_route_table_id": "rtb-default"
+        }
+      }
+    },
+    {
+      "address": "aws_default_security_group.main",
+      "type": "aws_default_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "sg-default",
+          "vpc_id": "vpc-default"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_default_vpc.main",
+          "type": "aws_default_vpc",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_default_subnet.main",
+          "type": "aws_default_subnet",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "availability_zone": {
+              "constant_value": "us-east-1a"
+            }
+          }
+        },
+        {
+          "address": "aws_default_network_acl.main",
+          "type": "aws_default_network_acl",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "default_network_acl_id": {
+              "references": [
+                "aws_default_vpc.main.default_network_acl_id"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_default_subnet.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_default_route_table.main",
+          "type": "aws_default_route_table",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "default_route_table_id": {
+              "references": [
+                "aws_default_vpc.main.default_route_table_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_default_security_group.main",
+          "type": "aws_default_security_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_default_vpc.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

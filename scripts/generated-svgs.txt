@@ -127,3 +127,4 @@ examples/grafana.svg
 examples/grafana-owners.svg
 examples/prometheus.svg
 examples/prometheus-scraper.svg
+examples/default-network.svg

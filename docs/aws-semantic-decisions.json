@@ -34810,10 +34810,10 @@
       }
     },
     "aws_default_network_acl": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "#710 audit: Missing: adopted ACL identity from VPC.default_network_acl_id and complete subnet_ids associations; computed vpc_id is not configured parent proof. Follow-up #889.",
+      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -34881,10 +34881,10 @@
       }
     },
     "aws_default_route_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "#710 audit: Missing: adoption via VPC.default_route_table_id, inline route contracts and propagation references; not an alias of aws_route_table. Missing: current Logical Node omits architecture-bearing default route table. Follow-up #889.",
+      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -34964,10 +34964,10 @@
       }
     },
     "aws_default_security_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "#710 audit: Missing: optional/computed vpc_id adoption and typed inline SG/prefix-list references; omitted vpc_id does not identify a configured VPC. Follow-up #889.",
+      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -35081,10 +35081,10 @@
       }
     },
     "aws_default_subnet": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "#710 audit: Missing: computed VPC identity and AZ-based adoption need a dedicated contract; do not reuse required subnet.vpc_id proof. Missing: current Logical Node does not represent an adopted subnet container. Follow-up #889.",
+      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -35142,10 +35142,10 @@
       }
     },
     "aws_default_vpc": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "#710 audit: Missing: adopted default VPC container and endpoint identity; computed defaults must not synthesize ACL/SG/route-table children. Missing: current Logical Node does not represent an adopted VPC container. Follow-up #889.",
+      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

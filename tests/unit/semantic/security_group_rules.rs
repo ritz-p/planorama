@@ -133,24 +133,27 @@ fn owner_and_typed_peers_require_explicit_current_matching_endpoints() {
 
 #[test]
 fn inline_sets_require_complete_ids_and_do_not_accept_names() {
-    for direction in ["ingress", "egress"] {
-        for (field, endpoint) in [
-            ("security_groups", "aws_security_group"),
-            ("prefix_list_ids", "aws_ec2_managed_prefix_list"),
-        ] {
-            let mut v = input("aws_security_group", "unused", endpoint, true);
-            v["resource_changes"][1]["change"]["after"] = json!({direction:[{field:["endpoint"]}]});
-            v["configuration"]["root_module"]["resources"][1]["expressions"] =
-                json!({direction:[{field:{"references":[format!("{endpoint}.peer.id")]}}]});
-            let path = format!("{direction}.{field}");
-            assert!(verified(&v, &path), "{path}");
-            let mut bad = v.clone();
-            bad["resource_changes"][1]["change"]["after"][direction][0][field] =
-                json!(["endpoint", "literal"]);
-            assert!(!verified(&bad, &path));
-            bad = v.clone();
-            bad["resource_changes"][1]["change"]["after_unknown"][direction] = true.into();
-            assert!(!verified(&bad, &path));
+    for kind in ["aws_security_group", "aws_default_security_group"] {
+        for direction in ["ingress", "egress"] {
+            for (field, endpoint) in [
+                ("security_groups", "aws_security_group"),
+                ("prefix_list_ids", "aws_ec2_managed_prefix_list"),
+            ] {
+                let mut v = input(kind, "unused", endpoint, true);
+                v["resource_changes"][1]["change"]["after"] =
+                    json!({direction:[{field:["endpoint"]}]});
+                v["configuration"]["root_module"]["resources"][1]["expressions"] =
+                    json!({direction:[{field:{"references":[format!("{endpoint}.peer.id")]}}]});
+                let path = format!("{direction}.{field}");
+                assert!(verified(&v, &path), "{path}");
+                let mut bad = v.clone();
+                bad["resource_changes"][1]["change"]["after"][direction][0][field] =
+                    json!(["endpoint", "literal"]);
+                assert!(!verified(&bad, &path));
+                bad = v.clone();
+                bad["resource_changes"][1]["change"]["after_unknown"][direction] = true.into();
+                assert!(!verified(&bad, &path));
+            }
         }
     }
 }

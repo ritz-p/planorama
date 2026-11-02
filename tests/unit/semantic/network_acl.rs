@@ -76,6 +76,7 @@ fn association_lowers_only_a_complete_compatible_pair() {
 fn acl_references_require_complete_current_matching_id_evidence() {
     for (kind, field) in [
         ("aws_network_acl", "subnet_ids"),
+        ("aws_default_network_acl", "subnet_ids"),
         ("aws_network_acl_rule", "network_acl_id"),
     ] {
         let v = input(kind, field);

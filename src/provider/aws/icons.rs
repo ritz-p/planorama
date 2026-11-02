@@ -59,7 +59,7 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_ec2_network_insights_path"
         | "aws_network_interface"
         | "aws_network_interfaces" => ResourceIcon::Vpc,
-        "aws_subnet" | "aws_subnets" => ResourceIcon::Subnet,
+        "aws_default_subnet" | "aws_subnet" | "aws_subnets" => ResourceIcon::Subnet,
         "aws_instance"
         | "aws_instances"
         | "aws_ami"
@@ -92,7 +92,8 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_ec2_transit_gateway_vpn_attachment"
         | "aws_ec2_transit_gateway_peering_attachment"
         | "aws_ec2_transit_gateway_peering_attachments" => ResourceIcon::Gateway,
-        "aws_route_table"
+        "aws_default_route_table"
+        | "aws_route_table"
         | "aws_route_tables"
         | "aws_route"
         | "aws_route_table_association"
@@ -232,7 +233,9 @@ pub(super) fn icon_for(resource_type: &str) -> Option<ResourceIcon> {
         | "aws_iam_server_certificate"
         | "aws_iam_user_ssh_key"
         | "aws_iam_role_policy_attachment" => ResourceIcon::Iam,
-        "aws_security_group"
+        "aws_default_security_group"
+        | "aws_default_network_acl"
+        | "aws_security_group"
         | "aws_security_groups"
         | "aws_network_acl"
         | "aws_network_acls"

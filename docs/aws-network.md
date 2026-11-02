@@ -394,3 +394,47 @@ sensitive and incompatible endpoints retain conservative fallback.
 Contracts follow AWS Provider 6.70.0 at
 `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, including the shared
 `resourceVPCPeeringConnectionRead` implementation for requester and accepter.
+
+## Adopted default networks (#889)
+
+AWS Provider 6.70.0 at commit
+5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f defines default resources as adoption
+contracts. They are not aliases of ordinary VPC resources.
+
+Default VPC and subnet resources are independent spatial containers; a default
+route table is a spatial connector. No default ACL, SG or table is synthesized.
+Default subnet availability_zone is required, while availability_zone_id,
+cidr_block and vpc_id are computed-only. AZ, CIDR and computed VPC values do not
+establish containment; the subnet stays independent without configured proof.
+
+Default ACL default_network_acl_id and default table default_route_table_id
+must reference the corresponding output on an explicit aws_vpc or aws_default_vpc.
+The adopted resource id must agree, and its known vpc_id must equal that VPC id.
+Default SG vpc_id is optional/computed: only a configured reference to VPC id
+establishes context. Missing configuration never adopts a VPC by value alone.
+These references establish network context, not embedded helper ownership.
+
+Default ACL subnet_ids requires a complete set of explicit subnet id references
+and agreeing known VPC values. Default SG ingress/egress security_groups and
+prefix_list_ids use complete typed id references; default SG is accepted as an
+SG endpoint by typed rule references. Names and IDs are distinct.
+
+Default table route is an optional/computed attribute-mode set. Explicit typed
+route references cover gateway, NAT, transit gateway, peering, ENI, egress-only
+gateway, instance, GatewayLoadBalancer endpoint, core-network ARN and destination
+prefix-list ID; propagating_vgws is a complete set of VPN gateway IDs. Unsupported
+or mixed incomplete route evidence remains unresolved. Explicit standalone routes
+can use a current default table id as owner. No computed route child is invented.
+
+All new proof requires current managed AWS endpoints, complete explicit instance
+references, known matching nonempty output values and compatible provider,
+account and region evidence. Unknown, literal-only, ambiguous, deleted/deposed,
+data or filtered endpoints keep independent resource identity and fallback.
+Named states do not borrow evidence. Inline rules, permissions, health and
+reachability are not inferred or summarized.
+
+Pinned source contracts:
+[default subnet](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_subnet.go),
+[default ACL](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_network_acl.go),
+[default table](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_route_table.go),
+[default SG](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_security_group.go).
