@@ -45,6 +45,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             "aws_apigatewayv2_integration_response"
                 | "aws_appsync_graphql_api"
                 | "aws_appsync_datasource"
+                | "aws_appsync_function"
+                | "aws_appsync_resolver"
                 | "aws_appsync_source_api_association"
                 | "aws_apigatewayv2_route_response"
                 | "aws_apigatewayv2_model"
