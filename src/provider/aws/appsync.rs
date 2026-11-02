@@ -41,6 +41,9 @@ pub(super) fn optional<'a>(v: &'a Value, m: &Value, path: &[&str]) -> Option<Opt
 }
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
+    if let Some(label) = super::appsync_helpers::label(kind, path) {
+        return Some(label);
+    }
     if let Some(label) = super::appsync_execution::label(kind, path) {
         return Some(label);
     }
@@ -168,6 +171,7 @@ pub(crate) fn annotate(
 ) {
     super::appsync_datasource::annotate(nodes, refs, evidence);
     super::appsync_execution::annotate(nodes, refs, evidence);
+    super::appsync_helpers::annotate(nodes, refs, evidence);
     let configured: std::collections::BTreeSet<_> = refs
         .iter()
         .map(|r| (r.target, r.attribute.clone()))
@@ -309,6 +313,9 @@ pub(crate) fn annotate(
 }
 
 pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> bool {
+    if super::appsync_helpers::label(&raw.nodes[r.target].resource_type, &r.attribute).is_some() {
+        return super::route53::bindings(raw, r);
+    }
     if super::appsync_execution::label(&raw.nodes[r.target].resource_type, &r.attribute).is_some() {
         return super::appsync_execution::bindings(raw, r);
     }
