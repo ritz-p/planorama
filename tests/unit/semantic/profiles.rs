@@ -94,3 +94,38 @@ fn public_zones_and_opaque_properties_do_not_prove_profile_resources() {
     v["resource_changes"][0]["change"]["after_unknown"] = json!({"vpc":true});
     assert!(!proven(&v, "resource_arn"));
 }
+
+#[test]
+fn private_zone_accepts_complete_non_sensitive_block_masks() {
+    let mut original = fixture(super::RESOURCE, "resource_arn", "aws_route53_zone", "arn");
+    original["resource_changes"][0]["change"]["after"]["vpc"] = json!([{"vpc_id":"vpc-private"}]);
+    for mask in [
+        json!([{}]),
+        json!([false]),
+        json!([{"vpc_id":false,"vpc_region":false}]),
+    ] {
+        let mut v = original.clone();
+        v["resource_changes"][0]["change"]["after_sensitive"] = json!({"vpc":mask});
+        assert!(proven(&v, "resource_arn"));
+        v["resource_changes"][0]["change"]
+            .as_object_mut()
+            .unwrap()
+            .remove("after_sensitive");
+        v["planned_values"] = json!({"root_module":{"resources":[{"address":"aws_route53_zone.main[0]","type":"aws_route53_zone","values":{"arn":"known","vpc":[{"vpc_id":"vpc-private"}]},"sensitive_values":{"vpc":mask}}]}});
+        assert!(proven(&v, "resource_arn"));
+    }
+    for mask in [
+        json!(true),
+        json!([true]),
+        json!([{"vpc_id":true}]),
+        json!([{"vpc_region":true}]),
+        json!([]),
+        json!([{}, {}]),
+    ] {
+        for field in ["after_sensitive", "after_unknown"] {
+            let mut v = original.clone();
+            v["resource_changes"][0]["change"][field] = json!({"vpc":mask});
+            assert!(!proven(&v, "resource_arn"), "{field}: {mask}");
+        }
+    }
+}

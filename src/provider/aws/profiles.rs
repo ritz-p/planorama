@@ -4,6 +4,32 @@ use serde_json::Value;
 const VPC: &str = "aws_route53profiles_association";
 const RESOURCE: &str = "aws_route53profiles_resource_association";
 
+fn clear(mask: &Value) -> bool {
+    match mask {
+        Value::Null | Value::Bool(false) => true,
+        Value::Object(fields) => fields.values().all(clear),
+        _ => false,
+    }
+}
+
+fn private_zone(value: &Value, mask: &Value) -> bool {
+    if !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_)) {
+        return false;
+    }
+    let Some(rows) = value["vpc"].as_array().filter(|rows| !rows.is_empty()) else {
+        return false;
+    };
+    let masks = match &mask["vpc"] {
+        Value::Null | Value::Bool(false) => None,
+        Value::Array(masks) if masks.len() == rows.len() => Some(masks),
+        _ => return false,
+    };
+    rows.iter().enumerate().all(|(i, row)| {
+        clear(masks.map_or(&Value::Null, |m| &m[i]))
+            && row["vpc_id"].as_str().is_some_and(|id| !id.is_empty())
+    })
+}
+
 pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
     match (kind, field) {
         (VPC | RESOURCE, "profile_id") => Some("Route 53 profile"),
@@ -58,10 +84,7 @@ pub(crate) fn annotate(
         }
         if endpoint.resource_type == "aws_route53_zone" {
             let (v, m) = evidence[*s];
-            if !matches!(m, Value::Null | Value::Bool(false) | Value::Object(_))
-                || !matches!(&m["vpc"], Value::Null | Value::Bool(false))
-                || v["vpc"].as_array().is_none_or(|a| a.is_empty())
-            {
+            if !private_zone(v, m) {
                 continue;
             }
         }
