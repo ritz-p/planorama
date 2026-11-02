@@ -7,8 +7,28 @@ use serde_json::Value;
 #[path = "../../../tests/unit/semantic/scheduler_pipes.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/eventbridge_references.rs"]
+mod reference_tests;
+
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        (
+            "aws_cloudwatch_event_rule"
+            | "aws_cloudwatch_event_bus_policy"
+            | "aws_cloudwatch_event_permission",
+            "event_bus_name",
+        ) => Some("Event bus reference"),
+        ("aws_cloudwatch_event_rule" | "aws_cloudwatch_event_target", "role_arn") => {
+            Some("Event execution role")
+        }
+        ("aws_cloudwatch_event_target", "dead_letter_config.arn") => {
+            Some("Event dead letter queue")
+        }
+        ("aws_cloudwatch_event_archive", "event_source_arn") => Some("Archive event bus"),
+        ("aws_cloudwatch_event_api_destination", "connection_arn") => {
+            Some("API destination connection")
+        }
         ("aws_scheduler_schedule", "group_name") => Some("Schedule group membership"),
         ("aws_scheduler_schedule", "target.arn") => Some("Schedule target"),
         ("aws_scheduler_schedule", "target.role_arn") => Some("Schedule execution role"),
@@ -22,6 +42,26 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn fields(resource: &str, attribute: &str, endpoint: &str) -> &'static [&'static str] {
     match (resource, attribute, endpoint) {
+        ("aws_cloudwatch_event_rule", "event_bus_name", "aws_cloudwatch_event_bus") => {
+            &["name", "arn"]
+        }
+        (
+            "aws_cloudwatch_event_bus_policy" | "aws_cloudwatch_event_permission",
+            "event_bus_name",
+            "aws_cloudwatch_event_bus",
+        ) => &["name"],
+        (
+            "aws_cloudwatch_event_rule" | "aws_cloudwatch_event_target",
+            "role_arn",
+            "aws_iam_role",
+        )
+        | ("aws_cloudwatch_event_target", "dead_letter_config.arn", "aws_sqs_queue")
+        | ("aws_cloudwatch_event_archive", "event_source_arn", "aws_cloudwatch_event_bus")
+        | (
+            "aws_cloudwatch_event_api_destination",
+            "connection_arn",
+            "aws_cloudwatch_event_connection",
+        ) => &["arn"],
         ("aws_scheduler_schedule", "group_name", "aws_scheduler_schedule_group") => &["name", "id"],
         ("aws_scheduler_schedule", "target.role_arn", "aws_iam_role")
         | ("aws_pipes_pipe", "role_arn", "aws_iam_role") => &["arn"],
@@ -143,6 +183,11 @@ pub(super) fn verify(
             && n.mode == EntityMode::Managed
             && n.action != Action::Delete
             && n.deposed_key.is_none()
+            && nodes
+                .iter()
+                .filter(|other| other.address == n.address)
+                .count()
+                == 1
     };
     if !current(node)
         || !current(endpoint)
