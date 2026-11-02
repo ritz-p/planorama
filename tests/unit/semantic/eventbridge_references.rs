@@ -135,8 +135,21 @@ fn references_require_known_unique_current_compatible_endpoints() {
                         json!("aws.other");
                 }
                 "duplicate" => {
-                    let copy = v["resource_changes"][endpoint].clone();
+                    let output = v["resource_changes"][endpoint]["change"]["after"]
+                        .as_object()
+                        .unwrap()
+                        .keys()
+                        .next()
+                        .unwrap()
+                        .to_owned();
+                    let mut copy = v["resource_changes"][endpoint].clone();
+                    copy["address"] = json!(format!("{address}_other"));
                     v["resource_changes"].as_array_mut().unwrap().push(copy);
+                    set_path(
+                        &mut v["configuration"]["root_module"]["resources"][index]["expressions"],
+                        &path,
+                        json!({"references":[format!("{address}.{output}"),format!("{address}_other.{output}")]}),
+                    );
                 }
                 "missing" => {
                     v["resource_changes"][endpoint]["address"] =
