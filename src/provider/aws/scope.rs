@@ -42,7 +42,11 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_default_network_acl"
+            "aws_eks_access_policy_association"
+                | "aws_eks_identity_provider_config"
+                | "aws_eks_pod_identity_association"
+                | "aws_eks_capability"
+                | "aws_default_network_acl"
                 | "aws_default_security_group"
                 | "aws_ecs_task_set"
                 | "aws_grafana_workspace"
