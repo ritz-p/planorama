@@ -82,6 +82,17 @@ fn variant<'a>(value: &Value, mask: &Value, block: &str, options: &'a [&str]) ->
             if child.as_array().is_none_or(|a| a.len() != 1) || selected.is_some() {
                 return None;
             }
+            if !matches!(child_mask, Value::Null | Value::Bool(false))
+                && child_mask.as_array().is_none_or(|masks| {
+                    masks.len() != 1
+                        || !matches!(
+                            masks[0],
+                            Value::Null | Value::Bool(false) | Value::Object(_)
+                        )
+                })
+            {
+                return None;
+            }
             selected = Some(option);
         }
     }

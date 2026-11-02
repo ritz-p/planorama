@@ -223,3 +223,29 @@ fn scraper_eks_network_requires_cluster_vpc_proof_and_logging_preserves_owner() 
             .any(|r| r.label == "Scraper log group" && r.complete)
     );
 }
+
+#[test]
+fn scraper_unknown_variant_does_not_prove_other_endpoint_references() {
+    for mask in [
+        json!({"source":[{"eks":true}]}),
+        json!({"destination":[{"amp":[true]}]}),
+    ] {
+        let mut input = fixture();
+        input["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|n| n["type"] == "aws_prometheus_scraper")
+            .unwrap()["change"]["after_unknown"] = mask;
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        assert!(
+            parsed
+                .attributes
+                .iter()
+                .filter(
+                    |r| super::label(&parsed.nodes[r.target].resource_type, &r.attribute).is_some()
+                )
+                .all(|r| !r.service_reference_verified)
+        );
+    }
+}
