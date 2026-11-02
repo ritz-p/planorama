@@ -1,23 +1,311 @@
 {
   "format_version": "1.2",
   "resource_changes": [
-    {"address":"aws_autoscaling_group.app","mode":"managed","type":"aws_autoscaling_group","name":"app","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"name":"app"}}},
-    {"address":"aws_autoscaling_policy.cpu","mode":"managed","type":"aws_autoscaling_policy","name":"cpu","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"autoscaling_group_name":"app"}}},
-    {"address":"aws_autoscaling_policy.memory","mode":"managed","type":"aws_autoscaling_policy","name":"memory","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["update"],"after":{"autoscaling_group_name":"app"}}}
+    {
+      "address": "aws_autoscaling_group.app",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "name": "app",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "app"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_policy.cpu",
+      "mode": "managed",
+      "type": "aws_autoscaling_policy",
+      "name": "cpu",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "app"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_policy.memory",
+      "mode": "managed",
+      "type": "aws_autoscaling_policy",
+      "name": "memory",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "autoscaling_group_name": "app"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.other",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "other"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.scaling",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:ap-northeast-1:123456789012:scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.scaling",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_group_tag.helper",
+      "mode": "managed",
+      "type": "aws_autoscaling_group_tag",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "app",
+          "tag": [
+            {
+              "key": "test",
+              "value": "SYNTHETIC_TAG_NOT_FOR_OUTPUT",
+              "propagate_at_launch": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_lifecycle_hook.helper",
+      "mode": "managed",
+      "type": "aws_autoscaling_lifecycle_hook",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "app",
+          "notification_target_arn": "arn:aws:sns:ap-northeast-1:123456789012:scaling",
+          "role_arn": "arn:aws:iam::123456789012:role/scaling"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_schedule.helper",
+      "mode": "managed",
+      "type": "aws_autoscaling_schedule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "autoscaling_group_name": "app"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_notification.groups",
+      "mode": "managed",
+      "type": "aws_autoscaling_notification",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_names": [
+            "app",
+            "other"
+          ],
+          "topic_arn": "arn:aws:sns:ap-northeast-1:123456789012:scaling",
+          "notifications": [
+            "autoscaling:EC2_INSTANCE_LAUNCH"
+          ]
+        }
+      }
+    }
   ],
   "configuration": {
     "provider_config": {
       "aws": {
-        "name":"aws",
-        "full_name":"registry.terraform.io/hashicorp/aws",
-        "expressions":{"region":{"constant_value":"ap-northeast-1"}}
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "ap-northeast-1"
+          }
+        }
       }
     },
     "root_module": {
       "resources": [
-        {"address":"aws_autoscaling_group.app","mode":"managed","type":"aws_autoscaling_group","name":"app","provider_config_key":"aws"},
-        {"address":"aws_autoscaling_policy.cpu","mode":"managed","type":"aws_autoscaling_policy","name":"cpu","provider_config_key":"aws","expressions":{"autoscaling_group_name":{"references":["aws_autoscaling_group.app.name"]}}},
-        {"address":"aws_autoscaling_policy.memory","mode":"managed","type":"aws_autoscaling_policy","name":"memory","provider_config_key":"aws","expressions":{"autoscaling_group_name":{"references":["aws_autoscaling_group.app.name"]}}}
+        {
+          "address": "aws_autoscaling_group.app",
+          "mode": "managed",
+          "type": "aws_autoscaling_group",
+          "name": "app",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_autoscaling_policy.cpu",
+          "mode": "managed",
+          "type": "aws_autoscaling_policy",
+          "name": "cpu",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_policy.memory",
+          "mode": "managed",
+          "type": "aws_autoscaling_policy",
+          "name": "memory",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_group.other",
+          "mode": "managed",
+          "type": "aws_autoscaling_group",
+          "name": "other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.scaling",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.scaling",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "scaling",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_autoscaling_group_tag.helper",
+          "mode": "managed",
+          "type": "aws_autoscaling_group_tag",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_lifecycle_hook.helper",
+          "mode": "managed",
+          "type": "aws_autoscaling_lifecycle_hook",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            },
+            "notification_target_arn": {
+              "references": [
+                "aws_sns_topic.scaling.arn"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.scaling.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_schedule.helper",
+          "mode": "managed",
+          "type": "aws_autoscaling_schedule",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "autoscaling_group_name": {
+              "references": [
+                "aws_autoscaling_group.app.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_autoscaling_notification.groups",
+          "mode": "managed",
+          "type": "aws_autoscaling_notification",
+          "name": "groups",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_names": {
+              "references": [
+                "aws_autoscaling_group.app.name",
+                "aws_autoscaling_group.other.name"
+              ]
+            },
+            "topic_arn": {
+              "references": [
+                "aws_sns_topic.scaling.arn"
+              ]
+            }
+          }
+        }
       ]
     }
   }

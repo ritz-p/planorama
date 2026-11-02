@@ -69,6 +69,7 @@ mod rds_proxy;
 mod redshift_tests;
 mod s3_exports;
 mod sagemaker;
+mod scaling;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
