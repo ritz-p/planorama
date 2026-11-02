@@ -1972,7 +1972,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Partial: #509 verifies API context; missing parent_id to same-API resource or root_resource_id with cycle/ambiguity rejection. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40452,10 +40452,10 @@
       }
     },
     "aws_api_gateway_documentation_part": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: REST API owner reference; location selectors do not identify Terraform method/resource nodes. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40502,10 +40502,10 @@
       }
     },
     "aws_api_gateway_documentation_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: API-qualified documentation version reference; version is not globally unique. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40723,10 +40723,10 @@
       }
     },
     "aws_api_gateway_gateway_response": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: response type is API-qualified. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40772,10 +40772,10 @@
       }
     },
     "aws_api_gateway_integration_response": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: same API/resource/method and response status tuple. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40831,10 +40831,10 @@
       }
     },
     "aws_api_gateway_method_response": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: same API/resource/method tuple and API-qualified model names. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40898,10 +40898,10 @@
       }
     },
     "aws_api_gateway_method_settings": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: stage with same API; wildcard method_path does not prove a method. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -40952,10 +40952,10 @@
       }
     },
     "aws_api_gateway_model": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: model name is API-qualified; schema body excluded. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41006,10 +41006,10 @@
       }
     },
     "aws_api_gateway_request_validator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: API-qualified validator. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41055,10 +41055,10 @@
       }
     },
     "aws_api_gateway_rest_api_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: API identity only; policy body opaque. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41099,10 +41099,10 @@
       }
     },
     "aws_api_gateway_rest_api_put": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 933,
-      "gap": "#714 audit: Missing: API update helper; OpenAPI does not create inferred resources. Follow-up #933. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #933: explicit matching REST API references, same-API stage/model and resource/method/response tuples, and rooted acyclic parent-resource chains. Complete model maps require managed model names; literal, ambiguous, unknown and incompatible evidence remains unverified. Independent logical placement is retained; payload interpretation and summaries remain unsupported. The review records the historical #714 baseline.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

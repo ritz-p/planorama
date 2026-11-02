@@ -55,21 +55,24 @@ fn basic(
     let Some(mut expected) = expected else {
         return false;
     };
-    if nodes[r.target].resource_type == "aws_apigatewayv2_route" {
+    if matches!(
+        nodes[r.target].resource_type.as_str(),
+        "aws_apigatewayv2_route" | "aws_api_gateway_method_response"
+    ) {
         if r.attribute == "target" {
             return expected.len() == 1
                 && known(evidence, r.target, "target")
                     .is_some_and(|value| value == format!("integrations/{}", expected[0]));
         }
-        if r.attribute == "request_models" {
+        if matches!(r.attribute.as_str(), "request_models" | "response_models") {
             let (value, unknown) = evidence[r.target];
             if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_)) {
                 return false;
             }
-            let Some(map) = value["request_models"].as_object() else {
+            let Some(map) = value[&r.attribute].as_object() else {
                 return false;
             };
-            let mask = &unknown["request_models"];
+            let mask = &unknown[&r.attribute];
             if !matches!(mask, Value::Null | Value::Bool(false))
                 && !mask.as_object().is_some_and(|m| {
                     m.values()
