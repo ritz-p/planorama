@@ -12792,7 +12792,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "Implemented #782: bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12826,7 +12826,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "Implemented #782: bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12863,7 +12863,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "Implemented #782: bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12901,7 +12901,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "Implemented #782: bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12935,7 +12935,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 782,
-      "gap": "Implemented #782: bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
+      "gap": "Implemented #782 (follow-up #713): bounded Cloud Map references; see docs/aws-compute.md. No containment, generated DNS identities or runtime inference.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
