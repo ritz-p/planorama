@@ -43,6 +43,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_apigatewayv2_integration_response"
+                | "aws_route53_query_log"
+                | "aws_route53_resolver_query_log_config"
+                | "aws_route53_resolver_query_log_config_association"
                 | "aws_apigatewayv2_route_response"
                 | "aws_apigatewayv2_model"
                 | "aws_api_gateway_usage_plan"
