@@ -72,9 +72,7 @@ pub(super) fn annotate(
                 return false;
             }
             let (value, unknown) = evidence[r.target];
-            if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_))
-                || !matches!(&unknown["api_stages"], Value::Null | Value::Bool(false))
-            {
+            if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_)) {
                 return false;
             }
             let Some(rows) = value["api_stages"]
@@ -83,13 +81,21 @@ pub(super) fn annotate(
             else {
                 return false;
             };
+            let masks = match &unknown["api_stages"] {
+                Value::Null | Value::Bool(false) => None,
+                Value::Array(masks) if masks.len() == rows.len() => Some(masks),
+                _ => return false,
+            };
             let mut used_apis = BTreeSet::new();
             let mut used_stages = BTreeSet::new();
-            for row in rows {
-                let Some(api_id) = row["api_id"].as_str().filter(|s| !s.is_empty()) else {
+            for (index, row) in rows.iter().enumerate() {
+                let mask = masks.map_or(&Value::Null, |masks| &masks[index]);
+                let row_evidence = [(row, mask)];
+                let Some(api_id) = super::service_evidence::known(&row_evidence, 0, "api_id")
+                else {
                     return false;
                 };
-                let Some(name) = row["stage"].as_str().filter(|s| !s.is_empty()) else {
+                let Some(name) = super::service_evidence::known(&row_evidence, 0, "stage") else {
                     return false;
                 };
                 let mut candidates = apis

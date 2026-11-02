@@ -22,6 +22,26 @@ fn complete_api_stage_pairs_and_key_type_preserve_shared_identity() {
         assert!(verified(&v, field), "{field}");
     }
     let graph = semantic::transform(&plan::parse(&v.to_string()).unwrap());
+    for (mask, expected) in [
+        (json!([{}, {}]), true),
+        (
+            json!([{"api_id":false,"throttle":true}, {"stage":false}]),
+            true,
+        ),
+        (json!([{"api_id":true}, {}]), false),
+        (json!([{}, {"stage":true}]), false),
+        (json!([true, {}]), false),
+        (json!([]), false),
+        (json!([{}]), false),
+        (json!([{}, {}, {}]), false),
+        (json!({}), false),
+    ] {
+        let mut masked = v.clone();
+        masked["resource_changes"][4]["change"]["after_unknown"]["api_stages"] = mask;
+        for field in ["api_stages.api_id", "api_stages.stage"] {
+            assert_eq!(verified(&masked, field), expected, "{field}: {masked}");
+        }
+    }
     assert_eq!(graph.coverage.selected.resources, 7);
     assert_eq!(
         graph
