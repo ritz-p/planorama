@@ -48284,7 +48284,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 927,
-      "gap": "#927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
+      "gap": "#715 audit: #927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48329,7 +48329,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 927,
-      "gap": "#927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
+      "gap": "#715 audit: #927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",

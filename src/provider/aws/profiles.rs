@@ -60,7 +60,7 @@ pub(crate) fn annotate(
             let (v, m) = evidence[*s];
             if !matches!(m, Value::Null | Value::Bool(false) | Value::Object(_))
                 || !matches!(&m["vpc"], Value::Null | Value::Bool(false))
-                || !v["vpc"].as_array().is_some_and(|a| !a.is_empty())
+                || v["vpc"].as_array().is_none_or(|a| a.is_empty())
             {
                 continue;
             }
