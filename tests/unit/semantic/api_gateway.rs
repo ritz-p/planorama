@@ -1707,3 +1707,112 @@ fn rest_parent_chain_rejects_indirect_cycles_and_cross_state_resolution() {
     .content;
     assert!(!output.contains("<metadata id=\"cross-state-relationships\">"));
 }
+
+#[test]
+fn rest_authorization_models_and_pools_require_qualified_complete_evidence() {
+    let original: Value =
+        serde_json::from_str(include_str!("../../fixtures/api-gateway-rest-plan.json")).unwrap();
+    let authorizer = original["resource_changes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| {
+            r["type"] == "aws_api_gateway_authorizer" && r["change"]["after"]["type"] == "REQUEST"
+        })
+        .unwrap()["address"]
+        .as_str()
+        .unwrap();
+    for (address, field) in [
+        (authorizer, "authorizer_credentials"),
+        ("aws_api_gateway_authorizer.cognito", "provider_arns"),
+        ("aws_api_gateway_method.get", "authorizer_id"),
+        ("aws_api_gateway_method.get", "request_validator_id"),
+        ("aws_api_gateway_method.get", "request_models"),
+    ] {
+        for case in [
+            "valid",
+            "literal",
+            "unknown",
+            "wrong_api",
+            "wrong_kind",
+            "partial",
+            "built_in",
+            "deleted",
+            "wrong_provider",
+            "unknown_region",
+        ] {
+            let mut value = original.clone();
+            let source = value["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .find(|r| r["address"] == address)
+                .unwrap();
+            match case {
+                "unknown" => source["change"]["after_unknown"][field] = json!(true),
+                "wrong_api" => source["change"]["after"]["rest_api_id"] = json!("other"),
+                "wrong_kind" => {
+                    if field == "authorizer_id" {
+                        source["change"]["after"]["authorization"] = json!("NONE");
+                    } else if field == "provider_arns" || field == "authorizer_credentials" {
+                        source["change"]["after"]["type"] = json!("UNKNOWN");
+                    }
+                }
+                "partial" if field == "provider_arns" => source["change"]["after"][field]
+                    .as_array_mut()
+                    .unwrap()
+                    .push(json!("unreferenced")),
+                "partial" if field == "request_models" => {
+                    source["change"]["after"][field]["text/plain"] = json!("Other")
+                }
+                "deleted" => source["change"]["actions"] = json!(["delete"]),
+                "wrong_provider" => source["provider_name"] = json!("example.invalid/custom/aws"),
+                _ => {}
+            }
+            if case == "literal" {
+                value["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .find(|r| r["address"] == address)
+                    .unwrap()["expressions"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove(field);
+            }
+            if case == "unknown_region" {
+                value["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+                    json!({"references":["var.region"]});
+            }
+            if case == "built_in" && field == "request_models" {
+                for r in value["resource_changes"].as_array_mut().unwrap() {
+                    if r["address"] == address {
+                        r["change"]["after"][field] = json!({"application/json":"Empty"});
+                    }
+                    if r["address"] == "aws_api_gateway_model.response" {
+                        r["change"]["after"]["name"] = json!("Empty");
+                    }
+                }
+            }
+            let raw = plan::parse(&value.to_string()).unwrap();
+            let expected = case == "valid"
+                || (case == "wrong_kind"
+                    && matches!(field, "request_validator_id" | "request_models"))
+                || (case == "partial" && !matches!(field, "provider_arns" | "request_models"))
+                || (case == "built_in" && field != "request_models");
+            assert_eq!(
+                raw.attributes
+                    .iter()
+                    .any(|r| raw.nodes[r.target].address == address
+                        && r.attribute == field
+                        && r.service_reference_verified),
+                expected,
+                "{address} {field} {case}"
+            );
+            assert_eq!(
+                semantic::transform(&raw).coverage.selected.resources,
+                value["resource_changes"].as_array().unwrap().len()
+            );
+        }
+    }
+}

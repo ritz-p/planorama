@@ -74,6 +74,12 @@ Contracts use AWS Provider 6.70.0 at commit
 `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`; field shapes and source paths are recorded
 in `aws-semantic-decisions.json`.
 
+REST authorization references (#931) require matching API/resource context. CUSTOM
+methods accept TOKEN/REQUEST authorizers; COGNITO_USER_POOLS methods accept matching
+Cognito authorizers. TOKEN/REQUEST authorizer roles use explicit IAM role ARNs, while
+Cognito pool sets and request model maps must be complete. Validators and models
+must belong to the same API. Built-in Empty/Error models remain unresolved.
+
 ## Step Functions
 
 `aws_sfn_state_machine` and `aws_sfn_activity` are independent regional spatial

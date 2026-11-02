@@ -3,6 +3,29 @@ use crate::model::AttributeReference;
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
     let (label, targets, list): (_, &[_], _) = match (resource, attribute) {
+        ("aws_api_gateway_authorizer", "authorizer_credentials") => {
+            ("REST authorizer role", &[("aws_iam_role", "arn")], false)
+        }
+        ("aws_api_gateway_authorizer", "provider_arns") => (
+            "REST Cognito pools",
+            &[("aws_cognito_user_pool", "arn")],
+            true,
+        ),
+        ("aws_api_gateway_method", "authorizer_id") => (
+            "REST method authorizer",
+            &[("aws_api_gateway_authorizer", "id")],
+            false,
+        ),
+        ("aws_api_gateway_method", "request_validator_id") => (
+            "REST request validator",
+            &[("aws_api_gateway_request_validator", "id")],
+            false,
+        ),
+        ("aws_api_gateway_method", "request_models") => (
+            "REST request models",
+            &[("aws_api_gateway_model", "name")],
+            true,
+        ),
         ("aws_api_gateway_account", "cloudwatch_role_arn") => (
             "API Gateway logging role",
             &[("aws_iam_role", "arn")],
@@ -181,6 +204,38 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         context.nodes[r.target].resource_type.as_str(),
         r.attribute.as_str(),
     ) {
+        ("aws_api_gateway_authorizer", "authorizer_credentials") => {
+            context.source(r.target, "rest_api_id").is_some()
+                && matches!(context.value(r.target, "type"), Some("TOKEN" | "REQUEST"))
+        }
+        ("aws_api_gateway_authorizer", "provider_arns") => {
+            context.source(r.target, "rest_api_id").is_some()
+                && context.value(r.target, "type") == Some("COGNITO_USER_POOLS")
+        }
+        ("aws_api_gateway_method", "authorizer_id" | "request_validator_id" | "request_models") => {
+            context
+                .source(r.target, "resource_id")
+                .is_some_and(|resource| resource_matches(context, r.target, resource))
+                && context.source(r.target, "rest_api_id").is_some_and(|api| {
+                    r.sources
+                        .iter()
+                        .all(|&endpoint| context.source(endpoint, "rest_api_id") == Some(api))
+                })
+                && match r.attribute.as_str() {
+                    "authorizer_id" => matches!(
+                        (
+                            context.value(r.target, "authorization"),
+                            context.value(source, "type")
+                        ),
+                        (Some("CUSTOM"), Some("TOKEN" | "REQUEST"))
+                            | (Some("COGNITO_USER_POOLS"), Some("COGNITO_USER_POOLS"))
+                    ),
+                    "request_models" => r.sources.iter().all(|&model| {
+                        !matches!(context.value(model, "name"), Some("Empty" | "Error"))
+                    }),
+                    _ => true,
+                }
+        }
         ("aws_api_gateway_resource", "parent_id") => {
             let mut seen = std::collections::BTreeSet::from([r.target]);
             let mut parent = source;

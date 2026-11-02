@@ -29,6 +29,8 @@ fn basic(
         r,
         (nodes[r.target].resource_type == "aws_api_gateway_account"
             && r.attribute == "cloudwatch_role_arn")
+            || (nodes[r.target].resource_type == "aws_api_gateway_authorizer"
+                && r.attribute == "authorizer_credentials")
             || (nodes[r.target].resource_type == "aws_api_gateway_integration"
                 && r.attribute == "credentials")
             || (matches!(
@@ -57,7 +59,7 @@ fn basic(
     };
     if matches!(
         nodes[r.target].resource_type.as_str(),
-        "aws_apigatewayv2_route" | "aws_api_gateway_method_response"
+        "aws_apigatewayv2_route" | "aws_api_gateway_method_response" | "aws_api_gateway_method"
     ) {
         if r.attribute == "target" {
             return expected.len() == 1
