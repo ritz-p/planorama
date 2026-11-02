@@ -80,6 +80,13 @@ Cognito authorizers. TOKEN/REQUEST authorizer roles use explicit IAM role ARNs, 
 Cognito pool sets and request model maps must be complete. Validators and models
 must belong to the same API. Built-in Empty/Error models remain unresolved.
 
+REST custom domains (#932) retain independent logical cards. Mapping stages must
+belong to the explicitly referenced API; private mappings also require a reference
+to the same domain's matching domain_name_id. ACM certificates require EDGE
+(us-east-1), REGIONAL or PRIVATE endpoint types as appropriate; ownership verification
+is regional. Private access associations require a PRIVATE domain ARN and VPCE
+Interface endpoint. Certificate registration names and truststore URLs stay opaque.
+
 ## Step Functions
 
 `aws_sfn_state_machine` and `aws_sfn_activity` are independent regional spatial

@@ -481,6 +481,142 @@
           ]
         }
       }
+    },
+    {
+      "address": "aws_acm_certificate.domain",
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic",
+          "domain_name": "api.example.invalid"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name.regional",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "regional.example.invalid",
+          "domain_name_id": null,
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/regional.example.invalid",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "REGIONAL"
+              ]
+            }
+          ],
+          "regional_certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name.private",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "private.example.invalid",
+          "domain_name_id": "private-id",
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/private.example.invalid",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "PRIVATE"
+              ]
+            }
+          ],
+          "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name.edge",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "edge.example.invalid",
+          "domain_name_id": null,
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/edge.example.invalid",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "EDGE"
+              ]
+            }
+          ],
+          "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_base_path_mapping.private",
+      "mode": "managed",
+      "type": "aws_api_gateway_base_path_mapping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "rest-synthetic",
+          "domain_name": "private.example.invalid",
+          "domain_name_id": "private-id",
+          "stage_name": "live"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_endpoint.domain",
+      "mode": "managed",
+      "type": "aws_vpc_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpce-domain",
+          "vpc_endpoint_type": "Interface"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name_access_association.private",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name_access_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name_arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/private.example.invalid",
+          "access_association_source_type": "VPCE",
+          "access_association_source": "vpce-domain",
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnameaccessassociations/synthetic"
+        }
+      }
     }
   ],
   "configuration": {
@@ -975,6 +1111,112 @@
             "provider_arns": {
               "references": [
                 "aws_cognito_user_pool.users.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acm_certificate.domain",
+          "mode": "managed",
+          "type": "aws_acm_certificate",
+          "name": "domain",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_domain_name.regional",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name",
+          "name": "regional",
+          "provider_config_key": "aws",
+          "expressions": {
+            "regional_certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_domain_name.private",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_domain_name.edge",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name",
+          "name": "edge",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_base_path_mapping.private",
+          "mode": "managed",
+          "type": "aws_api_gateway_base_path_mapping",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "domain_name": {
+              "references": [
+                "aws_api_gateway_domain_name.private.domain_name"
+              ]
+            },
+            "domain_name_id": {
+              "references": [
+                "aws_api_gateway_domain_name.private.domain_name_id"
+              ]
+            },
+            "stage_name": {
+              "references": [
+                "aws_api_gateway_stage.live.stage_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_endpoint.domain",
+          "mode": "managed",
+          "type": "aws_vpc_endpoint",
+          "name": "domain",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_domain_name_access_association.private",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name_access_association",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name_arn": {
+              "references": [
+                "aws_api_gateway_domain_name.private.arn"
+              ]
+            },
+            "access_association_source": {
+              "references": [
+                "aws_vpc_endpoint.domain.id"
               ]
             }
           }
