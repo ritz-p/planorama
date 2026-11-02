@@ -157,6 +157,43 @@ fn default_route_targets_require_complete_current_typed_evidence() {
 }
 
 #[test]
+fn default_tables_do_not_invent_unconfigured_computed_routes() {
+    for kind in ["aws_default_route_table", "aws_route_table"] {
+        for planned_only in [false, true] {
+            for unknown in [json!({}), json!({"route": true})] {
+                let address = format!("{kind}.main");
+                let values = json!({"route":[{"cidr_block":"10.0.0.0/16","gateway_id":"local"}]});
+                let mut v = json!({"format_version":"1.2",
+                    "planned_values":{"root_module":{"resources":[{"address":address,"mode":"managed","type":kind,"provider_name":"registry.terraform.io/hashicorp/aws","values":values}]}},
+                    "configuration":{"root_module":{"resources":[{"address":address,"mode":"managed","type":kind,"expressions":{}}]}}
+                });
+                if !planned_only {
+                    v["resource_changes"] = json!([{"address":address,"mode":"managed","type":kind,"provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["no-op"],"after":values,"after_unknown":unknown}}]);
+                }
+                let raw = plan::parse(&v.to_string()).unwrap();
+                assert_eq!(raw.nodes.len(), 1);
+                assert_eq!(
+                    raw.nodes[0].route_entries.len(),
+                    usize::from(kind == "aws_route_table")
+                );
+                if kind == "aws_default_route_table" {
+                    let out = crate::generate(&v.to_string(), &crate::Options::default()).unwrap();
+                    assert!(!out.content.contains("Inline route"));
+                }
+                v["configuration"]["root_module"]["resources"][0]["expressions"]["route"] =
+                    json!([{"cidr_block":{"constant_value":"0.0.0.0/0"}}]);
+                assert_eq!(
+                    plan::parse(&v.to_string()).unwrap().nodes[0]
+                        .route_entries
+                        .len(),
+                    1
+                );
+            }
+        }
+    }
+}
+
+#[test]
 fn adopted_network_formats_and_named_states_keep_each_identity() {
     let v: Value =
         serde_json::from_str(include_str!("../../fixtures/default-network-plan.json")).unwrap();

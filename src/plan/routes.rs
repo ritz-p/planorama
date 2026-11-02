@@ -211,6 +211,9 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
             .get(&super::address::static_address(&node.address))
             .copied()
             .unwrap_or(&Value::Null);
+        if node.resource_type == "aws_default_route_table" && expressions["route"].is_null() {
+            continue;
+        }
         let change = plan["resource_changes"]
             .as_array()
             .into_iter()
