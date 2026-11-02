@@ -239,3 +239,27 @@ fn references_preserve_identity_selection_and_state_boundaries() {
         assert!(out.contains("Event dead letter queue"));
     }
 }
+
+#[test]
+fn current_endpoints_remain_valid_beside_deposed_instances() {
+    let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
+    for index in [0, 1] {
+        let mut old = v["resource_changes"][index].clone();
+        old["deposed"] = json!("old");
+        old["change"]["actions"] = json!(["delete"]);
+        v["resource_changes"].as_array_mut().unwrap().push(old);
+    }
+    assert!(complete(&v, 1, "event_bus_name"));
+    let mut scheduler: Value = serde_json::from_str(include_str!(
+        "../../fixtures/eventbridge-configuration-plan.json"
+    ))
+    .unwrap();
+    let mut old = scheduler["resource_changes"][0].clone();
+    old["deposed"] = json!("old");
+    old["change"]["actions"] = json!(["delete"]);
+    scheduler["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(old);
+    assert!(complete(&scheduler, 5, "group_name"));
+}

@@ -197,11 +197,6 @@ pub(super) fn verify(
             && n.mode == EntityMode::Managed
             && n.action != Action::Delete
             && n.deposed_key.is_none()
-            && nodes
-                .iter()
-                .filter(|other| other.address == n.address)
-                .count()
-                == 1
     };
     if !current(node)
         || !current(endpoint)
