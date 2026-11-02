@@ -162,6 +162,13 @@ fn overrides_reject_unverified_dynamic_ambiguous_and_historical_evidence() {
                         json!("6.70.0");
                 }
             }
+            if case == 16 {
+                assert_eq!(
+                    plan::parse(&value.to_string()).unwrap_err(),
+                    "duplicate resource change identity"
+                );
+                continue;
+            }
             let raw = plan::parse(&value.to_string()).unwrap();
             let node = raw
                 .nodes
