@@ -158,6 +158,21 @@ Contracts were checked against AWS Provider 6.70.0 at
 and its resource documentation. The [fixture](../tests/fixtures/eventbridge-references-plan.json)
 covers each supported input/output pair; native and Wasm use the same verifier.
 
+### Schema registry navigation (#755)
+
+Schema and registry policy `registry_name` references must explicitly identify
+one registry's `name`; discoverer `source_arn` must identify an event bus `arn`.
+They use the same complete, unique, known-value and compatible provider/account/
+region checks described above. Registry, schema, policy and discoverer retain
+independent logical identities, including shared registries. Missing, filtered,
+historical and ambiguous endpoints never borrow another state's identity.
+
+Schema content, inferred event types, policy bodies and implicit AWS registries
+are not interpreted or synthesized. The contract was checked against the pinned
+[Schemas source](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/schemas)
+and resource documentation. The [fixture](../tests/fixtures/eventbridge-schemas-plan.json)
+is covered by semantic, safe SVG/HTML and native/Wasm parity tests.
+
 ## SQS and SNS
 
 `aws_sqs_queue` and `aws_sns_topic` are spatial nodes with AWS account and

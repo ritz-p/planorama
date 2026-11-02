@@ -8808,21 +8808,21 @@
       }
     },
     "aws_schemas_discoverer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Missing: explicit event bus source #755; discovery is not runtime message flow. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit source_arn matches aws_cloudwatch_event_bus.arn with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
-        "issue": 721,
+        "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
           "source_arn"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_schemas_discoverer identity.",
-        "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
+        "ownership": "Supported: explicit configuration navigation with independent logical identity; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit event bus source #755; discovery is not runtime message flow.",
+        "references": "Supported: explicit source_arn matches aws_cloudwatch_event_bus.arn with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: discovered event content; status does not prove runtime discovery.",
         "officialDocumentation": "website/docs/r/schemas_discoverer.html.markdown",
@@ -8860,12 +8860,12 @@
       }
     },
     "aws_schemas_registry_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Missing: explicit registry name #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
-        "issue": 721,
+        "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -8873,9 +8873,9 @@
           "policy"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_schemas_registry_policy identity.",
-        "ownership": "Missing: policy association #755 without embedding.",
+        "ownership": "Supported: explicit configuration navigation with independent logical identity; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit registry name #755.",
+        "references": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: policy body/permissions.",
         "officialDocumentation": "website/docs/r/schemas_registry_policy.html.markdown",
@@ -8890,12 +8890,12 @@
       }
     },
     "aws_schemas_schema": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Missing: explicit registry name #755. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
-        "issue": 721,
+        "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
@@ -8903,9 +8903,9 @@
           "content"
         ],
         "placement": "Supported: retain Logical presentation for this independent aws_schemas_schema identity.",
-        "ownership": "Missing: registry membership #755 with independent schema identity.",
+        "ownership": "Supported: explicit configuration navigation with independent logical identity; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit registry name #755.",
+        "references": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: OpenAPI/JSON schema content and field values.",
         "officialDocumentation": "website/docs/r/schemas_schema.html.markdown",

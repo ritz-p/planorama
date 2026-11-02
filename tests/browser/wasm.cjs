@@ -122,7 +122,7 @@ async function main() {
       }
     }
     checkpoint('cloudwatch-alarms');
-    for (const fixture of ['eventbridge-references-plan']) {
+    for (const fixture of ['eventbridge-references-plan', 'eventbridge-schemas-plan']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
       for (const format of ['svg', 'html']) {
         const result = run(input, {format});

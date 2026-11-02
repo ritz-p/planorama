@@ -11,8 +11,16 @@ mod tests;
 #[path = "../../../tests/unit/semantic/eventbridge_references.rs"]
 mod reference_tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/eventbridge_schemas.rs"]
+mod schema_tests;
+
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (resource, attribute) {
+        ("aws_schemas_schema" | "aws_schemas_registry_policy", "registry_name") => {
+            Some("Schema registry membership")
+        }
+        ("aws_schemas_discoverer", "source_arn") => Some("Schema discovery event bus"),
         (
             "aws_cloudwatch_event_rule"
             | "aws_cloudwatch_event_bus_policy"
@@ -42,6 +50,12 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 
 fn fields(resource: &str, attribute: &str, endpoint: &str) -> &'static [&'static str] {
     match (resource, attribute, endpoint) {
+        (
+            "aws_schemas_schema" | "aws_schemas_registry_policy",
+            "registry_name",
+            "aws_schemas_registry",
+        ) => &["name"],
+        ("aws_schemas_discoverer", "source_arn", "aws_cloudwatch_event_bus") => &["arn"],
         ("aws_cloudwatch_event_rule", "event_bus_name", "aws_cloudwatch_event_bus") => {
             &["name", "arn"]
         }
