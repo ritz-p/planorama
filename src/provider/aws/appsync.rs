@@ -323,6 +323,33 @@ pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> 
     if node.resource_type == "aws_appsync_datasource" {
         return super::appsync_datasource::bindings(raw, r);
     }
+    if raw.nodes[r.target].resource_type == ASSOCIATION {
+        return endpoint_binding(raw, r)
+            && raw
+                .attributes
+                .iter()
+                .filter(|peer| peer.target == r.target && peer.service_reference_verified)
+                .all(|peer| endpoint_binding(raw, peer));
+    }
+    super::route53::bindings(raw, r)
+}
+
+fn endpoint_binding(raw: &crate::semantic::Input, r: &AttributeReference) -> bool {
+    let node = &raw.nodes[r.target];
+    if super::route53::bindings(raw, r) {
+        return r
+            .service_reference_owner_account
+            .as_ref()
+            .is_none_or(|owner| {
+                r.sources.iter().all(|&s| {
+                    raw.nodes[s]
+                        .provider_configuration
+                        .as_ref()
+                        .and_then(|p| p.account.as_ref())
+                        .is_none_or(|account| account == owner)
+                })
+            });
+    }
     if node.resource_type == ASSOCIATION && r.service_reference_owner_account.is_some() {
         return r.sources.iter().all(|&s| {
             let (Some(a), Some(b)) = (

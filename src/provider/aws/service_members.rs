@@ -78,6 +78,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
             "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
             "aws_appsync_type" => ("api_id", "Type GraphQL API", "Schema types"),
+            "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (

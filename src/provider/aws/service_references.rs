@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::query_logs::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::appsync::label(resource, attribute) {
         return Some(label);
     }
@@ -696,6 +699,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::query_logs::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::query_logs::bindings(raw, reference))
         && (super::appsync::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
