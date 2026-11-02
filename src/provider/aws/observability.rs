@@ -248,7 +248,7 @@ fn log_values<'a>(
     if items.is_empty()
         || (!multiple && items.len() != 1)
         || (!matches!(masks, Value::Null | Value::Bool(false))
-            && !masks.as_array().is_some_and(|m| m.len() == items.len()))
+            && masks.as_array().is_none_or(|m| m.len() != items.len()))
     {
         return None;
     }
