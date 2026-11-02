@@ -133,6 +133,9 @@ current, non-deposed resources with compatible provider/account/region evidence;
 IAM roles are global. Unknown, ambiguous, literal-only, foreign, historical and
 missing endpoints remain unresolved. Selection and named states never borrow an
 endpoint from another state.
+Duplicate resource changes with the same address and deposed key are rejected
+before parsing can overwrite evidence. Distinct current and deposed identities
+can coexist; historical instances do not invalidate a valid current reference.
 
 | Consumer attribute | Endpoint output |
 | --- | --- |

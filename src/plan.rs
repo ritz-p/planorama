@@ -54,6 +54,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         .filter(|(_, node)| node.provider.is_explicit())
         .map(|(key, node)| (key.clone(), node.provider.clone()))
         .collect();
+    let mut changed_identities = BTreeSet::new();
     for change in plan["resource_changes"].as_array().into_iter().flatten() {
         let address = change["address"]
             .as_str()
@@ -66,7 +67,11 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
                 node.provider = provider.clone();
             }
         }
-        nodes.insert((address.to_owned(), node.deposed_key.clone()), node);
+        let identity = (address.to_owned(), node.deposed_key.clone());
+        if !changed_identities.insert(identity.clone()) {
+            return Err("duplicate resource change identity".into());
+        }
+        nodes.insert(identity, node);
     }
     let mut symbols = BTreeMap::new();
     if let Some(variables) = plan["variables"].as_object() {
