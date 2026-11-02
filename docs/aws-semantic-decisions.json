@@ -3607,7 +3607,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "#713 reviewed: Partial: cluster name and node role; missing launch template version proof #780; remote-access SG deferred pending distinction from workload SG (service_references.rs, tests/unit/semantic/eks.rs).   Supported: complete explicit subnet set/common-VPC proof (containment/vpc_scope.rs, network.rs, security_groups.rs; EKS tests); no cluster-as-VPC container. Deferred: node_group configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -3708,7 +3708,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "#713 reviewed: Partial: cluster name and service-account role; missing inline pod-identity role #780 (service_references.rs, tests/unit/semantic/eks.rs).   Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: addon configuration summary needs a bounded allowlist; versions/repair state, Kubernetes payloads and permission interpretation excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12468,10 +12468,10 @@
       }
     },
     "aws_eks_access_policy_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "#713 reviewed: Missing: cluster/principal tuple must agree with access entry #780; EKS policy ARN is not IAM policy.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: RBAC scope and policy are not effective permissions.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12507,10 +12507,10 @@
       }
     },
     "aws_eks_capability": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "#713 reviewed: Missing: cluster and IAM role #780; defer ArgoCD/Identity Center selectors until exact nested target identity contract.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: RBAC mapping and capability status do not prove access or health.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12541,10 +12541,10 @@
       }
     },
     "aws_eks_identity_provider_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "#713 reviewed: Missing: cluster-name navigation #780; issuer URL is not IAM OIDC provider identity.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: claims, client IDs and issuer URL are excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12572,10 +12572,10 @@
       }
     },
     "aws_eks_pod_identity_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "#713 reviewed: Missing: cluster and IAM role/target-role ARNs #780; namespaces/accounts do not create Kubernetes resources.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy, external_id and session data excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",

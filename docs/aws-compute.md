@@ -579,3 +579,34 @@ collections remain unresolved. CloudFormation application stacks and IAM roles h
 separate exact ARN references. Tag filters, metric labels, capacity and metric
 expressions do not identify resources. All helpers retain independent placement.
 The pinned Provider 6.70.0 field contracts are in aws-semantic-decisions.json.
+
+
+## EKS auxiliary references (#780)
+
+AWS Provider 6.70.0 commit 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f:
+access-policy associations, identity-provider configurations, pod-identity
+associations and capabilities use explicit aws_eks_cluster.name references.
+Access association principal_arn must reference a current access entry's
+principal_arn and both resources must prove the same cluster. policy_arn is an
+EKS access policy; it is not interpreted as an IAM policy.
+
+Pod identity role_arn/target_role_arn and capability role_arn use IAM role arn.
+Addon pod_identity_association is a set whose complete role_arn values must match
+explicit IAM endpoints. Node-group launch_template is a singleton list; configured
+id/name must match the corresponding template output. Its version must be a
+positive numeric string matching an explicit latest_version/default_version output
+from that same template. Literal versions and $Latest/$Default remain unresolved;
+conflicting selectors do not establish a template.
+
+Only current managed, unique explicit compatible provider/account/region evidence
+is accepted. Missing, unknown, partial, ambiguous, data, deleted/deposed and
+filtered endpoints retain fallback and identity. Named states stay independent.
+No ownership or network containment follows these references. Existing EKS cluster,
+role and network contracts remain unchanged. Namespace/service-account values,
+OIDC URLs, ArgoCD/Identity Center selectors, Kubernetes nodes, ASGs, health and
+effective permissions are not inferred or exposed.
+
+The pinned official implementations are in internal/service/eks/{access_policy_association,
+identity_provider_config,pod_identity_association,capability,addon,node_group}.go.
+See [fixture](../tests/fixtures/eks-auxiliary-plan.json) and
+[tests](../tests/unit/semantic/eks_auxiliary.rs).
