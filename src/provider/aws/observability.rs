@@ -11,6 +11,26 @@ type Rule = (&'static str, &'static str, bool, &'static str);
 
 fn rule(resource: &str, path: &str) -> Option<Rule> {
     match (resource, path) {
+        (
+            "aws_grafana_license_association"
+            | "aws_grafana_role_association"
+            | "aws_grafana_workspace_api_key"
+            | "aws_grafana_workspace_saml_configuration"
+            | "aws_grafana_workspace_service_account"
+            | "aws_grafana_workspace_service_account_token",
+            "workspace_id",
+        ) => Some((
+            "aws_grafana_workspace",
+            "id",
+            false,
+            "Grafana workspace owner",
+        )),
+        ("aws_grafana_workspace_service_account_token", "service_account_id") => Some((
+            "aws_grafana_workspace_service_account",
+            "service_account_id",
+            false,
+            "Grafana service account owner",
+        )),
         ("aws_grafana_workspace", "role_arn") => {
             Some(("aws_iam_role", "arn", false, "Workspace role"))
         }
@@ -92,6 +112,7 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
 
 fn verify(
     nodes: &[TerraformEntity],
+    references: &[AttributeReference],
     r: &AttributeReference,
     evidence: &[(&Value, &Value)],
 ) -> bool {
@@ -112,9 +133,9 @@ fn verify(
     }
     let (value, mask) = evidence[r.target];
     if r.attribute.starts_with("network_access_control.")
-        && !value["network_access_control"]
+        && value["network_access_control"]
             .as_array()
-            .is_some_and(|items| items.len() == 1)
+            .is_none_or(|items| items.len() != 1)
     {
         return false;
     }
@@ -148,6 +169,24 @@ fn verify(
         };
         if !expected.insert(identifier) {
             return false;
+        }
+        if node.resource_type == "aws_grafana_workspace_service_account_token"
+            && r.attribute == "service_account_id"
+        {
+            let owner = |index| {
+                let mut owners = references.iter().filter(|candidate| {
+                    candidate.target == index && candidate.attribute == "workspace_id"
+                });
+                let candidate = owners.next()?;
+                if owners.next().is_some() || !verify(nodes, references, candidate, evidence) {
+                    return None;
+                }
+                candidate.sources.first().copied()
+            };
+            let workspace = owner(r.target);
+            if workspace.is_none() || workspace != owner(source) {
+                return false;
+            }
         }
         if r.attribute == "kms_key_id" && !super::s3_exports::kms_arn(kind, identifier) {
             return false;
@@ -190,9 +229,13 @@ pub(super) fn annotate(
     references: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
 ) {
-    for r in references {
-        if label(&nodes[r.target].resource_type, &r.attribute).is_some() {
-            r.service_reference_verified = verify(nodes, r, evidence);
-        }
+    let proofs = references
+        .iter()
+        .enumerate()
+        .filter(|(_, r)| label(&nodes[r.target].resource_type, &r.attribute).is_some())
+        .map(|(index, r)| (index, verify(nodes, references, r, evidence)))
+        .collect::<Vec<_>>();
+    for (index, proof) in proofs {
+        references[index].service_reference_verified = proof;
     }
 }

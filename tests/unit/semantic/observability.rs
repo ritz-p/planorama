@@ -222,3 +222,78 @@ fn grafana_name_references_require_account_qualification() {
         );
     }
 }
+
+#[test]
+fn grafana_helpers_keep_actions_coverage_and_workspace_qualified_tokens() {
+    for case in 0..7 {
+        let mut input: Value =
+            serde_json::from_str(include_str!("../../fixtures/grafana-owners-plan.json")).unwrap();
+        match case {
+            0 => {}
+            1 => {
+                input["resource_changes"][10]["change"]["after"]["workspace_id"] =
+                    json!("other-workspace")
+            }
+            2 => {
+                input["resource_changes"][11]["change"]["after_unknown"] =
+                    json!({"workspace_id":true})
+            }
+            3 => input["resource_changes"][10]["change"]["actions"] = json!(["delete"]),
+            4 => input["resource_changes"][10]["mode"] = json!("data"),
+            5 => {
+                input["resource_changes"][10]["change"]["after_unknown"] =
+                    json!({"service_account_id":true})
+            }
+            _ => input["configuration"]["root_module"]["resources"][10]["expressions"] = json!({}),
+        }
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        let graph = semantic::transform(&parsed);
+        assert_eq!(graph.coverage.selected.resources, 12);
+        let token = graph
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_grafana_workspace_service_account_token")
+            .unwrap();
+        assert_eq!(token.placement, Placement::Logical);
+        assert_eq!(
+            token
+                .references
+                .iter()
+                .any(|r| r.attribute == "service_account_id"
+                    && r.complete
+                    && r.label == "Grafana service account owner"),
+            case == 0,
+            "case {case}"
+        );
+        if case == 0 {
+            for node in graph.nodes.iter().filter(|n| {
+                n.resource_type.starts_with("aws_grafana_")
+                    && n.resource_type != "aws_grafana_workspace"
+            }) {
+                assert_eq!(node.action, Action::Create);
+                assert!(
+                    node.references
+                        .iter()
+                        .any(|r| r.attribute == "workspace_id" && r.complete)
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn grafana_helper_credentials_are_not_emitted() {
+    let input = include_str!("../../fixtures/grafana-owners-plan.json");
+    for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+        let output = crate::generate(
+            input,
+            &crate::Options {
+                format,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        assert!(!output.content.contains("PRIVATE_TOKEN"));
+        assert!(!output.content.contains("PRIVATE_SAML"));
+    }
+}

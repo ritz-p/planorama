@@ -34,6 +34,28 @@ computed identifiers never create managed nodes. Credentials, configuration JSON
 and runtime reachability are not interpreted. See the [fixture](../tests/fixtures/grafana-plan.json)
 and [SVG](../examples/grafana.svg); HTML uses the shared generation procedure.
 
+### Grafana settings and service accounts (#992)
+
+License Association, Role Association, Workspace API Key, SAML Configuration,
+Service Account and Service Account Token retain separate Logical lifecycle
+identities and exactly-once coverage. Their scalar `workspace_id` inputs navigate
+to a current managed Workspace `id` only with explicit matching known evidence.
+Token `service_account_id` additionally requires the Service Account's
+`service_account_id` output and verified references from both resources to the
+same workspace. Equal service-account IDs in different workspaces are insufficient.
+Missing, unknown, filtered or historical owners remain unresolved; helpers are
+never folded into owners or inferred from computed token identifiers.
+
+The pinned 6.70.0 [Service Account](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/grafana_workspace_service_account.html.markdown)
+and [Token](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/grafana_workspace_service_account_token.html.markdown)
+contracts and registered schemas distinguish the account output from the composite
+Terraform `id`. Role enums do not identify IAM roles, user/group IDs lack
+identity-store proof, and SAML URL/XML does not identify an IAM provider.
+API keys, tokens and SAML contents are not emitted. The
+[owner fixture](../tests/fixtures/grafana-owners-plan.json) covers separate actions
+and workspace-qualified navigation; [SVG](../examples/grafana-owners.svg) and
+[HTML](../examples/grafana-owners.html) are generated from it.
+
 ## MemoryDB references (#740)
 
 MemoryDB clusters remain Spatial. Shared subnet/parameter groups, ACLs, users,

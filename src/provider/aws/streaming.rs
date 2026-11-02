@@ -202,9 +202,9 @@ fn verify(
     }
     let (value, unknown) = evidence[reference.target];
     if node.resource_type == "aws_grafana_workspace"
-        && !value["vpc_configuration"]
+        && value["vpc_configuration"]
             .as_array()
-            .is_some_and(|items| items.len() == 1)
+            .is_none_or(|items| items.len() != 1)
     {
         return false;
     }
