@@ -151,6 +151,16 @@ ALB/stage associations and unresolved configuration.
 
 ## Route 53
 
+Route 53 Profiles associations use explicit profile `id` and VPC `id` references.
+Resource associations accept only private Hosted Zone, Resolver Rule and DNS
+Firewall Rule Group `arn` outputs. A zone requires known nonempty VPC configuration;
+public/unknown zones remain unresolved. Query-log and VPC-endpoint variants are
+not enabled. `resource_properties` JSON and computed `resource_type` do not create
+topology. References require current managed endpoints, known non-sensitive equal
+values and compatible provider/account/region evidence. Zones keep global scope;
+regional targets keep their own region. Shared profiles remain independent;
+incompatible/cross-state endpoints do not establish ownership or VPC containment.
+
 Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
 Amazon Route 53 service label. The [synthetic example](../examples/route53.svg) also has
 [offline HTML](../examples/route53.html). `Hosted zone` links require a complete,

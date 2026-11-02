@@ -48281,10 +48281,10 @@
       }
     },
     "aws_route53profiles_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 927,
-      "gap": "#715 audit: Missing: profile ID plus VPC resource_id pair with independent shared-profile scope. Follow-up #927. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48326,10 +48326,10 @@
       }
     },
     "aws_route53profiles_resource_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 927,
-      "gap": "#715 audit: Missing: profile ID and typed resource ARN (private hosted zone, resolver rule, firewall group and explicitly verified supported endpoints); docs call ARN an ID. resource_type is computed; resource_properties JSON is not topology. Follow-up #927. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
