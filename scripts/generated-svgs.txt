@@ -124,5 +124,6 @@ examples/database-events.svg
 examples/memorydb.svg
 examples/dax.svg
 examples/grafana.svg
+examples/grafana-owners.svg
 examples/prometheus.svg
 examples/prometheus-scraper.svg

@@ -44,6 +44,12 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             resource,
             "aws_ecs_task_set"
                 | "aws_grafana_workspace"
+                | "aws_grafana_license_association"
+                | "aws_grafana_role_association"
+                | "aws_grafana_workspace_api_key"
+                | "aws_grafana_workspace_saml_configuration"
+                | "aws_grafana_workspace_service_account"
+                | "aws_grafana_workspace_service_account_token"
                 | "aws_prometheus_workspace"
                 | "aws_prometheus_scraper"
                 | "aws_prometheus_scraper_logging_configuration"

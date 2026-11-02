@@ -1,0 +1,362 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "sg-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/grafana",
+          "name": "grafana"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/test"
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_workspace.main",
+      "type": "aws_grafana_workspace",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:grafana:us-west-2:123456789012:/workspaces/g-example",
+          "id": "g-example",
+          "permission_type": "CUSTOMER_MANAGED",
+          "account_access_type": "CURRENT_ACCOUNT",
+          "role_arn": "arn:aws:iam::123456789012:role/grafana",
+          "kms_key_id": "arn:aws:kms:us-west-2:123456789012:key/test",
+          "vpc_configuration": [
+            {
+              "subnet_ids": [
+                "subnet-main"
+              ],
+              "security_group_ids": [
+                "sg-main"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_license_association.main",
+      "type": "aws_grafana_license_association",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "g-example",
+          "key": "PRIVATE_TOKEN",
+          "token": "PRIVATE_TOKEN",
+          "role": "ADMIN",
+          "grafana_role": "ADMIN",
+          "metadata": "PRIVATE_SAML"
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_role_association.main",
+      "type": "aws_grafana_role_association",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "g-example",
+          "key": "PRIVATE_TOKEN",
+          "token": "PRIVATE_TOKEN",
+          "role": "ADMIN",
+          "grafana_role": "ADMIN",
+          "metadata": "PRIVATE_SAML"
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_workspace_api_key.main",
+      "type": "aws_grafana_workspace_api_key",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "g-example",
+          "key": "PRIVATE_TOKEN",
+          "token": "PRIVATE_TOKEN",
+          "role": "ADMIN",
+          "grafana_role": "ADMIN",
+          "metadata": "PRIVATE_SAML"
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_workspace_saml_configuration.main",
+      "type": "aws_grafana_workspace_saml_configuration",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "g-example",
+          "key": "PRIVATE_TOKEN",
+          "token": "PRIVATE_TOKEN",
+          "role": "ADMIN",
+          "grafana_role": "ADMIN",
+          "metadata": "PRIVATE_SAML"
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_workspace_service_account.main",
+      "type": "aws_grafana_workspace_service_account",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "g-example",
+          "key": "PRIVATE_TOKEN",
+          "token": "PRIVATE_TOKEN",
+          "role": "ADMIN",
+          "grafana_role": "ADMIN",
+          "metadata": "PRIVATE_SAML",
+          "service_account_id": "account-1"
+        }
+      }
+    },
+    {
+      "address": "aws_grafana_workspace_service_account_token.main",
+      "type": "aws_grafana_workspace_service_account_token",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workspace_id": "g-example",
+          "key": "PRIVATE_TOKEN",
+          "token": "PRIVATE_TOKEN",
+          "role": "ADMIN",
+          "grafana_role": "ADMIN",
+          "metadata": "PRIVATE_SAML",
+          "service_account_id": "account-1"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_subnet.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_grafana_workspace.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            },
+            "vpc_configuration": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.main.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_grafana_license_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_grafana_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_grafana_role_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_grafana_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_grafana_workspace_api_key.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_grafana_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_grafana_workspace_saml_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_grafana_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_grafana_workspace_service_account.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_grafana_workspace.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_grafana_workspace_service_account_token.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workspace_id": {
+              "references": [
+                "aws_grafana_workspace.main.id"
+              ]
+            },
+            "service_account_id": {
+              "references": [
+                "aws_grafana_workspace_service_account.main.service_account_id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
