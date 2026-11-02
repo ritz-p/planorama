@@ -34813,7 +34813,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
+      "gap": "Implemented #889: bounded adoption semantics; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -34884,7 +34884,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
+      "gap": "Implemented #889: bounded adoption semantics; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -34967,7 +34967,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
+      "gap": "Implemented #889: bounded adoption semantics; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -35084,7 +35084,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
+      "gap": "Implemented #889: bounded adoption semantics; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -35145,7 +35145,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 889,
-      "gap": "Implemented bounded adoption semantics #889; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
+      "gap": "Implemented #889: bounded adoption semantics; see docs/aws-network.md and tests/unit/semantic/default_network.rs. Computed-only subnet VPC identity remains conservative; no implicit children or runtime inference.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
