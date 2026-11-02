@@ -79,6 +79,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "DNS Firewall rule group",
                 "DNS Firewall rules",
             ),
+            "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (
