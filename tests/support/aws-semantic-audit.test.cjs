@@ -626,7 +626,7 @@ test('NoSQL audit covers its exact managed denominator with six dimensions and p
 test('streaming audit covers its exact managed denominator and preserves bounded evidence',()=>{
  const services=new Set('kafka kafkaconnect mq kinesis kinesisanalytics kinesisanalyticsv2 kinesisvideo firehose events scheduler pipes schemas sns sqs sfn swf mwaa'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
- const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===721);
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>[721,748,755].includes(d.review?.issue));
  assert.equal(expected.length,55);
  assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
  for(const [type,{review,gap}] of entries) {
@@ -635,7 +635,7 @@ test('streaming audit covers its exact managed denominator and preserves bounded
   assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
   assert.deepEqual(Object.keys(review.shapes),review.fields);
   for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
-  assert.match(gap,/#721/);
+  assert.ok(gap.includes('#'+review.issue),type+': current review issue');
  }
  const decisions=Object.fromEntries(entries);
  assert.deepEqual(decisions.aws_mq_broker.review.shapes.subnet_ids,[['set','string']]);
