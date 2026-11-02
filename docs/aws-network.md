@@ -161,6 +161,20 @@ values and compatible provider/account/region evidence. Zones keep global scope;
 regional targets keep their own region. Shared profiles remain independent;
 incompatible/cross-state endpoints do not establish ownership or VPC containment.
 
+Query logging uses explicit current managed references and matching known outputs.
+`aws_route53_query_log.zone_id` accepts hosted-zone `id`/`zone_id` and supplies
+unique helper ownership; `cloudwatch_log_group_arn` accepts only a log-group `arn`
+in us-east-1. It does not prove delivery permissions.
+Resolver query-log `destination_arn` accepts S3 bucket, CloudWatch log-group or
+Firehose delivery-stream `arn`. Associations independently verify configuration
+`id` and VPC `id`; neither the shared configuration nor its destination becomes
+a VPC child. Regional endpoints must match the configuration region. Cross-account
+configuration references require explicit owner-account evidence and SHARED_BY_ME;
+unknown owner/share evidence remains unresolved. Destination scope is independent.
+Unknown, sensitive, dynamic, ambiguous, deleted/deposed, data, incompatible provider
+or mismatching output values do not prove dedicated relationships. Named states
+remain separate; no literal ARN search, permission or runtime delivery inference.
+
 Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
 Amazon Route 53 service label. The [synthetic example](../examples/route53.svg) also has
 [offline HTML](../examples/route53.html). `Hosted zone` links require a complete,

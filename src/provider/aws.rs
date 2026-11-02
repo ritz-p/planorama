@@ -70,6 +70,7 @@ pub(crate) mod organizations;
 mod placement;
 mod privatelink;
 pub(crate) mod profiles;
+pub(crate) mod query_logs;
 mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
