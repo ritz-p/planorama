@@ -3607,7 +3607,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "Implemented bounded auxiliary EKS references #780; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -3708,7 +3708,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "Implemented bounded auxiliary EKS references #780; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12471,7 +12471,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "Implemented bounded auxiliary EKS references #780; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12510,7 +12510,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "Implemented bounded auxiliary EKS references #780; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12544,7 +12544,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "Implemented bounded auxiliary EKS references #780; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12575,7 +12575,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 780,
-      "gap": "Implemented bounded auxiliary EKS references #780; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
+      "gap": "Implemented #780 (follow-up #713): bounded auxiliary EKS references; see docs/aws-compute.md. Nested capability selectors, effective permissions and runtime resources remain excluded.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
