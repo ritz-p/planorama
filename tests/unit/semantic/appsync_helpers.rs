@@ -128,3 +128,35 @@ fn helper_coverage_and_named_states_never_expose_key_or_definition_values() {
         }
     }
 }
+
+#[test]
+fn event_key_preserves_known_account_ownership() {
+    let mut v = input(super::KEY, "aws_appsync_api", "api_id");
+    v["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::111111111111:role/Test"}}]);
+    let raw = crate::plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    let key = graph
+        .nodes
+        .iter()
+        .find(|n| n.resource_type == super::KEY)
+        .unwrap();
+    assert!(key.member_owner.is_some());
+    assert_eq!(graph.coverage.selected.resources, 2);
+    v["configuration"]["provider_config"]["aws.other"] =
+        v["configuration"]["provider_config"]["aws"].clone();
+    v["configuration"]["provider_config"]["aws.other"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::222222222222:role/Test"}}]);
+    v["configuration"]["root_module"]["resources"][1]["provider_config_key"] = json!("aws.other");
+    let raw = crate::plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    assert!(
+        graph
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == super::KEY)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+}
