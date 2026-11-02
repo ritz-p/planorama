@@ -34,6 +34,31 @@ computed identifiers never create managed nodes. Credentials, configuration JSON
 and runtime reachability are not interpreted. See the [fixture](../tests/fixtures/grafana-plan.json)
 and [SVG](../examples/grafana.svg); HTML uses the shared generation procedure.
 
+## Prometheus workspace (#995)
+
+Prometheus workspaces are independent Spatial metrics-storage services. Alert
+Manager Definition, Anomaly Detector, Resource Policy, Rule Group Namespace,
+Workspace Configuration and Query Logging Configuration keep separate Logical
+identities/actions/coverage and reference Workspace `id` through `workspace_id`.
+Workspace `kms_key_arn` accepts current managed KMS Key `arn` with a key ARN.
+
+Workspace `logging_configuration.log_group_arn` and Query Logging Configuration
+`destination.cloudwatch_logs.log_group_arn` require explicit managed CloudWatch
+Log Group `arn` provenance. Only these inputs normalize the required trailing
+`:*` before comparison. Literal-only strings, missing suffixes, unknown values,
+wrong types/providers, historical endpoints and partial collections stay unresolved.
+The complete query destination list must match; each nested `cloudwatch_logs` block
+must have exactly one member. Account/region/named-state and selection boundaries
+remain independent of owner navigation. No URL implies network containment.
+
+The pinned Provider 6.70.0
+[Workspace](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/prometheus_workspace.html.markdown)
+and [Query Logging](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/prometheus_query_logging_configuration.html.markdown)
+contracts and SDK/Framework schemas define these scalar IDs/ARNs and list shapes.
+YAML receivers, PromQL, policy JSON, labels and runtime anomalies remain opaque.
+See the [fixture](../tests/fixtures/prometheus-plan.json), [SVG](../examples/prometheus.svg)
+and [HTML](../examples/prometheus.html).
+
 ## MemoryDB references (#740)
 
 MemoryDB clusters remain Spatial. Shared subnet/parameter groups, ACLs, users,

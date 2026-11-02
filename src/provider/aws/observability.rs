@@ -11,6 +11,33 @@ type Rule = (&'static str, &'static str, bool, &'static str);
 
 fn rule(resource: &str, path: &str) -> Option<Rule> {
     match (resource, path) {
+        (
+            "aws_prometheus_alert_manager_definition"
+            | "aws_prometheus_anomaly_detector"
+            | "aws_prometheus_resource_policy"
+            | "aws_prometheus_rule_group_namespace"
+            | "aws_prometheus_workspace_configuration"
+            | "aws_prometheus_query_logging_configuration",
+            "workspace_id",
+        ) => Some((
+            "aws_prometheus_workspace",
+            "id",
+            false,
+            "Prometheus workspace owner",
+        )),
+        ("aws_prometheus_workspace", "kms_key_arn") => {
+            Some(("aws_kms_key", "arn", false, "Workspace encryption key"))
+        }
+        ("aws_prometheus_workspace", "logging_configuration.log_group_arn") => Some((
+            "aws_cloudwatch_log_group",
+            "arn",
+            false,
+            "Workspace log group",
+        )),
+        (
+            "aws_prometheus_query_logging_configuration",
+            "destination.cloudwatch_logs.log_group_arn",
+        ) => Some(("aws_cloudwatch_log_group", "arn", true, "Query log groups")),
         ("aws_grafana_workspace", "role_arn") => {
             Some(("aws_iam_role", "arn", false, "Workspace role"))
         }
@@ -134,7 +161,17 @@ fn verify(
     {
         return false;
     }
-    let Some(actual) = super::streaming::values(value, mask, &r.attribute, collection) else {
+    let actual = if kind == "aws_cloudwatch_log_group" {
+        log_values(
+            value,
+            mask,
+            &r.attribute.split('.').collect::<Vec<_>>(),
+            node.resource_type == "aws_prometheus_query_logging_configuration",
+        )
+    } else {
+        super::streaming::values(value, mask, &r.attribute, collection)
+    };
+    let Some(actual) = actual else {
         return false;
     };
     let mut expected = BTreeSet::new();
@@ -149,7 +186,9 @@ fn verify(
         if !expected.insert(identifier) {
             return false;
         }
-        if r.attribute == "kms_key_id" && !super::s3_exports::kms_arn(kind, identifier) {
+        if matches!(r.attribute.as_str(), "kms_key_id" | "kms_key_arn")
+            && !super::s3_exports::kms_arn(kind, identifier)
+        {
             return false;
         }
         if matches!(
@@ -183,6 +222,45 @@ fn verify(
         }
     }
     actual == expected
+}
+
+fn log_values<'a>(
+    value: &'a Value,
+    mask: &Value,
+    path: &[&str],
+    multiple: bool,
+) -> Option<BTreeSet<&'a str>> {
+    let Some((field, remaining)) = path.split_first() else {
+        if !matches!(mask, Value::Null | Value::Bool(false)) {
+            return None;
+        }
+        let arn = value.as_str()?.strip_suffix(":*")?;
+        return (!arn.is_empty() && !arn.ends_with(":*")).then(|| [arn].into());
+    };
+    if !value.is_object() || !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_)) {
+        return None;
+    }
+    if remaining.is_empty() {
+        return log_values(&value[*field], &mask[*field], remaining, false);
+    }
+    let items = value[*field].as_array()?;
+    let masks = &mask[*field];
+    if items.is_empty()
+        || (!multiple && items.len() != 1)
+        || (!matches!(masks, Value::Null | Value::Bool(false))
+            && !masks.as_array().is_some_and(|m| m.len() == items.len()))
+    {
+        return None;
+    }
+    let mut result = BTreeSet::new();
+    for (index, item) in items.iter().enumerate() {
+        for arn in log_values(item, &masks[index], remaining, false)? {
+            if !result.insert(arn) {
+                return None;
+            }
+        }
+    }
+    Some(result)
 }
 
 pub(super) fn annotate(

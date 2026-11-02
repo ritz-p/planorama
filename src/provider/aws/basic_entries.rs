@@ -1162,7 +1162,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_prometheus_rule_group_namespace", "Amazon Managed Service for Prometheus", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
     entry!("aws_prometheus_scraper", "Amazon Managed Service for Prometheus", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
     entry!("aws_prometheus_scraper_logging_configuration", "Amazon Managed Service for Prometheus", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
-    entry!("aws_prometheus_workspace", "Amazon Managed Service for Prometheus", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
+    entry!("aws_prometheus_workspace", "Amazon Managed Service for Prometheus", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
     entry!("aws_prometheus_workspace_configuration", "Amazon Managed Service for Prometheus", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
     entry!("aws_proxy_protocol_policy", "Elastic Load Balancing", Policy, Logical, Regional, Some(ResourceIcon::LoadBalancer)),
     entry!("aws_qbusiness_application", "Amazon Q Business", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonQ))),
