@@ -8811,7 +8811,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Supported: explicit source_arn matches aws_cloudwatch_event_bus.arn with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
+      "gap": "Supported: explicit source_arn matches aws_cloudwatch_event_bus.arn with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
         "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -8863,7 +8863,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
+      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
         "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -8893,7 +8893,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 755,
-      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis.",
+      "gap": "Supported: explicit registry_name matches aws_schemas_registry.name with complete unique current compatible evidence. No schema/policy interpretation or implicit registry synthesis. See #755.",
       "review": {
         "issue": 755,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
