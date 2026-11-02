@@ -47091,10 +47091,10 @@
       }
     },
     "aws_route53_query_log": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 922,
-      "gap": "#715 audit: Missing: hosted-zone and CloudWatch log-group ARN references; target must preserve us-east-1 contract. No log-delivery permission inference. Follow-up #922. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #922: Explicit current managed references with known matching ID/ARN outputs are supported; public query-log destinations require us-east-1. Resolver destinations are typed S3/Logs/Firehose endpoints; shared configuration associations require proven owner account and compatible region. Independent destinations and VPCs retain scope; no permissions, delivery status or network containment inference. Unknown, sensitive, ambiguous and incompatible evidence retains conservative fallback. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48085,10 +48085,10 @@
       }
     },
     "aws_route53_resolver_query_log_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 922,
-      "gap": "#715 audit: Missing: typed S3/CloudWatch Logs/Firehose destination ARN; destination scope is independent of shared query-log configuration. Follow-up #922. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #922: Explicit current managed references with known matching ID/ARN outputs are supported; public query-log destinations require us-east-1. Resolver destinations are typed S3/Logs/Firehose endpoints; shared configuration associations require proven owner account and compatible region. Independent destinations and VPCs retain scope; no permissions, delivery status or network containment inference. Unknown, sensitive, ambiguous and incompatible evidence retains conservative fallback. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48169,10 +48169,10 @@
       }
     },
     "aws_route53_resolver_query_log_config_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 922,
-      "gap": "#715 audit: Missing: query-log config ID plus VPC resource_id pair; shared destination/config does not become a VPC child. Follow-up #922. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #922: Explicit current managed references with known matching ID/ARN outputs are supported; public query-log destinations require us-east-1. Resolver destinations are typed S3/Logs/Firehose endpoints; shared configuration associations require proven owner account and compatible region. Independent destinations and VPCs retain scope; no permissions, delivery status or network containment inference. Unknown, sensitive, ambiguous and incompatible evidence retains conservative fallback. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
