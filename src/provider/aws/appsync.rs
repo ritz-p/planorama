@@ -14,7 +14,7 @@ pub(super) fn scalar<'a>(
     super::service_references::scalar(v, m, &path.split('.').collect::<Vec<_>>())
 }
 
-fn optional<'a>(v: &'a Value, m: &Value, path: &[&str]) -> Option<Option<&'a str>> {
+pub(super) fn optional<'a>(v: &'a Value, m: &Value, path: &[&str]) -> Option<Option<&'a str>> {
     if let Some(rows) = v.as_array() {
         let [row] = rows.as_slice() else { return None };
         let mask = match m {
@@ -41,6 +41,9 @@ fn optional<'a>(v: &'a Value, m: &Value, path: &[&str]) -> Option<Option<&'a str
 }
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
+    if let Some(label) = super::appsync_datasource::label(kind, path) {
+        return Some(label);
+    }
     match (kind, path) {
         (API, "lambda_authorizer_config.authorizer_uri") => Some("GraphQL Lambda authorizer"),
         (API, "user_pool_config.user_pool_id" | ADDITIONAL) => Some("GraphQL Cognito user pool"),
@@ -160,6 +163,7 @@ pub(crate) fn annotate(
     refs: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
 ) {
+    super::appsync_datasource::annotate(nodes, refs, evidence);
     let configured: std::collections::BTreeSet<_> = refs
         .iter()
         .map(|r| (r.target, r.attribute.clone()))
@@ -174,6 +178,9 @@ pub(crate) fn annotate(
         .collect();
     for (r, extra) in refs.iter_mut().zip(extra) {
         let node = &nodes[r.target];
+        if !matches!(node.resource_type.as_str(), API | ASSOCIATION) {
+            continue;
+        }
         if label(&node.resource_type, &r.attribute).is_none() {
             continue;
         }
@@ -298,6 +305,9 @@ pub(crate) fn annotate(
 }
 
 pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> bool {
+    if raw.nodes[r.target].resource_type == "aws_appsync_datasource" {
+        return super::appsync_datasource::bindings(raw, r);
+    }
     if raw.nodes[r.target].resource_type == ASSOCIATION {
         return endpoint_binding(raw, r)
             && raw

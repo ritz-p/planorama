@@ -41898,10 +41898,10 @@
       }
     },
     "aws_appsync_datasource": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 944,
-      "gap": "#714 audit: Missing: API-qualified data-source identity and type-gated backend/role references. DynamoDB region and RDS HTTP endpoint/secret must match. OpenSearch HTTP endpoint requires explicit endpoint output, not hostname discovery. Follow-up #944. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #944 implements API-qualified typed backend and IAM role references with region, type and RDS pair checks. Unknown or incompatible evidence retains fallback; payloads and runtime behavior remain unsupported. See docs/aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
