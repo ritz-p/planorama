@@ -13,6 +13,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::query_logs::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::profiles::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::api_usage::label(resource, attribute) {
         return Some(label);
     }
@@ -702,6 +705,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::query_logs::bindings(raw, reference))
+        && (super::profiles::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::profiles::bindings(raw, reference))
         && (super::api_usage::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

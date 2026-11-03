@@ -43,6 +43,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_apigatewayv2_integration_response"
+                | "aws_route53profiles_profile"
+                | "aws_route53profiles_association"
+                | "aws_route53profiles_resource_association"
                 | "aws_route53_resolver_firewall_rule"
                 | "aws_route53_resolver_firewall_rule_group"
                 | "aws_route53_resolver_firewall_domain_list"
