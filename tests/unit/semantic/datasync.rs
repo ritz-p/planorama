@@ -4,6 +4,76 @@ use serde_json::{Value, json};
 fn fixture() -> Value {
     serde_json::from_str(include_str!("../../fixtures/datasync-plan.json")).unwrap()
 }
+
+#[test]
+fn datasync_task_accepts_only_typed_locations_and_singleton_reports() {
+    let original = fixture();
+    let address = "aws_datasync_task.sync";
+    let index = original["resource_changes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .position(|n| n["address"] == address)
+        .unwrap();
+    for path in [
+        "source_location_arn",
+        "destination_location_arn",
+        "cloudwatch_log_group_arn",
+        "task_report_config.s3_destination.s3_bucket_arn",
+        "task_report_config.s3_destination.bucket_access_role_arn",
+    ] {
+        assert!(complete(&original, address, path), "{path}");
+    }
+    for location in original["resource_changes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|n| {
+            n["type"]
+                .as_str()
+                .unwrap()
+                .starts_with("aws_datasync_location_")
+        })
+    {
+        let mut v = original.clone();
+        v["resource_changes"][index]["change"]["after"]["source_location_arn"] =
+            location["change"]["after"]["arn"].clone();
+        v["configuration"]["root_module"]["resources"][index]["expressions"]["source_location_arn"] =
+            json!({"references":[format!("{}.arn",location["address"].as_str().unwrap())]});
+        assert!(
+            complete(&v, address, "source_location_arn"),
+            "{}",
+            location["type"]
+        );
+    }
+    for case in [
+        "unknown-parent",
+        "multiple-parents",
+        "multiple-destinations",
+        "object-parent",
+        "unknown-role",
+    ] {
+        let mut v = original.clone();
+        let report =
+            v["resource_changes"][index]["change"]["after"]["task_report_config"][0].clone();
+        match case {
+            "unknown-parent" => v["resource_changes"][index]["change"]["after_unknown"] = json!({"task_report_config":true}),
+            "multiple-parents" => v["resource_changes"][index]["change"]["after"]["task_report_config"].as_array_mut().unwrap().push(report),
+            "multiple-destinations" => v["resource_changes"][index]["change"]["after"]["task_report_config"][0]["s3_destination"].as_array_mut().unwrap().push(report["s3_destination"][0].clone()),
+            "object-parent" => v["resource_changes"][index]["change"]["after"]["task_report_config"] = report,
+            "unknown-role" => v["resource_changes"][index]["change"]["after_unknown"] = json!({"task_report_config":[{"s3_destination":[{"bucket_access_role_arn":true}]}]}),
+            _ => unreachable!(),
+        }
+        assert!(
+            !complete(
+                &v,
+                address,
+                "task_report_config.s3_destination.bucket_access_role_arn"
+            ),
+            "{case}"
+        );
+    }
+}
 fn complete(v: &Value, address: &str, path: &str) -> bool {
     semantic::transform(&plan::parse(&v.to_string()).unwrap())
         .nodes
