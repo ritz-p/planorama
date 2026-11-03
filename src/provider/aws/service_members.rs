@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
+                ("file_system_id", "File system", "Policies")
+            }
             "aws_flow_log" => {
                 let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
                     raw.attributes.iter().any(|r| {
@@ -159,6 +162,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
+                    | "aws_efs_backup_policy"
+                    | "aws_efs_file_system_policy"
                     | "aws_route53_records_exclusive"
                     | "aws_ecs_task_set"
             )
