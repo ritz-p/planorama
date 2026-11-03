@@ -37775,10 +37775,10 @@
       }
     },
     "aws_vpc_block_public_access_exclusion": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 901,
-      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901. #710 audit: implemented follow-up.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37789,11 +37789,11 @@
           "internet_gateway_exclusion_mode",
           "resource_arn"
         ],
-        "placement": "Supported: retain Node / Logical default for aws_vpc_block_public_access_exclusion; basic classification is not dedicated semantics.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
         "ownership": "Supported: unique verified owner, with independent filtered fallback and action coverage.",
         "network": "Not applicable: aws_vpc_block_public_access_exclusion is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: #901 explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Not applicable: aws_vpc_block_public_access_exclusion is reviewed for identity and navigation only. Selected vpc_id, subnet_id, internet_gateway_exclusion_mode fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_block_public_access_exclusion.html.markdown",
         "shapes": {
@@ -37965,10 +37965,10 @@
       }
     },
     "aws_vpc_dhcp_options_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 901,
-      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901. #710 audit: implemented follow-up.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37980,8 +37980,8 @@
         "placement": "Supported: retain Association / Logical default for aws_vpc_dhcp_options_association; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: shared options remain independent of every VPC.",
         "network": "Not applicable: aws_vpc_dhcp_options_association is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: #901 explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Not applicable: aws_vpc_dhcp_options_association is reviewed for identity and navigation only. Selected vpc_id, dhcp_options_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_dhcp_options_association.html.markdown",
         "shapes": {
@@ -38016,10 +38016,10 @@
       }
     },
     "aws_vpc_encryption_control": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 901,
-      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901. #710 audit: implemented follow-up.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38030,11 +38030,11 @@
           "nat_gateway_exclusion",
           "vpc_peering_exclusion"
         ],
-        "placement": "Supported: retain Node / Logical default for aws_vpc_encryption_control; basic classification is not dedicated semantics.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
         "ownership": "Supported: unique verified owner, with independent filtered fallback and action coverage.",
         "network": "Not applicable: aws_vpc_encryption_control is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: #901 explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: mode/exclusion configuration summary requires a label separating requested policy from observed enforcement; state messages and encryption guarantees excluded.",
         "officialDocumentation": "website/docs/r/vpc_encryption_control.html.markdown",
         "shapes": {
