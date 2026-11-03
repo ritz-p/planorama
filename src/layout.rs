@@ -111,6 +111,7 @@ impl<'a> Layout<'a> {
         );
         let mut layout = Self::unspaced_step(graph).await;
         routing_shared::spacing::refine_step(graph, &mut layout).await;
+        routing_shared::refinement::extend_step(graph, &mut layout).await;
         layout
     }
 
