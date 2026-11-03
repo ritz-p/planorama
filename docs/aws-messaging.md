@@ -611,3 +611,19 @@ evidence remains unresolved. Functions and resolvers remain independent logical
 resources with their actions and coverage; references imply no containment or
 runtime invocation. Schema type/field selectors, code and templates are excluded.
 See [tests](../tests/unit/semantic/appsync_execution.rs).
+
+## AppSync cache, keys and types (#943)
+
+Provider 6.70.0 api_cache.go, api_key.go and type.go define scalar api_id inputs.
+Cache and type helpers reference GraphQL API id only. Keys also accept the Event
+API resource's api_id output, as defined by api.go; its nonexistent id output is
+not an alias. API context requires a unique explicit current managed endpoint,
+equal known values and compatible provider/account/region evidence. Unknown,
+sensitive, ambiguous, literal-only and unavailable evidence retains fallback.
+
+Helpers can be presented with their unique API while retaining individual
+Terraform identity, action and exactly-once coverage. Managed caches gain no
+subnet attachment. Key id contains key material; neither it, api_key_id nor key
+is parsed or displayed. Type SDL/JSON definitions create no resources or edges.
+Caching behavior and type format summaries remain outside the bounded contract.
+See [tests](../tests/unit/semantic/appsync_helpers.rs).

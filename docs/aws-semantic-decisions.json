@@ -41752,10 +41752,10 @@
       }
     },
     "aws_appsync_api_cache": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 943,
-      "gap": "#714 audit: Missing: GraphQL API ID owner context; managed cache has no subnet attachment. Follow-up #943. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #943 implements explicit compatible API context: GraphQL id for cache/type/key and Event api_id for keys. Unique proven API owners preserve helper identity; no composite key ID, key material or schema definitions are displayed or parsed. Safe summaries remain intentionally unsupported. See docs/aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41797,10 +41797,10 @@
       }
     },
     "aws_appsync_api_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 943,
-      "gap": "#714 audit: Missing: explicit API context distinguishing supported Event/GraphQL API endpoint contract; composite id embeds key and must not be parsed or displayed as key material. Follow-up #943. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #943 implements explicit compatible API context: GraphQL id for cache/type/key and Event api_id for keys. Unique proven API owners preserve helper identity; no composite key ID, key material or schema definitions are displayed or parsed. Safe summaries remain intentionally unsupported. See docs/aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42428,10 +42428,10 @@
       }
     },
     "aws_appsync_type": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 943,
-      "gap": "#714 audit: Missing: GraphQL API ownership reference only; SDL/JSON definition does not create resource graph. Follow-up #943. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #943 implements explicit compatible API context: GraphQL id for cache/type/key and Event api_id for keys. Unique proven API owners preserve helper identity; no composite key ID, key material or schema definitions are displayed or parsed. Safe summaries remain intentionally unsupported. See docs/aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

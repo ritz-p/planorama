@@ -75,6 +75,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
             "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
+            "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
+            "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
+            "aws_appsync_type" => ("api_id", "Type GraphQL API", "Schema types"),
             "aws_s3control_access_point_policy" => (
                 "access_point_arn",
                 "Access point policy owner",
