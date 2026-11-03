@@ -40,6 +40,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .as_ref()
         .and_then(|c| c.account.clone());
     if basic.is_some()
+        && !(resource == "aws_datasync_agent" || resource.starts_with("aws_datasync_location_"))
         && !matches!(
             resource,
             "aws_apigatewayv2_integration_response"

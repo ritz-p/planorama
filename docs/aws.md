@@ -510,3 +510,42 @@ differ from standalone `rule_number`/`rule_action`. Inline rules create no synth
 resource identities. Their summaries remain deferred: no raw rule values, CIDRs,
 policy effects or runtime reachability are displayed in SVG or HTML. This issue
 selects identity/navigation only, not a new configuration-summary display.
+
+## DataSync agents and locations (#828)
+
+DataSync agents have independent architecture cards. Complete explicit `subnet_arns`
+and `security_group_arns` establish task-interface VPC context only; they never
+identify the agent's physical host or subnet. `vpc_endpoint_id` accepts an Interface
+VPC endpoint ID. `private_link_endpoint` is an IP address and supplies no identity.
+
+| Location | Supported configuration references |
+| --- | --- |
+| EFS | `efs_file_system_arn`, `access_point_arn`, `file_system_access_role_arn`, `ec2_config.subnet_arn`, complete `ec2_config.security_group_arns` |
+| FSx Lustre / OpenZFS / Windows | Variant-specific `fsx_filesystem_arn`, complete `security_group_arns` |
+| FSx ONTAP | `storage_virtual_machine_arn`, complete `security_group_arns` |
+| S3 | `s3_bucket_arn`, `s3_config.bucket_access_role_arn`, complete optional `agent_arns` |
+| Azure Blob / HDFS / object storage / SMB | Complete `agent_arns` |
+| NFS | Complete `on_prem_config.agent_arns` |
+
+EFS access points must agree with the referenced filesystem and require known
+`TLS1_2`. Connection subnet/SG evidence establishes a common VPC context for the
+location, without moving the shared filesystem. FSx references accept only the
+matching filesystem type; ONTAP's computed filesystem ARN checks SVM consistency
+but never creates a configured filesystem relationship. Locations do not inherit
+filesystem subnet placement. S3 distinguishes bucket ARNs from S3 Outposts access
+point ARNs; ordinary S3 access points are not substituted for buckets.
+
+Every relation requires current managed resources, explicit unambiguous Terraform
+references, complete known collections, matching output identities and compatible
+independent provider/account/region evidence. Unknown, missing, mismatched,
+deleted/deposed or filtered endpoints retain conservative fallback. Shared endpoints
+have no DataSync owner. Empty optional agent collections establish no relationship.
+Hostnames, Azure URLs, Hadoop KMS URIs, self-managed bucket names and mount paths
+never identify managed AWS endpoints. Credentials, activation keys, filters and
+runtime transfer behavior are not summarized.
+
+Contracts were checked against AWS Provider 6.70.0 source/schema and documentation
+at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (`internal/service/datasync/` and
+`website/docs/r/datasync_*.html.markdown`). Nested configuration blocks are singleton
+lists; agent/subnet/SG collections are sets. The existing EFS, Backup and Lustre
+network/encryption contracts remain independent.

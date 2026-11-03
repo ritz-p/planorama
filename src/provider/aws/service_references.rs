@@ -145,6 +145,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::sagemaker::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::datasync::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::fsx::label(resource, attribute) {
         return Some(label);
     }
@@ -679,6 +682,7 @@ pub(crate) fn annotate(
     super::ecs_workloads::annotate(nodes, references, evidence);
     super::autoscaling_network::annotate(nodes, references, evidence);
     super::fsx::annotate(nodes, references, evidence);
+    super::datasync::annotate(nodes, references, evidence);
     super::networkfirewall::annotate(nodes, references, evidence);
     super::lambda::annotate(nodes, references, evidence);
     super::api_gateway::annotate(nodes, references, evidence);
@@ -705,6 +709,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::datasync::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::datasync::bindings(raw, reference))
         && (super::query_logs::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

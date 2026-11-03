@@ -21669,10 +21669,10 @@
       }
     },
     "aws_datasync_agent": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: complete subnet/SG ARN sets and endpoint ID. private_link_endpoint is an IP, not endpoint ID; activation/IP cannot locate agent host. Follow-up #828. Missing: current Logical agent merits independent architecture card in #828, without inventing EC2 ownership. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21731,10 +21731,10 @@
       }
     },
     "aws_datasync_location_efs": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: EFS/access-point/IAM ARNs, subnet ARN and complete SG ARNs. Access point must agree with EFS; connection subnet does not contain EFS. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21802,10 +21802,10 @@
       }
     },
     "aws_datasync_location_fsx_lustre_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: exact lustre filesystem ARN and complete SG ARN set; cannot borrow subnet placement from filesystem or emit mount credentials. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21851,10 +21851,10 @@
       }
     },
     "aws_datasync_location_fsx_openzfs_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: exact openzfs filesystem ARN and complete SG ARN set; cannot borrow subnet placement from filesystem or emit mount credentials. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21900,10 +21900,10 @@
       }
     },
     "aws_datasync_location_fsx_windows_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: exact windows filesystem ARN and complete SG ARN set; cannot borrow subnet placement from filesystem or emit mount credentials. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21949,10 +21949,10 @@
       }
     },
     "aws_datasync_location_fsx_ontap_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: configured storage_virtual_machine_arn to SVM ARN, not computed fsx_filesystem_arn; complete SG ARNs and SVM/filesystem consistency. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21998,10 +21998,10 @@
       }
     },
     "aws_datasync_location_s3": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: S3 bucket ARN or Outposts access-point ARN with explicit type discrimination, IAM role ARN and optional complete agent ARNs. Prefix is not a bucket identity. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -22053,10 +22053,10 @@
       }
     },
     "aws_datasync_location_azure_blob": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: complete agent_arns references; Azure container URL is not managed AWS storage. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -22097,10 +22097,10 @@
       }
     },
     "aws_datasync_location_hdfs": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: complete agent_arns references; kms_key_provider_uri is Hadoop KMS, not AWS KMS; NameNode hostnames are not managed endpoints. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -22141,10 +22141,10 @@
       }
     },
     "aws_datasync_location_nfs": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: complete on_prem_config.agent_arns references; NFS hostname/export path does not identify EFS or EC2. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -22186,10 +22186,10 @@
       }
     },
     "aws_datasync_location_object_storage": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: complete agent_arns references; self-managed bucket_name is not an AWS S3 bucket; optional agents support agentless transfers. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -22230,10 +22230,10 @@
       }
     },
     "aws_datasync_location_smb": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 828,
-      "gap": "#720 reviewed: Missing: complete agent_arns references; SMB host/domain does not identify managed FSx or Directory Service. Follow-up #828. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #828: typed explicit agent/location references, complete collections, EFS and ONTAP consistency, task-interface/connection VPC context and independent agent cards. See aws.md#datasync-agents-and-locations-828. Historical #720 review below records the prior baseline. Credentials, mount paths and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
