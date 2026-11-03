@@ -126,6 +126,7 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
         }
     }
     let mut attempts = 0;
+    let mut scorer = None;
     for ends in groups.values_mut() {
         crate::work::checkpoint().await;
         ends.sort_by_key(|&(i, end)| {
@@ -170,14 +171,18 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
             }
             terminals[a].as_mut().unwrap()[ae] = bp;
             terminals[b].as_mut().unwrap()[be] = ap;
-            let mut scorer = Scorer::default();
-            scorer.set_layout(graph, layout);
-            for (i, path) in layout.paths.iter().enumerate() {
-                crate::work::checkpoint().await;
-                if i != a && i != b {
-                    scorer.insert(path.clone());
+            if scorer.is_none() {
+                let mut initial = Scorer::default();
+                initial.set_layout(graph, layout);
+                for path in &layout.paths {
+                    crate::work::checkpoint().await;
+                    initial.insert(path.clone());
                 }
+                scorer = Some(initial);
             }
+            let scorer = scorer.as_mut().unwrap();
+            scorer.remove(a);
+            scorer.remove(b);
             let mut replacements = Vec::new();
             for i in [a, b] {
                 crate::work::checkpoint().await;
@@ -241,7 +246,7 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
                     start,
                     end,
                     &obstacles,
-                    Some(&scorer),
+                    Some(scorer),
                     clearances[i],
                 )
                 .await
@@ -251,7 +256,7 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
                 let path = shortcuts::simplify_path_with_clearances(
                     path,
                     &obstacles,
-                    &scorer,
+                    scorer,
                     clearances[i],
                 );
                 if !scorer.safe_border_change(&layout.paths[i], &path)
@@ -261,9 +266,11 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
                 {
                     break;
                 }
-                scorer.insert(path.clone());
+                scorer.replace(i, path.clone());
                 replacements.push(path);
             }
+            scorer.replace(a, layout.paths[a].clone());
+            scorer.replace(b, layout.paths[b].clone());
             if replacements.len() != 2 {
                 continue;
             }
@@ -310,6 +317,9 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
             {
                 layout.paths[a] = old_a;
                 layout.paths[b] = old_b;
+            } else {
+                scorer.replace(a, layout.paths[a].clone());
+                scorer.replace(b, layout.paths[b].clone());
             }
         }
     }
