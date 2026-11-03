@@ -16,6 +16,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::profiles::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::s3_access::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::api_usage::label(resource, attribute) {
         return Some(label);
     }
@@ -711,6 +714,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::profiles::bindings(raw, reference))
+        && (super::s3_access::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::s3_access::bindings(raw, reference))
         && (super::api_usage::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1151,6 +1160,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         if super::route53_records::indexed(&node.resource_type, &reference.attribute)
+            || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
             || super::cloudfront::indexed(&node.resource_type, &reference.attribute)

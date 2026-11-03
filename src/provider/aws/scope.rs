@@ -43,6 +43,15 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_apigatewayv2_integration_response"
+                | "aws_s3_access_point"
+                | "aws_s3control_access_point_policy"
+                | "aws_s3control_bucket"
+                | "aws_s3control_bucket_lifecycle_configuration"
+                | "aws_s3control_bucket_policy"
+                | "aws_s3control_directory_bucket_access_point_scope"
+                | "aws_s3control_object_lambda_access_point"
+                | "aws_s3control_object_lambda_access_point_policy"
+                | "aws_s3outposts_endpoint"
                 | "aws_route53profiles_profile"
                 | "aws_route53profiles_association"
                 | "aws_route53profiles_resource_association"
