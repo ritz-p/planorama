@@ -216,6 +216,38 @@ and [Attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
 fields and reference shapes.
 
+## FSx networking (#826)
+
+Windows, ONTAP, OpenZFS filesystems and file caches remain independent Spatial
+cards. Configured `subnet_ids` and `security_group_ids` require complete, unique
+explicit references to matching known managed subnet and security-group IDs.
+Their verified VPC parents and the filesystem's known `vpc_id` must agree.
+Single-AZ deployments require one subnet; Multi-AZ requires two. ONTAP accepts
+SINGLE_AZ_1/2 and MULTI_AZ_1/2; Windows and OpenZFS accept SINGLE_AZ_1/2 and
+MULTI_AZ_1. A cache requires one subnet. Unknown modes retain fallback placement.
+ONTAP and Multi-AZ require `preferred_subnet_id` membership; populated preferred
+subnet and route-table collections require their own verified references.
+
+| Configured path | Verified endpoint |
+| --- | --- |
+| `kms_key_id` | KMS key `arn`, including cache (the pinned source validates ARN) |
+| `preferred_subnet_id` | Subnet `id` within the complete filesystem subnet set |
+| ONTAP/OpenZFS `route_table_ids` | Complete route-table IDs in the same VPC |
+| Windows/OpenZFS `backup_id` | FSx backup `id` |
+| Windows `active_directory_id` | Directory Service directory `id` |
+| Windows `self_managed_active_directory.domain_join_service_account_secret` | Secrets Manager secret `arn` |
+| Windows `audit_log_configuration.audit_log_destination` | Logs group or Firehose delivery stream `arn`; both audit levels known and at least one enabled |
+
+References require compatible provider/account/region evidence and current managed
+identities. Computed outputs without configuration provenance, incomplete or
+ambiguous references, deleted/deposed targets and incompatible scopes retain
+generic fallback. Filtering and named-state boundaries preserve resource identity.
+No DNS names, passwords, repository paths, runtime reachability or file content
+are exposed. OpenZFS `root_volume_id` creates no synthetic resource.
+See the [fixture](../tests/fixtures/fsx-network-plan.json) and
+[tests](../tests/unit/semantic/fsx_network.rs). Contracts are pinned to
+[AWS Provider 6.70.0 FSx source](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/fsx).
+
 ## FSx Lustre networking and encryption (#702)
 
 `aws_fsx_lustre_file_system` retains its independent Spatial card. Dedicated

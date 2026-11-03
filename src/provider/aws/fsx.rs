@@ -7,6 +7,13 @@ use std::collections::BTreeSet;
 #[path = "../../../tests/unit/semantic/fsx.rs"]
 mod tests;
 
+#[path = "fsx_network.rs"]
+mod network;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/fsx_network.rs"]
+mod network_tests;
+
 fn rule(
     resource: &str,
     attribute: &str,
@@ -29,7 +36,9 @@ fn rule(
 }
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
-    rule(resource, attribute).map(|r| r.3)
+    rule(resource, attribute)
+        .map(|r| r.3)
+        .or_else(|| network::label(resource, attribute))
 }
 
 pub(super) fn annotate(
@@ -37,6 +46,7 @@ pub(super) fn annotate(
     references: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
 ) {
+    network::annotate(nodes, references, evidence);
     for r in references {
         let node = &nodes[r.target];
         let Some((kind, field, collection, _)) = rule(&node.resource_type, &r.attribute) else {
@@ -81,6 +91,7 @@ pub(super) fn annotate(
 }
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    network::present(raw, graph);
     for (target, node) in raw.nodes.iter().enumerate() {
         if node.resource_type != "aws_fsx_lustre_file_system" {
             continue;

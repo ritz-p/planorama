@@ -703,7 +703,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_fms_resource_set", "AWS Firewall Manager", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSFirewallManager))),
     entry!("aws_fsx_backup", "Amazon FSx", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
     entry!("aws_fsx_data_repository_association", "Amazon FSx", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
-    entry!("aws_fsx_file_cache", "Amazon FSx", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
+    entry!("aws_fsx_file_cache", "Amazon FSx", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
     entry!("aws_fsx_lustre_file_system", "Amazon FSx", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
     entry!("aws_fsx_ontap_file_system", "Amazon FSx", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
     entry!("aws_fsx_ontap_storage_virtual_machine", "Amazon FSx", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonFSx))),
