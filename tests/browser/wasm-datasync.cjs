@@ -2,7 +2,7 @@ const assert = require('node:assert/strict');
 const {readFileSync} = require('node:fs');
 const binding = new Function(readFileSync('output/wasm-engine/planorama.js','utf8')+'\nreturn wasm_bindgen;')();
 binding.initSync({module:readFileSync('output/wasm-engine/planorama_bg.wasm'),memory_budget_mib:512});
-const native = require('../support/native-reference.cjs')('target/release/planorama');
+const native = require('../support/native-reference.cjs')(`${process.env.CARGO_TARGET_DIR || 'target'}/release/planorama`);
 for (const scenario of ['complete','unknown','filtered']) {
   const input = JSON.parse(readFileSync('tests/fixtures/datasync-plan.json','utf8'));
   if (scenario === 'unknown') input.resource_changes.filter(n=>n.type.startsWith('aws_datasync_')).forEach(n=>n.change.after_unknown=true);

@@ -22274,10 +22274,10 @@
       }
     },
     "aws_datasync_task": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 829,
-      "gap": "#720 reviewed: Missing: typed source/destination location ARNs, log group ARN and report S3/IAM ARNs. bucket_access_role_arn denotes role, despite documentation saying policy. Task does not own shared locations. Follow-up #829. Intentionally unsupported: transfer options, file filters, authentication material and runtime progress are not architecture summaries; references provide safe endpoint navigation.",
+      "gap": "Implemented #829: typed source/destination locations, exact log-group ARN, and singleton report S3 bucket/IAM role references. Tasks do not own shared locations. See aws.md#datasync-tasks-829. Historical #720 review below records the prior baseline; report prefixes and runtime transfer behavior remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",

@@ -501,6 +501,53 @@
           "subdirectory": "PRIVATE_PATH"
         }
       }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.sync",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:sync"
+        }
+      }
+    },
+    {
+      "address": "aws_datasync_task.sync",
+      "mode": "managed",
+      "type": "aws_datasync_task",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:datasync:us-east-1:123456789012:task/task-sync",
+          "source_location_arn": "arn:aws:datasync:us-east-1:123456789012:location/loc-nfs",
+          "destination_location_arn": "arn:aws:datasync:us-east-1:123456789012:location/loc-s3",
+          "cloudwatch_log_group_arn": "arn:aws:logs:us-east-1:123456789012:log-group:sync",
+          "task_report_config": [
+            {
+              "s3_destination": [
+                {
+                  "s3_bucket_arn": "arn:aws:s3:::example-storage",
+                  "bucket_access_role_arn": "arn:aws:iam::123456789012:role/storage",
+                  "subdirectory": "PRIVATE_REPORT_PATH"
+                }
+              ]
+            }
+          ],
+          "options": [
+            {
+              "bytes_per_second": 12345
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration": {
@@ -923,6 +970,54 @@
                 "aws_datasync_agent.two.arn"
               ]
             }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_group.sync",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_datasync_task.sync",
+          "mode": "managed",
+          "type": "aws_datasync_task",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_location_arn": {
+              "references": [
+                "aws_datasync_location_nfs.shared.arn"
+              ]
+            },
+            "destination_location_arn": {
+              "references": [
+                "aws_datasync_location_s3.shared.arn"
+              ]
+            },
+            "cloudwatch_log_group_arn": {
+              "references": [
+                "aws_cloudwatch_log_group.sync.arn"
+              ]
+            },
+            "task_report_config": [
+              {
+                "s3_destination": [
+                  {
+                    "s3_bucket_arn": {
+                      "references": [
+                        "aws_s3_bucket.shared.arn"
+                      ]
+                    },
+                    "bucket_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.storage.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
           }
         }
       ]

@@ -549,3 +549,16 @@ at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (`internal/service/datasync/` and
 `website/docs/r/datasync_*.html.markdown`). Nested configuration blocks are singleton
 lists; agent/subnet/SG collections are sets. The existing EFS, Backup and Lustre
 network/encryption contracts remain independent.
+## DataSync tasks (#829)
+
+`aws_datasync_task.source_location_arn` and `destination_location_arn` reference
+only the supported DataSync location resource types. Tasks do not own locations,
+move their storage endpoints, or infer transfer reachability. Optional
+`cloudwatch_log_group_arn` references a CloudWatch log group ARN. Under singleton
+`task_report_config.s3_destination` blocks, `s3_bucket_arn` references an S3 bucket
+and `bucket_access_role_arn` references an IAM role, despite the pinned documentation
+calling the latter a policy. Both paths require explicit matching ARN references.
+Unknown or malformed parent blocks cannot establish a report relationship. The
+same current-resource, complete-reference and independent scope checks as the
+agent/location rules apply. Report prefixes, transfer options and runtime progress
+are not emitted as summaries.

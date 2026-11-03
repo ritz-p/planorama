@@ -9,6 +9,21 @@ mod tests;
 
 fn rule(resource: &str, path: &str) -> Option<(&'static str, &'static str, bool, &'static str)> {
     match (resource, path) {
+        ("aws_datasync_task", "source_location_arn") => {
+            Some(("location", "arn", false, "Source location"))
+        }
+        ("aws_datasync_task", "destination_location_arn") => {
+            Some(("location", "arn", false, "Destination location"))
+        }
+        ("aws_datasync_task", "cloudwatch_log_group_arn") => {
+            Some(("aws_cloudwatch_log_group", "arn", false, "Task log group"))
+        }
+        ("aws_datasync_task", "task_report_config.s3_destination.s3_bucket_arn") => {
+            Some(("aws_s3_bucket", "arn", false, "Task report bucket"))
+        }
+        ("aws_datasync_task", "task_report_config.s3_destination.bucket_access_role_arn") => {
+            Some(("aws_iam_role", "arn", false, "Task report access role"))
+        }
         ("aws_datasync_agent", "subnet_arns") => {
             Some(("aws_subnet", "arn", true, "Task interface subnets"))
         }
@@ -131,7 +146,22 @@ fn verify(
         .map(|&source| {
             let endpoint = &nodes[source];
             let output = super::service_evidence::known(evidence, source, field)?;
-            let compatible = if node.resource_type == "aws_datasync_location_s3"
+            let compatible = if kind == "location" {
+                matches!(
+                    endpoint.resource_type.as_str(),
+                    "aws_datasync_location_azure_blob"
+                        | "aws_datasync_location_efs"
+                        | "aws_datasync_location_fsx_lustre_file_system"
+                        | "aws_datasync_location_fsx_ontap_file_system"
+                        | "aws_datasync_location_fsx_openzfs_file_system"
+                        | "aws_datasync_location_fsx_windows_file_system"
+                        | "aws_datasync_location_hdfs"
+                        | "aws_datasync_location_nfs"
+                        | "aws_datasync_location_object_storage"
+                        | "aws_datasync_location_s3"
+                        | "aws_datasync_location_smb"
+                )
+            } else if node.resource_type == "aws_datasync_location_s3"
                 && r.attribute == "s3_bucket_arn"
             {
                 let parts = output.splitn(6, ':').collect::<Vec<_>>();
