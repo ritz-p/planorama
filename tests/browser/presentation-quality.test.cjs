@@ -57,6 +57,8 @@ test('rendered representative cards use the same reusable presentation checks', 
     const longPlan = path.join(directory, 'long.json');
     fs.writeFileSync(longPlan, JSON.stringify({format_version: '1.2', resource_changes: [
       {address: `${longType}.${'long_address_'.repeat(15)}`, type: longType, change: {actions: ['create']}},
+      {address: `custom_unicode.${'e\u0301'.repeat(100)}`, type: 'custom_unicode'},
+      {address: `custom_unicode.${'か\u3099'.repeat(40)}`, type: 'custom_unicode'},
       {address: 'data.aws_vpc.external', type: 'aws_vpc', mode: 'data'},
     ]}));
     const portsPlan = path.join(directory, 'ports.json');
@@ -109,6 +111,9 @@ test('rendered representative cards use the same reusable presentation checks', 
       assert.equal(result.status, 0, result.stderr);
       driver.get(pathToFileURL(file).href);
       const report = driver.execute_script(`return (${inspectPresentation.toString()})();`);
+      if (args[0] === longPlan) {
+        assert.equal(driver.execute_script(String.raw`return [...document.querySelectorAll('text, tspan')].some(el => /^\p{Mark}/u.test(el.textContent));`), false);
+      }
       fs.writeFileSync(path.join(directory, `${index}.json`), JSON.stringify(report, null, 2));
       const headings = driver.execute_script(`
         const root = document.documentElement;
