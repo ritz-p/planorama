@@ -21330,7 +21330,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21371,7 +21371,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21422,7 +21422,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21475,7 +21475,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21516,7 +21516,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21567,7 +21567,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21618,7 +21618,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 827,
-      "gap": "Implemented #827: verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
+      "gap": "Implemented #827 (audit #720): verified configured FSx parent, snapshot, backup, repository association and OpenZFS attachment references with exact ID/root-volume/ARN output contracts, mode discriminators, cycle rejection and independent scope/lifecycle evidence. Parent membership remains distinct from snapshot provenance and VPC access restriction. See aws-storage.md#fsx-child-relationships-827. Credentials, policies, paths and generated endpoints remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
