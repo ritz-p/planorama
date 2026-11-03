@@ -33,6 +33,7 @@ mod data;
 mod database_events;
 mod database_snapshots;
 mod databases;
+mod datasync;
 mod dax;
 mod default_network;
 pub(super) mod diagnostics;
@@ -170,6 +171,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
             crate::model::Placement::Spatial
         }
+        "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
         "aws_appsync_graphql_api" => crate::model::Placement::Spatial,
         "aws_s3control_bucket" | "aws_s3outposts_endpoint" => crate::model::Placement::Spatial,
@@ -284,6 +286,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     batch::present(&raw, &mut graph);
     autoscaling_network::present(&raw, &mut graph);
     fsx::present(&raw, &mut graph);
+    datasync::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
