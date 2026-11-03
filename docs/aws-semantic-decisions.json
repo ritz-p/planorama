@@ -47962,10 +47962,10 @@
       }
     },
     "aws_route53_resolver_firewall_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 926,
-      "gap": "#715 audit: Missing: unique rule-group and standard-rule domain-list ID proof; Advanced rules have no domain list and computed threat-protection ID is not a managed endpoint. Follow-up #926. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #926: Typed current managed rule-group/domain-list/VPC ID references require explicit provenance, matching known non-sensitive outputs and compatible scope. Standard domain-list rules reject Advanced threat/confidence evidence. Unique rule helpers embed under their group; associations do not contain shared groups. Shared-with-me and incompatible accounts remain conservative. No computed threat endpoint or enforcement inference. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48022,10 +48022,10 @@
       }
     },
     "aws_route53_resolver_firewall_rule_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 926,
-      "gap": "#715 audit: Missing: shared firewall rule-group ID and VPC ID relation; no dedicated association lowering. Follow-up #926. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #926: Typed current managed rule-group/domain-list/VPC ID references require explicit provenance, matching known non-sensitive outputs and compatible scope. Standard domain-list rules reject Advanced threat/confidence evidence. Unique rule helpers embed under their group; associations do not contain shared groups. Shared-with-me and incompatible accounts remain conservative. No computed threat endpoint or enforcement inference. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48281,10 +48281,10 @@
       }
     },
     "aws_route53profiles_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 927,
-      "gap": "#715 audit: Missing: profile ID plus VPC resource_id pair with independent shared-profile scope. Follow-up #927. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48326,10 +48326,10 @@
       }
     },
     "aws_route53profiles_resource_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 927,
-      "gap": "#715 audit: Missing: profile ID and typed resource ARN (private hosted zone, resolver rule, firewall group and explicitly verified supported endpoints); docs call ARN an ID. resource_type is computed; resource_properties JSON is not topology. Follow-up #927. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #927: Explicit current managed profile/VPC IDs and private-zone/Resolver-rule/DNS-Firewall-group ARNs require matching known non-sensitive outputs and compatible provider/account/region. Shared profiles remain independent. Public or unknown zones, other resource variants, cross-state and incompatible accounts remain conservative. No resource_properties parsing or computed resource synthesis. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -49110,10 +49110,10 @@
       }
     },
     "aws_s3_access_point": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 977,
-      "gap": "#719 audit: Missing: discriminate general-purpose bucket name from Outposts bucket ARN; verify VPC restriction independently. id is account:name for ordinary access points and ARN for Outposts. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -50951,10 +50951,10 @@
       }
     },
     "aws_s3control_access_point_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: explicit access-point ARN; account:name id is not bucket identity. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -50997,10 +50997,10 @@
       }
     },
     "aws_s3control_bucket": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: explicit Outpost ID; bucket id/arn are ARN, not general-purpose bucket-name aliases. Follow-up #977. Missing: Logical Outposts bucket is independent storage; review Spatial presentation, separately from Outpost/network containment. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51058,10 +51058,10 @@
       }
     },
     "aws_s3control_bucket_lifecycle_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: Outposts bucket ARN, not general-purpose bucket name; retain separate bucket_lifecycle_configuration action/identity. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51104,10 +51104,10 @@
       }
     },
     "aws_s3control_bucket_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: Outposts bucket ARN, not general-purpose bucket name; retain separate bucket_policy action/identity. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51150,10 +51150,10 @@
       }
     },
     "aws_s3control_directory_bucket_access_point_scope": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: account-qualified directory access-point name; no prefix/policy parsing and no bucket ownership inferred from account. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51400,10 +51400,10 @@
       }
     },
     "aws_s3control_object_lambda_access_point": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: supporting access-point ARN and Lambda function ARN through exact transformation collection; payload excluded. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51461,10 +51461,10 @@
       }
     },
     "aws_s3control_object_lambda_access_point_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 977,
-      "gap": "#719 audit: Missing: account-qualified Object Lambda access-point name; no effective-access interpretation. Follow-up #977. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51918,10 +51918,10 @@
       }
     },
     "aws_s3outposts_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 977,
-      "gap": "#719 audit: Missing: Outpost/subnet/SG references and mode-gated customer IP pool; computed network interfaces do not create managed nodes. Follow-up #977. Missing: Logical endpoint is an independent network endpoint; review Spatial presentation with verified subnet evidence. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #977 adds typed access-point/bucket/policy/Object-Lambda references and verified Outposts endpoint subnet/SG context. Complete transformation sets require explicit correlated function ARNs; account-qualified names preserve provider account proof. Outposts buckets/endpoints have independent Spatial presentation. No pinned managed Outpost, customer-owned IP pool or directory access-point endpoint exists, so those paths remain unproven rather than synthesizing resources. Unknown, sensitive, ambiguous and incompatible evidence stays conservative. See aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",

@@ -4,6 +4,28 @@
 
 ## S3 bucket configuration
 
+### Access points and Outposts (#977)
+
+Access points distinguish ordinary bucket `id`/`bucket` names from Outposts bucket
+`arn`/`id` outputs. VPC configuration is an independent access restriction, never
+bucket containment. Access-point policy helpers use `arn`; Outposts bucket policy
+and lifecycle helpers use bucket ARNs and retain distinct actions and coverage.
+Object Lambda uses a supporting access-point ARN and a complete, explicitly
+correlated transformation set of Lambda ARNs. Payloads are not read or displayed.
+Object Lambda policy names require matching known account qualifiers and provider
+accounts; composite IDs are not parsed as names or bucket identities.
+
+Outposts buckets and endpoints have independent Spatial cards. Endpoint subnet
+placement requires explicit current Subnet/SG references, matching VPC IDs and
+the subnet's known Outpost ARN matching the configured Outpost ID. No computed
+network interfaces are synthesized. The pinned managed inventory has no Outpost,
+customer-owned IP pool or directory-bucket access-point endpoint resource;
+those references remain unproven with diagnostics rather than targeting data or
+invented resources. All new links require matching known non-sensitive outputs,
+compatible provider/account/region and current managed identities. Shared resources
+remain independent; literal values, unknown/sensitive, ambiguous, filtered and
+cross-state evidence do not establish dedicated links or effective access.
+
 ### Object destinations and encryption (#976)
 
 `aws_s3_object`, `aws_s3_bucket_object` and `aws_s3_object_copy` retain independent
