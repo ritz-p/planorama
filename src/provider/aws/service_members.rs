@@ -78,6 +78,23 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
             "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
             "aws_appsync_type" => ("api_id", "Type GraphQL API", "Schema types"),
+            "aws_s3control_access_point_policy" => (
+                "access_point_arn",
+                "Access point policy owner",
+                "Access point policy",
+            ),
+            "aws_s3control_bucket_policy" => ("bucket", "Outposts bucket owner", "Bucket policy"),
+            "aws_s3control_bucket_lifecycle_configuration" => {
+                ("bucket", "Outposts bucket owner", "Bucket lifecycle")
+            }
+            "aws_s3control_object_lambda_access_point_policy" => {
+                ("name", "Named access point owner", "Object Lambda policy")
+            }
+            "aws_route53_resolver_firewall_rule" => (
+                "firewall_rule_group_id",
+                "DNS Firewall rule group",
+                "DNS Firewall rules",
+            ),
             "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"

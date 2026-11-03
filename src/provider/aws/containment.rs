@@ -19,6 +19,7 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
         | "aws_internet_gateway"
         | "aws_egress_only_internet_gateway" => Some(("vpc_id", "aws_vpc")),
         "aws_network_interface"
+        | "aws_s3outposts_endpoint"
         | "aws_ec2_instance_connect_endpoint"
         | "aws_instance"
         | "aws_nat_gateway"
@@ -76,7 +77,9 @@ pub(super) fn infer(raw: &Input) -> Graph {
         }
         if matches!(
             child.resource_type.as_str(),
-            "aws_network_interface" | "aws_ec2_instance_connect_endpoint"
+            "aws_network_interface"
+                | "aws_ec2_instance_connect_endpoint"
+                | "aws_s3outposts_endpoint"
         ) && !super::service_references::verified(raw, reference)
         {
             continue;
