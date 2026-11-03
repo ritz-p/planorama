@@ -15,6 +15,21 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_vpc_encryption_control" => {
+                ("vpc_id", "Encryption control VPC", "Encryption control")
+            }
+            "aws_vpc_block_public_access_exclusion" => {
+                let field = if raw.attributes.iter().any(|r| {
+                    r.target == index
+                        && r.attribute == "vpc_id"
+                        && super::service_references::verified(raw, r)
+                }) {
+                    "vpc_id"
+                } else {
+                    "subnet_id"
+                };
+                (field, "Exclusion target", "Public access exclusions")
+            }
             "aws_flow_log" => {
                 let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
                     raw.attributes.iter().any(|r| {
@@ -159,6 +174,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
+                    | "aws_vpc_encryption_control"
+                    | "aws_vpc_block_public_access_exclusion"
                     | "aws_route53_records_exclusive"
                     | "aws_ecs_task_set"
             )

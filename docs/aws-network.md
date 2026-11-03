@@ -473,3 +473,13 @@ Pinned source contracts:
 [default ACL](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_network_acl.go),
 [default table](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_route_table.go),
 [default SG](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_security_group.go).
+
+## VPC controls (#901)
+
+AWS Provider 6.70.0's pinned [EC2 resource schemas](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2) define scalar ID contracts:
+
+- Public-access exclusions require exactly one of vpc_id/subnet_id, matching the explicitly referenced VPC/subnet id, and known allow-bidirectional or allow-egress mode. Computed resource_arn is not provenance.
+- Encryption controls require a matching VPC id and known monitor/enforce mode. Gateway/peering exclusion flags identify service categories, not endpoints or KMS keys.
+- DHCP associations require matching VPC and DHCP-options id references before lowering. The default sentinel is excluded; shared options remain independent.
+
+Unique explicit current managed references, known matching values and compatible provider/account/region bindings are required. Proven control helpers embed with their own actions and coverage; unknown, incomplete, ambiguous, mismatched, deleted/deposed or filtered owners retain independent fallback. No DNS settings, policies, runtime connectivity or reachability are inferred. See the [fixture](../tests/fixtures/vpc-controls-plan.json).

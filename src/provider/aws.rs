@@ -107,6 +107,7 @@ mod scope;
 mod security_group_rules;
 mod security_groups;
 mod service_members;
+mod vpc_controls;
 mod vpc_gateways;
 mod vpc_routes;
 pub(crate) mod waf;
