@@ -47962,10 +47962,10 @@
       }
     },
     "aws_route53_resolver_firewall_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 926,
-      "gap": "#715 audit: Missing: unique rule-group and standard-rule domain-list ID proof; Advanced rules have no domain list and computed threat-protection ID is not a managed endpoint. Follow-up #926. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #926: Typed current managed rule-group/domain-list/VPC ID references require explicit provenance, matching known non-sensitive outputs and compatible scope. Standard domain-list rules reject Advanced threat/confidence evidence. Unique rule helpers embed under their group; associations do not contain shared groups. Shared-with-me and incompatible accounts remain conservative. No computed threat endpoint or enforcement inference. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48022,10 +48022,10 @@
       }
     },
     "aws_route53_resolver_firewall_rule_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 926,
-      "gap": "#715 audit: Missing: shared firewall rule-group ID and VPC ID relation; no dedicated association lowering. Follow-up #926. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #926: Typed current managed rule-group/domain-list/VPC ID references require explicit provenance, matching known non-sensitive outputs and compatible scope. Standard domain-list rules reject Advanced threat/confidence evidence. Unique rule helpers embed under their group; associations do not contain shared groups. Shared-with-me and incompatible accounts remain conservative. No computed threat endpoint or enforcement inference. See aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
