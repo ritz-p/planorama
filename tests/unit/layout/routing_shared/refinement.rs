@@ -3,6 +3,84 @@ use crate::layout::ContainmentTree;
 use crate::model::Edge;
 
 #[test]
+fn exchange_cannot_trade_a_removed_crossing_for_a_new_peer_crossing() {
+    let line = |a: (usize, usize), b: (usize, usize)| {
+        vec![Point { x: a.0, y: a.1 }, Point { x: b.0, y: b.1 }]
+    };
+    let a = line((0, 50), (100, 50));
+    let b = line((50, 0), (50, 100));
+    let moved = line((0, 110), (100, 110));
+    let peer = line((75, 100), (75, 120));
+    assert!(improves_conflicts(
+        [&a, &b],
+        [&moved, &b],
+        std::iter::empty()
+    ));
+    assert!(!improves_conflicts(
+        [&a, &b],
+        [&moved, &b],
+        [peer.as_slice()].into_iter()
+    ));
+    assert!(!improves_conflicts([&a, &b], [&a, &b], std::iter::empty()));
+}
+
+#[test]
+fn exchanges_include_nearby_nonadjacent_ports_and_bound_the_neighborhood() {
+    let horizontal = |y| vec![Point { x: 0, y }, Point { x: 100, y }];
+    let vertical = vec![Point { x: 50, y: 0 }, Point { x: 50, y: 50 }];
+    let mut paths = vec![horizontal(10), horizontal(100), vertical.clone()];
+    let group = vec![(0, 0), (1, 0), (2, 0)];
+    assert_eq!(
+        crate::work::complete(exchanges_step(&paths, [&group].into_iter())),
+        vec![[(0, 0), (2, 0)]]
+    );
+    paths = vec![horizontal(100); 10];
+    paths[0] = horizontal(10);
+    paths[9] = vertical;
+    let group = (0..10).map(|i| (i, 0)).collect();
+    assert!(crate::work::complete(exchanges_step(&paths, [&group].into_iter())).is_empty());
+}
+
+#[test]
+fn exchange_queues_share_trials_between_groups_before_revisiting_a_busy_group() {
+    let paths: Vec<_> = (0..42)
+        .map(|i| {
+            if i % 2 == 0 {
+                vec![Point { x: 0, y: 50 }, Point { x: 100, y: 50 }]
+            } else {
+                vec![Point { x: 50, y: 0 }, Point { x: 50, y: 100 }]
+            }
+        })
+        .collect();
+    let groups = [(0..40).map(|i| (i, 0)).collect(), vec![(40, 0), (41, 0)]];
+    let pairs = crate::work::complete(exchanges_step(&paths, groups.iter()));
+    assert_eq!(pairs.len(), EXCHANGE_BUDGET + 1);
+    assert_eq!(pairs[0], [(0, 0), (1, 0)]);
+    assert_eq!(pairs[1], [(40, 0), (41, 0)]);
+    assert_eq!(
+        pairs,
+        crate::work::complete(exchanges_step(&paths, groups.iter()))
+    );
+}
+
+#[test]
+fn exchanges_prioritize_more_crossings_with_stable_ties() {
+    let paths = vec![
+        vec![Point { x: 0, y: 50 }, Point { x: 100, y: 50 }],
+        vec![Point { x: 50, y: 0 }, Point { x: 50, y: 100 }],
+        vec![
+            Point { x: 25, y: 0 },
+            Point { x: 25, y: 100 },
+            Point { x: 75, y: 100 },
+            Point { x: 75, y: 0 },
+        ],
+    ];
+    let group = vec![(0, 0), (1, 0), (2, 0)];
+    let pairs = crate::work::complete(exchanges_step(&paths, [&group].into_iter()));
+    assert_eq!(pairs, vec![[(0, 0), (2, 0)], [(0, 0), (1, 0)]]);
+}
+
+#[test]
 fn port_exchanges_reject_marker_corner_overlap_without_centerline_collisions() {
     let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.hub","type":"test"},{"address":"test.lower","type":"test"},{"address":"test.upper","type":"test"},{"address":"test.marker","type":"test"},{"address":"test.peer","type":"test"}]}"#).unwrap();
     let mut graph = crate::semantic::transform(&raw).0;
