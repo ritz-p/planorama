@@ -43,6 +43,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_apigatewayv2_integration_response"
+                | "aws_appsync_graphql_api"
+                | "aws_appsync_source_api_association"
                 | "aws_s3_access_point"
                 | "aws_s3control_access_point_policy"
                 | "aws_s3control_bucket"

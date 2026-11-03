@@ -42176,10 +42176,10 @@
       }
     },
     "aws_appsync_graphql_api": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 947,
-      "gap": "#714 audit: Missing: typed Cognito/Lambda authentication, MERGED execution role and log role references. Missing: review independent GraphQL API architecture card; current basic Connector is Logical. Follow-up #947. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #947 adds an independent GraphQL API card, discriminator-gated Lambda/Cognito/IAM references, complete indexed additional Cognito authentication, and paired distinct source/MERGED API references. Configured ARN/ID alternatives remain exclusive; computed counterparts only corroborate. Cross-account ARN references require known provider account evidence. Unknown/sensitive, incompatible, data and historical endpoints remain conservative. No schema or policy interpretation. See aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42360,10 +42360,10 @@
       }
     },
     "aws_appsync_source_api_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 947,
-      "gap": "#714 audit: Missing: mutually exclusive ARN/ID alternatives for both GraphQL endpoints with MERGED target proof; cross-account associations require explicit account evidence. Follow-up #947. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #947 adds an independent GraphQL API card, discriminator-gated Lambda/Cognito/IAM references, complete indexed additional Cognito authentication, and paired distinct source/MERGED API references. Configured ARN/ID alternatives remain exclusive; computed counterparts only corroborate. Cross-account ARN references require known provider account evidence. Unknown/sensitive, incompatible, data and historical endpoints remain conservative. No schema or policy interpretation. See aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",

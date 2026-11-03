@@ -13,6 +13,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::query_logs::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::appsync::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::profiles::label(resource, attribute) {
         return Some(label);
     }
@@ -708,6 +711,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         )
         .is_none()
             || super::query_logs::bindings(raw, reference))
+        && (super::appsync::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::appsync::bindings(raw, reference))
         && (super::profiles::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1160,6 +1169,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         if super::route53_records::indexed(&node.resource_type, &reference.attribute)
+            || super::appsync::indexed(&node.resource_type, &reference.attribute)
             || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
