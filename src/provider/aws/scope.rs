@@ -136,6 +136,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_vpc_peering_connection_options"
                 | "aws_fsx_lustre_file_system"
                 | "aws_backup_vault"
+                | "aws_backup_plan"
                 | "aws_backup_logically_air_gapped_vault"
                 | "aws_backup_vault_lock_configuration"
                 | "aws_backup_vault_notifications"

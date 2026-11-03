@@ -375,7 +375,7 @@ test('filesystem audit covers 70 exact types and distinguishes configured refere
  assert.equal(d.aws_transfer_web_app.review.contracts['endpoint_details.vpc.vpc_endpoint_id'],'computed');
  assert.match(d.aws_transfer_ssh_key.review.references,/server ID AND user_name/);
  assert.match(d.aws_efs_access_point.review.ownership,/#548/);
- assert.match(d.aws_backup_plan.review.references,/#508.*one rule/);
+ assert.match(d.aws_backup_plan.review.references,/#821.*complete aggregate rule/);
 });
 
 test('compute audit covers 52 types and keeps names, ARNs and collection evidence distinct',()=>{
