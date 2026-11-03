@@ -80,18 +80,19 @@ pub(crate) enum Content {
 }
 
 fn escape(value: &str) -> String {
-    value
-        .chars()
-        .filter(|&c| c >= ' ' || matches!(c, '\n' | '\r' | '\t'))
-        .map(|c| match c {
-            '&' => "&amp;".into(),
-            '<' => "&lt;".into(),
-            '>' => "&gt;".into(),
-            '"' => "&quot;".into(),
-            '\'' => "&apos;".into(),
-            _ => c.to_string(),
-        })
-        .collect()
+    let mut escaped = String::with_capacity(value.len());
+    for character in value.chars() {
+        match character {
+            '&' => escaped.push_str("&amp;"),
+            '<' => escaped.push_str("&lt;"),
+            '>' => escaped.push_str("&gt;"),
+            '"' => escaped.push_str("&quot;"),
+            '\'' => escaped.push_str("&apos;"),
+            c if c >= ' ' || matches!(c, '\n' | '\r' | '\t') => escaped.push(c),
+            _ => {}
+        }
+    }
+    escaped
 }
 
 pub(crate) fn render(graph: &Graph, layout: &Layout<'_>) -> String {

@@ -8,6 +8,10 @@ mod semantic_diagnostics;
 #[path = "../tests/unit/html_changed_paths.rs"]
 mod changed_path_tests;
 
+#[cfg(test)]
+#[path = "../tests/unit/html_serialization.rs"]
+mod serialization_tests;
+
 pub(crate) fn render(
     graph: &view::ViewGraph,
     layout: &Layout<'_>,
@@ -142,13 +146,23 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
 }
 
 fn safe_json(value: &Value) -> String {
-    value
-        .to_string()
-        .replace('&', "\\u0026")
-        .replace('<', "\\u003c")
-        .replace('>', "\\u003e")
-        .replace('\u{2028}', "\\u2028")
-        .replace('\u{2029}', "\\u2029")
+    let json = value.to_string();
+    let Some(start) = json.find(['&', '<', '>', '\u{2028}', '\u{2029}']) else {
+        return json;
+    };
+    let mut escaped = String::with_capacity(json.len());
+    escaped.push_str(&json[..start]);
+    for character in json[start..].chars() {
+        match character {
+            '&' => escaped.push_str("\\u0026"),
+            '<' => escaped.push_str("\\u003c"),
+            '>' => escaped.push_str("\\u003e"),
+            '\u{2028}' => escaped.push_str("\\u2028"),
+            '\u{2029}' => escaped.push_str("\\u2029"),
+            c => escaped.push(c),
+        }
+    }
+    escaped
 }
 
 fn provenance_providers(graph: &Graph, state: &str) -> Vec<Value> {
@@ -215,11 +229,42 @@ fn document(
             )
         })
         .unwrap_or_default();
-    include_str!("html/viewer.html")
-        .replace("/* VIEWER_CSS */", include_str!("html/viewer.css"))
-        .replace(
-            "/* VIEWER_JS */",
-            &include_str!("html/viewer.js").replace(
+    let providers = safe_json(&Value::Array(providers));
+    interpolate(
+        include_str!("html/viewer.html"),
+        &[
+            ("/* VIEWER_CSS */", include_str!("html/viewer.css")),
+            ("<!-- DIAGRAM -->", &svg),
+            ("<!-- VIEWER_DATA -->", &data),
+            ("<!-- VIEWER_PROVIDER_DATA -->", &providers),
+            ("<!-- VIEWER_DIAGNOSTICS -->", &diagnostics),
+            ("<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->", &semantic),
+            ("/* VIEWER_JS */", viewer_script()),
+        ],
+    )
+}
+
+fn interpolate(mut template: &str, slots: &[(&str, &str)]) -> String {
+    let capacity = template.len() + slots.iter().map(|(_, value)| value.len()).sum::<usize>();
+    let mut output = String::with_capacity(capacity);
+    for &(marker, value) in slots {
+        let (prefix, suffix) = template
+            .split_once(marker)
+            .expect("embedded template marker");
+        output.push_str(prefix);
+        output.push_str(value);
+        template = suffix;
+    }
+    output.push_str(template);
+    output
+}
+
+fn viewer_script() -> &'static str {
+    static SCRIPT: std::sync::OnceLock<String> = std::sync::OnceLock::new();
+    SCRIPT.get_or_init(|| {
+        interpolate(
+            include_str!("html/viewer.js"),
+            &[(
                 "/* VIEWER_MODULES */",
                 concat!(
                     include_str!("html/generation.js"),
@@ -252,14 +297,7 @@ fn document(
                     "\n",
                     include_str!("html/impact.js"),
                 ),
-            ),
+            )],
         )
-        .replace("<!-- VIEWER_DATA -->", &data)
-        .replace(
-            "<!-- VIEWER_PROVIDER_DATA -->",
-            &safe_json(&Value::Array(providers)),
-        )
-        .replace("<!-- VIEWER_DIAGNOSTICS -->", &diagnostics)
-        .replace("<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->", &semantic)
-        .replace("<!-- DIAGRAM -->", &svg)
+    })
 }
