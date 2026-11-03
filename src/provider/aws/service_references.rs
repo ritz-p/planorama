@@ -1225,6 +1225,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                             | "MemoryDB user membership"
                             | "MemoryDB multi-region membership"
                             | "Schedule group membership"
+                            | "ONTAP filesystem membership"
+                            | "ONTAP SVM membership"
+                            | "OpenZFS parent membership"
                     ) || matches!(
                         node.resource_type.as_str(),
                         "aws_iam_group_membership" | "aws_iam_user_group_membership"
