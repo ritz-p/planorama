@@ -10,6 +10,9 @@ mod tests;
 #[path = "fsx_network.rs"]
 mod network;
 
+#[path = "fsx_children.rs"]
+mod children;
+
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/fsx_network.rs"]
 mod network_tests;
@@ -39,6 +42,7 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     rule(resource, attribute)
         .map(|r| r.3)
         .or_else(|| network::label(resource, attribute))
+        .or_else(|| children::label(resource, attribute))
 }
 
 pub(super) fn annotate(
@@ -47,6 +51,7 @@ pub(super) fn annotate(
     evidence: &[(&Value, &Value)],
 ) {
     network::annotate(nodes, references, evidence);
+    children::annotate(nodes, references, evidence);
     for r in references {
         let node = &nodes[r.target];
         let Some((kind, field, collection, _)) = rule(&node.resource_type, &r.attribute) else {

@@ -216,6 +216,41 @@ and [Attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
 fields and reference shapes.
 
+## FSx child relationships (#827)
+
+FSx SVMs and volumes use independent Spatial cards with explicit parent-membership
+references. OpenZFS parent chains must terminate at a verified filesystem root;
+cycles and incomplete ancestor chains are rejected. No computed root volume is
+synthesized as a managed resource. Membership
+does not infer subnet placement or embed a shared endpoint; selecting a child alone
+preserves its identity. Snapshots, backups and association helpers retain their
+own lifecycle identities.
+
+| Resource and configured path | Verified endpoint |
+| --- | --- |
+| ONTAP SVM `file_system_id` | ONTAP filesystem `id` |
+| ONTAP volume `storage_virtual_machine_id` | SVM `id`; known `volume_type = ONTAP` |
+| OpenZFS volume `parent_volume_id` | OpenZFS volume `id` or filesystem `root_volume_id` |
+| OpenZFS volume `origin_snapshot.snapshot_arn` | Snapshot `arn`; CLONE, FULL_COPY or INCREMENTAL_COPY provenance, separate from ownership |
+| OpenZFS snapshot `volume_id` | OpenZFS volume `id` or filesystem `root_volume_id` |
+| Backup `file_system_id` | Lustre or Windows filesystem `id`, with `volume_id` known absent |
+| Backup `volume_id` | ONTAP volume `id`, with `file_system_id` known absent |
+| Data repository association `file_system_id` | Lustre filesystem `id` |
+| S3 access point attachment `openzfs_configuration.volume_id` | OpenZFS volume `id` or filesystem `root_volume_id`; known `type = OPENZFS` |
+| Attachment `s3_access_point.vpc_configuration.vpc_id` | VPC `id`, as access restriction only |
+
+All paths require unique explicit references, matching known outputs, current
+managed identities and compatible independent provider/account/region evidence.
+Missing, ambiguous, unknown, deleted/deposed and incompatible evidence retains
+generic fallback within its named state. ONTAP volume's computed `file_system_id`
+and backup's computed `kms_key_id` cannot substitute for configured provenance.
+Association S3/NFS paths, self-managed AD domain/DNS/credentials, policies and the
+attachment's generated `s3_access_point_arn` create no managed endpoints or summaries.
+Contracts use the pinned [Provider source and schemas](aws-inventory.md), including
+its distinct root-volume output identity. See the
+[fixture](../tests/fixtures/fsx-children-plan.json) and
+[tests](../tests/unit/semantic/fsx_children.rs).
+
 ## FSx networking (#826)
 
 Windows, ONTAP, OpenZFS filesystems and file caches remain independent Spatial
