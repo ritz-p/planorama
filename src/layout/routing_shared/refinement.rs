@@ -2,22 +2,31 @@ use super::{crosses, ports, scoring::Scorer, shortcuts, slots};
 use crate::layout::relationship_markers::{self, Terminal};
 use crate::layout::{Bounds, Layout, Point, Port, Side};
 use crate::model::Graph;
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, VecDeque};
 
 type Exchange = [(usize, usize); 2];
 const EXCHANGE_BUDGET: usize = 32;
+const ADDITIONAL_EXCHANGE_BUDGET: usize = 8;
 
 fn improves_conflicts<'a>(
     old: [&[Point]; 2],
     new: [&[Point]; 2],
     peers: impl Iterator<Item = &'a [Point]>,
+    preserve_pairs: bool,
 ) -> bool {
-    let mut improved = false;
+    let mut totals = [0; 4];
     let mut compare = |old_a: &[Point], old_b: &[Point], new_a: &[Point], new_b: &[Point]| {
         let before = crossings(old_a, old_b);
         let after = crossings(new_a, new_b);
-        improved |= after < before;
-        after <= before && overlap(new_a, new_b) <= overlap(old_a, old_b)
+        let before_overlap = overlap(old_a, old_b);
+        let after_overlap = overlap(new_a, new_b);
+        for (total, value) in totals
+            .iter_mut()
+            .zip([before, after, before_overlap, after_overlap])
+        {
+            *total += value;
+        }
+        !preserve_pairs || (after <= before && after_overlap <= before_overlap)
     };
     if !compare(old[0], old[1], new[0], new[1]) {
         return false;
@@ -29,7 +38,7 @@ fn improves_conflicts<'a>(
             }
         }
     }
-    improved
+    totals[1] < totals[0] && totals[3] <= totals[2]
 }
 
 async fn exchanges_step<'a>(
@@ -142,10 +151,21 @@ pub(super) fn overlap(a: &[Point], b: &[Point]) -> usize {
 
 #[cfg(test)]
 pub(in crate::layout) fn refine(graph: &Graph, layout: &mut Layout<'_>) {
-    crate::work::complete(refine_step(graph, layout))
+    crate::work::complete(async {
+        refine_step(graph, layout).await;
+        extend_step(graph, layout).await;
+    })
 }
 
 pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_>) {
+    refine_pass_step(graph, layout, false).await;
+}
+
+pub(in crate::layout) async fn extend_step(graph: &Graph, layout: &mut Layout<'_>) {
+    refine_pass_step(graph, layout, true).await;
+}
+
+async fn refine_pass_step(graph: &Graph, layout: &mut Layout<'_>, preserve_pairs: bool) {
     crate::work::checkpoint().await;
     let numbers = relationship_markers::numbers(graph);
     let clearances: Vec<_> = layout
@@ -191,10 +211,9 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
                 .push((i, end));
         }
     }
-    for ends in groups.values_mut() {
-        crate::work::checkpoint().await;
+    let sort_ends = |ends: &mut Vec<(usize, usize)>, paths: &[Vec<Point>]| {
         ends.sort_by_key(|&(i, end)| {
-            let p = terminal(&layout.paths[i], end);
+            let p = terminal(&paths[i], end);
             let e = &graph.edges[i];
             (
                 p.point.x,
@@ -205,16 +224,43 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
                 end,
             )
         });
-    }
+    };
     let mut attempts = 0;
     let mut scorer = None;
-    for pair in exchanges_step(&layout.paths, groups.values()).await {
+    let mut exchanges = if preserve_pairs {
+        for ends in groups.values_mut() {
+            crate::work::checkpoint().await;
+            sort_ends(ends, &layout.paths);
+        }
+        VecDeque::from(exchanges_step(&layout.paths, groups.values()).await)
+    } else {
+        VecDeque::new()
+    };
+    let mut remaining_groups = groups.values_mut();
+    let budget = if preserve_pairs {
+        ADDITIONAL_EXCHANGE_BUDGET
+    } else {
+        EXCHANGE_BUDGET
+    };
+    loop {
         crate::work::checkpoint().await;
+        let pair = match exchanges.pop_front() {
+            Some(pair) => pair,
+            None if preserve_pairs => break,
+            None => {
+                let Some(ends) = remaining_groups.next() else {
+                    break;
+                };
+                sort_ends(ends, &layout.paths);
+                exchanges.extend(ends.windows(2).map(|pair| [pair[0], pair[1]]));
+                continue;
+            }
+        };
         let [(a, ae), (b, be)] = [pair[0], pair[1]];
         if a == b || crossings(&layout.paths[a], &layout.paths[b]) == 0 {
             continue;
         }
-        if attempts >= EXCHANGE_BUDGET {
+        if attempts >= budget {
             return;
         }
         attempts += 1;
@@ -354,7 +400,18 @@ pub(in crate::layout) async fn refine_step(graph: &Graph, layout: &mut Layout<'_
                 .enumerate()
                 .filter(|(i, _)| *i != a && *i != b)
                 .map(|(_, path)| path.as_slice()),
+            preserve_pairs,
         ) {
+            continue;
+        }
+        if preserve_pairs
+            && !crate::layout::diagnostics::preserves_visible_pairs(
+                graph,
+                layout,
+                [a, b],
+                &replacements,
+            )
+        {
             continue;
         }
         let old_a = std::mem::replace(&mut layout.paths[a], replacements.remove(0));

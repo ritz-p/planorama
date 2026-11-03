@@ -33,6 +33,161 @@ struct Segment {
     high: usize,
 }
 
+enum Contact {
+    Crossing(Point),
+    Shared(usize),
+    Parallel {
+        low: usize,
+        high: usize,
+        gap: f64,
+        overlap: bool,
+        deficit: usize,
+    },
+}
+
+fn contacts(a: &Route, b: &Route, sa: Segment, sb: Segment) -> Vec<Contact> {
+    if sa.horizontal != sb.horizontal {
+        let (h, v) = if sa.horizontal { (sa, sb) } else { (sb, sa) };
+        return if h.low < v.axis && v.axis < h.high && v.low < h.axis && h.axis < v.high {
+            vec![Contact::Crossing(Point {
+                x: v.axis,
+                y: h.axis,
+            })]
+        } else {
+            Vec::new()
+        };
+    }
+    let (mut low, mut high) = (sa.low.max(sb.low), sa.high.min(sb.high));
+    if low >= high {
+        return Vec::new();
+    }
+    let distance = sa.axis.abs_diff(sb.axis);
+    let gap = distance as f64 - (a.stroke + b.stroke) as f64 / 8.0;
+    if distance == 0 {
+        return shared_sections(a, b, sa, low, high)
+            .into_iter()
+            .map(|(low, high, shared)| {
+                if shared {
+                    Contact::Shared(high - low)
+                } else {
+                    Contact::Parallel {
+                        low,
+                        high,
+                        gap,
+                        overlap: true,
+                        deficit: 0,
+                    }
+                }
+            })
+            .collect();
+    }
+    let overlap = gap < 0.0;
+    let deficit = if overlap {
+        0
+    } else if distance < 16 {
+        trim_endpoint(a, sa, &mut low, &mut high);
+        trim_endpoint(b, sb, &mut low, &mut high);
+        if high.saturating_sub(low) < 64 {
+            return Vec::new();
+        }
+        (16 - distance) * (high - low)
+    } else {
+        return Vec::new();
+    };
+    vec![Contact::Parallel {
+        low,
+        high,
+        gap,
+        overlap,
+        deficit,
+    }]
+}
+
+fn pair_metrics(a: &Route, b: &Route, sa: &[Segment], sb: &[Segment]) -> [usize; 3] {
+    let mut crossings = BTreeSet::new();
+    let mut metrics = [0; 3];
+    for a_segment in sa {
+        for b_segment in sb {
+            for contact in contacts(a, b, *a_segment, *b_segment) {
+                match contact {
+                    Contact::Crossing(p) => {
+                        crossings.insert((p.x, p.y));
+                    }
+                    Contact::Parallel {
+                        low,
+                        high,
+                        overlap,
+                        deficit,
+                        ..
+                    } => {
+                        metrics[1] += if overlap { high - low } else { 0 };
+                        metrics[2] += deficit;
+                    }
+                    Contact::Shared(_) => {}
+                }
+            }
+        }
+    }
+    metrics[0] = crossings.len();
+    metrics
+}
+
+pub(in crate::layout) fn preserves_visible_pairs(
+    graph: &Graph,
+    layout: &Layout<'_>,
+    changed: [usize; 2],
+    replacements: &[Vec<Point>],
+) -> bool {
+    let index = borders::Index::new(borders::frames(graph, layout));
+    let route = |i: usize, path: &[Point]| Route {
+        identity: json!({"source": graph.edges[i].from, "target": graph.edges[i].to}),
+        path: path.to_vec(),
+        stroke: geometry::relationship_stroke(graph.edges[i].kind),
+        soft: super::containers::routing::soft_obstacles(layout, &graph.edges[i]),
+        rounded: true,
+    };
+    let old: Vec<_> = layout
+        .paths
+        .iter()
+        .enumerate()
+        .map(|(i, path)| {
+            let route = route(i, path);
+            let segments = visible_segments(&route, &index);
+            (route, segments)
+        })
+        .collect();
+    let new: Vec<_> = changed
+        .into_iter()
+        .zip(replacements)
+        .map(|(i, path)| {
+            let route = route(i, path);
+            let segments = visible_segments(&route, &index);
+            (route, segments)
+        })
+        .collect();
+    for (position, a) in changed.into_iter().enumerate() {
+        for b in 0..old.len() {
+            if a == b || (position == 1 && b == changed[0]) {
+                continue;
+            }
+            let peer = changed
+                .iter()
+                .position(|&i| i == b)
+                .map_or(&old[b], |i| &new[i]);
+            let before = pair_metrics(&old[a].0, &old[b].0, &old[a].1, &old[b].1);
+            let after = pair_metrics(&new[position].0, &peer.0, &new[position].1, &peer.1);
+            if after
+                .into_iter()
+                .zip(before)
+                .any(|(after, before)| after > before)
+            {
+                return false;
+            }
+        }
+    }
+    true
+}
+
 fn point(p: Point) -> Value {
     json!([p.x, p.y])
 }
@@ -307,74 +462,44 @@ impl Scene {
                             break 'pairs;
                         }
                         comparisons += 1;
-                        let (category, location) = if sa.horizontal != sb.horizontal {
-                            let (h, v) = if sa.horizontal { (sa, sb) } else { (sb, sa) };
-                            if h.low < v.axis
-                                && v.axis < h.high
-                                && v.low < h.axis
-                                && h.axis < v.high
-                                && crossings.insert((v.axis, h.axis))
-                            {
-                                crossing_count += 1;
-                                ("crossing", json!({"point": [v.axis, h.axis]}))
-                            } else {
-                                continue;
-                            }
-                        } else {
-                            let mut low = sa.low.max(sb.low);
-                            let mut high = sa.high.min(sb.high);
-                            if low >= high {
-                                continue;
-                            }
-                            let distance = sa.axis.abs_diff(sb.axis);
-                            let ea = &self.edges[a];
-                            let eb = &self.edges[b];
-                            if distance == 0 {
-                                for (low, high, is_shared) in
-                                    shared_sections(ea, eb, *sa, low, high)
-                                {
-                                    if is_shared {
-                                        shared_length += high - low;
-                                    } else {
-                                        overlap += high - low;
-                                        if findings.len() < finding_limit {
-                                            findings.push(json!({"category": "independent_overlap",
-                                                "edge": ea.identity.to_string(), "peer": eb.identity.to_string(),
-                                                "segment": sa.index, "peer_segment": sb.index,
-                                                "location": {"horizontal": sa.horizontal, "coordinates": [sa.axis, sb.axis],
-                                                    "interval": [low, high], "visible_gap": -(ea.stroke as f64 + eb.stroke as f64) / 8.0}}));
-                                        } else {
-                                            findings_complete = false;
-                                        }
+                        for contact in contacts(&self.edges[a], &self.edges[b], *sa, *sb) {
+                            let (category, location) = match contact {
+                                Contact::Crossing(p) => {
+                                    if !crossings.insert((p.x, p.y)) {
+                                        continue;
                                     }
+                                    crossing_count += 1;
+                                    ("crossing", json!({"point": [p.x, p.y]}))
                                 }
-                                continue;
-                            }
-                            let gap = distance as f64 - (ea.stroke + eb.stroke) as f64 / 8.0;
-                            let category = if gap < 0.0 {
-                                overlap += high - low;
-                                "independent_overlap"
-                            } else if distance < 16 {
-                                trim_endpoint(ea, *sa, &mut low, &mut high);
-                                trim_endpoint(eb, *sb, &mut low, &mut high);
-                                if high.saturating_sub(low) < 64 {
+                                Contact::Shared(length) => {
+                                    shared_length += length;
                                     continue;
                                 }
-                                parallel_deficit += (16 - distance) * (high - low);
-                                "parallel_proximity"
-                            } else {
-                                continue;
+                                Contact::Parallel {
+                                    low,
+                                    high,
+                                    gap,
+                                    overlap: is_overlap,
+                                    deficit,
+                                } => {
+                                    overlap += if is_overlap { high - low } else { 0 };
+                                    parallel_deficit += deficit;
+                                    (
+                                        if is_overlap {
+                                            "independent_overlap"
+                                        } else {
+                                            "parallel_proximity"
+                                        },
+                                        json!({"horizontal": sa.horizontal, "coordinates": [sa.axis, sb.axis], "interval": [low, high], "visible_gap": gap}),
+                                    )
+                                }
                             };
-                            (
-                                category,
-                                json!({"horizontal": sa.horizontal, "coordinates": [sa.axis, sb.axis], "interval": [low, high], "visible_gap": gap}),
-                            )
-                        };
-                        if findings.len() < finding_limit {
-                            findings.push(json!({"category": category, "edge": self.edges[a].identity.to_string(),
-                                "peer": self.edges[b].identity.to_string(), "segment": sa.index, "peer_segment": sb.index, "location": location}));
-                        } else {
-                            findings_complete = false;
+                            if findings.len() < finding_limit {
+                                findings.push(json!({"category": category, "edge": self.edges[a].identity.to_string(),
+                                    "peer": self.edges[b].identity.to_string(), "segment": sa.index, "peer_segment": sb.index, "location": location}));
+                            } else {
+                                findings_complete = false;
+                            }
                         }
                     }
                 }

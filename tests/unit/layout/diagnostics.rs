@@ -61,6 +61,38 @@ fn report(edges: Vec<Route>) -> Value {
 }
 
 #[test]
+fn routing_pair_metrics_match_visible_report_with_rounding_strokes_and_shared_trunks() {
+    let index = borders::Index::new(Vec::new());
+    for (id, coords) in [
+        ("b", vec![(100, 0), (100, 200)]),
+        ("b", vec![(0, 101), (300, 101)]),
+        ("b", vec![(0, 108), (300, 108)]),
+        ("a", vec![(0, 100), (200, 100), (200, 300)]),
+        ("b", vec![(0, 100), (10, 100), (10, 200)]),
+    ] {
+        let a = route("a", &[(0, 100), (300, 100), (300, 300)]);
+        let mut b = route(id, &coords);
+        b.identity["target"] = json!("other");
+        let actual = pair_metrics(
+            &a,
+            &b,
+            &visible_segments(&a, &index),
+            &visible_segments(&b, &index),
+        );
+        let value = report(vec![a, b]);
+        let metrics = &value["summary"]["visible_straight_sections"];
+        assert_eq!(
+            actual.map(|n| n as u64),
+            [
+                metrics["crossings"].as_u64().unwrap(),
+                metrics["independent_overlap_length"].as_u64().unwrap(),
+                metrics["parallel_deficit"].as_u64().unwrap(),
+            ]
+        );
+    }
+}
+
+#[test]
 fn corner_rounding_removes_raw_overlap_but_preserves_visible_overlap() {
     for (turn, expected) in [(29, 0), (10, 8)] {
         let a = route("a", &[(100, 5), (100, 31), (609, 31)]);

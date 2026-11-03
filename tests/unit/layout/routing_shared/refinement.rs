@@ -3,25 +3,106 @@ use crate::layout::ContainmentTree;
 use crate::model::Edge;
 
 #[test]
+fn additional_pass_uncrosses_ports_separated_by_an_unrelated_neighbor() {
+    let raw = crate::plan::parse(r#"{"format_version":"1.2","resource_changes":[{"address":"test.hub","type":"test"},{"address":"test.lower","type":"test"},{"address":"test.middle","type":"test"},{"address":"test.upper","type":"test"}]}"#).unwrap();
+    let mut graph = crate::semantic::transform(&raw).0;
+    graph.edges = vec![Edge::from((0, 1)), Edge::from((0, 2)), Edge::from((0, 3))];
+    let bounds: Vec<_> = [
+        (100, 100, 100, 300),
+        (600, 700, 100, 100),
+        (300, 200, 100, 100),
+        (800, 0, 100, 100),
+    ]
+    .into_iter()
+    .map(|(x, y, width, height)| Bounds {
+        origin: Point { x, y },
+        width,
+        height,
+    })
+    .collect();
+    let paths: Vec<Vec<_>> = [
+        vec![(200, 150), (500, 150), (500, 750), (600, 750)],
+        vec![(200, 250), (300, 250)],
+        vec![(200, 350), (450, 350), (450, 50), (800, 50)],
+    ]
+    .into_iter()
+    .map(|p| p.into_iter().map(|(x, y)| Point { x, y }).collect())
+    .collect();
+    let mut layout = Layout {
+        scopes: vec![],
+        header_heights: bounds.iter().map(|b| b.height).collect(),
+        positions: bounds.iter().map(|b| b.origin).collect(),
+        bounds,
+        containers: vec![],
+        containment: ContainmentTree::new(&graph),
+        width: 1200,
+        height: 1000,
+        bands: vec![],
+        paths: paths.clone(),
+        junctions: vec![],
+    };
+    assert!(crate::layout::diagnostics::preserves_visible_pairs(
+        &graph,
+        &layout,
+        [0, 1],
+        &paths[..2],
+    ));
+    for y in [151, 158] {
+        let near = vec![Point { x: 200, y }, Point { x: 500, y }];
+        assert_eq!(overlap(&paths[0], &near), 0);
+        assert!(!crate::layout::diagnostics::preserves_visible_pairs(
+            &graph,
+            &layout,
+            [0, 1],
+            &[paths[0].clone(), near],
+        ));
+    }
+    crate::work::complete(refine_pass_step(&graph, &mut layout, false));
+    assert_eq!(layout.paths, paths);
+    assert_eq!(crossings(&paths[0], &paths[2]), 1);
+    refine(&graph, &mut layout);
+    assert_eq!(crossings(&layout.paths[0], &layout.paths[2]), 0);
+    assert_eq!(layout.paths[1], paths[1]);
+}
+
+#[test]
 fn exchange_cannot_trade_a_removed_crossing_for_a_new_peer_crossing() {
     let line = |a: (usize, usize), b: (usize, usize)| {
         vec![Point { x: a.0, y: a.1 }, Point { x: b.0, y: b.1 }]
     };
     let a = line((0, 50), (100, 50));
-    let b = line((50, 0), (50, 100));
+    let b = vec![
+        Point { x: 25, y: 0 },
+        Point { x: 25, y: 100 },
+        Point { x: 75, y: 100 },
+        Point { x: 75, y: 0 },
+    ];
     let moved = line((0, 110), (100, 110));
     let peer = line((75, 100), (75, 120));
     assert!(improves_conflicts(
         [&a, &b],
         [&moved, &b],
-        std::iter::empty()
+        std::iter::empty(),
+        true,
     ));
     assert!(!improves_conflicts(
         [&a, &b],
         [&moved, &b],
-        [peer.as_slice()].into_iter()
+        [peer.as_slice()].into_iter(),
+        true,
     ));
-    assert!(!improves_conflicts([&a, &b], [&a, &b], std::iter::empty()));
+    assert!(improves_conflicts(
+        [&a, &b],
+        [&moved, &b],
+        [peer.as_slice()].into_iter(),
+        false
+    ));
+    assert!(!improves_conflicts(
+        [&a, &b],
+        [&a, &b],
+        std::iter::empty(),
+        true
+    ));
 }
 
 #[test]
