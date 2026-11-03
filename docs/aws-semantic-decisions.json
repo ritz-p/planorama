@@ -20990,10 +20990,10 @@
       }
     },
     "aws_fsx_ontap_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 826,
-      "gap": "#720 reviewed: Missing: complete network sets and KMS ARN; route-table IDs and preferred subnet must agree with filesystem VPC; endpoint addresses and admin password excluded. Follow-up #826. Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
+      "gap": "Implemented #826: explicit complete subnet/SG sets, deployment-aware common-VPC placement, preferred-subnet membership, route tables and configured KMS ARN. Windows adds Directory Service, enabled audit destination, domain-join secret and source backup; OpenZFS adds source backup. Independent Spatial cards; uncertain evidence falls back. See aws-storage.md#fsx-networking-826. Runtime endpoints, credentials and content remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21009,10 +21009,10 @@
           "vpc_id",
           "route_table_ids"
         ],
-        "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
+        "placement": "Supported: independent Spatial card, including file cache; shared endpoints are not embedded.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
-        "network": "Missing: complete subnet/SG proof, preferred-subnet membership and deployment-aware common-VPC context in #826; do not copy single-subnet Lustre assumptions.",
-        "references": "Missing: complete network sets and KMS ARN; route-table IDs and preferred subnet must agree with filesystem VPC; endpoint addresses and admin password excluded. Follow-up #826.",
+        "network": "Supported: variant-specific complete subnet/SG references with known common VPC, deployment cardinality and preferred-subnet membership; no endpoint-derived placement.",
+        "references": "Supported: configured paths documented in aws-storage.md#fsx-networking-826 require unique compatible references and matching known output values.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
         "officialDocumentation": "website/docs/r/fsx_ontap_file_system.html.markdown",
@@ -21070,10 +21070,10 @@
       }
     },
     "aws_fsx_openzfs_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 826,
-      "gap": "#720 reviewed: Missing: complete network sets and KMS ARN; route-table IDs and source backup ID; root_volume_id is a computed endpoint for child volumes, not an extra managed resource. Follow-up #826. Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
+      "gap": "Implemented #826: explicit complete subnet/SG sets, deployment-aware common-VPC placement, preferred-subnet membership, route tables and configured KMS ARN. Windows adds Directory Service, enabled audit destination, domain-join secret and source backup; OpenZFS adds source backup. Independent Spatial cards; uncertain evidence falls back. See aws-storage.md#fsx-networking-826. Runtime endpoints, credentials and content remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21091,10 +21091,10 @@
           "root_volume_id",
           "backup_id"
         ],
-        "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
+        "placement": "Supported: independent Spatial card, including file cache; shared endpoints are not embedded.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
-        "network": "Missing: complete subnet/SG proof, preferred-subnet membership and deployment-aware common-VPC context in #826; do not copy single-subnet Lustre assumptions.",
-        "references": "Missing: complete network sets and KMS ARN; route-table IDs and source backup ID; root_volume_id is a computed endpoint for child volumes, not an extra managed resource. Follow-up #826.",
+        "network": "Supported: variant-specific complete subnet/SG references with known common VPC, deployment cardinality and preferred-subnet membership; no endpoint-derived placement.",
+        "references": "Supported: configured paths documented in aws-storage.md#fsx-networking-826 require unique compatible references and matching known output values.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
         "officialDocumentation": "website/docs/r/fsx_openzfs_file_system.html.markdown",
@@ -21160,10 +21160,10 @@
       }
     },
     "aws_fsx_windows_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 826,
-      "gap": "#720 reviewed: Missing: complete network sets and KMS ARN; Directory Service ID, enabled Logs/Firehose audit destination, configured secret ARN and backup ID. DNS aliases/self-managed domain are not Directory Service identities. Follow-up #826. Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
+      "gap": "Implemented #826: explicit complete subnet/SG sets, deployment-aware common-VPC placement, preferred-subnet membership, route tables and configured KMS ARN. Windows adds Directory Service, enabled audit destination, domain-join secret and source backup; OpenZFS adds source backup. Independent Spatial cards; uncertain evidence falls back. See aws-storage.md#fsx-networking-826. Runtime endpoints, credentials and content remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21182,10 +21182,10 @@
           "self_managed_active_directory.domain_join_service_account_secret",
           "backup_id"
         ],
-        "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
+        "placement": "Supported: independent Spatial card, including file cache; shared endpoints are not embedded.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
-        "network": "Missing: complete subnet/SG proof, preferred-subnet membership and deployment-aware common-VPC context in #826; do not copy single-subnet Lustre assumptions.",
-        "references": "Missing: complete network sets and KMS ARN; Directory Service ID, enabled Logs/Firehose audit destination, configured secret ARN and backup ID. DNS aliases/self-managed domain are not Directory Service identities. Follow-up #826.",
+        "network": "Supported: variant-specific complete subnet/SG references with known common VPC, deployment cardinality and preferred-subnet membership; no endpoint-derived placement.",
+        "references": "Supported: configured paths documented in aws-storage.md#fsx-networking-826 require unique compatible references and matching known output values.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
         "officialDocumentation": "website/docs/r/fsx_windows_file_system.html.markdown",
@@ -21254,10 +21254,10 @@
       }
     },
     "aws_fsx_file_cache": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 826,
-      "gap": "#720 reviewed: Missing: complete subnet/SG references and KMS contract. Embedded repository paths and computed association IDs cannot create S3/NFS endpoints. Follow-up #826. Missing: current Logical cache is an architecture-bearing storage endpoint; review independent Spatial card in #826. Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
+      "gap": "Implemented #826: explicit complete subnet/SG sets, deployment-aware common-VPC placement, preferred-subnet membership, route tables and configured KMS ARN. Windows adds Directory Service, enabled audit destination, domain-join secret and source backup; OpenZFS adds source backup. Independent Spatial cards; uncertain evidence falls back. See aws-storage.md#fsx-networking-826. Runtime endpoints, credentials and content remain excluded.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21272,10 +21272,10 @@
           "vpc_id",
           "data_repository_association.data_repository_path"
         ],
-        "placement": "Missing: current Logical cache is an architecture-bearing storage endpoint; review independent Spatial card in #826.",
+        "placement": "Supported: independent Spatial card, including file cache; shared endpoints are not embedded.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
-        "network": "Missing: verified subnet/SG common-VPC context in #826; DNS/IP paths do not identify network resources.",
-        "references": "Missing: complete subnet/SG references and KMS contract. Embedded repository paths and computed association IDs cannot create S3/NFS endpoints. Follow-up #826.",
+        "network": "Supported: variant-specific complete subnet/SG references with known common VPC, deployment cardinality and preferred-subnet membership; no endpoint-derived placement.",
+        "references": "Supported: configured paths documented in aws-storage.md#fsx-networking-826 require unique compatible references and matching known output values.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
         "officialDocumentation": "website/docs/r/fsx_file_cache.html.markdown",

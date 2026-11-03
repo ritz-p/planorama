@@ -246,7 +246,7 @@ fn lustre_requires_complete_unique_network_and_persistent_key_contract() {
         let mut v = fixture();
         v["resource_changes"][5]["type"] = json!(variant);
         assert!(parent(&v).is_none());
-        assert!(super::label(variant, "kms_key_id").is_none());
+        assert!(super::label(variant, "kms_key_id").is_some());
     }
     let mut v = fixture();
     v["resource_changes"][5]["change"]["after"]["deployment_type"] = json!("PERSISTENT_1");
