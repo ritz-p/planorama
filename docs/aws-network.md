@@ -151,6 +151,27 @@ ALB/stage associations and unresolved configuration.
 
 ## Route 53
 
+Route 53 Profiles associations use explicit profile `id` and VPC `id` references.
+Resource associations accept only private Hosted Zone, Resolver Rule and DNS
+Firewall Rule Group `arn` outputs. A zone requires known nonempty VPC configuration;
+public/unknown zones remain unresolved. Query-log and VPC-endpoint variants are
+not enabled. `resource_properties` JSON and computed `resource_type` do not create
+topology. References require current managed endpoints, known non-sensitive equal
+values and compatible provider/account/region evidence. Zones keep global scope;
+regional targets keep their own region. Shared profiles remain independent;
+incompatible/cross-state endpoints do not establish ownership or VPC containment.
+
+DNS Firewall rules reference a managed rule-group `id` and, for standard rules,
+a managed domain-list `id`. The domain-list link requires absent Advanced-rule
+threat/confidence fields, including the computed threat-protection ID; no managed
+endpoint is synthesized for that ID. A uniquely proven group owns the rule helper.
+Rule-group associations independently reference group and VPC IDs without moving
+the shared group into a VPC. Provider/account/region, current managed identity,
+explicit indexed provenance and known non-sensitive matching outputs are required.
+Shared-by-me owner evidence must match the group's provider account; shared-with-me
+or incompatible accounts remain unresolved. This does not infer DNS enforcement,
+effective policy or network containment.
+
 Query logging uses explicit current managed references and matching known outputs.
 `aws_route53_query_log.zone_id` accepts hosted-zone `id`/`zone_id` and supplies
 unique helper ownership; `cloudwatch_log_group_arn` accepts only a log-group `arn`
