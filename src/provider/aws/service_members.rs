@@ -15,6 +15,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::backup_vaults::helper(kind) => (
+                "backup_vault_name",
+                "Backup vault owner",
+                "Vault configuration",
+            ),
             "aws_flow_log" => {
                 let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
                     raw.attributes.iter().any(|r| {
@@ -159,6 +164,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
+                    | "aws_backup_vault_lock_configuration"
+                    | "aws_backup_vault_notifications"
+                    | "aws_backup_vault_policy"
                     | "aws_route53_records_exclusive"
                     | "aws_ecs_task_set"
             )
