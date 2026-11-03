@@ -593,3 +593,21 @@ IAM roles remain independent, as do all shared backend resources.
 Unknown, sensitive, literal-only, conflicting and unavailable endpoints retain
 fallback. No HTTP URL, credentials, SQL/schema or runtime behavior is interpreted.
 See [tests](../tests/unit/semantic/appsync_datasource.rs).
+
+## AppSync functions and resolvers (#946)
+
+Provider 6.70.0 function.go and resolver.go define data_source as a name and
+pipeline_config.functions as an ordered list of function_id outputs. Both
+consumer and endpoint must independently reference the same GraphQL API.
+Equal names in different APIs do not match. UNIT resolvers require data_source;
+PIPELINE resolvers require complete explicit function-ID evidence, preserving
+the evaluated order. Composite function IDs and function names are not accepted
+as pipeline identities. Conflicting UNIT/PIPELINE inputs retain fallback.
+
+Nested conflict handlers require the LAMBDA discriminator and an explicit Lambda
+ARN. All endpoints must be current, managed, uniquely referenced and compatible
+in account and region. Partial, unknown, sensitive, unavailable or incompatible
+evidence remains unresolved. Functions and resolvers remain independent logical
+resources with their actions and coverage; references imply no containment or
+runtime invocation. Schema type/field selectors, code and templates are excluded.
+See [tests](../tests/unit/semantic/appsync_execution.rs).

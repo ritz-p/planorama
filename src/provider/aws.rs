@@ -5,6 +5,7 @@ mod application_scaling;
 mod apprunner;
 pub(crate) mod appsync;
 mod appsync_datasource;
+mod appsync_execution;
 mod associations;
 mod autoscaling;
 mod autoscaling_network;

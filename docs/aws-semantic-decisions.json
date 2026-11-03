@@ -42113,10 +42113,10 @@
       }
     },
     "aws_appsync_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 946,
-      "gap": "#714 audit: Missing: API-qualified data source and LAMBDA conflict handler references; function name not unique, function_id is the pipeline identity. Follow-up #946. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #946 implements same-API data-source names, ordered complete pipeline function IDs and LAMBDA-gated conflict handlers. Helpers retain independent logical identity; schema selectors and templates are not graph inputs. See docs/aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42278,10 +42278,10 @@
       }
     },
     "aws_appsync_resolver": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 946,
-      "gap": "#714 audit: Missing: API-qualified UNIT data-source or ordered complete PIPELINE function IDs and Lambda conflict handler; type/field names are schema selectors, not fabricated Terraform nodes. Follow-up #946. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit: #946 implements same-API data-source names, ordered complete pipeline function IDs and LAMBDA-gated conflict handlers. Helpers retain independent logical identity; schema selectors and templates are not graph inputs. See docs/aws-messaging.md.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
