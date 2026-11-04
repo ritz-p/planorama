@@ -15393,10 +15393,10 @@
       }
     },
     "aws_cloudsearch_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: independent search domain is Logical; review Spatial promotion with its policy navigation. Not applicable: no configured managed endpoint identity; domain_id and service endpoint URLs are computed. Follow-up #797. Deferred: HTTPS/multi-AZ flags require an explicit known/unknown summary contract; index fields and document defaults remain private.",
+      "gap": "Implemented #797: independent CloudSearch domain card. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15408,11 +15408,11 @@
           "endpoint_options.enforce_https",
           "multi_az"
         ],
-        "placement": "Missing: independent search domain is Logical; review Spatial promotion with its policy navigation.",
+        "placement": "Supported: #797 independent Spatial architecture card; references do not establish ownership or network containment.",
         "ownership": "Not applicable: independent aws_cloudsearch_domain configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_cloudsearch_domain fields provide no configured subnet containment; service references do not propagate network placement.",
         "references": "Not applicable: no configured managed endpoint identity; domain_id and service endpoint URLs are computed.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: HTTPS/multi-AZ flags require an explicit known/unknown summary contract; index fields and document defaults remain private.",
         "officialDocumentation": "website/docs/r/cloudsearch_domain.html.markdown",
         "shapes": {
@@ -15436,10 +15436,10 @@
       }
     },
     "aws_cloudsearch_domain_service_access_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: verified domain navigation; policy document is not network ownership. Missing: domain_name -> cloudsearch_domain.name; access_policy is opaque JSON. Follow-up #797. Intentionally unsupported: access_policy contents and effective search access; domain navigation supplies the useful configuration context.",
+      "gap": "Implemented #797: configured domain_name to cloudsearch_domain.name. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15448,11 +15448,11 @@
           "domain_name",
           "access_policy"
         ],
-        "placement": "Supported: retain Logical aws_cloudsearch_domain_service_access_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified domain navigation; policy document is not network ownership.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_cloudsearch_domain_service_access_policy fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> cloudsearch_domain.name; access_policy is opaque JSON.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to cloudsearch_domain.name. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: access_policy contents and effective search access; domain navigation supplies the useful configuration context.",
         "officialDocumentation": "website/docs/r/cloudsearch_domain_service_access_policy.html.markdown",
         "shapes": {
@@ -15466,10 +15466,10 @@
       }
     },
     "aws_elasticsearch_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: Logical legacy domain needs independent-card review; not a verified alias of opensearch_domain. Missing: complete vpc_options subnet/SG common-VPC proof; no inheritance from OpenSearch type. Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS. Follow-up #797. Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+      "gap": "Implemented #797: complete local subnet/SG IDs plus enabled Cognito, ACM, KMS and log-group references; exact Elasticsearch type remains distinct from OpenSearch. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15491,11 +15491,11 @@
           "log_publishing_options.enabled",
           "log_publishing_options.cloudwatch_log_group_arn"
         ],
-        "placement": "Missing: Logical legacy domain needs independent-card review; not a verified alias of opensearch_domain.",
+        "placement": "Supported: #797 independent Spatial domain, not a verified alias of opensearch_domain.",
         "ownership": "Not applicable: independent aws_elasticsearch_domain configuration; no verified embedded owner in runtime.",
-        "network": "Missing: complete vpc_options subnet/SG common-VPC proof; no inheritance from OpenSearch type.",
-        "references": "Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "network": "Supported: #797 complete matching subnet/SG IDs and a single independently verified VPC; incomplete or implicit default-SG evidence retains regional fallback.",
+        "references": "Supported: #797 complete local subnet/SG IDs plus enabled Cognito, ACM, KMS and log-group references; exact Elasticsearch type remains distinct from OpenSearch. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
         "officialDocumentation": "website/docs/r/elasticsearch_domain.html.markdown",
         "shapes": {
@@ -15566,10 +15566,10 @@
       }
     },
     "aws_elasticsearch_domain_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: domain navigation only; preserve policy identity and action. Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation. Follow-up #797. Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+      "gap": "Implemented #797: configured domain_name to elasticsearch_domain.domain_name. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15578,11 +15578,11 @@
           "domain_name",
           "access_policies"
         ],
-        "placement": "Supported: retain Logical aws_elasticsearch_domain_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: domain navigation only; preserve policy identity and action.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_elasticsearch_domain_policy fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to elasticsearch_domain.domain_name. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
         "officialDocumentation": "website/docs/r/elasticsearch_domain_policy.html.markdown",
         "shapes": {
@@ -15596,10 +15596,10 @@
       }
     },
     "aws_elasticsearch_domain_saml_options": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: verified domain helper navigation. Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier. Follow-up #797. Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+      "gap": "Implemented #797: configured domain_name to elasticsearch_domain.domain_name; IdP metadata and entity_id stay opaque. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15610,11 +15610,11 @@
           "saml_options.idp.entity_id",
           "saml_options.idp.metadata_content"
         ],
-        "placement": "Supported: retain Logical aws_elasticsearch_domain_saml_options basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified domain helper navigation.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_elasticsearch_domain_saml_options fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to elasticsearch_domain.domain_name; IdP metadata and entity_id stay opaque. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
         "officialDocumentation": "website/docs/r/elasticsearch_domain_saml_options.html.markdown",
         "shapes": {
@@ -15639,10 +15639,10 @@
       }
     },
     "aws_elasticsearch_vpc_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Not applicable: endpoint references a shared domain; do not embed domain under endpoint. Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location. Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized. Follow-up #797. Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+      "gap": "Implemented #797: domain_arn to elasticsearch_domain.arn; complete explicit local subnet/SG IDs. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15653,11 +15653,11 @@
           "vpc_options.subnet_ids",
           "vpc_options.security_group_ids"
         ],
-        "placement": "Supported: retain Logical aws_elasticsearch_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "placement": "Supported: #797 Spatial placement only after complete network proof; otherwise independent Logical fallback.",
         "ownership": "Not applicable: endpoint references a shared domain; do not embed domain under endpoint.",
-        "network": "Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location.",
-        "references": "Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "network": "Supported: #797 complete matching configured subnet/SG sets with common VPC proof independent of the domain location. No inferred default security group.",
+        "references": "Supported: #797 domain_arn to elasticsearch_domain.arn; complete explicit local subnet/SG IDs. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
         "officialDocumentation": "website/docs/r/elasticsearch_vpc_endpoint.html.markdown",
         "shapes": {
@@ -16358,10 +16358,10 @@
       }
     },
     "aws_opensearch_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: Logical application merits independent-card review with data-source navigation. Missing: typed domain/collection data_source_arn, KMS key, enabled Identity Center instance and IAM role references; computed application ARN is not a configured SSO application. Follow-up #797. Deferred: Identity Center enabled flag and key mode need an allowlist distinguishing configured options from computed application identity; app_config values excluded.",
+      "gap": "Implemented #797: complete data-source ARN set of OpenSearch domains/Serverless collections, KMS ARN and enabled IAM role; enabled instance lookup only from a scoped data.aws_ssoadmin_instances.arns singleton. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16374,11 +16374,11 @@
           "iam_identity_center_options.iam_identity_center_instance_arn",
           "iam_identity_center_options.iam_role_for_identity_center_application_arn"
         ],
-        "placement": "Missing: Logical application merits independent-card review with data-source navigation.",
+        "placement": "Supported: #797 independent Spatial architecture card; references do not establish ownership or network containment.",
         "ownership": "Not applicable: independent aws_opensearch_application configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_opensearch_application fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: typed domain/collection data_source_arn, KMS key, enabled Identity Center instance and IAM role references; computed application ARN is not a configured SSO application.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 complete data-source ARN set of OpenSearch domains/Serverless collections, KMS ARN and enabled IAM role; enabled instance lookup only from a scoped data.aws_ssoadmin_instances.arns singleton. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: Identity Center enabled flag and key mode need an allowlist distinguishing configured options from computed application identity; app_config values excluded.",
         "officialDocumentation": "website/docs/r/opensearch_application.html.markdown",
         "shapes": {
@@ -16408,10 +16408,10 @@
       }
     },
     "aws_opensearch_authorize_vpc_endpoint_access": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: domain navigation, not embedding of grantee account. Intentionally unsupported: authorization does not establish VPC containment or reachability. Missing: domain_name -> opensearch_domain.domain_name. account is a grantee account ID, not a managed VPC endpoint or IAM principal. Follow-up #797. Intentionally unsupported: account authorization is not proof of effective access; authorized_principal output is not permission evaluation.",
+      "gap": "Implemented #797: configured domain_name to opensearch_domain.domain_name; account identifies a grantee, never an owner or endpoint. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16420,11 +16420,11 @@
           "account",
           "domain_name"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_authorize_vpc_endpoint_access basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: domain navigation, not embedding of grantee account.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Intentionally unsupported: authorization does not establish VPC containment or reachability.",
-        "references": "Missing: domain_name -> opensearch_domain.domain_name. account is a grantee account ID, not a managed VPC endpoint or IAM principal.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to opensearch_domain.domain_name; account identifies a grantee, never an owner or endpoint. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: account authorization is not proof of effective access; authorized_principal output is not permission evaluation.",
         "officialDocumentation": "website/docs/r/opensearch_authorize_vpc_endpoint_access.html.markdown",
         "shapes": {
@@ -16441,7 +16441,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Supported: Spatial through classification.rs; retain completed #47. Partial: existing complete-subnet common-VPC placement #181 and SG connections #182 (vpc_scope.rs/security_groups.rs and matching tests). This legacy path does not prove the stricter known-value/common-SG-VPC contract; retain its bounded support. Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS. Follow-up #797. Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+      "gap": "Implemented #797: enabled Cognito identity/user pools and IAM role, custom-endpoint ACM ARN, KMS key ARN or ID with verified normalization, and complete enabled log-group ARN collections. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16466,8 +16466,8 @@
         "placement": "Supported: Spatial through classification.rs; retain completed #47.",
         "ownership": "Not applicable: independent aws_opensearch_domain configuration; no verified embedded owner in runtime.",
         "network": "Partial: existing complete-subnet common-VPC placement #181 and SG connections #182 (vpc_scope.rs/security_groups.rs and matching tests). This legacy path does not prove the stricter known-value/common-SG-VPC contract; retain its bounded support.",
-        "references": "Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS.",
-        "scope": "Supported: pre-existing Regional provider account/region handling in scope.rs; remote connection endpoints still require their own owner/region evidence, not local scope inheritance.",
+        "references": "Supported: #797 enabled Cognito identity/user pools and IAM role, custom-endpoint ACM ARN, KMS key ARN or ID with verified normalization, and complete enabled log-group ARN collections. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
         "officialDocumentation": "website/docs/r/opensearch_domain.html.markdown",
         "shapes": {
@@ -16538,10 +16538,10 @@
       }
     },
     "aws_opensearch_domain_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: domain navigation only; preserve policy identity and action. Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation. Follow-up #797. Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+      "gap": "Implemented #797: configured domain_name to opensearch_domain.domain_name. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16550,11 +16550,11 @@
           "domain_name",
           "access_policies"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_domain_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: domain navigation only; preserve policy identity and action.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_opensearch_domain_policy fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to opensearch_domain.domain_name. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
         "officialDocumentation": "website/docs/r/opensearch_domain_policy.html.markdown",
         "shapes": {
@@ -16568,10 +16568,10 @@
       }
     },
     "aws_opensearch_domain_saml_options": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: verified domain helper navigation. Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier. Follow-up #797. Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+      "gap": "Implemented #797: configured domain_name to opensearch_domain.domain_name; IdP metadata and entity_id stay opaque. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16582,11 +16582,11 @@
           "saml_options.idp.entity_id",
           "saml_options.idp.metadata_content"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_domain_saml_options basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified domain helper navigation.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_opensearch_domain_saml_options fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to opensearch_domain.domain_name; IdP metadata and entity_id stay opaque. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
         "officialDocumentation": "website/docs/r/opensearch_domain_saml_options.html.markdown",
         "shapes": {
@@ -16701,10 +16701,10 @@
       }
     },
     "aws_opensearch_package": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: package_source.s3_bucket_name -> S3 bucket.bucket; key identifies content and is not a bucket or implicit object resource. Follow-up #797. Deferred: package type/engine compatibility needs a selected enum allowlist; package contents and S3 keys excluded.",
+      "gap": "Implemented #797: package_source.s3_bucket_name to s3_bucket.bucket; object keys remain opaque. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16719,8 +16719,8 @@
         "placement": "Supported: retain Logical aws_opensearch_package basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_opensearch_package configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_opensearch_package fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: package_source.s3_bucket_name -> S3 bucket.bucket; key identifies content and is not a bucket or implicit object resource.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 package_source.s3_bucket_name to s3_bucket.bucket; object keys remain opaque. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: package type/engine compatibility needs a selected enum allowlist; package contents and S3 keys excluded.",
         "officialDocumentation": "website/docs/r/opensearch_package.html.markdown",
         "shapes": {
@@ -16745,10 +16745,10 @@
       }
     },
     "aws_opensearch_package_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Not applicable: many-domain package association is not exclusive ownership. Missing: package_id -> package.id and domain_name -> domain.domain_name, with both ends proven; shared packages stay independent. Follow-up #797. Intentionally unsupported: computed reference_path and package version do not establish runtime plugin availability.",
+      "gap": "Implemented #797: typed package ID/domain-name association only with both independent endpoints verified. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16760,8 +16760,8 @@
         "placement": "Supported: retain Logical aws_opensearch_package_association basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: many-domain package association is not exclusive ownership.",
         "network": "Not applicable: reviewed aws_opensearch_package_association fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: package_id -> package.id and domain_name -> domain.domain_name, with both ends proven; shared packages stay independent.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 typed package ID/domain-name association only with both independent endpoints verified. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: computed reference_path and package version do not establish runtime plugin availability.",
         "officialDocumentation": "website/docs/r/opensearch_package_association.html.markdown",
         "shapes": {
@@ -16775,10 +16775,10 @@
       }
     },
     "aws_opensearch_vpc_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Not applicable: endpoint references a shared domain; do not embed domain under endpoint. Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location. Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized. Follow-up #797. Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+      "gap": "Implemented #797: domain_arn to opensearch_domain.arn; complete explicit local subnet/SG IDs. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16789,11 +16789,11 @@
           "vpc_options.subnet_ids",
           "vpc_options.security_group_ids"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "placement": "Supported: #797 Spatial placement only after complete network proof; otherwise independent Logical fallback.",
         "ownership": "Not applicable: endpoint references a shared domain; do not embed domain under endpoint.",
-        "network": "Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location.",
-        "references": "Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "network": "Supported: #797 complete matching configured subnet/SG sets with common VPC proof independent of the domain location. No inferred default security group.",
+        "references": "Supported: #797 domain_arn to opensearch_domain.arn; complete explicit local subnet/SG IDs. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
         "officialDocumentation": "website/docs/r/opensearch_vpc_endpoint.html.markdown",
         "shapes": {

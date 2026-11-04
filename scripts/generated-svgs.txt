@@ -135,3 +135,6 @@ examples/api-responses.svg
 examples/fsx-network.svg
 examples/fsx-children.svg
 examples/efs-configuration.svg
+examples/search-domains.svg
+examples/search-network.svg
+examples/search-applications.svg
