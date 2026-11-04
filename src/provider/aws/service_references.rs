@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::cloudfront_security::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloudfront_functions::label(resource, attribute) {
         return Some(label);
     }
@@ -723,6 +726,7 @@ pub(crate) fn annotate(
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::cloudfront_functions::bindings(raw, reference)
+        && super::cloudfront_security::bindings(raw, reference)
         && (super::search_connections::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1216,6 +1220,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
             || super::cloudfront::indexed(&node.resource_type, &reference.attribute)
+            || super::cloudfront_security::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
             || super::s3::aggregate(raw, reference)

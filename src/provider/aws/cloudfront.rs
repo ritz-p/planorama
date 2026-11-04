@@ -379,4 +379,5 @@ pub(crate) fn annotate(
         }
     }
     super::cloudfront_functions::annotate(nodes, refs, evidence);
+    super::cloudfront_security::annotate(nodes, refs, evidence);
 }

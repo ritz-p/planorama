@@ -142,3 +142,4 @@ examples/search-connections.svg
 examples/appsync-events.svg
 examples/appsync-domains.svg
 examples/cloudfront-functions.svg
+examples/cloudfront-security.svg

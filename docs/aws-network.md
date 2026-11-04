@@ -473,3 +473,33 @@ Pinned source contracts:
 [default ACL](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_network_acl.go),
 [default table](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_route_table.go),
 [default SG](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_security_group.go).
+
+## CloudFront functions and KeyValueStore helpers (#913)
+
+Contracts use AWS Provider 6.70.0 at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: the [function schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/function.go), [connection-function schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/connection_function.go), and [key-helper documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/cloudfrontkeyvaluestore_keys_exclusive.html.markdown).
+
+| Source path | Verified endpoint and gate |
+| --- | --- |
+| Function key_value_store_associations | Complete nonempty ARN set to current managed KeyValueStore.arn; known runtime cloudfront-js-2.0 |
+| Connection function connection_function_config.key_value_store_association.key_value_store_arn | Singleton config and singleton association, exact store.arn and known runtime cloudfront-js-2.0 |
+| Key / exclusive-keys helper key_value_store_arn | One exact store.arn; deprecated composite key.id is not store identity |
+
+The connection-function schema uses a singular nested association, despite the documentation's top-level plural argument description. Its connection_function_arn and id remain separate from a normal function's arn. Known `publish = true` is required when existing CloudFront consumer paths reference either function type; absent, false, unknown or sensitive publish values do not establish a live endpoint. Store configuration references remain valid for development functions. No new distribution consumer paths are introduced.
+
+All selected resources retain Logical presentation and Global service scope with independent account identity. Key helpers retain unique verified store navigation without embedding or claiming ownership of other key resources. Complete explicit provenance, exact known outputs and compatible accounts are required; literal, partial, unknown, masked, ambiguous, deleted/deposed, data or filtered endpoints remain unresolved. Function code and all key/value payloads are excluded, including non-sensitive schema fields. Exclusive reconciliation is not a managed key inventory, and destroying it does not delete keys. See the maintained [function/store example](../examples/cloudfront-functions.svg).
+## CloudFront keys, field encryption and trust stores (#914)
+
+Contracts follow AWS Provider 6.70.0 at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: [key groups](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/key_group.go), [field encryption configuration](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/field_level_encryption_config.go), [profiles](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/field_level_encryption_profile.go) and [trust stores](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/trust_store.go).
+
+| Source path | Verified identity |
+| --- | --- |
+| Key group items | Complete nonempty string set of managed public_key.id outputs |
+| Encryption config content_type_profile_config.content_type_profiles.items.profile_id | Profile.id per indexed set element, through two singleton lists; known absent optional profile IDs are skipped |
+| Encryption config query_arg_profile_config.query_arg_profiles.items.profile_id | Required profile.id per indexed set element, through two singleton lists |
+| Encryption profile encryption_entities.items.public_key_id | Public_key.id per indexed set element, through a singleton list |
+| Trust store ca_certificates_bundle_source.ca_certificates_bundle_s3_location.bucket | Explicit S3 bucket.bucket or bucket.id with known configured region matching the bucket's independently known region |
+| Same S3 location key / version | Explicit S3 object.key and optional object.version_id for the same object, itself explicitly referencing the proven bucket; object and bucket regions must match the location region |
+
+Both trust-store blocks are singleton lists. Modern aws_s3_object and deprecated aws_s3_bucket_object are checked as separate exact types. A present version must be known and explicitly reference the same object's version_id; unknown, sensitive or literal-only versions leave object provenance unresolved. Bucket identity can remain verified independently. Global CloudFront provider region does not set the bucket region, and late provider account evidence is checked for the bucket, object and consumer separately.
+
+All key groups, profiles, encryption configurations, public keys and trust stores retain independent Logical identity, Global scope and account evidence. Complete explicit references and matching known outputs are required; reordered sets require corresponding indexed evidence, and malformed masks, missing/literal rows, ambiguous IDs, inactive lifecycle, wrong provider/type or unavailable selected endpoints remain unresolved. These references do not add ownership, network containment or distribution consumer rules. Content/query matching rules, encryption provider_id, encoded keys and certificate contents are opaque and excluded from rendering. See the maintained [security example](../examples/cloudfront-security.svg).

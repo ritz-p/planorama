@@ -7,6 +7,7 @@ pub(crate) fn has_indexed_service_references(
 ) -> bool {
     provider.is_aws()
         && (aws::cloudfront::resource(resource)
+            || aws::cloudfront_security::resource(resource)
             || aws::elbv2_cognito::block(resource).is_some()
             || aws::s3::indexed_resource(resource)
             || resource == "aws_networkfirewall_logging_configuration"
@@ -28,6 +29,7 @@ pub(crate) fn indexed_service_reference(
 ) -> bool {
     provider.is_aws()
         && (aws::cloudfront::indexed(resource, attribute)
+            || aws::cloudfront_security::indexed(resource, attribute)
             || aws::appsync::indexed(resource, attribute)
             || aws::appsync_events::indexed(resource, attribute)
             || aws::s3_access::indexed(resource, attribute)
