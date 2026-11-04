@@ -89,7 +89,7 @@ mod s3_exports;
 mod sagemaker;
 mod scaling;
 mod scraper;
-mod search;
+pub(crate) mod search;
 pub(crate) mod search_connections;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
