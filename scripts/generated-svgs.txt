@@ -138,3 +138,4 @@ examples/efs-configuration.svg
 examples/search-domains.svg
 examples/search-network.svg
 examples/search-applications.svg
+examples/search-connections.svg
