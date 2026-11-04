@@ -80,6 +80,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_appsync_channel_namespace" => {
+                ("api_id", "Namespace Event API", "Channel namespaces")
+            }
             "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
             "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
             "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
@@ -162,6 +165,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         });
         if (node.resource_type == "aws_flow_log"
             && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+            || node.resource_type == "aws_appsync_channel_namespace"
             || super::search::helper(&node.resource_type)
             || matches!(
                 node.resource_type.as_str(),

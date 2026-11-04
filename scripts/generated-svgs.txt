@@ -139,3 +139,4 @@ examples/search-domains.svg
 examples/search-network.svg
 examples/search-applications.svg
 examples/search-connections.svg
+examples/appsync-events.svg

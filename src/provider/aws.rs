@@ -5,6 +5,7 @@ mod application_scaling;
 mod apprunner;
 pub(crate) mod appsync;
 mod appsync_datasource;
+pub(crate) mod appsync_events;
 mod appsync_execution;
 mod appsync_helpers;
 mod associations;
@@ -176,7 +177,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         }
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
-        "aws_appsync_graphql_api" => crate::model::Placement::Spatial,
+        "aws_appsync_graphql_api" | "aws_appsync_api" => crate::model::Placement::Spatial,
         "aws_cloudsearch_domain" | "aws_elasticsearch_domain" | "aws_opensearch_application" => {
             crate::model::Placement::Spatial
         }
