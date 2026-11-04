@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_cloudfront_monitoring_subscription" => {
+                ("distribution_id", "Monitoring distribution", "Monitoring")
+            }
             kind if super::cloudfront_functions::helper(kind) => (
                 "key_value_store_arn",
                 "Owner KeyValueStore",
@@ -168,8 +171,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if (node.resource_type == "aws_flow_log"
-            && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+        if (matches!(
+            node.resource_type.as_str(),
+            "aws_flow_log" | "aws_cloudfront_monitoring_subscription"
+        ) && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
             || node.resource_type == "aws_appsync_channel_namespace"
             || super::search::helper(&node.resource_type)
             || matches!(
