@@ -141,6 +141,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_elasticsearch_domain_policy"
                 | "aws_elasticsearch_domain_saml_options"
                 | "aws_elasticsearch_vpc_endpoint"
+                | "aws_opensearch_outbound_connection"
+                | "aws_opensearch_inbound_connection_accepter"
                 | "aws_opensearch_application"
                 | "aws_opensearch_authorize_vpc_endpoint_access"
                 | "aws_opensearch_domain_policy"

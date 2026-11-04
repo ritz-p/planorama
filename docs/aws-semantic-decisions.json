@@ -16611,10 +16611,10 @@
       }
     },
     "aws_opensearch_inbound_connection_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 798,
-      "gap": "#724 reviewed: Not applicable: accepter lifecycle is distinct even when connection IDs agree. Missing: connection_id -> outbound connection.id, with reversed local/remote account/region proof; accepter stays a separate lifecycle identity. Follow-up #798. Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
+      "gap": "#724 reviewed; #798 implements scoped connection references. Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16626,8 +16626,8 @@
         "placement": "Supported: retain Logical aws_opensearch_inbound_connection_accepter basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: accepter lifecycle is distinct even when connection IDs agree.",
         "network": "Not applicable: reviewed aws_opensearch_inbound_connection_accepter fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: connection_id -> outbound connection.id, with reversed local/remote account/region proof; accepter stays a separate lifecycle identity.",
-        "scope": "Partial: Regional eligibility; inbound target context differs from outbound initiator.",
+        "references": "Supported: explicit known connection_id to outbound connection.id requires both verified domain sides and accepter provider scope matching the remote side; lifecycle identities remain separate.",
+        "scope": "Supported: #798 requires trusted nonconflicting provider account evidence and matching per-side region; the outbound operates in local scope and the accepter in remote scope. JSON-only account selectors remain unverified.",
         "summaries": "Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
         "officialDocumentation": "website/docs/r/opensearch_inbound_connection_accepter.html.markdown",
         "shapes": {
@@ -16641,10 +16641,10 @@
       }
     },
     "aws_opensearch_outbound_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 798,
-      "gap": "#724 reviewed: Not applicable: connects independent domains; neither is owned by the connection. Missing: local/remote domain names require matching owner_id and region at each endpoint; mode DIRECT/VPC_ENDPOINT is not a managed endpoint ID. Follow-up #798. Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
+      "gap": "#724 reviewed; #798 implements scoped connection references. Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16662,8 +16662,8 @@
         "placement": "Supported: retain Logical aws_opensearch_outbound_connection basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: connects independent domains; neither is owned by the connection.",
         "network": "Not applicable: reviewed aws_opensearch_outbound_connection fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: local/remote domain names require matching owner_id and region at each endpoint; mode DIRECT/VPC_ENDPOINT is not a managed endpoint ID.",
-        "scope": "Partial: current Regional eligibility is control-plane only; remote owner_id/region cannot be replaced by provider scope.",
+        "references": "Supported: explicit singleton local_domain_info.domain_name and remote_domain_info.domain_name references to OpenSearch domain.domain_name require independently known owner_id and region, trusted matching account evidence and DIRECT/VPC_ENDPOINT mode; neither mode is an endpoint identity.",
+        "scope": "Supported: #798 requires trusted nonconflicting provider account evidence and matching per-side region; the outbound operates in local scope and the accepter in remote scope. JSON-only account selectors remain unverified.",
         "summaries": "Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
         "officialDocumentation": "website/docs/r/opensearch_outbound_connection.html.markdown",
         "shapes": {

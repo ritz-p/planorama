@@ -235,6 +235,7 @@ pub(super) fn annotate(
 
     crate::provider::aws::eni::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::peering::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::search_connections::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2_network::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudfront_vpc_origin::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2::annotate(nodes, references, &elbv2_evidence);

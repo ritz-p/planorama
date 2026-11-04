@@ -781,3 +781,17 @@ Single configuration blocks require singleton lists; log publishing and applicat
 CloudSearch, Elasticsearch domains and OpenSearch applications are independent Spatial cards. Proven domain helpers embed with their own action and coverage; absent/filtered owners retain independent fallback. Proven package associations retain both shared endpoints. Endpoint cards promote only after complete network proof. Existing OpenSearch domain subnet/SG behavior (#181/#182) and Serverless endpoint behavior (#696) are unchanged.
 
 All new relationships require explicit compatible current references and matching known outputs, with independent provider/account/region and named-state identities. Deleted/deposed, literal-only and incompatible references remain conservative. Policies, SAML XML, package content keys, service URLs and runtime access/health are not interpreted or displayed. Maintained examples: [domain configuration](../examples/search-domains.svg), [network](../examples/search-network.svg), [applications and packages](../examples/search-applications.svg).
+
+## OpenSearch cross-domain connections (#798)
+
+The pinned AWS Provider 6.70.0 [outbound schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch/outbound_connection.go) and [inbound schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch/inbound_connection_accepter.go) define these independent lifecycle objects.
+
+| Source path | Verified endpoint and scope |
+| --- | --- |
+| aws_opensearch_outbound_connection.local_domain_info.domain_name | Exact aws_opensearch_domain.domain_name with matching known owner_id and region; outbound provider scope must match this local side |
+| aws_opensearch_outbound_connection.remote_domain_info.domain_name | Exact aws_opensearch_domain.domain_name with independently matching known owner_id and region; local side must also be proven |
+| aws_opensearch_inbound_connection_accepter.connection_id | Exact outbound connection.id, both verified domain sides, and accepter provider account/region matching the remote side |
+
+Both domain-info blocks require singleton lists with known string selectors. The outbound requires known connection_mode DIRECT or VPC_ENDPOINT; the schema makes this field Optional+Computed although its resource documentation calls it Required. Neither mode nor a computed endpoint URL identifies a managed VPC endpoint. Account selectors require independently trusted provider account evidence from the saved-plan path; a JSON-only assume_role or owner_id value cannot establish account identity. Missing/conflicting accounts, mismatched regions, unknown/masked selectors, duplicate or partial references, literal values, deleted/deposed or data objects remain unresolved. Elasticsearch domains are not interchangeable endpoints.
+
+Connections and accepters retain Logical presentation, distinct actions and exactly-once coverage even when their IDs are equal. Neither owns a domain or creates network containment. Filtering removes unavailable endpoints without creating replacements; named states retain separate namespaces. Runtime status, computed endpoint URLs and connection properties do not prove connectivity and are not rendered as payload. The [JSON-only example](../examples/search-connections.svg) deliberately retains unresolved account evidence; saved-plan positive and reversed-scope cases are covered by semantic tests.
