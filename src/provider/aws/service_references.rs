@@ -707,7 +707,6 @@ pub(crate) fn annotate(
     super::eks_auxiliary::annotate(nodes, references, evidence);
     super::cloud_map::annotate(nodes, references, evidence);
     super::api_usage::annotate(nodes, references, evidence);
-    super::search::annotate(nodes, references, evidence);
     super::efs_evidence::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
     super::application_scaling::annotate(nodes, references, evidence);
