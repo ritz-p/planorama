@@ -368,3 +368,30 @@ fn lookup_identity_is_singleton_data_and_helpers_preserve_filtered_coverage() {
         }
     }
 }
+#[test]
+fn sensitive_search_consumers_and_endpoints_never_verify() {
+    for input in [DOMAINS, NETWORK, APPLICATIONS] {
+        let v = fixture(input);
+        let parsed = plan::parse(input).unwrap();
+        let raw = semantic::Input::new(&parsed);
+        for r in raw
+            .attributes
+            .iter()
+            .filter(|r| super::label(&raw.nodes[r.target].resource_type, &r.attribute).is_some())
+        {
+            let address = &raw.nodes[r.target].address;
+            for selected in std::iter::once(r.target).chain(r.sources.iter().copied()) {
+                let mut masked = v.clone();
+                let i = index(&masked, &raw.nodes[selected].address);
+                masked["resource_changes"][i]["change"]["after_sensitive"] = json!(true);
+                assert!(
+                    !verified(&masked, address, &r.attribute),
+                    "{} {} masked {}",
+                    address,
+                    r.attribute,
+                    raw.nodes[selected].address
+                );
+            }
+        }
+    }
+}
