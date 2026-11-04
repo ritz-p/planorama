@@ -134,3 +134,4 @@ examples/api-usage.svg
 examples/api-responses.svg
 examples/fsx-network.svg
 examples/fsx-children.svg
+examples/efs-configuration.svg
