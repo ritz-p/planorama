@@ -45782,10 +45782,10 @@
       }
     },
     "aws_cloudfront_monitoring_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 915,
-      "gap": "#715 audit: Missing: distribution ID owner reference; metrics subscription does not identify a CloudWatch alarm or log group. Follow-up #915. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #915 implements distribution ownership and typed realtime log destinations. Safe metrics/sampling summaries remain deferred; no CloudWatch alarm/log-group inference or runtime delivery claims. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45794,11 +45794,11 @@
           "distribution_id",
           "monitoring_subscription.realtime_metrics_subscription_config.realtime_metrics_subscription_status"
         ],
-        "placement": "Supported: retain Logical Controller for aws_cloudfront_monitoring_subscription; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique current distribution ID proof for subscription helper; retain helper provenance.",
+        "placement": "Supported: embed under the proven Spatial distribution; unresolved ownership retains Logical fallback.",
+        "ownership": "Supported: unique proven distribution owner with account-compatible scope; preserve helper identity, action and selection.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: distribution ID owner reference; metrics subscription does not identify a CloudWatch alarm or log group.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: unique explicit distribution_id to current managed CloudFront distribution.id; metrics subscription status does not identify a CloudWatch alarm or log group.",
+        "scope": "Supported: Global identity retains account evidence and checks late provider account compatibility; Kinesis retains independently known regional scope.",
         "summaries": "Intentionally unsupported: log payloads and metrics/delivery results; no arbitrary aws_cloudfront_monitoring_subscription attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_monitoring_subscription.html.markdown",
         "shapes": {
@@ -45826,17 +45826,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_observability.rs",
+          "tests/unit/semantic/cloudfront_observability.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_realtime_log_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 915,
-      "gap": "#715 audit: Missing: Kinesis stream and IAM role ARNs, gated by endpoint.stream_type; log config remains shared across behaviors. Follow-up #915. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #915 implements distribution ownership and typed realtime log destinations. Safe metrics/sampling summaries remain deferred; no CloudWatch alarm/log-group inference or runtime delivery claims. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45850,8 +45852,8 @@
         "placement": "Supported: retain Logical Controller for aws_cloudfront_realtime_log_config; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: Kinesis stream and IAM role ARNs, gated by endpoint.stream_type; log config remains shared across behaviors.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: singleton endpoint and kinesis_stream_config with known stream_type=Kinesis; exact managed Kinesis stream.arn and IAM role.arn references. Distribution consumers retain their existing contract.",
+        "scope": "Supported: Global identity retains account evidence and checks late provider account compatibility; Kinesis retains independently known regional scope.",
         "summaries": "Intentionally unsupported: fields may request custom function log data; no log contents, delivery success or arbitrary field list rendering.",
         "officialDocumentation": "website/docs/r/cloudfront_realtime_log_config.html.markdown",
         "shapes": {
@@ -45890,7 +45892,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_observability.rs",
+          "tests/unit/semantic/cloudfront_observability.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), name (required). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
