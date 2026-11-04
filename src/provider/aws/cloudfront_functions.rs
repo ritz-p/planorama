@@ -81,18 +81,17 @@ pub(super) fn annotate(
         {
             continue;
         }
-        if node.resource_type == CONNECTION {
-            if v["connection_function_config"]
+        if node.resource_type == CONNECTION
+            && (v["connection_function_config"]
                 .as_array()
                 .is_none_or(|a| a.len() != 1)
                 || v["connection_function_config"][0]["key_value_store_association"]
                     .as_array()
                     .is_none_or(|a| a.len() != 1)
                 || super::appsync::scalar(evidence, r.target, "connection_function_config.runtime")
-                    != Some("cloudfront-js-2.0")
-            {
-                continue;
-            }
+                    != Some("cloudfront-js-2.0"))
+        {
+            continue;
         }
         let Some(actual) = super::streaming::values(v, m, &r.attribute, collection) else {
             continue;
