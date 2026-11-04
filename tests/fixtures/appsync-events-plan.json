@@ -1,0 +1,382 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cognito_user_pool.first",
+          "mode": "managed",
+          "type": "aws_cognito_user_pool",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cognito_user_pool.second",
+          "mode": "managed",
+          "type": "aws_cognito_user_pool",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.authorizer",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "authorizer",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.logs",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_appsync_api.events",
+          "mode": "managed",
+          "type": "aws_appsync_api",
+          "name": "events",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_config": [
+              {
+                "auth_provider": [
+                  {
+                    "cognito_config": [
+                      {
+                        "user_pool_id": {
+                          "references": [
+                            "aws_cognito_user_pool.first.id"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "cognito_config": [
+                      {
+                        "user_pool_id": {
+                          "references": [
+                            "aws_cognito_user_pool.second.id"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "lambda_authorizer_config": [
+                      {
+                        "authorizer_uri": {
+                          "references": [
+                            "aws_lambda_function.authorizer.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {}
+                ],
+                "log_config": [
+                  {
+                    "cloudwatch_logs_role_arn": {
+                      "references": [
+                        "aws_iam_role.logs.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_appsync_datasource.events",
+          "mode": "managed",
+          "type": "aws_appsync_datasource",
+          "name": "events",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_appsync_api.events.api_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appsync_channel_namespace.events",
+          "mode": "managed",
+          "type": "aws_appsync_channel_namespace",
+          "name": "events",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_appsync_api.events.api_id"
+              ]
+            },
+            "handler_configs": [
+              {
+                "on_publish": [
+                  {
+                    "integration": [
+                      {
+                        "data_source_name": {
+                          "references": [
+                            "aws_appsync_datasource.events.name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "on_subscribe": [
+                  {
+                    "integration": [
+                      {
+                        "data_source_name": {
+                          "references": [
+                            "aws_appsync_datasource.events.name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_appsync_graphql_api.graphql",
+          "mode": "managed",
+          "type": "aws_appsync_graphql_api",
+          "name": "graphql",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_cognito_user_pool.first",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool",
+      "name": "first",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-east-1_first"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool.second",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool",
+      "name": "second",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-east-1_second"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_lambda_function.authorizer",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "authorizer",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:111111111111:function:authorizer",
+          "function_name": "authorizer"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_iam_role.logs",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "logs",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/event-logs"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_api.events",
+      "mode": "managed",
+      "type": "aws_appsync_api",
+      "name": "events",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "event-api",
+          "api_arn": "arn:aws:appsync:us-east-1:111111111111:apis/event-api",
+          "name": "events",
+          "event_config": [
+            {
+              "auth_provider": [
+                {
+                  "auth_type": "AMAZON_COGNITO_USER_POOLS",
+                  "cognito_config": [
+                    {
+                      "user_pool_id": "us-east-1_first",
+                      "aws_region": "us-east-1"
+                    }
+                  ]
+                },
+                {
+                  "auth_type": "AMAZON_COGNITO_USER_POOLS",
+                  "cognito_config": [
+                    {
+                      "user_pool_id": "us-east-1_second",
+                      "aws_region": "us-east-1"
+                    }
+                  ]
+                },
+                {
+                  "auth_type": "AWS_LAMBDA",
+                  "lambda_authorizer_config": [
+                    {
+                      "authorizer_uri": "arn:aws:lambda:us-east-1:111111111111:function:authorizer",
+                      "identity_validation_expression": "PRIVATE_AUTH_PAYLOAD"
+                    }
+                  ]
+                },
+                {
+                  "auth_type": "AWS_IAM"
+                }
+              ],
+              "log_config": [
+                {
+                  "cloudwatch_logs_role_arn": "arn:aws:iam::111111111111:role/event-logs",
+                  "log_level": "ERROR"
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_datasource.events",
+      "mode": "managed",
+      "type": "aws_appsync_datasource",
+      "name": "events",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "event-api",
+          "name": "shared-source",
+          "type": "NONE"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_channel_namespace.events",
+      "mode": "managed",
+      "type": "aws_appsync_channel_namespace",
+      "name": "events",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "event-api",
+          "name": "updates",
+          "code_handlers": "PRIVATE_HANDLER_PAYLOAD",
+          "handler_configs": [
+            {
+              "on_publish": [
+                {
+                  "behavior": "CODE",
+                  "integration": [
+                    {
+                      "data_source_name": "shared-source"
+                    }
+                  ]
+                }
+              ],
+              "on_subscribe": [
+                {
+                  "behavior": "DIRECT",
+                  "integration": [
+                    {
+                      "data_source_name": "shared-source"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_graphql_api.graphql",
+      "mode": "managed",
+      "type": "aws_appsync_graphql_api",
+      "name": "graphql",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "graphql-api",
+          "name": "graphql",
+          "authentication_type": "AWS_IAM"
+        },
+        "after_unknown": {}
+      }
+    }
+  ]
+}

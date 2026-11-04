@@ -48,6 +48,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_appsync_graphql_api"
                 | "aws_appsync_datasource"
                 | "aws_appsync_api_cache"
+                | "aws_appsync_channel_namespace"
                 | "aws_appsync_api"
                 | "aws_appsync_api_key"
                 | "aws_appsync_type"

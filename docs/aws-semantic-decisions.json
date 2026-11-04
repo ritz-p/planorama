@@ -41669,10 +41669,10 @@
       }
     },
     "aws_appsync_api": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 942,
-      "gap": "#714 audit: Missing: Event API typed Cognito/Lambda auth and logging-role references; distinct identity from GraphQL API. Missing: review independent Event API architecture card; current basic Connector is Logical, not dedicated Spatial support. Follow-up #942. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #942 implements the bounded Event API and namespace relationships. Intentionally unsupported: no arbitrary aws_appsync_api attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41686,11 +41686,11 @@
           "event_config.auth_provider.lambda_authorizer_config.authorizer_uri",
           "event_config.log_config.cloudwatch_logs_role_arn"
         ],
-        "placement": "Missing: review independent Event API architecture card; current basic Connector is Logical, not dedicated Spatial support.",
+        "placement": "Supported: independent Spatial Event API card, with api_id/api_arn distinct from GraphQL API id/arn.",
         "ownership": "Not applicable: retain independent aws_appsync_api identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_appsync_api has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: Event API typed Cognito/Lambda auth and logging-role references; distinct identity from GraphQL API.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: complete indexed event_config.auth_provider Cognito user_pool_id to pool.id with auth_type and aws_region; Lambda authorizer_uri to function.arn with AWS_LAMBDA; singleton log_config.cloudwatch_logs_role_arn to IAM role.arn.",
+        "scope": "Supported: regional identity with independent provider/account/state evidence; configured Cognito aws_region qualifies each pool while IAM logging roles remain global.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_api attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_api.html.markdown",
         "shapes": {
@@ -41745,7 +41745,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_events.rs",
+          "tests/unit/semantic/appsync_events.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
@@ -41842,10 +41844,10 @@
       }
     },
     "aws_appsync_channel_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 942,
-      "gap": "#714 audit: Missing: Event API owner and API-qualified data-source names; code handlers opaque. Follow-up #942. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #942 implements the bounded Event API and namespace relationships. Intentionally unsupported: no arbitrary aws_appsync_channel_namespace attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41855,11 +41857,11 @@
           "handler_configs.on_publish.integration.data_source_name",
           "handler_configs.on_subscribe.integration.data_source_name"
         ],
-        "placement": "Supported: retain Logical Node for aws_appsync_channel_namespace; basic display is not complete semantics.",
-        "ownership": "Not applicable: retain independent aws_appsync_channel_namespace identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
+        "placement": "Supported: verified namespace embeds under its Event API; unresolved/filtered ownership keeps independent fallback.",
+        "ownership": "Supported: explicit known api_id to Event API.api_id, preserving namespace action, identity and coverage.",
         "network": "Not applicable: aws_appsync_channel_namespace has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: Event API owner and API-qualified data-source names; code handlers opaque.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: api_id to Event API.api_id and singleton on_publish/on_subscribe integration.data_source_name to data source.name, qualified by the same explicit known Event API on both objects. CODE/DIRECT behavior is known; code remains opaque.",
+        "scope": "Supported: regional identity with independent provider/account/state evidence; configured Cognito aws_region qualifies each pool while IAM logging roles remain global.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_channel_namespace attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_channel_namespace.html.markdown",
         "shapes": {
@@ -41891,7 +41893,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_events.rs",
+          "tests/unit/semantic/appsync_events.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
