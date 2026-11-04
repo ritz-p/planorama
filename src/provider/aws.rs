@@ -19,6 +19,7 @@ mod classification;
 mod cloud_map;
 pub(crate) mod cloudfront;
 mod cloudfront_functions;
+pub(crate) mod cloudfront_security;
 pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]

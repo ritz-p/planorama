@@ -45,6 +45,11 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !matches!(
             resource,
             "aws_apigatewayv2_integration_response"
+                | "aws_cloudfront_key_group"
+                | "aws_cloudfront_field_level_encryption_config"
+                | "aws_cloudfront_field_level_encryption_profile"
+                | "aws_cloudfront_trust_store"
+                | "aws_cloudfront_public_key"
                 | "aws_cloudfront_function"
                 | "aws_cloudfront_connection_function"
                 | "aws_cloudfront_key_value_store"

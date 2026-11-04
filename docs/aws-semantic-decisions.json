@@ -45474,10 +45474,10 @@
       }
     },
     "aws_cloudfront_key_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: complete items public-key ID set; key groups remain shared and do not own public keys. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45489,8 +45489,8 @@
         "placement": "Supported: retain Logical Node for aws_cloudfront_key_group; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: complete items public-key ID set; key groups remain shared and do not own public keys.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete items public-key ID set with exact current managed public_key.id outputs; shared keys are not owned by groups.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_key_group attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_key_group.html.markdown",
         "shapes": {
@@ -45519,7 +45519,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -45542,7 +45544,7 @@
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: independent public-key identity sufficient; key-group and encryption-profile consumers own references. encoded_key is content, not a KMS reference.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "scope": "Supported: Global identity retains account evidence for incoming key-group and encryption-profile references; no provider-region deployment.",
         "summaries": "Intentionally unsupported: encoded_key material and encryption validity are excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_public_key.html.markdown",
         "shapes": {
@@ -45579,10 +45581,10 @@
       }
     },
     "aws_cloudfront_field_level_encryption_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: content-type and query-argument profile ID collections; interpret only explicit typed identity, never matching rules. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45595,8 +45597,8 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_field_level_encryption_config; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: content-type and query-argument profile ID collections; interpret only explicit typed identity, never matching rules.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete indexed content-type and query-argument profile ID collections; known absent optional content profile IDs are skipped, matching rules are opaque.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_field_level_encryption_config attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_field_level_encryption_config.html.markdown",
         "shapes": {
@@ -45632,17 +45634,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_field_level_encryption_profile": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: encryption_entities public_key_id references; provider_id is an encryption-provider identifier, not Terraform provider binding or IAM identity. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45655,8 +45659,8 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_field_level_encryption_profile; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: encryption_entities public_key_id references; provider_id is an encryption-provider identifier, not Terraform provider binding or IAM identity.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: indexed encryption_entities public_key_id references; provider_id remains an encryption-provider identifier, not Terraform provider binding or IAM identity.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_field_level_encryption_profile attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_field_level_encryption_profile.html.markdown",
         "shapes": {
@@ -45690,17 +45694,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_trust_store": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: S3 bundle provenance with explicit bucket region and optional version; CloudFront remains Global, not the bucket region. No certificate parsing. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45716,8 +45722,8 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_trust_store; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: S3 bundle provenance with explicit bucket region and optional version; CloudFront remains Global, not the bucket region. No certificate parsing.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: S3 bucket ID/name and explicitly bucket-qualified object key/version references; known bucket region is required independently of Global CloudFront scope. No certificate parsing.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_trust_store attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_trust_store.html.markdown",
         "shapes": {
@@ -45767,7 +45773,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
