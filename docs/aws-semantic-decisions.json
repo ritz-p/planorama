@@ -4509,7 +4509,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 824,
-      "gap": "#720 reviewed: Partial: #497 regional filesystem and mount/access-point endpoints retained. Missing: kms_key_id is documented as KMS ARN, gated by encrypted=true; not arbitrary key IDs. Follow-up #824. Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
+      "gap": "Implemented #824: explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -4524,8 +4524,8 @@
         "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Intentionally unsupported: regional shared filesystem is not contained by a mount target subnet; One Zone AZ name does not identify a subnet.",
-        "references": "Partial: #497 regional filesystem and mount/access-point endpoints retained. Missing: kms_key_id is documented as KMS ARN, gated by encrypted=true; not arbitrary key IDs. Follow-up #824.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #824 explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
         "officialDocumentation": "website/docs/r/efs_file_system.html.markdown",
         "shapes": {
@@ -4560,7 +4560,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 824,
-      "gap": "#720 reviewed: Partial: #497 verifies filesystem/subnet ID values in service_references.rs; security_groups.rs uses existing complete SG collection proof, not network.rs strict value/scope validation. Missing: strengthen SG value/scope and filesystem/subnet binding proof in #824. tests/unit/semantic/service_references.rs preserve existing current/deposed cases. Follow-up #824. Not applicable: independently placed mount target must not be embedded into the shared filesystem. Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
+      "gap": "Implemented #824: explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -4574,9 +4574,9 @@
         ],
         "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
         "ownership": "Not applicable: independently placed mount target must not be embedded into the shared filesystem.",
-        "network": "Partial: #497 known subnet proof and legacy SG collection evidence; complete matching SG values and common-VPC proof remain in #824. Shared filesystem remains regional.",
-        "references": "Partial: #497 verifies filesystem/subnet ID values in service_references.rs; security_groups.rs uses existing complete SG collection proof, not network.rs strict value/scope validation. Missing: strengthen SG value/scope and filesystem/subnet binding proof in #824. tests/unit/semantic/service_references.rs preserve existing current/deposed cases. Follow-up #824.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "network": "Supported: #497 subnet endpoint preserved; #824 verifies complete matching SG IDs and their common VPC with the verified subnet. The shared filesystem stays regional.",
+        "references": "Supported: #824 explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
         "officialDocumentation": "website/docs/r/efs_mount_target.html.markdown",
         "shapes": {
@@ -20842,10 +20842,10 @@
       }
     },
     "aws_efs_backup_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 824,
-      "gap": "#720 reviewed: Missing: explicit file_system_id owner to filesystem id; policy content and enabled backup policy do not identify a Backup plan. Follow-up #824. Missing: verified filesystem helper embedding in #824; separate fallback required. Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
+      "gap": "Implemented #824: explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20855,11 +20855,11 @@
           "file_system_id",
           "backup_policy.status"
         ],
-        "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
-        "ownership": "Missing: verified filesystem helper embedding in #824; separate fallback required.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified file_system_id owner; independent fallback retains identity and action.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: explicit file_system_id owner to filesystem id; policy content and enabled backup policy do not identify a Backup plan. Follow-up #824.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #824 explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
         "officialDocumentation": "website/docs/r/efs_backup_policy.html.markdown",
         "shapes": {
@@ -20884,10 +20884,10 @@
       }
     },
     "aws_efs_file_system_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 824,
-      "gap": "#720 reviewed: Missing: explicit file_system_id owner to filesystem id; policy content and enabled backup policy do not identify a Backup plan. Follow-up #824. Missing: verified filesystem helper embedding in #824; separate fallback required. Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
+      "gap": "Implemented #824: explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20897,11 +20897,11 @@
           "file_system_id",
           "policy"
         ],
-        "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
-        "ownership": "Missing: verified filesystem helper embedding in #824; separate fallback required.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified file_system_id owner; independent fallback retains identity and action.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: explicit file_system_id owner to filesystem id; policy content and enabled backup policy do not identify a Backup plan. Follow-up #824.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #824 explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
         "officialDocumentation": "website/docs/r/efs_file_system_policy.html.markdown",
         "shapes": {
@@ -20925,10 +20925,10 @@
       }
     },
     "aws_efs_replication_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 824,
-      "gap": "#720 reviewed: Missing: configured source ID and optional destination filesystem ID; destination key accepts ID/ARN/alias/alias ARN, unlike filesystem kms_key_id. Destination region qualifies endpoint; computed replica without configured provenance cannot synthesize a resource. Follow-up #824. Not applicable: replication connects independent filesystems; destination is not source-owned presentation. Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
+      "gap": "Implemented #824: explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20945,8 +20945,8 @@
         "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
         "ownership": "Not applicable: replication connects independent filesystems; destination is not source-owned presentation.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: configured source ID and optional destination filesystem ID; destination key accepts ID/ARN/alias/alias ARN, unlike filesystem kms_key_id. Destination region qualifies endpoint; computed replica without configured provenance cannot synthesize a resource. Follow-up #824.",
-        "scope": "Partial: current Regional eligibility describes source/control scope; destination.region and source_file_system_region must remain distinct in cross-region proof.",
+        "references": "Supported: #824 explicit matching current filesystem/KMS references, complete mount-target SG values and common-VPC proof, verified policy ownership and independently scoped replication destinations. See aws-storage.md#efs-configuration-824. Computed-only replicas, mount paths, policies and runtime health remain excluded.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: encrypted/backup-policy status can support a plan-only summary after an explicit unknown/sensitive-value contract; no mount paths, POSIX IDs, filesystem content or replication health.",
         "officialDocumentation": "website/docs/r/efs_replication_configuration.html.markdown",
         "shapes": {

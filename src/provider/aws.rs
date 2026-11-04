@@ -43,6 +43,7 @@ mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
 mod efs;
+mod efs_evidence;
 mod eks_auxiliary;
 mod elasticache;
 pub(crate) mod elbv2;

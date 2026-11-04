@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::efs_evidence::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::backup_plan::label(resource, attribute) {
         return Some(label);
     }
@@ -695,6 +698,7 @@ pub(crate) fn annotate(
     super::eks_auxiliary::annotate(nodes, references, evidence);
     super::cloud_map::annotate(nodes, references, evidence);
     super::api_usage::annotate(nodes, references, evidence);
+    super::efs_evidence::annotate(nodes, references, evidence);
     super::backup_plan::annotate(nodes, references, evidence);
     super::backup_vaults::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
@@ -717,6 +721,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::efs_evidence::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::efs_evidence::bindings(raw, reference))
         && (super::backup_plan::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
