@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::cloudfront_functions::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::search_connections::label(resource, attribute) {
         return Some(label);
     }
@@ -720,6 +723,7 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::cloudfront_functions::bindings(raw, reference)
         && (super::search_connections::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
