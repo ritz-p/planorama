@@ -30,6 +30,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 };
                 (field, "Exclusion target", "Public access exclusions")
             }
+            "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
+                ("file_system_id", "File system", "Policies")
+            }
             "aws_flow_log" => {
                 let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
                     raw.attributes.iter().any(|r| {
@@ -174,6 +177,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
+                    | "aws_efs_backup_policy"
+                    | "aws_efs_file_system_policy"
                     | "aws_vpc_encryption_control"
                     | "aws_vpc_block_public_access_exclusion"
                     | "aws_route53_records_exclusive"

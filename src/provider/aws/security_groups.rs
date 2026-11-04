@@ -34,7 +34,8 @@ pub(super) fn failure(raw: &Input, reference: &AttributeReference) -> Option<Dia
         return Some(DiagnosticReason::UnprovenEndpointValue);
     }
     if node.resource_type == "aws_efs_mount_target"
-        && (node.action == crate::model::Action::Delete
+        && (!super::service_references::verified(raw, reference)
+            || node.action == crate::model::Action::Delete
             || node.deposed_key.is_some()
             || reference.sources.iter().any(|&source| {
                 raw.nodes[source].mode != EntityMode::Managed

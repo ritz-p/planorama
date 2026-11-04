@@ -195,6 +195,29 @@ and [Access Point](https://github.com/hashicorp/terraform-provider-aws/blob/v5.1
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
 fields and reference shapes.
 
+## EFS configuration (#824)
+
+The pinned AWS Provider 6.70.0 [EFS source and schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/efs)
+define these additional contracts:
+
+- Filesystem `kms_key_id` accepts an explicit KMS key `arn` with known `encrypted=true`.
+- Mount-target filesystem/subnet `id` references require compatible provider and region evidence.
+  `security_groups` must exactly match the complete explicit SG `id` collection; every SG's
+  known VPC must equal the verified subnet's VPC. The shared filesystem remains regional.
+- Backup and filesystem policies embed only under a uniquely verified filesystem `id` owner.
+  Policy content and backup status never identify a Backup plan or appear as summaries.
+- Replication uses explicit `source_file_system_id` to filesystem `id`, and a single destination
+  block with optional configured `file_system_id` to filesystem `id`. Destination `kms_key_id`
+  accepts key `id`/`key_id`/`arn` or alias `name`/`arn`. The destination region must match its
+  independently configured endpoint region; both providers must prove the same account.
+  Cross-account or unknown account destinations fall back. Replicas remain independent.
+
+Known matching outputs, current managed identities and complete unique configuration provenance
+are required. Unknown, literal-only, ambiguous, incompatible, deleted/deposed or filtered owners
+retain independent coverage and fallback references. Computed replica IDs and source ARN/region
+outputs do not create configured relationships. AZ names never identify a subnet.
+The [fixture](../tests/fixtures/efs-configuration-plan.json) exercises these paths without credentials.
+
 ## EBS
 
 EBS Volumes are regional Spatial Nodes with the Amazon EBS label. Their AWS AZ
