@@ -1,0 +1,301 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.client",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "client",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.client",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "client",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.client.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.client",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "client",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.client.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_opensearch_domain.main",
+          "mode": "managed",
+          "type": "aws_opensearch_domain",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_opensearch_vpc_endpoint.main",
+          "mode": "managed",
+          "type": "aws_opensearch_vpc_endpoint",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_arn": {
+              "references": [
+                "aws_opensearch_domain.main.arn"
+              ]
+            },
+            "vpc_options": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.client.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.client.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_elasticsearch_domain.main",
+          "mode": "managed",
+          "type": "aws_elasticsearch_domain",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_options": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.client.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.client.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_elasticsearch_vpc_endpoint.main",
+          "mode": "managed",
+          "type": "aws_elasticsearch_vpc_endpoint",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_arn": {
+              "references": [
+                "aws_elasticsearch_domain.main.arn"
+              ]
+            },
+            "vpc_options": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.client.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.client.id"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_vpc.client",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "client",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "vpc-client"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_subnet.client",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "client",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "subnet-client",
+          "vpc_id": "vpc-client"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_security_group.client",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "client",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "sg-client",
+          "vpc_id": "vpc-client"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_opensearch_domain.main",
+      "mode": "managed",
+      "type": "aws_opensearch_domain",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "domain_name": "opensearch",
+          "arn": "arn:aws:es:us-east-1:123456789012:domain/opensearch"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_opensearch_vpc_endpoint.main",
+      "mode": "managed",
+      "type": "aws_opensearch_vpc_endpoint",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "vpce-opensearch",
+          "domain_arn": "arn:aws:es:us-east-1:123456789012:domain/opensearch",
+          "vpc_options": [
+            {
+              "subnet_ids": [
+                "subnet-client"
+              ],
+              "security_group_ids": [
+                "sg-client"
+              ]
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_elasticsearch_domain.main",
+      "mode": "managed",
+      "type": "aws_elasticsearch_domain",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "domain_name": "elasticsearch",
+          "arn": "arn:aws:es:us-east-1:123456789012:domain/elasticsearch",
+          "vpc_options": [
+            {
+              "subnet_ids": [
+                "subnet-client"
+              ],
+              "security_group_ids": [
+                "sg-client"
+              ]
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_elasticsearch_vpc_endpoint.main",
+      "mode": "managed",
+      "type": "aws_elasticsearch_vpc_endpoint",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "vpce-elasticsearch",
+          "domain_arn": "arn:aws:es:us-east-1:123456789012:domain/elasticsearch",
+          "vpc_options": [
+            {
+              "subnet_ids": [
+                "subnet-client"
+              ],
+              "security_group_ids": [
+                "sg-client"
+              ]
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    }
+  ]
+}

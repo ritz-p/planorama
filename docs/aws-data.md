@@ -760,3 +760,24 @@ is authoritative. Security-group and newer RDS event source families are outside
 this bounded contract.
 See [fixture](../tests/fixtures/database-events-plan.json),
 [SVG](../examples/database-events.svg) and [HTML](../examples/database-events.html).
+
+## Search domains and configuration (#797)
+
+Contracts follow AWS Provider 6.70.0 pinned [OpenSearch source/schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch), [Elasticsearch](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/elasticsearch) and [CloudSearch](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudsearch). Elasticsearch and OpenSearch retain distinct types and endpoint identities.
+
+| Source | Supported configured references |
+| --- | --- |
+| CloudSearch policy | domain_name to CloudSearch name |
+| OpenSearch/Elasticsearch policy and SAML helpers | domain_name to the same service's domain_name |
+| Both domain types | enabled cognito_options identity_pool_id/user_pool_id to matching pool id, role_arn to IAM role arn; enabled domain_endpoint_options custom_endpoint_certificate_arn to ACM arn; enabled encrypt_at_rest kms_key_id to KMS key arn/id/key_id; enabled log_publishing_options cloudwatch_log_group_arn to log-group arn |
+| Elasticsearch domain and both VPC endpoints | complete vpc_options subnet_ids/security_group_ids to explicit subnet/SG id sets with matching known VPC IDs and independent VPC references |
+| VPC endpoints | domain_arn to the same service's domain arn; domain placement stays independent |
+| OpenSearch application | data_source.data_source_arn set to OpenSearch domain/Serverless collection arn; kms_key_arn to KMS key arn; enabled iam_identity_center_options role ARN to IAM role arn and instance ARN to a single known data.aws_ssoadmin_instances.arns result |
+| Endpoint-access authorization | domain_name to OpenSearch domain_name; grantee account is not an endpoint |
+| Package / package association | package_source.s3_bucket_name to S3 bucket.bucket; association package_id/domain_name to exact package.id/domain.domain_name |
+
+Single configuration blocks require singleton lists; log publishing and application data sources require complete nonempty sets. All rows of an enabled reference collection must have a known true enabled flag. Aggregate references tolerate set reordering and repeated endpoint use but do not infer positional matching. Unknown masks, partial ancestry, mixed literals, ambiguous output values or mixed enabled/disabled log collections retain fallback. KMS ID readback normalization additionally requires the referenced key's known ARN to end in its known key ID; aliases are not substituted. Identity Center lookup accepts only an explicit singleton data result in compatible provider scope, never a fabricated managed instance or computed application identity.
+
+CloudSearch, Elasticsearch domains and OpenSearch applications are independent Spatial cards. Proven domain helpers embed with their own action and coverage; absent/filtered owners retain independent fallback. Proven package associations retain both shared endpoints. Endpoint cards promote only after complete network proof. Existing OpenSearch domain subnet/SG behavior (#181/#182) and Serverless endpoint behavior (#696) are unchanged.
+
+All new relationships require explicit compatible current references and matching known outputs, with independent provider/account/region and named-state identities. Deleted/deposed, literal-only and incompatible references remain conservative. Policies, SAML XML, package content keys, service URLs and runtime access/health are not interpreted or displayed. Maintained examples: [domain configuration](../examples/search-domains.svg), [network](../examples/search-network.svg), [applications and packages](../examples/search-applications.svg).

@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::search::helper(kind) => {
+                ("domain_name", "Search domain", "Domain configuration")
+            }
             "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
                 ("file_system_id", "File system", "Policies")
             }
@@ -159,6 +162,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         });
         if (node.resource_type == "aws_flow_log"
             && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+            || super::search::helper(&node.resource_type)
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
