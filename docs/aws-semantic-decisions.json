@@ -42027,10 +42027,10 @@
       }
     },
     "aws_appsync_domain_name": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 945,
-      "gap": "#714 audit: Missing: ACM or IAM server certificate ARN; certificate must reside in us-east-1. Follow-up #945. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #945 implements the bounded custom-domain certificate and GraphQL association references. Intentionally unsupported: no arbitrary aws_appsync_domain_name attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42042,8 +42042,8 @@
         "placement": "Supported: retain Logical Node for aws_appsync_domain_name; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_appsync_domain_name identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_appsync_domain_name has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: ACM or IAM server certificate ARN; certificate must reside in us-east-1.",
-        "scope": "Partial: Regional API control plane; us-east-1 certificate requirement and generated CloudFront DNS do not make every endpoint regional or prove distribution ownership.",
+        "references": "Supported: explicit certificate_arn to exact ACM certificate.arn in us-east-1 or global IAM server certificate.arn, with matching known values and compatible account evidence.",
+        "scope": "Supported: independent compatible provider/account/region/state identity; ACM certificates must be in us-east-1, IAM server certificates remain Global, and association endpoints match the association region.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_domain_name attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_domain_name.html.markdown",
         "shapes": {
@@ -42065,17 +42065,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_domains.rs",
+          "tests/unit/semantic/appsync_domains.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_appsync_domain_name_api_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 945,
-      "gap": "#714 audit: Missing: GraphQL API/domain association preserving both independently shared endpoints. Follow-up #945. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #945 implements the bounded custom-domain certificate and GraphQL association references. Intentionally unsupported: no arbitrary aws_appsync_domain_name_api_association attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42084,11 +42086,11 @@
           "api_id",
           "domain_name"
         ],
-        "placement": "Supported: retain Logical Association for aws_appsync_domain_name_api_association; basic display is not complete semantics.",
+        "placement": "Supported: proven association lowers between independently shared domain and GraphQL API with unchanged provenance/action/coverage; unproven evidence retains Logical fallback.",
         "ownership": "Not applicable: retain independent aws_appsync_domain_name_api_association identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_appsync_domain_name_api_association has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: GraphQL API/domain association preserving both independently shared endpoints.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: explicit api_id to GraphQL API.id and domain_name to custom domain.domain_name; both independently verified endpoints are required for association lowering.",
+        "scope": "Supported: independent compatible provider/account/region/state identity; ACM certificates must be in us-east-1, IAM server certificates remain Global, and association endpoints match the association region.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_domain_name_api_association attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_domain_name_api_association.html.markdown",
         "shapes": {
@@ -42110,7 +42112,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_domains.rs",
+          "tests/unit/semantic/appsync_domains.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}

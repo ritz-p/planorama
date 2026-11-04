@@ -5,6 +5,7 @@ mod application_scaling;
 mod apprunner;
 pub(crate) mod appsync;
 mod appsync_datasource;
+mod appsync_domains;
 pub(crate) mod appsync_events;
 mod appsync_execution;
 mod appsync_helpers;
