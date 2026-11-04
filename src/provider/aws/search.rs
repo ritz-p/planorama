@@ -260,7 +260,7 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     })
 }
 
-pub(super) fn annotate(
+pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
