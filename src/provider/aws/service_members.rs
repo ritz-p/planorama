@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
+                ("file_system_id", "File system", "Policies")
+            }
             kind if super::backup_vaults::helper(kind) => (
                 "backup_vault_name",
                 "Backup vault owner",
@@ -164,6 +167,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
+                    | "aws_efs_backup_policy"
+                    | "aws_efs_file_system_policy"
                     | "aws_backup_vault_lock_configuration"
                     | "aws_backup_vault_notifications"
                     | "aws_backup_vault_policy"
