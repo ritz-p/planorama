@@ -322,6 +322,9 @@ fn verify(
             if !outputs.contains(&output.as_str()) {
                 return None;
             }
+            if !super::cloudfront_functions::live(nodes, evidence, source) {
+                return None;
+            }
             let expected_value = super::service_evidence::known(evidence, source, output)?;
             if r.attribute == "origin.domain_name"
                 && super::aliases::entity_type(endpoint) == "aws_lb"
@@ -375,4 +378,5 @@ pub(crate) fn annotate(
             r.complete = true;
         }
     }
+    super::cloudfront_functions::annotate(nodes, refs, evidence);
 }

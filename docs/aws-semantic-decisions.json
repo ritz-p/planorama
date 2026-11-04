@@ -45170,10 +45170,10 @@
       }
     },
     "aws_cloudfront_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: key_value_store_associations ARN set and stage-aware incoming consumer proof. Function code never supplies resource references. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45187,8 +45187,8 @@
         "placement": "Supported: retain Logical Node for aws_cloudfront_function; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: key_value_store_associations ARN set and stage-aware incoming consumer proof. Function code never supplies resource references.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete known store ARN associations with cloudfront-js-2.0 runtime; connection functions use the nested singleton association. Existing incoming consumers require known publish=true and preserve distinct function output contracts.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Deferred: runtime/publish configuration summary until function-consumer presentation is implemented; source code and status excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_function.html.markdown",
         "shapes": {
@@ -45225,7 +45225,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), name (required), stage (required). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -45245,10 +45247,10 @@
       }
     },
     "aws_cloudfront_connection_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: nested KeyValueStore ARN associations and separate connection_function_arn output; not an alias of CloudFront Function. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45263,8 +45265,8 @@
         "placement": "Supported: retain Logical Node for aws_cloudfront_connection_function; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: nested KeyValueStore ARN associations and separate connection_function_arn output; not an alias of CloudFront Function.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete known store ARN associations with cloudfront-js-2.0 runtime; connection functions use the nested singleton association. Existing incoming consumers require known publish=true and preserve distinct function output contracts.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Deferred: runtime/publish summary with separate development/live known-state contract; connection_function_code excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_connection_function.html.markdown",
         "shapes": {
@@ -45305,7 +45307,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {},
@@ -45334,7 +45338,7 @@
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: shared store identity sufficient; function and key helpers own incoming references. No source import or managed child list in this pinned schema.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "scope": "Supported: Global identity retains account evidence for incoming function and key-helper references; provider region is not deployment scope.",
         "summaries": "Intentionally unsupported: store contents and runtime size are not architecture configuration.",
         "officialDocumentation": "website/docs/r/cloudfront_key_value_store.html.markdown",
         "shapes": {
@@ -45371,10 +45375,10 @@
       }
     },
     "aws_cloudfrontkeyvaluestore_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: owner store ARN navigation without inspecting key/value payloads. Deprecated composite id is not store identity. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45385,10 +45389,10 @@
           "id"
         ],
         "placement": "Supported: retain Logical Node for aws_cloudfrontkeyvaluestore_key; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique store context; exclusive reconciliation cannot claim ownership of all key resources.",
+        "ownership": "Supported: unique verified store navigation without spatial promotion or ownership of other key resources; exclusive reconciliation does not enumerate keys.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: owner store ARN navigation without inspecting key/value payloads. Deprecated composite id is not store identity.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: exact key_value_store_arn to a current managed KeyValueStore.arn; composite key IDs and key/value payloads are excluded.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Intentionally unsupported: key/value contents and key names are application payload, even if schema does not mark them sensitive.",
         "officialDocumentation": "website/docs/r/cloudfrontkeyvaluestore_key.html.markdown",
         "shapes": {
@@ -45414,17 +45418,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfrontkeyvaluestore_keys_exclusive": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: owner store ARN navigation without inspecting key/value payloads. Exclusive reconciliation is not a snapshot of separately managed key resources; destroy does not delete keys. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45434,10 +45440,10 @@
           "resource_key_value_pair"
         ],
         "placement": "Supported: retain Logical Controller for aws_cloudfrontkeyvaluestore_keys_exclusive; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique store context; exclusive reconciliation cannot claim ownership of all key resources.",
+        "ownership": "Supported: unique verified store navigation without spatial promotion or ownership of other key resources; exclusive reconciliation does not enumerate keys.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: owner store ARN navigation without inspecting key/value payloads. Exclusive reconciliation is not a snapshot of separately managed key resources; destroy does not delete keys.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: exact key_value_store_arn to a current managed KeyValueStore.arn; composite key IDs and key/value payloads are excluded. Exclusive reconciliation is not a snapshot of separately managed key resources; destroy does not delete keys.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Intentionally unsupported: key/value contents and key names are application payload, even if schema does not mark them sensitive.",
         "officialDocumentation": "website/docs/r/cloudfrontkeyvaluestore_keys_exclusive.html.markdown",
         "shapes": {
@@ -45459,7 +45465,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}

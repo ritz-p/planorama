@@ -15,6 +15,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::cloudfront_functions::helper(kind) => (
+                "key_value_store_arn",
+                "Owner KeyValueStore",
+                "Key management",
+            ),
             kind if super::search::helper(kind) => {
                 ("domain_name", "Search domain", "Domain configuration")
             }
