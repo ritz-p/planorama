@@ -373,3 +373,16 @@ Pinned AWS Provider 6.70.0 [Backup source/schema](https://github.com/hashicorp/t
 - Notification sns_topic_arn matches a managed SNS topic arn independently of ownership.
 
 Every relation requires unique complete explicit current managed references, known output equality and compatible provider/account/region bindings. Proven helpers embed with their own actions and coverage; unknown, ambiguous, incomplete, mismatched, deleted/deposed or filtered owners fall back independently. Shared KMS/SNS resources remain independent. No policies, retention claims or runtime recovery guarantees are displayed. See the [fixture](../tests/fixtures/backup-vaults-plan.json).
+
+## Backup plan rules (#821)
+
+The pinned [Backup plan schema/source](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/backup/plan.go) uses sets for rule, copy_action and scan_setting. Complete aggregate references are supported for:
+
+- rule.target_vault_name to standard vault name/id, including multiple rules.
+- rule.target_logically_air_gapped_backup_vault_arn to the distinct air-gapped vault arn.
+- rule.copy_action.destination_vault_arn to standard/air-gapped vault arn.
+- scan_setting.scanner_role_arn to IAM role arn, with known GUARDDUTY malware_scanner.
+
+Known output values must equal the complete set of explicitly referenced compatible current managed endpoints. Repeated uses of one endpoint and set reordering are allowed; this proves plan-level references, not positional rule-to-rule relationships. Missing fields in collection ancestry, mixed literals, unknown masks, ambiguous identical outputs, incomplete provenance, deleted/deposed endpoints and incompatible scopes retain fallback. Optional paths present in only part of a rule collection remain conservative fallback.
+
+Ordinary vault targets use compatible local provider scope; scanner roles use the global IAM account contract. Copy ARNs must match each destination's independently configured region. A single known destination account is required across the copy collection. Same-provider copies can use that common binding; cross-region aliases additionally require independent matching account evidence. Cross-account copies remain fallback. No plan containment, recovery guarantee or runtime copy status is inferred. See the [fixture](../tests/fixtures/backup-plan-rules-plan.json).

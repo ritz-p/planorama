@@ -172,6 +172,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_efs_file_system_policy"
                 | "aws_efs_replication_configuration"
                 | "aws_backup_vault"
+                | "aws_backup_plan"
                 | "aws_backup_logically_air_gapped_vault"
                 | "aws_backup_vault_lock_configuration"
                 | "aws_backup_vault_notifications"

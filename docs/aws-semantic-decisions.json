@@ -5523,7 +5523,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 821,
-      "gap": "#720 reviewed: Partial: #508 service_references.rs verifies one rule.target_vault_name via vault name/id. Missing: multiple-rule target proof, air-gapped ARN, copy destination ARN and scanner role ARN; cross-region copies need destination scope, not plan containment. Follow-up #821. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "Implemented #821: complete aggregate rule target names, air-gapped vault ARNs, nested copy destination ARN sets and GuardDuty scanner role ARNs. Explicit matching current endpoints and independent scope proof; cross-region copies remain independent. Partial collection ancestry and unproven/cross-account destinations fall back. See aws-storage.md#backup-plan-rules-821. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -5539,8 +5539,8 @@
         "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Partial: #508 service_references.rs verifies one rule.target_vault_name via vault name/id. Missing: multiple-rule target proof, air-gapped ARN, copy destination ARN and scanner role ARN; cross-region copies need destination scope, not plan containment. Follow-up #821.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #821 complete aggregate rule target names, air-gapped vault ARNs, nested copy destination ARN sets and GuardDuty scanner role ARNs. Explicit matching current endpoints and independent scope proof; cross-region copies remain independent. Partial collection ancestry and unproven/cross-account destinations fall back. See aws-storage.md#backup-plan-rules-821.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_plan.html.markdown",
         "shapes": {

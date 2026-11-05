@@ -13,6 +13,7 @@ mod associations;
 mod autoscaling;
 mod autoscaling_network;
 mod backup;
+mod backup_plan;
 mod backup_vaults;
 mod basic;
 mod batch;
