@@ -1,0 +1,512 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudfront_public_key.first",
+          "mode": "managed",
+          "type": "aws_cloudfront_public_key",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_public_key.second",
+          "mode": "managed",
+          "type": "aws_cloudfront_public_key",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_key_group.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_key_group",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "items": {
+              "references": [
+                "aws_cloudfront_public_key.first.id",
+                "aws_cloudfront_public_key.second.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_field_level_encryption_profile.first",
+          "mode": "managed",
+          "type": "aws_cloudfront_field_level_encryption_profile",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_entities": [
+              {
+                "items": [
+                  {
+                    "public_key_id": {
+                      "references": [
+                        "aws_cloudfront_public_key.first.id"
+                      ]
+                    }
+                  },
+                  {
+                    "public_key_id": {
+                      "references": [
+                        "aws_cloudfront_public_key.second.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_field_level_encryption_profile.second",
+          "mode": "managed",
+          "type": "aws_cloudfront_field_level_encryption_profile",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_entities": [
+              {
+                "items": [
+                  {
+                    "public_key_id": {
+                      "references": [
+                        "aws_cloudfront_public_key.first.id"
+                      ]
+                    }
+                  },
+                  {
+                    "public_key_id": {
+                      "references": [
+                        "aws_cloudfront_public_key.second.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_field_level_encryption_config.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_field_level_encryption_config",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "content_type_profile_config": [
+              {
+                "content_type_profiles": [
+                  {
+                    "items": [
+                      {
+                        "profile_id": {
+                          "references": [
+                            "aws_cloudfront_field_level_encryption_profile.first.id"
+                          ]
+                        }
+                      },
+                      {},
+                      {
+                        "profile_id": {
+                          "references": [
+                            "aws_cloudfront_field_level_encryption_profile.second.id"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "query_arg_profile_config": [
+              {
+                "query_arg_profiles": [
+                  {
+                    "items": [
+                      {
+                        "profile_id": {
+                          "references": [
+                            "aws_cloudfront_field_level_encryption_profile.second.id"
+                          ]
+                        }
+                      },
+                      {
+                        "profile_id": {
+                          "references": [
+                            "aws_cloudfront_field_level_encryption_profile.first.id"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.bundle",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "bundle",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_object.bundle",
+          "mode": "managed",
+          "type": "aws_s3_object",
+          "name": "bundle",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.bundle.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_trust_store.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_trust_store",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ca_certificates_bundle_source": [
+              {
+                "ca_certificates_bundle_s3_location": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.bundle.id"
+                      ]
+                    },
+                    "key": {
+                      "references": [
+                        "aws_s3_object.bundle.key"
+                      ]
+                    },
+                    "version": {
+                      "references": [
+                        "aws_s3_object.bundle.version_id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_cloudfront_public_key.first",
+      "mode": "managed",
+      "type": "aws_cloudfront_public_key",
+      "name": "first",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "public-first",
+          "encoded_key": "PRIVATE_PUBLIC_KEY"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_public_key.second",
+      "mode": "managed",
+      "type": "aws_cloudfront_public_key",
+      "name": "second",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "public-second",
+          "encoded_key": "PRIVATE_PUBLIC_KEY"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_key_group.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_key_group",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "group-id",
+          "items": [
+            "public-first",
+            "public-second"
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_field_level_encryption_profile.first",
+      "mode": "managed",
+      "type": "aws_cloudfront_field_level_encryption_profile",
+      "name": "first",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "profile-first",
+          "encryption_entities": [
+            {
+              "items": [
+                {
+                  "public_key_id": "public-first",
+                  "provider_id": "PRIVATE_ENCRYPTION_PROVIDER",
+                  "field_patterns": [
+                    {
+                      "items": [
+                        "PRIVATE_FIELD"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "public_key_id": "public-second",
+                  "provider_id": "PRIVATE_OTHER_PROVIDER",
+                  "field_patterns": [
+                    {
+                      "items": [
+                        "PRIVATE_FIELD"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_field_level_encryption_profile.second",
+      "mode": "managed",
+      "type": "aws_cloudfront_field_level_encryption_profile",
+      "name": "second",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "profile-second",
+          "encryption_entities": [
+            {
+              "items": [
+                {
+                  "public_key_id": "public-first",
+                  "provider_id": "PRIVATE_ENCRYPTION_PROVIDER",
+                  "field_patterns": [
+                    {
+                      "items": [
+                        "PRIVATE_FIELD"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "public_key_id": "public-second",
+                  "provider_id": "PRIVATE_OTHER_PROVIDER",
+                  "field_patterns": [
+                    {
+                      "items": [
+                        "PRIVATE_FIELD"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_field_level_encryption_config.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_field_level_encryption_config",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "encryption-config",
+          "content_type_profile_config": [
+            {
+              "forward_when_content_type_is_unknown": true,
+              "content_type_profiles": [
+                {
+                  "items": [
+                    {
+                      "profile_id": "profile-first",
+                      "content_type": "application/x-www-form-urlencoded",
+                      "format": "URLEncoded"
+                    },
+                    {
+                      "profile_id": null,
+                      "content_type": "PRIVATE_CONTENT",
+                      "format": "URLEncoded"
+                    },
+                    {
+                      "profile_id": "profile-second",
+                      "content_type": "PRIVATE_OTHER_CONTENT",
+                      "format": "URLEncoded"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "query_arg_profile_config": [
+            {
+              "forward_when_query_arg_profile_is_unknown": true,
+              "query_arg_profiles": [
+                {
+                  "items": [
+                    {
+                      "profile_id": "profile-second",
+                      "query_arg": "PRIVATE_QUERY"
+                    },
+                    {
+                      "profile_id": "profile-first",
+                      "query_arg": "PRIVATE_OTHER_QUERY"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_s3_bucket.bundle",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "bundle",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bundle-bucket",
+          "bucket": "bundle-bucket",
+          "arn": "arn:aws:s3:::bundle-bucket"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_s3_object.bundle",
+      "mode": "managed",
+      "type": "aws_s3_object",
+      "name": "bundle",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bundle.pem",
+          "bucket": "bundle-bucket",
+          "key": "bundle.pem",
+          "version_id": "version-1",
+          "content": "PRIVATE_CERTIFICATE"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_trust_store.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_trust_store",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "trust-store",
+          "arn": "arn:aws:cloudfront::111111111111:trust-store/main",
+          "ca_certificates_bundle_source": [
+            {
+              "ca_certificates_bundle_s3_location": [
+                {
+                  "bucket": "bundle-bucket",
+                  "key": "bundle.pem",
+                  "region": "us-west-2",
+                  "version": "version-1"
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ]
+}

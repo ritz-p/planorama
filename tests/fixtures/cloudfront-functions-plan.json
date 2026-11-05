@@ -1,0 +1,298 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudfront_key_value_store.first",
+          "mode": "managed",
+          "type": "aws_cloudfront_key_value_store",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_key_value_store.second",
+          "mode": "managed",
+          "type": "aws_cloudfront_key_value_store",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_function.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_function",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_value_store_associations": {
+              "references": [
+                "aws_cloudfront_key_value_store.first.arn",
+                "aws_cloudfront_key_value_store.second.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_connection_function.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_connection_function",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_function_config": [
+              {
+                "key_value_store_association": [
+                  {
+                    "key_value_store_arn": {
+                      "references": [
+                        "aws_cloudfront_key_value_store.second.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfrontkeyvaluestore_key.main",
+          "mode": "managed",
+          "type": "aws_cloudfrontkeyvaluestore_key",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_value_store_arn": {
+              "references": [
+                "aws_cloudfront_key_value_store.first.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfrontkeyvaluestore_keys_exclusive.main",
+          "mode": "managed",
+          "type": "aws_cloudfrontkeyvaluestore_keys_exclusive",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_value_store_arn": {
+              "references": [
+                "aws_cloudfront_key_value_store.first.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_distribution",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "default_cache_behavior": [
+              {
+                "function_association": [
+                  {
+                    "function_arn": {
+                      "references": [
+                        "aws_cloudfront_function.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "connection_function_association": [
+              {
+                "id": {
+                  "references": [
+                    "aws_cloudfront_connection_function.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_cloudfront_key_value_store.first",
+      "mode": "managed",
+      "type": "aws_cloudfront_key_value_store",
+      "name": "first",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "first",
+          "arn": "arn:aws:cloudfront::111111111111:key-value-store/first",
+          "name": "first"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_key_value_store.second",
+      "mode": "managed",
+      "type": "aws_cloudfront_key_value_store",
+      "name": "second",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "second",
+          "arn": "arn:aws:cloudfront::111111111111:key-value-store/second",
+          "name": "second"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_function.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_function",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cloudfront::111111111111:function/main",
+          "name": "main",
+          "runtime": "cloudfront-js-2.0",
+          "publish": true,
+          "key_value_store_associations": [
+            "arn:aws:cloudfront::111111111111:key-value-store/first",
+            "arn:aws:cloudfront::111111111111:key-value-store/second"
+          ],
+          "code": "PRIVATE_FUNCTION_CODE"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_connection_function.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_connection_function",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "connection-id",
+          "connection_function_arn": "arn:aws:cloudfront::111111111111:connection-function/connection-id",
+          "name": "connection",
+          "publish": true,
+          "connection_function_code": "PRIVATE_CONNECTION_CODE",
+          "connection_function_config": [
+            {
+              "runtime": "cloudfront-js-2.0",
+              "comment": "configuration",
+              "key_value_store_association": [
+                {
+                  "key_value_store_arn": "arn:aws:cloudfront::111111111111:key-value-store/second"
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cloudfrontkeyvaluestore_key.main",
+      "mode": "managed",
+      "type": "aws_cloudfrontkeyvaluestore_key",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_value_store_arn": "arn:aws:cloudfront::111111111111:key-value-store/first",
+          "key": "PRIVATE_KEY",
+          "value": "PRIVATE_VALUE",
+          "id": "arn:aws:cloudfront::111111111111:key-value-store/first,PRIVATE_COMPOSITE_ID"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cloudfrontkeyvaluestore_keys_exclusive.main",
+      "mode": "managed",
+      "type": "aws_cloudfrontkeyvaluestore_keys_exclusive",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_value_store_arn": "arn:aws:cloudfront::111111111111:key-value-store/first",
+          "resource_key_value_pair": [
+            {
+              "key": "PRIVATE_EXCLUSIVE_KEY",
+              "value": "PRIVATE_EXCLUSIVE_VALUE"
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_distribution",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "distribution-id",
+          "default_cache_behavior": [
+            {
+              "function_association": [
+                {
+                  "event_type": "viewer-request",
+                  "function_arn": "arn:aws:cloudfront::111111111111:function/main"
+                }
+              ]
+            }
+          ],
+          "connection_function_association": [
+            {
+              "id": "connection-id"
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    }
+  ]
+}
