@@ -10,10 +10,28 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::cloudfront_observability::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudfront_security::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudfront_functions::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::search_connections::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::search::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::efs_evidence::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::backup_vaults::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::vpc_controls::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::query_logs::label(resource, attribute) {
@@ -697,6 +715,7 @@ pub(crate) fn annotate(
     super::api_usage::annotate(nodes, references, evidence);
     super::efs_evidence::annotate(nodes, references, evidence);
     super::backup_vaults::annotate(nodes, references, evidence);
+    super::vpc_controls::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
     super::application_scaling::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
@@ -717,6 +736,21 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::cloudfront_functions::bindings(raw, reference)
+        && super::cloudfront_security::bindings(raw, reference)
+        && super::cloudfront_observability::bindings(raw, reference)
+        && (super::search_connections::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::search_connections::bindings(raw, reference))
+        && (super::search::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::search::bindings(raw, reference))
         && (super::efs_evidence::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -724,6 +758,12 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         .is_none()
             || super::efs_evidence::bindings(raw, reference))
         && (super::backup_vaults::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && (super::vpc_controls::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
         )
@@ -1204,6 +1244,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
             || super::cloudfront::indexed(&node.resource_type, &reference.attribute)
+            || super::cloudfront_security::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
             || super::s3::aggregate(raw, reference)

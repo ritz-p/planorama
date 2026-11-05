@@ -15393,10 +15393,10 @@
       }
     },
     "aws_cloudsearch_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: independent search domain is Logical; review Spatial promotion with its policy navigation. Not applicable: no configured managed endpoint identity; domain_id and service endpoint URLs are computed. Follow-up #797. Deferred: HTTPS/multi-AZ flags require an explicit known/unknown summary contract; index fields and document defaults remain private.",
+      "gap": "Implemented #797: independent CloudSearch domain card. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15408,11 +15408,11 @@
           "endpoint_options.enforce_https",
           "multi_az"
         ],
-        "placement": "Missing: independent search domain is Logical; review Spatial promotion with its policy navigation.",
+        "placement": "Supported: #797 independent Spatial architecture card; references do not establish ownership or network containment.",
         "ownership": "Not applicable: independent aws_cloudsearch_domain configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_cloudsearch_domain fields provide no configured subnet containment; service references do not propagate network placement.",
         "references": "Not applicable: no configured managed endpoint identity; domain_id and service endpoint URLs are computed.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: HTTPS/multi-AZ flags require an explicit known/unknown summary contract; index fields and document defaults remain private.",
         "officialDocumentation": "website/docs/r/cloudsearch_domain.html.markdown",
         "shapes": {
@@ -15436,10 +15436,10 @@
       }
     },
     "aws_cloudsearch_domain_service_access_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: verified domain navigation; policy document is not network ownership. Missing: domain_name -> cloudsearch_domain.name; access_policy is opaque JSON. Follow-up #797. Intentionally unsupported: access_policy contents and effective search access; domain navigation supplies the useful configuration context.",
+      "gap": "Implemented #797: configured domain_name to cloudsearch_domain.name. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15448,11 +15448,11 @@
           "domain_name",
           "access_policy"
         ],
-        "placement": "Supported: retain Logical aws_cloudsearch_domain_service_access_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified domain navigation; policy document is not network ownership.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_cloudsearch_domain_service_access_policy fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> cloudsearch_domain.name; access_policy is opaque JSON.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to cloudsearch_domain.name. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: access_policy contents and effective search access; domain navigation supplies the useful configuration context.",
         "officialDocumentation": "website/docs/r/cloudsearch_domain_service_access_policy.html.markdown",
         "shapes": {
@@ -15466,10 +15466,10 @@
       }
     },
     "aws_elasticsearch_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: Logical legacy domain needs independent-card review; not a verified alias of opensearch_domain. Missing: complete vpc_options subnet/SG common-VPC proof; no inheritance from OpenSearch type. Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS. Follow-up #797. Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+      "gap": "Implemented #797: complete local subnet/SG IDs plus enabled Cognito, ACM, KMS and log-group references; exact Elasticsearch type remains distinct from OpenSearch. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15491,11 +15491,11 @@
           "log_publishing_options.enabled",
           "log_publishing_options.cloudwatch_log_group_arn"
         ],
-        "placement": "Missing: Logical legacy domain needs independent-card review; not a verified alias of opensearch_domain.",
+        "placement": "Supported: #797 independent Spatial domain, not a verified alias of opensearch_domain.",
         "ownership": "Not applicable: independent aws_elasticsearch_domain configuration; no verified embedded owner in runtime.",
-        "network": "Missing: complete vpc_options subnet/SG common-VPC proof; no inheritance from OpenSearch type.",
-        "references": "Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "network": "Supported: #797 complete matching subnet/SG IDs and a single independently verified VPC; incomplete or implicit default-SG evidence retains regional fallback.",
+        "references": "Supported: #797 complete local subnet/SG IDs plus enabled Cognito, ACM, KMS and log-group references; exact Elasticsearch type remains distinct from OpenSearch. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
         "officialDocumentation": "website/docs/r/elasticsearch_domain.html.markdown",
         "shapes": {
@@ -15566,10 +15566,10 @@
       }
     },
     "aws_elasticsearch_domain_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: domain navigation only; preserve policy identity and action. Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation. Follow-up #797. Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+      "gap": "Implemented #797: configured domain_name to elasticsearch_domain.domain_name. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15578,11 +15578,11 @@
           "domain_name",
           "access_policies"
         ],
-        "placement": "Supported: retain Logical aws_elasticsearch_domain_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: domain navigation only; preserve policy identity and action.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_elasticsearch_domain_policy fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to elasticsearch_domain.domain_name. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
         "officialDocumentation": "website/docs/r/elasticsearch_domain_policy.html.markdown",
         "shapes": {
@@ -15596,10 +15596,10 @@
       }
     },
     "aws_elasticsearch_domain_saml_options": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: verified domain helper navigation. Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier. Follow-up #797. Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+      "gap": "Implemented #797: configured domain_name to elasticsearch_domain.domain_name; IdP metadata and entity_id stay opaque. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15610,11 +15610,11 @@
           "saml_options.idp.entity_id",
           "saml_options.idp.metadata_content"
         ],
-        "placement": "Supported: retain Logical aws_elasticsearch_domain_saml_options basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified domain helper navigation.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_elasticsearch_domain_saml_options fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to elasticsearch_domain.domain_name; IdP metadata and entity_id stay opaque. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
         "officialDocumentation": "website/docs/r/elasticsearch_domain_saml_options.html.markdown",
         "shapes": {
@@ -15639,10 +15639,10 @@
       }
     },
     "aws_elasticsearch_vpc_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Not applicable: endpoint references a shared domain; do not embed domain under endpoint. Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location. Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized. Follow-up #797. Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+      "gap": "Implemented #797: domain_arn to elasticsearch_domain.arn; complete explicit local subnet/SG IDs. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -15653,11 +15653,11 @@
           "vpc_options.subnet_ids",
           "vpc_options.security_group_ids"
         ],
-        "placement": "Supported: retain Logical aws_elasticsearch_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "placement": "Supported: #797 Spatial placement only after complete network proof; otherwise independent Logical fallback.",
         "ownership": "Not applicable: endpoint references a shared domain; do not embed domain under endpoint.",
-        "network": "Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location.",
-        "references": "Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "network": "Supported: #797 complete matching configured subnet/SG sets with common VPC proof independent of the domain location. No inferred default security group.",
+        "references": "Supported: #797 domain_arn to elasticsearch_domain.arn; complete explicit local subnet/SG IDs. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
         "officialDocumentation": "website/docs/r/elasticsearch_vpc_endpoint.html.markdown",
         "shapes": {
@@ -16358,10 +16358,10 @@
       }
     },
     "aws_opensearch_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: Logical application merits independent-card review with data-source navigation. Missing: typed domain/collection data_source_arn, KMS key, enabled Identity Center instance and IAM role references; computed application ARN is not a configured SSO application. Follow-up #797. Deferred: Identity Center enabled flag and key mode need an allowlist distinguishing configured options from computed application identity; app_config values excluded.",
+      "gap": "Implemented #797: complete data-source ARN set of OpenSearch domains/Serverless collections, KMS ARN and enabled IAM role; enabled instance lookup only from a scoped data.aws_ssoadmin_instances.arns singleton. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16374,11 +16374,11 @@
           "iam_identity_center_options.iam_identity_center_instance_arn",
           "iam_identity_center_options.iam_role_for_identity_center_application_arn"
         ],
-        "placement": "Missing: Logical application merits independent-card review with data-source navigation.",
+        "placement": "Supported: #797 independent Spatial architecture card; references do not establish ownership or network containment.",
         "ownership": "Not applicable: independent aws_opensearch_application configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_opensearch_application fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: typed domain/collection data_source_arn, KMS key, enabled Identity Center instance and IAM role references; computed application ARN is not a configured SSO application.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 complete data-source ARN set of OpenSearch domains/Serverless collections, KMS ARN and enabled IAM role; enabled instance lookup only from a scoped data.aws_ssoadmin_instances.arns singleton. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: Identity Center enabled flag and key mode need an allowlist distinguishing configured options from computed application identity; app_config values excluded.",
         "officialDocumentation": "website/docs/r/opensearch_application.html.markdown",
         "shapes": {
@@ -16408,10 +16408,10 @@
       }
     },
     "aws_opensearch_authorize_vpc_endpoint_access": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: domain navigation, not embedding of grantee account. Intentionally unsupported: authorization does not establish VPC containment or reachability. Missing: domain_name -> opensearch_domain.domain_name. account is a grantee account ID, not a managed VPC endpoint or IAM principal. Follow-up #797. Intentionally unsupported: account authorization is not proof of effective access; authorized_principal output is not permission evaluation.",
+      "gap": "Implemented #797: configured domain_name to opensearch_domain.domain_name; account identifies a grantee, never an owner or endpoint. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16420,11 +16420,11 @@
           "account",
           "domain_name"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_authorize_vpc_endpoint_access basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: domain navigation, not embedding of grantee account.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Intentionally unsupported: authorization does not establish VPC containment or reachability.",
-        "references": "Missing: domain_name -> opensearch_domain.domain_name. account is a grantee account ID, not a managed VPC endpoint or IAM principal.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to opensearch_domain.domain_name; account identifies a grantee, never an owner or endpoint. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: account authorization is not proof of effective access; authorized_principal output is not permission evaluation.",
         "officialDocumentation": "website/docs/r/opensearch_authorize_vpc_endpoint_access.html.markdown",
         "shapes": {
@@ -16441,7 +16441,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Supported: Spatial through classification.rs; retain completed #47. Partial: existing complete-subnet common-VPC placement #181 and SG connections #182 (vpc_scope.rs/security_groups.rs and matching tests). This legacy path does not prove the stricter known-value/common-SG-VPC contract; retain its bounded support. Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS. Follow-up #797. Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
+      "gap": "Implemented #797: enabled Cognito identity/user pools and IAM role, custom-endpoint ACM ARN, KMS key ARN or ID with verified normalization, and complete enabled log-group ARN collections. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16466,8 +16466,8 @@
         "placement": "Supported: Spatial through classification.rs; retain completed #47.",
         "ownership": "Not applicable: independent aws_opensearch_domain configuration; no verified embedded owner in runtime.",
         "network": "Partial: existing complete-subnet common-VPC placement #181 and SG connections #182 (vpc_scope.rs/security_groups.rs and matching tests). This legacy path does not prove the stricter known-value/common-SG-VPC contract; retain its bounded support.",
-        "references": "Missing: enabled Cognito pool/role, enabled custom-endpoint ACM certificate, encryption key and enabled log destination references. KMS input accepts ID but readback normalizes ARN; never infer from endpoint DNS.",
-        "scope": "Supported: pre-existing Regional provider account/region handling in scope.rs; remote connection endpoints still require their own owner/region evidence, not local scope inheritance.",
+        "references": "Supported: #797 enabled Cognito identity/user pools and IAM role, custom-endpoint ACM ARN, KMS key ARN or ID with verified normalization, and complete enabled log-group ARN collections. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: encryption/TLS flags require enabled/unknown and key normalization contracts; master credentials, policies and advanced options excluded.",
         "officialDocumentation": "website/docs/r/opensearch_domain.html.markdown",
         "shapes": {
@@ -16538,10 +16538,10 @@
       }
     },
     "aws_opensearch_domain_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: domain navigation only; preserve policy identity and action. Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation. Follow-up #797. Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
+      "gap": "Implemented #797: configured domain_name to opensearch_domain.domain_name. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16550,11 +16550,11 @@
           "domain_name",
           "access_policies"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_domain_policy basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: domain navigation only; preserve policy identity and action.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_opensearch_domain_policy fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; docs call access_policies optional but schema requires it. No policy interpretation.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to opensearch_domain.domain_name. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: access_policies contents and effective permissions; domain navigation is tracked separately.",
         "officialDocumentation": "website/docs/r/opensearch_domain_policy.html.markdown",
         "shapes": {
@@ -16568,10 +16568,10 @@
       }
     },
     "aws_opensearch_domain_saml_options": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: verified domain helper navigation. Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier. Follow-up #797. Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
+      "gap": "Implemented #797: configured domain_name to opensearch_domain.domain_name; IdP metadata and entity_id stay opaque. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16582,11 +16582,11 @@
           "saml_options.idp.entity_id",
           "saml_options.idp.metadata_content"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_domain_saml_options basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified domain helper navigation.",
+        "placement": "Supported: verified domain helpers embed; otherwise independent Logical fallback.",
+        "ownership": "Supported: #797 unique verified domain helper owner, retaining helper identity/action and independent filtered fallback.",
         "network": "Not applicable: reviewed aws_opensearch_domain_saml_options fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: domain_name -> exact service domain.domain_name; IdP entity_id is not a Terraform resource identifier.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 configured domain_name to opensearch_domain.domain_name; IdP metadata and entity_id stay opaque. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: XML metadata, SAML subjects and backend roles are not safe architecture summaries.",
         "officialDocumentation": "website/docs/r/opensearch_domain_saml_options.html.markdown",
         "shapes": {
@@ -16611,10 +16611,10 @@
       }
     },
     "aws_opensearch_inbound_connection_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 798,
-      "gap": "#724 reviewed: Not applicable: accepter lifecycle is distinct even when connection IDs agree. Missing: connection_id -> outbound connection.id, with reversed local/remote account/region proof; accepter stays a separate lifecycle identity. Follow-up #798. Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
+      "gap": "#724 reviewed; #798 implements scoped connection references. Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16626,8 +16626,8 @@
         "placement": "Supported: retain Logical aws_opensearch_inbound_connection_accepter basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: accepter lifecycle is distinct even when connection IDs agree.",
         "network": "Not applicable: reviewed aws_opensearch_inbound_connection_accepter fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: connection_id -> outbound connection.id, with reversed local/remote account/region proof; accepter stays a separate lifecycle identity.",
-        "scope": "Partial: Regional eligibility; inbound target context differs from outbound initiator.",
+        "references": "Supported: explicit known connection_id to outbound connection.id requires both verified domain sides and accepter provider scope matching the remote side; lifecycle identities remain separate.",
+        "scope": "Supported: #798 requires trusted nonconflicting provider account evidence and matching per-side region; the outbound operates in local scope and the accepter in remote scope. JSON-only account selectors remain unverified.",
         "summaries": "Intentionally unsupported: acceptance/connection_status is runtime lifecycle, not connectivity or health.",
         "officialDocumentation": "website/docs/r/opensearch_inbound_connection_accepter.html.markdown",
         "shapes": {
@@ -16641,10 +16641,10 @@
       }
     },
     "aws_opensearch_outbound_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 798,
-      "gap": "#724 reviewed: Not applicable: connects independent domains; neither is owned by the connection. Missing: local/remote domain names require matching owner_id and region at each endpoint; mode DIRECT/VPC_ENDPOINT is not a managed endpoint ID. Follow-up #798. Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
+      "gap": "#724 reviewed; #798 implements scoped connection references. Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16662,8 +16662,8 @@
         "placement": "Supported: retain Logical aws_opensearch_outbound_connection basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: connects independent domains; neither is owned by the connection.",
         "network": "Not applicable: reviewed aws_opensearch_outbound_connection fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: local/remote domain names require matching owner_id and region at each endpoint; mode DIRECT/VPC_ENDPOINT is not a managed endpoint ID.",
-        "scope": "Partial: current Regional eligibility is control-plane only; remote owner_id/region cannot be replaced by provider scope.",
+        "references": "Supported: explicit singleton local_domain_info.domain_name and remote_domain_info.domain_name references to OpenSearch domain.domain_name require independently known owner_id and region, trusted matching account evidence and DIRECT/VPC_ENDPOINT mode; neither mode is an endpoint identity.",
+        "scope": "Supported: #798 requires trusted nonconflicting provider account evidence and matching per-side region; the outbound operates in local scope and the accepter in remote scope. JSON-only account selectors remain unverified.",
         "summaries": "Deferred: DIRECT/VPC_ENDPOINT mode summary needs explicit known/unknown enum handling; connection_status does not prove connectivity.",
         "officialDocumentation": "website/docs/r/opensearch_outbound_connection.html.markdown",
         "shapes": {
@@ -16701,10 +16701,10 @@
       }
     },
     "aws_opensearch_package": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Missing: package_source.s3_bucket_name -> S3 bucket.bucket; key identifies content and is not a bucket or implicit object resource. Follow-up #797. Deferred: package type/engine compatibility needs a selected enum allowlist; package contents and S3 keys excluded.",
+      "gap": "Implemented #797: package_source.s3_bucket_name to s3_bucket.bucket; object keys remain opaque. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16719,8 +16719,8 @@
         "placement": "Supported: retain Logical aws_opensearch_package basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_opensearch_package configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_opensearch_package fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: package_source.s3_bucket_name -> S3 bucket.bucket; key identifies content and is not a bucket or implicit object resource.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 package_source.s3_bucket_name to s3_bucket.bucket; object keys remain opaque. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: package type/engine compatibility needs a selected enum allowlist; package contents and S3 keys excluded.",
         "officialDocumentation": "website/docs/r/opensearch_package.html.markdown",
         "shapes": {
@@ -16745,10 +16745,10 @@
       }
     },
     "aws_opensearch_package_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Not applicable: many-domain package association is not exclusive ownership. Missing: package_id -> package.id and domain_name -> domain.domain_name, with both ends proven; shared packages stay independent. Follow-up #797. Intentionally unsupported: computed reference_path and package version do not establish runtime plugin availability.",
+      "gap": "Implemented #797: typed package ID/domain-name association only with both independent endpoints verified. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16760,8 +16760,8 @@
         "placement": "Supported: retain Logical aws_opensearch_package_association basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: many-domain package association is not exclusive ownership.",
         "network": "Not applicable: reviewed aws_opensearch_package_association fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: package_id -> package.id and domain_name -> domain.domain_name, with both ends proven; shared packages stay independent.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: #797 typed package ID/domain-name association only with both independent endpoints verified. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Intentionally unsupported: computed reference_path and package version do not establish runtime plugin availability.",
         "officialDocumentation": "website/docs/r/opensearch_package_association.html.markdown",
         "shapes": {
@@ -16775,10 +16775,10 @@
       }
     },
     "aws_opensearch_vpc_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 797,
-      "gap": "#724 reviewed: Not applicable: endpoint references a shared domain; do not embed domain under endpoint. Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location. Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized. Follow-up #797. Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
+      "gap": "Implemented #797: domain_arn to opensearch_domain.arn; complete explicit local subnet/SG IDs. Explicit known matching current references and independent provider/account/region evidence are required; conservative fallbacks and summary exclusions remain. See aws-data.md#search-domains-and-configuration-797. #724 audit follow-up.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16789,11 +16789,11 @@
           "vpc_options.subnet_ids",
           "vpc_options.security_group_ids"
         ],
-        "placement": "Supported: retain Logical aws_opensearch_vpc_endpoint basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
+        "placement": "Supported: #797 Spatial placement only after complete network proof; otherwise independent Logical fallback.",
         "ownership": "Not applicable: endpoint references a shared domain; do not embed domain under endpoint.",
-        "network": "Missing: endpoint common-VPC proof from configured subnet/SG collections, independent of domain location.",
-        "references": "Missing: domain_arn -> exact service domain.arn and complete subnet/SG IDs; default SG cannot be synthesized.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "network": "Supported: #797 complete matching configured subnet/SG sets with common VPC proof independent of the domain location. No inferred default security group.",
+        "references": "Supported: #797 domain_arn to opensearch_domain.arn; complete explicit local subnet/SG IDs. Unknown, partial, ambiguous and incompatible evidence retains fallback.",
+        "scope": "Supported: #797 retain independently known compatible provider/account/region evidence; shared endpoints keep their own scope. No inferred scope from service URLs or grantee accounts.",
         "summaries": "Deferred: default-SG configuration needs omitted/computed-value handling before an attachment summary; endpoint URLs and runtime state excluded.",
         "officialDocumentation": "website/docs/r/opensearch_vpc_endpoint.html.markdown",
         "shapes": {
@@ -37775,10 +37775,10 @@
       }
     },
     "aws_vpc_block_public_access_exclusion": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 901,
-      "gap": "#710 audit: Missing: exactly one VPC/subnet target with matching ID; computed resource_arn is not separate configured owner. Follow-up #901.",
+      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901. #710 audit: implemented follow-up.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37789,11 +37789,11 @@
           "internet_gateway_exclusion_mode",
           "resource_arn"
         ],
-        "placement": "Supported: retain Node / Logical default for aws_vpc_block_public_access_exclusion; basic classification is not dedicated semantics.",
-        "ownership": "Missing: verified exclusion helper; no conclusion that selected network is reachable.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified owner, with independent filtered fallback and action coverage.",
         "network": "Not applicable: aws_vpc_block_public_access_exclusion is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: exactly one VPC/subnet target with matching ID; computed resource_arn is not separate configured owner.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: #901 explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Not applicable: aws_vpc_block_public_access_exclusion is reviewed for identity and navigation only. Selected vpc_id, subnet_id, internet_gateway_exclusion_mode fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_block_public_access_exclusion.html.markdown",
         "shapes": {
@@ -37965,10 +37965,10 @@
       }
     },
     "aws_vpc_dhcp_options_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 901,
-      "gap": "#710 audit: Missing: typed VPC/options association; default sentinel is not a managed options ID. Follow-up #901.",
+      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901. #710 audit: implemented follow-up.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37980,8 +37980,8 @@
         "placement": "Supported: retain Association / Logical default for aws_vpc_dhcp_options_association; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: shared options remain independent of every VPC.",
         "network": "Not applicable: aws_vpc_dhcp_options_association is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: typed VPC/options association; default sentinel is not a managed options ID.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: #901 explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Not applicable: aws_vpc_dhcp_options_association is reviewed for identity and navigation only. Selected vpc_id, dhcp_options_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_dhcp_options_association.html.markdown",
         "shapes": {
@@ -38016,10 +38016,10 @@
       }
     },
     "aws_vpc_encryption_control": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 901,
-      "gap": "#710 audit: Missing: VPC-owned configuration reference; exclusion flags name service categories, not actual gateway/peer endpoints. Follow-up #901.",
+      "gap": "Implemented #901: explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901. #710 audit: implemented follow-up.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38030,11 +38030,11 @@
           "nat_gateway_exclusion",
           "vpc_peering_exclusion"
         ],
-        "placement": "Supported: retain Node / Logical default for aws_vpc_encryption_control; basic classification is not dedicated semantics.",
-        "ownership": "Missing: verified control owner with action/coverage; no KMS key contract here.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified owner, with independent filtered fallback and action coverage.",
         "network": "Not applicable: aws_vpc_encryption_control is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: VPC-owned configuration reference; exclusion flags name service categories, not actual gateway/peer endpoints.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: #901 explicit matching current VPC/subnet/options IDs, exclusive exclusion target and known modes, verified helper ownership and complete DHCP association with independent shared options. Default options and computed resource ARN cannot prove endpoints. See aws-network.md#vpc-controls-901.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Deferred: mode/exclusion configuration summary requires a label separating requested policy from observed enforcement; state messages and encryption guarantees excluded.",
         "officialDocumentation": "website/docs/r/vpc_encryption_control.html.markdown",
         "shapes": {
@@ -41669,10 +41669,10 @@
       }
     },
     "aws_appsync_api": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 942,
-      "gap": "#714 audit: Missing: Event API typed Cognito/Lambda auth and logging-role references; distinct identity from GraphQL API. Missing: review independent Event API architecture card; current basic Connector is Logical, not dedicated Spatial support. Follow-up #942. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #942 implements the bounded Event API and namespace relationships. Intentionally unsupported: no arbitrary aws_appsync_api attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41686,11 +41686,11 @@
           "event_config.auth_provider.lambda_authorizer_config.authorizer_uri",
           "event_config.log_config.cloudwatch_logs_role_arn"
         ],
-        "placement": "Missing: review independent Event API architecture card; current basic Connector is Logical, not dedicated Spatial support.",
+        "placement": "Supported: independent Spatial Event API card, with api_id/api_arn distinct from GraphQL API id/arn.",
         "ownership": "Not applicable: retain independent aws_appsync_api identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_appsync_api has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: Event API typed Cognito/Lambda auth and logging-role references; distinct identity from GraphQL API.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: complete indexed event_config.auth_provider Cognito user_pool_id to pool.id with auth_type and aws_region; Lambda authorizer_uri to function.arn with AWS_LAMBDA; singleton log_config.cloudwatch_logs_role_arn to IAM role.arn.",
+        "scope": "Supported: regional identity with independent provider/account/state evidence; configured Cognito aws_region qualifies each pool while IAM logging roles remain global.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_api attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_api.html.markdown",
         "shapes": {
@@ -41745,7 +41745,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_events.rs",
+          "tests/unit/semantic/appsync_events.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
@@ -41842,10 +41844,10 @@
       }
     },
     "aws_appsync_channel_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 942,
-      "gap": "#714 audit: Missing: Event API owner and API-qualified data-source names; code handlers opaque. Follow-up #942. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #942 implements the bounded Event API and namespace relationships. Intentionally unsupported: no arbitrary aws_appsync_channel_namespace attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -41855,11 +41857,11 @@
           "handler_configs.on_publish.integration.data_source_name",
           "handler_configs.on_subscribe.integration.data_source_name"
         ],
-        "placement": "Supported: retain Logical Node for aws_appsync_channel_namespace; basic display is not complete semantics.",
-        "ownership": "Not applicable: retain independent aws_appsync_channel_namespace identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
+        "placement": "Supported: verified namespace embeds under its Event API; unresolved/filtered ownership keeps independent fallback.",
+        "ownership": "Supported: explicit known api_id to Event API.api_id, preserving namespace action, identity and coverage.",
         "network": "Not applicable: aws_appsync_channel_namespace has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: Event API owner and API-qualified data-source names; code handlers opaque.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: api_id to Event API.api_id and singleton on_publish/on_subscribe integration.data_source_name to data source.name, qualified by the same explicit known Event API on both objects. CODE/DIRECT behavior is known; code remains opaque.",
+        "scope": "Supported: regional identity with independent provider/account/state evidence; configured Cognito aws_region qualifies each pool while IAM logging roles remain global.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_channel_namespace attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_channel_namespace.html.markdown",
         "shapes": {
@@ -41891,7 +41893,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_events.rs",
+          "tests/unit/semantic/appsync_events.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
@@ -42023,10 +42027,10 @@
       }
     },
     "aws_appsync_domain_name": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 945,
-      "gap": "#714 audit: Missing: ACM or IAM server certificate ARN; certificate must reside in us-east-1. Follow-up #945. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #945 implements the bounded custom-domain certificate and GraphQL association references. Intentionally unsupported: no arbitrary aws_appsync_domain_name attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42038,8 +42042,8 @@
         "placement": "Supported: retain Logical Node for aws_appsync_domain_name; basic display is not complete semantics.",
         "ownership": "Not applicable: retain independent aws_appsync_domain_name identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_appsync_domain_name has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: ACM or IAM server certificate ARN; certificate must reside in us-east-1.",
-        "scope": "Partial: Regional API control plane; us-east-1 certificate requirement and generated CloudFront DNS do not make every endpoint regional or prove distribution ownership.",
+        "references": "Supported: explicit certificate_arn to exact ACM certificate.arn in us-east-1 or global IAM server certificate.arn, with matching known values and compatible account evidence.",
+        "scope": "Supported: independent compatible provider/account/region/state identity; ACM certificates must be in us-east-1, IAM server certificates remain Global, and association endpoints match the association region.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_domain_name attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_domain_name.html.markdown",
         "shapes": {
@@ -42061,17 +42065,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_domains.rs",
+          "tests/unit/semantic/appsync_domains.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_appsync_domain_name_api_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 945,
-      "gap": "#714 audit: Missing: GraphQL API/domain association preserving both independently shared endpoints. Follow-up #945. Six dimensions and pinned field contracts recorded here.",
+      "gap": "#714 audit; #945 implements the bounded custom-domain certificate and GraphQL association references. Intentionally unsupported: no arbitrary aws_appsync_domain_name_api_association attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -42080,11 +42086,11 @@
           "api_id",
           "domain_name"
         ],
-        "placement": "Supported: retain Logical Association for aws_appsync_domain_name_api_association; basic display is not complete semantics.",
+        "placement": "Supported: proven association lowers between independently shared domain and GraphQL API with unchanged provenance/action/coverage; unproven evidence retains Logical fallback.",
         "ownership": "Not applicable: retain independent aws_appsync_domain_name_api_association identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_appsync_domain_name_api_association has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: GraphQL API/domain association preserving both independently shared endpoints.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: explicit api_id to GraphQL API.id and domain_name to custom domain.domain_name; both independently verified endpoints are required for association lowering.",
+        "scope": "Supported: independent compatible provider/account/region/state identity; ACM certificates must be in us-east-1, IAM server certificates remain Global, and association endpoints match the association region.",
         "summaries": "Intentionally unsupported: no arbitrary aws_appsync_domain_name_api_association attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/appsync_domain_name_api_association.html.markdown",
         "shapes": {
@@ -42106,7 +42112,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/appsync_domains.rs",
+          "tests/unit/semantic/appsync_domains.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
@@ -45162,10 +45170,10 @@
       }
     },
     "aws_cloudfront_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: key_value_store_associations ARN set and stage-aware incoming consumer proof. Function code never supplies resource references. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45179,8 +45187,8 @@
         "placement": "Supported: retain Logical Node for aws_cloudfront_function; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: key_value_store_associations ARN set and stage-aware incoming consumer proof. Function code never supplies resource references.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete known store ARN associations with cloudfront-js-2.0 runtime; connection functions use the nested singleton association. Existing incoming consumers require known publish=true and preserve distinct function output contracts.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Deferred: runtime/publish configuration summary until function-consumer presentation is implemented; source code and status excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_function.html.markdown",
         "shapes": {
@@ -45217,7 +45225,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), name (required), stage (required). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -45237,10 +45247,10 @@
       }
     },
     "aws_cloudfront_connection_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: nested KeyValueStore ARN associations and separate connection_function_arn output; not an alias of CloudFront Function. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45255,8 +45265,8 @@
         "placement": "Supported: retain Logical Node for aws_cloudfront_connection_function; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: nested KeyValueStore ARN associations and separate connection_function_arn output; not an alias of CloudFront Function.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete known store ARN associations with cloudfront-js-2.0 runtime; connection functions use the nested singleton association. Existing incoming consumers require known publish=true and preserve distinct function output contracts.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Deferred: runtime/publish summary with separate development/live known-state contract; connection_function_code excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_connection_function.html.markdown",
         "shapes": {
@@ -45297,7 +45307,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {},
@@ -45326,7 +45338,7 @@
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: shared store identity sufficient; function and key helpers own incoming references. No source import or managed child list in this pinned schema.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "scope": "Supported: Global identity retains account evidence for incoming function and key-helper references; provider region is not deployment scope.",
         "summaries": "Intentionally unsupported: store contents and runtime size are not architecture configuration.",
         "officialDocumentation": "website/docs/r/cloudfront_key_value_store.html.markdown",
         "shapes": {
@@ -45363,10 +45375,10 @@
       }
     },
     "aws_cloudfrontkeyvaluestore_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: owner store ARN navigation without inspecting key/value payloads. Deprecated composite id is not store identity. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45377,10 +45389,10 @@
           "id"
         ],
         "placement": "Supported: retain Logical Node for aws_cloudfrontkeyvaluestore_key; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique store context; exclusive reconciliation cannot claim ownership of all key resources.",
+        "ownership": "Supported: unique verified store navigation without spatial promotion or ownership of other key resources; exclusive reconciliation does not enumerate keys.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: owner store ARN navigation without inspecting key/value payloads. Deprecated composite id is not store identity.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: exact key_value_store_arn to a current managed KeyValueStore.arn; composite key IDs and key/value payloads are excluded.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Intentionally unsupported: key/value contents and key names are application payload, even if schema does not mark them sensitive.",
         "officialDocumentation": "website/docs/r/cloudfrontkeyvaluestore_key.html.markdown",
         "shapes": {
@@ -45406,17 +45418,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfrontkeyvaluestore_keys_exclusive": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 913,
-      "gap": "#715 audit: Missing: owner store ARN navigation without inspecting key/value payloads. Exclusive reconciliation is not a snapshot of separately managed key resources; destroy does not delete keys. Follow-up #913. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #913 implements typed KeyValueStore references and known publish-state checks for existing consumers. Runtime summaries remain deferred; function code and key/value contents are excluded. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45426,10 +45440,10 @@
           "resource_key_value_pair"
         ],
         "placement": "Supported: retain Logical Controller for aws_cloudfrontkeyvaluestore_keys_exclusive; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique store context; exclusive reconciliation cannot claim ownership of all key resources.",
+        "ownership": "Supported: unique verified store navigation without spatial promotion or ownership of other key resources; exclusive reconciliation does not enumerate keys.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: owner store ARN navigation without inspecting key/value payloads. Exclusive reconciliation is not a snapshot of separately managed key resources; destroy does not delete keys.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: exact key_value_store_arn to a current managed KeyValueStore.arn; composite key IDs and key/value payloads are excluded. Exclusive reconciliation is not a snapshot of separately managed key resources; destroy does not delete keys.",
+        "scope": "Supported: Global service scope retains independent account evidence; late account compatibility is checked before references are used.",
         "summaries": "Intentionally unsupported: key/value contents and key names are application payload, even if schema does not mark them sensitive.",
         "officialDocumentation": "website/docs/r/cloudfrontkeyvaluestore_keys_exclusive.html.markdown",
         "shapes": {
@@ -45451,17 +45465,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudfront_functions.rs",
+          "tests/unit/semantic/cloudfront_functions.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_key_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: complete items public-key ID set; key groups remain shared and do not own public keys. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45473,8 +45489,8 @@
         "placement": "Supported: retain Logical Node for aws_cloudfront_key_group; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: complete items public-key ID set; key groups remain shared and do not own public keys.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete items public-key ID set with exact current managed public_key.id outputs; shared keys are not owned by groups.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_key_group attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_key_group.html.markdown",
         "shapes": {
@@ -45503,7 +45519,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
@@ -45526,7 +45544,7 @@
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: independent public-key identity sufficient; key-group and encryption-profile consumers own references. encoded_key is content, not a KMS reference.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "scope": "Supported: Global identity retains account evidence for incoming key-group and encryption-profile references; no provider-region deployment.",
         "summaries": "Intentionally unsupported: encoded_key material and encryption validity are excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_public_key.html.markdown",
         "shapes": {
@@ -45563,10 +45581,10 @@
       }
     },
     "aws_cloudfront_field_level_encryption_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: content-type and query-argument profile ID collections; interpret only explicit typed identity, never matching rules. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45579,8 +45597,8 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_field_level_encryption_config; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: content-type and query-argument profile ID collections; interpret only explicit typed identity, never matching rules.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete indexed content-type and query-argument profile ID collections; known absent optional content profile IDs are skipped, matching rules are opaque.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_field_level_encryption_config attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_field_level_encryption_config.html.markdown",
         "shapes": {
@@ -45616,17 +45634,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_field_level_encryption_profile": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: encryption_entities public_key_id references; provider_id is an encryption-provider identifier, not Terraform provider binding or IAM identity. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45639,8 +45659,8 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_field_level_encryption_profile; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: encryption_entities public_key_id references; provider_id is an encryption-provider identifier, not Terraform provider binding or IAM identity.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: indexed encryption_entities public_key_id references; provider_id remains an encryption-provider identifier, not Terraform provider binding or IAM identity.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_field_level_encryption_profile attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_field_level_encryption_profile.html.markdown",
         "shapes": {
@@ -45674,17 +45694,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_trust_store": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 914,
-      "gap": "#715 audit: Missing: S3 bundle provenance with explicit bucket region and optional version; CloudFront remains Global, not the bucket region. No certificate parsing. Follow-up #914. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #914 implements bounded typed key/profile collections and S3 bundle provenance. Shared identities remain Logical; safe configuration summaries remain deferred. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45700,8 +45722,8 @@
         "placement": "Supported: retain Logical Policy for aws_cloudfront_trust_store; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: S3 bundle provenance with explicit bucket region and optional version; CloudFront remains Global, not the bucket region. No certificate parsing.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: S3 bucket ID/name and explicitly bucket-qualified object key/version references; known bucket region is required independently of Global CloudFront scope. No certificate parsing.",
+        "scope": "Supported: Global identity retains independent account evidence, including late account checks; regional S3 endpoints keep their own verified region.",
         "summaries": "Intentionally unsupported: key material, field patterns and cryptographic outcomes; no arbitrary aws_cloudfront_trust_store attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_trust_store.html.markdown",
         "shapes": {
@@ -45751,17 +45773,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_security.rs",
+          "tests/unit/semantic/cloudfront_security.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_monitoring_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 915,
-      "gap": "#715 audit: Missing: distribution ID owner reference; metrics subscription does not identify a CloudWatch alarm or log group. Follow-up #915. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #915 implements distribution ownership and typed realtime log destinations. Safe metrics/sampling summaries remain deferred; no CloudWatch alarm/log-group inference or runtime delivery claims. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45770,11 +45794,11 @@
           "distribution_id",
           "monitoring_subscription.realtime_metrics_subscription_config.realtime_metrics_subscription_status"
         ],
-        "placement": "Supported: retain Logical Controller for aws_cloudfront_monitoring_subscription; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique current distribution ID proof for subscription helper; retain helper provenance.",
+        "placement": "Supported: embed under the proven Spatial distribution; unresolved ownership retains Logical fallback.",
+        "ownership": "Supported: unique proven distribution owner with account-compatible scope; preserve helper identity, action and selection.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: distribution ID owner reference; metrics subscription does not identify a CloudWatch alarm or log group.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: unique explicit distribution_id to current managed CloudFront distribution.id; metrics subscription status does not identify a CloudWatch alarm or log group.",
+        "scope": "Supported: Global identity retains account evidence and checks late provider account compatibility; Kinesis retains independently known regional scope.",
         "summaries": "Intentionally unsupported: log payloads and metrics/delivery results; no arbitrary aws_cloudfront_monitoring_subscription attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_monitoring_subscription.html.markdown",
         "shapes": {
@@ -45802,17 +45826,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_observability.rs",
+          "tests/unit/semantic/cloudfront_observability.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_realtime_log_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 915,
-      "gap": "#715 audit: Missing: Kinesis stream and IAM role ARNs, gated by endpoint.stream_type; log config remains shared across behaviors. Follow-up #915. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: #915 implements distribution ownership and typed realtime log destinations. Safe metrics/sampling summaries remain deferred; no CloudWatch alarm/log-group inference or runtime delivery claims. Six dimensions and pinned fields: aws-semantic-decisions.json.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45826,8 +45852,8 @@
         "placement": "Supported: retain Logical Controller for aws_cloudfront_realtime_log_config; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: Kinesis stream and IAM role ARNs, gated by endpoint.stream_type; log config remains shared across behaviors.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: singleton endpoint and kinesis_stream_config with known stream_type=Kinesis; exact managed Kinesis stream.arn and IAM role.arn references. Distribution consumers retain their existing contract.",
+        "scope": "Supported: Global identity retains account evidence and checks late provider account compatibility; Kinesis retains independently known regional scope.",
         "summaries": "Intentionally unsupported: fields may request custom function log data; no log contents, delivery success or arbitrary field list rendering.",
         "officialDocumentation": "website/docs/r/cloudfront_realtime_log_config.html.markdown",
         "shapes": {
@@ -45866,7 +45892,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_observability.rs",
+          "tests/unit/semantic/cloudfront_observability.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), name (required). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {

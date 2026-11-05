@@ -15,6 +15,32 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_vpc_encryption_control" => {
+                ("vpc_id", "Encryption control VPC", "Encryption control")
+            }
+            "aws_vpc_block_public_access_exclusion" => {
+                let field = if raw.attributes.iter().any(|r| {
+                    r.target == index
+                        && r.attribute == "vpc_id"
+                        && super::service_references::verified(raw, r)
+                }) {
+                    "vpc_id"
+                } else {
+                    "subnet_id"
+                };
+                (field, "Exclusion target", "Public access exclusions")
+            }
+            "aws_cloudfront_monitoring_subscription" => {
+                ("distribution_id", "Monitoring distribution", "Monitoring")
+            }
+            kind if super::cloudfront_functions::helper(kind) => (
+                "key_value_store_arn",
+                "Owner KeyValueStore",
+                "Key management",
+            ),
+            kind if super::search::helper(kind) => {
+                ("domain_name", "Search domain", "Domain configuration")
+            }
             "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
                 ("file_system_id", "File system", "Policies")
             }
@@ -82,6 +108,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_appsync_channel_namespace" => {
+                ("api_id", "Namespace Event API", "Channel namespaces")
+            }
             "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
             "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
             "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
@@ -162,8 +191,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if (node.resource_type == "aws_flow_log"
-            && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+        if (matches!(
+            node.resource_type.as_str(),
+            "aws_flow_log" | "aws_cloudfront_monitoring_subscription"
+        ) && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+            || node.resource_type == "aws_appsync_channel_namespace"
+            || super::search::helper(&node.resource_type)
             || matches!(
                 node.resource_type.as_str(),
                 "aws_networkfirewall_logging_configuration"
@@ -172,6 +205,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     | "aws_backup_vault_lock_configuration"
                     | "aws_backup_vault_notifications"
                     | "aws_backup_vault_policy"
+                    | "aws_vpc_encryption_control"
+                    | "aws_vpc_block_public_access_exclusion"
                     | "aws_route53_records_exclusive"
                     | "aws_ecs_task_set"
             )

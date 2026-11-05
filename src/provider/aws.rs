@@ -5,6 +5,8 @@ mod application_scaling;
 mod apprunner;
 pub(crate) mod appsync;
 mod appsync_datasource;
+mod appsync_domains;
+pub(crate) mod appsync_events;
 mod appsync_execution;
 mod appsync_helpers;
 mod associations;
@@ -17,6 +19,9 @@ mod batch;
 mod classification;
 mod cloud_map;
 pub(crate) mod cloudfront;
+mod cloudfront_functions;
+mod cloudfront_observability;
+pub(crate) mod cloudfront_security;
 pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
@@ -87,6 +92,8 @@ mod s3_exports;
 mod sagemaker;
 mod scaling;
 mod scraper;
+pub(crate) mod search;
+pub(crate) mod search_connections;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
@@ -109,6 +116,7 @@ mod scope;
 mod security_group_rules;
 mod security_groups;
 mod service_members;
+mod vpc_controls;
 mod vpc_gateways;
 mod vpc_routes;
 pub(crate) mod waf;
@@ -176,7 +184,10 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
-        "aws_appsync_graphql_api" => crate::model::Placement::Spatial,
+        "aws_appsync_graphql_api" | "aws_appsync_api" => crate::model::Placement::Spatial,
+        "aws_cloudsearch_domain" | "aws_elasticsearch_domain" | "aws_opensearch_application" => {
+            crate::model::Placement::Spatial
+        }
         "aws_s3control_bucket" | "aws_s3outposts_endpoint" => crate::model::Placement::Spatial,
         "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
             crate::model::Placement::Spatial
@@ -286,6 +297,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
+    search::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
     autoscaling_network::present(&raw, &mut graph);
     fsx::present(&raw, &mut graph);
