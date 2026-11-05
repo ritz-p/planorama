@@ -13,6 +13,7 @@ mod associations;
 mod autoscaling;
 mod autoscaling_network;
 mod backup;
+mod backup_vaults;
 mod basic;
 mod batch;
 mod classification;
@@ -181,6 +182,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
             crate::model::Placement::Spatial
         }
         "aws_datasync_agent" => crate::model::Placement::Spatial,
+        "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
         "aws_appsync_graphql_api" | "aws_appsync_api" => crate::model::Placement::Spatial,
         "aws_cloudsearch_domain" | "aws_elasticsearch_domain" | "aws_opensearch_application" => {

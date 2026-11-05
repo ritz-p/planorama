@@ -363,3 +363,13 @@ Targets keep their own scope, including cross-region replication KMS keys.
 Computed metadata destinations, table-export flags, prefixes and retention settings
 do not synthesize resources, ownership or runtime guarantees. Unproven inputs retain
 ordinary Terraform navigation independently of dedicated references.
+
+## Backup vaults (#820)
+
+Pinned AWS Provider 6.70.0 [Backup source/schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/backup) defines these explicit contracts:
+
+- The logically air-gapped vault is an independent regional Spatial card. Its configured encryption_key_arn must match a managed KMS key arn; computed encryption alone does not establish provenance.
+- Lock configuration, notification and policy helpers use backup_vault_name to a vault name/id. Both standard and logically air-gapped vaults keep distinct identities. A known computed backup_vault_arn must corroborate the owner's arn; it cannot replace configured name provenance.
+- Notification sns_topic_arn matches a managed SNS topic arn independently of ownership.
+
+Every relation requires unique complete explicit current managed references, known output equality and compatible provider/account/region bindings. Proven helpers embed with their own actions and coverage; unknown, ambiguous, incomplete, mismatched, deleted/deposed or filtered owners fall back independently. Shared KMS/SNS resources remain independent. No policies, retention claims or runtime recovery guarantees are displayed. See the [fixture](../tests/fixtures/backup-vaults-plan.json).

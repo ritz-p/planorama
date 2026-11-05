@@ -135,6 +135,7 @@ examples/api-responses.svg
 examples/fsx-network.svg
 examples/fsx-children.svg
 examples/efs-configuration.svg
+examples/backup-vaults.svg
 examples/vpc-controls.svg
 examples/search-domains.svg
 examples/search-network.svg

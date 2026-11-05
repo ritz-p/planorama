@@ -1,0 +1,186 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "type": "aws_backup_vault",
+      "address": "aws_backup_vault.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "main",
+          "id": "main",
+          "arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:main"
+        }
+      }
+    },
+    {
+      "type": "aws_kms_key",
+      "address": "aws_kms_key.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/example",
+          "id": "example"
+        }
+      }
+    },
+    {
+      "type": "aws_sns_topic",
+      "address": "aws_sns_topic.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:vault"
+        }
+      }
+    },
+    {
+      "type": "aws_backup_logically_air_gapped_vault",
+      "address": "aws_backup_logically_air_gapped_vault.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "airgap",
+          "id": "airgap",
+          "arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:airgap",
+          "encryption_key_arn": "arn:aws:kms:us-east-1:123456789012:key/example",
+          "min_retention_days": 7,
+          "max_retention_days": 365
+        }
+      }
+    },
+    {
+      "type": "aws_backup_vault_lock_configuration",
+      "address": "aws_backup_vault_lock_configuration.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "backup_vault_name": "main",
+          "backup_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:main",
+          "min_retention_days": 7
+        }
+      }
+    },
+    {
+      "type": "aws_backup_vault_notifications",
+      "address": "aws_backup_vault_notifications.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "backup_vault_name": "main",
+          "backup_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:main",
+          "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:vault",
+          "backup_vault_events": [
+            "BACKUP_JOB_COMPLETED"
+          ]
+        }
+      }
+    },
+    {
+      "type": "aws_backup_vault_policy",
+      "address": "aws_backup_vault_policy.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "backup_vault_name": "main",
+          "backup_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:main",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_backup_vault.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_logically_air_gapped_vault.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_backup_vault_lock_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "backup_vault_name": {
+              "references": [
+                "aws_backup_vault.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_backup_vault_notifications.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "backup_vault_name": {
+              "references": [
+                "aws_backup_vault.main.id"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_backup_vault_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "backup_vault_name": {
+              "references": [
+                "aws_backup_vault.main.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

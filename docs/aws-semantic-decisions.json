@@ -20431,10 +20431,10 @@
       }
     },
     "aws_backup_logically_air_gapped_vault": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 820,
-      "gap": "#720 reviewed: Missing: encryption_key_arn to KMS ARN; independent air-gapped vault card, not an alias of aws_backup_vault. Follow-up #820. Missing: current Logical default hides an independent backup storage endpoint; review Spatial presentation in #820. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "Implemented #820: independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20447,11 +20447,11 @@
           "min_retention_days",
           "max_retention_days"
         ],
-        "placement": "Missing: current Logical default hides an independent backup storage endpoint; review Spatial presentation in #820.",
-        "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
+        "placement": "Supported: #820 independent Spatial vault, distinct from aws_backup_vault and shared KMS endpoints.",
+        "ownership": "Not applicable: independent storage endpoint.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: encryption_key_arn to KMS ARN; independent air-gapped vault card, not an alias of aws_backup_vault. Follow-up #820.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #820 independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_logically_air_gapped_vault.html.markdown",
         "shapes": {
@@ -20487,10 +20487,10 @@
       }
     },
     "aws_backup_vault_lock_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 820,
-      "gap": "#720 reviewed: Missing: backup_vault_name must match vault name/id. Computed backup_vault_arn corroborates, not configured provenance. Follow-up #820. Missing: verified single vault configuration ownership; keep separate fallback until owner proof exists in #820. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "Implemented #820: independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20502,11 +20502,11 @@
           "max_retention_days",
           "changeable_for_days"
         ],
-        "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
-        "ownership": "Missing: verified single vault configuration ownership; keep separate fallback until owner proof exists in #820.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified vault name/id owner with filtered fallback.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: backup_vault_name must match vault name/id. Computed backup_vault_arn corroborates, not configured provenance. Follow-up #820.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #820 independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_vault_lock_configuration.html.markdown",
         "shapes": {
@@ -20538,10 +20538,10 @@
       }
     },
     "aws_backup_vault_notifications": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 820,
-      "gap": "#720 reviewed: Missing: backup_vault_name must match vault name/id; sns_topic_arn must match SNS ARN. Computed backup_vault_arn corroborates, not configured provenance. Follow-up #820. Missing: verified single vault configuration ownership; keep separate fallback until owner proof exists in #820. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "Implemented #820: independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20552,11 +20552,11 @@
           "sns_topic_arn",
           "backup_vault_events"
         ],
-        "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
-        "ownership": "Missing: verified single vault configuration ownership; keep separate fallback until owner proof exists in #820.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified vault name/id owner with filtered fallback.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: backup_vault_name must match vault name/id; sns_topic_arn must match SNS ARN. Computed backup_vault_arn corroborates, not configured provenance. Follow-up #820.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #820 independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_vault_notifications.html.markdown",
         "shapes": {
@@ -20587,10 +20587,10 @@
       }
     },
     "aws_backup_vault_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 820,
-      "gap": "#720 reviewed: Missing: backup_vault_name must match vault name/id. Computed backup_vault_arn corroborates, not configured provenance. Follow-up #820. Missing: verified single vault configuration ownership; keep separate fallback until owner proof exists in #820. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "Implemented #820: independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries. #720 audit follow-up.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -20600,11 +20600,11 @@
           "backup_vault_arn",
           "policy"
         ],
-        "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
-        "ownership": "Missing: verified single vault configuration ownership; keep separate fallback until owner proof exists in #820.",
+        "placement": "Supported: verified helpers embed under their unique owner; otherwise retain an independent Logical fallback with action and coverage.",
+        "ownership": "Supported: unique verified vault name/id owner with filtered fallback.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: backup_vault_name must match vault name/id. Computed backup_vault_arn corroborates, not configured provenance. Follow-up #820.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "references": "Supported: #820 independent Spatial air-gapped vault with configured KMS ARN, verified name/id helper ownership and SNS ARN notification target. Computed vault ARN only corroborates; unproven or filtered owners retain separate coverage. See aws-storage.md#backup-vaults-820. No policy or retention/runtime summaries.",
+        "scope": "Supported: independently known compatible provider/account/region evidence, current identities and named-state boundaries. Endpoint references do not relocate this resource; unknown or conflicting evidence falls back.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_vault_policy.html.markdown",
         "shapes": {
