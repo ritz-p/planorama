@@ -13,6 +13,10 @@ mod ebs_tests;
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
     let resource_type = super::aliases::canonical(resource_type);
     match resource_type {
+        "aws_vpc_dhcp_options_association" => Some([
+            ("dhcp_options_id", "aws_vpc_dhcp_options"),
+            ("vpc_id", "aws_vpc"),
+        ]),
         "aws_appsync_domain_name_api_association" => Some([
             ("domain_name", "aws_appsync_domain_name"),
             ("api_id", "aws_appsync_graphql_api"),
@@ -122,6 +126,8 @@ pub(super) fn lower(raw: &Input) -> Graph {
             "aws_network_interface_attachment" | "aws_network_interface_sg_attachment"
         ) {
             super::eni::association(raw, index)
+        } else if node.resource_type == "aws_vpc_dhcp_options_association" {
+            super::vpc_controls::association(raw, index)
         } else if node.resource_type == "aws_network_acl_association" {
             super::network_acl::association(raw, index)
         } else if node.resource_type == "aws_vpc_security_group_vpc_association" {
