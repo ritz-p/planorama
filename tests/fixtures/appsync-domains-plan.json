@@ -1,0 +1,259 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_acm_certificate.main",
+          "mode": "managed",
+          "type": "aws_acm_certificate",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_server_certificate.main",
+          "mode": "managed",
+          "type": "aws_iam_server_certificate",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_appsync_graphql_api.main",
+          "mode": "managed",
+          "type": "aws_appsync_graphql_api",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_appsync_api.events",
+          "mode": "managed",
+          "type": "aws_appsync_api",
+          "name": "events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_appsync_domain_name.acm",
+          "mode": "managed",
+          "type": "aws_appsync_domain_name",
+          "name": "acm",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_acm_certificate.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appsync_domain_name.iam",
+          "mode": "managed",
+          "type": "aws_appsync_domain_name",
+          "name": "iam",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_iam_server_certificate.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appsync_domain_name_api_association.acm",
+          "mode": "managed",
+          "type": "aws_appsync_domain_name_api_association",
+          "name": "acm",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_appsync_graphql_api.main.id"
+              ]
+            },
+            "domain_name": {
+              "references": [
+                "aws_appsync_domain_name.acm.domain_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appsync_domain_name_api_association.iam",
+          "mode": "managed",
+          "type": "aws_appsync_domain_name_api_association",
+          "name": "iam",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_appsync_graphql_api.main.id"
+              ]
+            },
+            "domain_name": {
+              "references": [
+                "aws_appsync_domain_name.iam.domain_name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_acm_certificate.main",
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:111111111111:certificate/example",
+          "certificate_body": "PRIVATE_CERTIFICATE"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_iam_server_certificate.main",
+      "mode": "managed",
+      "type": "aws_iam_server_certificate",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:server-certificate/example",
+          "certificate_body": "PRIVATE_CERTIFICATE",
+          "private_key": "PRIVATE_KEY"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_graphql_api.main",
+      "mode": "managed",
+      "type": "aws_appsync_graphql_api",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "graphql-api",
+          "name": "shared-graphql",
+          "authentication_type": "AWS_IAM"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_api.events",
+      "mode": "managed",
+      "type": "aws_appsync_api",
+      "name": "events",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "event-api",
+          "name": "events"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_domain_name.acm",
+      "mode": "managed",
+      "type": "aws_appsync_domain_name",
+      "name": "acm",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "acm.example.com",
+          "certificate_arn": "arn:aws:acm:us-east-1:111111111111:certificate/example"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_domain_name.iam",
+      "mode": "managed",
+      "type": "aws_appsync_domain_name",
+      "name": "iam",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "iam.example.com",
+          "certificate_arn": "arn:aws:iam::111111111111:server-certificate/example"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_domain_name_api_association.acm",
+      "mode": "managed",
+      "type": "aws_appsync_domain_name_api_association",
+      "name": "acm",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "graphql-api",
+          "domain_name": "acm.example.com"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_appsync_domain_name_api_association.iam",
+      "mode": "managed",
+      "type": "aws_appsync_domain_name_api_association",
+      "name": "iam",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "graphql-api",
+          "domain_name": "iam.example.com"
+        },
+        "after_unknown": {}
+      }
+    }
+  ]
+}

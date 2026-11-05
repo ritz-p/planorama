@@ -760,3 +760,66 @@ is authoritative. Security-group and newer RDS event source families are outside
 this bounded contract.
 See [fixture](../tests/fixtures/database-events-plan.json),
 [SVG](../examples/database-events.svg) and [HTML](../examples/database-events.html).
+
+## Search domains and configuration (#797)
+
+Contracts follow AWS Provider 6.70.0 pinned [OpenSearch source/schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch), [Elasticsearch](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/elasticsearch) and [CloudSearch](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudsearch). Elasticsearch and OpenSearch retain distinct types and endpoint identities.
+
+| Source | Supported configured references |
+| --- | --- |
+| CloudSearch policy | domain_name to CloudSearch name |
+| OpenSearch/Elasticsearch policy and SAML helpers | domain_name to the same service's domain_name |
+| Both domain types | enabled cognito_options identity_pool_id/user_pool_id to matching pool id, role_arn to IAM role arn; enabled domain_endpoint_options custom_endpoint_certificate_arn to ACM arn; enabled encrypt_at_rest kms_key_id to KMS key arn/id/key_id; enabled log_publishing_options cloudwatch_log_group_arn to log-group arn |
+| Elasticsearch domain and both VPC endpoints | complete vpc_options subnet_ids/security_group_ids to explicit subnet/SG id sets with matching known VPC IDs and independent VPC references |
+| VPC endpoints | domain_arn to the same service's domain arn; domain placement stays independent |
+| OpenSearch application | data_source.data_source_arn set to OpenSearch domain/Serverless collection arn; kms_key_arn to KMS key arn; enabled iam_identity_center_options role ARN to IAM role arn and instance ARN to a single known data.aws_ssoadmin_instances.arns result |
+| Endpoint-access authorization | domain_name to OpenSearch domain_name; grantee account is not an endpoint |
+| Package / package association | package_source.s3_bucket_name to S3 bucket.bucket; association package_id/domain_name to exact package.id/domain.domain_name |
+
+Single configuration blocks require singleton lists; log publishing and application data sources require complete nonempty sets. All rows of an enabled reference collection must have a known true enabled flag. Aggregate references tolerate set reordering and repeated endpoint use but do not infer positional matching. Unknown masks, partial ancestry, mixed literals, ambiguous output values or mixed enabled/disabled log collections retain fallback. KMS ID readback normalization additionally requires the referenced key's known ARN to end in its known key ID; aliases are not substituted. Identity Center lookup accepts only an explicit singleton data result in compatible provider scope, never a fabricated managed instance or computed application identity.
+
+CloudSearch, Elasticsearch domains and OpenSearch applications are independent Spatial cards. Proven domain helpers embed with their own action and coverage; absent/filtered owners retain independent fallback. Proven package associations retain both shared endpoints. Endpoint cards promote only after complete network proof. Existing OpenSearch domain subnet/SG behavior (#181/#182) and Serverless endpoint behavior (#696) are unchanged.
+
+All new relationships require explicit compatible current references and matching known outputs, with independent provider/account/region and named-state identities. Deleted/deposed, literal-only and incompatible references remain conservative. Policies, SAML XML, package content keys, service URLs and runtime access/health are not interpreted or displayed. Maintained examples: [domain configuration](../examples/search-domains.svg), [network](../examples/search-network.svg), [applications and packages](../examples/search-applications.svg).
+
+## OpenSearch cross-domain connections (#798)
+
+The pinned AWS Provider 6.70.0 [outbound schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch/outbound_connection.go) and [inbound schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch/inbound_connection_accepter.go) define these independent lifecycle objects.
+
+| Source path | Verified endpoint and scope |
+| --- | --- |
+| aws_opensearch_outbound_connection.local_domain_info.domain_name | Exact aws_opensearch_domain.domain_name with matching known owner_id and region; outbound provider scope must match this local side |
+| aws_opensearch_outbound_connection.remote_domain_info.domain_name | Exact aws_opensearch_domain.domain_name with independently matching known owner_id and region; local side must also be proven |
+| aws_opensearch_inbound_connection_accepter.connection_id | Exact outbound connection.id, both verified domain sides, and accepter provider account/region matching the remote side |
+
+Both domain-info blocks require singleton lists with known string selectors. The outbound requires known connection_mode DIRECT or VPC_ENDPOINT; the schema makes this field Optional+Computed although its resource documentation calls it Required. Neither mode nor a computed endpoint URL identifies a managed VPC endpoint. Account selectors require independently trusted provider account evidence from the saved-plan path; a JSON-only assume_role or owner_id value cannot establish account identity. Missing/conflicting accounts, mismatched regions, unknown/masked selectors, duplicate or partial references, literal values, deleted/deposed or data objects remain unresolved. Elasticsearch domains are not interchangeable endpoints.
+
+Connections and accepters retain Logical presentation, distinct actions and exactly-once coverage even when their IDs are equal. Neither owns a domain or creates network containment. Filtering removes unavailable endpoints without creating replacements; named states retain separate namespaces. Runtime status, computed endpoint URLs and connection properties do not prove connectivity and are not rendered as payload. The [JSON-only example](../examples/search-connections.svg) deliberately retains unresolved account evidence; saved-plan positive and reversed-scope cases are covered by semantic tests.
+
+## AppSync Event API and channel namespaces (#942)
+
+Contracts follow the pinned AWS Provider 6.70.0 [Event API schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/appsync/api.go) and [namespace schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/appsync/channel_namespace.go). Event API api_id/api_arn are separate from GraphQL API id/arn. Event APIs render as independent Spatial cards; a namespace embeds only under a proven Event API and retains its own action and coverage.
+
+| Source path | Endpoint contract |
+| --- | --- |
+| event_config.auth_provider.cognito_config.user_pool_id | auth_type AMAZON_COGNITO_USER_POOLS, exact pool.id and configured aws_region matching the pool region |
+| event_config.auth_provider.lambda_authorizer_config.authorizer_uri | auth_type AWS_LAMBDA and exact Lambda function.arn in compatible regional scope |
+| event_config.log_config.cloudwatch_logs_role_arn | Exact global IAM role.arn in compatible account scope |
+| namespace api_id | Exact Event API.api_id; GraphQL APIs and api_arn are incompatible |
+| handler_configs.on_publish/on_subscribe.integration.data_source_name | Exact data source.name, with both namespace and data source explicitly referencing the same Event API.api_id and known matching api_id values |
+
+Event config, each Cognito/Lambda config, log config, handler config, publish/subscribe and integration blocks are singleton lists. auth_provider is a complete nonempty list: indexed expression evidence must correlate every selected endpoint with the same evaluated row and known auth_type; mixed auth types are supported, but unknown/invalid types, partial collections, literal rows, swapped row references or malformed masks are unresolved. Cognito region selectors never create resources. Namespace handlers require known CODE or DIRECT behavior; a repeated data source name in another API is not interchangeable. The data source parent is checked as qualification evidence for the namespace reference, without widening existing GraphQL data-source ownership rules.
+
+All references require current explicit managed provenance, known matching outputs and compatible provider/account/state identities. Deleted/deposed, sensitive, unknown, ambiguous and filtered endpoints retain conservative fallback. Shared pools, functions, roles and data sources stay independent; references add no network containment. Handler code, authorizer expressions, credentials, URLs and runtime outcomes are not interpreted or rendered. See the maintained [Event API example](../examples/appsync-events.svg).
+
+## AppSync custom domains (#945)
+
+Contracts use AWS Provider 6.70.0 [domain documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/appsync_domain_name.html.markdown) and the pinned [association schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/appsync/domain_name_api_association.go). All selected inputs and endpoint outputs are scalar strings.
+
+| Source path | Verified endpoint |
+| --- | --- |
+| aws_appsync_domain_name.certificate_arn | ACM certificate.arn in known us-east-1 scope, or global IAM server certificate.arn; account evidence remains independent of the domain region |
+| aws_appsync_domain_name_api_association.api_id | GraphQL API.id in matching regional scope; Event API.api_id and API ARNs are incompatible |
+| aws_appsync_domain_name_api_association.domain_name | Custom domain.domain_name in matching regional scope; id and service-created appsync_domain_name outputs are not substitutes |
+
+Domains remain independent Logical resources; certificate references do not imply certificate ownership or network containment. An association lowers only when both uniquely referenced endpoints are current, compatible and have exact known matching values. Domain and GraphQL API resources remain independently shared, while the association retains its provenance, action and exactly-once coverage. A missing/filtered endpoint, unknown or sensitive value, literal-only reference, ambiguity, wrong provider/type/output, deleted/deposed or data object keeps conservative fallback. Named states remain separate. Certificate bodies, private keys, descriptions, service URLs and runtime validation results are not parsed or rendered. See the [custom-domain example](../examples/appsync-domains.svg).

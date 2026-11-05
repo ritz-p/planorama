@@ -481,6 +481,12 @@ fn cloudfront_auxiliary_paths_require_typed_current_matching_outputs() {
             .push(json!({
                 "address":address,"provider_config_key":"aws"
             }));
+        if matches!(
+            kind,
+            "aws_cloudfront_function" | "aws_cloudfront_connection_function"
+        ) {
+            value["resource_changes"][11]["change"]["after"]["publish"] = json!(true);
+        }
         let parts: Vec<_> = path.split('.').collect();
         let actual = if path.ends_with("trusted_key_groups") {
             json!(["endpoint"])

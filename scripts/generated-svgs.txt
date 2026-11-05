@@ -137,3 +137,13 @@ examples/fsx-children.svg
 examples/efs-configuration.svg
 examples/backup-vaults.svg
 examples/backup-plan-rules.svg
+examples/vpc-controls.svg
+examples/search-domains.svg
+examples/search-network.svg
+examples/search-applications.svg
+examples/search-connections.svg
+examples/appsync-events.svg
+examples/appsync-domains.svg
+examples/cloudfront-functions.svg
+examples/cloudfront-security.svg
+examples/cloudfront-observability.svg
