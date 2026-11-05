@@ -15,6 +15,53 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_vpc_encryption_control" => {
+                ("vpc_id", "Encryption control VPC", "Encryption control")
+            }
+            "aws_vpc_block_public_access_exclusion" => {
+                let field = if raw.attributes.iter().any(|r| {
+                    r.target == index
+                        && r.attribute == "vpc_id"
+                        && super::service_references::verified(raw, r)
+                }) {
+                    "vpc_id"
+                } else {
+                    "subnet_id"
+                };
+                (field, "Exclusion target", "Public access exclusions")
+            }
+            "aws_cloudfront_monitoring_subscription" => {
+                ("distribution_id", "Monitoring distribution", "Monitoring")
+            }
+            kind if super::cloudfront_functions::helper(kind) => (
+                "key_value_store_arn",
+                "Owner KeyValueStore",
+                "Key management",
+            ),
+            kind if super::search::helper(kind) => {
+                ("domain_name", "Search domain", "Domain configuration")
+            }
+            "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
+                ("file_system_id", "File system", "Policies")
+            }
+            kind if super::backup_vaults::helper(kind) => (
+                "backup_vault_name",
+                "Backup vault owner",
+                "Vault configuration",
+            ),
+            "aws_flow_log" => {
+                let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
+                    raw.attributes.iter().any(|r| {
+                        r.target == index
+                            && r.attribute == *field
+                            && super::service_references::verified(raw, r)
+                    })
+                }) else {
+                    continue;
+                };
+                (field, "Monitored resource", "Flow logs")
+            }
+            "aws_network_acl_rule" => ("network_acl_id", "Network ACL owner", "Rules"),
             "aws_security_group_rule"
             | "aws_vpc_security_group_ingress_rule"
             | "aws_vpc_security_group_egress_rule" => {
@@ -61,6 +108,31 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_appsync_channel_namespace" => {
+                ("api_id", "Namespace Event API", "Channel namespaces")
+            }
+            "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
+            "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
+            "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
+            "aws_appsync_type" => ("api_id", "Type GraphQL API", "Schema types"),
+            "aws_s3control_access_point_policy" => (
+                "access_point_arn",
+                "Access point policy owner",
+                "Access point policy",
+            ),
+            "aws_s3control_bucket_policy" => ("bucket", "Outposts bucket owner", "Bucket policy"),
+            "aws_s3control_bucket_lifecycle_configuration" => {
+                ("bucket", "Outposts bucket owner", "Bucket lifecycle")
+            }
+            "aws_s3control_object_lambda_access_point_policy" => {
+                ("name", "Named access point owner", "Object Lambda policy")
+            }
+            "aws_route53_resolver_firewall_rule" => (
+                "firewall_rule_group_id",
+                "DNS Firewall rule group",
+                "DNS Firewall rules",
+            ),
+            "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (
@@ -119,12 +191,26 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if matches!(
+        if (matches!(
             node.resource_type.as_str(),
-            "aws_networkfirewall_logging_configuration"
-                | "aws_route53_records_exclusive"
-                | "aws_ecs_task_set"
-        ) {
+            "aws_flow_log" | "aws_cloudfront_monitoring_subscription"
+        ) && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+            || node.resource_type == "aws_appsync_channel_namespace"
+            || super::search::helper(&node.resource_type)
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_networkfirewall_logging_configuration"
+                    | "aws_efs_backup_policy"
+                    | "aws_efs_file_system_policy"
+                    | "aws_backup_vault_lock_configuration"
+                    | "aws_backup_vault_notifications"
+                    | "aws_backup_vault_policy"
+                    | "aws_vpc_encryption_control"
+                    | "aws_vpc_block_public_access_exclusion"
+                    | "aws_route53_records_exclusive"
+                    | "aws_ecs_task_set"
+            )
+        {
             graph.nodes[index].placement = crate::model::Placement::Spatial;
         }
     }

@@ -5,7 +5,6 @@ fn fixture() -> serde_json::Value {
     json!({"format_version":"1.2","resource_changes":[
         {"address":"terraform_data.root","type":"terraform_data"},
         {"address":"module.app[\"a,b:c.d\"].terraform_data.x","type":"terraform_data"},
-        {"address":"module.app[\"a,b:c.d\"].terraform_data.x","type":"terraform_data"},
         {"address":"module.app[\"a,b:c.d\"].terraform_data.x","deposed":"old","type":"terraform_data"},
         {"address":"module.app[\"a,b:c.d\"].module.db.data.aws_ami.x","mode":"data","type":"aws_ami"}
     ],"planned_values":{"root_module":{"child_modules":[{"address":"module.empty[0]"}]}},
@@ -73,6 +72,19 @@ fn list_modules_counts_original_instances_without_rendering_and_roundtrips_selec
     assert!(saved.status.success());
     assert!(saved.stdout.is_empty());
     assert_eq!(std::fs::read_to_string(path).unwrap(), text);
+    let mut duplicate = fixture();
+    let resource = duplicate["resource_changes"][1].clone();
+    duplicate["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(resource);
+    std::fs::write(&input, duplicate.to_string()).unwrap();
+    let rejected = cli().arg(&input).arg("--list-modules").output().unwrap();
+    assert!(!rejected.status.success());
+    assert!(rejected.stdout.is_empty());
+    assert!(
+        String::from_utf8_lossy(&rejected.stderr).contains("duplicate resource change identity")
+    );
 }
 
 #[test]

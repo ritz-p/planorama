@@ -145,7 +145,7 @@ resource `region` expression and historical objects using the verified v6 contra
 `region_override` retains only a proven safe region, following the restricted
 [AWS evidence contract](aws.md#deployment-scopes). Unresolved overrides stay unknown;
 the shared Rust resolver accepts only Terraform 1.9.8 or 1.16.6 with the exact
-AWS 6.0.0 constraint and the three verified managed types. HTML and Wasm consume
+AWS 6.0.0 constraint, or Terraform 1.9.8 with AWS 6.70.0, for the three verified managed types. HTML and Wasm consume
 the same resolved scope.
 `provider_configuration.region` keeps the original provider value.
 `ArchitectureEntity.scope` remains independent of logical

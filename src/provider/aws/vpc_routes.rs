@@ -8,6 +8,26 @@ use std::collections::BTreeSet;
 mod tests;
 
 fn rule(resource: &str, attribute: &str) -> Option<(&'static [&'static str], &'static str, bool)> {
+    if resource == "aws_default_route_table" {
+        return match attribute {
+            "route.gateway_id" => Some((&["aws_internet_gateway", "aws_vpn_gateway"], "id", false)),
+            "route.nat_gateway_id" => Some((&["aws_nat_gateway"], "id", false)),
+            "route.transit_gateway_id" => Some((&["aws_ec2_transit_gateway"], "id", false)),
+            "route.vpc_peering_connection_id" => {
+                Some((&["aws_vpc_peering_connection"], "id", false))
+            }
+            "route.network_interface_id" => Some((&["aws_network_interface"], "id", false)),
+            "route.egress_only_gateway_id" => {
+                Some((&["aws_egress_only_internet_gateway"], "id", false))
+            }
+            "route.instance_id" => Some((&["aws_instance"], "id", false)),
+            "route.destination_prefix_list_id"
+            | "route.vpc_endpoint_id"
+            | "route.core_network_arn"
+            | "propagating_vgws" => rule("aws_route_table", attribute),
+            _ => None,
+        };
+    }
     match (resource, attribute) {
         ("aws_route", "destination_prefix_list_id")
         | ("aws_route_table", "route.destination_prefix_list_id") => {
@@ -111,7 +131,10 @@ pub(super) fn annotate(
 ) {
     let mut target_counts = std::collections::BTreeMap::new();
     for r in refs.iter() {
-        let attribute = if nodes[r.target].resource_type == "aws_route_table" {
+        let attribute = if matches!(
+            nodes[r.target].resource_type.as_str(),
+            "aws_route_table" | "aws_default_route_table"
+        ) {
             r.attribute.strip_prefix("route.").unwrap_or("")
         } else if nodes[r.target].resource_type == "aws_route" {
             &r.attribute

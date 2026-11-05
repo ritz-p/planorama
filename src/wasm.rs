@@ -99,6 +99,25 @@ pub fn inspect_resources(json: &str) -> Result<String, JsValue> {
 }
 
 #[wasm_bindgen]
+pub fn inspect_input_summary(json: &str) -> Result<String, JsValue> {
+    let result = crate::inspect_input_summary(json).map_err(error)?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}
+
+#[wasm_bindgen]
+pub fn inspect_named_input_summaries(inputs: &str) -> Result<String, JsValue> {
+    if inputs.len() > crate::generation::MAX_INPUT_BYTES * 6 + 16384 {
+        return Err(error(crate::Error::InputTooLarge));
+    }
+    crate::generation::memory::check_inspection(inputs.len() as u64 * 2 + 16 * 1024 * 1024)
+        .map_err(error)?;
+    let result = crate::inspect_named_input_summaries(&decode_inputs(inputs)?).map_err(|failure| {
+        JsValue::from_str(&serde_json::json!({"code": failure.code, "message": failure.to_string(), "input_index": failure.input_index}).to_string())
+    })?;
+    serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))
+}
+
+#[wasm_bindgen]
 pub fn inspect_modules(json: &str) -> Result<String, JsValue> {
     let result = crate::inspect_modules(json).map_err(error)?;
     serde_json::to_string(&result).map_err(|_| error(crate::Error::GenerationFailed))

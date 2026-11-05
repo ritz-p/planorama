@@ -3,6 +3,31 @@ use crate::model::AttributeReference;
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
     let (label, targets, list): (_, &[_], _) = match (resource, attribute) {
+        ("aws_apigatewayv2_integration_response", "integration_id") => (
+            "WebSocket integration",
+            &[("aws_apigatewayv2_integration", "id")],
+            false,
+        ),
+        ("aws_apigatewayv2_route_response", "route_id") => (
+            "WebSocket route",
+            &[("aws_apigatewayv2_route", "id")],
+            false,
+        ),
+        ("aws_apigatewayv2_route_response", "response_models") => (
+            "WebSocket response models",
+            &[("aws_apigatewayv2_model", "name")],
+            true,
+        ),
+        ("aws_apigatewayv2_stage", "client_certificate_id") => (
+            "V2 client certificate",
+            &[("aws_api_gateway_client_certificate", "id")],
+            false,
+        ),
+        ("aws_apigatewayv2_stage", "access_log_settings.destination_arn") => (
+            "V2 access logs",
+            &[("aws_cloudwatch_log_group", "arn")],
+            false,
+        ),
         ("aws_apigatewayv2_authorizer", "authorizer_credentials_arn") => {
             ("V2 authorizer role", &[("aws_iam_role", "arn")], false)
         }
@@ -30,7 +55,9 @@ pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
             ("V2 integration role", &[("aws_iam_role", "arn")], false)
         }
         (
-            "aws_apigatewayv2_integration"
+            "aws_apigatewayv2_integration_response"
+            | "aws_apigatewayv2_route_response"
+            | "aws_apigatewayv2_integration"
             | "aws_apigatewayv2_stage"
             | "aws_apigatewayv2_authorizer"
             | "aws_apigatewayv2_route"
@@ -91,6 +118,34 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         context.nodes[r.target].resource_type.as_str(),
         r.attribute.as_str(),
     ) {
+        ("aws_apigatewayv2_model", "api_id") => protocol == Some("WEBSOCKET"),
+        ("aws_apigatewayv2_integration_response", field) => {
+            protocol == Some("WEBSOCKET")
+                && context
+                    .value(r.target, "integration_response_key")
+                    .is_some()
+                && (field == "api_id"
+                    || api.is_some_and(|api| context.source(source, "api_id") == Some(api)))
+        }
+        ("aws_apigatewayv2_route_response", field) => {
+            protocol == Some("WEBSOCKET")
+                && context.value(r.target, "route_response_key") == Some("$default")
+                && match field {
+                    "api_id" => true,
+                    "route_id" => {
+                        api.is_some_and(|api| context.source(source, "api_id") == Some(api))
+                    }
+                    "response_models" => api.is_some_and(|api| {
+                        context
+                            .source(r.target, "route_id")
+                            .is_some_and(|route| context.source(route, "api_id") == Some(api))
+                            && r.sources
+                                .iter()
+                                .all(|&model| context.source(model, "api_id") == Some(api))
+                    }),
+                    _ => false,
+                }
+        }
         ("aws_apigatewayv2_authorizer", "authorizer_credentials_arn") => {
             matches!(protocol, Some("HTTP" | "WEBSOCKET"))
                 && context.value(r.target, "authorizer_type") == Some("REQUEST")
@@ -137,6 +192,10 @@ pub(super) fn valid(context: &Context<'_>, r: &AttributeReference) -> bool {
         ("aws_apigatewayv2_stage", "deployment_id") => {
             context.known_false(r.target, "auto_deploy")
                 && api.is_some_and(|api| context.source(source, "api_id") == Some(api))
+        }
+        ("aws_apigatewayv2_stage", "client_certificate_id") => protocol == Some("WEBSOCKET"),
+        ("aws_apigatewayv2_stage", "access_log_settings.destination_arn") => {
+            matches!(protocol, Some("HTTP" | "WEBSOCKET"))
         }
         ("aws_apigatewayv2_integration", "connection_id") => {
             protocol == Some("HTTP")

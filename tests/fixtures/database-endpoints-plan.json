@@ -1,0 +1,477 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.broker",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-broker",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_subnet_group.shared",
+      "mode": "managed",
+      "type": "aws_neptune_subnet_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "db-subnets",
+          "id": "db-subnets",
+          "subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster.main",
+      "mode": "managed",
+      "type": "aws_neptune_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "cluster-main",
+          "id": "cluster-main",
+          "neptune_subnet_group_name": "db-subnets",
+          "vpc_security_group_ids": [
+            "sg-broker"
+          ],
+          "master_password": "PRIVATE_PASSWORD",
+          "endpoint": "PRIVATE_ENDPOINT"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster_instance.member",
+      "mode": "managed",
+      "type": "aws_neptune_cluster_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "member",
+          "cluster_identifier": "cluster-main",
+          "neptune_subnet_group_name": "db-subnets"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster.other",
+      "mode": "managed",
+      "type": "aws_neptune_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "cluster-other",
+          "neptune_subnet_group_name": "db-subnets",
+          "vpc_security_group_ids": [
+            "sg-broker"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster_endpoint.custom",
+      "mode": "managed",
+      "type": "aws_neptune_cluster_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "cluster-main",
+          "static_members": [
+            "member"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.main",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "rds-main"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_instance.member",
+      "mode": "managed",
+      "type": "aws_rds_cluster_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "rds-member",
+          "cluster_identifier": "rds-main"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_endpoint.custom",
+      "mode": "managed",
+      "type": "aws_rds_cluster_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "rds-main",
+          "excluded_members": [
+            "rds-member"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_db_proxy.main",
+      "mode": "managed",
+      "type": "aws_db_proxy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "proxy"
+        }
+      }
+    },
+    {
+      "address": "aws_db_proxy_endpoint.custom",
+      "mode": "managed",
+      "type": "aws_db_proxy_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_proxy_name": "proxy",
+          "vpc_subnet_ids": [
+            "subnet-a",
+            "subnet-b"
+          ],
+          "vpc_security_group_ids": [
+            "sg-broker"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.broker",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_subnet_group.shared",
+          "mode": "managed",
+          "type": "aws_neptune_subnet_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster.main",
+          "mode": "managed",
+          "type": "aws_neptune_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "neptune_subnet_group_name": {
+              "references": [
+                "aws_neptune_subnet_group.shared.name"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster_instance.member",
+          "mode": "managed",
+          "type": "aws_neptune_cluster_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_neptune_cluster.main.cluster_identifier"
+              ]
+            },
+            "neptune_subnet_group_name": {
+              "references": [
+                "aws_neptune_subnet_group.shared.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster.other",
+          "mode": "managed",
+          "type": "aws_neptune_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "neptune_subnet_group_name": {
+              "references": [
+                "aws_neptune_subnet_group.shared.name"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster_endpoint.custom",
+          "mode": "managed",
+          "type": "aws_neptune_cluster_endpoint",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_neptune_cluster.main.cluster_identifier"
+              ]
+            },
+            "static_members": {
+              "references": [
+                "aws_neptune_cluster_instance.member.identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster.main",
+          "mode": "managed",
+          "type": "aws_rds_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rds_cluster_instance.member",
+          "mode": "managed",
+          "type": "aws_rds_cluster_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.main.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster_endpoint.custom",
+          "mode": "managed",
+          "type": "aws_rds_cluster_endpoint",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.main.cluster_identifier"
+              ]
+            },
+            "excluded_members": {
+              "references": [
+                "aws_rds_cluster_instance.member.identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_db_proxy.main",
+          "mode": "managed",
+          "type": "aws_db_proxy",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_proxy_endpoint.custom",
+          "mode": "managed",
+          "type": "aws_db_proxy_endpoint",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_proxy_name": {
+              "references": [
+                "aws_db_proxy.main.name"
+              ]
+            },
+            "vpc_subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.broker.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+

@@ -1,3 +1,21 @@
+fn bucket_configuration(resource: &str) -> bool {
+    matches!(
+        resource,
+        "aws_s3_bucket_abac"
+            | "aws_s3_bucket_accelerate_configuration"
+            | "aws_s3_bucket_acl"
+            | "aws_s3_bucket_cors_configuration"
+            | "aws_s3_bucket_intelligent_tiering_configuration"
+            | "aws_s3_bucket_lifecycle_configuration"
+            | "aws_s3_bucket_object_lock_configuration"
+            | "aws_s3_bucket_ownership_controls"
+            | "aws_s3_bucket_public_access_block"
+            | "aws_s3_bucket_request_payment_configuration"
+            | "aws_s3_bucket_versioning"
+            | "aws_s3_bucket_website_configuration"
+            | "aws_s3_bucket_metric"
+    )
+}
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/s3.rs"]
 mod tests;
@@ -13,13 +31,30 @@ mod replication_tests;
 pub(crate) fn indexed_resource(resource: &str) -> bool {
     matches!(
         resource,
-        "aws_s3_bucket_notification" | "aws_s3_bucket_replication_configuration"
+        "aws_s3_bucket_notification"
+            | "aws_s3_bucket_replication_configuration"
+            | "aws_s3_bucket_metric"
     )
 }
 
 pub(crate) fn indexed_attribute(resource: &str, attribute: &str) -> Option<&'static str> {
     let parts: Vec<_> = attribute.split('.').collect();
     match (resource, parts.as_slice()) {
+        (
+            "aws_s3_bucket_replication_configuration",
+            [
+                "rule",
+                rule,
+                "destination",
+                "0",
+                "encryption_configuration",
+                "0",
+                "replica_kms_key_id",
+            ],
+        ) if rule.parse::<usize>().is_ok() => {
+            Some("rule.destination.encryption_configuration.replica_kms_key_id")
+        }
+        ("aws_s3_bucket_metric", ["filter", "0", "access_point"]) => Some("filter.access_point"),
         (
             "aws_s3_bucket_replication_configuration",
             ["rule", rule, "destination", destination, "bucket"],
@@ -42,17 +77,33 @@ pub(crate) fn indexed_attribute(resource: &str, attribute: &str) -> Option<&'sta
 
 pub(super) fn list_shape(resource: &str, lengths: &[usize]) -> bool {
     match resource {
+        "aws_s3_bucket_metric" => lengths == [1],
         "aws_s3_bucket_notification" => lengths.len() == 1,
-        "aws_s3_bucket_replication_configuration" => matches!(lengths, [_, 1]),
+        "aws_s3_bucket_replication_configuration" => matches!(lengths, [_, 1] | [_, 1, 1]),
         _ => false,
     }
 }
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if object(resource) {
+        match attribute {
+            "bucket" => return Some("Object destination"),
+            "kms_key_id" => return Some("Object encryption key"),
+            _ => {}
+        }
+    }
+    if bucket_configuration(resource) && attribute == "bucket" {
+        return Some("Configuration bucket reference");
+    }
     match (
         resource,
         indexed_attribute(resource, attribute).unwrap_or(attribute),
     ) {
+        (
+            "aws_s3_bucket_replication_configuration",
+            "rule.destination.encryption_configuration.replica_kms_key_id",
+        ) => Some("Replication KMS reference"),
+        ("aws_s3_bucket_metric", "filter.access_point") => Some("Metric access point reference"),
         ("aws_s3_bucket_policy", "bucket") => Some("Policy bucket reference"),
         ("aws_s3_bucket_replication_configuration", "bucket") => {
             Some("Replication source bucket reference")
@@ -75,8 +126,36 @@ pub(super) fn source_fields(
     attribute: &str,
     source: &str,
 ) -> &'static [&'static str] {
+    if object(resource) {
+        return match (attribute, source) {
+            ("bucket", "aws_s3_bucket" | "aws_s3_directory_bucket") => &["id", "bucket"],
+            ("bucket", "aws_s3_access_point") if resource != "aws_s3_object_copy" => &["arn"],
+            ("kms_key_id", "aws_kms_key") => &["arn"],
+            ("kms_key_id", "aws_kms_alias") => &["target_key_arn"],
+            _ => &[],
+        };
+    }
+    if bucket_configuration(resource) && attribute == "bucket" && source == "aws_s3_bucket" {
+        return &["id", "bucket"];
+    }
+    if resource == "aws_s3_bucket_metric"
+        && attribute == "bucket"
+        && source == "aws_s3_directory_bucket"
+    {
+        return &["id", "bucket"];
+    }
     let indexed = indexed_attribute(resource, attribute);
     match (resource, indexed.unwrap_or(attribute), source) {
+        (
+            "aws_s3_bucket_replication_configuration",
+            "rule.destination.encryption_configuration.replica_kms_key_id",
+            "aws_kms_key" | "aws_kms_alias",
+        ) if indexed.is_some() => &["arn"],
+        ("aws_s3_bucket_metric", "filter.access_point", "aws_s3_access_point")
+            if indexed.is_some() =>
+        {
+            &["arn"]
+        }
         (
             "aws_s3_bucket_policy"
             | "aws_s3_bucket_notification"
@@ -100,6 +179,36 @@ pub(super) fn source_fields(
     }
 }
 
+pub(super) fn object(resource: &str) -> bool {
+    matches!(
+        resource,
+        "aws_s3_object" | "aws_s3_bucket_object" | "aws_s3_object_copy"
+    )
+}
+
+pub(super) fn verify_object(
+    nodes: &[crate::model::TerraformEntity],
+    reference: &crate::model::AttributeReference,
+    evidence: &[(&serde_json::Value, &serde_json::Value)],
+) -> bool {
+    if !super::service_evidence::eligible(nodes, reference) {
+        return false;
+    }
+    if reference.attribute != "kms_key_id" {
+        return true;
+    }
+    let key = super::service_evidence::known(evidence, reference.target, "kms_key_id");
+    let (value, unknown) = evidence[reference.target];
+    let mode = super::service_evidence::known(evidence, reference.target, "server_side_encryption");
+    key.is_some_and(|arn| super::s3_exports::kms_arn("aws_kms_key", arn))
+        && (matches!(mode, Some("aws:kms" | "aws:kms:dsse"))
+            || (value["server_side_encryption"].is_null()
+                && matches!(
+                    unknown["server_side_encryption"],
+                    serde_json::Value::Null | serde_json::Value::Bool(false)
+                )))
+}
+
 pub(super) fn aggregate(
     raw: &crate::semantic::Input,
     reference: &crate::model::AttributeReference,
@@ -108,7 +217,9 @@ pub(super) fn aggregate(
     if !indexed_resource(resource)
         || !matches!(
             reference.attribute.as_str(),
-            "queue.queue_arn"
+            "rule.destination.encryption_configuration.replica_kms_key_id"
+                | "filter.access_point"
+                | "queue.queue_arn"
                 | "topic.topic_arn"
                 | "lambda_function.lambda_function_arn"
                 | "rule.destination.bucket"

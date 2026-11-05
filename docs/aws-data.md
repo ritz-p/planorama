@@ -2,6 +2,193 @@
 
 [AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
+## Grafana workspace (#993)
+
+Grafana workspaces are independent Spatial dashboard services. The pinned AWS
+Provider 6.70.0 [workspace contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/grafana_workspace.html.markdown)
+and SDK schema define scalar role/KMS/name inputs, an organizational-unit ID list,
+and singleton VPC/access-control list blocks with subnet/SG/prefix-list/endpoint sets.
+
+| Input | Current managed endpoint output |
+| --- | --- |
+| `role_arn` | IAM Role `arn`, with known permission type |
+| `kms_key_id` | KMS Key `arn` |
+| `organizational_units` | Organizations Organizational Unit `id` |
+| `organization_role_name` | IAM Role `name`, with known matching account |
+| `stack_set_name` | CloudFormation StackSet `name`, with known matching account/region |
+| `vpc_configuration.subnet_ids` / `security_group_ids` | Subnet / Security Group `id` |
+| `network_access_control.prefix_list_ids` | EC2 Managed Prefix List `id` |
+| `network_access_control.vpce_ids` | VPC Endpoint `id`, Interface type and exact regional `grafana-workspace` service |
+
+Organization inputs require `account_access_type = ORGANIZATION`. Every dedicated
+reference requires explicit complete unique Terraform evidence and equal known
+values. Collections must resolve in full. Unknown, malformed, ambiguous, deleted,
+deposed, wrong provider/type or incompatible account/region bindings retain
+unresolved navigation. Filtered and named-state identities retain existing rules.
+Both complete VPC collections must prove the same VPC before adding VPC context;
+no individual subnet owns the workspace. Access restrictions are separate from
+data-source VPC connectivity. Shared role/key/OU/StackSet endpoints keep their scopes.
+
+Service-managed generated roles, enum destinations, workspace endpoint URLs and
+computed identifiers never create managed nodes. Credentials, configuration JSON
+and runtime reachability are not interpreted. See the [fixture](../tests/fixtures/grafana-plan.json)
+and [SVG](../examples/grafana.svg); HTML uses the shared generation procedure.
+
+### Grafana settings and service accounts (#992)
+
+License Association, Role Association, Workspace API Key, SAML Configuration,
+Service Account and Service Account Token retain separate Logical lifecycle
+identities and exactly-once coverage. Their scalar `workspace_id` inputs navigate
+to a current managed Workspace `id` only with explicit matching known evidence.
+Token `service_account_id` additionally requires the Service Account's
+`service_account_id` output and verified references from both resources to the
+same workspace. Equal service-account IDs in different workspaces are insufficient.
+Missing, unknown, filtered or historical owners remain unresolved; helpers are
+never folded into owners or inferred from computed token identifiers.
+
+The pinned 6.70.0 [Service Account](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/grafana_workspace_service_account.html.markdown)
+and [Token](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/grafana_workspace_service_account_token.html.markdown)
+contracts and registered schemas distinguish the account output from the composite
+Terraform `id`. Role enums do not identify IAM roles, user/group IDs lack
+identity-store proof, and SAML URL/XML does not identify an IAM provider.
+API keys, tokens and SAML contents are not emitted. The
+[owner fixture](../tests/fixtures/grafana-owners-plan.json) covers separate actions
+and workspace-qualified navigation; [SVG](../examples/grafana-owners.svg) and
+[HTML](../examples/grafana-owners.html) are generated from it.
+
+## Prometheus workspace (#995)
+
+Prometheus workspaces are independent Spatial metrics-storage services. Alert
+Manager Definition, Anomaly Detector, Resource Policy, Rule Group Namespace,
+Workspace Configuration and Query Logging Configuration keep separate Logical
+identities/actions/coverage and reference Workspace `id` through `workspace_id`.
+Workspace `kms_key_arn` accepts current managed KMS Key `arn` with a key ARN.
+
+Workspace `logging_configuration.log_group_arn` and Query Logging Configuration
+`destination.cloudwatch_logs.log_group_arn` require explicit managed CloudWatch
+Log Group `arn` provenance. Only these inputs normalize the required trailing
+`:*` before comparison. Literal-only strings, missing suffixes, unknown values,
+wrong types/providers, historical endpoints and partial collections stay unresolved.
+The complete query destination list must match; each nested `cloudwatch_logs` block
+must have exactly one member. Account/region/named-state and selection boundaries
+remain independent of owner navigation. No URL implies network containment.
+
+The pinned Provider 6.70.0
+[Workspace](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/prometheus_workspace.html.markdown)
+and [Query Logging](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/prometheus_query_logging_configuration.html.markdown)
+contracts and SDK/Framework schemas define these scalar IDs/ARNs and list shapes.
+YAML receivers, PromQL, policy JSON, labels and runtime anomalies remain opaque.
+See the [fixture](../tests/fixtures/prometheus-plan.json), [SVG](../examples/prometheus.svg)
+and [HTML](../examples/prometheus.html).
+
+### Prometheus scraper (#996)
+
+Scrapers are independent Spatial collection services. The pinned 6.70.0
+[Scraper](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/prometheus_scraper.html.markdown)
+SDK schema defines singleton source/destination blocks with exclusive EKS/VPC
+and AMP/CloudWatch variants. EKS `cluster_arn`, AMP `workspace_arn`, OpenSearch
+exporter `domain_arn` and configured source/target role ARNs require explicit
+current managed matching endpoints. The default CloudWatch dataset and computed
+scraper `role_arn` never synthesize managed resources.
+
+Complete source subnet/SG collections must prove one common VPC before placement;
+subnet collections require at least two distinct IDs. EKS placement separately
+requires the referenced cluster's explicit complete subnet-to-VPC proof to agree.
+Missing optional SG evidence leaves the scraper independent. No customer subnet
+owns the scraper and no destination workspace is placed inside its source VPC.
+Unknown, ambiguous, incomplete, wrong-type/provider, deleted/deposed or filtered
+evidence retains the existing conservative fallback. Source/destination variants
+must be known and exclusive; access, Kubernetes permissions, scrape YAML and
+runtime reachability are not interpreted.
+
+Cross-account AMP destinations require known source/target accounts, the same
+region, explicit source/target role references, and a target role in the workspace
+account. Both endpoints retain their original scopes. Scraper Logging Configuration
+keeps an independent lifecycle and references Scraper `id` through `scraper_id`.
+Its singleton `logging_destination.cloudwatch_logs.log_group_arn` uses the same
+explicit Log Group `arn` plus mandatory `:*` proof as workspace logs. Component
+enums are not child resources. See the [fixture](../tests/fixtures/prometheus-scraper-plan.json),
+[SVG](../examples/prometheus-scraper.svg) and [HTML](../examples/prometheus-scraper.html).
+
+## MemoryDB references (#740)
+
+MemoryDB clusters remain Spatial. Shared subnet/parameter groups, ACLs, users,
+snapshots and multi-region clusters remain independent Logical resources.
+
+| Input | Managed endpoint output |
+| --- | --- |
+| Cluster `subnet_group_name` | `aws_memorydb_subnet_group.name` / `id` |
+| Subnet group `subnet_ids` set | `aws_subnet.id` |
+| Cluster `security_group_ids` set | `aws_security_group.id` |
+| Cluster `acl_name` | `aws_memorydb_acl.name` / `id` |
+| ACL `user_names` set | `aws_memorydb_user.user_name` / `id` |
+| Cluster `parameter_group_name` | `aws_memorydb_parameter_group.name` / `id` |
+| Cluster `multi_region_cluster_name` | `aws_memorydb_multi_region_cluster.multi_region_cluster_name` |
+| Cluster or snapshot `kms_key_arn` | `aws_kms_key.arn` |
+| Cluster `sns_topic_arn` | `aws_sns_topic.arn` |
+| Cluster `snapshot_name` | `aws_memorydb_snapshot.name` / `id` |
+| Snapshot `cluster_name` | `aws_memorydb_cluster.name` / `id` |
+
+Contracts were checked against AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+[official schemas](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/memorydb)
+and [cluster documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/memorydb_cluster.html.markdown).
+Group, ACL, user, snapshot and cluster IDs equal their respective names. The
+Framework multi-region resource exposes its computed name, not an `id` output.
+Subnet IDs and user names are sets; cluster SGs are an optional/computed set.
+Default subnet groups, open-access ACL names and other literals prove no managed
+identity without explicit Terraform references and equal known output values.
+
+References require unique current managed endpoints with compatible
+provider/account/region evidence within one named state. Collections must be
+complete, nonempty and duplicate-free. Regional cluster placement requires all
+referenced subnets and SGs to prove one current managed VPC. Missing, transformed,
+unknown, ambiguous, deleted, deposed or filtered evidence remains unresolved.
+Multi-region membership permits different management regions in the same account;
+it does not relocate a regional cluster. Snapshot source and restore references
+are historical configuration links, never containment. Shared ACLs and users are
+not embedded. Actions, imports, moves and coverage remain attached exactly once.
+No password/access-string/parameter interpretation, snapshot S3 ARN parsing,
+computed shards, regional mapping of `multi_region_parameter_group_name`,
+encryption summaries or health/reachability claims are added.
+See the [fixture](../tests/fixtures/memorydb-plan.json) and
+[SVG](../examples/memorydb.svg).
+
+## DAX references (#739)
+
+DAX clusters remain Spatial; shared subnet and parameter groups remain independent
+Logical resources. Verified configuration navigation supports:
+
+| Input | Managed endpoint output |
+| --- | --- |
+| Cluster `subnet_group_name` | `aws_dax_subnet_group.name` / `id` |
+| Subnet group `subnet_ids` set | `aws_subnet.id` |
+| Cluster `security_group_ids` set | `aws_security_group.id` |
+| Cluster `parameter_group_name` | `aws_dax_parameter_group.name` / `id` |
+| Cluster `iam_role_arn` | `aws_iam_role.arn` |
+| Cluster `notification_topic_arn` | `aws_sns_topic.arn` |
+
+These contracts use AWS Provider 6.70.0, commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, checked against the official
+[cluster schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/dax/cluster.go),
+[subnet group schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/dax/subnet_group.go),
+[parameter group schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/dax/parameter_group.go)
+and their resource documentation. Group IDs equal their names. Cluster subnet,
+parameter and security group inputs are optional/computed; defaults alone prove
+no managed target. IAM role is required; notification topic is optional.
+
+References require explicit unique current managed resources, equal known values
+and compatible provider/account/region evidence within one named state. Sets
+must be complete, nonempty and duplicate-free. Cluster placement additionally
+requires every referenced subnet and SG to prove the same current managed VPC.
+Missing, transformed, unknown, ambiguous, deleted, deposed or filtered evidence
+stays unresolved; individual proven configuration links remain independent of
+placement. IAM roles retain global scope. Lifecycle actions, imports, moves and
+coverage remain attached exactly once. No computed nodes, table ownership,
+credentials, parameters, policy content, encryption summaries or reachability
+are inferred. See the [fixture](../tests/fixtures/dax-plan.json) and
+[SVG](../examples/dax.svg).
+
 ## OpenSearch Serverless (#696)
 
 Collections retain independent Spatial cards. VPC endpoints remain Logical,
@@ -373,8 +560,10 @@ The pinned Provider 6.70.0 [cluster contract](https://github.com/hashicorp/terra
 and [subnet group contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/neptune_subnet_group.html.markdown)
 were checked against schema. Network collections are sets. RDS/DocumentDB types
 and cluster `id` are not accepted as substitutes for these exact contracts.
-Analytics, snapshots, global databases, parameters and encryption summaries remain
+Analytics, global databases, parameters and encryption summaries remain
 outside this scope. Credentials, graph data and endpoint strings are not rendered.
+
+Snapshot references use the separate [snapshot contract](#database-snapshots-and-export-763).
 
 See [fixture](../tests/fixtures/neptune-plan.json), [SVG](../examples/neptune.svg)
 and [HTML](../examples/neptune.html).
@@ -507,3 +696,130 @@ Pinned Provider 6.70.0 contracts:
 [fixture](../tests/fixtures/sagemaker-plan.json) cover positive/negative evidence;
 native/Wasm parity covers SVG/HTML and incomplete model/network collections.
 Examples: [SVG](../examples/sagemaker.svg), [HTML](../examples/sagemaker.html).
+
+## Database custom endpoints (#765)
+
+`aws_db_proxy_endpoint` is an independent Spatial card. Its `db_proxy_name` references the proxy `name`; complete explicit `vpc_subnet_ids` and `vpc_security_group_ids` references must prove one common VPC. Proxy ownership never supplies network placement.
+
+RDS and Neptune custom cluster endpoints remain Logical configuration. `cluster_identifier` must reference the matching cluster `cluster_identifier`. `static_members` and `excluded_members` reference instance `identifier` outputs and require each instance to explicitly reference the same cluster. References require known matching nonempty values, current managed resources and compatible bindings. Unknown, ambiguous, filtered, deleted and deposed proof is rejected. Endpoint hostnames and runtime balancing are excluded.
+
+Contracts were checked against AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: `website/docs/r/{db_proxy_endpoint,rds_cluster_endpoint,neptune_cluster_endpoint}.html.markdown` and `internal/service/{rds,neptune}/*endpoint.go`. See [fixture](../tests/fixtures/database-endpoints-plan.json), [SVG](../examples/database-endpoints.svg) and [HTML](../examples/database-endpoints.html).
+
+## Database configuration references (#762)
+
+RDS, DocumentDB and Neptune parameter-group inputs link only to the exact service-specific group `name`; RDS option groups use `name` as well. Family, name prefixes, parameter bodies and nested option values are not evidence. Shared groups remain independent Logical resources and never provide network placement or service ownership.
+
+RDS monitoring roles, RDS/Neptune `iam_roles` and RDS instance/cluster role associations link to exact IAM role `arn` outputs. Role associations identify their database using `identifier` or `cluster_identifier`, respectively. Complete collections, known matching nonempty values, current managed identities and compatible provider/account bindings are required. IAM roles are global; regional parameter groups must match the consumer region. Unknown, ambiguous, deleted/deposed and filtered evidence is rejected. Existing database membership and network contracts remain unchanged. AD/CA, restore/replication and parameter contents are excluded.
+
+The resource docs and schema/read implementations were checked at AWS Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. See [fixture](../tests/fixtures/database-configuration-plan.json), [SVG](../examples/database-configuration.svg) and [HTML](../examples/database-configuration.html).
+
+## Database snapshots and export (#763)
+
+RDS instance snapshots reference instance `identifier`, never its resource ID.
+RDS, DocumentDB and Neptune cluster snapshots reference their exact service's
+`cluster_identifier` or `id`. Snapshot copies reference the matching RDS snapshot
+identifier or snapshot ARN output. Cross-region copies require an ARN whose region
+and account match the source, with compatible known accounts on both providers.
+The copy retains its own provider/resource region; source scope is not inherited.
+
+RDS export references snapshot ARN outputs, S3 bucket `id`/`bucket`, IAM role `arn`
+and KMS key `arn`/`key_id`. Every reference requires unique explicit current managed
+Terraform endpoints and matching known nonempty values. Unknown, ambiguous,
+deleted/deposed, filtered or incompatible provider evidence does not verify a link.
+Snapshots, copies and exports remain independent Logical resources; computed
+`vpc_id` does not imply containment. Restore chains, automatic backup replication,
+database/table selectors, policies, runtime status and computed encryption claims
+are excluded.
+
+The resource docs and schema/create/read implementations were checked at AWS
+Provider `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (6.70.0), under
+`website/docs/r/` and `internal/service/{rds,docdb,neptune}/`.
+See [fixture](../tests/fixtures/database-snapshots-plan.json),
+[SVG](../examples/database-snapshots.svg) and [HTML](../examples/database-snapshots.html).
+
+## Database event subscriptions (#764)
+
+RDS `sns_topic` and DocumentDB/Neptune `sns_topic_arn` reference exact SNS topic
+`arn` outputs. `source_ids` is a complete set of identifiers, selected by a known
+service-specific `source_type`: DB instances, clusters, parameter groups and
+supported snapshot types use their identifier/name outputs, never snapshot ARNs
+or RDS instance resource IDs. RDS snapshot copies can also be source endpoints.
+Every endpoint must be current, managed, explicit, uniquely identified and have
+matching known values and compatible provider/account/region and named-state
+identity. Incomplete, unknown, ambiguous, deleted/deposed and filtered proof is
+rejected. Empty sets represent service-wide subscriptions and do not expand to
+all Terraform nodes. SNS topics and subscriptions remain independent resources;
+no event delivery, category, payload, policy or runtime claims are inferred.
+
+The resource docs and schema/create/read implementations were checked at AWS
+Provider 6.70.0 commit `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`:
+`website/docs/r/{db,docdb,neptune}_event_subscription.html.markdown` and
+`internal/service/{rds,docdb,neptune}/event_subscription.go`. DocumentDB's argument
+list says `sns_topic`, but its schema and example use `sns_topic_arn`; the schema
+is authoritative. Security-group and newer RDS event source families are outside
+this bounded contract.
+See [fixture](../tests/fixtures/database-events-plan.json),
+[SVG](../examples/database-events.svg) and [HTML](../examples/database-events.html).
+
+## Search domains and configuration (#797)
+
+Contracts follow AWS Provider 6.70.0 pinned [OpenSearch source/schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch), [Elasticsearch](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/elasticsearch) and [CloudSearch](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudsearch). Elasticsearch and OpenSearch retain distinct types and endpoint identities.
+
+| Source | Supported configured references |
+| --- | --- |
+| CloudSearch policy | domain_name to CloudSearch name |
+| OpenSearch/Elasticsearch policy and SAML helpers | domain_name to the same service's domain_name |
+| Both domain types | enabled cognito_options identity_pool_id/user_pool_id to matching pool id, role_arn to IAM role arn; enabled domain_endpoint_options custom_endpoint_certificate_arn to ACM arn; enabled encrypt_at_rest kms_key_id to KMS key arn/id/key_id; enabled log_publishing_options cloudwatch_log_group_arn to log-group arn |
+| Elasticsearch domain and both VPC endpoints | complete vpc_options subnet_ids/security_group_ids to explicit subnet/SG id sets with matching known VPC IDs and independent VPC references |
+| VPC endpoints | domain_arn to the same service's domain arn; domain placement stays independent |
+| OpenSearch application | data_source.data_source_arn set to OpenSearch domain/Serverless collection arn; kms_key_arn to KMS key arn; enabled iam_identity_center_options role ARN to IAM role arn and instance ARN to a single known data.aws_ssoadmin_instances.arns result |
+| Endpoint-access authorization | domain_name to OpenSearch domain_name; grantee account is not an endpoint |
+| Package / package association | package_source.s3_bucket_name to S3 bucket.bucket; association package_id/domain_name to exact package.id/domain.domain_name |
+
+Single configuration blocks require singleton lists; log publishing and application data sources require complete nonempty sets. All rows of an enabled reference collection must have a known true enabled flag. Aggregate references tolerate set reordering and repeated endpoint use but do not infer positional matching. Unknown masks, partial ancestry, mixed literals, ambiguous output values or mixed enabled/disabled log collections retain fallback. KMS ID readback normalization additionally requires the referenced key's known ARN to end in its known key ID; aliases are not substituted. Identity Center lookup accepts only an explicit singleton data result in compatible provider scope, never a fabricated managed instance or computed application identity.
+
+CloudSearch, Elasticsearch domains and OpenSearch applications are independent Spatial cards. Proven domain helpers embed with their own action and coverage; absent/filtered owners retain independent fallback. Proven package associations retain both shared endpoints. Endpoint cards promote only after complete network proof. Existing OpenSearch domain subnet/SG behavior (#181/#182) and Serverless endpoint behavior (#696) are unchanged.
+
+All new relationships require explicit compatible current references and matching known outputs, with independent provider/account/region and named-state identities. Deleted/deposed, literal-only and incompatible references remain conservative. Policies, SAML XML, package content keys, service URLs and runtime access/health are not interpreted or displayed. Maintained examples: [domain configuration](../examples/search-domains.svg), [network](../examples/search-network.svg), [applications and packages](../examples/search-applications.svg).
+
+## OpenSearch cross-domain connections (#798)
+
+The pinned AWS Provider 6.70.0 [outbound schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch/outbound_connection.go) and [inbound schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/opensearch/inbound_connection_accepter.go) define these independent lifecycle objects.
+
+| Source path | Verified endpoint and scope |
+| --- | --- |
+| aws_opensearch_outbound_connection.local_domain_info.domain_name | Exact aws_opensearch_domain.domain_name with matching known owner_id and region; outbound provider scope must match this local side |
+| aws_opensearch_outbound_connection.remote_domain_info.domain_name | Exact aws_opensearch_domain.domain_name with independently matching known owner_id and region; local side must also be proven |
+| aws_opensearch_inbound_connection_accepter.connection_id | Exact outbound connection.id, both verified domain sides, and accepter provider account/region matching the remote side |
+
+Both domain-info blocks require singleton lists with known string selectors. The outbound requires known connection_mode DIRECT or VPC_ENDPOINT; the schema makes this field Optional+Computed although its resource documentation calls it Required. Neither mode nor a computed endpoint URL identifies a managed VPC endpoint. Account selectors require independently trusted provider account evidence from the saved-plan path; a JSON-only assume_role or owner_id value cannot establish account identity. Missing/conflicting accounts, mismatched regions, unknown/masked selectors, duplicate or partial references, literal values, deleted/deposed or data objects remain unresolved. Elasticsearch domains are not interchangeable endpoints.
+
+Connections and accepters retain Logical presentation, distinct actions and exactly-once coverage even when their IDs are equal. Neither owns a domain or creates network containment. Filtering removes unavailable endpoints without creating replacements; named states retain separate namespaces. Runtime status, computed endpoint URLs and connection properties do not prove connectivity and are not rendered as payload. The [JSON-only example](../examples/search-connections.svg) deliberately retains unresolved account evidence; saved-plan positive and reversed-scope cases are covered by semantic tests.
+
+## AppSync Event API and channel namespaces (#942)
+
+Contracts follow the pinned AWS Provider 6.70.0 [Event API schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/appsync/api.go) and [namespace schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/appsync/channel_namespace.go). Event API api_id/api_arn are separate from GraphQL API id/arn. Event APIs render as independent Spatial cards; a namespace embeds only under a proven Event API and retains its own action and coverage.
+
+| Source path | Endpoint contract |
+| --- | --- |
+| event_config.auth_provider.cognito_config.user_pool_id | auth_type AMAZON_COGNITO_USER_POOLS, exact pool.id and configured aws_region matching the pool region |
+| event_config.auth_provider.lambda_authorizer_config.authorizer_uri | auth_type AWS_LAMBDA and exact Lambda function.arn in compatible regional scope |
+| event_config.log_config.cloudwatch_logs_role_arn | Exact global IAM role.arn in compatible account scope |
+| namespace api_id | Exact Event API.api_id; GraphQL APIs and api_arn are incompatible |
+| handler_configs.on_publish/on_subscribe.integration.data_source_name | Exact data source.name, with both namespace and data source explicitly referencing the same Event API.api_id and known matching api_id values |
+
+Event config, each Cognito/Lambda config, log config, handler config, publish/subscribe and integration blocks are singleton lists. auth_provider is a complete nonempty list: indexed expression evidence must correlate every selected endpoint with the same evaluated row and known auth_type; mixed auth types are supported, but unknown/invalid types, partial collections, literal rows, swapped row references or malformed masks are unresolved. Cognito region selectors never create resources. Namespace handlers require known CODE or DIRECT behavior; a repeated data source name in another API is not interchangeable. The data source parent is checked as qualification evidence for the namespace reference, without widening existing GraphQL data-source ownership rules.
+
+All references require current explicit managed provenance, known matching outputs and compatible provider/account/state identities. Deleted/deposed, sensitive, unknown, ambiguous and filtered endpoints retain conservative fallback. Shared pools, functions, roles and data sources stay independent; references add no network containment. Handler code, authorizer expressions, credentials, URLs and runtime outcomes are not interpreted or rendered. See the maintained [Event API example](../examples/appsync-events.svg).
+
+## AppSync custom domains (#945)
+
+Contracts use AWS Provider 6.70.0 [domain documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/appsync_domain_name.html.markdown) and the pinned [association schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/appsync/domain_name_api_association.go). All selected inputs and endpoint outputs are scalar strings.
+
+| Source path | Verified endpoint |
+| --- | --- |
+| aws_appsync_domain_name.certificate_arn | ACM certificate.arn in known us-east-1 scope, or global IAM server certificate.arn; account evidence remains independent of the domain region |
+| aws_appsync_domain_name_api_association.api_id | GraphQL API.id in matching regional scope; Event API.api_id and API ARNs are incompatible |
+| aws_appsync_domain_name_api_association.domain_name | Custom domain.domain_name in matching regional scope; id and service-created appsync_domain_name outputs are not substitutes |
+
+Domains remain independent Logical resources; certificate references do not imply certificate ownership or network containment. An association lowers only when both uniquely referenced endpoints are current, compatible and have exact known matching values. Domain and GraphQL API resources remain independently shared, while the association retains its provenance, action and exactly-once coverage. A missing/filtered endpoint, unknown or sensitive value, literal-only reference, ambiguity, wrong provider/type/output, deleted/deposed or data object keeps conservative fallback. Named states remain separate. Certificate bodies, private keys, descriptions, service URLs and runtime validation results are not parsed or rendered. See the [custom-domain example](../examples/appsync-domains.svg).

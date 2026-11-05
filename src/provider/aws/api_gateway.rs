@@ -1,9 +1,13 @@
 use super::service_evidence::{eligible_with_global_role, known};
 use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
+mod domains;
 mod rest;
 mod v2;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/api_responses.rs"]
+mod response_tests;
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/api_gateway.rs"]
 mod tests;
@@ -15,7 +19,9 @@ pub(super) struct Rule {
 }
 
 pub(super) fn rule(resource: &str, attribute: &str) -> Option<Rule> {
-    rest::rule(resource, attribute).or_else(|| v2::rule(resource, attribute))
+    rest::rule(resource, attribute)
+        .or_else(|| v2::rule(resource, attribute))
+        .or_else(|| domains::rule(resource, attribute))
 }
 
 fn basic(
@@ -24,18 +30,23 @@ fn basic(
     evidence: &[(&Value, &Value)],
     rule: &Rule,
 ) -> bool {
-    if !eligible_with_global_role(
+    if !(eligible_with_global_role(
         nodes,
         r,
-        (nodes[r.target].resource_type == "aws_api_gateway_integration"
-            && r.attribute == "credentials")
+        (nodes[r.target].resource_type == "aws_api_gateway_account"
+            && r.attribute == "cloudwatch_role_arn")
+            || (nodes[r.target].resource_type == "aws_api_gateway_authorizer"
+                && r.attribute == "authorizer_credentials")
+            || (nodes[r.target].resource_type == "aws_api_gateway_integration"
+                && r.attribute == "credentials")
             || (matches!(
                 nodes[r.target].resource_type.as_str(),
                 "aws_apigatewayv2_api" | "aws_apigatewayv2_integration"
             ) && r.attribute == "credentials_arn")
             || (nodes[r.target].resource_type == "aws_apigatewayv2_authorizer"
                 && r.attribute == "authorizer_credentials_arn"),
-    ) || r.source_attributes.len() != 1
+    ) || domains::edge_eligible(nodes, r))
+        || r.source_attributes.len() != 1
     {
         return false;
     }
@@ -53,21 +64,27 @@ fn basic(
     let Some(mut expected) = expected else {
         return false;
     };
-    if nodes[r.target].resource_type == "aws_apigatewayv2_route" {
+    if matches!(
+        nodes[r.target].resource_type.as_str(),
+        "aws_apigatewayv2_route"
+            | "aws_apigatewayv2_route_response"
+            | "aws_api_gateway_method_response"
+            | "aws_api_gateway_method"
+    ) {
         if r.attribute == "target" {
             return expected.len() == 1
                 && known(evidence, r.target, "target")
                     .is_some_and(|value| value == format!("integrations/{}", expected[0]));
         }
-        if r.attribute == "request_models" {
+        if matches!(r.attribute.as_str(), "request_models" | "response_models") {
             let (value, unknown) = evidence[r.target];
             if !matches!(unknown, Value::Null | Value::Bool(false) | Value::Object(_)) {
                 return false;
             }
-            let Some(map) = value["request_models"].as_object() else {
+            let Some(map) = value[&r.attribute].as_object() else {
                 return false;
             };
-            let mask = &unknown["request_models"];
+            let mask = &unknown[&r.attribute];
             if !matches!(mask, Value::Null | Value::Bool(false))
                 && !mask.as_object().is_some_and(|m| {
                     m.values()
@@ -88,6 +105,17 @@ fn basic(
         }
     }
     if !rule.list {
+        if r.attribute.contains('.') {
+            let (value, unknown) = evidence[r.target];
+            return expected.len() == 1
+                && r.attribute.split_once('.').is_some_and(|(block, _)| {
+                    value[block]
+                        .as_array()
+                        .is_some_and(|blocks| blocks.len() == 1)
+                })
+                && super::streaming::values(value, unknown, &r.attribute, false)
+                    .is_some_and(|actual| actual.len() == 1 && actual.contains(expected[0]));
+        }
         return expected.len() == 1
             && known(evidence, r.target, &r.attribute) == expected.first().copied();
     }
@@ -228,7 +256,12 @@ pub(super) fn annotate(
     let verified: Vec<_> = references
         .iter()
         .enumerate()
-        .map(|(i, r)| context.base[i] && rest::valid(&context, r) && v2::valid(&context, r))
+        .map(|(i, r)| {
+            context.base[i]
+                && rest::valid(&context, r)
+                && v2::valid(&context, r)
+                && domains::valid(&context, r)
+        })
         .collect();
     for (r, verified) in references.iter_mut().zip(verified) {
         if rule(&nodes[r.target].resource_type, &r.attribute).is_some() {

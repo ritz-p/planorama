@@ -119,15 +119,13 @@ regions stay in one group without a shared region claim. See the maintained
 [this fixture](../tests/fixtures/logical-regions-plan.json).
 Static resource-level `region` overrides are supported for managed `aws_vpc`,
 `aws_subnet` and `aws_cloudwatch_log_group`, verified with Terraform **1.9.8** or
-**1.16.6** and HashiCorp AWS **6.0.0**. The configuration must pin
-`version_constraint` to `6.0.0`
-(optionally prefixed by `= `); a range, missing version or another version does
-not prove this schema. AWS v5 fixtures do not support these overrides.
-These are exact Core versions, not a minimum-version range. A JSON constraint is
-not a selected-version/lock attestation: only the exact AWS 6.0.0 constraint
-matches the schema contract checked with real locked plans. The
-[compatibility matrix](terraform-compatibility.md) records both Core captures;
-other Core versions and Provider releases remain unverified.
+**1.16.6** with HashiCorp AWS **6.0.0**, and Terraform **1.9.8** with AWS **6.70.0**.
+The configuration must pin `version_constraint` to the corresponding exact provider
+version (optionally prefixed by `= `). Ranges and missing versions do not prove the
+schema. AWS v5 does not support these overrides. These are exact verified pairs,
+not minimum-version ranges. A JSON constraint is not a selected-version/lock
+attestation; the [compatibility matrix](terraform-compatibility.md) records the
+real locked captures. Other combinations remain unverified.
 The reference-free literal must equal the unique current resource change's known,
 non-sensitive `after.region`. Initial accepted literals are `us-east-1`, `us-east-2`,
 `us-west-1`, `us-west-2`, `eu-west-1`, `eu-west-2`, `eu-west-3`, `eu-central-1`,
@@ -419,3 +417,148 @@ deleted/deposed objects, sensitive values and data-mode boundaries remain intact
 No health, traffic, successful log delivery or effective permission is inferred.
 Contracts follow AWS Provider 6.70.0 schema and `load_balancer.go` at
 `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
+## Flow log references (#896)
+
+`aws_flow_log` retains its Controller / Logical default. These scalar string
+inputs accept one explicit current managed endpoint and its known matching output:
+
+| Input | Endpoint output |
+| --- | --- |
+| `eni_id` | `aws_network_interface.id` |
+| `subnet_id` | `aws_subnet.id` |
+| `vpc_id` | `aws_vpc.id` |
+| `regional_nat_gateway_id` | `aws_nat_gateway.id`, with known `availability_mode=regional` |
+| `transit_gateway_id` | `aws_ec2_transit_gateway.id` |
+| `transit_gateway_attachment_id` | `aws_ec2_transit_gateway_vpc_attachment.id` |
+| `log_destination` | `aws_cloudwatch_log_group.arn`, `aws_s3_bucket.arn`, or `aws_kinesis_firehose_delivery_stream.arn` |
+| `iam_role_arn`, `deliver_cross_account_role` | `aws_iam_role.arn` |
+
+Exactly one of the six monitored-resource inputs must be present; the other five
+must be known absent. A verified spatial monitored resource embeds the Flow logs
+helper section while the flow log keeps its Terraform identity and action.
+Logical monitored resources retain ownership navigation and the logical flow log;
+neither resource is promoted to a spatial card in that case. Other transit
+gateway attachment types and data endpoints retain conservative fallback.
+
+Destination type must be known and match `cloud-watch-logs`, `s3`, or
+`kinesis-data-firehose`. No missing default is guessed. S3 prefix ARNs do not equal
+bucket ARNs and are not stripped to manufacture a match. The delivery role is
+supported for CloudWatch Logs and Firehose only. Cross-account roles require
+Firehose and a separately verified destination in the role's known account,
+different from the producer account. No policy or successful delivery is inferred.
+
+All links require unique explicit instances, complete references, known matching
+output values, non-deleted/non-deposed managed identities, and compatible independent
+provider/account/region evidence. Monitored resources and CloudWatch destinations
+stay in the producer account and region. Source delivery roles stay in its account
+but are global. S3 and Firehose destinations may cross independently known accounts;
+Firehose requires the same region, while S3 and IAM use their global scope. Named
+states, filtering and coverage retain the existing identity pipeline. Shared
+destinations and roles keep independent identities and never become contained in
+the monitored VPC/subnet/ENI. Unknown, literal-only, ambiguous, incomplete or
+incompatible evidence retains ordinary references without verified ownership.
+
+The pinned [AWS Provider 6.70.0 source](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_flow_log.go)
+defines the six monitor fields as optional strings with ExactlyOneOf, the role
+fields as optional strings, `log_destination` as optional/computed, and destination
+type as optional with a CloudWatch default. Computed values alone never prove a
+configured endpoint. Monitored endpoint `id` outputs and Firehose `arn` are
+optional/computed strings; other listed `arn` outputs are computed strings.
+Although those endpoint types have data-source registrations, this bounded
+contract supports managed endpoints only. Account evidence from a saved plan is
+checked after annotation and again when presenting references and ownership.
+Packet records, log format, tag keys and traffic effects are
+not summarized or exposed in SVG/HTML.
+
+## Network ACL relationships (#898)
+
+`aws_network_acl.subnet_ids` accepts a complete set of explicit managed
+`aws_subnet.id` references whose known IDs exactly match the complete input set.
+Every subnet must have the same known `vpc_id` as the ACL. This adds configured
+association navigation; the shared ACL retains its own identity and VPC placement.
+Existing `vpc_id` containment is unchanged and is not claimed to use these new checks.
+
+`aws_network_acl_association.network_acl_id` and `subnet_id` require unique
+managed `aws_network_acl.id` and `aws_subnet.id` references and matching known
+endpoint outputs. Both endpoints must have the same known VPC. A complete pair
+with exactly its two dependency edges becomes an association edge retaining the
+helper's Terraform address, action and change metadata. Additional consumers or
+unproven pairs retain the independent helper.
+
+`aws_network_acl_rule.network_acl_id` accepts only a unique managed
+`aws_network_acl.id` owner. Known `rule_number` (integer 1–32766), `egress`
+(boolean), `protocol` (tcp/udp/icmp/icmpv6/all or numeric string -1–255), and
+`rule_action` (allow/deny) qualify ownership. Other protocol names conservatively
+fall back. Rules retain their Terraform identity and action under the owner's
+Rules section; direction/number never identify a traffic endpoint or merge two
+Terraform resources. Unknown or invalid identity fields retain standalone rules.
+
+All new links require explicit instances, complete references, current non-deposed
+managed resources, compatible independent provider/account/region evidence and
+known matching output `id` strings. Literal-only values, data sources, ambiguous
+references, incomplete collections, mismatched VPCs and deleted endpoints do not
+prove a link. Named-state identity and filtering use the existing reference and
+coverage pipeline. No CIDR, IP, policy or computed-only endpoint inference occurs.
+The default ACL resource and data-source variants are not aliases.
+
+The pinned AWS Provider 6.70.0 source at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` defines `subnet_ids` as optional/computed
+set(string), despite the documentation calling it a list. `ingress`/`egress` are
+optional/computed attribute-as-blocks sets of objects; inline `rule_no`/`action`
+differ from standalone `rule_number`/`rule_action`. Inline rules create no synthetic
+resource identities. Their summaries remain deferred: no raw rule values, CIDRs,
+policy effects or runtime reachability are displayed in SVG or HTML. This issue
+selects identity/navigation only, not a new configuration-summary display.
+
+## DataSync agents and locations (#828)
+
+DataSync agents have independent architecture cards. Complete explicit `subnet_arns`
+and `security_group_arns` establish task-interface VPC context only; they never
+identify the agent's physical host or subnet. `vpc_endpoint_id` accepts an Interface
+VPC endpoint ID. `private_link_endpoint` is an IP address and supplies no identity.
+
+| Location | Supported configuration references |
+| --- | --- |
+| EFS | `efs_file_system_arn`, `access_point_arn`, `file_system_access_role_arn`, `ec2_config.subnet_arn`, complete `ec2_config.security_group_arns` |
+| FSx Lustre / OpenZFS / Windows | Variant-specific `fsx_filesystem_arn`, complete `security_group_arns` |
+| FSx ONTAP | `storage_virtual_machine_arn`, complete `security_group_arns` |
+| S3 | `s3_bucket_arn`, `s3_config.bucket_access_role_arn`, complete optional `agent_arns` |
+| Azure Blob / HDFS / object storage / SMB | Complete `agent_arns` |
+| NFS | Complete `on_prem_config.agent_arns` |
+
+EFS access points must agree with the referenced filesystem and require known
+`TLS1_2`. Connection subnet/SG evidence establishes a common VPC context for the
+location, without moving the shared filesystem. FSx references accept only the
+matching filesystem type; ONTAP's computed filesystem ARN checks SVM consistency
+but never creates a configured filesystem relationship. Locations do not inherit
+filesystem subnet placement. S3 distinguishes bucket ARNs from S3 Outposts access
+point ARNs; ordinary S3 access points are not substituted for buckets.
+
+Every relation requires current managed resources, explicit unambiguous Terraform
+references, complete known collections, matching output identities and compatible
+independent provider/account/region evidence. Unknown, missing, mismatched,
+deleted/deposed or filtered endpoints retain conservative fallback. Shared endpoints
+have no DataSync owner. Empty optional agent collections establish no relationship.
+Hostnames, Azure URLs, Hadoop KMS URIs, self-managed bucket names and mount paths
+never identify managed AWS endpoints. Credentials, activation keys, filters and
+runtime transfer behavior are not summarized.
+
+Contracts were checked against AWS Provider 6.70.0 source/schema and documentation
+at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` (`internal/service/datasync/` and
+`website/docs/r/datasync_*.html.markdown`). Nested configuration blocks are singleton
+lists; agent/subnet/SG collections are sets. The existing EFS, Backup and Lustre
+network/encryption contracts remain independent.
+## DataSync tasks (#829)
+
+`aws_datasync_task.source_location_arn` and `destination_location_arn` reference
+only the supported DataSync location resource types. Tasks do not own locations,
+move their storage endpoints, or infer transfer reachability. Optional
+`cloudwatch_log_group_arn` references a CloudWatch log group ARN. Under singleton
+`task_report_config.s3_destination` blocks, `s3_bucket_arn` references an S3 bucket
+and `bucket_access_role_arn` references an IAM role, despite the pinned documentation
+calling the latter a policy. Both paths require explicit matching ARN references.
+Unknown or malformed parent blocks cannot establish a report relationship. The
+same current-resource, complete-reference and independent scope checks as the
+agent/location rules apply. Report prefixes, transfer options and runtime progress
+are not emitted as summaries.

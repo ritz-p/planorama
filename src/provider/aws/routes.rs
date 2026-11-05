@@ -65,7 +65,26 @@ pub(super) fn owner(raw: &Input, route: usize) -> Result<usize, Diagnostic> {
         .iter()
         .find(|a| a.target == route && a.attribute == "route_table_id")
         .ok_or_else(|| failure(raw, route, "route_table_id", Reason::MissingAttribute))?;
-    endpoint(raw, route, reference, &["aws_route_table"])
+    if reference
+        .sources
+        .iter()
+        .any(|&s| raw.nodes[s].resource_type == "aws_default_route_table")
+        && (!super::service_references::verified(raw, reference)
+            || !super::vpc_routes::bindings(raw, reference))
+    {
+        return Err(failure(
+            raw,
+            route,
+            "route_table_id",
+            Reason::UnprovenEndpointValue,
+        ));
+    }
+    endpoint(
+        raw,
+        route,
+        reference,
+        &["aws_route_table", "aws_default_route_table"],
+    )
 }
 
 pub(super) fn target(raw: &Input, route: usize) -> Result<usize, Diagnostic> {
@@ -133,8 +152,10 @@ fn target_types(attribute: &str) -> Option<&'static [&'static str]> {
 
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
     for (index, node) in raw.nodes.iter().enumerate() {
-        if node.resource_type == "aws_route_table"
-            && node.provider.is_aws()
+        if matches!(
+            node.resource_type.as_str(),
+            "aws_route_table" | "aws_default_route_table"
+        ) && node.provider.is_aws()
             && node.mode == EntityMode::Managed
         {
             graph.nodes[index].routes.inline = !node.routes.entries.is_empty();
@@ -143,6 +164,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     entry.target_attribute.as_deref(),
                     Some("vpc_endpoint_id" | "core_network_arn" | "odb_network_arn")
                 ) {
+                    entry.target = None;
+                    entry.target_kind = None;
+                    continue;
+                }
+                if node.resource_type == "aws_default_route_table"
+                    && !raw.attributes.iter().any(|r| {
+                        r.target == index
+                            && r.attribute.strip_prefix("route.")
+                                == entry.target_attribute.as_deref()
+                            && super::service_references::verified(raw, r)
+                    })
+                {
                     entry.target = None;
                     entry.target_kind = None;
                     continue;

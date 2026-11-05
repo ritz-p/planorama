@@ -200,7 +200,10 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
     for node in nodes {
         if !node.provider.is_aws()
             || node.mode != crate::model::EntityMode::Managed
-            || !matches!(node.resource_type.as_str(), "aws_route" | "aws_route_table")
+            || !matches!(
+                node.resource_type.as_str(),
+                "aws_route" | "aws_route_table" | "aws_default_route_table"
+            )
         {
             continue;
         }
@@ -208,6 +211,9 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
             .get(&super::address::static_address(&node.address))
             .copied()
             .unwrap_or(&Value::Null);
+        if node.resource_type == "aws_default_route_table" && expressions["route"].is_null() {
+            continue;
+        }
         let change = plan["resource_changes"]
             .as_array()
             .into_iter()

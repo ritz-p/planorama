@@ -1,0 +1,200 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "type": "aws_backup_vault",
+      "address": "aws_backup_vault.first",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "first",
+          "name": "first",
+          "arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:first"
+        }
+      }
+    },
+    {
+      "type": "aws_backup_vault",
+      "address": "aws_backup_vault.second",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "second",
+          "name": "second",
+          "arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:second"
+        }
+      }
+    },
+    {
+      "type": "aws_backup_logically_air_gapped_vault",
+      "address": "aws_backup_logically_air_gapped_vault.airgap",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "airgap",
+          "name": "airgap",
+          "arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:airgap"
+        }
+      }
+    },
+    {
+      "type": "aws_iam_role",
+      "address": "aws_iam_role.scanner",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/scanner"
+        }
+      }
+    },
+    {
+      "type": "aws_backup_plan",
+      "address": "aws_backup_plan.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule": [
+            {
+              "rule_name": "first",
+              "target_vault_name": "first",
+              "target_logically_air_gapped_backup_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:airgap",
+              "copy_action": [
+                {
+                  "destination_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:second"
+                }
+              ]
+            },
+            {
+              "rule_name": "second",
+              "target_vault_name": "second",
+              "target_logically_air_gapped_backup_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:airgap",
+              "copy_action": [
+                {
+                  "destination_vault_arn": "arn:aws:backup:us-east-1:123456789012:backup-vault:first"
+                }
+              ]
+            }
+          ],
+          "scan_setting": [
+            {
+              "malware_scanner": "GUARDDUTY",
+              "scanner_role_arn": "arn:aws:iam::123456789012:role/scanner"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_backup_vault.first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_vault.second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_logically_air_gapped_vault.airgap",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.scanner",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_plan.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": [
+              {
+                "target_vault_name": {
+                  "references": [
+                    "aws_backup_vault.first.name"
+                  ]
+                },
+                "target_logically_air_gapped_backup_vault_arn": {
+                  "references": [
+                    "aws_backup_logically_air_gapped_vault.airgap.arn"
+                  ]
+                },
+                "copy_action": [
+                  {
+                    "destination_vault_arn": {
+                      "references": [
+                        "aws_backup_vault.second.arn"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "target_vault_name": {
+                  "references": [
+                    "aws_backup_vault.second.name"
+                  ]
+                },
+                "target_logically_air_gapped_backup_vault_arn": {
+                  "references": [
+                    "aws_backup_logically_air_gapped_vault.airgap.arn"
+                  ]
+                },
+                "copy_action": [
+                  {
+                    "destination_vault_arn": {
+                      "references": [
+                        "aws_backup_vault.first.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "scan_setting": [
+              {
+                "scanner_role_arn": {
+                  "references": [
+                    "aws_iam_role.scanner.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

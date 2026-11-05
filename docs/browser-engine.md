@@ -25,7 +25,8 @@ memory adapter; the normal distribution has `pkg/memory-capabilities.json`.
 manifest and licenses, excluding UI/artwork; `.sha256` supplies its checksum.
 Never mix archives' bindings/Wasm.
 
-**Wasm engine release** is manual and build-only by default. Publication validates
+**Wasm engine release** runs full validation on `release` branch updates and manual
+invocations; publication requires an explicit manual request. Publication validates
 both builds and requires an existing `v<package-version>` tag, published stable
 GitHub Release and successful manual **Layout quality** for the checkout commit
 (not a PR merge ref). Size/SHA-256-matching assets are reused; conflicts abort

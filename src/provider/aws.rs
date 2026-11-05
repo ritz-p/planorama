@@ -1,32 +1,55 @@
 mod aliases;
 mod api_gateway;
+mod api_usage;
+mod application_scaling;
 mod apprunner;
+pub(crate) mod appsync;
+mod appsync_datasource;
+mod appsync_domains;
+pub(crate) mod appsync_events;
+mod appsync_execution;
+mod appsync_helpers;
 mod associations;
 mod autoscaling;
 mod autoscaling_network;
 mod backup;
+mod backup_plan;
+mod backup_vaults;
 mod basic;
 mod batch;
 mod classification;
+mod cloud_map;
 pub(crate) mod cloudfront;
+mod cloudfront_functions;
+mod cloudfront_observability;
+pub(crate) mod cloudfront_security;
 pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
 mod cloudtrail_tests;
+pub(crate) mod cloudwatch_alarms;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;
+pub(crate) mod cloudwatch_metrics;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
 mod components;
 mod containment;
 mod data;
+mod database_events;
+mod database_snapshots;
 mod databases;
+mod datasync;
+mod dax;
+mod default_network;
 pub(super) mod diagnostics;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
 mod efs;
+mod efs_evidence;
+mod eks_auxiliary;
 mod elasticache;
 pub(crate) mod elbv2;
 pub(crate) mod elbv2_cognito;
@@ -35,6 +58,7 @@ mod elbv2_tls;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
+pub(crate) mod flow_logs;
 mod fsx;
 mod glue;
 mod iam;
@@ -45,21 +69,32 @@ pub(crate) mod lambda_events;
 pub(crate) mod lambda_policy;
 pub(crate) mod lambda_qualified;
 mod members;
+mod memorydb;
 mod messaging;
 mod monitoring;
 mod network;
+mod network_acl;
 pub(crate) mod networkfirewall;
+mod observability;
 mod opensearch_serverless;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;
 mod privatelink;
+pub(crate) mod profiles;
+pub(crate) mod query_logs;
 mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+pub(crate) mod s3_access;
+mod s3_exports;
 mod sagemaker;
+mod scaling;
+mod scraper;
+pub(crate) mod search;
+pub(crate) mod search_connections;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
@@ -82,6 +117,7 @@ mod scope;
 mod security_group_rules;
 mod security_groups;
 mod service_members;
+mod vpc_controls;
 mod vpc_gateways;
 mod vpc_routes;
 pub(crate) mod waf;
@@ -143,6 +179,17 @@ pub(super) fn reference_label(resource_type: &str, attribute: &str) -> &'static 
 pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
     let resource_type = aliases::canonical(resource_type);
     match resource_type {
+        "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
+            crate::model::Placement::Spatial
+        }
+        "aws_datasync_agent" => crate::model::Placement::Spatial,
+        "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
+        "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
+        "aws_appsync_graphql_api" | "aws_appsync_api" => crate::model::Placement::Spatial,
+        "aws_cloudsearch_domain" | "aws_elasticsearch_domain" | "aws_opensearch_application" => {
+            crate::model::Placement::Spatial
+        }
+        "aws_s3control_bucket" | "aws_s3outposts_endpoint" => crate::model::Placement::Spatial,
         "aws_egress_only_internet_gateway" | "aws_vpc_endpoint_service" => {
             crate::model::Placement::Spatial
         }
@@ -244,13 +291,18 @@ pub(crate) fn data_icon(resource_type: &str) -> Option<crate::icons::ResourceIco
 pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     let mut graph = security_groups::infer(&raw, containment::infer(&raw));
     streaming::present(&raw, &mut graph);
+    scraper::present(&raw, &mut graph);
+    memorydb::present(&raw, &mut graph);
+    dax::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
+    search::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
     autoscaling_network::present(&raw, &mut graph);
     fsx::present(&raw, &mut graph);
+    datasync::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);

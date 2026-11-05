@@ -1,5 +1,22 @@
 # AWS APIs and messaging
 
+## AppSync GraphQL APIs (#947)
+
+GraphQL APIs have independent Spatial cards. Explicit current managed Lambda,
+Cognito and IAM role references require known equal output values and compatible
+provider/account/region evidence. Authentication and MERGED execution-role links
+are gated by their exact discriminator. Additional Cognito authentication uses a
+complete indexed list with element-correlated pool IDs and known region qualifiers.
+Unknown/sensitive, mismatched, dynamic and historical endpoints remain unproven.
+
+Source API associations require distinct GraphQL and MERGED endpoints. Only one
+configured ARN/ID alternative per endpoint is accepted; unconfigured computed
+counterparts may corroborate identity but cannot create a reference. ARN-based
+cross-account associations require explicit provider accounts and a matching
+endpoint ARN account/region. IDs alone cannot establish cross-account identity.
+Shared APIs, roles and authentication backends retain independent scope; no schema,
+token, policy, authentication result or runtime reachability interpretation occurs.
+
 [AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## API Gateway integrations and deployment context
@@ -12,9 +29,14 @@ remain unchanged. VPC Link references do not place an API inside a subnet.
 | --- | --- | --- |
 | REST | API, Resource and Method context | Exact IDs and method output; Resource and Method must belong to the same explicitly referenced API |
 | REST | Stage deployment | Exact Deployment ID with the same API owner |
+| REST | Stage certificate, documentation and canary | Exact certificate ID; documentation version and canary Deployment ID require the same explicitly referenced REST API |
+| REST | Stage access logs | One known block with an exact Log Group or Firehose ARN; Firehose name starts with `amazon-apigateway-` |
+| REST | Account logging role | Explicit matching IAM Role ARN and compatible regional provider binding; the account configuration does not own the role |
 | REST | Lambda Integration / Authorizer | Exact Function or verified Alias `invoke_arn`; Integration requires AWS/AWS_PROXY, POST and matching Method context; Authorizer requires TOKEN/REQUEST |
 | REST | Private Integration and NLB | HTTP/HTTP_PROXY with VPC_LINK and matching Method context; VPC Link has exactly one matching NLB ARN |
 | v2 | API and explicit Stage deployment | Exact IDs and same API owner; deployment navigation requires known `auto_deploy = false` |
+| v2 | Stage client certificate | Explicit matching API Gateway client certificate ID and known WebSocket API |
+| v2 | Stage access logs | Known HTTP/WebSocket API and one complete block with an explicitly referenced matching CloudWatch Log Group ARN; independent of automatic deployment |
 | v2 | Lambda Integration / Authorizer | Known HTTP/WebSocket API; AWS_PROXY and INTERNET for Integration, REQUEST for Authorizer; exact invoke ARN, or raw Lambda ARN for HTTP Integration |
 | v2 | Private Integration | HTTP API, HTTP_PROXY, VPC_LINK and exact listener or Cloud Map service ARN; listener explicitly identifies an ALB/NLB |
 | v2 | Quick-create Lambda | HTTP API with an explicit Function or verified Alias reference matching its raw ARN; generated integrations, routes and stages are not Terraform nodes |
@@ -31,6 +53,9 @@ partial, ambiguous, wrong-provider/type, data, deleted and deposed evidence reta
 generic references and unresolved diagnostics. Provider bindings and known Regions
 must match. Filtering and named states retain their existing identity boundaries.
 An automatic v2 Stage does not acquire a synthetic Deployment.
+Stage logging and canary blocks require complete single-element lists. Stage,
+account configuration, certificates and logging destinations retain their existing
+independent placement. Log formats, certificates and stage variables are not displayed.
 
 The contracts were checked against AWS Provider 6.70.0 schema and a synthetic
 Terraform 1.9.8 `plan -refresh=false`. See the official
@@ -52,6 +77,39 @@ Synthetic examples: REST [SVG](../examples/api-gateway-rest.svg) /
 [HTML](../examples/api-gateway-v2.html). Generate HTML in Docker using
 `cargo run --locked -- tests/fixtures/api-gateway-rest-plan.json --format html -o examples/api-gateway-rest.html`
 (replace `rest` with `v2` for the second example).
+
+REST helper references (#933) require explicit current managed endpoints and matching
+known values. Documentation parts/versions, gateway responses, models, validators,
+policies and API update helpers link to their REST API without interpreting payloads.
+Method/integration responses verify the same API/resource/method tuple; integration
+response status also identifies the matching method response. Response model maps
+must be complete and API-qualified; built-in `Empty`/`Error` are not managed models.
+Method settings link only to a same-API stage; wildcard paths do not infer methods.
+Resource parents require an unambiguous acyclic chain ending at the same API's root.
+These helpers retain independent logical cards, coverage and filtering behavior.
+Contracts use AWS Provider 6.70.0 at commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`; field shapes and source paths are recorded
+in `aws-semantic-decisions.json`.
+
+REST authorization references (#931) require matching API/resource context. CUSTOM
+methods accept TOKEN/REQUEST authorizers; COGNITO_USER_POOLS methods accept matching
+Cognito authorizers. TOKEN/REQUEST authorizer roles use explicit IAM role ARNs, while
+Cognito pool sets and request model maps must be complete. Validators and models
+must belong to the same API. Built-in Empty/Error models remain unresolved.
+
+REST custom domains (#932) retain independent logical cards. Mapping stages must
+belong to the explicitly referenced API; private mappings also require a reference
+to the same domain's matching domain_name_id. ACM certificates require EDGE
+(us-east-1), REGIONAL or PRIVATE endpoint types as appropriate; ownership verification
+is regional. Private access associations require a PRIVATE domain ARN and VPCE
+Interface endpoint. Certificate registration names and truststore URLs stay opaque.
+
+V2 domain mappings (#939) require a REGIONAL domain and an explicitly referenced
+REST, HTTP or WebSocket API with a stage from that same API family and owner.
+V2 domain certificate blocks must be single and REGIONAL. Routing-rule actions
+require exactly one invoke_api block targeting an explicitly EDGE/REGIONAL REST API
+and its stage; PRIVATE, unknown or missing endpoint types remain unresolved. The V2
+resource name does not permit HTTP/WebSocket targets. Conditions remain opaque.
 
 ## Step Functions
 
@@ -79,10 +137,58 @@ schema defines regional resources and a scalar `role_arn`; ASL is an opaque stri
 
 `aws_cloudwatch_event_bus` and `aws_cloudwatch_event_rule` are regional spatial
 nodes with the Amazon EventBridge service label. They preserve Terraform identities,
-managed/data mode, actions and lifecycle metadata. Explicit references remain
-ordinary dependencies; event patterns, names and policy text do not establish
+managed/data mode, actions and lifecycle metadata. Verified configuration links
+remain dependencies; event patterns, names and policy text do not establish
 message flow or VPC/Subnet containment. Literal-only and implicit default buses
 do not create resources or ownership. See the [EventBridge example](../examples/eventbridge.svg).
+
+### Bounded configuration references (#748)
+
+The following attributes require one complete, explicit managed AWS endpoint,
+the listed output field and equal known values. Consumer and endpoint must be
+current, non-deposed resources with compatible provider/account/region evidence;
+IAM roles are global. Unknown, ambiguous, literal-only, foreign, historical and
+missing endpoints remain unresolved. Selection and named states never borrow an
+endpoint from another state.
+Duplicate resource changes with the same address and deposed key are rejected
+before parsing can overwrite evidence. Distinct current and deposed identities
+can coexist; historical instances do not invalidate a valid current reference.
+
+| Consumer attribute | Endpoint output |
+| --- | --- |
+| Rule `event_bus_name` | Event bus `name` or `arn` |
+| Bus policy / permission `event_bus_name` | Event bus `name` |
+| Archive `event_source_arn` | Event bus `arn` |
+| API destination `connection_arn` | Event connection `arn` |
+| Rule / target `role_arn` | IAM role `arn` |
+| Target `dead_letter_config.arn` | SQS queue `arn` |
+
+Archives and API destinations retain independent regional logical identities;
+shared connections are not embedded. These links describe configuration, not
+delivery, permissions or health. They do not interpret policy/authentication
+bodies, HTTP URLs, event patterns or partner sources. Global endpoint bus pairs
+and connection VPC Lattice references remain deferred. Existing target-to-rule
+and SQS/Lambda relationships keep their separate proof contract.
+
+Contracts were checked against AWS Provider 6.70.0 at
+[`5e13eed`](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/events)
+and its resource documentation. The [fixture](../tests/fixtures/eventbridge-references-plan.json)
+covers each supported input/output pair; native and Wasm use the same verifier.
+
+### Schema registry navigation (#755)
+
+Schema and registry policy `registry_name` references must explicitly identify
+one registry's `name`; discoverer `source_arn` must identify an event bus `arn`.
+They use the same complete, unique, known-value and compatible provider/account/
+region checks described above. Registry, schema, policy and discoverer retain
+independent logical identities, including shared registries. Missing, filtered,
+historical and ambiguous endpoints never borrow another state's identity.
+
+Schema content, inferred event types, policy bodies and implicit AWS registries
+are not interpreted or synthesized. The contract was checked against the pinned
+[Schemas source](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/schemas)
+and resource documentation. The [fixture](../tests/fixtures/eventbridge-schemas-plan.json)
+is covered by semantic, safe SVG/HTML and native/Wasm parity tests.
 
 ## SQS and SNS
 
@@ -430,3 +536,94 @@ Filtering never borrows identity from another state; unavailable links become
 plain context. Parallel targets retain separate provenance and numbers, while
 each target is counted once across logical rows and the relationship index.
 See the [EventBridge target example](../examples/eventbridge-targets.svg).
+
+
+## Usage plans and keys (#936)
+
+Provider 6.70.0 commit 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f defines
+usage-plan api_stages as a set of required api_id/stage string pairs. Every row
+must match explicit REST API id and stage stage_name outputs, and each stage
+must independently prove that API via rest_api_id. Equal stage names in different
+APIs remain distinct. Missing rows, partial references, unknown values and
+conflicting qualifiers invalidate the pair collection. A shared usage plan stays
+independent and is never embedded under an arbitrary API.
+
+Usage-plan-key key_id and usage_plan_id reference API-key id and usage-plan id
+only when key_type is known API_KEY. The association retains its own identity;
+no key value is emitted. References require current managed explicit compatible
+provider/account/region evidence. Literal-only, ambiguous, data, deleted/deposed
+or filtered endpoints remain unresolved; named states remain isolated.
+No permissions, throttling effects or runtime access is inferred. See the
+[fixture](../tests/fixtures/api-usage-plan.json) and
+[tests](../tests/unit/semantic/api_usage.rs).
+
+
+## WebSocket response identities (#940)
+
+AWS Provider 6.70.0 commit 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f:
+integration responses use api_id and integration_id, with a known nonempty
+integration_response_key. Route responses use api_id and route_id, with the
+supported $default route_response_key. Both require a known WEBSOCKET API and
+an explicit parent whose independently proven API is that same endpoint.
+Models retain independent API-qualified identity. response_models is a complete
+string map of model names; the pinned route_response_test.go verifies model.name,
+not model.id. Every model and the response's route must prove that same API.
+
+All references require unique explicit current managed endpoints, exact output
+fields, equal known nonempty values and compatible provider/account/region.
+Unknown, conflicting, literal-only, partial, data, deleted/deposed and filtered
+endpoints retain fallback. Named states stay isolated. Helpers remain independent;
+no embedding or network containment is introduced. Model schema and response
+body/template values are excluded. See the
+[fixture](../tests/fixtures/api-responses-plan.json) and
+[tests](../tests/unit/semantic/api_responses.rs).
+## AppSync data sources (#944)
+
+Provider 6.70.0 datasource.go uses singleton list blocks for typed backends.
+Data sources retain their Terraform identity and join a GraphQL API only through
+an explicit matching api_id reference. Backend references require this API context,
+the exact data-source type, a unique managed output and compatible accounts.
+Lambda and EventBridge use ARN outputs; DynamoDB uses table names, with delta
+tables requiring known versioned=true. Explicit backend regions must match;
+omitted regions use the data-source region. RDS_HTTP_ENDPOINT requires both a
+cluster identifier and secret ARN. Elasticsearch/OpenSearch accept an explicit
+endpoint output, optionally prefixed by https://, without hostname discovery.
+IAM roles remain independent, as do all shared backend resources.
+
+Unknown, sensitive, literal-only, conflicting and unavailable endpoints retain
+fallback. No HTTP URL, credentials, SQL/schema or runtime behavior is interpreted.
+See [tests](../tests/unit/semantic/appsync_datasource.rs).
+
+## AppSync functions and resolvers (#946)
+
+Provider 6.70.0 function.go and resolver.go define data_source as a name and
+pipeline_config.functions as an ordered list of function_id outputs. Both
+consumer and endpoint must independently reference the same GraphQL API.
+Equal names in different APIs do not match. UNIT resolvers require data_source;
+PIPELINE resolvers require complete explicit function-ID evidence, preserving
+the evaluated order. Composite function IDs and function names are not accepted
+as pipeline identities. Conflicting UNIT/PIPELINE inputs retain fallback.
+
+Nested conflict handlers require the LAMBDA discriminator and an explicit Lambda
+ARN. All endpoints must be current, managed, uniquely referenced and compatible
+in account and region. Partial, unknown, sensitive, unavailable or incompatible
+evidence remains unresolved. Functions and resolvers remain independent logical
+resources with their actions and coverage; references imply no containment or
+runtime invocation. Schema type/field selectors, code and templates are excluded.
+See [tests](../tests/unit/semantic/appsync_execution.rs).
+
+## AppSync cache, keys and types (#943)
+
+Provider 6.70.0 api_cache.go, api_key.go and type.go define scalar api_id inputs.
+Cache and type helpers reference GraphQL API id only. Keys also accept the Event
+API resource's api_id output, as defined by api.go; its nonexistent id output is
+not an alias. API context requires a unique explicit current managed endpoint,
+equal known values and compatible provider/account/region evidence. Unknown,
+sensitive, ambiguous, literal-only and unavailable evidence retains fallback.
+
+Helpers can be presented with their unique API while retaining individual
+Terraform identity, action and exactly-once coverage. Managed caches gain no
+subnet attachment. Key id contains key material; neither it, api_key_id nor key
+is parsed or displayed. Type SDL/JSON definitions create no resources or edges.
+Caching behavior and type format summaries remain outside the bounded contract.
+See [tests](../tests/unit/semantic/appsync_helpers.rs).

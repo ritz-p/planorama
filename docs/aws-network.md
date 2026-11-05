@@ -151,6 +151,41 @@ ALB/stage associations and unresolved configuration.
 
 ## Route 53
 
+Route 53 Profiles associations use explicit profile `id` and VPC `id` references.
+Resource associations accept only private Hosted Zone, Resolver Rule and DNS
+Firewall Rule Group `arn` outputs. A zone requires known nonempty VPC configuration;
+public/unknown zones remain unresolved. Query-log and VPC-endpoint variants are
+not enabled. `resource_properties` JSON and computed `resource_type` do not create
+topology. References require current managed endpoints, known non-sensitive equal
+values and compatible provider/account/region evidence. Zones keep global scope;
+regional targets keep their own region. Shared profiles remain independent;
+incompatible/cross-state endpoints do not establish ownership or VPC containment.
+
+DNS Firewall rules reference a managed rule-group `id` and, for standard rules,
+a managed domain-list `id`. The domain-list link requires absent Advanced-rule
+threat/confidence fields, including the computed threat-protection ID; no managed
+endpoint is synthesized for that ID. A uniquely proven group owns the rule helper.
+Rule-group associations independently reference group and VPC IDs without moving
+the shared group into a VPC. Provider/account/region, current managed identity,
+explicit indexed provenance and known non-sensitive matching outputs are required.
+Shared-by-me owner evidence must match the group's provider account; shared-with-me
+or incompatible accounts remain unresolved. This does not infer DNS enforcement,
+effective policy or network containment.
+
+Query logging uses explicit current managed references and matching known outputs.
+`aws_route53_query_log.zone_id` accepts hosted-zone `id`/`zone_id` and supplies
+unique helper ownership; `cloudwatch_log_group_arn` accepts only a log-group `arn`
+in us-east-1. It does not prove delivery permissions.
+Resolver query-log `destination_arn` accepts S3 bucket, CloudWatch log-group or
+Firehose delivery-stream `arn`. Associations independently verify configuration
+`id` and VPC `id`; neither the shared configuration nor its destination becomes
+a VPC child. Regional endpoints must match the configuration region. Cross-account
+configuration references require explicit owner-account evidence and SHARED_BY_ME;
+unknown owner/share evidence remains unresolved. Destination scope is independent.
+Unknown, sensitive, dynamic, ambiguous, deleted/deposed, data, incompatible provider
+or mismatching output values do not prove dedicated relationships. Named states
+remain separate; no literal ARN search, permission or runtime delivery inference.
+
 Route 53 Hosted Zones and Records are spatial nodes with Global scope and the
 Amazon Route 53 service label. The [synthetic example](../examples/route53.svg) also has
 [offline HTML](../examples/route53.html). `Hosted zone` links require a complete,
@@ -394,3 +429,100 @@ sensitive and incompatible endpoints retain conservative fallback.
 Contracts follow AWS Provider 6.70.0 at
 `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, including the shared
 `resourceVPCPeeringConnectionRead` implementation for requester and accepter.
+
+## Adopted default networks (#889)
+
+AWS Provider 6.70.0 at commit
+5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f defines default resources as adoption
+contracts. They are not aliases of ordinary VPC resources.
+
+Default VPC and subnet resources are independent spatial containers; a default
+route table is a spatial connector. No default ACL, SG or table is synthesized.
+Default subnet availability_zone is required, while availability_zone_id,
+cidr_block and vpc_id are computed-only. AZ, CIDR and computed VPC values do not
+establish containment; the subnet stays independent without configured proof.
+
+Default ACL default_network_acl_id and default table default_route_table_id
+must reference the corresponding output on an explicit aws_vpc or aws_default_vpc.
+The adopted resource id must agree, and its known vpc_id must equal that VPC id.
+Default SG vpc_id is optional/computed: only a configured reference to VPC id
+establishes context. Missing configuration never adopts a VPC by value alone.
+These references establish network context, not embedded helper ownership.
+
+Default ACL subnet_ids requires a complete set of explicit subnet id references
+and agreeing known VPC values. Default SG ingress/egress security_groups and
+prefix_list_ids use complete typed id references; default SG is accepted as an
+SG endpoint by typed rule references. Names and IDs are distinct.
+
+Default table route is an optional/computed attribute-mode set. Explicit typed
+route references cover gateway, NAT, transit gateway, peering, ENI, egress-only
+gateway, instance, GatewayLoadBalancer endpoint, core-network ARN and destination
+prefix-list ID; propagating_vgws is a complete set of VPN gateway IDs. Unsupported
+or mixed incomplete route evidence remains unresolved. Explicit standalone routes
+can use a current default table id as owner. No computed route child is invented.
+
+All new proof requires current managed AWS endpoints, complete explicit instance
+references, known matching nonempty output values and compatible provider,
+account and region evidence. Unknown, literal-only, ambiguous, deleted/deposed,
+data or filtered endpoints keep independent resource identity and fallback.
+Named states do not borrow evidence. Inline rules, permissions, health and
+reachability are not inferred or summarized.
+
+Pinned source contracts:
+[default subnet](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_subnet.go),
+[default ACL](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_network_acl.go),
+[default table](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_route_table.go),
+[default SG](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2/vpc_default_security_group.go).
+
+## VPC controls (#901)
+
+AWS Provider 6.70.0's pinned [EC2 resource schemas](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/ec2) define scalar ID contracts:
+
+- Public-access exclusions require exactly one of vpc_id/subnet_id, matching the explicitly referenced VPC/subnet id, and known allow-bidirectional or allow-egress mode. Computed resource_arn is not provenance.
+- Encryption controls require a matching VPC id and known monitor/enforce mode. Gateway/peering exclusion flags identify service categories, not endpoints or KMS keys.
+- DHCP associations require matching VPC and DHCP-options id references before lowering. The default sentinel is excluded; shared options remain independent.
+
+Unique explicit current managed references, known matching values and compatible provider/account/region bindings are required. Proven control helpers embed with their own actions and coverage; unknown, incomplete, ambiguous, mismatched, deleted/deposed or filtered owners retain independent fallback. No DNS settings, policies, runtime connectivity or reachability are inferred. See the [fixture](../tests/fixtures/vpc-controls-plan.json).
+
+## CloudFront functions and KeyValueStore helpers (#913)
+
+Contracts use AWS Provider 6.70.0 at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: the [function schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/function.go), [connection-function schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/connection_function.go), and [key-helper documentation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/cloudfrontkeyvaluestore_keys_exclusive.html.markdown).
+
+| Source path | Verified endpoint and gate |
+| --- | --- |
+| Function key_value_store_associations | Complete nonempty ARN set to current managed KeyValueStore.arn; known runtime cloudfront-js-2.0 |
+| Connection function connection_function_config.key_value_store_association.key_value_store_arn | Singleton config and singleton association, exact store.arn and known runtime cloudfront-js-2.0 |
+| Key / exclusive-keys helper key_value_store_arn | One exact store.arn; deprecated composite key.id is not store identity |
+
+The connection-function schema uses a singular nested association, despite the documentation's top-level plural argument description. Its connection_function_arn and id remain separate from a normal function's arn. Known `publish = true` is required when existing CloudFront consumer paths reference either function type; absent, false, unknown or sensitive publish values do not establish a live endpoint. Store configuration references remain valid for development functions. No new distribution consumer paths are introduced.
+
+All selected resources retain Logical presentation and Global service scope with independent account identity. Key helpers retain unique verified store navigation without embedding or claiming ownership of other key resources. Complete explicit provenance, exact known outputs and compatible accounts are required; literal, partial, unknown, masked, ambiguous, deleted/deposed, data or filtered endpoints remain unresolved. Function code and all key/value payloads are excluded, including non-sensitive schema fields. Exclusive reconciliation is not a managed key inventory, and destroying it does not delete keys. See the maintained [function/store example](../examples/cloudfront-functions.svg).
+## CloudFront keys, field encryption and trust stores (#914)
+
+Contracts follow AWS Provider 6.70.0 at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`: [key groups](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/key_group.go), [field encryption configuration](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/field_level_encryption_config.go), [profiles](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/field_level_encryption_profile.go) and [trust stores](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/trust_store.go).
+
+| Source path | Verified identity |
+| --- | --- |
+| Key group items | Complete nonempty string set of managed public_key.id outputs |
+| Encryption config content_type_profile_config.content_type_profiles.items.profile_id | Profile.id per indexed set element, through two singleton lists; known absent optional profile IDs are skipped |
+| Encryption config query_arg_profile_config.query_arg_profiles.items.profile_id | Required profile.id per indexed set element, through two singleton lists |
+| Encryption profile encryption_entities.items.public_key_id | Public_key.id per indexed set element, through a singleton list |
+| Trust store ca_certificates_bundle_source.ca_certificates_bundle_s3_location.bucket | Explicit S3 bucket.bucket or bucket.id with known configured region matching the bucket's independently known region |
+| Same S3 location key / version | Explicit S3 object.key and optional object.version_id for the same object, itself explicitly referencing the proven bucket; object and bucket regions must match the location region |
+
+Both trust-store blocks are singleton lists. Modern aws_s3_object and deprecated aws_s3_bucket_object are checked as separate exact types. A present version must be known and explicitly reference the same object's version_id; unknown, sensitive or literal-only versions leave object provenance unresolved. Bucket identity can remain verified independently. Global CloudFront provider region does not set the bucket region, and late provider account evidence is checked for the bucket, object and consumer separately.
+
+All key groups, profiles, encryption configurations, public keys and trust stores retain independent Logical identity, Global scope and account evidence. Complete explicit references and matching known outputs are required; reordered sets require corresponding indexed evidence, and malformed masks, missing/literal rows, ambiguous IDs, inactive lifecycle, wrong provider/type or unavailable selected endpoints remain unresolved. These references do not add ownership, network containment or distribution consumer rules. Content/query matching rules, encryption provider_id, encoded keys and certificate contents are opaque and excluded from rendering. See the maintained [security example](../examples/cloudfront-security.svg).
+## CloudFront monitoring and realtime log destinations (#915)
+
+Contracts use the pinned AWS Provider 6.70.0 [monitoring subscription schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/monitoring_subscription.go) and [realtime log schema](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/cloudfront/realtime_log_config.go).
+
+| Source path | Verified endpoint and presentation |
+| --- | --- |
+| Monitoring subscription distribution_id | One current managed CloudFront distribution.id; the helper embeds only under a proven Spatial owner with compatible account scope |
+| Realtime log endpoint.kinesis_stream_config.role_arn | Exact IAM role.arn, gated by known endpoint.stream_type = Kinesis |
+| Realtime log endpoint.kinesis_stream_config.stream_arn | Exact Kinesis stream.arn with independently known regional scope, under the same stream-type gate |
+
+The schema requires exactly one endpoint and one kinesis_stream_config list element. Empty, multiple, masked or partial blocks are unresolved. All paths require explicit unique managed provenance, exact known values and compatible provider/account identity, including late account checks. CloudFront stays Global, IAM stays Global, and a Kinesis region is never replaced by the CloudFront provider region. Realtime log configurations remain independent Logical resources shared across behaviors; existing distribution-to-log references are unchanged.
+
+Metrics status Enabled/Disabled and unknown status do not change the configured distribution owner. Metrics do not establish a CloudWatch alarm or log group, and IAM references make no effective-permission or delivery claim. Unproven, inactive, ambiguous or filtered endpoints retain fallback and original action/coverage; named states remain distinct. Policy contents, credentials and runtime metrics are excluded. See the maintained [monitoring/log example](../examples/cloudfront-observability.svg).

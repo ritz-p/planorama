@@ -6,6 +6,8 @@ on:
       - tests/fixtures/compatibility/**
       - scripts/terraform-compatibility.cjs
       - scripts/terraform-compatibility-inputs.cjs
+      - scripts/compatibility-provider.cjs
+      - tests/ci/compatibility-provider.test.cjs
       - tests/ci/terraform-compatibility.test.cjs
       - tests/fixtures/aws-captured/**
       - tests/fixtures/aws-region-overrides/**
@@ -26,21 +28,6 @@ permissions:
   contents: read
 
 jobs:
-  evidence:
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
-      - run: docker compose up -d --build dev
-      - run: docker compose exec -T dev node tests/support/provider_plan.cjs prepare
-      - run: docker compose exec -T dev cargo build --locked --bin planorama
-      - name: Verify real saved plans without external network
-        run: >-
-          docker run --rm --network none
-          --volumes-from "$(docker compose ps -q dev)"
-          planorama-dev node tests/support/provider_plan.cjs verify
   committed:
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -50,10 +37,11 @@ jobs:
           persist-credentials: false
       - run: node scripts/terraform-compatibility.cjs check
       - run: node --test tests/ci/terraform-compatibility.test.cjs
+      - run: node --test tests/ci/compatibility-provider.test.cjs
   capture:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -67,8 +55,17 @@ jobs:
       - run: docker compose exec -T dev node scripts/terraform-compatibility.cjs check
       - run: docker compose exec -T dev cargo test --locked --lib compatibility_tests
       - run: docker compose exec -T dev cargo test --locked --test terraform_plan
+      - run: docker compose exec -T dev node tests/support/provider_plan.cjs prepare
+      - run: docker compose exec -T dev cargo build --locked --bin planorama
+      - name: Capture public saved-plan evidence without external network
+        run: >-
+          docker run --rm --network none
+          --volumes-from "$(docker compose ps -q dev)"
+          planorama-dev node tests/support/provider_plan.cjs capture
       - uses: actions/upload-artifact@v7.0.2
         with:
           name: terraform-compatibility
-          path: tests/fixtures/compatibility
+          path: |
+            tests/fixtures/compatibility
+            tests/fixtures/provider-plan/captured
           include-hidden-files: true

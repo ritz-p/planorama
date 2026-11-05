@@ -1,0 +1,515 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.cache",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-cache",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_subnet_group.shared",
+      "mode": "managed",
+      "type": "aws_memorydb_subnet_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_SUBNETS",
+          "name": "PRIVATE_SUBNETS",
+          "subnet_ids": [
+            "subnet-b",
+            "subnet-a"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_memorydb_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_PARAMS",
+          "name": "PRIVATE_PARAMS",
+          "parameters": [
+            {
+              "name": "PRIVATE_PARAM",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.cache",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111122223333:key/PRIVATE_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.events",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:111122223333:PRIVATE_TOPIC"
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_cluster.cache",
+      "mode": "managed",
+      "type": "aws_memorydb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "subnet_group_name": "PRIVATE_SUBNETS",
+          "security_group_ids": [
+            "sg-cache"
+          ],
+          "parameter_group_name": "PRIVATE_PARAMS",
+          "name": "PRIVATE_CLUSTER",
+          "id": "PRIVATE_CLUSTER",
+          "acl_name": "PRIVATE_ACL",
+          "multi_region_cluster_name": "PRIVATE_GLOBAL",
+          "kms_key_arn": "arn:aws:kms:us-east-1:111122223333:key/PRIVATE_KEY",
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111122223333:PRIVATE_TOPIC",
+          "snapshot_name": "PRIVATE_SNAPSHOT",
+          "shards": [
+            {
+              "nodes": [
+                {
+                  "endpoint": "PRIVATE_HOST"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_snapshot.old",
+      "mode": "managed",
+      "type": "aws_memorydb_snapshot",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_SNAPSHOT",
+          "name": "PRIVATE_SNAPSHOT",
+          "cluster_name": "PRIVATE_OLD_CLUSTER",
+          "kms_key_arn": "arn:aws:kms:us-east-1:111122223333:key/PRIVATE_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_user.a",
+      "mode": "managed",
+      "type": "aws_memorydb_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_USER_A",
+          "user_name": "PRIVATE_USER_A",
+          "access_string": "PRIVATE_ACCESS",
+          "authentication_mode": [
+            {
+              "passwords": [
+                "PRIVATE_PASSWORD"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_user.b",
+      "mode": "managed",
+      "type": "aws_memorydb_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_USER_B",
+          "user_name": "PRIVATE_USER_B"
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_acl.shared",
+      "mode": "managed",
+      "type": "aws_memorydb_acl",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_ACL",
+          "name": "PRIVATE_ACL",
+          "user_names": [
+            "PRIVATE_USER_B",
+            "PRIVATE_USER_A"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_multi_region_cluster.global",
+      "mode": "managed",
+      "type": "aws_memorydb_multi_region_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "multi_region_cluster_name": "PRIVATE_GLOBAL",
+          "multi_region_parameter_group_name": "PRIVATE_PARAMS"
+        }
+      }
+    },
+    {
+      "address": "aws_memorydb_cluster.historical",
+      "mode": "managed",
+      "type": "aws_memorydb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "PRIVATE_OLD_CLUSTER",
+          "name": "PRIVATE_OLD_CLUSTER"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111122223333:role/example"
+              }
+            }
+          ]
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.cache",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_memorydb_subnet_group.shared",
+          "mode": "managed",
+          "type": "aws_memorydb_subnet_group",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_memorydb_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_memorydb_parameter_group",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.cache",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.events",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_memorydb_cluster.cache",
+          "mode": "managed",
+          "type": "aws_memorydb_cluster",
+          "name": "cache",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_group_name": {
+              "references": [
+                "aws_memorydb_subnet_group.shared.name"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.cache.id"
+              ]
+            },
+            "parameter_group_name": {
+              "references": [
+                "aws_memorydb_parameter_group.shared.id"
+              ]
+            },
+            "acl_name": {
+              "references": [
+                "aws_memorydb_acl.shared.name"
+              ]
+            },
+            "multi_region_cluster_name": {
+              "references": [
+                "aws_memorydb_multi_region_cluster.global.multi_region_cluster_name"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.cache.arn"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "snapshot_name": {
+              "references": [
+                "aws_memorydb_snapshot.old.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_memorydb_snapshot.old",
+          "mode": "managed",
+          "type": "aws_memorydb_snapshot",
+          "name": "old",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_memorydb_cluster.historical.name"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.cache.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_memorydb_user.a",
+          "mode": "managed",
+          "type": "aws_memorydb_user",
+          "name": "a",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_memorydb_user.b",
+          "mode": "managed",
+          "type": "aws_memorydb_user",
+          "name": "b",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_memorydb_acl.shared",
+          "mode": "managed",
+          "type": "aws_memorydb_acl",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_names": {
+              "references": [
+                "aws_memorydb_user.a.user_name",
+                "aws_memorydb_user.b.user_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_memorydb_multi_region_cluster.global",
+          "mode": "managed",
+          "type": "aws_memorydb_multi_region_cluster",
+          "name": "global",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_memorydb_cluster.historical",
+          "mode": "managed",
+          "type": "aws_memorydb_cluster",
+          "name": "historical",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

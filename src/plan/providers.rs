@@ -42,6 +42,7 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
         &configuration["root_module"],
         "",
         &configuration["provider_config"],
+        plan["terraform_version"].as_str(),
         &mut resources,
     );
     for node in nodes.iter_mut().filter(|node| node.deposed_key.is_none()) {
@@ -92,6 +93,7 @@ fn collect<'a>(
     module: &'a Value,
     scope: &str,
     providers: &Value,
+    core: Option<&str>,
     found: &mut BTreeMap<String, ResourceConfiguration<'a>>,
 ) {
     for resource in module["resources"].as_array().into_iter().flatten() {
@@ -122,10 +124,11 @@ fn collect<'a>(
                     configuration,
                     resource,
                     ambiguous: false,
-                    verified_version: matches!(
-                        providers[key]["version_constraint"].as_str(),
-                        Some("6.0.0" | "= 6.0.0")
-                    ),
+                    verified_version: match providers[key]["version_constraint"].as_str() {
+                        Some("6.0.0" | "= 6.0.0") => true,
+                        Some("6.70.0" | "= 6.70.0") => core == Some("1.9.8"),
+                        _ => false,
+                    },
                 },
             );
         }
@@ -136,6 +139,7 @@ fn collect<'a>(
                 &call["module"],
                 &qualify(scope, &format!("module.{name}")),
                 providers,
+                core,
                 found,
             );
         }

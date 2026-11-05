@@ -449,6 +449,51 @@ by Terraform identity. Filtering can leave either endpoint unavailable without
 emitting a dangling link. See
 [autoscaling-policy.svg](../examples/autoscaling-policy.svg).
 
+## CloudWatch metric configuration references (#987)
+
+Metric streams expose separate configured Firehose delivery-stream (`firehose_arn`)
+and IAM role (`role_arn`) references. Detailed resource metrics configurations
+accept only an ElastiCache replication-group `arn` through `resource_arn`; cache
+clusters and serverless caches are excluded by the pinned Provider contract.
+
+Managed Contributor Insights rules accept a VPC endpoint-service `arn` with one
+of the exact `VpcEndpointService-{ActiveConnections,Bytes,NewConnections,RstPackets}ByEndpointId-v1`
+templates documented for [PrivateLink](https://docs.aws.amazon.com/vpc/latest/privatelink/privatelink-cloudwatch-metrics.html).
+Unknown templates and other resource/template combinations remain unresolved.
+
+All links require a unique explicit current managed AWS reference, a known matching
+ARN, the expected type/output and compatible provider/account/region. IAM roles
+remain global. Unknown, sensitive, mismatched, deleted, deposed, data-mode or
+ambiguous endpoints do not verify a link. Helpers retain independent identity,
+action and coverage; named states and filtered targets remain separate.
+
+Namespace and metric filters are selectors, not resource identities. Computed
+`rule_name` never creates a managed rule. These references establish neither
+ownership/network containment nor delivery, collection or monitoring success.
+See the [synthetic example](../examples/cloudwatch-metrics.svg).
+
+## CloudWatch alarm configuration references (#986)
+
+Metric and composite alarms expose configured ALARM, OK and INSUFFICIENT_DATA
+action references to SNS topics and Lambda functions/aliases (`arn`). Metric
+alarms additionally accept Auto Scaling and Application Auto Scaling policies.
+Each action set must be complete, uniquely referenced, typed and equal to known
+endpoint ARNs in the same provider/account/region scope. Unsupported action forms
+(including EC2 automation and Systems Manager action strings) retain unresolved
+configuration references; they do not synthesize resource nodes.
+
+Composite `actions_suppressor.alarm` accepts an explicit metric/composite alarm
+`alarm_name` or `arn`. Mute-rule `mute_targets.alarm_names` accepts a complete set
+of explicit metric/composite alarm names in the same scope. Both blocks must have
+exactly one entry. Unknown, sensitive, ambiguous, deleted, deposed, data-mode or
+mismatched endpoints cannot establish these links. Named states stay separate;
+selection removes unavailable link destinations.
+
+These are configuration navigation, not ownership, containment, execution or
+current suppression claims. Alarm rules and schedules are not evaluated. Existing
+RDS Monitors/Monitored by verification and independent alarm display remain
+unchanged. See the [synthetic example](../examples/cloudwatch-alarms.svg).
+
 ## CloudWatch Logs configuration references (#988)
 
 The fixed AWS Provider 6.70.0 [registration and schema sources](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/logs)
@@ -508,3 +553,81 @@ IAM roles, S3 buckets and CloudFront keep their own global scope. Lambda and log
 Log Destination subscriptions require an absent role input. No endpoint is moved into
 a consumer scope, and no policy interpretation, permission or delivery-success claim
 is made. See the [synthetic example](../examples/cloudwatch-delivery.svg).
+
+## Auto Scaling auxiliary references (#811)
+
+Group tags, lifecycle hooks and schedules retain independent logical identities and
+link only to explicit matching current managed group names. Hooks additionally
+verify SNS/SQS notification ARNs and IAM role ARNs. Notification resources verify
+the entire group-name set and a separate SNS topic; a multi-group notification is
+not embedded into one owner. Shared endpoints remain independent. Literal, unknown,
+partial, incompatible and lifecycle-invalid references retain conservative fallback.
+Tag values, notification metadata and cron expressions are not interpreted or shown.
+Contracts follow the pinned AWS Provider 6.70.0 schema and documentation recorded
+in aws-semantic-decisions.json. Existing Auto Scaling policy behavior is unchanged.
+
+## Application Auto Scaling and scaling plans (#812)
+
+Target resource IDs require exact namespace/dimension-qualified formats proven by
+explicit managed endpoint outputs: ECS service/cluster/service names, DynamoDB
+table/name (and known table index membership), or RDS cluster:identifier. ECS also
+requires an explicit matching service-to-cluster reference. Policies and scheduled
+actions identify the same resource ID, namespace and dimension of an explicit target.
+Scaling plans verify complete instruction collections; Auto Scaling group/name is
+additionally supported there. Unknown, duplicate, partial, ambiguous or incompatible
+collections remain unresolved. CloudFormation application stacks and IAM roles have
+separate exact ARN references. Tag filters, metric labels, capacity and metric
+expressions do not identify resources. All helpers retain independent placement.
+The pinned Provider 6.70.0 field contracts are in aws-semantic-decisions.json.
+
+
+## EKS auxiliary references (#780)
+
+AWS Provider 6.70.0 commit 5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f:
+access-policy associations, identity-provider configurations, pod-identity
+associations and capabilities use explicit aws_eks_cluster.name references.
+Access association principal_arn must reference a current access entry's
+principal_arn and both resources must prove the same cluster. policy_arn is an
+EKS access policy; it is not interpreted as an IAM policy.
+
+Pod identity role_arn/target_role_arn and capability role_arn use IAM role arn.
+Addon pod_identity_association is a set whose complete role_arn values must match
+explicit IAM endpoints. Node-group launch_template is a singleton list; configured
+id/name must match the corresponding template output. Its version must be a
+positive numeric string matching an explicit latest_version/default_version output
+from that same template. Literal versions and $Latest/$Default remain unresolved;
+conflicting selectors do not establish a template.
+
+Only current managed, unique explicit compatible provider/account/region evidence
+is accepted. Missing, unknown, partial, ambiguous, data, deleted/deposed and
+filtered endpoints retain fallback and identity. Named states stay independent.
+No ownership or network containment follows these references. Existing EKS cluster,
+role and network contracts remain unchanged. Namespace/service-account values,
+OIDC URLs, ArgoCD/Identity Center selectors, Kubernetes nodes, ASGs, health and
+effective permissions are not inferred or exposed.
+
+The pinned official implementations are in internal/service/eks/{access_policy_association,
+identity_provider_config,pod_identity_association,capability,addon,node_group}.go.
+See [fixture](../tests/fixtures/eks-auxiliary-plan.json) and
+[tests](../tests/unit/semantic/eks_auxiliary.rs).
+
+
+## Cloud Map identities (#782)
+
+Pinned AWS Provider 6.70.0 (5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f)
+servicediscovery source/schema contracts: private DNS namespace vpc references an
+explicit VPC id as logical DNS context. Public/HTTP namespaces have no VPC selector.
+Service namespace_id and singleton-list dns_config.namespace_id reference namespace
+id, with agreeing known alternatives. HTTP namespaces require HTTP service type
+and no DNS configuration; DNS configuration requires a private/public namespace
+and known DNS/DNS_HTTP type. A known HTTP-only service can use a DNS namespace.
+Instance service_id references service id. Each resource remains independent;
+namespace references establish neither embedding nor subnet/VPC containment.
+
+All links require unique current managed explicit Terraform endpoints, matching
+known nonempty values and compatible provider/account/region evidence. Unknown,
+literal-only, ambiguous, partial, conflicting or historical inputs keep fallback.
+Filtered endpoints and named states never borrow evidence. Attributes-map IP/port
+values, generated hosted zones, DNS health and deprecated custom health-check
+configuration are excluded. See [fixture](../tests/fixtures/cloud-map-plan.json)
+and [tests](../tests/unit/semantic/cloud_map.rs).

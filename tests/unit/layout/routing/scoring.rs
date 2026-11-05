@@ -5,6 +5,61 @@ fn points(values: &[(usize, usize)]) -> Vec<Point> {
 }
 
 #[test]
+fn reused_scores_match_rebuilding_after_partial_trials_and_replacements() {
+    let mut paths = vec![
+        points(&[(10, 30), (90, 30), (90, 80)]),
+        points(&[(30, 10), (30, 90)]),
+        points(&[(10, 30), (70, 30)]),
+        vec![],
+        points(&[(10, 70), (70, 70), (70, 10)]),
+    ];
+    let probes = [
+        points(&[(10, 50), (90, 50)]),
+        points(&[(50, 10), (50, 90)]),
+        points(&[(10, 30), (90, 30)]),
+    ];
+    let mut reused = Scorer::default();
+    for path in &paths {
+        reused.insert(path.clone());
+    }
+    let check = |reused: &Scorer, paths: &[Vec<Point>]| {
+        let mut rebuilt = Scorer::default();
+        for path in paths.iter().filter(|p| !p.is_empty()) {
+            rebuilt.insert(path.clone());
+        }
+        for probe in &probes {
+            assert_eq!(reused.score(probe, &[]), rebuilt.score(probe, &[]));
+            for pair in probe.windows(2) {
+                assert_eq!(
+                    reused.segment_cost(pair[0], pair[1]),
+                    rebuilt.segment_cost(pair[0], pair[1])
+                );
+            }
+        }
+    };
+    for (a, b, accept) in [(0, 1, false), (1, 4, true), (0, 2, false)] {
+        let original = paths.clone();
+        for index in [a, b] {
+            reused.remove(index);
+            paths[index].clear();
+        }
+        check(&reused, &paths);
+        paths[a] = points(&[(10, 50), (90, 50)]);
+        reused.replace(a, paths[a].clone());
+        check(&reused, &paths);
+        if accept {
+            paths[b] = points(&[(50, 10), (50, 90)]);
+        } else {
+            paths = original;
+        }
+        for index in [a, b] {
+            reused.replace(index, paths[index].clone());
+        }
+        check(&reused, &paths);
+    }
+}
+
+#[test]
 fn frame_cost_penalizes_visible_near_misses_and_keeps_detours_bounded() {
     let frame = Bounds {
         origin: Point { x: 100, y: 100 },

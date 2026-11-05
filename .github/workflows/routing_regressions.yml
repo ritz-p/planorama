@@ -2,8 +2,7 @@ name: Routing regressions
 run-name: Routing regressions at ${{ github.sha }}
 
 on:
-  pull_request_target:
-    types: [closed]
+  push:
     branches: [main]
   schedule:
     - cron: '23 18 * * *'
@@ -15,7 +14,6 @@ permissions:
 jobs:
   regressions:
     name: Deferred routing regressions
-    if: github.event_name != 'pull_request_target' || github.event.pull_request.merged == true
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
