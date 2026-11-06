@@ -9276,10 +9276,10 @@
       }
     },
     "aws_kinesis_resource_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 749,
-      "gap": "Missing: explicit stream or consumer ARN endpoint; ARN substring does not identify parent stream. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #749: stream_arn -> explicit stream.arn; resource_arn -> explicit stream/consumer.arn, with known equal values, current managed identity and compatible scope. Consumers and policies remain independent Logical resources; no ARN-prefix ownership inference, policy/payload interpretation or encryption expansion. See aws-messaging.md#kinesis-consumer-and-policy-owners-749. Historical #721 audit baseline is retained.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9341,10 +9341,10 @@
       }
     },
     "aws_kinesis_stream_consumer": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 749,
-      "gap": "Missing: stream_arn -> stream.arn, not an application or runtime-consumption link. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #749: stream_arn -> explicit stream.arn; resource_arn -> explicit stream/consumer.arn, with known equal values, current managed identity and compatible scope. Consumers and policies remain independent Logical resources; no ARN-prefix ownership inference, policy/payload interpretation or encryption expansion. See aws-messaging.md#kinesis-consumer-and-policy-owners-749. Historical #721 audit baseline is retained.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",

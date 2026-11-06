@@ -148,3 +148,4 @@ examples/cloudfront-functions.svg
 examples/cloudfront-security.svg
 examples/cloudfront-observability.svg
 examples/messaging-policies.svg
+examples/kinesis-owners.svg

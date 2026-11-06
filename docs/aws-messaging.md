@@ -1,5 +1,23 @@
 # AWS APIs and messaging
 
+## Kinesis consumer and policy owners (#749)
+
+`aws_kinesis_stream_consumer.stream_arn` accepts only an explicit
+`aws_kinesis_stream.arn`. `aws_kinesis_resource_policy.resource_arn` accepts an
+explicit stream or stream-consumer `arn`. Each link requires the unique current
+managed AWS endpoint, correct output, equal known non-sensitive values, complete
+references and compatible provider/account/region bindings. A consumer ARN's
+stream-shaped prefix is never used to discover its owner.
+
+The stream keeps its card; consumers and policies retain independent Logical
+identities, actions and provenance. Consumers are registered consumers, not
+running applications or producers. Unknown, ambiguous, literal-only, data,
+foreign, historical and filtered endpoints retain conservative diagnostics.
+Named states remain separate. Policy bodies, payloads, encryption expansion and
+runtime health are excluded; Lambda, DynamoDB and Firehose contracts are unchanged.
+These input/output contracts use AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
 ## SNS and SQS policy owners (#753)
 
 SNS topic policy and data-protection policy `arn` references accept only

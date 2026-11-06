@@ -1,0 +1,118 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kinesis_stream.main",
+      "type": "aws_kinesis_stream",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kinesis:us-east-1:123456789012:stream/main"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_stream_consumer.main",
+      "type": "aws_kinesis_stream_consumer",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kinesis:us-east-1:123456789012:stream/main/consumer/main:1234567890",
+          "stream_arn": "arn:aws:kinesis:us-east-1:123456789012:stream/main"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_resource_policy.stream",
+      "type": "aws_kinesis_resource_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:kinesis:us-east-1:123456789012:stream/main",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_resource_policy.consumer",
+      "type": "aws_kinesis_resource_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:kinesis:us-east-1:123456789012:stream/main/consumer/main:1234567890",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kinesis_stream.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_kinesis_stream_consumer.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "stream_arn": {
+              "references": [
+                "aws_kinesis_stream.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kinesis_resource_policy.stream",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_kinesis_stream.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kinesis_resource_policy.consumer",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_kinesis_stream_consumer.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
