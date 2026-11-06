@@ -22,67 +22,12 @@ fn policy_owners_require_unique_explicit_current_typed_outputs() {
             fixture["configuration"]["root_module"]["resources"][source],
             fixture["configuration"]["root_module"]["resources"][target]
         ]);
-        super::super::service_references::tests::check_service_fixture(
+        super::super::service_references::tests::check_current_scalar_fixture(
             &pair.to_string(),
             label,
             path,
+            if path == "arn" { "arn" } else { "url" },
         );
-        for case in [
-            "sensitive",
-            "endpoint-sensitive",
-            "wrong-output",
-            "region",
-            "binding",
-            "move",
-            "import",
-            "replace",
-        ] {
-            let mut v = pair.clone();
-            match case {
-                "sensitive" => {
-                    v["resource_changes"][1]["change"]["after_sensitive"] = json!({path:true})
-                }
-                "endpoint-sensitive" => {
-                    v["resource_changes"][0]["change"]["after_sensitive"] =
-                        json!({"arn":true,"url":true})
-                }
-                "wrong-output" => {
-                    let address = v["resource_changes"][0]["address"].as_str().unwrap();
-                    v["configuration"]["root_module"]["resources"][1]["expressions"][path] =
-                        json!({"references":[format!("{address}.name")]});
-                }
-                "region" => {
-                    v["configuration"]["root_module"]["resources"][0]["expressions"]["region"] =
-                        json!({"constant_value":"us-west-2"})
-                }
-                "binding" => {
-                    v["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
-                        json!({"references":["var.region"]})
-                }
-                "move" => {
-                    v["resource_changes"][1]["previous_address"] =
-                        json!("module.old.aws_policy.main")
-                }
-                "import" => {
-                    v["resource_changes"][1]["change"]["importing"] = json!({"id":"import-policy"})
-                }
-                _ => {
-                    v["resource_changes"][1]["change"]["actions"] = json!(["delete", "create"]);
-                    v["resource_changes"][1]["change"]["before"] =
-                        v["resource_changes"][1]["change"]["after"].clone();
-                }
-            }
-            let graph = semantic::transform(&plan::parse(&v.to_string()).unwrap());
-            assert_eq!(
-                graph.nodes[1]
-                    .references
-                    .iter()
-                    .any(|r| r.label == label && r.complete),
-                matches!(case, "move" | "import" | "replace"),
-                "{target} {case}"
-            );
-            assert_eq!(graph.coverage.selected.resources, 2);
-        }
     }
 }
 
