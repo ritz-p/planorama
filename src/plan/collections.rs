@@ -224,6 +224,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::prefix_list_entries::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::kinesis_owners::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::messaging_policies::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::search::annotate(nodes, references, &elbv2_evidence);

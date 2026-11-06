@@ -1,0 +1,70 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_managed_prefix_list.main",
+      "type": "aws_ec2_managed_prefix_list",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pl-main",
+          "name": "Customer prefix list",
+          "address_family": "IPv4"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_managed_prefix_list_entry.main",
+      "type": "aws_ec2_managed_prefix_list_entry",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "entry-main",
+          "prefix_list_id": "pl-main",
+          "cidr": "10.0.0.0/24",
+          "description": "PRIVATE_DESCRIPTION"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_managed_prefix_list.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_ec2_managed_prefix_list_entry.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "prefix_list_id": {
+              "references": [
+                "aws_ec2_managed_prefix_list.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,5 +1,21 @@
 # AWS Network and edge
 
+## Managed prefix-list entries (#891)
+
+`aws_ec2_managed_prefix_list_entry.prefix_list_id` accepts only an explicit,
+unique, current managed `aws_ec2_managed_prefix_list.id` with equal known
+non-sensitive values and compatible provider/account/region evidence. Data lookups
+and AWS-managed prefix lists do not acquire this customer-managed ownership rule.
+CIDRs, descriptions, ARN substrings and literal ID matches do not identify owners.
+
+Verified entries retain their own actions, provenance and coverage, plus member
+owner metadata and navigation. List and entry defaults stay Logical. Existing
+member presentation can embed the entry when both are presented spatially; filtering
+the list makes that owner unavailable. Ownership is not network containment, and
+independently verified provider accounts are retained for these managed types.
+The `prefix_list_id` input and `id` output were checked against AWS Provider 6.70.0
+at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
 [AWS 共通契約・サービス一覧](aws.md)。以下は各節に記載した Provider 版・証拠範囲の契約です。 [HTML 生成手順](aws.md#html-example-generation)。
 
 ## Network Firewall (#693)
