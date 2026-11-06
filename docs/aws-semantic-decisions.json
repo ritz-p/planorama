@@ -4656,28 +4656,320 @@
       }
     },
     "aws_kms_key": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 542,
-      "gap": "Key spatial card and verified alias ownership implemented; no policy interpretation or inferred cryptographic access."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: custom_key_store_id -> custom key store.id; xks_key_id is external key identity, not an AWS managed-resource owner. Not applicable: key card #542 is independent from its key store. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "key_id",
+          "arn",
+          "custom_key_store_id",
+          "customer_master_key_spec",
+          "key_usage",
+          "enable_key_rotation"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: key card #542 is independent from its key store.",
+        "network": "Not applicable: aws_kms_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: custom_key_store_id -> custom key store.id; xks_key_id is external key identity, not an AWS managed-resource owner.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_key.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "key_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "custom_key_store_id": [
+            "string"
+          ],
+          "customer_master_key_spec": [
+            "string"
+          ],
+          "key_usage": [
+            "string"
+          ],
+          "enable_key_rotation": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "key_id": "computed",
+          "arn": "computed",
+          "custom_key_store_id": "optional",
+          "customer_master_key_spec": "optional",
+          "key_usage": "optional",
+          "enable_key_rotation": "optional"
+        },
+        "dataContracts": {
+          "grant_tokens": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "key_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_kms_alias": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 542,
-      "gap": "Key spatial card and verified alias ownership implemented; no policy interpretation or inferred cryptographic access."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Partial: #493/#542 embeds alias for aws_kms_key id/key_id/arn; missing exact external/replica key variants. Supported: #542 verified alias member retains independent metadata; basic variants are not runtime aliases. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "target_key_id",
+          "target_key_arn",
+          "arn"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Supported: #542 verified alias member retains independent metadata; basic variants are not runtime aliases.",
+        "network": "Not applicable: aws_kms_alias is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Partial: #493/#542 embeds alias for aws_kms_key id/key_id/arn; missing exact external/replica key variants.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_alias summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_alias.html.markdown",
+        "shapes": {
+          "target_key_id": [
+            "string"
+          ],
+          "target_key_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "target_key_id": "required",
+          "target_key_arn": "computed",
+          "arn": "computed"
+        },
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_secretsmanager_secret": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 543,
-      "gap": "Secret card and verified version child implemented; values and runtime access intentionally unsupported."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1135,
+      "gap": "#727 audit: Missing: kms_key_id -> exact KMS key and mode-gated replica region/KMS proof; replica blocks are not standalone secret resources. Not applicable: independent secret card #543; do not embed shared keys. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "id",
+          "kms_key_id",
+          "replica"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent secret card #543; do not embed shared keys.",
+        "network": "Not applicable: aws_secretsmanager_secret is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: kms_key_id -> exact KMS key and mode-gated replica region/KMS proof; replica blocks are not standalone secret resources.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional secretsmanager_secret summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/secretsmanager_secret.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "replica": [
+            "set"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "id": "optional/computed",
+          "kms_key_id": "optional",
+          "replica": "block"
+        },
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_secretsmanager_secret_version": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Implemented",
       "priority": "P3",
       "issue": 543,
-      "gap": "Secret card and verified version child implemented; values and runtime access intentionally unsupported."
+      "gap": "#727 audit: Supported: #494/#543 secret_id -> secret.id/arn with independent version identity; deprecated arn is secret ARN, never version ARN. Supported: #543 version member retained under verified secret; id is composite, version_id alone is not secret identity. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "secret_id",
+          "secret_arn",
+          "arn",
+          "version_id",
+          "version_stages"
+        ],
+        "placement": "Supported: Controller / Controller; Spatial / Spatial; SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Supported: #543 version member retained under verified secret; id is composite, version_id alone is not secret identity.",
+        "network": "Not applicable: aws_secretsmanager_secret_version is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Supported: #494/#543 secret_id -> secret.id/arn with independent version identity; deprecated arn is secret ARN, never version ARN.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional secretsmanager_secret_version summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/secretsmanager_secret_version.html.markdown",
+        "shapes": {
+          "secret_id": [
+            "string"
+          ],
+          "secret_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "version_id": [
+            "string"
+          ],
+          "version_stages": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "secret_id": "required",
+          "secret_arn": "computed",
+          "arn": "computed",
+          "version_id": "computed",
+          "version_stages": "optional/computed"
+        },
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "secret_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "version_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "version_stage": {
+            "shape": "string",
+            "contract": "optional"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_glue_job": {
       "status": "Partial",
@@ -5243,22 +5535,215 @@
       }
     },
     "aws_acmpca_certificate_authority": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
-      "issue": 541,
-      "gap": "CA cards and proven certificate ownership/reference implemented; certificate bodies and trust inference excluded."
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1131,
+      "gap": "#727 audit: Missing: enabled CRL s3_bucket_name -> bucket.id/bucket; no DNS/CNAME inference. Not applicable: independent CA card #541; revocation configuration does not own the bucket. Implementation follow-up #1131. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "type",
+          "usage_mode",
+          "certificate_authority_configuration",
+          "revocation_configuration.crl_configuration.s3_bucket_name",
+          "revocation_configuration.crl_configuration.enabled"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; PrivateCa / AWS Private CA runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent CA card #541; revocation configuration does not own the bucket.",
+        "network": "Not applicable: aws_acmpca_certificate_authority is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: enabled CRL s3_bucket_name -> bucket.id/bucket; no DNS/CNAME inference.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional acmpca_certificate_authority summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acmpca_certificate_authority.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "usage_mode": [
+            "string"
+          ],
+          "certificate_authority_configuration": [
+            "list"
+          ],
+          "revocation_configuration.crl_configuration.s3_bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "revocation_configuration.crl_configuration.enabled": [
+            "list",
+            "list",
+            "bool"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "type": "optional",
+          "usage_mode": "optional/computed",
+          "certificate_authority_configuration": "block",
+          "revocation_configuration.crl_configuration.s3_bucket_name": "optional",
+          "revocation_configuration.crl_configuration.enabled": "optional"
+        },
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_acmpca_certificate": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Implemented",
       "priority": "P3",
       "issue": 541,
-      "gap": "CA cards and proven certificate ownership/reference implemented; certificate bodies and trust inference excluded."
+      "gap": "#727 audit: Supported: #492 CA ARN navigation; AWS template ARN is configuration, not an in-plan certificate owner. Partial: verified parent CA is navigation, not network containment; PEM certificate/CSR contents excluded. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "certificate_authority_arn",
+          "template_arn",
+          "signing_algorithm",
+          "validity"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; PrivateCa / AWS Private CA runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Partial: verified parent CA is navigation, not network containment; PEM certificate/CSR contents excluded.",
+        "network": "Not applicable: aws_acmpca_certificate is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Supported: #492 CA ARN navigation; AWS template ARN is configuration, not an in-plan certificate owner.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. CA issuing account is not certificate deployment account; account is cleared.",
+        "summaries": "Deferred: no additional acmpca_certificate summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acmpca_certificate.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "certificate_authority_arn": [
+            "string"
+          ],
+          "template_arn": [
+            "string"
+          ],
+          "signing_algorithm": [
+            "string"
+          ],
+          "validity": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "certificate_authority_arn": "required",
+          "template_arn": "optional",
+          "signing_algorithm": "required",
+          "validity": "block"
+        },
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "certificate_authority_arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_acmpca_certificate_authority_certificate": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Implemented",
       "priority": "P3",
       "issue": 541,
-      "gap": "CA cards and proven certificate ownership/reference implemented; certificate bodies and trust inference excluded."
+      "gap": "#727 audit: Supported: #492 target CA ARN and explicit installed-certificate reference; PEM content equality is bounded legacy evidence, never policy interpretation. Not applicable: installation controller is not a second CA; preserve current lifecycle. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_authority_arn",
+          "certificate"
+        ],
+        "placement": "Supported: Controller / Controller; Logical / Logical; PrivateCa / AWS Private CA runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: installation controller is not a second CA; preserve current lifecycle.",
+        "network": "Not applicable: aws_acmpca_certificate_authority_certificate is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Supported: #492 target CA ARN and explicit installed-certificate reference; PEM content equality is bounded legacy evidence, never policy interpretation.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional acmpca_certificate_authority_certificate summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acmpca_certificate_authority_certificate.html.markdown",
+        "shapes": {
+          "certificate_authority_arn": [
+            "string"
+          ],
+          "certificate": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "certificate_authority_arn": "required",
+          "certificate": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
     },
     "aws_organizations_organization": {
       "status": "Partial (bounded capabilities implemented)",
@@ -57295,6 +57780,2219 @@
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
           "tests/unit/purpose_placement.rs"
+        ]
+      }
+    },
+    "aws_acm_certificate": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "#727 audit: Supported: certificate_authority_arn -> CA.arn under existing #491/#541; external consumers preserve independent certificate identity. Partial: #541 embeds an unreferenced private certificate under its verified CA; referenced certificates retain cards. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "certificate_authority_arn",
+          "validation_method",
+          "domain_validation_options",
+          "options"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; Acm / AWS Certificate Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Partial: #541 embeds an unreferenced private certificate under its verified CA; referenced certificates retain cards.",
+        "network": "Not applicable: aws_acm_certificate is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Supported: certificate_authority_arn -> CA.arn under existing #491/#541; external consumers preserve independent certificate identity.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional acm_certificate summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acm_certificate.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "certificate_authority_arn": [
+            "string"
+          ],
+          "validation_method": [
+            "string"
+          ],
+          "domain_validation_options": [
+            [
+              "set",
+              [
+                "object",
+                {
+                  "domain_name": "string",
+                  "resource_record_name": "string",
+                  "resource_record_type": "string",
+                  "resource_record_value": "string"
+                }
+              ]
+            ]
+          ],
+          "options": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "certificate_authority_arn": "optional",
+          "validation_method": "optional/computed",
+          "domain_validation_options": "computed",
+          "options": "block"
+        },
+        "dataContracts": {
+          "domain": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "key_types": {
+            "shape": [
+              "set",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "most_recent": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "statuses": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "types": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_acm_certificate_validation": {
+      "status": "Implemented",
+      "priority": "P3",
+      "gap": "#727 audit: Supported: #491 certificate_arn -> certificate.arn; FQDN strings do not establish DNS record ownership. Not applicable: validation waiter has independent lifecycle; id is issuance time, not certificate identity. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_arn",
+          "validation_record_fqdns",
+          "id"
+        ],
+        "placement": "Supported: Controller / Controller; Logical / Logical; Acm / AWS Certificate Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: validation waiter has independent lifecycle; id is issuance time, not certificate identity.",
+        "network": "Not applicable: aws_acm_certificate_validation is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Supported: #491 certificate_arn -> certificate.arn; FQDN strings do not establish DNS record ownership.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional acm_certificate_validation summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acm_certificate_validation.html.markdown",
+        "shapes": {
+          "certificate_arn": [
+            "string"
+          ],
+          "validation_record_fqdns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "certificate_arn": "required",
+          "validation_record_fqdns": "optional",
+          "id": "optional/computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_acmpca_permission": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1131,
+      "gap": "#727 audit: Missing: certificate_authority_arn -> CA.arn; principal service strings and source_account alone do not identify principals. Missing: CA permission helper ownership with independent action coverage. Implementation follow-up #1131. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_authority_arn",
+          "principal",
+          "source_account",
+          "actions"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); PrivateCa / AWS Private CA runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: CA permission helper ownership with independent action coverage.",
+        "network": "Not applicable: aws_acmpca_permission is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: certificate_authority_arn -> CA.arn; principal service strings and source_account alone do not identify principals.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional acmpca_permission summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acmpca_permission.html.markdown",
+        "shapes": {
+          "certificate_authority_arn": [
+            "string"
+          ],
+          "principal": [
+            "string"
+          ],
+          "source_account": [
+            "string"
+          ],
+          "actions": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "certificate_authority_arn": "required",
+          "principal": "required",
+          "source_account": "optional/computed",
+          "actions": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_acmpca_policy": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1131,
+      "gap": "#727 audit: Missing: resource_arn -> CA.arn; policy body interpretation excluded. Missing: CA-owned policy helper, distinct from certificate issuance. Implementation follow-up #1131. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "policy"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); PrivateCa / AWS Private CA runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: CA-owned policy helper, distinct from certificate issuance.",
+        "network": "Not applicable: aws_acmpca_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: resource_arn -> CA.arn; policy body interpretation excluded.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional acmpca_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/acmpca_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_arn": "required",
+          "policy": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cloudhsm_v2_cluster": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1132,
+      "gap": "#727 audit: Missing: complete subnet_ids -> subnet.id and independently matching VPC proof; computed SG/VPC outputs cannot synthesize nodes. Not applicable: independent cluster, source_backup_identifier is not a live cluster owner. Implementation follow-up #1132. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_id",
+          "subnet_ids",
+          "security_group_id",
+          "vpc_id",
+          "source_backup_identifier"
+        ],
+        "placement": "Supported: Node / Unknown; Spatial / Spatial (unresolved); Service(AWSCloudHSM) / AWS CloudHSM runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent cluster, source_backup_identifier is not a live cluster owner.",
+        "network": "Missing: complete explicit subnets and shared VPC proof, not inferred from computed vpc_id.",
+        "references": "Missing: complete subnet_ids -> subnet.id and independently matching VPC proof; computed SG/VPC outputs cannot synthesize nodes.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cloudhsm_v2_cluster summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cloudhsm_v2_cluster.html.markdown",
+        "shapes": {
+          "cluster_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_id": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "source_backup_identifier": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "cluster_id": "computed",
+          "subnet_ids": "required",
+          "security_group_id": "computed",
+          "vpc_id": "computed",
+          "source_backup_identifier": "optional"
+        },
+        "dataContracts": {
+          "cluster_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "cluster_state": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cloudhsm_v2_hsm": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1132,
+      "gap": "#727 audit: Missing: cluster_id -> cluster.cluster_id/id; optional subnet_id -> subnet.id with cluster consistency. Missing: HSM membership retains independently changed HSM identity; computed ENI never synthesized. Implementation follow-up #1132. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_id",
+          "subnet_id",
+          "availability_zone",
+          "hsm_eni_id",
+          "hsm_id"
+        ],
+        "placement": "Supported: Node / Unknown; Spatial / Spatial (unresolved); Service(AWSCloudHSM) / AWS CloudHSM runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: HSM membership retains independently changed HSM identity; computed ENI never synthesized.",
+        "network": "Missing: configured subnet and cluster VPC agreement; AZ/IP equality is insufficient.",
+        "references": "Missing: cluster_id -> cluster.cluster_id/id; optional subnet_id -> subnet.id with cluster consistency.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cloudhsm_v2_hsm summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cloudhsm_v2_hsm.html.markdown",
+        "shapes": {
+          "cluster_id": [
+            "string"
+          ],
+          "subnet_id": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "hsm_eni_id": [
+            "string"
+          ],
+          "hsm_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "cluster_id": "required",
+          "subnet_id": "optional/computed",
+          "availability_zone": "optional/computed",
+          "hsm_eni_id": "computed",
+          "hsm_id": "computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_identity_pool": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Partial: #500 client_id -> client.id and provider_name -> user_pool.endpoint; missing complete OIDC/SAML provider ARN navigation. Not applicable: identity pool is independent from user pool, not an embedded child. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "cognito_identity_providers",
+          "openid_connect_provider_arns",
+          "saml_provider_arns"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: identity pool is independent from user pool, not an embedded child.",
+        "network": "Not applicable: aws_cognito_identity_pool is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Partial: #500 client_id -> client.id and provider_name -> user_pool.endpoint; missing complete OIDC/SAML provider ARN navigation.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_identity_pool summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_identity_pool.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "cognito_identity_providers": [
+            "set"
+          ],
+          "openid_connect_provider_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "saml_provider_arns": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "cognito_identity_providers": "block",
+          "openid_connect_provider_arns": "optional",
+          "saml_provider_arns": "optional"
+        },
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "identity_pool_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_identity_pool_provider_principal_tag": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: identity_pool_id -> identity_pool.id; identity_provider_name must use a provider-type-specific contract, not URL matching. Missing: pool-owned principal-tag helper; tag mappings excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identity_pool_id",
+          "identity_provider_name",
+          "use_defaults"
+        ],
+        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool-owned principal-tag helper; tag mappings excluded.",
+        "network": "Not applicable: aws_cognito_identity_pool_provider_principal_tag is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: identity_pool_id -> identity_pool.id; identity_provider_name must use a provider-type-specific contract, not URL matching.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_identity_pool_provider_principal_tag summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_identity_pool_provider_principal_tag.html.markdown",
+        "shapes": {
+          "identity_pool_id": [
+            "string"
+          ],
+          "identity_provider_name": [
+            "string"
+          ],
+          "use_defaults": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "identity_pool_id": "required",
+          "identity_provider_name": "required",
+          "use_defaults": "optional"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_identity_pool_roles_attachment": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and roles map -> IAM role.arn; role_mapping needs independently verified provider discriminator. Missing: pool-owned role attachment; roles remain shared identities. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "identity_pool_id",
+          "roles",
+          "role_mapping"
+        ],
+        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool-owned role attachment; roles remain shared identities.",
+        "network": "Not applicable: aws_cognito_identity_pool_roles_attachment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and roles map -> IAM role.arn; role_mapping needs independently verified provider discriminator.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_identity_pool_roles_attachment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_identity_pool_roles_attachment.html.markdown",
+        "shapes": {
+          "identity_pool_id": [
+            "string"
+          ],
+          "roles": [
+            [
+              "map",
+              "string"
+            ]
+          ],
+          "role_mapping": [
+            "set"
+          ]
+        },
+        "contracts": {
+          "identity_pool_id": "required",
+          "roles": "required",
+          "role_mapping": "block"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_identity_provider": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: user_pool_id -> pool.id; provider_details is provider-dependent and contains secrets, never dumped. Missing: user-pool-owned provider with independent metadata. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "provider_name",
+          "provider_type"
+        ],
+        "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: user-pool-owned provider with independent metadata.",
+        "network": "Not applicable: aws_cognito_identity_provider is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: user_pool_id -> pool.id; provider_details is provider-dependent and contains secrets, never dumped.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_identity_provider summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_identity_provider.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "provider_name": [
+            "string"
+          ],
+          "provider_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "provider_name": "required",
+          "provider_type": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_log_delivery_configuration": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and type-gated log destination ARNs (CloudWatch Logs/S3/Firehose). Missing: user-pool-owned delivery helper; configured delivery is not runtime health. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "log_configurations"
+        ],
+        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: user-pool-owned delivery helper; configured delivery is not runtime health.",
+        "network": "Not applicable: aws_cognito_log_delivery_configuration is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and type-gated log destination ARNs (CloudWatch Logs/S3/Firehose).",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_log_delivery_configuration summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_log_delivery_configuration.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "log_configurations": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "log_configurations": "block"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_managed_login_branding": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and client.id pair with client pool consistency. Missing: client-owned branding helper; assets/settings are payloads, excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "client_id",
+          "managed_login_branding_id",
+          "use_cognito_provided_values"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: client-owned branding helper; assets/settings are payloads, excluded.",
+        "network": "Not applicable: aws_cognito_managed_login_branding is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and client.id pair with client pool consistency.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_managed_login_branding summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_managed_login_branding.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "client_id": [
+            "string"
+          ],
+          "managed_login_branding_id": [
+            "string"
+          ],
+          "use_cognito_provided_values": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "client_id": "required",
+          "managed_login_branding_id": "computed",
+          "use_cognito_provided_values": "optional/computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_managed_user_pool_client": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id navigation; managed lookup/update client is not an alias of aws_cognito_user_pool_client. Not applicable: lookup-selected client retains independent identity; pattern selection is not explicit Terraform ownership. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "id",
+          "name",
+          "name_pattern",
+          "name_prefix"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: lookup-selected client retains independent identity; pattern selection is not explicit Terraform ownership.",
+        "network": "Not applicable: aws_cognito_managed_user_pool_client is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id navigation; managed lookup/update client is not an alias of aws_cognito_user_pool_client.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_managed_user_pool_client summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_managed_user_pool_client.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "name_pattern": [
+            "string"
+          ],
+          "name_prefix": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "id": "computed",
+          "name": "computed",
+          "name_pattern": "optional",
+          "name_prefix": "optional"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_resource_server": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: user_pool_id -> pool.id; scope strings are authorization configuration, not resource endpoints. Missing: user-pool-owned resource-server helper with independent coverage. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "identifier",
+          "scope_identifiers"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: user-pool-owned resource-server helper with independent coverage.",
+        "network": "Not applicable: aws_cognito_resource_server is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: user_pool_id -> pool.id; scope strings are authorization configuration, not resource endpoints.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_resource_server summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_resource_server.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "identifier": [
+            "string"
+          ],
+          "scope_identifiers": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "identifier": "required",
+          "scope_identifiers": "computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_risk_configuration": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and optional client.id; omitted client means pool-level risk, not an invented client. Missing: pool/client risk helper with independent lifecycle; notify source identities need exact ARN proof. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "client_id",
+          "account_takeover_risk_configuration.notify_configuration"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool/client risk helper with independent lifecycle; notify source identities need exact ARN proof.",
+        "network": "Not applicable: aws_cognito_risk_configuration is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and optional client.id; omitted client means pool-level risk, not an invented client.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_risk_configuration summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_risk_configuration.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "client_id": [
+            "string"
+          ],
+          "account_takeover_risk_configuration.notify_configuration": [
+            "list",
+            "list"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "client_id": "optional",
+          "account_takeover_risk_configuration.notify_configuration": "block"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id ownership; username/sub are scoped identity selectors, not arbitrary global IDs. Missing: pool-owned user identity; no credentials, attributes, metadata or personal data summaries. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "username",
+          "sub"
+        ],
+        "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool-owned user identity; no credentials, attributes, metadata or personal data summaries.",
+        "network": "Not applicable: aws_cognito_user is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id ownership; username/sub are scoped identity selectors, not arbitrary global IDs.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "username": [
+            "string"
+          ],
+          "sub": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "username": "required",
+          "sub": "computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user_group": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and optional role_arn -> IAM role.arn. Missing: pool-owned group; role association is not group containment. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "name",
+          "role_arn"
+        ],
+        "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool-owned group; role association is not group containment.",
+        "network": "Not applicable: aws_cognito_user_group is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and optional role_arn -> IAM role.arn.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user_group summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user_group.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "name": "required",
+          "role_arn": "optional"
+        },
+        "dataContracts": {
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "user_pool_id": {
+            "shape": "string",
+            "contract": "required"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user_in_group": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: group.name and user.username scoped to independently verified same user_pool_id. Not applicable: association between independent user/group identities; preserve exactly-once change coverage. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "group_name",
+          "username"
+        ],
+        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: association between independent user/group identities; preserve exactly-once change coverage.",
+        "network": "Not applicable: aws_cognito_user_in_group is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: group.name and user.username scoped to independently verified same user_pool_id.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user_in_group summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user_in_group.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "group_name": [
+            "string"
+          ],
+          "username": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "group_name": "required",
+          "username": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user_pool": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: allowlisted Lambda triggers/custom sender KMS and SMS role/email source ARN references; no callback URL inference. Not applicable: independent user-pool card #500; computed domain never synthesizes a domain or distribution. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "endpoint",
+          "lambda_config",
+          "email_configuration",
+          "sms_configuration"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent user-pool card #500; computed domain never synthesizes a domain or distribution.",
+        "network": "Not applicable: aws_cognito_user_pool is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: allowlisted Lambda triggers/custom sender KMS and SMS role/email source ARN references; no callback URL inference.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user_pool summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user_pool.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "endpoint": [
+            "string"
+          ],
+          "lambda_config": [
+            "list"
+          ],
+          "email_configuration": [
+            "list"
+          ],
+          "sms_configuration": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "arn": "computed",
+          "endpoint": "computed",
+          "lambda_config": "block",
+          "email_configuration": "block",
+          "sms_configuration": "block"
+        },
+        "dataContracts": {
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "user_pool_id": {
+            "shape": "string",
+            "contract": "required"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user_pool_client": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Partial: #500 user_pool_id -> pool.id; missing enabled Pinpoint analytics application and type-gated provider references. Not applicable: independent client card; callback/logout URLs are not network containment. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "user_pool_id",
+          "analytics_configuration",
+          "supported_identity_providers"
+        ],
+        "placement": "Supported: Node / Node; Spatial / Spatial; Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent client card; callback/logout URLs are not network containment.",
+        "network": "Not applicable: aws_cognito_user_pool_client is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Partial: #500 user_pool_id -> pool.id; missing enabled Pinpoint analytics application and type-gated provider references.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user_pool_client summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user_pool_client.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "user_pool_id": [
+            "string"
+          ],
+          "analytics_configuration": [
+            "list"
+          ],
+          "supported_identity_providers": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "id": "computed",
+          "user_pool_id": "required",
+          "analytics_configuration": "block",
+          "supported_identity_providers": "optional/computed"
+        },
+        "dataContracts": {
+          "client_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "user_pool_id": {
+            "shape": "string",
+            "contract": "required"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user_pool_domain": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and configured ACM certificate.arn with explicit cross-region certificate policy; computed distribution ARN is not a configured endpoint. Missing: pool-owned domain helper; custom domain is not a customer-managed CloudFront distribution. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "certificate_arn",
+          "domain",
+          "cloudfront_distribution_arn"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool-owned domain helper; custom domain is not a customer-managed CloudFront distribution.",
+        "network": "Not applicable: aws_cognito_user_pool_domain is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and configured ACM certificate.arn with explicit cross-region certificate policy; computed distribution ARN is not a configured endpoint.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user_pool_domain summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user_pool_domain.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "certificate_arn": [
+            "string"
+          ],
+          "domain": [
+            "string"
+          ],
+          "cloudfront_distribution_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "certificate_arn": "optional",
+          "domain": "required",
+          "cloudfront_distribution_arn": "computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_cognito_user_pool_ui_customization": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1133,
+      "gap": "#727 audit: Missing: pool.id and optional client.id; ALL sentinel is pool-level, not a resource identifier. Missing: pool/client-owned customization helper; CSS/image payloads excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "user_pool_id",
+          "client_id"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Cognito / Amazon Cognito runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: pool/client-owned customization helper; CSS/image payloads excluded.",
+        "network": "Not applicable: aws_cognito_user_pool_ui_customization is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: pool.id and optional client.id; ALL sentinel is pool-level, not a resource identifier.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional cognito_user_pool_ui_customization summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/cognito_user_pool_ui_customization.html.markdown",
+        "shapes": {
+          "user_pool_id": [
+            "string"
+          ],
+          "client_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "user_pool_id": "required",
+          "client_id": "optional"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_ciphertext": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: configured key_id navigation only; plaintext/context/ciphertext must remain absent from presentation. Not applicable: encryption operation is not a service, key or network owner. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "key_id",
+          "ciphertext_blob"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: encryption operation is not a service, key or network owner.",
+        "network": "Not applicable: aws_kms_ciphertext is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: configured key_id navigation only; plaintext/context/ciphertext must remain absent from presentation.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_ciphertext summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_ciphertext.html.markdown",
+        "shapes": {
+          "key_id": [
+            "string"
+          ],
+          "ciphertext_blob": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "key_id": "required",
+          "ciphertext_blob": "computed"
+        },
+        "dataContracts": {
+          "context": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "key_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "plaintext": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_custom_key_store": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: CloudHSM cluster id or mode-gated XKS VPC endpoint service name; external public proxy URLs are not resources. Not applicable: independent key store; credentials/trust material excluded. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "cloud_hsm_cluster_id",
+          "custom_key_store_type",
+          "xks_proxy_connectivity",
+          "xks_proxy_vpc_endpoint_service_name"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent key store; credentials/trust material excluded.",
+        "network": "Not applicable: aws_kms_custom_key_store is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: CloudHSM cluster id or mode-gated XKS VPC endpoint service name; external public proxy URLs are not resources.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_custom_key_store summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_custom_key_store.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "cloud_hsm_cluster_id": [
+            "string"
+          ],
+          "custom_key_store_type": [
+            "string"
+          ],
+          "xks_proxy_connectivity": [
+            "string"
+          ],
+          "xks_proxy_vpc_endpoint_service_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "cloud_hsm_cluster_id": "optional",
+          "custom_key_store_type": "optional/computed",
+          "xks_proxy_connectivity": "optional",
+          "xks_proxy_vpc_endpoint_service_name": "optional"
+        },
+        "dataContracts": {
+          "custom_key_store_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "custom_key_store_name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_external_key": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#727 audit: Not applicable: no configured primary-key owner; imported material is not an endpoint. Not applicable: imported key is independent and not a runtime alias of aws_kms_key. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "id",
+          "key_spec",
+          "key_usage",
+          "multi_region"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: imported key is independent and not a runtime alias of aws_kms_key.",
+        "network": "Not applicable: aws_kms_external_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Not applicable: no configured primary-key owner; imported material is not an endpoint.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_external_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_external_key.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "key_spec": [
+            "string"
+          ],
+          "key_usage": [
+            "string"
+          ],
+          "multi_region": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "id": "optional/computed",
+          "key_spec": "optional/computed",
+          "key_usage": "optional/computed",
+          "multi_region": "optional/computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_grant": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: exact key id/ARN plus type-gated IAM principal ARN references; no access/effective-policy claims. Missing: key-owned grant helper, principals remain shared. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "key_id",
+          "grantee_principal",
+          "retiring_principal",
+          "operations"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: key-owned grant helper, principals remain shared.",
+        "network": "Not applicable: aws_kms_grant is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: exact key id/ARN plus type-gated IAM principal ARN references; no access/effective-policy claims.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_grant summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_grant.html.markdown",
+        "shapes": {
+          "key_id": [
+            "string"
+          ],
+          "grantee_principal": [
+            "string"
+          ],
+          "retiring_principal": [
+            "string"
+          ],
+          "operations": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "key_id": "required",
+          "grantee_principal": "required",
+          "retiring_principal": "optional",
+          "operations": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_key_policy": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: key_id -> exact KMS key variant id/key_id/arn; exclude policy content. Missing: key-owned policy helper with independent change identity. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "key_id",
+          "policy"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: key-owned policy helper with independent change identity.",
+        "network": "Not applicable: aws_kms_key_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: key_id -> exact KMS key variant id/key_id/arn; exclude policy content.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional kms_key_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_key_policy.html.markdown",
+        "shapes": {
+          "key_id": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "key_id": "required",
+          "policy": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_replica_external_key": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: primary_key_arn -> external primary key.arn using explicit cross-region multi-region proof; same region is not valid replication evidence. Not applicable: replica is an independent regional key; not embedded under primary. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "primary_key_arn",
+          "arn",
+          "key_id"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: replica is an independent regional key; not embedded under primary.",
+        "network": "Not applicable: aws_kms_replica_external_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: primary_key_arn -> external primary key.arn using explicit cross-region multi-region proof; same region is not valid replication evidence.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Replica deployment region differs from primary; cross-region references need independent primary/replica evidence.",
+        "summaries": "Deferred: no additional kms_replica_external_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_replica_external_key.html.markdown",
+        "shapes": {
+          "primary_key_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "key_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "primary_key_arn": "required",
+          "arn": "computed",
+          "key_id": "computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_kms_replica_key": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1130,
+      "gap": "#727 audit: Missing: primary_key_arn -> primary key.arn with multi-region and cross-region proof. Not applicable: replica key retains independent deployment scope and lifecycle. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "primary_key_arn",
+          "arn",
+          "key_id"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: replica key retains independent deployment scope and lifecycle.",
+        "network": "Not applicable: aws_kms_replica_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: primary_key_arn -> primary key.arn with multi-region and cross-region proof.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Replica deployment region differs from primary; cross-region references need independent primary/replica evidence.",
+        "summaries": "Deferred: no additional kms_replica_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/kms_replica_key.html.markdown",
+        "shapes": {
+          "primary_key_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "key_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "primary_key_arn": "required",
+          "arn": "computed",
+          "key_id": "computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_paymentcryptography_key": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "#727 audit: Not applicable: key attributes define key configuration, no configured resource endpoint. Not applicable: independent cryptographic key; key check values and key material are not summaries. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "enabled",
+          "exportable",
+          "key_attributes"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AWSPaymentCryptography) / AWS Payment Cryptography runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: independent cryptographic key; key check values and key material are not summaries.",
+        "network": "Not applicable: aws_paymentcryptography_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Not applicable: key attributes define key configuration, no configured resource endpoint.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional paymentcryptography_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/paymentcryptography_key.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "enabled": [
+            "bool"
+          ],
+          "exportable": [
+            "bool"
+          ],
+          "key_attributes": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "enabled": "optional/computed",
+          "exportable": "required",
+          "key_attributes": "block"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_paymentcryptography_key_alias": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1134,
+      "gap": "#727 audit: Missing: optional key_arn -> paymentcryptography_key.arn; unassigned alias stays unresolved. Missing: alias member only with verified key, independent lifecycle retained. Implementation follow-up #1134. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "alias_name",
+          "key_arn"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AWSPaymentCryptography) / AWS Payment Cryptography runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: alias member only with verified key, independent lifecycle retained.",
+        "network": "Not applicable: aws_paymentcryptography_key_alias is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: optional key_arn -> paymentcryptography_key.arn; unassigned alias stays unresolved.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional paymentcryptography_key_alias summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/paymentcryptography_key_alias.html.markdown",
+        "shapes": {
+          "alias_name": [
+            "string"
+          ],
+          "key_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "alias_name": "required",
+          "key_arn": "optional"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_secretsmanager_secret_policy": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1135,
+      "gap": "#727 audit: Missing: secret_arn -> secret.arn; no policy-body inference. Missing: secret-owned policy helper with independent metadata. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "secret_arn",
+          "policy"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: secret-owned policy helper with independent metadata.",
+        "network": "Not applicable: aws_secretsmanager_secret_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: secret_arn -> secret.arn; no policy-body inference.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional secretsmanager_secret_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/secretsmanager_secret_policy.html.markdown",
+        "shapes": {
+          "secret_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "secret_arn": "required",
+          "policy": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_secretsmanager_secret_rotation": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1135,
+      "gap": "#727 audit: Missing: secret_id -> secret.id/arn/name with exact output equality; configured Lambda/partner role must be mode-gated. Missing: secret-owned rotation helper; no automatic rotation/health assertion. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "secret_id",
+          "rotation_lambda_arn",
+          "external_secret_rotation_role_arn",
+          "rotation_enabled",
+          "rotation_rules"
+        ],
+        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: secret-owned rotation helper; no automatic rotation/health assertion.",
+        "network": "Not applicable: aws_secretsmanager_secret_rotation is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: secret_id -> secret.id/arn/name with exact output equality; configured Lambda/partner role must be mode-gated.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional secretsmanager_secret_rotation summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/secretsmanager_secret_rotation.html.markdown",
+        "shapes": {
+          "secret_id": [
+            "string"
+          ],
+          "rotation_lambda_arn": [
+            "string"
+          ],
+          "external_secret_rotation_role_arn": [
+            "string"
+          ],
+          "rotation_enabled": [
+            "bool"
+          ],
+          "rotation_rules": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "secret_id": "required",
+          "rotation_lambda_arn": "optional",
+          "external_secret_rotation_role_arn": "optional",
+          "rotation_enabled": "optional/computed",
+          "rotation_rules": "block"
+        },
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "secret_id": {
+            "shape": "string",
+            "contract": "required"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_secretsmanager_tag": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1135,
+      "gap": "#727 audit: Missing: secret_id -> secret.id; composite helper id is not owner identity. Missing: secret-owned tag helper; tag values remain excluded. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "secret_id",
+          "key",
+          "id"
+        ],
+        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: secret-owned tag helper; tag values remain excluded.",
+        "network": "Not applicable: aws_secretsmanager_tag is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: secret_id -> secret.id; composite helper id is not owner identity.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional secretsmanager_tag summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/secretsmanager_tag.html.markdown",
+        "shapes": {
+          "secret_id": [
+            "string"
+          ],
+          "key": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "secret_id": "required",
+          "key": "required",
+          "id": "optional/computed"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_signer_signing_job": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1136,
+      "gap": "#727 audit: Missing: profile_name -> profile.name and configured source/destination bucket names; source object version is not a runtime application. Not applicable: signing job keeps independent controller lifecycle; computed signed_object is not a new resource. Implementation follow-up #1136. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "profile_name",
+          "source.s3.bucket",
+          "destination.s3.bucket",
+          "profile_version",
+          "job_id"
+        ],
+        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Service(AWSSigner) / AWS Signer runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: signing job keeps independent controller lifecycle; computed signed_object is not a new resource.",
+        "network": "Not applicable: aws_signer_signing_job is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: profile_name -> profile.name and configured source/destination bucket names; source object version is not a runtime application.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional signer_signing_job summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/signer_signing_job.html.markdown",
+        "shapes": {
+          "profile_name": [
+            "string"
+          ],
+          "source.s3.bucket": [
+            "list",
+            "list",
+            "string"
+          ],
+          "destination.s3.bucket": [
+            "list",
+            "list",
+            "string"
+          ],
+          "profile_version": [
+            "string"
+          ],
+          "job_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "profile_name": "required",
+          "source.s3.bucket": "required",
+          "destination.s3.bucket": "required",
+          "profile_version": "computed",
+          "job_id": "computed"
+        },
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "job_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_signer_signing_profile": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1136,
+      "gap": "#727 audit: Missing: signing_material.certificate_arn -> ACM certificate.arn; version_arn differs from profile arn. Not applicable: profile is independent reusable configuration; signing parameters excluded. Implementation follow-up #1136. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "name",
+          "version",
+          "version_arn",
+          "signing_material.certificate_arn",
+          "platform_id"
+        ],
+        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AWSSigner) / AWS Signer runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Not applicable: profile is independent reusable configuration; signing parameters excluded.",
+        "network": "Not applicable: aws_signer_signing_profile is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: signing_material.certificate_arn -> ACM certificate.arn; version_arn differs from profile arn.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional signer_signing_profile summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/signer_signing_profile.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "version": [
+            "string"
+          ],
+          "version_arn": [
+            "string"
+          ],
+          "signing_material.certificate_arn": [
+            "list",
+            "string"
+          ],
+          "platform_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "name": "optional/computed",
+          "version": "computed",
+          "version_arn": "computed",
+          "signing_material.certificate_arn": "required",
+          "platform_id": "required"
+        },
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        },
+        "managedDataContract": "Managed and data contracts are distinct. Exact-name data selectors are recorded in dataContracts; data lookup does not acquire managed ownership, action or alias semantics.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
+        ]
+      }
+    },
+    "aws_signer_signing_profile_permission": {
+      "status": "Partial",
+      "priority": "P2",
+      "issue": 1136,
+      "gap": "#727 audit: Missing: profile_name -> profile.name with optional exact version equality; account principal string alone is not identity ownership. Missing: profile-owned permission helper without effective access inference. Implementation follow-up #1136. Existing completed capabilities remain bounded to their documented contracts.",
+      "review": {
+        "issue": 727,
+        "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "profile_name",
+          "profile_version",
+          "principal",
+          "action"
+        ],
+        "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Service(AWSSigner) / AWS Signer runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "ownership": "Missing: profile-owned permission helper without effective access inference.",
+        "network": "Not applicable: aws_signer_signing_profile_permission is application/key/certificate configuration, not a VPC/subnet containment assertion.",
+        "references": "Missing: profile_name -> profile.name with optional exact version equality; account principal string alone is not identity ownership.",
+        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "summaries": "Deferred: no additional signer_signing_profile_permission summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
+        "officialDocumentation": "website/docs/r/signer_signing_profile_permission.html.markdown",
+        "shapes": {
+          "profile_name": [
+            "string"
+          ],
+          "profile_version": [
+            "string"
+          ],
+          "principal": [
+            "string"
+          ],
+          "action": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "profile_name": "required",
+          "profile_version": "optional/computed",
+          "principal": "required",
+          "action": "required"
+        },
+        "dataContracts": {},
+        "managedDataContract": "No exact-name data source in pinned schema; managed helper is not a data lookup alias.",
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "src/provider/aws/service_members.rs",
+          "tests/unit/semantic/service_references.rs",
+          "tests/unit/resource_support.rs"
         ]
       }
     }
