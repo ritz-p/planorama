@@ -1,0 +1,599 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc_ipam.main",
+      "type": "aws_vpc_ipam",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ipam-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_scope.main",
+      "type": "aws_vpc_ipam_scope",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "scope-main",
+          "ipam_id": "ipam-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_pool.parent",
+      "type": "aws_vpc_ipam_pool",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pool-parent",
+          "ipam_scope_id": "scope-main",
+          "address_family": "ipv4",
+          "locale": "us-east-1",
+          "description": "PRIVATE_POOL_NOTE"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_pool.ipv6",
+      "type": "aws_vpc_ipam_pool",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pool-ipv6",
+          "ipam_scope_id": "scope-main",
+          "address_family": "ipv6",
+          "locale": "us-east-1"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main",
+          "ipv4_ipam_pool_id": "pool-parent",
+          "ipv6_ipam_pool_id": "pool-ipv6"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "vpc_id": "vpc-main",
+          "ipv4_ipam_pool_id": "pool-parent",
+          "ipv6_ipam_pool_id": "pool-ipv6",
+          "outpost_arn": "arn:aws:outposts:us-east-1:123456789012:outpost/op-fixture",
+          "availability_zone": "us-east-1a",
+          "availability_zone_id": "use1-az1"
+        }
+      }
+    },
+    {
+      "address": "data.aws_outposts_outpost.main",
+      "type": "aws_outposts_outpost",
+      "mode": "data",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arn": "arn:aws:outposts:us-east-1:123456789012:outpost/op-fixture",
+          "id": "op-fixture",
+          "owner_id": "123456789012",
+          "availability_zone": "us-east-1a",
+          "availability_zone_id": "use1-az1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_subnet_cidr_reservation.main",
+      "type": "aws_ec2_subnet_cidr_reservation",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "reservation-main",
+          "subnet_id": "subnet-main",
+          "reservation_type": "prefix",
+          "cidr_block": "10.0.0.0/28",
+          "description": "PRIVATE_RESERVATION_NOTE"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_pool_cidr.main",
+      "type": "aws_vpc_ipam_pool_cidr",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pool-parent_10.0.0.0/16",
+          "ipam_pool_id": "pool-parent",
+          "ipam_pool_cidr_id": "cidr-main",
+          "cidr": "10.0.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_pool_cidr_allocation.main",
+      "type": "aws_vpc_ipam_pool_cidr_allocation",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pool-parent_allocation-main",
+          "ipam_pool_id": "pool-parent",
+          "ipam_pool_allocation_id": "allocation-main",
+          "resource_id": "computed-not-a-reference",
+          "resource_owner": "123456789012",
+          "resource_type": "vpc",
+          "cidr": "10.0.0.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_preview_next_cidr.main",
+      "type": "aws_vpc_ipam_preview_next_cidr",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "preview-main",
+          "ipam_pool_id": "pool-parent",
+          "netmask_length": 24,
+          "cidr": "10.0.1.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_pool.planning",
+      "type": "aws_vpc_ipam_pool",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pool-planning",
+          "ipam_scope_id": "scope-main",
+          "address_family": "ipv4",
+          "source_ipam_pool_id": "pool-parent",
+          "locale": "us-east-1",
+          "source_resource": [
+            {
+              "resource_id": "vpc-main",
+              "resource_type": "vpc",
+              "resource_owner": "123456789012",
+              "resource_region": "us-east-1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_resource_discovery.main",
+      "type": "aws_vpc_ipam_resource_discovery",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "discovery-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_resource_discovery_association.main",
+      "type": "aws_vpc_ipam_resource_discovery_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "association-main",
+          "ipam_id": "ipam-main",
+          "ipam_resource_discovery_id": "discovery-main",
+          "ipam_region": "us-east-1",
+          "owner_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipv4_cidr_block_association.main",
+      "type": "aws_vpc_ipv4_cidr_block_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-cidr-v4",
+          "vpc_id": "vpc-main",
+          "ipv4_ipam_pool_id": "pool-parent",
+          "cidr_block": "10.32.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipv6_cidr_block_association.main",
+      "type": "aws_vpc_ipv6_cidr_block_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-cidr-v6",
+          "vpc_id": "vpc-main",
+          "ipv6_ipam_pool_id": "pool-ipv6",
+          "assign_generated_ipv6_cidr_block": false
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.delegated",
+      "type": "aws_organizations_account",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "210987654321",
+          "name": "Delegated IPAM account"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_ipam_organization_admin_account.main",
+      "type": "aws_vpc_ipam_organization_admin_account",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "210987654321",
+          "delegated_admin_account_id": "210987654321",
+          "arn": "arn:aws:organizations::123456789012:account/o-fixture/210987654321",
+          "service_principal": "ipam.amazonaws.com"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc_ipam.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_ipam_scope.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_scope",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_id": {
+              "references": [
+                "aws_vpc_ipam.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_pool.parent",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_pool",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_scope_id": {
+              "references": [
+                "aws_vpc_ipam_scope.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_pool.ipv6",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_pool",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_scope_id": {
+              "references": [
+                "aws_vpc_ipam_scope.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipv4_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            },
+            "ipv6_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.ipv6.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.main",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "ipv4_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            },
+            "ipv6_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.ipv6.id"
+              ]
+            },
+            "outpost_arn": {
+              "references": [
+                "data.aws_outposts_outpost.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "data.aws_outposts_outpost.main",
+          "mode": "data",
+          "type": "aws_outposts_outpost",
+          "provider_config_key": "aws",
+          "expressions": {
+            "id": {
+              "constant_value": "op-fixture"
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_subnet_cidr_reservation.main",
+          "mode": "managed",
+          "type": "aws_ec2_subnet_cidr_reservation",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_id": {
+              "references": [
+                "aws_subnet.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_pool_cidr.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_pool_cidr",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_pool_cidr_allocation.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_pool_cidr_allocation",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_preview_next_cidr.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_preview_next_cidr",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_pool.planning",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_pool",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_scope_id": {
+              "references": [
+                "aws_vpc_ipam_scope.main.id"
+              ]
+            },
+            "source_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            },
+            "source_resource": [
+              {
+                "resource_id": {
+                  "references": [
+                    "aws_vpc.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_vpc_ipam_resource_discovery.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_resource_discovery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_ipam_resource_discovery_association.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_resource_discovery_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ipam_id": {
+              "references": [
+                "aws_vpc_ipam.main.id"
+              ]
+            },
+            "ipam_resource_discovery_id": {
+              "references": [
+                "aws_vpc_ipam_resource_discovery.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipv4_cidr_block_association.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipv4_cidr_block_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "ipv4_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.parent.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_ipv6_cidr_block_association.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipv6_cidr_block_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "ipv6_ipam_pool_id": {
+              "references": [
+                "aws_vpc_ipam_pool.ipv6.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.delegated",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_ipam_organization_admin_account.main",
+          "mode": "managed",
+          "type": "aws_vpc_ipam_organization_admin_account",
+          "provider_config_key": "aws",
+          "expressions": {
+            "delegated_admin_account_id": {
+              "references": [
+                "aws_organizations_account.delegated.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

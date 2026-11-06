@@ -31,6 +31,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::backup_plan::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::ipam::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::prefix_list_entries::label(resource, attribute) {
         return Some(label);
     }
@@ -749,6 +752,7 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::ipam::bindings(raw, reference)
         && (super::prefix_list_entries::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

@@ -36824,10 +36824,10 @@
       }
     },
     "aws_ec2_subnet_cidr_reservation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: reservation-to-subnet reference; CIDR overlaps do not identify consumers. Follow-up #900.",
+      "gap": "Implemented #900: subnet_id -> subnet.id with known explicit/prefix mode; owned helper retains independent change coverage, CIDR never identifies consumers. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38657,7 +38657,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Partial: explicit VPC containment supported; missing IPAM pool and Outpost navigation. CIDR/AZ equality is not resource identity. Follow-up #900.",
+      "gap": "Implemented #900: configured IPv4/IPv6 IPAM pool IDs require matching pool family/locale and independent control/deployment scope. Outpost ARN uses the separate singleton data contract with owner/AZ corroboration; existing VPC containment is unchanged. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -38729,7 +38729,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Partial: Spatial container and typed containment target supported; missing configured IPAM pool navigation. Computed defaults never synthesize resources. Follow-up #900.",
+      "gap": "Implemented #900: configured IPAM pool navigation verifies family and allocation locale independently of pool control region; computed default SG/ACL/route IDs never synthesize resources. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39772,9 +39772,9 @@
       }
     },
     "aws_vpc_ipam": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P3",
-      "gap": "#710 audit: Not applicable: operating regions are allocation locales, not managed resources; default scope IDs are outputs, not configured children. Current logical identity is sufficient for this bounded scope; Deferred: configured operating-region/count summary requires distinction from home region and actual allocations; revisit with IPAM hierarchy presentation.",
+      "gap": "#710 audit: Not applicable: operating regions are allocation locales, not managed resources; default scope IDs are outputs, not configured children. Current logical identity is sufficient for this bounded scope; Deferred: configured operating-region/count summary requires distinction from home region and actual allocations; revisit with IPAM hierarchy presentation. #900 preserves independently verified provider account scope for managed IPAM/discovery endpoints; it does not synthesize resources from default-scope outputs or infer runtime discovery coverage.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39833,10 +39833,10 @@
       }
     },
     "aws_vpc_ipam_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: explicit Organizations account id navigation; delegated account differs from management/control account. Email/name excluded. Follow-up #900.",
+      "gap": "Implemented #900: delegated_admin_account_id -> explicit Organizations account.id; the delegated account is not assigned as the helper management account or inferred from its Organizations ARN. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39889,10 +39889,10 @@
       }
     },
     "aws_vpc_ipam_pool": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: scope, parent pool and type-gated planning VPC proof. Locale/resource_region must agree independently of control region. Follow-up #900.",
+      "gap": "Implemented #900: explicit scope.id and same-family/scope parent pool.id navigation; planning VPC requires type=vpc, resource ID/owner/region and verified parent locale, with independent provider account evidence. Pools stay independent Logical identities. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -39974,10 +39974,10 @@
       }
     },
     "aws_vpc_ipam_pool_cidr": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: pool owner; composite Terraform id differs from ipam_pool_cidr_id. Authorization message/signature excluded. Follow-up #900.",
+      "gap": "Implemented #900: ipam_pool_id -> pool.id ownership; composite helper id and ipam_pool_cidr_id stay distinct. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40035,10 +40035,10 @@
       }
     },
     "aws_vpc_ipam_pool_cidr_allocation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: pool owner; computed resource_id/resource_type are not configured consumer references. Follow-up #900.",
+      "gap": "Implemented #900: explicit pool.id owner; computed resource_id/resource_type do not identify configured consumers or synthesize resources. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40101,10 +40101,10 @@
       }
     },
     "aws_vpc_ipam_preview_next_cidr": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: preview-to-pool navigation; managed preview and separate data lookup contract are not aliases. Follow-up #900.",
+      "gap": "Implemented #900: managed preview -> explicit pool.id owner; not a data-source alias, allocation or reservation. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40157,9 +40157,9 @@
       }
     },
     "aws_vpc_ipam_resource_discovery": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P3",
-      "gap": "#710 audit: Intentionally unsupported: OU entity paths and wildcard exclusions do not enumerate accounts or discovered VPC resources. Current logical identity is sufficient for this bounded scope; Deferred: operating-region summary requires explicit distinction from discovery home region and observed inventory; revisit with discovery association presentation.",
+      "gap": "#710 audit: Intentionally unsupported: OU entity paths and wildcard exclusions do not enumerate accounts or discovered VPC resources. Current logical identity is sufficient for this bounded scope; Deferred: operating-region summary requires explicit distinction from discovery home region and observed inventory; revisit with discovery association presentation. #900 preserves independently verified provider account scope for managed IPAM/discovery endpoints; it does not synthesize resources from default-scope outputs or infer runtime discovery coverage.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40219,10 +40219,10 @@
       }
     },
     "aws_vpc_ipam_resource_discovery_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: IPAM/discovery identity pair with independently verified home regions and owner scope. Follow-up #900.",
+      "gap": "Implemented #900: complete explicit IPAM/discovery pair with independently verified home regions and discovery-owner account; unknown owner/home context prevents both navigation and association lowering. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40280,10 +40280,10 @@
       }
     },
     "aws_vpc_ipam_scope": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: ipam_id owner navigation; IPAM allocation scope is not deployment scope. Follow-up #900.",
+      "gap": "Implemented #900: ipam_id -> explicit IPAM.id owner; allocation scope is not deployment scope and computed default scope outputs do not synthesize managed scopes. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40336,10 +40336,10 @@
       }
     },
     "aws_vpc_ipv4_cidr_block_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: VPC owner and optional IPv4 IPAM pool; CIDR is allocation content, not subnet identity. Follow-up #900.",
+      "gap": "Implemented #900: VPC.id owner and optional family/locale-gated IPAM pool.id; CIDR is allocation content, never a subnet identity. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40397,10 +40397,10 @@
       }
     },
     "aws_vpc_ipv6_cidr_block_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 900,
-      "gap": "#710 audit: Missing: VPC owner and mode-gated IPAM/IPv6 pool; generated, BYOIP and IPAM variants are distinct. Follow-up #900.",
+      "gap": "Implemented #900: VPC.id owner and non-generated/non-BYOIP IPAM pool.id with family/locale proof. IPv6 pool strings have no registered managed/data endpoint in 6.70.0 and remain intentionally unsupported; no resource synthesis. See aws-network.md#ipam-and-configured-cidr-references-900. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",

@@ -15,6 +15,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_ec2_subnet_cidr_reservation" => {
+                ("subnet_id", "Reservation subnet", "CIDR reservations")
+            }
+            "aws_vpc_ipam_scope" => ("ipam_id", "Scope IPAM", "IPAM scopes"),
+            "aws_vpc_ipam_pool_cidr"
+            | "aws_vpc_ipam_pool_cidr_allocation"
+            | "aws_vpc_ipam_preview_next_cidr" => {
+                ("ipam_pool_id", "IPAM pool owner", "Pool configuration")
+            }
+            "aws_vpc_ipv4_cidr_block_association" | "aws_vpc_ipv6_cidr_block_association" => {
+                ("vpc_id", "CIDR VPC owner", "CIDR associations")
+            }
             "aws_ec2_managed_prefix_list_entry" => {
                 ("prefix_list_id", "Prefix list owner", "Prefix list entries")
             }
@@ -194,10 +206,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if (matches!(
+        if ((matches!(
             node.resource_type.as_str(),
             "aws_flow_log" | "aws_cloudfront_monitoring_subscription"
-        ) && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+        ) || super::ipam::owner(&node.resource_type).is_some())
+            && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
             || node.resource_type == "aws_appsync_channel_namespace"
             || super::search::helper(&node.resource_type)
             || matches!(
