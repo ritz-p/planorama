@@ -44,7 +44,18 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             || resource.starts_with("aws_datasync_location_"))
         && !matches!(
             resource,
-            "aws_ec2_managed_prefix_list"
+            "aws_vpc_ipam"
+                | "aws_vpc_ipam_scope"
+                | "aws_vpc_ipam_pool"
+                | "aws_vpc_ipam_pool_cidr"
+                | "aws_vpc_ipam_pool_cidr_allocation"
+                | "aws_vpc_ipam_preview_next_cidr"
+                | "aws_vpc_ipam_resource_discovery"
+                | "aws_vpc_ipam_resource_discovery_association"
+                | "aws_ec2_subnet_cidr_reservation"
+                | "aws_vpc_ipv4_cidr_block_association"
+                | "aws_vpc_ipv6_cidr_block_association"
+                | "aws_ec2_managed_prefix_list"
                 | "aws_ec2_managed_prefix_list_entry"
                 | "aws_apigatewayv2_integration_response"
                 | "aws_cloudfront_monitoring_subscription"
