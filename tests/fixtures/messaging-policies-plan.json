@@ -1,0 +1,196 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_sns_topic.main",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:main"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic_policy.main",
+      "type": "aws_sns_topic_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:main",
+          "policy": "PRIVATE_POLICY_<script>&"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic_data_protection_policy.main",
+      "type": "aws_sns_topic_data_protection_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:main",
+          "policy": "PRIVATE_PROTECTION"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.main",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "https://sqs.us-east-1.amazonaws.com/123456789012/main",
+          "url": "https://sqs.us-east-1.amazonaws.com/123456789012/main",
+          "arn": "arn:aws:sqs:us-east-1:123456789012:main"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue_policy.main",
+      "type": "aws_sqs_queue_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "queue_url": "https://sqs.us-east-1.amazonaws.com/123456789012/main",
+          "policy": "PRIVATE_POLICY",
+          "redrive_policy": "PRIVATE_REDRIVE",
+          "redrive_allow_policy": "PRIVATE_ALLOW"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue_redrive_policy.main",
+      "type": "aws_sqs_queue_redrive_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "queue_url": "https://sqs.us-east-1.amazonaws.com/123456789012/main",
+          "policy": "PRIVATE_POLICY",
+          "redrive_policy": "PRIVATE_REDRIVE",
+          "redrive_allow_policy": "PRIVATE_ALLOW"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue_redrive_allow_policy.main",
+      "type": "aws_sqs_queue_redrive_allow_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "queue_url": "https://sqs.us-east-1.amazonaws.com/123456789012/main",
+          "policy": "PRIVATE_POLICY",
+          "redrive_policy": "PRIVATE_REDRIVE",
+          "redrive_allow_policy": "PRIVATE_ALLOW"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_sns_topic.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sns_topic_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "arn": {
+              "references": [
+                "aws_sns_topic.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sns_topic_data_protection_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "arn": {
+              "references": [
+                "aws_sns_topic.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sqs_queue.main",
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "aws_sqs_queue_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "queue_url": {
+              "references": [
+                "aws_sqs_queue.main.url"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sqs_queue_redrive_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "queue_url": {
+              "references": [
+                "aws_sqs_queue.main.url"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sqs_queue_redrive_allow_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "queue_url": {
+              "references": [
+                "aws_sqs_queue.main.url"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

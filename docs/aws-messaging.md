@@ -1,5 +1,22 @@
 # AWS APIs and messaging
 
+## SNS and SQS policy owners (#753)
+
+SNS topic policy and data-protection policy `arn` references accept only
+`aws_sns_topic.arn`. SQS queue, redrive and redrive-allow policy `queue_url`
+references accept only `aws_sqs_queue.url` or `id`, never its ARN. The URL is
+compared as a typed output value; its contents are not parsed to discover queues.
+
+Each link requires one complete, explicit, unique current managed AWS endpoint,
+the exact output attribute, equal known non-sensitive values and compatible
+provider/account/region bindings. Unknown, partial, ambiguous, foreign, data,
+deleted, deposed and filtered endpoints remain unproven or unavailable. Named
+states retain separate identities. Policies remain independent Logical resources
+with their own actions and provenance. Policy JSON, redrive destinations and
+runtime delivery are not interpreted; existing subscriptions and queue encryption
+summaries retain their contracts. Inputs and output flags were verified against
+AWS Provider 6.70.0 at `5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
 ## AppSync GraphQL APIs (#947)
 
 GraphQL APIs have independent Spatial cards. Explicit current managed Lambda,
