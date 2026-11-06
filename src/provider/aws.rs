@@ -83,6 +83,7 @@ pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod placement;
+pub(crate) mod prefix_list_entries;
 mod privatelink;
 pub(crate) mod profiles;
 pub(crate) mod query_logs;

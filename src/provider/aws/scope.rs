@@ -44,7 +44,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             || resource.starts_with("aws_datasync_location_"))
         && !matches!(
             resource,
-            "aws_apigatewayv2_integration_response"
+            "aws_ec2_managed_prefix_list"
+                | "aws_ec2_managed_prefix_list_entry"
+                | "aws_apigatewayv2_integration_response"
                 | "aws_cloudfront_monitoring_subscription"
                 | "aws_cloudfront_realtime_log_config"
                 | "aws_cloudfront_key_group"

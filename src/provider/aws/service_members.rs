@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_ec2_managed_prefix_list_entry" => {
+                ("prefix_list_id", "Prefix list owner", "Prefix list entries")
+            }
             "aws_vpc_encryption_control" => {
                 ("vpc_id", "Encryption control VPC", "Encryption control")
             }
