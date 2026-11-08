@@ -63,6 +63,7 @@ mod fsx;
 mod glue;
 mod iam;
 mod icons;
+pub(crate) mod kinesis_owners;
 mod lambda;
 pub(crate) mod lambda_config;
 pub(crate) mod lambda_events;

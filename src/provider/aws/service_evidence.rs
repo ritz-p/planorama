@@ -1,6 +1,41 @@
 use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
 use serde_json::Value;
 
+pub(super) fn annotate_scalar(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    evidence: &[(&Value, &Value)],
+    label: fn(&str, &str) -> Option<&'static str>,
+    endpoint: fn(&str, &str, &str, &str) -> bool,
+) {
+    let mut counts = std::collections::BTreeMap::new();
+    for r in refs.iter() {
+        *counts
+            .entry((r.target, r.attribute.clone()))
+            .or_insert(0usize) += 1;
+    }
+    for r in refs {
+        let kind = nodes[r.target].resource_type.as_str();
+        if label(kind, &r.attribute).is_none() {
+            continue;
+        }
+        r.service_reference_verified = false;
+        if counts[&(r.target, r.attribute.clone())] != 1
+            || !eligible(nodes, r)
+            || r.sources.len() != 1
+            || r.source_attributes.len() != 1
+        {
+            continue;
+        }
+        let source = r.sources[0];
+        let field = r.source_attributes.first().unwrap().as_str();
+        if endpoint(kind, &r.attribute, &nodes[source].resource_type, field) {
+            r.service_reference_verified = known(evidence, r.target, &r.attribute)
+                .is_some_and(|value| known(evidence, source, field) == Some(value));
+        }
+    }
+}
+
 fn current(node: &TerraformEntity) -> bool {
     node.provider.is_aws()
         && node.mode == EntityMode::Managed
