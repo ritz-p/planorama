@@ -55,6 +55,14 @@ pub(super) fn infer(raw: &Input) -> Graph {
             }
             continue;
         }
+        if child.resource_type == "aws_vpc_route_server_endpoint"
+            && reference.attribute == "subnet_id"
+        {
+            if super::service_references::verified(raw, reference) {
+                relationships.insert((reference.sources[0], reference.target));
+            }
+            continue;
+        }
         if super::secondary_network::label(&child.resource_type, &reference.attribute).is_some() {
             if super::service_references::verified(raw, reference) {
                 if let [parent] = reference.sources.as_slice() {

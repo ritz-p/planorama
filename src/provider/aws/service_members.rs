@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_vpc_route_server_peer" => {
+                ("route_server_endpoint_id", "BGP peer endpoint", "BGP peers")
+            }
             "aws_ec2_subnet_cidr_reservation" => {
                 ("subnet_id", "Reservation subnet", "CIDR reservations")
             }
@@ -208,7 +211,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         });
         if ((matches!(
             node.resource_type.as_str(),
-            "aws_flow_log" | "aws_cloudfront_monitoring_subscription"
+            "aws_vpc_route_server_peer" | "aws_flow_log" | "aws_cloudfront_monitoring_subscription"
         ) || super::ipam::owner(&node.resource_type).is_some())
             && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
             || node.resource_type == "aws_appsync_channel_namespace"

@@ -40718,10 +40718,10 @@
       }
     },
     "aws_vpc_route_server": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 904,
-      "gap": "#710 audit: Missing: architecture and route_server_id endpoint identity; no generic id field. SNS topic is AWS-provisioned output, not configured child. Missing: current Logical controller omits route-server architecture. Follow-up #904.",
+      "gap": "Implemented #904: exact current managed route_server_id and route_server_endpoint_id references, endpoint subnet context with coherent explicit VPC association, peer ownership, and paired propagation/VPC association endpoints. Configuration summaries remain excluded. See aws-network.md#route-server-904.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40732,11 +40732,11 @@
           "sns_topic_arn",
           "sns_notifications_enabled"
         ],
-        "placement": "Missing: current Logical controller omits route-server architecture.",
-        "ownership": "Not applicable: aws_vpc_route_server remains independently tracked configuration; references alone do not prove embedded ownership.",
-        "network": "Missing: VPC association context belongs to explicit association helper, not ASN or SNS output.",
-        "references": "Missing: architecture and route_server_id endpoint identity; no generic id field. SNS topic is AWS-provisioned output, not configured child.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "placement": "Supported: independent spatial architecture card.",
+        "ownership": "Not applicable: independent architecture/configuration endpoints retain identity.",
+        "network": "Not applicable: service relationships do not imply containment or computed routes.",
+        "references": "Supported: unique explicit typed output references with matching known values and compatible provider/account/region evidence; computed ENI/SNS outputs and peer IP addresses never identify managed children. Dedicated route_server_id output; no generic id.",
+        "scope": "Supported: regional scope preserves independently proven account/provider/region evidence.",
         "summaries": "Not applicable: aws_vpc_route_server is reviewed for identity and navigation only. Selected route_server_id, amazon_side_asn, sns_topic_arn fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_route_server.html.markdown",
         "shapes": {
@@ -40773,16 +40773,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/route_server.rs",
+          "tests/unit/semantic/route_server.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_vpc_route_server_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 904,
-      "gap": "#710 audit: Missing: route_server_id and subnet_id proof; generated eni_id does not synthesize ENI. Missing: current Logical endpoint needs subnet architecture. Follow-up #904.",
+      "gap": "Implemented #904: exact current managed route_server_id and route_server_endpoint_id references, endpoint subnet context with coherent explicit VPC association, peer ownership, and paired propagation/VPC association endpoints. Configuration summaries remain excluded. See aws-network.md#route-server-904.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40794,11 +40796,11 @@
           "eni_id",
           "vpc_id"
         ],
-        "placement": "Missing: current Logical endpoint needs subnet architecture.",
-        "ownership": "Missing: service membership separate from subnet containment; server and endpoint retain distinct identities.",
-        "network": "Missing: required subnet_id containment with VPC coherence.",
-        "references": "Missing: route_server_id and subnet_id proof; generated eni_id does not synthesize ENI.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "placement": "Supported: independent spatial architecture card.",
+        "ownership": "Not applicable: independent architecture/configuration endpoints retain identity.",
+        "network": "Supported: subnet containment requires matching known endpoint/subnet VPC IDs and one verified server/VPC association.",
+        "references": "Supported: unique explicit typed output references with matching known values and compatible provider/account/region evidence; computed ENI/SNS outputs and peer IP addresses never identify managed children.",
+        "scope": "Supported: regional scope preserves independently proven account/provider/region evidence.",
         "summaries": "Not applicable: aws_vpc_route_server_endpoint is reviewed for identity and navigation only. Selected route_server_id, subnet_id, route_server_endpoint_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_route_server_endpoint.html.markdown",
         "shapes": {
@@ -40839,16 +40841,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/route_server.rs",
+          "tests/unit/semantic/route_server.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_vpc_route_server_peer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 904,
-      "gap": "#710 audit: Missing: endpoint owner via route_server_endpoint_id output, not generic id; peer_address never identifies an appliance by IP. Follow-up #904.",
+      "gap": "Implemented #904: exact current managed route_server_id and route_server_endpoint_id references, endpoint subnet context with coherent explicit VPC association, peer ownership, and paired propagation/VPC association endpoints. Configuration summaries remain excluded. See aws-network.md#route-server-904.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40859,11 +40863,11 @@
           "peer_address",
           "bgp_options.peer_asn"
         ],
-        "placement": "Supported: retain Node / Logical default for aws_vpc_route_server_peer; basic classification is not dedicated semantics.",
-        "ownership": "Missing: endpoint-owned BGP peer helper; configured session is not observed reachability.",
-        "network": "Not applicable: aws_vpc_route_server_peer is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: endpoint owner via route_server_endpoint_id output, not generic id; peer_address never identifies an appliance by IP.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "placement": "Supported: independent helper identity and coverage; verified peers may embed, paired associations may lower.",
+        "ownership": "Supported: peer belongs only to a unique verified route_server_endpoint_id owner.",
+        "network": "Not applicable: service relationships do not imply containment or computed routes.",
+        "references": "Supported: unique explicit typed output references with matching known values and compatible provider/account/region evidence; computed ENI/SNS outputs and peer IP addresses never identify managed children.",
+        "scope": "Supported: regional scope preserves independently proven account/provider/region evidence.",
         "summaries": "Not applicable: aws_vpc_route_server_peer is reviewed for identity and navigation only. Selected route_server_endpoint_id, route_server_peer_id, peer_address fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_route_server_peer.html.markdown",
         "shapes": {
@@ -40901,16 +40905,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/route_server.rs",
+          "tests/unit/semantic/route_server.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_vpc_route_server_propagation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 904,
-      "gap": "#710 audit: Missing: server/table association; no computed routes synthesized. Follow-up #904.",
+      "gap": "Implemented #904: exact current managed route_server_id and route_server_endpoint_id references, endpoint subnet context with coherent explicit VPC association, peer ownership, and paired propagation/VPC association endpoints. Configuration summaries remain excluded. See aws-network.md#route-server-904.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40919,11 +40925,11 @@
           "route_server_id",
           "route_table_id"
         ],
-        "placement": "Supported: retain Association / Logical default for aws_vpc_route_server_propagation; basic classification is not dedicated semantics.",
-        "ownership": "Not applicable: propagation connects independent configuration endpoints.",
-        "network": "Not applicable: aws_vpc_route_server_propagation is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: server/table association; no computed routes synthesized.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "placement": "Supported: independent helper identity and coverage; verified peers may embed, paired associations may lower.",
+        "ownership": "Not applicable: independent architecture/configuration endpoints retain identity.",
+        "network": "Not applicable: service relationships do not imply containment or computed routes.",
+        "references": "Supported: unique explicit typed output references with matching known values and compatible provider/account/region evidence; computed ENI/SNS outputs and peer IP addresses never identify managed children.",
+        "scope": "Supported: regional scope preserves independently proven account/provider/region evidence.",
         "summaries": "Not applicable: aws_vpc_route_server_propagation is reviewed for identity and navigation only. Selected route_server_id, route_table_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_route_server_propagation.html.markdown",
         "shapes": {
@@ -40952,16 +40958,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/route_server.rs",
+          "tests/unit/semantic/route_server.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_vpc_route_server_vpc_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 904,
-      "gap": "#710 audit: Missing: server/VPC association and coherent context for its endpoints. Follow-up #904.",
+      "gap": "Implemented #904: exact current managed route_server_id and route_server_endpoint_id references, endpoint subnet context with coherent explicit VPC association, peer ownership, and paired propagation/VPC association endpoints. Configuration summaries remain excluded. See aws-network.md#route-server-904.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -40970,11 +40978,11 @@
           "route_server_id",
           "vpc_id"
         ],
-        "placement": "Supported: retain Association / Logical default for aws_vpc_route_server_vpc_association; basic classification is not dedicated semantics.",
-        "ownership": "Not applicable: VPC context differs from service child ownership.",
-        "network": "Not applicable: aws_vpc_route_server_vpc_association is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: server/VPC association and coherent context for its endpoints.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "placement": "Supported: independent helper identity and coverage; verified peers may embed, paired associations may lower.",
+        "ownership": "Not applicable: independent architecture/configuration endpoints retain identity.",
+        "network": "Not applicable: service relationships do not imply containment or computed routes.",
+        "references": "Supported: unique explicit typed output references with matching known values and compatible provider/account/region evidence; computed ENI/SNS outputs and peer IP addresses never identify managed children.",
+        "scope": "Supported: regional scope preserves independently proven account/provider/region evidence.",
         "summaries": "Not applicable: aws_vpc_route_server_vpc_association is reviewed for identity and navigation only. Selected route_server_id, vpc_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/vpc_route_server_vpc_association.html.markdown",
         "shapes": {
@@ -41003,7 +41011,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/route_server.rs",
+          "tests/unit/semantic/route_server.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }

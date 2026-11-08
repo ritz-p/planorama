@@ -224,6 +224,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::route_server::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::secondary_network::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::ipam::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::prefix_list_entries::annotate(nodes, references, &elbv2_evidence);
