@@ -92,6 +92,43 @@ const ec2VpcExpected=[
 ];
 const dimensions=['placement','ownership','network','references','scope','summaries'];
 
+test('#726 covers exactly 75 IAM, federation and directory managed types',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services='iam identitystore ssoadmin ds directoryservicedata rolesanywhere accountaccess verifiedpermissions'.split(' ');
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===726);
+ assert.equal(expected.length,75);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'ccebb5f8972b59cd4603958cf849777ef4a2eafc');
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),path);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#726 audit:/);
+  if(dimensions.some(k=>/\b[Mm]issing\b/.test(r[k])))assert.ok(issue>=1138&&issue<=1145,type);
+ }
+});
+
+test('#726 separates directory targets, global IAM, regional trust and policy namespaces',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.match(r('directory_service_region').references,/deployment region, distinct from API control region/);
+ assert.match(r('directory_service_shared_directory_accepter').references,/owner\/recipient account proof/);
+ assert.equal(r('iam_virtual_mfa_device').contracts.user_name,'computed');
+ assert.match(r('iam_virtual_mfa_device').references,/Seeds and QR code bytes are credentials/);
+ assert.match(r('rolesanywhere_profile').references,/regional despite no region input/);
+ assert.match(r('ssoadmin_customer_managed_policy_attachment').references,/target accounts, not the SSO administration account/);
+ assert.match(r('iam_role_policies_exclusive').references,/inline policy.name.*not managed policy ARNs/);
+ assert.deepEqual(r('identitystore_group_membership').shapes.member_id,['string']);
+ assert.equal(r('accountaccess_application').contracts['identity_source.identity_center.application_arn'],'computed');
+ assert.match(r('verifiedpermissions_identity_source').references,/OIDC issuer URL is not IAM provider identity/);
+});
+
 test('#727 covers all 44 key, certificate and application identity types with pinned contracts',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const services='kms secretsmanager acm acmpca cloudhsmv2 paymentcryptography cognitoidentity cognitoidp signer'.split(' ');
