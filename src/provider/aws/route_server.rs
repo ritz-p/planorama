@@ -14,8 +14,9 @@ fn rule(kind: &str, path: &str) -> Option<(&'static str, &'static str, &'static 
             | "aws_vpc_route_server_vpc_association",
             "route_server_id",
         ) => Some(("aws_vpc_route_server", "route_server_id", "Route server")),
-        ("aws_vpc_route_server_endpoint", "subnet_id")
-        | ("aws_vpc_route_server_propagation", _) => Some(("aws_subnet", "id", "Endpoint subnet")),
+        ("aws_vpc_route_server_endpoint", "subnet_id") => {
+            Some(("aws_subnet", "id", "Endpoint subnet"))
+        }
         ("aws_vpc_route_server_peer", "route_server_endpoint_id") => Some((
             "aws_vpc_route_server_endpoint",
             "route_server_endpoint_id",
@@ -66,7 +67,8 @@ pub(crate) fn annotate(
             }
             let known = |i, p| super::service_evidence::known(evidence, i, p);
             match (nodes[r.target].resource_type.as_str(), r.attribute.as_str()) {
-                ("aws_vpc_route_server_endpoint", "subnet_id") => {
+                ("aws_vpc_route_server_endpoint", "subnet_id")
+                | ("aws_vpc_route_server_propagation", _) => {
                     let Some(server) = reference(refs, r.target, "route_server_id") else {
                         return false;
                     };

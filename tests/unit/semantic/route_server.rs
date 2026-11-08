@@ -69,6 +69,18 @@ fn endpoints_require_subnet_and_unique_coherent_vpc_association() {
         }
         let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
         assert_eq!(g.coverage.selected.resources, 8);
+        if case == "valid" {
+            assert_eq!(
+                g.edges
+                    .iter()
+                    .filter(|e| e.kind == crate::model::EdgeKind::Association)
+                    .count(),
+                2
+            );
+            assert!(g.nodes.iter().any(
+                |n| n.resource_type == "aws_vpc_route_server_peer" && n.member_owner.is_some()
+            ));
+        }
         assert_eq!(
             g.edges.iter().any(
                 |e| g.nodes[e.to].resource_type == "aws_vpc_route_server_endpoint"
