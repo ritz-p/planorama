@@ -60,6 +60,7 @@ mod eventbridge;
 mod firehose;
 pub(crate) mod flow_logs;
 mod fsx;
+pub(crate) mod global_accelerator;
 mod glue;
 mod iam;
 mod icons;
@@ -321,6 +322,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     cloudfront_vpc_origin::present(&raw, &mut graph);
     efs::present(&raw, &mut graph);
     service_members::present(&raw, &mut graph);
+    global_accelerator::present(&mut graph);
     encryption::present(&raw, &mut graph);
     let contained = crate::semantic::Input { graph, ..raw };
     let mut graph = data::visible(associations::lower(&contained));

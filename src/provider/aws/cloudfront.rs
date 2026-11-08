@@ -100,13 +100,17 @@ use serde_json::Value;
 use std::collections::BTreeSet;
 
 pub(crate) fn resource(kind: &str) -> bool {
-    matches!(
-        kind,
-        "aws_cloudfront_distribution" | "aws_cloudfront_continuous_deployment_policy"
-    )
+    super::global_accelerator::resource(kind)
+        || matches!(
+            kind,
+            "aws_cloudfront_distribution" | "aws_cloudfront_continuous_deployment_policy"
+        )
 }
 
 pub(super) fn reference_label(kind: &str, path: &str) -> Option<&'static str> {
+    if super::global_accelerator::resource(kind) {
+        return super::global_accelerator::label(kind, path);
+    }
     match kind {
         "aws_cloudfront_distribution" => label(path),
         "aws_cloudfront_continuous_deployment_policy"
@@ -131,6 +135,9 @@ pub(crate) fn indexed(kind: &str, path: &str) -> bool {
 }
 
 fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
+    if super::global_accelerator::resource(kind) {
+        return super::global_accelerator::fields(kind, path, source);
+    }
     if kind == "aws_cloudfront_continuous_deployment_policy" {
         if path == "staging_distribution_dns_names.items" && source == "aws_cloudfront_distribution"
         {
@@ -178,6 +185,7 @@ fn rows<'a>(
             prefix.rsplit('.').next(),
             Some(
                 "origin"
+                    | "endpoint_configuration"
                     | "ordered_cache_behavior"
                     | "function_association"
                     | "lambda_function_association"
@@ -233,6 +241,15 @@ fn verify(
 ) -> Option<()> {
     let node = &nodes[r.target];
     if !current(node) || !r.issues.is_empty() || !r.instances_explicit {
+        return None;
+    }
+    if super::global_accelerator::resource(&node.resource_type)
+        && refs
+            .iter()
+            .filter(|other| other.target == r.target && other.attribute == r.attribute)
+            .count()
+            != 1
+    {
         return None;
     }
     let (value, mask) = evidence[r.target];
@@ -320,6 +337,9 @@ fn verify(
                 return None;
             };
             if !outputs.contains(&output.as_str()) {
+                return None;
+            }
+            if !super::global_accelerator::valid(nodes, evidence, r, source) {
                 return None;
             }
             if !super::cloudfront_functions::live(nodes, evidence, source) {
