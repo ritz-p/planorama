@@ -36702,10 +36702,10 @@
       }
     },
     "aws_ec2_secondary_network": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 893,
-      "gap": "#710 audit: Missing: dedicated secondary-network identity and container semantics; rdma secondary network is not aws_vpc. Missing: current Logical default omits secondary-network architecture. Follow-up #893.",
+      "gap": "Implemented #893: independent secondary network/subnet containers; explicit secondary_network_id output with known rdma type and matching values. See aws-network.md#secondary-networks-893. Configuration summaries remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36715,11 +36715,11 @@
           "network_type",
           "ipv4_cidr_block"
         ],
-        "placement": "Missing: current Logical default omits secondary-network architecture.",
+        "placement": "Supported: dedicated spatial containers, never ordinary VPC/subnet aliases.",
         "ownership": "Not applicable: aws_ec2_secondary_network remains independently tracked configuration; references alone do not prove embedded ownership.",
         "network": "Not applicable: independent secondary-network boundary; no VPC parent field.",
-        "references": "Missing: dedicated secondary-network identity and container semantics; rdma secondary network is not aws_vpc.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: managed secondary_subnet.secondary_network_id -> secondary_network.secondary_network_id, unique current compatible explicit evidence and known matching values; network_type must be rdma.",
+        "scope": "Supported: regional scope preserves independently proven account and provider binding.",
         "summaries": "Not applicable: aws_ec2_secondary_network is reviewed for identity and navigation only. Selected secondary_network_id, network_type, ipv4_cidr_block fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_secondary_network.html.markdown",
         "shapes": {
@@ -36752,16 +36752,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/secondary_network.rs",
+          "tests/unit/semantic/secondary_network.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_ec2_secondary_subnet": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 893,
-      "gap": "#710 audit: Missing: secondary_network_id to secondary-network output, with AZ/AZ-ID distinction. Missing: current Logical default omits secondary subnet architecture. Follow-up #893.",
+      "gap": "Implemented #893: independent secondary network/subnet containers; explicit secondary_network_id output with known rdma type and matching values. See aws-network.md#secondary-networks-893. Configuration summaries remain excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36773,11 +36775,11 @@
           "availability_zone_id",
           "ipv4_cidr_block"
         ],
-        "placement": "Missing: current Logical default omits secondary subnet architecture.",
+        "placement": "Supported: dedicated spatial containers, never ordinary VPC/subnet aliases.",
         "ownership": "Not applicable: aws_ec2_secondary_subnet remains independently tracked configuration; references alone do not prove embedded ownership.",
-        "network": "Missing: secondary-network containment, never ordinary VPC/subnet aliasing.",
-        "references": "Missing: secondary_network_id to secondary-network output, with AZ/AZ-ID distinction.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "network": "Supported: verified secondary-network containment; AZ names and AZ IDs are separate optional/computed strings and do not identify the parent.",
+        "references": "Supported: managed secondary_subnet.secondary_network_id -> secondary_network.secondary_network_id, unique current compatible explicit evidence and known matching values; network_type must be rdma.",
+        "scope": "Supported: regional scope preserves independently proven account and provider binding.",
         "summaries": "Not applicable: aws_ec2_secondary_subnet is reviewed for identity and navigation only. Selected secondary_network_id, secondary_subnet_id, availability_zone fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_secondary_subnet.html.markdown",
         "shapes": {
@@ -36818,7 +36820,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/secondary_network.rs",
+          "tests/unit/semantic/secondary_network.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
