@@ -71,6 +71,7 @@ pub(crate) mod lambda_qualified;
 mod members;
 mod memorydb;
 mod messaging;
+pub(crate) mod messaging_policies;
 mod monitoring;
 mod network;
 mod network_acl;

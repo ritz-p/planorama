@@ -10140,10 +10140,10 @@
       }
     },
     "aws_sns_topic_data_protection_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 753,
-      "gap": "Missing: topic ARN #753. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #753: explicit unique current managed policy-owner navigation; SNS arn -> topic.arn, SQS queue_url -> queue.url/id (not ARN). Policies stay independent Logical identities; policy/redrive JSON and delivery inference remain excluded. See aws-messaging.md#sns-and-sqs-policy-owners-753. Historical #721 audit baseline is retained; current implementation supersedes only the owner-navigation gap.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -10170,10 +10170,10 @@
       }
     },
     "aws_sns_topic_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 753,
-      "gap": "Missing: topic ARN #753. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #753: explicit unique current managed policy-owner navigation; SNS arn -> topic.arn, SQS queue_url -> queue.url/id (not ARN). Policies stay independent Logical identities; policy/redrive JSON and delivery inference remain excluded. See aws-messaging.md#sns-and-sqs-policy-owners-753. Historical #721 audit baseline is retained; current implementation supersedes only the owner-navigation gap.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -10200,10 +10200,10 @@
       }
     },
     "aws_sqs_queue_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 753,
-      "gap": "Missing: queue_url -> queue.url/id #753; ARN output incompatible. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #753: explicit unique current managed policy-owner navigation; SNS arn -> topic.arn, SQS queue_url -> queue.url/id (not ARN). Policies stay independent Logical identities; policy/redrive JSON and delivery inference remain excluded. See aws-messaging.md#sns-and-sqs-policy-owners-753. Historical #721 audit baseline is retained; current implementation supersedes only the owner-navigation gap.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -10230,10 +10230,10 @@
       }
     },
     "aws_sqs_queue_redrive_allow_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 753,
-      "gap": "Missing: queue_url -> queue.url/id #753; ARN output incompatible. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #753: explicit unique current managed policy-owner navigation; SNS arn -> topic.arn, SQS queue_url -> queue.url/id (not ARN). Policies stay independent Logical identities; policy/redrive JSON and delivery inference remain excluded. See aws-messaging.md#sns-and-sqs-policy-owners-753. Historical #721 audit baseline is retained; current implementation supersedes only the owner-navigation gap.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -10260,10 +10260,10 @@
       }
     },
     "aws_sqs_queue_redrive_policy": {
-      "status": "Basic-only",
-      "priority": "P1",
+      "status": "Implemented",
+      "priority": "P2",
       "issue": 753,
-      "gap": "Missing: queue_url -> queue.url/id #753; ARN output incompatible. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "Implemented #753: explicit unique current managed policy-owner navigation; SNS arn -> topic.arn, SQS queue_url -> queue.url/id (not ARN). Policies stay independent Logical identities; policy/redrive JSON and delivery inference remain excluded. See aws-messaging.md#sns-and-sqs-policy-owners-753. Historical #721 audit baseline is retained; current implementation supersedes only the owner-navigation gap.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
