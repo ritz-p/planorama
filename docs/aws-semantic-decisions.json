@@ -36367,7 +36367,7 @@
     "aws_ec2_managed_prefix_list": {
       "status": "Basic-only",
       "priority": "P3",
-      "gap": "#710 audit: Not applicable: customer prefix-list entries contain CIDRs, not resource endpoints. Consumer navigation is owned by route/SG source types. Current logical identity is sufficient for this bounded scope; Deferred: address-family/count summary needs configured-versus-observed and unknown-count semantics; revisit with entry presentation. CIDRs never imply ownership.",
+      "gap": "#710 audit: Not applicable: customer prefix-list entries contain CIDRs, not resource endpoints. Consumer navigation is owned by route/SG source types. Current logical identity is sufficient for this bounded scope; Deferred: address-family/count summary needs configured-versus-observed and unknown-count semantics; revisit with entry presentation. CIDRs never imply ownership. #891 adds verified entry ownership navigation and preserves independently verified provider account scope for both managed list and entry; existing reference capabilities remain bounded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36436,10 +36436,10 @@
       }
     },
     "aws_ec2_managed_prefix_list_entry": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 891,
-      "gap": "#710 audit: Missing: prefix_list_id to customer managed prefix-list id; CIDR is content, not endpoint. Follow-up #891.",
+      "gap": "Implemented #891: unique current managed prefix_list_id -> customer-managed prefix-list.id with explicit complete references, known non-sensitive value equality and compatible independent scope. Entry retains member-owner metadata, independent lifecycle and Logical defaults; no CIDR or literal-ID ownership inference. See aws-network.md#managed-prefix-list-entries-891. Historical #710 audit baseline is retained.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
