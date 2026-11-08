@@ -153,3 +153,4 @@ examples/prefix-list-entries.svg
 examples/ipam.svg
 examples/secondary-network.svg
 examples/route-server.svg
+examples/lambda-core.svg

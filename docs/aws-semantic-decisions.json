@@ -44184,10 +44184,10 @@
       }
     },
     "aws_lambdacore_network_connector": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 954,
-      "gap": "#714 audit: Missing: operator role and complete subnet/SG common-VPC proof; MicroVm compute type is a discriminator, not ownership. Missing: explicit connector egress network context; generated ENIs are not managed children and image consumers do not inherit containment. Follow-up #954. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #954: explicit operator role ARN and complete MicroVm egress subnet/SG references with common-VPC proof. See aws-network.md#lambda-core-connectors-954. Configuration summaries remain excluded. Follow-up to #714.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -44200,11 +44200,11 @@
           "configuration.vpc_egress_configuration.security_group_ids",
           "configuration.vpc_egress_configuration.associated_compute_resource_types"
         ],
-        "placement": "Supported: retain Logical Node for aws_lambdacore_network_connector; basic display is not complete semantics.",
+        "placement": "Supported: independent regional connector architecture card.",
         "ownership": "Not applicable: retain independent aws_lambdacore_network_connector identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
-        "network": "Missing: explicit connector egress network context; generated ENIs are not managed children and image consumers do not inherit containment.",
-        "references": "Missing: operator role and complete subnet/SG common-VPC proof; MicroVm compute type is a discriminator, not ownership.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "network": "Supported: connector VPC context only with complete known subnet/SG common-VPC provenance; generated ENIs and image consumers do not inherit containment.",
+        "references": "Supported: operator_role -> managed IAM role.arn, and complete explicit subnet_ids/security_group_ids -> managed subnet/security group.id sets; known matching evaluated values, exact singleton configuration/vpc_egress_configuration lists, known MicroVm discriminator.",
+        "scope": "Supported: independently compatible provider/account/region identities, including global operator role account checks.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambdacore_network_connector attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambdacore_network_connector.html.markdown",
         "shapes": {
@@ -44257,7 +44257,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lambda_core.rs",
+          "tests/unit/semantic/lambda_core.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}

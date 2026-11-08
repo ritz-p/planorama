@@ -906,7 +906,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_lambda_provisioned_concurrency_config", "AWS Lambda", Controller, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambda_resource_policy", "AWS Lambda", Policy, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambda_runtime_management_config", "AWS Lambda", Controller, Logical, Regional, Some(ResourceIcon::Lambda)),
-    entry!("aws_lambdacore_network_connector", "AWS Lambda Core", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
+    entry!("aws_lambdacore_network_connector", "AWS Lambda Core", Node, Spatial, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambdamicrovms_image", "AWS Lambda MicroVMs", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambdamicrovms_microvm", "AWS Lambda MicroVMs", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_launch_configuration", "Amazon EC2 Auto Scaling", Controller, Logical, Regional, Some(ResourceIcon::Scaling)),

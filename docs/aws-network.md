@@ -635,3 +635,18 @@ Missing or ambiguous context stays uncontained. Provider/account/region, current
 managed lifecycle, complete provenance, and unknown/sensitive evidence are checked
 independently. Generated ENIs, SNS topics, peer IPs, ASNs and propagated routes never
 synthesize managed resources or prove reachability.
+
+## Lambda Core connectors (#954)
+
+The managed Lambda Core network connector has independent regional placement.
+`operator_role` accepts only a unique explicit managed IAM role ARN with a matching
+known value and compatible account/provider evidence. The role is not owned by the
+connector.
+
+The single `configuration` and `vpc_egress_configuration` list blocks must contain a
+known `MicroVm` compute-type list before egress references are accepted. Complete
+subnet and security-group sets must match known managed endpoint IDs. VPC placement
+requires every endpoint's unique explicit `vpc_id` to prove the same current VPC,
+including known matching values and compatible independent scope evidence. Unknown,
+sensitive, incomplete, incompatible or ambiguous evidence stays conservative.
+Generated ENIs and consumer images are not children and do not inherit placement.
