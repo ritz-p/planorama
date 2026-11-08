@@ -761,6 +761,7 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::cloudfront_multitenant::bindings(raw, reference)
         && super::global_accelerator::bindings(raw, reference)
         && (super::lambda_core::label(
             &raw.nodes[reference.target].resource_type,

@@ -45904,10 +45904,10 @@
       }
     },
     "aws_cloudfront_multitenant_distribution": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 912,
-      "gap": "#715 audit: Missing: dedicated multitenant distribution references; not a runtime alias of distribution. cache_behavior and lambda_function_arn differ from ordered_cache_behavior and lambda_arn. Tenant parameter templates cannot be resolved by string substitution. Missing: current Logical default omits independent multitenant distribution architecture. Follow-up #912. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "Implemented #912: dedicated multitenant consumer paths, explicit tenant distribution/group/certificate/WAF references, and connection-group Anycast ID reference. #715 audit: follow-up; no standard-distribution alias or tenant-template substitution. See aws-network.md#cloudfront-multitenant-912.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -45931,11 +45931,11 @@
           "web_acl_id",
           "default_cache_behavior.trusted_key_groups.items"
         ],
-        "placement": "Missing: current Logical default omits independent multitenant distribution architecture.",
+        "placement": "Supported: independent spatial multitenant distribution architecture card.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Intentionally unsupported: origins and tenants do not contain the Global distribution.",
-        "references": "Missing: dedicated multitenant distribution references; not a runtime alias of distribution. cache_behavior and lambda_function_arn differ from ordered_cache_behavior and lambda_arn. Tenant parameter templates cannot be resolved by string substitution.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete element-correlated explicit known typed references, including cache_behavior and lambda_function_arn, qualified Lambda outputs, LIVE CloudFront functions, CloudFront-scope WAF, ACM viewer certificates in us-east-1, exact multitenant distribution/group IDs and Anycast IDs. cache_behavior and lambda_function_arn differ from standard ordered_cache_behavior and lambda_arn. trusted_key_groups uses singleton block items, not the standard flat list.",
+        "scope": "Supported: compatible independent provider/account evidence; global control scope does not overwrite regional targets or imply containment.",
         "summaries": "Intentionally unsupported: tenant parameters/domains and effective template resolution; no arbitrary aws_cloudfront_multitenant_distribution attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_multitenant_distribution.html.markdown",
         "shapes": {
@@ -46043,17 +46043,19 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_multitenant.rs",
+          "tests/unit/semantic/cloudfront_multitenant.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_cloudfront_distribution_tenant": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 912,
-      "gap": "#715 audit: Missing: multitenant distribution ID, explicit connection group ID, ACM/WAF customization references. Omitted default group or managed certificate request must not synthesize configured children. Follow-up #912. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "Implemented #912: dedicated multitenant consumer paths, explicit tenant distribution/group/certificate/WAF references, and connection-group Anycast ID reference. #715 audit: follow-up; no standard-distribution alias or tenant-template substitution. See aws-network.md#cloudfront-multitenant-912.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46066,11 +46068,11 @@
           "customizations.web_acl.arn",
           "managed_certificate_request.primary_domain_name"
         ],
-        "placement": "Supported: retain Logical Connector for aws_cloudfront_distribution_tenant; this presentation alone does not prove relationships.",
+        "placement": "Supported: independent logical identity and reference navigation; no default group or managed certificate fabrication.",
         "ownership": "Missing: verified tenant membership by distribution_id; a tenant and its shared connection group must retain independent identities.",
         "network": "Not applicable: tenant is Global application configuration, not subnet attachment.",
-        "references": "Missing: multitenant distribution ID, explicit connection group ID, ACM/WAF customization references. Omitted default group or managed certificate request must not synthesize configured children.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete element-correlated explicit known typed references, including cache_behavior and lambda_function_arn, qualified Lambda outputs, LIVE CloudFront functions, CloudFront-scope WAF, ACM viewer certificates in us-east-1, exact multitenant distribution/group IDs and Anycast IDs.",
+        "scope": "Supported: compatible independent provider/account evidence; global control scope does not overwrite regional targets or imply containment.",
         "summaries": "Intentionally unsupported: tenant parameters/domains and effective template resolution; no arbitrary aws_cloudfront_distribution_tenant attribute summary.",
         "officialDocumentation": "website/docs/r/cloudfront_distribution_tenant.html.markdown",
         "shapes": {
@@ -46117,7 +46119,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_multitenant.rs",
+          "tests/unit/semantic/cloudfront_multitenant.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), domain (optional), id (optional/computed), name (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -46141,10 +46145,10 @@
       }
     },
     "aws_cloudfront_connection_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 912,
-      "gap": "#715 audit: Missing: Anycast list ID reference; default service-created groups and routing_endpoint DNS do not prove user-managed identities. Follow-up #912. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "Implemented #912: dedicated multitenant consumer paths, explicit tenant distribution/group/certificate/WAF references, and connection-group Anycast ID reference. #715 audit: follow-up; no standard-distribution alias or tenant-template substitution. See aws-network.md#cloudfront-multitenant-912.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -46155,11 +46159,11 @@
           "is_default",
           "routing_endpoint"
         ],
-        "placement": "Supported: retain Logical Node for aws_cloudfront_connection_group; this presentation alone does not prove relationships.",
+        "placement": "Supported: independent logical identity and reference navigation; no default group or managed certificate fabrication.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: Anycast list ID reference; default service-created groups and routing_endpoint DNS do not prove user-managed identities.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: complete element-correlated explicit known typed references, including cache_behavior and lambda_function_arn, qualified Lambda outputs, LIVE CloudFront functions, CloudFront-scope WAF, ACM viewer certificates in us-east-1, exact multitenant distribution/group IDs and Anycast IDs.",
+        "scope": "Supported: compatible independent provider/account evidence; global control scope does not overwrite regional targets or imply containment.",
         "summaries": "Deferred: enabled/IPv6 configuration summary until tenant presentation is designed; runtime status and routing endpoint values excluded.",
         "officialDocumentation": "website/docs/r/cloudfront_connection_group.html.markdown",
         "shapes": {
@@ -46193,7 +46197,9 @@
           "src/provider/aws/cloudfront.rs",
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/cloudfront.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_multitenant.rs",
+          "tests/unit/semantic/cloudfront_multitenant.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: id (optional/computed), routing_endpoint (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {

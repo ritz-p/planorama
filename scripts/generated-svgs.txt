@@ -155,3 +155,4 @@ examples/secondary-network.svg
 examples/route-server.svg
 examples/lambda-core.svg
 examples/global-accelerator.svg
+examples/cloudfront-multitenant.svg

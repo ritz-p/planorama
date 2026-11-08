@@ -671,3 +671,26 @@ The pinned Provider 6.70.0 endpoint-group documentation establishes LB ARN and E
 allocation ID contracts. EC2 instance ID support is not claimed without additional
 explicit source evidence. DNS and hosted-zone consumer semantics remain Route53's
 responsibility. Literal names, IPs and ARN-string matching are not reference proof.
+
+## CloudFront multitenant (#912)
+
+Multitenant distributions have independent spatial cards and are never runtime
+aliases of standard distributions. Their known `connection_mode` must be
+`tenant-only` before consumer references or tenant-to-distribution references
+are accepted. Missing/unknown mode remains conservative.
+
+Both `default_cache_behavior` and `cache_behavior` support explicit cache-policy,
+qualified Lambda (`lambda_function_arn`), published CloudFront function, trusted key
+group (`trusted_key_groups.items` in a singleton block), field-encryption and realtime-log references. Origins support the existing
+typed domain, OAC, VPC-origin and client-certificate contracts. All nested collection
+references remain complete and element-correlated. Tenant templates are not expanded
+or substituted. Standard `ordered_cache_behavior`/`lambda_arn` paths are not aliases
+on the multitenant type.
+
+Tenants reference only explicit multitenant distribution IDs, connection-group IDs,
+and configured ACM/WAF customization ARNs. Viewer certificates require ACM in
+us-east-1; WAF references require CloudFront scope. Connection groups reference
+Anycast list IDs only. Omitted default groups, routing-endpoint DNS and managed
+certificate requests do not create configured children. Shared endpoints keep
+independent identity, scope, coverage and selection; these are configuration
+references, not network containment or runtime enforcement claims.

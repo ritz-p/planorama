@@ -100,7 +100,8 @@ use serde_json::Value;
 use std::collections::BTreeSet;
 
 pub(crate) fn resource(kind: &str) -> bool {
-    super::global_accelerator::resource(kind)
+    super::cloudfront_multitenant::resource(kind)
+        || super::global_accelerator::resource(kind)
         || matches!(
             kind,
             "aws_cloudfront_distribution" | "aws_cloudfront_continuous_deployment_policy"
@@ -108,6 +109,9 @@ pub(crate) fn resource(kind: &str) -> bool {
 }
 
 pub(super) fn reference_label(kind: &str, path: &str) -> Option<&'static str> {
+    if super::cloudfront_multitenant::resource(kind) {
+        return super::cloudfront_multitenant::label(kind, path);
+    }
     if super::global_accelerator::resource(kind) {
         return super::global_accelerator::label(kind, path);
     }
@@ -135,6 +139,9 @@ pub(crate) fn indexed(kind: &str, path: &str) -> bool {
 }
 
 fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
+    if super::cloudfront_multitenant::resource(kind) {
+        return super::cloudfront_multitenant::fields(kind, path, source);
+    }
     if super::global_accelerator::resource(kind) {
         return super::global_accelerator::fields(kind, path, source);
     }
@@ -185,6 +192,7 @@ fn rows<'a>(
             prefix.rsplit('.').next(),
             Some(
                 "origin"
+                    | "cache_behavior"
                     | "endpoint_configuration"
                     | "ordered_cache_behavior"
                     | "function_association"
@@ -243,7 +251,8 @@ fn verify(
     if !current(node) || !r.issues.is_empty() || !r.instances_explicit {
         return None;
     }
-    if super::global_accelerator::resource(&node.resource_type)
+    if (super::cloudfront_multitenant::resource(&node.resource_type)
+        || super::global_accelerator::resource(&node.resource_type))
         && refs
             .iter()
             .filter(|other| other.target == r.target && other.attribute == r.attribute)
@@ -337,6 +346,9 @@ fn verify(
                 return None;
             };
             if !outputs.contains(&output.as_str()) {
+                return None;
+            }
+            if !super::cloudfront_multitenant::valid(nodes, evidence, r, source) {
                 return None;
             }
             if !super::global_accelerator::valid(nodes, evidence, r, source) {

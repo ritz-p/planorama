@@ -1,0 +1,649 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_cloudfront_multitenant_distribution.main",
+      "type": "aws_cloudfront_multitenant_distribution",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "multi-1",
+          "arn": "arn:multi",
+          "connection_mode": "tenant-only",
+          "origin": [
+            {
+              "domain_name": "bucket.s3.amazonaws.com",
+              "origin_access_control_id": "oac-1",
+              "vpc_origin_config": [
+                {
+                  "vpc_origin_id": "origin-1"
+                }
+              ],
+              "custom_origin_config": [
+                {
+                  "origin_mtls_config": [
+                    {
+                      "client_certificate_arn": "arn:cert"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "default_cache_behavior": [
+            {
+              "cache_policy_id": "cache-1",
+              "lambda_function_association": [
+                {
+                  "lambda_function_arn": "arn:lambda:version"
+                }
+              ],
+              "function_association": [
+                {
+                  "function_arn": "arn:function"
+                }
+              ],
+              "trusted_key_groups": [
+                {
+                  "items": [
+                    "kg-1"
+                  ],
+                  "enabled": true
+                }
+              ],
+              "field_level_encryption_id": "fle-1",
+              "realtime_log_config_arn": "arn:realtime"
+            }
+          ],
+          "cache_behavior": [
+            {
+              "cache_policy_id": "cache-1",
+              "lambda_function_association": [
+                {
+                  "lambda_function_arn": "arn:lambda:version"
+                }
+              ],
+              "function_association": [
+                {
+                  "function_arn": "arn:function"
+                }
+              ],
+              "trusted_key_groups": [
+                {
+                  "items": [
+                    "kg-1"
+                  ],
+                  "enabled": true
+                }
+              ],
+              "field_level_encryption_id": "fle-1",
+              "realtime_log_config_arn": "arn:realtime"
+            },
+            {
+              "cache_policy_id": "cache-2"
+            }
+          ],
+          "viewer_certificate": [
+            {
+              "acm_certificate_arn": "arn:cert"
+            }
+          ],
+          "web_acl_id": "arn:waf"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution_tenant.main",
+      "type": "aws_cloudfront_distribution_tenant",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tenant-1",
+          "distribution_id": "multi-1",
+          "connection_group_id": "group-1",
+          "customizations": [
+            {
+              "certificate": [
+                {
+                  "arn": "arn:cert"
+                }
+              ],
+              "web_acl": [
+                {
+                  "arn": "arn:waf",
+                  "action": "override"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_connection_group.main",
+      "type": "aws_cloudfront_connection_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "group-1",
+          "anycast_ip_list_id": "anycast-1"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_anycast_ip_list.main",
+      "type": "aws_cloudfront_anycast_ip_list",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "anycast-1"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.main",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket_regional_domain_name": "bucket.s3.amazonaws.com"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_cache_policy.main",
+      "type": "aws_cloudfront_cache_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cache-1"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.main",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "qualified_arn": "arn:lambda:version",
+          "arn": "arn:lambda"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_function.main",
+      "type": "aws_cloudfront_function",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:function",
+          "publish": true
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_key_group.main",
+      "type": "aws_cloudfront_key_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "kg-1"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_field_level_encryption_config.main",
+      "type": "aws_cloudfront_field_level_encryption_config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fle-1"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_realtime_log_config.main",
+      "type": "aws_cloudfront_realtime_log_config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:realtime"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.main",
+      "type": "aws_acm_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:cert"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl.main",
+      "type": "aws_wafv2_web_acl",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:waf",
+          "scope": "CLOUDFRONT"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_origin_access_control.main",
+      "type": "aws_cloudfront_origin_access_control",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "oac-1"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_vpc_origin.main",
+      "type": "aws_cloudfront_vpc_origin",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "origin-1"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudfront_cache_policy.second",
+      "type": "aws_cloudfront_cache_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cache-2"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudfront_multitenant_distribution.main",
+          "type": "aws_cloudfront_multitenant_distribution",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "origin": [
+              {
+                "domain_name": {
+                  "references": [
+                    "aws_s3_bucket.main.bucket_regional_domain_name"
+                  ]
+                },
+                "origin_access_control_id": {
+                  "references": [
+                    "aws_cloudfront_origin_access_control.main.id"
+                  ]
+                },
+                "vpc_origin_config": [
+                  {
+                    "vpc_origin_id": {
+                      "references": [
+                        "aws_cloudfront_vpc_origin.main.id"
+                      ]
+                    }
+                  }
+                ],
+                "custom_origin_config": [
+                  {
+                    "origin_mtls_config": [
+                      {
+                        "client_certificate_arn": {
+                          "references": [
+                            "aws_acm_certificate.main.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "default_cache_behavior": [
+              {
+                "cache_policy_id": {
+                  "references": [
+                    "aws_cloudfront_cache_policy.main.id"
+                  ]
+                },
+                "lambda_function_association": [
+                  {
+                    "lambda_function_arn": {
+                      "references": [
+                        "aws_lambda_function.main.qualified_arn"
+                      ]
+                    }
+                  }
+                ],
+                "function_association": [
+                  {
+                    "function_arn": {
+                      "references": [
+                        "aws_cloudfront_function.main.arn"
+                      ]
+                    }
+                  }
+                ],
+                "trusted_key_groups": [
+                  {
+                    "items": {
+                      "references": [
+                        "aws_cloudfront_key_group.main.id"
+                      ]
+                    }
+                  }
+                ],
+                "field_level_encryption_id": {
+                  "references": [
+                    "aws_cloudfront_field_level_encryption_config.main.id"
+                  ]
+                },
+                "realtime_log_config_arn": {
+                  "references": [
+                    "aws_cloudfront_realtime_log_config.main.arn"
+                  ]
+                }
+              }
+            ],
+            "cache_behavior": [
+              {
+                "cache_policy_id": {
+                  "references": [
+                    "aws_cloudfront_cache_policy.main.id"
+                  ]
+                },
+                "lambda_function_association": [
+                  {
+                    "lambda_function_arn": {
+                      "references": [
+                        "aws_lambda_function.main.qualified_arn"
+                      ]
+                    }
+                  }
+                ],
+                "function_association": [
+                  {
+                    "function_arn": {
+                      "references": [
+                        "aws_cloudfront_function.main.arn"
+                      ]
+                    }
+                  }
+                ],
+                "trusted_key_groups": [
+                  {
+                    "items": {
+                      "references": [
+                        "aws_cloudfront_key_group.main.id"
+                      ]
+                    }
+                  }
+                ],
+                "field_level_encryption_id": {
+                  "references": [
+                    "aws_cloudfront_field_level_encryption_config.main.id"
+                  ]
+                },
+                "realtime_log_config_arn": {
+                  "references": [
+                    "aws_cloudfront_realtime_log_config.main.arn"
+                  ]
+                }
+              },
+              {
+                "cache_policy_id": {
+                  "references": [
+                    "aws_cloudfront_cache_policy.second.id"
+                  ]
+                }
+              }
+            ],
+            "viewer_certificate": [
+              {
+                "acm_certificate_arn": {
+                  "references": [
+                    "aws_acm_certificate.main.arn"
+                  ]
+                }
+              }
+            ],
+            "web_acl_id": {
+              "references": [
+                "aws_wafv2_web_acl.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution_tenant.main",
+          "type": "aws_cloudfront_distribution_tenant",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "distribution_id": {
+              "references": [
+                "aws_cloudfront_multitenant_distribution.main.id"
+              ]
+            },
+            "connection_group_id": {
+              "references": [
+                "aws_cloudfront_connection_group.main.id"
+              ]
+            },
+            "customizations": [
+              {
+                "certificate": [
+                  {
+                    "arn": {
+                      "references": [
+                        "aws_acm_certificate.main.arn"
+                      ]
+                    }
+                  }
+                ],
+                "web_acl": [
+                  {
+                    "arn": {
+                      "references": [
+                        "aws_wafv2_web_acl.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_connection_group.main",
+          "type": "aws_cloudfront_connection_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "anycast_ip_list_id": {
+              "references": [
+                "aws_cloudfront_anycast_ip_list.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudfront_anycast_ip_list.main",
+          "type": "aws_cloudfront_anycast_ip_list",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.main",
+          "type": "aws_s3_bucket",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_cache_policy.main",
+          "type": "aws_cloudfront_cache_policy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.main",
+          "type": "aws_lambda_function",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_function.main",
+          "type": "aws_cloudfront_function",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_key_group.main",
+          "type": "aws_cloudfront_key_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_field_level_encryption_config.main",
+          "type": "aws_cloudfront_field_level_encryption_config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_realtime_log_config.main",
+          "type": "aws_cloudfront_realtime_log_config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.main",
+          "type": "aws_acm_certificate",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafv2_web_acl.main",
+          "type": "aws_wafv2_web_acl",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_origin_access_control.main",
+          "type": "aws_cloudfront_origin_access_control",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_vpc_origin.main",
+          "type": "aws_cloudfront_vpc_origin",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_cache_policy.second",
+          "type": "aws_cloudfront_cache_policy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
