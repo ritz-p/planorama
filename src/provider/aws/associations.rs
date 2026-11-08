@@ -120,7 +120,12 @@ pub(super) fn lower(raw: &Input) -> Graph {
         {
             continue;
         }
-        let endpoints = if node.resource_type == "aws_vpc_ipam_resource_discovery_association" {
+        let endpoints = if matches!(
+            node.resource_type.as_str(),
+            "aws_vpc_route_server_propagation" | "aws_vpc_route_server_vpc_association"
+        ) {
+            super::route_server::association(raw, index)
+        } else if node.resource_type == "aws_vpc_ipam_resource_discovery_association" {
             super::ipam::association(raw, index)
         } else if node.resource_type == "aws_appsync_domain_name_api_association" {
             super::appsync_domains::association(raw, index)

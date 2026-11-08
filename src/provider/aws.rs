@@ -92,6 +92,7 @@ mod rds_proxy;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+pub(crate) mod route_server;
 pub(crate) mod s3_access;
 mod s3_exports;
 mod sagemaker;

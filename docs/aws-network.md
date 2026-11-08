@@ -620,3 +620,18 @@ The pinned AWS Provider 6.70.0 source defines `availability_zone` and
 into the other or used to identify the parent network. CIDRs and service-generated
 outputs do not create resources. Both containers retain independent actions and
 coverage; filtering and named states retain the standard reference boundaries.
+
+## Route Server (#904)
+
+Route servers and endpoints have independent spatial cards. Managed references use
+`route_server_id` and `route_server_endpoint_id` outputs; generic `id` is not an
+alias. Peers belong only to their uniquely verified endpoint. Propagation and VPC
+association helpers require both explicit typed endpoints with matching known
+values before lowering, preserving their actions and resource coverage.
+
+Endpoint subnet containment additionally requires equal known endpoint/subnet
+`vpc_id` values and exactly one verified association of that server with the VPC.
+Missing or ambiguous context stays uncontained. Provider/account/region, current
+managed lifecycle, complete provenance, and unknown/sensitive evidence are checked
+independently. Generated ENIs, SNS topics, peer IPs, ASNs and propagated routes never
+synthesize managed resources or prove reachability.
