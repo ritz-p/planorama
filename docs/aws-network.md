@@ -1,5 +1,67 @@
 # AWS Network and edge
 
+## IPAM and configured CIDR references (#900)
+
+These are Provider 6.70.0 contracts pinned at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`. References require one unique,
+explicit, current managed AWS endpoint, exact output attributes, equal known
+non-sensitive values and independently compatible provider/account/region scope.
+The singleton Outpost data lookup below is the only data-mode exception. Unknown,
+partial, ambiguous, malformed, foreign, deleted and deposed evidence stays
+unproven. Filtering and named states retain their original identities and coverage.
+
+| Input / source helper | Endpoint / additional proof |
+| --- | --- |
+| Subnet CIDR reservation `subnet_id` | `aws_subnet.id`; known `reservation_type = explicit` or `prefix` |
+| VPC/Subnet `ipv4_ipam_pool_id`, `ipv6_ipam_pool_id` | Managed pool `id`; exact `address_family` and known pool `locale` matching the consumer's deployment Region |
+| Pool `ipam_scope_id` | Managed IPAM scope `id`; default-scope outputs do not stand in for a managed scope |
+| Pool `source_ipam_pool_id` | Parent pool `id`, equal known address family and `ipam_scope_id`, compatible control scope |
+| Pool `source_resource.resource_id` | `aws_vpc.id`; one complete block with `resource_type = vpc`, matching `resource_owner` and actual VPC `resource_region`; the independently verified parent pool's `locale` must match that Region; a supplied planning-pool locale must agree |
+| Scope `ipam_id` | Managed IPAM `id`; address-allocation scope is not deployment scope |
+| Pool CIDR provision/allocation/managed preview `ipam_pool_id` | Managed pool `id`; helper composite IDs, `ipam_pool_cidr_id` and allocation IDs are distinct namespaces |
+| IPv4/IPv6 VPC CIDR association `vpc_id` | Managed VPC `id`; allocation content does not identify a subnet |
+| IPv4 CIDR association `ipv4_ipam_pool_id` | Pool `id`, IPv4 family and allocation locale |
+| IPv6 CIDR association `ipv6_ipam_pool_id` | Pool `id`, IPv6 family and locale; generated-IPv6 mode must be absent/false and `ipv6_pool` absent |
+| IPAM organization admin `delegated_admin_account_id` | Explicit Organizations account `id`; delegated identity is separate from the administration/control account |
+| Discovery association `ipam_id`, `ipam_resource_discovery_id` | Complete IPAM/discovery `id` pair; known `ipam_region` must match the IPAM home Region and the association must use the discovery home Region; `owner_id` must independently match the discovery provider account |
+
+A pool's control Region can differ from its allocation locale and the VPC's
+Region. Such links require independently known compatible accounts; a matching
+locale or ID never supplies account evidence. Planning VPC proof also requires
+the parent reference's final account/control binding. Discovery associations can
+cross IPAM home Regions and discovery-owner accounts only with the complete
+independent home/owner proof. Missing either endpoint prevents both dedicated
+navigation and association lowering.
+
+`aws_subnet.outpost_arn` accepts only the exact `arn` of a current singleton
+[`data.aws_outposts_outpost`](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/d/outposts_outpost.html.markdown).
+Its provider Region must be known and agree, without a data-resource Region
+override. A known `owner_id` must match independently verified provider accounts;
+at least one known subnet AZ qualifier must match, and every other known qualifier
+must agree. The schema makes `owner_id` optional, while the pinned
+[data-source implementation](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/outposts/outpost_data_source.go)
+populates it on read. There is no managed Outpost alias, plural-lookup shortcut,
+ARN substring lookup or Outpost network container.
+
+Owned reservations, IPAM scopes, pool helpers and VPC CIDR helpers retain their
+own lifecycle, actions and provenance. Existing member presentation embeds a
+verified helper only when its owner has a Spatial presentation and compatible
+independent scope. Pools, scopes and discovery resources keep Logical defaults;
+allocation hierarchy does not contain VPCs/subnets. Independently verified
+provider accounts are retained for these managed IPAM endpoints/helpers. The
+organization-admin helper stays Global with its account unresolved; its
+Organizations ARN never supplies a deployment account.
+
+CIDRs, IP overlaps, AZ equality alone, computed allocation `resource_id` or
+`resource_type`, default SG/ACL/route/scope outputs and preview CIDRs never create
+resources or consumers. In this pinned Provider there is no registered managed or
+data IPv6-pool endpoint for BYOIP `ipv6_pool` strings; these stay opaque and
+unsupported until an exact endpoint contract exists. A managed preview is not a
+data alias or allocation. Authorization messages/signatures, arbitrary summaries
+and runtime allocation/health inference are excluded. Existing VPC/Subnet
+containment and legacy reference contracts are unchanged.
+
+
 ## Managed prefix-list entries (#891)
 
 `aws_ec2_managed_prefix_list_entry.prefix_list_id` accepts only an explicit,
