@@ -44,7 +44,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             || resource.starts_with("aws_datasync_location_"))
         && !matches!(
             resource,
-            "aws_vpc_route_server"
+            "aws_lambdacore_network_connector"
+                | "aws_vpc_route_server"
                 | "aws_vpc_route_server_endpoint"
                 | "aws_vpc_route_server_peer"
                 | "aws_vpc_route_server_propagation"

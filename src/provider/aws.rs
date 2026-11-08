@@ -67,6 +67,7 @@ pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
 mod lambda;
 pub(crate) mod lambda_config;
+pub(crate) mod lambda_core;
 pub(crate) mod lambda_events;
 pub(crate) mod lambda_policy;
 pub(crate) mod lambda_qualified;
@@ -316,6 +317,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     autoscaling::present(&raw, &mut graph);
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
+    lambda_core::present(&raw, &mut graph);
     cloudfront_vpc_origin::present(&raw, &mut graph);
     efs::present(&raw, &mut graph);
     service_members::present(&raw, &mut graph);
