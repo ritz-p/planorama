@@ -92,6 +92,43 @@ const ec2VpcExpected=[
 ];
 const dimensions=['placement','ownership','network','references','scope','summaries'];
 
+test('#727 covers all 44 key, certificate and application identity types with pinned contracts',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services='kms secretsmanager acm acmpca cloudhsmv2 paymentcryptography cognitoidentity cognitoidp signer'.split(' ');
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===727);
+ assert.equal(expected.length,44);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'ccebb5f8972b59cd4603958cf849777ef4a2eafc');
+  assert.match(r.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),path);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#727 audit:/);
+  if(dimensions.some(k=>/\b[Mm]issing\b/.test(r[k])))assert.ok(issue>=1130&&issue<=1136,type);
+ }
+});
+
+test('#727 preserves version identity, external replicas and Cognito control distinctions',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.match(r('secretsmanager_secret_version').references,/deprecated arn is secret ARN, never version ARN/);
+ assert.equal(r('acm_certificate_validation').contracts.id,'optional/computed');
+ assert.match(r('acm_certificate_validation').ownership,/issuance time/);
+ assert.match(r('kms_replica_external_key').references,/external primary key.*cross-region/);
+ assert.match(r('cognito_managed_user_pool_client').references,/not an alias/);
+ assert.match(r('cognito_user_pool_domain').references,/computed distribution ARN is not/);
+ assert.match(r('cloudhsm_v2_hsm').network,/AZ\/IP equality is insufficient/);
+ assert.deepEqual(r('signer_signing_job').shapes['source.s3.bucket'],['list','list','string']);
+ assert.ok(!r('kms_ciphertext').fields.includes('plaintext'));
+});
+
 test('#730 covers exactly 77 observability types with bounded evidence',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const services='cloudwatch logs cloudwatchomni amp grafana oam observabilityadmin xray synthetics rum evidently internetmonitor applicationinsights'.split(' ');
