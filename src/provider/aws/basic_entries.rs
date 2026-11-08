@@ -258,7 +258,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_cloudfront_key_group", "Amazon CloudFront", Node, Logical, Global, Some(ResourceIcon::CloudFront)),
     entry!("aws_cloudfront_key_value_store", "Amazon CloudFront", Node, Logical, Global, Some(ResourceIcon::CloudFront)),
     entry!("aws_cloudfront_monitoring_subscription", "Amazon CloudFront", Controller, Logical, Global, Some(ResourceIcon::CloudFront)),
-    entry!("aws_cloudfront_multitenant_distribution", "Amazon CloudFront", Connector, Logical, Global, Some(ResourceIcon::CloudFront)),
+    entry!("aws_cloudfront_multitenant_distribution", "Amazon CloudFront", Connector, Spatial, Global, Some(ResourceIcon::CloudFront)),
     entry!("aws_cloudfront_origin_access_control", "Amazon CloudFront", Policy, Logical, Global, Some(ResourceIcon::CloudFront)),
     entry!("aws_cloudfront_origin_access_identity", "Amazon CloudFront", Node, Logical, Global, Some(ResourceIcon::CloudFront)),
     entry!("aws_cloudfront_origin_request_policy", "Amazon CloudFront", Policy, Logical, Global, Some(ResourceIcon::CloudFront)),

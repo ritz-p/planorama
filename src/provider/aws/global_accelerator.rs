@@ -108,7 +108,10 @@ pub(super) fn valid(
         _ => true,
     }
 }
-fn compatible(left: Option<&ProviderConfiguration>, right: Option<&ProviderConfiguration>) -> bool {
+pub(super) fn compatible(
+    left: Option<&ProviderConfiguration>,
+    right: Option<&ProviderConfiguration>,
+) -> bool {
     let (Some(left), Some(right)) = (left, right) else {
         return false;
     };
