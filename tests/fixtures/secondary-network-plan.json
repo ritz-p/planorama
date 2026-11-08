@@ -1,0 +1,76 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_secondary_network.main",
+      "type": "aws_ec2_secondary_network",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "secondary_network_id": "sn-1",
+          "network_type": "rdma",
+          "ipv4_cidr_block": "10.0.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_secondary_subnet.main",
+      "type": "aws_ec2_secondary_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "secondary_subnet_id": "ss-1",
+          "secondary_network_id": "sn-1",
+          "availability_zone": "us-east-1a",
+          "availability_zone_id": "use1-az1",
+          "ipv4_cidr_block": "10.0.0.0/24"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_secondary_network.main",
+          "type": "aws_ec2_secondary_network",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_secondary_subnet.main",
+          "type": "aws_ec2_secondary_subnet",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "secondary_network_id": {
+              "references": [
+                "aws_ec2_secondary_network.main.secondary_network_id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -55,6 +55,14 @@ pub(super) fn infer(raw: &Input) -> Graph {
             }
             continue;
         }
+        if super::secondary_network::label(&child.resource_type, &reference.attribute).is_some() {
+            if super::service_references::verified(raw, reference) {
+                if let [parent] = reference.sources.as_slice() {
+                    relationships.insert((*parent, reference.target));
+                }
+            }
+            continue;
+        }
         let rule = if child.resource_type == "aws_nat_gateway" && reference.attribute == "vpc_id" {
             Some(("vpc_id", "aws_vpc"))
         } else {

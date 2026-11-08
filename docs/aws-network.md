@@ -604,3 +604,19 @@ Contracts use the pinned AWS Provider 6.70.0 [monitoring subscription schema](ht
 The schema requires exactly one endpoint and one kinesis_stream_config list element. Empty, multiple, masked or partial blocks are unresolved. All paths require explicit unique managed provenance, exact known values and compatible provider/account identity, including late account checks. CloudFront stays Global, IAM stays Global, and a Kinesis region is never replaced by the CloudFront provider region. Realtime log configurations remain independent Logical resources shared across behaviors; existing distribution-to-log references are unchanged.
 
 Metrics status Enabled/Disabled and unknown status do not change the configured distribution owner. Metrics do not establish a CloudWatch alarm or log group, and IAM references make no effective-permission or delivery claim. Unproven, inactive, ambiguous or filtered endpoints retain fallback and original action/coverage; named states remain distinct. Policy contents, credentials and runtime metrics are excluded. See the maintained [monitoring/log example](../examples/cloudfront-observability.svg).
+
+## Secondary networks (#893)
+
+`aws_ec2_secondary_network` and `aws_ec2_secondary_subnet` are independent spatial
+containers, never aliases of VPCs or ordinary subnets. Containment requires a unique
+explicit managed subnet `secondary_network_id` reference to the managed network's
+computed `secondary_network_id`, equal known values, known `network_type = rdma`,
+and compatible provider/account/region evidence. Unknown, sensitive, ambiguous,
+deleted/deposed, data-mode and literal-only evidence cannot establish containment.
+The generic `id` output is not accepted by this contract.
+
+The pinned AWS Provider 6.70.0 source defines `availability_zone` and
+`availability_zone_id` as separate optional/computed strings. Neither is translated
+into the other or used to identify the parent network. CIDRs and service-generated
+outputs do not create resources. Both containers retain independent actions and
+coverage; filtering and named states retain the standard reference boundaries.
