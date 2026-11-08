@@ -154,3 +154,4 @@ examples/ipam.svg
 examples/secondary-network.svg
 examples/route-server.svg
 examples/lambda-core.svg
+examples/global-accelerator.svg

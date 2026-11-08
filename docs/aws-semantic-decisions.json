@@ -47010,10 +47010,10 @@
       }
     },
     "aws_globalaccelerator_accelerator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 917,
-      "gap": "#715 audit: Missing: enabled flow-log S3 bucket reference; DNS/hosted-zone outputs are alias targets owned by Route53 record follow-up. Missing: current Logical Connector omits independent accelerator architecture. Follow-up #917. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "Implemented #917: standard ARN hierarchy, enabled flow-log bucket reference, correlated complete ALB/NLB ARN and EIP allocation-ID endpoint sets, and cross-account attachment ARN references. #715 audit: follow-up; EC2 ID support remains unproven by the selected pinned provider contract. See aws-network.md#global-accelerator-917.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47026,11 +47026,11 @@
           "dns_name",
           "hosted_zone_id"
         ],
-        "placement": "Missing: current Logical Connector omits independent accelerator architecture.",
-        "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
+        "placement": "Supported: independent global accelerator architecture card.",
+        "ownership": "Not applicable: independent accelerator.",
         "network": "Not applicable: Global accelerator is not contained in endpoint subnets.",
-        "references": "Missing: enabled flow-log S3 bucket reference; DNS/hosted-zone outputs are alias targets owned by Route53 record follow-up.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: exact standard accelerator/listener ARN outputs; enabled attributes.flow_logs_s3_bucket -> S3 bucket.bucket; complete element-correlated endpoint_configuration endpoint_id -> ALB/NLB arn or EIP allocation_id and attachment_arn -> cross-account attachment.arn. No IP, literal or custom-routing matches.",
+        "scope": "Supported: global control scope preserves independent regional targets; known endpoint_group_region must match endpoint scope. No network containment or permission claims.",
         "summaries": "Intentionally unsupported: assigned IPs and runtime traffic/health; no arbitrary aws_globalaccelerator_accelerator attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_accelerator.html.markdown",
         "shapes": {
@@ -47070,7 +47070,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/global_accelerator.rs",
+          "tests/unit/semantic/global_accelerator.rs"
         ],
         "managedDataContract": "No runtime alias. Same-name data selectors: arn (optional/computed), name (optional/computed). Lookup outputs are not managed configuration or ownership proof.",
         "dataContracts": {
@@ -47086,10 +47088,10 @@
       }
     },
     "aws_globalaccelerator_listener": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 917,
-      "gap": "#715 audit: Missing: exact globalaccelerator_accelerator ARN ownership; standard and custom routing listeners must not cross-match. Follow-up #917. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "Implemented #917: standard ARN hierarchy, enabled flow-log bucket reference, correlated complete ALB/NLB ARN and EIP allocation-ID endpoint sets, and cross-account attachment ARN references. #715 audit: follow-up; EC2 ID support remains unproven by the selected pinned provider contract. See aws-network.md#global-accelerator-917.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47099,11 +47101,11 @@
           "accelerator_arn",
           "port_range"
         ],
-        "placement": "Supported: retain Logical Node for aws_globalaccelerator_listener; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique accelerator ARN membership; do not manufacture inline port-range resources.",
+        "placement": "Supported: helpers may embed only with a unique verified standard ARN owner; independent identities and coverage remain.",
+        "ownership": "Supported: explicit unique current standard hierarchy ownership with compatible account/provider evidence.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: exact globalaccelerator_accelerator ARN ownership; standard and custom routing listeners must not cross-match.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: exact standard accelerator/listener ARN outputs; enabled attributes.flow_logs_s3_bucket -> S3 bucket.bucket; complete element-correlated endpoint_configuration endpoint_id -> ALB/NLB arn or EIP allocation_id and attachment_arn -> cross-account attachment.arn. No IP, literal or custom-routing matches.",
+        "scope": "Supported: global control scope preserves independent regional targets; known endpoint_group_region must match endpoint scope. No network containment or permission claims.",
         "summaries": "Intentionally unsupported: assigned IPs and runtime traffic/health; no arbitrary aws_globalaccelerator_listener attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_listener.html.markdown",
         "shapes": {
@@ -47129,17 +47131,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/global_accelerator.rs",
+          "tests/unit/semantic/global_accelerator.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_globalaccelerator_endpoint_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 917,
-      "gap": "#715 audit: Missing: listener ARN and typed ALB/NLB ARN, EIP allocation ID (EC2 ID only after explicit source verification) endpoint set plus cross-account attachment ARN; no literal/IP matching. Follow-up #917. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "Implemented #917: standard ARN hierarchy, enabled flow-log bucket reference, correlated complete ALB/NLB ARN and EIP allocation-ID endpoint sets, and cross-account attachment ARN references. #715 audit: follow-up; EC2 ID support remains unproven by the selected pinned provider contract. See aws-network.md#global-accelerator-917.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47151,11 +47155,11 @@
           "endpoint_configuration.endpoint_id",
           "endpoint_configuration.attachment_arn"
         ],
-        "placement": "Supported: retain Logical Node for aws_globalaccelerator_endpoint_group; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique matching listener membership; endpoints remain independent shared objects.",
+        "placement": "Supported: helpers may embed only with a unique verified standard ARN owner; independent identities and coverage remain.",
+        "ownership": "Supported: explicit unique current standard hierarchy ownership with compatible account/provider evidence.",
         "network": "Not applicable: endpoint membership is not containment of the Global control object; endpoint_group_region describes target deployment.",
-        "references": "Missing: listener ARN and typed ALB/NLB ARN, EIP allocation ID (EC2 ID only after explicit source verification) endpoint set plus cross-account attachment ARN; no literal/IP matching.",
-        "scope": "Partial: current Global control scope; endpoint_group_region needs independent regional endpoint proof, not provider-region substitution.",
+        "references": "Supported: exact standard accelerator/listener ARN outputs; enabled attributes.flow_logs_s3_bucket -> S3 bucket.bucket; complete element-correlated endpoint_configuration endpoint_id -> ALB/NLB arn or EIP allocation_id and attachment_arn -> cross-account attachment.arn. No IP, literal or custom-routing matches.",
+        "scope": "Supported: global control scope preserves independent regional targets; known endpoint_group_region must match endpoint scope. No network containment or permission claims.",
         "summaries": "Intentionally unsupported: assigned IPs and runtime traffic/health; no arbitrary aws_globalaccelerator_endpoint_group attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_endpoint_group.html.markdown",
         "shapes": {
@@ -47191,7 +47195,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/global_accelerator.rs",
+          "tests/unit/semantic/global_accelerator.rs"
         ],
         "managedDataContract": "No runtime alias. No same-name registered data source in the pinned schema; other lookup names do not expand the managed denominator.",
         "dataContracts": {}

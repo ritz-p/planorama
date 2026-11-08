@@ -650,3 +650,24 @@ requires every endpoint's unique explicit `vpc_id` to prove the same current VPC
 including known matching values and compatible independent scope evidence. Unknown,
 sensitive, incomplete, incompatible or ambiguous evidence stays conservative.
 Generated ENIs and consumer images are not children and do not inherit placement.
+
+## Global Accelerator (#917)
+
+Standard accelerators have independent global cards. Listener `accelerator_arn`
+and endpoint-group `listener_arn` references accept only the exact standard managed
+ARN outputs; custom-routing types cannot cross-match. Verified unique helpers may
+embed while retaining their independent actions and coverage.
+
+An enabled singleton `attributes` block can reference an S3 bucket through
+`flow_logs_s3_bucket -> bucket`. Each `endpoint_configuration` set element is
+correlated with its explicit expression and known evaluated value. Supported
+endpoints are application/network LB ARNs (including verified LB aliases) and EIP
+`allocation_id`; the known `endpoint_group_region` must match each regional target.
+`attachment_arn` accepts the explicit cross-account attachment ARN without claiming
+permission or reachability. Provider/account and state boundaries remain independent;
+no endpoint is located inside the accelerator.
+
+The pinned Provider 6.70.0 endpoint-group documentation establishes LB ARN and EIP
+allocation ID contracts. EC2 instance ID support is not claimed without additional
+explicit source evidence. DNS and hosted-zone consumer semantics remain Route53's
+responsibility. Literal names, IPs and ARN-string matching are not reference proof.
