@@ -867,3 +867,27 @@ regional/account evidence. Missing, ambiguous, unknown/sensitive and noncurrent
 evidence stays unresolved. Dimensions, distance metrics, metadata configuration
 and policy documents do not create vector resources or network ownership; arbitrary
 payloads remain excluded from presentation.
+
+### VPC Lattice services and targets (#790)
+
+Services and service networks have independent spatial cards. A service network
+is not an EC2 VPC container. Listeners navigate to a uniquely referenced service;
+rules require their explicit service and listener to agree on that parent.
+Listener IDs use listener_id or arn, never the composite Terraform id. Forward
+target-group lists require complete positional ID/ARN references and exclude
+fixed-response actions. Shared targets and target groups retain their identities.
+
+Target attachments require a known group type: INSTANCE uses instance id, LAMBDA
+uses function arn, and ALB uses the ARN of a known application load balancer. IP
+values do not identify Terraform resources. Network target groups can reference
+a configured VPC; VPC associations require complete security-group references
+with the same explicitly proven VPC. Neither relationship relocates services.
+
+Policy references accept ARN outputs, matching the pinned Provider validators.
+Resource policies support service, service-network and resource-configuration
+owners. Access logs require a known SERVICE/RESOURCE variant and an explicit
+CloudWatch log-group, S3 bucket or Firehose delivery-stream ARN. Cross-account
+service-network association and logging-owner references require ARN outputs
+and independently known account/region bindings; scopes are never inherited.
+Policies, listener predicates, DNS names, computed endpoints and runtime health
+remain opaque. Unknown, sensitive, partial or noncurrent evidence stays unresolved.

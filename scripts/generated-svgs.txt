@@ -169,3 +169,4 @@ examples/secrets-manager-references.svg
 examples/s3files.svg
 examples/s3tables.svg
 examples/s3vectors.svg
+examples/vpclattice.svg

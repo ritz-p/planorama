@@ -13,6 +13,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::secrets_manager::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::vpclattice::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::s3files::label(resource, attribute) {
         return Some(label);
     }
@@ -804,6 +807,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::s3vectors::bindings(raw, reference)
         && super::s3tables::bindings(raw, reference)
         && super::s3files::bindings(raw, reference)
+        && super::vpclattice::bindings(raw, reference)
         && super::secrets_manager::bindings(raw, reference)
         && (super::identity_center::label(
             &raw.nodes[reference.target].resource_type,
@@ -1395,6 +1399,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         if super::s3vectors::indexed(&node.resource_type, &reference.attribute)
+            || super::vpclattice::indexed(&node.resource_type, &reference.attribute)
             || super::s3tables::indexed(&node.resource_type, &reference.attribute)
             || super::secrets_manager::indexed(&node.resource_type, &reference.attribute)
             || super::route53_records::indexed(&node.resource_type, &reference.attribute)

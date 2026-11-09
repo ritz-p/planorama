@@ -7,6 +7,7 @@ pub(crate) fn has_indexed_service_references(
 ) -> bool {
     provider.is_aws()
         && (aws::s3vectors::resource(resource)
+            || aws::vpclattice::resource(resource)
             || aws::s3tables::resource(resource)
             || aws::secrets_manager::resource(resource)
             || aws::cloudfront::resource(resource)
@@ -32,6 +33,7 @@ pub(crate) fn indexed_service_reference(
 ) -> bool {
     provider.is_aws()
         && (aws::s3vectors::indexed(resource, attribute)
+            || aws::vpclattice::indexed(resource, attribute)
             || aws::s3tables::indexed(resource, attribute)
             || aws::secrets_manager::indexed(resource, attribute)
             || aws::cloudfront::indexed(resource, attribute)

@@ -121,6 +121,7 @@ pub(crate) mod secrets_manager;
 mod step_functions_tests;
 mod streaming;
 pub(crate) mod traffic_mirror;
+pub(crate) mod vpclattice;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]

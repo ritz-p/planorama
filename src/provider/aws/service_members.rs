@@ -58,6 +58,21 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Replication source table",
                 "Table configuration",
             ),
+            "aws_vpclattice_listener" => {
+                let path = if raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target == index && r.attribute == "service_identifier")
+                {
+                    "service_identifier"
+                } else {
+                    "service_arn"
+                };
+                (path, "Lattice service", "Listeners")
+            }
+            "aws_vpclattice_listener_rule" => {
+                ("listener_identifier", "Rule listener", "Listener rules")
+            }
             "aws_s3vectors_index" => (
                 "vector_bucket_name",
                 "Vector bucket owner",
