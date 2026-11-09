@@ -1,0 +1,360 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_dx_connection.main",
+      "type": "aws_dx_connection",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxcon-main",
+          "arn": "arn:aws:directconnect:us-east-1:123456789012:dxcon/dxcon-main",
+          "location": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_lag.main",
+      "type": "aws_dx_lag",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxlag-main",
+          "connection_id": "dxcon-main",
+          "location": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_gateway.main",
+      "type": "aws_dx_gateway",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxgw-main",
+          "arn": "arn:aws:directconnect::123456789012:dx-gateway/dxgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpn_gateway.main",
+      "type": "aws_vpn_gateway",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.macsec",
+      "type": "aws_secretsmanager_secret",
+      "name": "macsec",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:macsec"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_private_virtual_interface.main",
+      "type": "aws_dx_private_virtual_interface",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-private",
+          "connection_id": "dxlag-main",
+          "dx_gateway_id": "dxgw-main",
+          "vpn_gateway_id": null,
+          "bgp_auth_key": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_public_virtual_interface.main",
+      "type": "aws_dx_public_virtual_interface",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-public",
+          "connection_id": "dxcon-main",
+          "route_filter_prefixes": [
+            "PRIVATE_DX_PAYLOAD"
+          ],
+          "bgp_auth_key": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_transit_virtual_interface.main",
+      "type": "aws_dx_transit_virtual_interface",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-transit",
+          "connection_id": "dxcon-main",
+          "dx_gateway_id": "dxgw-main",
+          "bgp_auth_key": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_connection_association.main",
+      "type": "aws_dx_connection_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connection_id": "dxcon-main",
+          "lag_id": "dxlag-main"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_bgp_peer.main",
+      "type": "aws_dx_bgp_peer",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "virtual_interface_id": "dxvif-private",
+          "bgp_auth_key": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_macsec_key_association.main",
+      "type": "aws_dx_macsec_key_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connection_id": "dxcon-main",
+          "secret_arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:macsec",
+          "cak": "PRIVATE_DX_PAYLOAD",
+          "ckn": "PRIVATE_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_private_virtual_interface.vpn",
+      "type": "aws_dx_private_virtual_interface",
+      "name": "vpn",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-vpn",
+          "connection_id": "dxcon-main",
+          "vpn_gateway_id": "vgw-main",
+          "dx_gateway_id": null
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dx_connection.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dx_lag.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_connection.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_gateway.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpn_gateway.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.macsec",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dx_private_virtual_interface.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_lag.main.id"
+              ]
+            },
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_public_virtual_interface.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_connection.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_transit_virtual_interface.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_connection.main.id"
+              ]
+            },
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_connection_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_connection.main.id"
+              ]
+            },
+            "lag_id": {
+              "references": [
+                "aws_dx_lag.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_bgp_peer.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "virtual_interface_id": {
+              "references": [
+                "aws_dx_private_virtual_interface.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_macsec_key_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_connection.main.id"
+              ]
+            },
+            "secret_arn": {
+              "references": [
+                "aws_secretsmanager_secret.macsec.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_private_virtual_interface.vpn",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_connection.main.id"
+              ]
+            },
+            "vpn_gateway_id": {
+              "references": [
+                "aws_vpn_gateway.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

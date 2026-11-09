@@ -45,6 +45,7 @@ mod datasync;
 mod dax;
 mod default_network;
 pub(super) mod diagnostics;
+pub(crate) mod direct_connect;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;

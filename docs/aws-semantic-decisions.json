@@ -14011,10 +14011,10 @@
       }
     },
     "aws_dx_bgp_peer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: virtual_interface_id -> exact managed VIF id; BGP addresses/ASN are not endpoints. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14027,8 +14027,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Deferred: VIF navigation first; embedding requires unique VIF owner and allocator/accepter identity contract.",
         "network": "Not applicable: BGP peer configuration does not locate a subnet.",
-        "references": "Missing: virtual_interface_id -> exact managed VIF id; BGP addresses/ASN are not endpoints.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact private/public/transit virtual-interface id; BGP authentication values remain opaque even without sensitive masks.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Not applicable: aws_dx_bgp_peer uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (virtual_interface_id, bgp_peer_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_bgp_peer.html.markdown",
         "shapes": {
@@ -14045,10 +14045,10 @@
       }
     },
     "aws_dx_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: No outbound Terraform endpoint field; incoming LAG/VIF relationships and independent card review #786. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14061,11 +14061,11 @@
           "encryption_mode",
           "request_macsec"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "placement": "Supported: independent Spatial architecture card; physical location is not network containment.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: physical location is not a Terraform VPC or subnet.",
-        "references": "Not applicable: No outbound Terraform endpoint field; incoming LAG/VIF relationships and independent card review #786.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Not applicable: independent connection card has no configured outgoing endpoint; location is not VPC/subnet proof.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Deferred: configured encryption_mode/request_macsec needs a MACsec configuration-only summary contract; port status is not protection evidence.",
         "officialDocumentation": "website/docs/r/dx_connection.html.markdown",
         "shapes": {
@@ -14091,10 +14091,10 @@
       }
     },
     "aws_dx_connection_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: connection_id -> connection id; lag_id -> LAG id; require both compatible endpoints. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14106,8 +14106,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection id; lag_id -> LAG id; require both compatible endpoints.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: dedicated connection id and LAG id remain separate exact endpoints.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Not applicable: aws_dx_connection_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (connection_id, lag_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_connection_association.html.markdown",
         "shapes": {
@@ -14151,10 +14151,10 @@
       }
     },
     "aws_dx_gateway": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: No outbound resource reference; retain distinct global gateway for VIF/association endpoints. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14165,11 +14165,11 @@
           "owner_account_id",
           "amazon_side_asn"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "placement": "Supported: independent Spatial architecture card; physical location is not network containment.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Not applicable: No outbound resource reference; retain distinct global gateway for VIF/association endpoints.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "references": "Not applicable: independent global gateway receives typed incoming ID references without regional containment.",
+        "scope": "Supported: global gateway keeps its own known account; regional consumers do not assign it a region.",
         "summaries": "Not applicable: aws_dx_gateway uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_gateway.html.markdown",
         "shapes": {
@@ -14550,10 +14550,10 @@
       }
     },
     "aws_dx_lag": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: Optional connection_id migrates a dedicated connection; no ownership from location/provider name. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14565,11 +14565,11 @@
           "location",
           "owner_account_id"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "placement": "Supported: independent Spatial architecture card; physical location is not network containment.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Optional connection_id migrates a dedicated connection; no ownership from location/provider name.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: explicit dedicated connection id; shared connection identity is retained.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Not applicable: aws_dx_lag uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_lag.html.markdown",
         "shapes": {
@@ -14592,10 +14592,10 @@
       }
     },
     "aws_dx_macsec_key_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: connection_id -> dedicated connection; explicit secret_arn -> Secrets Manager secret; never CAK/CKN values. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14607,8 +14607,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> dedicated connection; explicit secret_arn -> Secrets Manager secret; never CAK/CKN values.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact dedicated connection id and explicitly configured Secrets Manager secret ARN; CAK/CKN contents remain opaque.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Intentionally unsupported: CAK/CKN, write-only variants and runtime key state are excluded; association is not effective encryption.",
         "officialDocumentation": "website/docs/r/dx_macsec_key_association.html.markdown",
         "shapes": {
@@ -14622,10 +14622,10 @@
       }
     },
     "aws_dx_private_virtual_interface": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: connection_id -> connection/LAG; exclusive DX/VPN gateway IDs. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14640,8 +14640,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Deferred: connection navigation is useful; embedding waits for a unique owner contract across VIF variants.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection/LAG; exclusive DX/VPN gateway IDs.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: connection/LAG id and exactly one known DX gateway id or VPN gateway id; absent opposite variant must be known.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Not applicable: aws_dx_private_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, dx_gateway_id, vpn_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_private_virtual_interface.html.markdown",
         "shapes": {
@@ -14664,10 +14664,10 @@
       }
     },
     "aws_dx_public_virtual_interface": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: connection_id -> connection/LAG; route_filter_prefixes are CIDRs, not resource identities. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14681,8 +14681,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Deferred: connection navigation is useful; embedding waits for a unique owner contract across VIF variants.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection/LAG; route_filter_prefixes are CIDRs, not resource identities.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact connection/LAG id only; route prefixes, BGP peer addresses and authentication material never identify endpoints.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Not applicable: aws_dx_public_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_public_virtual_interface.html.markdown",
         "shapes": {
@@ -14705,10 +14705,10 @@
       }
     },
     "aws_dx_transit_virtual_interface": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 786,
-      "gap": "#716 reviewed: connection_id -> connection/LAG; required dx_gateway_id. Current basic Logical display has no dedicated relationships. Follow-up #786; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #786 typed dedicated Direct Connect references and independent connection/LAG/global-gateway cards. See docs/aws-network.md; hosted/cross-account contracts remain separate and runtime connectivity is not inferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14722,8 +14722,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Deferred: connection navigation is useful; embedding waits for a unique owner contract across VIF variants.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection/LAG; required dx_gateway_id.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact connection/LAG id and global DX gateway id; no route or reachability inference.",
+        "scope": "Supported: regional references require compatible known bindings; DX gateway endpoints remain global, with independent same-account proof.",
         "summaries": "Not applicable: aws_dx_transit_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, dx_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_transit_virtual_interface.html.markdown",
         "shapes": {
