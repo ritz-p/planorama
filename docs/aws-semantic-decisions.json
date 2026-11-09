@@ -14121,10 +14121,10 @@
       }
     },
     "aws_dx_connection_confirmation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: connection_id -> hosted connection id; id is the connection ID, not a distinct connection.  Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14136,8 +14136,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: confirmation removal does not delete hosted connection; do not embed or merge allocator identity.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> hosted connection id; id is the connection ID, not a distinct connection. ",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_connection_confirmation uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (connection_id, id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_connection_confirmation.html.markdown",
         "shapes": {
@@ -14189,10 +14189,10 @@
       }
     },
     "aws_dx_gateway_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: Single-account VGW/TGW ID versus cross-account proposal_id; verify both owner accounts. Computed transit attachment does not create a resource. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14207,8 +14207,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Single-account VGW/TGW ID versus cross-account proposal_id; verify both owner accounts. Computed transit attachment does not create a resource.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_gateway_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (dx_gateway_id, associated_gateway_id, associated_gateway_owner_account_id, proposal_id, dx_gateway_owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_gateway_association.html.markdown",
         "shapes": {
@@ -14231,10 +14231,10 @@
       }
     },
     "aws_dx_gateway_association_proposal": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: DX gateway and VGW/TGW with owner-account evidence; proposal is not accepted connectivity. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14249,8 +14249,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: DX gateway and VGW/TGW with owner-account evidence; proposal is not accepted connectivity.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_gateway_association_proposal uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, dx_gateway_id, associated_gateway_id, dx_gateway_owner_account_id, associated_gateway_owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_gateway_association_proposal.html.markdown",
         "shapes": {
@@ -14273,10 +14273,10 @@
       }
     },
     "aws_dx_hosted_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: connection_id -> interconnect/LAG only with supported endpoint; customer owner differs from allocator; connection_region supersedes deprecated region. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14291,8 +14291,8 @@
         "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> interconnect/LAG only with supported endpoint; customer owner differs from allocator; connection_region supersedes deprecated region.",
-        "scope": "Partial: Unknown target scope (basic.rs); connection_region and customer owner proof #787; deprecated region is not provider override.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Partial: connection_region proves related endpoint region; deprecated region and provider region never establish hosted target scope. The hosted resource retains unknown scope.",
         "summaries": "Not applicable: aws_dx_hosted_connection uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_connection.html.markdown",
         "shapes": {
@@ -14315,10 +14315,10 @@
       }
     },
     "aws_dx_hosted_private_virtual_interface": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: connection_id -> connection/LAG id with allocator and owner_account_id agreement; private VIF must not inherit allocator ownership. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14332,8 +14332,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: allocator and accepter remain distinct Terraform lifecycle identities.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; private VIF must not inherit allocator ownership.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_hosted_private_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_private_virtual_interface.html.markdown",
         "shapes": {
@@ -14353,10 +14353,10 @@
       }
     },
     "aws_dx_hosted_private_virtual_interface_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: virtual_interface_id -> matching hosted private VIF id; exclusive dx_gateway_id/vpn_gateway_id. Require cross-account proof. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14371,8 +14371,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: acceptance is not resource deletion ownership; keep allocator/accepter coverage separately.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: virtual_interface_id -> matching hosted private VIF id; exclusive dx_gateway_id/vpn_gateway_id. Require cross-account proof.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_hosted_private_virtual_interface_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, virtual_interface_id, dx_gateway_id, vpn_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_private_virtual_interface_accepter.html.markdown",
         "shapes": {
@@ -14395,10 +14395,10 @@
       }
     },
     "aws_dx_hosted_public_virtual_interface": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: connection_id -> connection/LAG id with allocator and owner_account_id agreement; public VIF must not inherit allocator ownership. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14413,8 +14413,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: allocator and accepter remain distinct Terraform lifecycle identities.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; public VIF must not inherit allocator ownership.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_hosted_public_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_public_virtual_interface.html.markdown",
         "shapes": {
@@ -14440,10 +14440,10 @@
       }
     },
     "aws_dx_hosted_public_virtual_interface_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: virtual_interface_id -> matching hosted public VIF id; no gateway argument. Require cross-account proof. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14456,8 +14456,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: acceptance is not resource deletion ownership; keep allocator/accepter coverage separately.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: virtual_interface_id -> matching hosted public VIF id; no gateway argument. Require cross-account proof.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_hosted_public_virtual_interface_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, virtual_interface_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_public_virtual_interface_accepter.html.markdown",
         "shapes": {
@@ -14474,10 +14474,10 @@
       }
     },
     "aws_dx_hosted_transit_virtual_interface": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: connection_id -> connection/LAG id with allocator and owner_account_id agreement; transit VIF must not inherit allocator ownership. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14491,8 +14491,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: allocator and accepter remain distinct Terraform lifecycle identities.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: connection_id -> connection/LAG id with allocator and owner_account_id agreement; transit VIF must not inherit allocator ownership.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_hosted_transit_virtual_interface uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, connection_id, owner_account_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_transit_virtual_interface.html.markdown",
         "shapes": {
@@ -14512,10 +14512,10 @@
       }
     },
     "aws_dx_hosted_transit_virtual_interface_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 787,
-      "gap": "#716 reviewed: virtual_interface_id -> matching hosted transit VIF id; dx_gateway_id -> global gateway. Require cross-account proof. Current basic Logical display has no dedicated relationships. Follow-up #787; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #787 explicit hosted allocation, acceptance and gateway proposal references with independent account and region proof. See docs/aws-network.md. Unsupported interconnect endpoints, incomplete owner evidence and computed attachments remain conservative.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14529,8 +14529,8 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Intentionally unsupported: acceptance is not resource deletion ownership; keep allocator/accepter coverage separately.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: virtual_interface_id -> matching hosted transit VIF id; dx_gateway_id -> global gateway. Require cross-account proof.",
-        "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
+        "references": "Supported: exact typed ID outputs, explicit unique current references and known values; cross-account acceptance requires allocator owner evidence and independently known provider accounts.",
+        "scope": "Supported: independently known account bindings and regional endpoints; global DX gateways retain global scope. Owner fields never assign resource accounts.",
         "summaries": "Not applicable: aws_dx_hosted_transit_virtual_interface_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, virtual_interface_id, dx_gateway_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/dx_hosted_transit_virtual_interface_accepter.html.markdown",
         "shapes": {

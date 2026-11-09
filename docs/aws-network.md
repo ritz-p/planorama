@@ -927,3 +927,22 @@ ARN and ID outputs are not interchangeable. All endpoints require explicit
 current managed references, known values and compatible provider/account/region
 evidence. Route prefixes, computed endpoints and runtime link health are ignored.
 Hosted/cross-account contracts are handled separately by #787.
+
+### Hosted Direct Connect and gateway proposals (#787)
+
+Hosted connections reference explicitly configured LAG IDs; unsupported
+interconnect identities remain unresolved. Their `connection_region` validates
+related regional endpoints, while deprecated `region` and provider region never
+establish hosted target scope. Confirmations reference the hosted connection ID
+and require the customer account to match the allocator's `owner_account_id`.
+
+Hosted VIF allocations reference connection/LAG IDs. Accepters require the matching
+private/public/transit allocator type and independently known customer account.
+Private gateway variants are exclusive; DX gateways remain global. Acceptance
+does not establish deletion ownership or embed the allocated resource.
+
+Gateway associations distinguish direct same-account gateway references from
+cross-account proposal acceptance. Proposals verify both explicit gateway IDs
+and owner accounts; acceptance verifies the same DX gateway and regional owner.
+All participating accounts must be independently known. CIDRs, computed transit
+attachments and opaque authentication values never create endpoints or summaries.

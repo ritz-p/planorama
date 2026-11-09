@@ -31,10 +31,19 @@ pub struct AttributeReference {
     pub service_reference_verified: bool,
     pub service_reference_owner_account: Option<super::AwsAccountScope>,
     pub service_reference_shared: bool,
+    pub direct_connect_proof: Option<DirectConnectProof>,
     pub peering_proof: Option<PeeringProof>,
     pub endpoint_network_context: Vec<usize>,
     pub ids_only: bool,
     pub issues: std::collections::BTreeSet<super::DiagnosticReason>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq)]
+pub struct DirectConnectProof {
+    pub accounts: std::collections::BTreeMap<usize, super::AwsAccountScope>,
+    pub same_accounts: Vec<(usize, usize)>,
+    pub participants: std::collections::BTreeSet<usize>,
+    pub connection_region: Option<super::RegionScope>,
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
