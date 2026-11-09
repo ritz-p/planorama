@@ -15,6 +15,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::identity_center::owner(kind).is_some() => {
+                let (field, label) = super::identity_center::owner(kind).unwrap();
+                (field, label, "Identity Center configuration")
+            }
             kind if super::iam_credentials::owner(kind).is_some() => (
                 super::iam_credentials::owner(kind).unwrap(),
                 "Credential owner",

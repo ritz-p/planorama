@@ -750,3 +750,11 @@ Access keys, login profiles, service-specific credentials, signing certificates 
 ### Identity Store membership (#1141)
 
 Membership `group_id` and `member_id` resolve only explicit managed `group.group_id` and `user.user_id` outputs with matching known `identity_store_id`. Composite resource IDs are not principal identifiers. Each endpoint is verified independently with current lifecycle and compatible provider/account/region evidence. Memberships, users and groups retain independent identities and changes; no network containment or personal-data summaries are inferred.
+
+### Identity Center assignments and configuration (#1142)
+
+Application helpers resolve explicit managed `application_arn`/`arn` outputs. Permission-set helpers and account assignments resolve `permission_set.arn` only with a matching known `instance_arn`. Owner navigation preserves each helper action, including empty exclusive policy sets. Shared applications, permission sets and principals stay independent.
+
+USER/GROUP principals use exact managed `user_id`/`group_id` outputs and require instance/store correlation: both the instance owner and principal must explicitly reference the same current `data.aws_ssoadmin_instances`, whose known `arns` and `identity_store_ids` lists each contain exactly one entry. This lookup supplies correlation evidence only; it is not a managed principal. Multiple-instance lists, unknown/sensitive values and literal-only correlation remain unproven. Application assignments obtain the instance through their verified application.
+
+AWS_ACCOUNT targets resolve exact Organizations account IDs independently from principal and permission-set evidence. The represented target account is distinct from the administration provider account. Customer policy name/path applies in target accounts, AWS-managed policy ARNs do not identify in-plan customer policies, and authorized-target strings and policy JSON remain opaque. No configured assignment flag or reference asserts effective access.
