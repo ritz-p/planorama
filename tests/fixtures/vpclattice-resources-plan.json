@@ -1,0 +1,400 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.resources",
+      "type": "aws_vpc",
+      "name": "resources",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-resources",
+          "cidr_block": "10.2.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "type": "aws_subnet",
+      "name": "a",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-resources",
+          "cidr_block": "10.2.1.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "type": "aws_subnet",
+      "name": "b",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-resources",
+          "cidr_block": "10.2.2.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.resources",
+      "type": "aws_security_group",
+      "name": "resources",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-resources",
+          "vpc_id": "vpc-resources"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_gateway.main",
+      "type": "aws_vpclattice_resource_gateway",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rgw-main",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourcegateway/rgw-main",
+          "vpc_id": "vpc-resources",
+          "subnet_ids": [
+            "subnet-b",
+            "subnet-a"
+          ],
+          "security_group_ids": [
+            "sg-resources"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_domain_verification.main",
+      "type": "aws_vpclattice_domain_verification",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dv-main",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:domainverification/dv-main",
+          "domain_name": "PRIVATE_RESOURCE_PAYLOAD",
+          "txt_record_name": "PRIVATE_RESOURCE_PAYLOAD",
+          "txt_record_value": "PRIVATE_RESOURCE_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_configuration.group",
+      "type": "aws_vpclattice_resource_configuration",
+      "name": "group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rcfg-group",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-group",
+          "type": "GROUP",
+          "resource_gateway_identifier": "rgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_configuration.child",
+      "type": "aws_vpclattice_resource_configuration",
+      "name": "child",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rcfg-child",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-child",
+          "type": "CHILD",
+          "resource_configuration_group_id": "rcfg-group",
+          "resource_gateway_identifier": "rgw-main",
+          "resource_configuration_definition": [
+            {
+              "dns_resource": [
+                {
+                  "domain_name": "PRIVATE_RESOURCE_PAYLOAD",
+                  "ip_address_type": "IPV4"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_configuration.single",
+      "type": "aws_vpclattice_resource_configuration",
+      "name": "single",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rcfg-single",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-single",
+          "type": "SINGLE",
+          "resource_gateway_identifier": "rgw-main",
+          "domain_verification_id": "dv-main",
+          "resource_configuration_definition": [
+            {
+              "ip_resource": [
+                {
+                  "ip_address": "10.2.1.5"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_configuration.arn",
+      "type": "aws_vpclattice_resource_configuration",
+      "name": "arn",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rcfg-arn",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-arn",
+          "type": "ARN",
+          "resource_gateway_identifier": "rgw-main",
+          "resource_configuration_definition": [
+            {
+              "arn_resource": [
+                {
+                  "arn": "PRIVATE_RESOURCE_PAYLOAD"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_service_network.resources",
+      "type": "aws_vpclattice_service_network",
+      "name": "resources",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sn-resources",
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:servicenetwork/sn-resources"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_service_network_resource_association.main",
+      "type": "aws_vpclattice_service_network_resource_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_configuration_identifier": "rcfg-group",
+          "service_network_identifier": "sn-resources"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.resources",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.resources.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.resources.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.resources",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.resources.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_resource_gateway.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.resources.id"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.a.id",
+                "aws_subnet.b.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.resources.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_domain_verification.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpclattice_resource_configuration.group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_gateway_identifier": {
+              "references": [
+                "aws_vpclattice_resource_gateway.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_resource_configuration.child",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_configuration_group_id": {
+              "references": [
+                "aws_vpclattice_resource_configuration.group.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_resource_configuration.single",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_gateway_identifier": {
+              "references": [
+                "aws_vpclattice_resource_gateway.main.id"
+              ]
+            },
+            "domain_verification_id": {
+              "references": [
+                "aws_vpclattice_domain_verification.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_resource_configuration.arn",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_gateway_identifier": {
+              "references": [
+                "aws_vpclattice_resource_gateway.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpclattice_service_network.resources",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpclattice_service_network_resource_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_configuration_identifier": {
+              "references": [
+                "aws_vpclattice_resource_configuration.group.id"
+              ]
+            },
+            "service_network_identifier": {
+              "references": [
+                "aws_vpclattice_service_network.resources.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

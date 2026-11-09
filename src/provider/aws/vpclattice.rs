@@ -1,11 +1,15 @@
-use crate::model::{AttributeReference, TerraformEntity};
-use crate::semantic::Input;
+use crate::model::{AttributeReference, Edge, EdgeKind, Graph, TerraformEntity};
+use crate::semantic::{Input, relationships};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/vpclattice.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/vpclattice_resources.rs"]
+mod resource_tests;
 
 const FORWARD: &str = "default_action.forward.target_groups.target_group_identifier";
 const RULE_FORWARD: &str = "action.forward.target_groups.target_group_identifier";
@@ -24,11 +28,36 @@ pub(crate) fn resource(kind: &str) -> bool {
             | "aws_vpclattice_auth_policy"
             | "aws_vpclattice_resource_policy"
             | "aws_vpclattice_access_log_subscription"
+            | "aws_vpclattice_resource_gateway"
+            | "aws_vpclattice_resource_configuration"
+            | "aws_vpclattice_service_network_resource_association"
+            | "aws_vpclattice_domain_verification"
     )
 }
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
+        ("aws_vpclattice_resource_gateway", "vpc_id") => Some("Resource gateway VPC"),
+        ("aws_vpclattice_resource_gateway", "subnet_ids") => Some("Resource gateway subnets"),
+        ("aws_vpclattice_resource_gateway", "security_group_ids") => {
+            Some("Resource gateway security groups")
+        }
+        ("aws_vpclattice_resource_configuration", "resource_gateway_identifier") => {
+            Some("Configuration gateway")
+        }
+        ("aws_vpclattice_resource_configuration", "resource_configuration_group_id") => {
+            Some("Parent resource group")
+        }
+        ("aws_vpclattice_resource_configuration", "domain_verification_id") => {
+            Some("Configured domain verification")
+        }
+        (
+            "aws_vpclattice_service_network_resource_association",
+            "resource_configuration_identifier",
+        ) => Some("Associated resource configuration"),
+        ("aws_vpclattice_service_network_resource_association", "service_network_identifier") => {
+            Some("Lattice service network")
+        }
         ("aws_vpclattice_service", "certificate_arn") => Some("Service certificate"),
         ("aws_vpclattice_listener", "service_identifier" | "service_arn")
         | (
@@ -71,6 +100,13 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 
 fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
     match (kind, path, source) {
+        (_, "vpc_id", "aws_vpc") | (_, "subnet_ids", "aws_subnet") => &["id"],
+        (_, "resource_gateway_identifier", "aws_vpclattice_resource_gateway")
+        | (_, "resource_configuration_identifier", "aws_vpclattice_resource_configuration") => {
+            &["id", "arn"]
+        }
+        (_, "resource_configuration_group_id", "aws_vpclattice_resource_configuration")
+        | (_, "domain_verification_id", "aws_vpclattice_domain_verification") => &["id"],
         ("aws_vpclattice_service", "certificate_arn", "aws_acm_certificate") => &["arn"],
         ("aws_vpclattice_listener", "service_arn", "aws_vpclattice_service") => &["arn"],
         ("aws_vpclattice_listener", "service_identifier", "aws_vpclattice_service") => &["id"],
@@ -130,7 +166,7 @@ fn basic(
     super::nested_references::verify(nodes, refs, evidence, r, fields, |_, path| {
         let (v, m) = evidence[r.target];
         super::nested_references::value(v, m, path).is_some_and(|v| {
-            if r.attribute == "security_group_ids" {
+            if matches!(r.attribute.as_str(), "security_group_ids" | "subnet_ids") {
                 v.is_array()
             } else {
                 v.is_string()
@@ -188,6 +224,46 @@ fn absent(v: &Value, m: &Value, path: &str) -> bool {
         .is_some_and(|v| v.is_null() || v.as_array().is_some_and(Vec::is_empty))
 }
 
+fn network_context(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    target: usize,
+    vpc_path: &str,
+    subnets: bool,
+) -> Option<Vec<usize>> {
+    let vpc = endpoint(nodes, refs, evidence, target, vpc_path)?;
+    let (v, m) = evidence[target];
+    let mut context = vec![vpc];
+    for path in if subnets {
+        &["subnet_ids", "security_group_ids"][..]
+    } else {
+        &["security_group_ids"][..]
+    } {
+        if *path == "security_group_ids" && absent(v, m, path) {
+            if refs.iter().any(|r| {
+                r.target == target
+                    && r.attribute == *path
+                    && (!r.sources.is_empty() || !r.issues.is_empty())
+            }) {
+                return None;
+            }
+            continue;
+        }
+        let members = super::lambda_core::unique(refs, target, path)?;
+        if !basic(nodes, refs, evidence, members) {
+            return None;
+        }
+        for &member in &members.sources {
+            if super::lambda_core::parent(nodes, refs, evidence, member)? != vpc {
+                return None;
+            }
+            context.push(member);
+        }
+    }
+    Some(context)
+}
+
 fn context(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
@@ -198,6 +274,44 @@ fn context(
     let (v, m) = evidence[r.target];
     let known = |index, path| super::service_evidence::known(evidence, index, path);
     let mut context = Vec::new();
+    if kind == "aws_vpclattice_resource_gateway" {
+        return network_context(nodes, refs, evidence, r.target, "vpc_id", true);
+    }
+    if kind == "aws_vpclattice_resource_configuration" {
+        let mode = known(r.target, "type")?;
+        if !matches!(mode, "SINGLE" | "GROUP" | "CHILD" | "ARN") {
+            return None;
+        }
+        match r.attribute.as_str() {
+            "resource_gateway_identifier" => {
+                if mode == "CHILD" || !absent(v, m, "resource_configuration_group_id") {
+                    return None;
+                }
+            }
+            "resource_configuration_group_id" => {
+                let [parent] = r.sources.as_slice() else {
+                    return None;
+                };
+                if mode != "CHILD" || known(*parent, "type") != Some("GROUP") {
+                    return None;
+                }
+            }
+            _ => {}
+        }
+    }
+    if kind == "aws_vpclattice_service_network_resource_association"
+        && r.attribute == "resource_configuration_identifier"
+    {
+        let [configuration] = r.sources.as_slice() else {
+            return None;
+        };
+        if !matches!(
+            known(*configuration, "type"),
+            Some("SINGLE" | "GROUP" | "ARN")
+        ) {
+            return None;
+        }
+    }
     if kind == "aws_vpclattice_listener" {
         context.push(listener_service(nodes, refs, evidence, r.target)?);
     }
@@ -248,28 +362,7 @@ fn context(
             "vpc_identifier" | "security_group_ids"
         )
     {
-        let vpc = endpoint(nodes, refs, evidence, r.target, "vpc_identifier")?;
-        context.push(vpc);
-        if absent(v, m, "security_group_ids") {
-            if refs.iter().any(|other| {
-                other.target == r.target
-                    && other.attribute == "security_group_ids"
-                    && (!other.sources.is_empty() || !other.issues.is_empty())
-            }) {
-                return None;
-            }
-        } else {
-            let groups = super::lambda_core::unique(refs, r.target, "security_group_ids")?;
-            if !basic(nodes, refs, evidence, groups) {
-                return None;
-            }
-            for &group in &groups.sources {
-                if super::lambda_core::parent(nodes, refs, evidence, group)? != vpc {
-                    return None;
-                }
-                context.push(group);
-            }
-        }
+        return network_context(nodes, refs, evidence, r.target, "vpc_identifier", false);
     }
     if kind == "aws_vpclattice_access_log_subscription" {
         let owner = endpoint(nodes, refs, evidence, r.target, "resource_identifier")?;
@@ -346,11 +439,14 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     let cross = |r: &AttributeReference, source| {
         matches!(
             r.attribute.as_str(),
-            "service_network_identifier" | "resource_identifier"
+            "service_network_identifier"
+                | "resource_identifier"
+                | "resource_configuration_identifier"
         ) && matches!(
             raw.nodes[r.target].resource_type.as_str(),
             "aws_vpclattice_service_network_service_association"
                 | "aws_vpclattice_service_network_vpc_association"
+                | "aws_vpclattice_service_network_resource_association"
                 | "aws_vpclattice_access_log_subscription"
         ) && r
             .source_attributes_by_instance
@@ -367,4 +463,32 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
                     .is_some_and(|owner| cross(owner, s));
             compatible(raw, r.target, s, shared_log_owner)
         })
+}
+
+pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    for (target, node) in raw.nodes.iter().enumerate().filter(|(_, n)| {
+        n.provider.is_aws() && n.resource_type == "aws_vpclattice_resource_gateway"
+    }) {
+        let Some(r) = super::lambda_core::unique(&raw.attributes, target, "vpc_id")
+            .filter(|r| super::service_references::verified(raw, r))
+        else {
+            continue;
+        };
+        let [vpc] = r.sources.as_slice() else {
+            continue;
+        };
+        if !node.presentation_scope_matches(&raw.nodes[*vpc]) {
+            continue;
+        }
+        let evidence = r
+            .endpoint_network_context
+            .iter()
+            .map(|&member| relationships::reference(graph, member, target))
+            .collect();
+        relationships::record(graph, *vpc, target, EdgeKind::Containment, evidence);
+        graph.edges.push(Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((*vpc, target))
+        });
+    }
 }

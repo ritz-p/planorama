@@ -891,3 +891,23 @@ service-network association and logging-owner references require ARN outputs
 and independently known account/region bindings; scopes are never inherited.
 Policies, listener predicates, DNS names, computed endpoints and runtime health
 remain opaque. Unknown, sensitive, partial or noncurrent evidence stays unresolved.
+
+### VPC Lattice resource gateways and configurations (#791)
+
+Resource gateways have independent spatial cards. Placement requires explicit
+VPC/subnet/security-group IDs, complete collections and common-VPC proof for
+each subnet and security group. Known empty optional security groups are allowed;
+computed defaults or unknown/partial memberships do not establish placement.
+
+Known SINGLE, GROUP and ARN configurations reference gateway ID/ARN outputs.
+CHILD configurations navigate only to an explicitly referenced GROUP id; their
+computed inherited gateway does not add a configured link. Explicit domain
+verification uses the verification resource id. Resource-configuration id/arn
+identify that configuration, despite the pinned docs calling them gateway outputs.
+Service-network associations retain independent configuration/network identities
+and require ARN outputs plus independent account evidence across accounts.
+
+The initial ARN-target endpoint contract remains deferred. IP/DNS values and TXT
+verification outputs never synthesize application endpoints or Route53 records.
+Configuration gateway references do not place the represented resource in a VPC
+and domain verification references do not assert successful DNS verification.

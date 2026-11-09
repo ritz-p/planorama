@@ -1661,7 +1661,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_vpclattice_listener", "Amazon VPC Lattice", Connector, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
     entry!("aws_vpclattice_listener_rule", "Amazon VPC Lattice", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
     entry!("aws_vpclattice_resource_configuration", "Amazon VPC Lattice", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
-    entry!("aws_vpclattice_resource_gateway", "Amazon VPC Lattice", Connector, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
+    entry!("aws_vpclattice_resource_gateway", "Amazon VPC Lattice", Connector, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
     entry!("aws_vpclattice_resource_policy", "Amazon VPC Lattice", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
     entry!("aws_vpclattice_service", "Amazon VPC Lattice", Connector, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
     entry!("aws_vpclattice_service_network", "Amazon VPC Lattice", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonVPCLattice))),
