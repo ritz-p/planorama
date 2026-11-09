@@ -802,3 +802,18 @@ key references require the same region; IAM principals retain global scope.
 Unknown/sensitive/ambiguous, wrong-output and noncurrent evidence remains unresolved.
 Key material, credentials, plaintext, ciphertext, contexts and policy bodies are
 excluded from presentation and interpretation.
+
+### Secrets Manager configuration (#1135)
+
+Secrets resolve exact managed KMS key outputs. Replica blocks require complete
+correlated key references, known distinct destination regions matching each key,
+and compatible account evidence. Blocks never generate standalone secret nodes.
+Policy helpers use secret ARN, tags use secret ID, and rotation helpers accept
+secret ID/ARN/name with exact output equality. Unique owners retain independent
+helper changes and provenance; shared keys and rotation targets remain separate.
+
+Configured rotation Lambda/partner-role references require known enabled rotation
+and a known absent competing mode field. This does not assert successful rotation,
+permissions or health. Secret values, policy bodies, tag values and partner
+metadata remain opaque. Unknown, sensitive, ambiguous, foreign or noncurrent
+inputs stay unresolved. Existing secret-version identities are unchanged.

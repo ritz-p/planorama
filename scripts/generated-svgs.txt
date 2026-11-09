@@ -165,3 +165,4 @@ examples/identitystore.svg
 examples/identity-center.svg
 examples/global-accelerator-custom.svg
 examples/kms-references.svg
+examples/secrets-manager-references.svg
