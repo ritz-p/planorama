@@ -15,6 +15,14 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::iam_policies::owner(kind).is_some() => {
+                let (field, _) = super::iam_policies::owner(kind).unwrap();
+                (
+                    field,
+                    super::iam_policies::label(kind, field).unwrap(),
+                    "Policy management",
+                )
+            }
             "aws_globalaccelerator_listener" => {
                 ("accelerator_arn", "Listener accelerator", "Listeners")
             }
