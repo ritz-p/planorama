@@ -31,6 +31,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::backup_plan::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::lambda_capacity::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::lambda_core::label(resource, attribute) {
         return Some(label);
     }
@@ -764,6 +767,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::lambda_capacity::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::lambda_capacity::bindings(raw, reference))
         && (super::traffic_mirror::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

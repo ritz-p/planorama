@@ -225,6 +225,7 @@ pub(super) fn annotate(
         .map(|((value, _), mask)| (*value, mask))
         .collect();
     crate::provider::aws::lambda_core::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::lambda_capacity::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route_server::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::secondary_network::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::traffic_mirror::annotate(nodes, references, &elbv2_evidence);

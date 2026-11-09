@@ -891,7 +891,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_lakeformation_resource_lf_tag", "AWS Lake Formation", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSLakeFormation))),
     entry!("aws_lakeformation_resource_lf_tags", "AWS Lake Formation", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSLakeFormation))),
     entry!("aws_lambda_alias", "AWS Lambda", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
-    entry!("aws_lambda_capacity_provider", "AWS Lambda", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
+    entry!("aws_lambda_capacity_provider", "AWS Lambda", Node, Spatial, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambda_code_signing_config", "AWS Lambda", Controller, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambda_event_source_mapping", "AWS Lambda", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambda_function", "AWS Lambda", Node, Logical, Regional, Some(ResourceIcon::Lambda)),

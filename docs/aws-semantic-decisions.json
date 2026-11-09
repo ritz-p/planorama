@@ -43531,10 +43531,10 @@
       }
     },
     "aws_lambda_capacity_provider": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 948,
-      "gap": "#714 audit: Missing: complete common-VPC network, operator-role and KMS references; no synthetic EC2 capacity. Missing: review capacity provider independent architecture-bearing presentation; basic Logical default does not establish a workload card. Missing: complete subnet/SG collections and common current managed VPC proof; function capacity-provider membership does not imply instance ownership. Follow-up #948. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #948: independent capacity-provider card, exact operator-role/KMS references, complete subnet/SG collections and current common-VPC proof. #714 audit: no synthetic EC2 capacity or function instance ownership. See aws-network.md#lambda-capacity-providers-948.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -43546,11 +43546,11 @@
           "permissions_config.capacity_provider_operator_role_arn",
           "kms_key_arn"
         ],
-        "placement": "Missing: review capacity provider independent architecture-bearing presentation; basic Logical default does not establish a workload card.",
+        "placement": "Supported: independent spatial capacity-provider architecture card; no generated EC2 or ENI children.",
         "ownership": "Not applicable: retain independent aws_lambda_capacity_provider identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
-        "network": "Missing: complete subnet/SG collections and common current managed VPC proof; function capacity-provider membership does not imply instance ownership.",
-        "references": "Missing: complete common-VPC network, operator-role and KMS references; no synthetic EC2 capacity.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "network": "Supported: VPC context requires complete subnet and security-group sets, explicit matching current managed VPC provenance for every member, and compatible late account evidence. Empty/incomplete or mixed-VPC sets do not establish containment.",
+        "references": "Supported: singleton vpc_config subnet_ids/security_group_ids -> exact managed id outputs; singleton permissions_config.capacity_provider_operator_role_arn -> IAM role.arn; kms_key_arn -> KMS key.arn. Shared endpoints remain independent.",
+        "scope": "Supported: compatible provider/account/region and named-state boundaries; IAM role is global-compatible, KMS and network endpoints remain regional. Late scope evidence is rechecked.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambda_capacity_provider attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambda_capacity_provider.html.markdown",
         "shapes": {
@@ -43601,7 +43601,10 @@
           "src/provider/aws/containment/vpc_scope.rs",
           "tests/unit/semantic/vpc_scope.rs",
           "src/provider/aws/security_groups.rs",
-          "tests/unit/semantic/security_groups.rs"
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/lambda_capacity.rs",
+          "src/provider/aws/lambda_core.rs",
+          "tests/unit/semantic/lambda_capacity.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}

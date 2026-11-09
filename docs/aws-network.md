@@ -714,3 +714,19 @@ current managed scope. Account compatibility is rechecked after enrichment.
 Configuration objects keep logical identities; backing ENIs, LBs and subnets do
 not contain targets or sessions. Computed EC2 primary-interface IDs, literals,
 CIDRs and packet rules never fabricate resources or establish reachability.
+
+## Lambda capacity providers (#948)
+
+Capacity providers have independent spatial cards. The required singleton
+`vpc_config` list block contains complete subnet and security-group ID sets;
+`permissions_config` is a separate singleton list block containing the operator
+role ARN. References accept managed subnet/security-group `id`, IAM role `arn`,
+and KMS key `arn` outputs only. Object-shaped or repeated blocks, unknown or
+sensitive values, incomplete sets and literal-only endpoints remain unresolved.
+
+VPC placement requires all subnet and security-group members to reference one
+current managed VPC explicitly, with matching known IDs and compatible scope.
+Missing or empty network evidence retains the independent card without inferred
+containment. Account evidence is rechecked after enrichment. IAM roles keep their
+global scope; network and KMS references retain regional scope. No EC2 capacity,
+ENIs or function-owned instances are synthesized from provider configuration.
