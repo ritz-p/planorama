@@ -174,3 +174,4 @@ examples/vpclattice-resources.svg
 examples/direct-connect.svg
 examples/direct-connect-hosted.svg
 examples/route53-health.svg
+examples/route53-dnssec.svg

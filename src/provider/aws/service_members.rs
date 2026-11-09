@@ -58,6 +58,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Replication source table",
                 "Table configuration",
             ),
+            "aws_route53_hosted_zone_dnssec" | "aws_route53_key_signing_key" => (
+                "hosted_zone_id",
+                "DNSSEC hosted zone",
+                "DNSSEC configuration",
+            ),
+            "aws_route53domains_delegation_signer_record" => (
+                "domain_name",
+                "Registered domain owner",
+                "Delegation signers",
+            ),
             "aws_vpclattice_resource_configuration" => (
                 "resource_configuration_group_id",
                 "Parent resource group",

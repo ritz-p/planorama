@@ -1,0 +1,206 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_route53_zone.main",
+      "type": "aws_route53_zone",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ZMAIN",
+          "zone_id": "ZMAIN",
+          "name": "example.test"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/dnssec",
+          "id": "dnssec"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_key_signing_key.main",
+      "type": "aws_route53_key_signing_key",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ZMAIN,signer",
+          "name": "signer",
+          "hosted_zone_id": "ZMAIN",
+          "key_management_service_arn": "arn:aws:kms:us-east-1:111111111111:key/dnssec",
+          "public_key": "PRIVATE_DNSSEC_PAYLOAD",
+          "ds_record": "PRIVATE_DNSSEC_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_hosted_zone_dnssec.main",
+      "type": "aws_route53_hosted_zone_dnssec",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "hosted_zone_id": "ZMAIN",
+          "signing_status": "SIGNING"
+        }
+      }
+    },
+    {
+      "address": "aws_route53domains_registered_domain.main",
+      "type": "aws_route53domains_registered_domain",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "example.test",
+          "hosted_zone_id": "ZMAIN"
+        }
+      }
+    },
+    {
+      "address": "aws_route53domains_delegation_signer_record.main",
+      "type": "aws_route53domains_delegation_signer_record",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "example.test",
+          "signing_attributes": [
+            {
+              "public_key": "PRIVATE_DNSSEC_PAYLOAD",
+              "algorithm": 13,
+              "flags": 257
+            }
+          ],
+          "dnssec_key_id": "computed-key"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_route53_zone.main",
+          "type": "aws_route53_zone",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.main",
+          "type": "aws_kms_key",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53_key_signing_key.main",
+          "type": "aws_route53_key_signing_key",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "hosted_zone_id": {
+              "references": [
+                "aws_route53_zone.main.id"
+              ]
+            },
+            "key_management_service_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53_hosted_zone_dnssec.main",
+          "type": "aws_route53_hosted_zone_dnssec",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "hosted_zone_id": {
+              "references": [
+                "aws_route53_zone.main.zone_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53domains_registered_domain.main",
+          "type": "aws_route53domains_registered_domain",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53domains_delegation_signer_record.main",
+          "type": "aws_route53domains_delegation_signer_record",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name": {
+              "references": [
+                "aws_route53domains_registered_domain.main.domain_name"
+              ]
+            },
+            "signing_attributes": {
+              "references": [
+                "aws_route53_key_signing_key.main.public_key"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

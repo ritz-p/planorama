@@ -48235,10 +48235,10 @@
       }
     },
     "aws_route53_hosted_zone_dnssec": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 923,
-      "gap": "#715 audit: Missing: direct hosted-zone ID reference; hosted_zone_id forwarded through a KSK resource is not automatically a direct zone proof. Follow-up #923. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #923 direct hosted-zone ownership, us-east-1 KMS key ARN and registered/domain resource ownership. Key material and computed hosted-zone IDs do not establish identities. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48248,10 +48248,10 @@
           "signing_status"
         ],
         "placement": "Supported: retain Logical Controller for aws_route53_hosted_zone_dnssec; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique hosted-zone helper ownership, separate from the shared KMS key.",
+        "ownership": "Supported: unique verified hosted-zone or registered/domain owner navigation preserves helper identity and shared KMS keys; no network containment.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: direct hosted-zone ID reference; hosted_zone_id forwarded through a KSK resource is not automatically a direct zone proof.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: direct explicit hosted-zone ID reference; forwarded KSK hosted_zone_id does not prove a direct zone.",
+        "scope": "Supported: global DNSSEC/domain configuration remains global; KMS endpoint must independently resolve to us-east-1 with compatible account bindings.",
         "summaries": "Intentionally unsupported: signing_status is requested configuration, not successful DNSSEC validation.",
         "officialDocumentation": "website/docs/r/route53_hosted_zone_dnssec.html.markdown",
         "shapes": {
@@ -48281,10 +48281,10 @@
       }
     },
     "aws_route53_key_signing_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 923,
-      "gap": "#715 audit: Missing: hosted-zone ID and us-east-1 KMS key ARN references; KSK name is zone-qualified, not KMS identity. Provider source constructs id from hostedZoneID and KSK name, despite docs calling the second part a KMS identifier. Follow-up #923. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #923 direct hosted-zone ownership, us-east-1 KMS key ARN and registered/domain resource ownership. Key material and computed hosted-zone IDs do not establish identities. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48297,10 +48297,10 @@
           "public_key"
         ],
         "placement": "Supported: retain Logical Node for aws_route53_key_signing_key; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique hosted-zone KSK membership; KMS key remains independent.",
+        "ownership": "Supported: unique verified hosted-zone or registered/domain owner navigation preserves helper identity and shared KMS keys; no network containment.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: hosted-zone ID and us-east-1 KMS key ARN references; KSK name is zone-qualified, not KMS identity. Provider source constructs id from hostedZoneID and KSK name, despite docs calling the second part a KMS identifier.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: direct hosted-zone ID and independently scoped us-east-1 KMS key ARN references. Source composite ID contains hostedZoneID and KSK name, never a KMS identifier.",
+        "scope": "Supported: global DNSSEC/domain configuration remains global; KMS endpoint must independently resolve to us-east-1 with compatible account bindings.",
         "summaries": "Intentionally unsupported: public key, digest, DNSKEY/DS records and cryptographic validity.",
         "officialDocumentation": "website/docs/r/route53_key_signing_key.html.markdown",
         "shapes": {
@@ -48348,10 +48348,10 @@
       }
     },
     "aws_route53domains_delegation_signer_record": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 923,
-      "gap": "#715 audit: Missing: explicit registered/domain resource domain_name ownership; key-signing public_key is key material, not an ID reference. No matching KSK by public-key value. Follow-up #923. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #923 direct hosted-zone ownership, us-east-1 KMS key ARN and registered/domain resource ownership. Key material and computed hosted-zone IDs do not establish identities. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48364,10 +48364,10 @@
           "dnssec_key_id"
         ],
         "placement": "Supported: retain Logical Node for aws_route53domains_delegation_signer_record; this presentation alone does not prove relationships.",
-        "ownership": "Missing: exact domain_name reference with known values; never infer hosted-zone ownership from matching domain strings.",
+        "ownership": "Supported: unique verified hosted-zone or registered/domain owner navigation preserves helper identity and shared KMS keys; no network containment.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: explicit registered/domain resource domain_name ownership; key-signing public_key is key material, not an ID reference. No matching KSK by public-key value.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Supported: explicit registered/domain resource domain_name reference. Public key material, computed hosted_zone_id and literal names do not create endpoints.",
+        "scope": "Supported: global DNSSEC/domain configuration remains global; KMS endpoint must independently resolve to us-east-1 with compatible account bindings.",
         "summaries": "Intentionally unsupported: public-key material and effective delegation-signature verification.",
         "officialDocumentation": "website/docs/r/route53domains_delegation_signer_record.html.markdown",
         "shapes": {
