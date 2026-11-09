@@ -4659,7 +4659,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: custom_key_store_id -> custom key store.id; xks_key_id is external key identity, not an AWS managed-resource owner. Not applicable: key card #542 is independent from its key store. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -4676,8 +4676,8 @@
         "placement": "Supported: Node / Node; Spatial / Spatial; Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: key card #542 is independent from its key store.",
         "network": "Not applicable: aws_kms_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: custom_key_store_id -> custom key store.id; xks_key_id is external key identity, not an AWS managed-resource owner.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_key.html.markdown",
         "shapes": {
@@ -4749,7 +4749,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Partial: #493/#542 embeds alias for aws_kms_key id/key_id/arn; missing exact external/replica key variants. Supported: #542 verified alias member retains independent metadata; basic variants are not runtime aliases. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -4762,8 +4762,8 @@
         "placement": "Supported: Node / Node; Spatial / Spatial; Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Supported: #542 verified alias member retains independent metadata; basic variants are not runtime aliases.",
         "network": "Not applicable: aws_kms_alias is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Partial: #493/#542 embeds alias for aws_kms_key id/key_id/arn; missing exact external/replica key variants.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_alias summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_alias.html.markdown",
         "shapes": {
@@ -59690,7 +59690,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: configured key_id navigation only; plaintext/context/ciphertext must remain absent from presentation. Not applicable: encryption operation is not a service, key or network owner. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59702,8 +59702,8 @@
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: encryption operation is not a service, key or network owner.",
         "network": "Not applicable: aws_kms_ciphertext is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: configured key_id navigation only; plaintext/context/ciphertext must remain absent from presentation.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_ciphertext summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_ciphertext.html.markdown",
         "shapes": {
@@ -59759,7 +59759,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: CloudHSM cluster id or mode-gated XKS VPC endpoint service name; external public proxy URLs are not resources. Not applicable: independent key store; credentials/trust material excluded. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59774,8 +59774,8 @@
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: independent key store; credentials/trust material excluded.",
         "network": "Not applicable: aws_kms_custom_key_store is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: CloudHSM cluster id or mode-gated XKS VPC endpoint service name; external public proxy URLs are not resources.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_custom_key_store summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_custom_key_store.html.markdown",
         "shapes": {
@@ -59895,7 +59895,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: exact key id/ARN plus type-gated IAM principal ARN references; no access/effective-policy claims. Missing: key-owned grant helper, principals remain shared. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59907,10 +59907,10 @@
           "operations"
         ],
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: key-owned grant helper, principals remain shared.",
+        "ownership": "Supported: unique verified key owner navigation with independent lifecycle and coverage.",
         "network": "Not applicable: aws_kms_grant is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: exact key id/ARN plus type-gated IAM principal ARN references; no access/effective-policy claims.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_grant summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_grant.html.markdown",
         "shapes": {
@@ -59953,7 +59953,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: key_id -> exact KMS key variant id/key_id/arn; exclude policy content. Missing: key-owned policy helper with independent change identity. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59963,10 +59963,10 @@
           "policy"
         ],
         "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: key-owned policy helper with independent change identity.",
+        "ownership": "Supported: unique verified key owner navigation with independent lifecycle and coverage.",
         "network": "Not applicable: aws_kms_key_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: key_id -> exact KMS key variant id/key_id/arn; exclude policy content.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_key_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_key_policy.html.markdown",
         "shapes": {
@@ -59998,7 +59998,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: primary_key_arn -> external primary key.arn using explicit cross-region multi-region proof; same region is not valid replication evidence. Not applicable: replica is an independent regional key; not embedded under primary. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60008,11 +60008,11 @@
           "arn",
           "key_id"
         ],
-        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: independent Spatial regional replica key; no primary-key containment.",
         "ownership": "Not applicable: replica is an independent regional key; not embedded under primary.",
         "network": "Not applicable: aws_kms_replica_external_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: primary_key_arn -> external primary key.arn using explicit cross-region multi-region proof; same region is not valid replication evidence.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Replica deployment region differs from primary; cross-region references need independent primary/replica evidence.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_replica_external_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_replica_external_key.html.markdown",
         "shapes": {
@@ -60048,7 +60048,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1130,
-      "gap": "#727 audit: Missing: primary_key_arn -> primary key.arn with multi-region and cross-region proof. Not applicable: replica key retains independent deployment scope and lifecycle. Implementation follow-up #1130. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1130 exact key-variant outputs, configured key/typed IAM principal references, mode-gated custom key stores, and primary-key replication proof. Key material, plaintext, contexts and policy documents remain opaque.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60058,11 +60058,11 @@
           "arn",
           "key_id"
         ],
-        "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Kms / AWS Key Management Service runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: independent Spatial regional replica key; no primary-key containment.",
         "ownership": "Not applicable: replica key retains independent deployment scope and lifecycle.",
         "network": "Not applicable: aws_kms_replica_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: primary_key_arn -> primary key.arn with multi-region and cross-region proof.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Replica deployment region differs from primary; cross-region references need independent primary/replica evidence.",
+        "references": "Partial: explicit current managed key id/key_id/ARN variants and typed configuration references; external primary key ARN requires multi-region and cross-region evidence. No alias-output or policy-content inference.",
+        "scope": "Supported: same-account regional bindings, global IAM principals and explicit distinct-region primary/replica proof; late account conflicts reject references.",
         "summaries": "Deferred: no additional kms_replica_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/kms_replica_key.html.markdown",
         "shapes": {

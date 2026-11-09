@@ -587,7 +587,7 @@ fn kms_uses_only_allowlisted_configuration_fields_and_never_exposes_key_material
     value["resource_changes"][0]["type"] = json!("aws_kms_replica_key");
     let graph = semantic::transform(&plan::parse(&value.to_string()).unwrap());
     assert!(
-        !graph
+        graph
             .nodes
             .iter()
             .flat_map(|n| &n.references)

@@ -40,6 +40,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .as_ref()
         .and_then(|c| c.account.clone());
     if basic.is_some()
+        && !super::kms::resource(resource)
         && super::identity_center::owner(resource).is_none()
         && !matches!(
             resource,

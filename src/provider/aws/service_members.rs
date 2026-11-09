@@ -193,6 +193,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             }
             "aws_ecs_task_set" => ("service", "Task set service", "Task sets"),
             "aws_kms_alias" => ("target_key_id", "Alias key", "Aliases"),
+            "aws_kms_grant" | "aws_kms_key_policy" => {
+                ("key_id", "Configured KMS key", "Key configuration")
+            }
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
             "aws_glue_catalog_table" => {
                 if raw.attributes.iter().any(|reference| {
