@@ -31,6 +31,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::classic_elb::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::networkmanager::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::xray_encryption::label(resource, attribute) {
         return Some(label);
     }
@@ -835,6 +838,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::direct_connect::bindings(raw, reference)
         && super::rds_auxiliary::bindings(raw, reference)
         && super::classic_elb::bindings(raw, reference)
+        && super::networkmanager::bindings(raw, reference)
         && super::xray_encryption::bindings(raw, reference)
         && super::synthetics::bindings(raw, reference)
         && super::rum::bindings(raw, reference)
@@ -1432,6 +1436,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         }
         if super::s3vectors::indexed(&node.resource_type, &reference.attribute)
             || super::vpclattice::indexed(&node.resource_type, &reference.attribute)
+            || super::networkmanager::indexed(&node.resource_type, &reference.attribute)
             || super::classic_elb::indexed(&node.resource_type, &reference.attribute)
             || super::synthetics::indexed(&node.resource_type, &reference.attribute)
             || super::rum::indexed(&node.resource_type, &reference.attribute)
