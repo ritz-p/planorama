@@ -61483,7 +61483,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1139,
-      "gap": "#726 audit: Missing: user -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded. Missing: user-owned access_key helper; independent credential lifecycle is retained. Implementation follow-up #1139. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1139 exact global same-account user-name references and independent user-owned credential helpers. Credential outputs and key/certificate bodies remain excluded. See aws-network.md#iam-credential-owners-1139.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61492,10 +61492,10 @@
           "user"
         ],
         "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned access_key helper; independent credential lifecycle is retained.",
+        "ownership": "Supported: user-owned access_key helper; independent credential lifecycle is retained.",
         "network": "Not applicable: aws_iam_access_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: user -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: user -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
+        "scope": "Supported: global IAM same-account bindings, including known-account cross-region aliases; no scope from credential outputs.",
         "summaries": "Deferred: no additional iam_access_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_access_key.html.markdown",
         "shapes": {
@@ -61518,7 +61518,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_credentials.rs",
+          "tests/unit/semantic/iam_credentials.rs"
         ]
       }
     },
@@ -61526,7 +61528,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1139,
-      "gap": "#726 audit: Missing: user -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded. Missing: user-owned user_login_profile helper; independent credential lifecycle is retained. Implementation follow-up #1139. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1139 exact global same-account user-name references and independent user-owned credential helpers. Credential outputs and key/certificate bodies remain excluded. See aws-network.md#iam-credential-owners-1139.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61535,10 +61537,10 @@
           "user"
         ],
         "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned user_login_profile helper; independent credential lifecycle is retained.",
+        "ownership": "Supported: user-owned user_login_profile helper; independent credential lifecycle is retained.",
         "network": "Not applicable: aws_iam_user_login_profile is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: user -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: user -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
+        "scope": "Supported: global IAM same-account bindings, including known-account cross-region aliases; no scope from credential outputs.",
         "summaries": "Deferred: no additional iam_user_login_profile summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_user_login_profile.html.markdown",
         "shapes": {
@@ -61561,7 +61563,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_credentials.rs",
+          "tests/unit/semantic/iam_credentials.rs"
         ]
       }
     },
@@ -61569,7 +61573,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1139,
-      "gap": "#726 audit: Missing: user_name -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded. Missing: user-owned service_specific_credential helper; independent credential lifecycle is retained. Implementation follow-up #1139. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1139 exact global same-account user-name references and independent user-owned credential helpers. Credential outputs and key/certificate bodies remain excluded. See aws-network.md#iam-credential-owners-1139.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61578,10 +61582,10 @@
           "user_name"
         ],
         "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned service_specific_credential helper; independent credential lifecycle is retained.",
+        "ownership": "Supported: user-owned service_specific_credential helper; independent credential lifecycle is retained.",
         "network": "Not applicable: aws_iam_service_specific_credential is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: user_name -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: user_name -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
+        "scope": "Supported: global IAM same-account bindings, including known-account cross-region aliases; no scope from credential outputs.",
         "summaries": "Deferred: no additional iam_service_specific_credential summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_service_specific_credential.html.markdown",
         "shapes": {
@@ -61604,7 +61608,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_credentials.rs",
+          "tests/unit/semantic/iam_credentials.rs"
         ]
       }
     },
@@ -61612,7 +61618,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1139,
-      "gap": "#726 audit: Missing: user_name -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded. Missing: user-owned signing_certificate helper; independent credential lifecycle is retained. Implementation follow-up #1139. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1139 exact global same-account user-name references and independent user-owned credential helpers. Credential outputs and key/certificate bodies remain excluded. See aws-network.md#iam-credential-owners-1139.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61621,10 +61627,10 @@
           "user_name"
         ],
         "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned signing_certificate helper; independent credential lifecycle is retained.",
+        "ownership": "Supported: user-owned signing_certificate helper; independent credential lifecycle is retained.",
         "network": "Not applicable: aws_iam_signing_certificate is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: user_name -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: user_name -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
+        "scope": "Supported: global IAM same-account bindings, including known-account cross-region aliases; no scope from credential outputs.",
         "summaries": "Deferred: no additional iam_signing_certificate summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_signing_certificate.html.markdown",
         "shapes": {
@@ -61647,7 +61653,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_credentials.rs",
+          "tests/unit/semantic/iam_credentials.rs"
         ]
       }
     },
@@ -61655,7 +61663,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1139,
-      "gap": "#726 audit: Missing: username -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded. Missing: user-owned user_ssh_key helper; independent credential lifecycle is retained. Implementation follow-up #1139. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1139 exact global same-account user-name references and independent user-owned credential helpers. Credential outputs and key/certificate bodies remain excluded. See aws-network.md#iam-credential-owners-1139.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61664,10 +61672,10 @@
           "username"
         ],
         "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned user_ssh_key helper; independent credential lifecycle is retained.",
+        "ownership": "Supported: user-owned user_ssh_key helper; independent credential lifecycle is retained.",
         "network": "Not applicable: aws_iam_user_ssh_key is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: username -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: username -> IAM user.name with global same-account proof; credential output and certificate/key bodies are excluded.",
+        "scope": "Supported: global IAM same-account bindings, including known-account cross-region aliases; no scope from credential outputs.",
         "summaries": "Deferred: no additional iam_user_ssh_key summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_user_ssh_key.html.markdown",
         "shapes": {
@@ -61707,7 +61715,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_credentials.rs",
+          "tests/unit/semantic/iam_credentials.rs"
         ]
       }
     },
