@@ -37,6 +37,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::route_server::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::traffic_mirror::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::secondary_network::label(resource, attribute) {
         return Some(label);
     }
@@ -761,6 +764,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::traffic_mirror::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
         && super::cloudfront_multitenant::bindings(raw, reference)
         && super::global_accelerator::bindings(raw, reference)
         && (super::lambda_core::label(

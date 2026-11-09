@@ -21,6 +21,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_globalaccelerator_endpoint_group" => {
                 ("listener_arn", "Group listener", "Endpoint groups")
             }
+            "aws_ec2_traffic_mirror_filter_rule" => (
+                "traffic_mirror_filter_id",
+                "Traffic mirror filter",
+                "Mirror rules",
+            ),
             "aws_vpc_route_server_peer" => {
                 ("route_server_endpoint_id", "BGP peer endpoint", "BGP peers")
             }

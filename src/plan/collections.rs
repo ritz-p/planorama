@@ -227,6 +227,7 @@ pub(super) fn annotate(
     crate::provider::aws::lambda_core::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route_server::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::secondary_network::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::traffic_mirror::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::ipam::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::prefix_list_entries::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::kinesis_owners::annotate(nodes, references, &elbv2_evidence);
