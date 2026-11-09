@@ -44277,10 +44277,10 @@
       }
     },
     "aws_lambdamicrovms_image": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 955,
-      "gap": "#714 audit: Missing: build role, explicit managed base-image ARN/version and typed connector ARN list; INTERNET_EGRESS and AWS-managed base image are not managed resources. S3 code URI remains opaque. Follow-up #955. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #955: exact version-qualified image and role references, complete typed connector collections and explicit log-stream parent proof. #714 audit: service-managed markers, opaque code URIs and runtime traffic remain outside managed semantics. See aws-network.md#lambda-microvms-955.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -44293,11 +44293,11 @@
           "egress_network_connectors",
           "image_version"
         ],
-        "placement": "Supported: retain Logical Node for aws_lambdamicrovms_image; basic display is not complete semantics.",
+        "placement": "Supported: independent Logical image resource; shared images are not embedded.",
         "ownership": "Not applicable: retain independent aws_lambdamicrovms_image identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: aws_lambdamicrovms_image has no configured subnet attachment; service references do not establish network containment.",
-        "references": "Missing: build role, explicit managed base-image ARN/version and typed connector ARN list; INTERNET_EGRESS and AWS-managed base image are not managed resources. S3 code URI remains opaque.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: exact managed image ARN with matching known image_version, role ARN, complete connector ARN lists; MicroVM singleton logging.cloudwatch group/stream names require explicit matching stream parent provenance. INTERNET_EGRESS and AWS-managed base images are not managed resources; S3 code URIs remain opaque.",
+        "scope": "Supported: current managed provider/account/region boundaries with global IAM roles; late binding and named-state boundaries preserved.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambdamicrovms_image attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambdamicrovms_image.html.markdown",
         "shapes": {
@@ -44338,17 +44338,19 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/microvms.rs",
+          "tests/unit/semantic/microvms.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}
       }
     },
     "aws_lambdamicrovms_microvm": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 955,
-      "gap": "#714 audit: Missing: image/version, execution role, complete ingress connector and log-group/stream parent references; endpoint URL/lifecycle state does not prove traffic. Missing: review MicroVM Spatial workload card; current Logical fallback hides architecture-bearing identity. Follow-up #955. Six dimensions and pinned field contracts recorded here.",
+      "gap": "Implemented #955: exact version-qualified image and role references, complete typed connector collections and explicit log-stream parent proof. #714 audit: service-managed markers, opaque code URIs and runtime traffic remain outside managed semantics. See aws-network.md#lambda-microvms-955.",
       "review": {
         "issue": 714,
         "implementationCommit": "80b70c8fec8b5a3c75b0457bf0f4061fccea441e",
@@ -44362,11 +44364,11 @@
           "logging.cloudwatch.log_group",
           "logging.cloudwatch.log_stream"
         ],
-        "placement": "Missing: review MicroVM Spatial workload card; current Logical fallback hides architecture-bearing identity.",
+        "placement": "Supported: independent Spatial MicroVM workload card.",
         "ownership": "Not applicable: retain independent aws_lambdamicrovms_microvm identity for the stated reference-only contract; shared endpoints are not embedded. Any future helper embedding requires unique verified parent proof and unchanged coverage.",
         "network": "Not applicable: ingress connectors do not establish MicroVM ownership by a customer subnet; retain independently verified connectivity only.",
-        "references": "Missing: image/version, execution role, complete ingress connector and log-group/stream parent references; endpoint URL/lifecycle state does not prove traffic.",
-        "scope": "Partial: Regional (conditional) eligibility from scope.rs; basic fallback clears account. Known region and compatible provider/account/state are required; identifiers do not manufacture scope.",
+        "references": "Supported: exact managed image ARN with matching known image_version, role ARN, complete connector ARN lists; MicroVM singleton logging.cloudwatch group/stream names require explicit matching stream parent provenance.",
+        "scope": "Supported: current managed provider/account/region boundaries with global IAM roles; late binding and named-state boundaries preserved.",
         "summaries": "Intentionally unsupported: no arbitrary aws_lambdamicrovms_microvm attributes, code, request/response payloads, credentials or runtime outcomes. Safe enum/boolean summaries deferred until an explicit allowlist and unknown-value contract is selected.",
         "officialDocumentation": "website/docs/r/lambdamicrovms_microvm.html.markdown",
         "shapes": {
@@ -44415,7 +44417,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/microvms.rs",
+          "tests/unit/semantic/microvms.rs"
         ],
         "managedDataContract": "No managed alias canonicalization. No same-name data source is registered at the pinned schema; related lookup names do not expand this managed denominator.",
         "dataContracts": {}

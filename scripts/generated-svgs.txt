@@ -158,3 +158,4 @@ examples/global-accelerator.svg
 examples/cloudfront-multitenant.svg
 examples/traffic-mirror.svg
 examples/lambda-capacity.svg
+examples/microvms.svg

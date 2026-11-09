@@ -730,3 +730,9 @@ Missing or empty network evidence retains the independent card without inferred
 containment. Account evidence is rechecked after enrichment. IAM roles keep their
 global scope; network and KMS references retain regional scope. No EC2 capacity,
 ENIs or function-owned instances are synthesized from provider configuration.
+
+### Lambda MicroVMs (#955)
+
+MicroVMs have independent spatial cards; images retain independent logical identities. Image/base-image references require an exact current managed ARN and a known matching image version. Build/execution roles use exact IAM role ARNs. Connector references require complete lists of managed Lambda Core connector ARNs. They do not establish traffic direction, reachability or network containment; `INTERNET_EGRESS` and AWS-managed identifiers never create managed endpoints.
+
+Singleton `logging.cloudwatch` blocks resolve exact log-group/stream names. A stream additionally requires explicit matching log-group provenance from both the MicroVM and the stream. Unknown/sensitive values, incomplete collections, incompatible scopes and lifecycle mismatches retain conservative fallback. Code URIs, endpoint URLs, payloads and runtime states remain opaque.
