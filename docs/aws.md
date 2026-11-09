@@ -633,3 +633,29 @@ unknown/sensitive masks, provider/state boundaries and selection are preserved.
 Computed `sink_arn`, resource-type selectors and log/metric filters do not resolve
 managed log groups or synthesize monitoring relationships. Policy contents do not
 prove authorization; filters, policies and telemetry payloads are not displayed.
+
+## Transfer server architecture (#832)
+
+Transfer servers have independent Spatial cards. Network references are separated
+by known `endpoint_type`: PUBLIC supplies no network placement; VPC accepts
+explicit VPC/subnet/SG/EIP IDs; VPC_ENDPOINT accepts a managed Interface endpoint
+ID. VPC containment requires complete subnet and SG sets whose explicit VPC-ID
+references agree with the server's configured VPC. Missing/default security
+groups are not synthesized. EIP references require known IPV4 mode and a complete
+subnet set of equal cardinality, without claiming public reachability. Computed
+VPC endpoint IDs in VPC mode do not substitute for configured endpoint provenance.
+
+FTPS certificates require a known protocol set containing FTPS and an ACM ARN,
+not a Transfer certificate. Directory ID, Lambda ARN and invocation-role ARN
+references require AWS_DIRECTORY_SERVICE, AWS_LAMBDA and API_GATEWAY respectively.
+Logging roles use IAM ARNs. Structured logs require a complete explicitly referenced
+CloudWatch log-group ARN set; only the documented terminal `:*` is normalized.
+Filters, other suffixes and literal destinations do not establish identity.
+
+`workflow_details` and each `on_upload` / `on_partial_upload` block must be
+singletons. Workflow IDs and execution-role ARNs remain separate, correlated
+references. Shared workflows, roles, certificates and directories stay independent.
+All endpoints require exact known values, compatible accounts, independently known
+regions (with global IAM roles), current unique managed identity and preserved
+state/selection boundaries. Host keys, banners, authentication URLs and file or
+workflow payloads are not summarized. This does not change EFS, Backup or FSx scope.

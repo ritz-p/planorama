@@ -183,3 +183,4 @@ examples/classic-elb.svg
 examples/networkmanager.svg
 examples/cloudwan.svg
 examples/oam.svg
+examples/transfer-server.svg

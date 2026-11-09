@@ -131,6 +131,7 @@ mod step_functions_tests;
 mod streaming;
 pub(crate) mod synthetics;
 pub(crate) mod traffic_mirror;
+pub(crate) mod transfer_server;
 pub(crate) mod vpclattice;
 pub(crate) mod xray_encryption;
 
@@ -347,6 +348,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     service_references::present(&raw, &mut graph);
     s3files::present(&raw, &mut graph);
     vpclattice::present(&raw, &mut graph);
+    transfer_server::present(&raw, &mut graph);
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
