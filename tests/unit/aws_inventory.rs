@@ -227,8 +227,24 @@ fn basic_fixture_preserves_references_counts_and_private_values() {
         .iter()
         .find(|n| n.resource_type == "aws_identitystore_group_membership")
         .unwrap();
-    assert_eq!(membership.references.len(), 1);
-    assert_eq!(membership.references[0].label, "References");
+    assert_eq!(membership.references.len(), 2);
+    assert!(
+        membership
+            .references
+            .iter()
+            .any(|r| r.label == "References")
+    );
+    let member = membership
+        .references
+        .iter()
+        .find(|r| r.label == "Identity Store member")
+        .unwrap();
+    assert!(!member.complete);
+    assert!(member.targets.is_empty());
+    assert_eq!(
+        member.issues,
+        BTreeSet::from([model::DiagnosticReason::UnprovenEndpointValue])
+    );
     assert!(graph.edges.iter().all(|e| !matches!(
         e.kind,
         model::EdgeKind::Association | model::EdgeKind::Containment | model::EdgeKind::Connection
