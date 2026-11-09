@@ -31,6 +31,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::backup_plan::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::identity_center::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::identitystore::label(resource, attribute) {
         return Some(label);
     }
@@ -779,6 +782,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::identity_center::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::identity_center::bindings(raw, reference))
         && (super::identitystore::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

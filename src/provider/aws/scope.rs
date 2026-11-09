@@ -40,6 +40,13 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .as_ref()
         .and_then(|c| c.account.clone());
     if basic.is_some()
+        && super::identity_center::owner(resource).is_none()
+        && !matches!(
+            resource,
+            "aws_ssoadmin_account_assignment"
+                | "aws_ssoadmin_application"
+                | "aws_ssoadmin_permission_set"
+        )
         && super::iam_credentials::owner(resource).is_none()
         && super::iam_policies::owner(resource).is_none()
         && resource != "aws_iam_policy_attachment"
@@ -298,6 +305,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     let region = if global {
         None
     } else if basic.is_some_and(|entry| entry.scope == super::basic::Scope::Regional)
+        || (entity.mode == EntityMode::Data && resource == "aws_ssoadmin_instances")
         || entity.waf_scope == Some(crate::model::WafScope::Regional)
         || matches!(
             resource,

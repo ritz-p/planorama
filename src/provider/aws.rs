@@ -67,6 +67,7 @@ mod iam;
 pub(crate) mod iam_credentials;
 pub(crate) mod iam_policies;
 mod icons;
+pub(crate) mod identity_center;
 pub(crate) mod identitystore;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;

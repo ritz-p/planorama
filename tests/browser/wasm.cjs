@@ -237,6 +237,17 @@ async function main() {
       }
     }
     checkpoint('spatial-parity');
+    for (const fixture of ['traffic-mirror', 'lambda-capacity', 'microvms', 'iam-policies', 'iam-credentials', 'identitystore', 'identity-center']) {
+      const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'-plan.json'), 'utf8');
+      for (const format of ['svg', 'html']) {
+        const result = run(input, {format});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), fixture+' native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+        assert.ok(!result.content.includes('OPAQUE_POLICY_PAYLOAD'));
+      }
+    }
+    checkpoint('network-identity-parity');
     for (const fixture of ['aws-basic', 'service-labels']) {
       const basic = readFileSync(join(root, `tests/fixtures/${fixture}-plan.json`), 'utf8');
       for (const format of ['svg', 'html']) {

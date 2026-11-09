@@ -63174,7 +63174,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set.arn, USER/GROUP identity-store principal, AWS_ACCOUNT Organizations account.id; independently verify instance/store and target-account scope. Not applicable: assignment association is not principal ownership or effective access. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63190,8 +63190,8 @@
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: assignment association is not principal ownership or effective access.",
         "network": "Not applicable: aws_ssoadmin_account_assignment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set.arn, USER/GROUP identity-store principal, AWS_ACCOUNT Organizations account.id; independently verify instance/store and target-account scope.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set.arn, USER/GROUP identity-store principal, AWS_ACCOUNT Organizations account.id; independently verify instance/store and target-account scope. Principal proof requires explicit references to the same current data.aws_ssoadmin_instances with singleton known arns/identity_store_ids lists; multiple-instance lookups remain conservative.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_account_assignment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_account_assignment.html.markdown",
         "shapes": {
@@ -63234,7 +63234,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63308,7 +63310,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: application_arn -> application.application_arn/arn. authorized_targets strings require an explicit target-type contract, not ARN substring parsing. Missing: application-owned application_access_scope helper with independent action coverage. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63319,10 +63321,10 @@
           "authorized_targets"
         ],
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: application-owned application_access_scope helper with independent action coverage.",
+        "ownership": "Supported: application-owned application_access_scope helper with independent action coverage.",
         "network": "Not applicable: aws_ssoadmin_application_access_scope is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: application_arn -> application.application_arn/arn. authorized_targets strings require an explicit target-type contract, not ARN substring parsing.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: application_arn -> application.application_arn/arn. authorized_targets strings require an explicit target-type contract, not ARN substring parsing.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_application_access_scope summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_application_access_scope.html.markdown",
         "shapes": {
@@ -63356,7 +63358,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63364,7 +63368,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: application_arn -> application.application_arn/arn. USER/GROUP principal requires matching identity store/instance evidence. Missing: application-owned application_assignment helper with independent action coverage. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63375,10 +63379,10 @@
           "principal_type"
         ],
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: application-owned application_assignment helper with independent action coverage.",
+        "ownership": "Supported: application-owned application_assignment helper with independent action coverage.",
         "network": "Not applicable: aws_ssoadmin_application_assignment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: application_arn -> application.application_arn/arn. USER/GROUP principal requires matching identity store/instance evidence.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: application_arn -> application.application_arn/arn. USER/GROUP principal requires matching identity store/instance evidence. Principal proof requires explicit references to the same current data.aws_ssoadmin_instances with singleton known arns/identity_store_ids lists; multiple-instance lookups remain conservative.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_application_assignment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_application_assignment.html.markdown",
         "shapes": {
@@ -63409,7 +63413,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63417,7 +63423,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: application_arn -> application.application_arn/arn. Boolean controls configured assignment requirement, not authorization health. Missing: application-owned application_assignment_configuration helper with independent action coverage. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63427,10 +63433,10 @@
           "assignment_required"
         ],
         "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: application-owned application_assignment_configuration helper with independent action coverage.",
+        "ownership": "Supported: application-owned application_assignment_configuration helper with independent action coverage.",
         "network": "Not applicable: aws_ssoadmin_application_assignment_configuration is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: application_arn -> application.application_arn/arn. Boolean controls configured assignment requirement, not authorization health.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: application_arn -> application.application_arn/arn. Boolean controls configured assignment requirement, not authorization health.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_application_assignment_configuration summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_application_assignment_configuration.html.markdown",
         "shapes": {
@@ -63457,7 +63463,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63465,7 +63473,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Customer policy name/path is applied in target accounts, not the SSO administration account. Missing: permission-set-owned customer_managed_policy_attachment controller; policy identity is not embedded ownership. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63476,10 +63484,10 @@
           "customer_managed_policy_reference"
         ],
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: permission-set-owned customer_managed_policy_attachment controller; policy identity is not embedded ownership.",
+        "ownership": "Supported: permission-set-owned customer_managed_policy_attachment controller; policy identity is not embedded ownership.",
         "network": "Not applicable: aws_ssoadmin_customer_managed_policy_attachment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Customer policy name/path is applied in target accounts, not the SSO administration account.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set_arn -> permission_set.arn with matching instance_arn. Customer policy name/path is applied in target accounts, not the SSO administration account.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_customer_managed_policy_attachment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_customer_managed_policy_attachment.html.markdown",
         "shapes": {
@@ -63510,7 +63518,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63518,7 +63528,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Complete name/path set is exclusive management, not administration-account IAM identity. Missing: permission-set-owned customer_managed_policy_attachments_exclusive controller; policy identity is not embedded ownership. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63529,10 +63539,10 @@
           "customer_managed_policy_reference"
         ],
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: permission-set-owned customer_managed_policy_attachments_exclusive controller; policy identity is not embedded ownership.",
+        "ownership": "Supported: permission-set-owned customer_managed_policy_attachments_exclusive controller; policy identity is not embedded ownership.",
         "network": "Not applicable: aws_ssoadmin_customer_managed_policy_attachments_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Complete name/path set is exclusive management, not administration-account IAM identity.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set_arn -> permission_set.arn with matching instance_arn. Complete name/path set is exclusive management, not administration-account IAM identity.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_customer_managed_policy_attachments_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_customer_managed_policy_attachments_exclusive.html.markdown",
         "shapes": {
@@ -63563,7 +63573,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63571,7 +63583,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set_arn -> permission_set.arn with matching instance_arn. AWS-managed policy ARN is not an in-plan customer managed policy by default. Missing: permission-set-owned managed_policy_attachment controller; policy identity is not embedded ownership. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63582,10 +63594,10 @@
           "managed_policy_arn"
         ],
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: permission-set-owned managed_policy_attachment controller; policy identity is not embedded ownership.",
+        "ownership": "Supported: permission-set-owned managed_policy_attachment controller; policy identity is not embedded ownership.",
         "network": "Not applicable: aws_ssoadmin_managed_policy_attachment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set_arn -> permission_set.arn with matching instance_arn. AWS-managed policy ARN is not an in-plan customer managed policy by default.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set_arn -> permission_set.arn with matching instance_arn. AWS-managed policy ARN is not an in-plan customer managed policy by default.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_managed_policy_attachment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_managed_policy_attachment.html.markdown",
         "shapes": {
@@ -63616,7 +63628,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63624,7 +63638,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Complete AWS-managed policy set; empty set is removal intent. Missing: permission-set-owned managed_policy_attachments_exclusive controller; policy identity is not embedded ownership. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63635,10 +63649,10 @@
           "managed_policy_arns"
         ],
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: permission-set-owned managed_policy_attachments_exclusive controller; policy identity is not embedded ownership.",
+        "ownership": "Supported: permission-set-owned managed_policy_attachments_exclusive controller; policy identity is not embedded ownership.",
         "network": "Not applicable: aws_ssoadmin_managed_policy_attachments_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Complete AWS-managed policy set; empty set is removal intent.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set_arn -> permission_set.arn with matching instance_arn. Complete AWS-managed policy set; empty set is removal intent.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_managed_policy_attachments_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_managed_policy_attachments_exclusive.html.markdown",
         "shapes": {
@@ -63672,7 +63686,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63680,7 +63696,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Inline policy JSON is payload and is never interpreted. Missing: permission-set-owned permission_set_inline_policy controller; policy identity is not embedded ownership. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63691,10 +63707,10 @@
           "inline_policy"
         ],
         "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: permission-set-owned permission_set_inline_policy controller; policy identity is not embedded ownership.",
+        "ownership": "Supported: permission-set-owned permission_set_inline_policy controller; policy identity is not embedded ownership.",
         "network": "Not applicable: aws_ssoadmin_permission_set_inline_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Inline policy JSON is payload and is never interpreted.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set_arn -> permission_set.arn with matching instance_arn. Inline policy JSON is payload and is never interpreted.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_permission_set_inline_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_permission_set_inline_policy.html.markdown",
         "shapes": {
@@ -63725,7 +63741,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },
@@ -63733,7 +63751,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1142,
-      "gap": "#726 audit: Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Customer name/path and AWS-managed ARN modes differ; no target-account shortcut. Missing: permission-set-owned permissions_boundary_attachment controller; policy identity is not embedded ownership. Implementation follow-up #1142. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1142 typed application/permission-set ownership, qualified principal references and Organizations target-account references. Singleton explicit aws_ssoadmin_instances evidence links instance/store; ambiguous lists and policy/target payloads remain opaque. See aws-network.md#identity-center-assignments-and-configuration-1142.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63744,10 +63762,10 @@
           "permissions_boundary"
         ],
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: permission-set-owned permissions_boundary_attachment controller; policy identity is not embedded ownership.",
+        "ownership": "Supported: permission-set-owned permissions_boundary_attachment controller; policy identity is not embedded ownership.",
         "network": "Not applicable: aws_ssoadmin_permissions_boundary_attachment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permission_set_arn -> permission_set.arn with matching instance_arn. Customer name/path and AWS-managed ARN modes differ; no target-account shortcut.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permission_set_arn -> permission_set.arn with matching instance_arn. Customer name/path and AWS-managed ARN modes differ; no target-account shortcut.",
+        "scope": "Supported: compatible provider/account/region and state boundaries, matching known instance ARN for permission sets, and explicit instance/store correlation for principals. Organizations target account identity is distinct from the administration provider account; late context bindings are rechecked.",
         "summaries": "Deferred: no additional ssoadmin_permissions_boundary_attachment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/ssoadmin_permissions_boundary_attachment.html.markdown",
         "shapes": {
@@ -63778,7 +63796,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identity_center.rs",
+          "tests/unit/semantic/identity_center.rs"
         ]
       }
     },

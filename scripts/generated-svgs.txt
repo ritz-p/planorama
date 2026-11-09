@@ -162,3 +162,4 @@ examples/microvms.svg
 examples/iam-policies.svg
 examples/iam-credentials.svg
 examples/identitystore.svg
+examples/identity-center.svg

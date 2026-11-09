@@ -1,0 +1,590 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "data.aws_ssoadmin_instances.current",
+      "mode": "data",
+      "type": "aws_ssoadmin_instances",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arns": [
+            "arn:aws:sso:::instance/ssoins-1234567890123456"
+          ],
+          "identity_store_ids": [
+            "d-store"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_identitystore_user.main",
+      "mode": "managed",
+      "type": "aws_identitystore_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_id": "user-main",
+          "identity_store_id": "d-store"
+        }
+      }
+    },
+    {
+      "address": "aws_identitystore_group.main",
+      "mode": "managed",
+      "type": "aws_identitystore_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_id": "group-main",
+          "identity_store_id": "d-store"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_permission_set.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_permission_set",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_application.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_application",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_arn": "arn:aws:sso::123456789012:application/ssoins-1234567890123456/apl-1234567890123456",
+          "arn": "arn:aws:sso::123456789012:application/ssoins-1234567890123456/apl-1234567890123456",
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.target",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "210987654321"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_account_assignment.user",
+      "mode": "managed",
+      "type": "aws_ssoadmin_account_assignment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "principal_id": "user-main",
+          "principal_type": "USER",
+          "target_id": "210987654321",
+          "target_type": "AWS_ACCOUNT"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_account_assignment.group",
+      "mode": "managed",
+      "type": "aws_ssoadmin_account_assignment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "principal_id": "group-main",
+          "principal_type": "GROUP",
+          "target_id": "210987654321",
+          "target_type": "AWS_ACCOUNT"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_application_access_scope.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_application_access_scope",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_arn": "arn:aws:sso::123456789012:application/ssoins-1234567890123456/apl-1234567890123456",
+          "scope": "opaque",
+          "authorized_targets": [
+            "OPAQUE_TARGET"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_application_assignment.user",
+      "mode": "managed",
+      "type": "aws_ssoadmin_application_assignment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_arn": "arn:aws:sso::123456789012:application/ssoins-1234567890123456/apl-1234567890123456",
+          "principal_id": "user-main",
+          "principal_type": "USER"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_application_assignment.group",
+      "mode": "managed",
+      "type": "aws_ssoadmin_application_assignment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_arn": "arn:aws:sso::123456789012:application/ssoins-1234567890123456/apl-1234567890123456",
+          "principal_id": "group-main",
+          "principal_type": "GROUP"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_application_assignment_configuration.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_application_assignment_configuration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_arn": "arn:aws:sso::123456789012:application/ssoins-1234567890123456/apl-1234567890123456",
+          "assignment_required": true
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_customer_managed_policy_attachment.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_customer_managed_policy_attachment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "customer_managed_policy_reference": [
+            {
+              "name": "PRIVATE_POLICY_NAME",
+              "path": "/"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_customer_managed_policy_attachments_exclusive.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_customer_managed_policy_attachments_exclusive",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "customer_managed_policy_reference": []
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_managed_policy_attachment.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_managed_policy_attachment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "managed_policy_arn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_managed_policy_attachments_exclusive.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_managed_policy_attachments_exclusive",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "managed_policy_arns": []
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_permission_set_inline_policy.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_permission_set_inline_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "inline_policy": "PRIVATE_POLICY_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_ssoadmin_permissions_boundary_attachment.main",
+      "mode": "managed",
+      "type": "aws_ssoadmin_permissions_boundary_attachment",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_arn": "arn:aws:sso:::instance/ssoins-1234567890123456",
+          "permission_set_arn": "arn:aws:sso:::permissionSet/ssoins-1234567890123456/ps-1234567890123456",
+          "permissions_boundary": [
+            {
+              "managed_policy_arn": "arn:aws:iam::aws:policy/ReadOnlyAccess"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "data.aws_ssoadmin_instances.current",
+          "mode": "data",
+          "type": "aws_ssoadmin_instances",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_identitystore_user.main",
+          "mode": "managed",
+          "type": "aws_identitystore_user",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_store_id": {
+              "references": [
+                "data.aws_ssoadmin_instances.current.identity_store_ids"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_identitystore_group.main",
+          "mode": "managed",
+          "type": "aws_identitystore_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_store_id": {
+              "references": [
+                "data.aws_ssoadmin_instances.current.identity_store_ids"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_permission_set.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_permission_set",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_arn": {
+              "references": [
+                "data.aws_ssoadmin_instances.current.arns"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_application.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_application",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_arn": {
+              "references": [
+                "data.aws_ssoadmin_instances.current.arns"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.target",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssoadmin_account_assignment.user",
+          "mode": "managed",
+          "type": "aws_ssoadmin_account_assignment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_arn": {
+              "references": [
+                "data.aws_ssoadmin_instances.current.arns"
+              ]
+            },
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            },
+            "principal_id": {
+              "references": [
+                "aws_identitystore_user.main.user_id"
+              ]
+            },
+            "target_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_account_assignment.group",
+          "mode": "managed",
+          "type": "aws_ssoadmin_account_assignment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_arn": {
+              "references": [
+                "data.aws_ssoadmin_instances.current.arns"
+              ]
+            },
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            },
+            "principal_id": {
+              "references": [
+                "aws_identitystore_group.main.group_id"
+              ]
+            },
+            "target_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_application_access_scope.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_application_access_scope",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_arn": {
+              "references": [
+                "aws_ssoadmin_application.main.application_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_application_assignment.user",
+          "mode": "managed",
+          "type": "aws_ssoadmin_application_assignment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_arn": {
+              "references": [
+                "aws_ssoadmin_application.main.arn"
+              ]
+            },
+            "principal_id": {
+              "references": [
+                "aws_identitystore_user.main.user_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_application_assignment.group",
+          "mode": "managed",
+          "type": "aws_ssoadmin_application_assignment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_arn": {
+              "references": [
+                "aws_ssoadmin_application.main.arn"
+              ]
+            },
+            "principal_id": {
+              "references": [
+                "aws_identitystore_group.main.group_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_application_assignment_configuration.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_application_assignment_configuration",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_arn": {
+              "references": [
+                "aws_ssoadmin_application.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_customer_managed_policy_attachment.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_customer_managed_policy_attachment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_customer_managed_policy_attachments_exclusive.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_customer_managed_policy_attachments_exclusive",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_managed_policy_attachment.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_managed_policy_attachment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_managed_policy_attachments_exclusive.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_managed_policy_attachments_exclusive",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_permission_set_inline_policy.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_permission_set_inline_policy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssoadmin_permissions_boundary_attachment.main",
+          "mode": "managed",
+          "type": "aws_ssoadmin_permissions_boundary_attachment",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_set_arn": {
+              "references": [
+                "aws_ssoadmin_permission_set.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
