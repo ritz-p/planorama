@@ -946,3 +946,13 @@ cross-account proposal acceptance. Proposals verify both explicit gateway IDs
 and owner accounts; acceptance verifies the same DX gateway and regional owner.
 All participating accounts must be independently known. CIDRs, computed transit
 attachments and opaque authentication values never create endpoints or summaries.
+
+### Route 53 health check references (#921)
+
+Health checks remain independent global resources. CALCULATED checks reference
+complete sets of exact child health check IDs. CLOUDWATCH_METRIC checks reference
+metric alarm `alarm_name` outputs and require a known `cloudwatch_alarm_region`
+matching the alarm's independently resolved region. RECOVERY_CONTROL checks
+reference routing control ARNs. All modes require explicit current managed
+references, known values and compatible accounts. FQDN, IP, paths, probe regions
+and runtime health never establish application endpoints or network containment.

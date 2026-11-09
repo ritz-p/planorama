@@ -120,6 +120,7 @@ pub(super) fn collect(
                     source_attributes,
                     source_attributes_by_instance,
                     service_reference_verified: false,
+                    service_reference_region: None,
                     service_reference_owner_account: None,
                     service_reference_shared: false,
                     direct_connect_proof: None,

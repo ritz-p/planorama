@@ -252,6 +252,7 @@ pub(super) fn annotate(
     crate::provider::aws::s3files::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::vpclattice::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::direct_connect::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::route53_health::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::secrets_manager::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::kms::annotate(nodes, references, &elbv2_evidence);
 

@@ -46,6 +46,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::s3files::resource(resource)
         && !super::vpclattice::resource(resource)
         && !super::direct_connect::resource(resource)
+        && !super::route53_health::resource(resource)
         && !super::secrets_manager::resource(resource)
         && super::identity_center::owner(resource).is_none()
         && !matches!(

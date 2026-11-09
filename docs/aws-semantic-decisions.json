@@ -48006,10 +48006,10 @@
       }
     },
     "aws_route53_health_check": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 921,
-      "gap": "#715 audit: Missing: type-gated CALCULATED child IDs, CLOUDWATCH_METRIC alarm name with alarm region and RECOVERY_CONTROL ARN. fqdn/IP/path do not prove application endpoints. Follow-up #921. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #921 type-gated calculated children, region-qualified metric alarm and recovery control references. FQDN/IP/path and runtime health remain unsupported. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -48026,8 +48026,8 @@
         "placement": "Supported: retain Logical Node for aws_route53_health_check; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: type-gated CALCULATED child IDs, CLOUDWATCH_METRIC alarm name with alarm region and RECOVERY_CONTROL ARN. fqdn/IP/path do not prove application endpoints.",
-        "scope": "Partial: Global health-check identity; check regions and cloudwatch_alarm_region are not health-check deployment scope.",
+        "references": "Supported: complete CALCULATED child ID sets, CLOUDWATCH_METRIC alarm_name output with known cloudwatch_alarm_region, and RECOVERY_CONTROL routing control ARN. Explicit current managed references and known matching values required.",
+        "scope": "Supported: global health checks remain independent; regional alarm scope is validated against explicit alarm region and account bindings without inheriting provider region.",
         "summaries": "Intentionally unsupported: configured checks never prove health or failover; thresholds/search strings/status excluded.",
         "officialDocumentation": "website/docs/r/route53_health_check.html.markdown",
         "shapes": {
