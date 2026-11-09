@@ -64,6 +64,7 @@ mod fsx;
 pub(crate) mod global_accelerator;
 mod glue;
 mod iam;
+pub(crate) mod iam_credentials;
 pub(crate) mod iam_policies;
 mod icons;
 pub(crate) mod ipam;

@@ -742,3 +742,7 @@ Singleton `logging.cloudwatch` blocks resolve exact log-group/stream names. A st
 Role policies, direct role attachments and instance profiles resolve explicit role name outputs. Permissions boundaries, direct/legacy policy attachments and deprecated role policy sets resolve exact managed policy ARNs. Global IAM references require same-account evidence; known matching accounts permit cross-region provider aliases. Trust and inline policy documents remain opaque.
 
 Exclusive controllers retain independent change metadata and owner navigation, including empty policy sets (removal intent). Complete inline-policy name sets additionally require explicit matching owner references from each inline policy; these names never resolve against the managed-policy namespace. Multi-principal attachments require complete role/group/user name collections independently. Shared policies and profiles are not embedded, and IAM resources remain logical.
+
+### IAM credential owners (#1139)
+
+Access keys, login profiles, service-specific credentials, signing certificates and SSH keys resolve only their exact configured IAM user name (`user`, `user_name` or `username`). Verified current managed users provide owner navigation while each helper retains its own action and identity. Global references require same-account evidence; known matching accounts permit cross-region aliases. Credential outputs, encrypted values, fingerprints and key/certificate bodies are neither interpreted nor displayed.
