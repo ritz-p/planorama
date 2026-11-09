@@ -58092,10 +58092,10 @@
       }
     },
     "aws_xray_encryption_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 999,
-      "gap": "#730 audit: Missing: KMS-mode key ARN; NONE selects default encryption and does not mean unencrypted. Follow-up #999. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Implemented #999 explicit KMS-mode key ARN references with independent account/region proof. NONE selects default encryption, not unencrypted storage. No new configuration summary. See docs/aws.md.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -58107,8 +58107,8 @@
         "placement": "Supported: retain Logical Controller default for aws_xray_encryption_config; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_xray_encryption_config identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_xray_encryption_config has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: KMS-mode key ARN; NONE selects default encryption and does not mean unencrypted. Follow-up #999.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "references": "Supported: KMS-mode key ARN from explicit current managed KMS key references with known matching values; aliases/key IDs and unknown modes remain unresolved. NONE selects default encryption.",
+        "scope": "Supported: independently known compatible regional/account bindings; shared KMS keys retain their scope and identity.",
         "summaries": "Deferred: configured KMS/default encryption summary needs type/key/unknown tests; NONE must never be rendered as disabled encryption.",
         "officialDocumentation": "website/docs/r/xray_encryption_config.html.markdown",
         "shapes": {

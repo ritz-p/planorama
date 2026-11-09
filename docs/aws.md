@@ -586,3 +586,12 @@ Group associations reference group names and canary ARNs while preserving shared
 canary identity. Computed group IDs, engine Lambda/layer ARNs and artifact S3 URIs
 do not establish ownership or create managed resources. Script contents,
 environment values and runtime health are excluded from presentation.
+
+### X-Ray encryption key references (#999)
+
+X-Ray encryption configuration references a customer KMS key only for known
+`type = KMS`, using an explicit matching key ARN despite the `key_id` argument
+name. Key IDs and aliases do not substitute for key ARNs. Independent account and
+region evidence must agree. `NONE` selects default encryption; it does not mean
+unencrypted. The configuration and shared KMS key remain independent, without a
+new encryption-status summary or effective-security claim.

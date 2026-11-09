@@ -25,6 +25,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::synthetics::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::xray_encryption::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::direct_connect::label(resource, attribute) {
         return Some(label);
     }
@@ -824,6 +827,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::s3files::bindings(raw, reference)
         && super::vpclattice::bindings(raw, reference)
         && super::direct_connect::bindings(raw, reference)
+        && super::xray_encryption::bindings(raw, reference)
         && super::synthetics::bindings(raw, reference)
         && super::rum::bindings(raw, reference)
         && super::route53_dnssec::bindings(raw, reference)

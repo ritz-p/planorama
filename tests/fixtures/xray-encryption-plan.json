@@ -1,0 +1,100 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.xray",
+      "type": "aws_kms_key",
+      "name": "xray",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/xray",
+          "id": "xray"
+        }
+      }
+    },
+    {
+      "address": "aws_xray_encryption_config.customer",
+      "type": "aws_xray_encryption_config",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "KMS",
+          "key_id": "arn:aws:kms:us-east-1:111111111111:key/xray"
+        }
+      }
+    },
+    {
+      "address": "aws_xray_encryption_config.default",
+      "type": "aws_xray_encryption_config",
+      "name": "default",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "NONE",
+          "key_id": null
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.xray",
+          "type": "aws_kms_key",
+          "name": "xray",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_xray_encryption_config.customer",
+          "type": "aws_xray_encryption_config",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_id": {
+              "references": [
+                "aws_kms_key.xray.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_xray_encryption_config.default",
+          "type": "aws_xray_encryption_config",
+          "name": "default",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
