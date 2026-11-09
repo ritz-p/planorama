@@ -911,3 +911,19 @@ The initial ARN-target endpoint contract remains deferred. IP/DNS values and TXT
 verification outputs never synthesize application endpoints or Route53 records.
 Configuration gateway references do not place the represented resource in a VPC
 and domain verification references do not assert successful DNS verification.
+
+### Direct Connect connections and virtual interfaces (#786)
+
+Connections, LAGs and DX gateways have independent spatial cards. DX gateways
+remain global; connection locations and BGP addresses do not establish VPC/subnet
+containment. Dedicated connection associations and LAG migration use connection
+ids. Private/public/transit VIFs reference exact connection or LAG ids; private
+VIF gateway references require exactly one known DX/VPN gateway variant. BGP
+peers reference exact VIF ids without embedding shared interface identities.
+
+MACsec associations reference dedicated connection ids and explicitly configured
+Secrets Manager ARNs. CAK, CKN and unmarked BGP authentication values stay opaque.
+ARN and ID outputs are not interchangeable. All endpoints require explicit
+current managed references, known values and compatible provider/account/region
+evidence. Route prefixes, computed endpoints and runtime link health are ignored.
+Hosted/cross-account contracts are handled separately by #787.
