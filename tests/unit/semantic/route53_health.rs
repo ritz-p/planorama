@@ -157,3 +157,33 @@ fn health_global_scope_does_not_inherit_alarm_region_or_claim_reachability() {
         );
     }
 }
+
+#[test]
+fn calculated_child_masks_accept_only_complete_known_non_sensitive_elements() {
+    for location in ["after_unknown", "after_sensitive", "planned_values"] {
+        for (mask, accepted) in [
+            (json!([false, false]), true),
+            (json!([null, false]), true),
+            (json!([false, true]), false),
+            (json!([false]), false),
+            (json!([false, false, false]), false),
+            (json!([false, {}]), false),
+        ] {
+            let mut v = fixture();
+            if location == "planned_values" {
+                v["planned_values"] = json!({"root_module":{"resources":[{"address":"aws_route53_health_check.calculated","sensitive_values":{"child_healthchecks":mask}}]}});
+            } else {
+                v["resource_changes"][2]["change"][location] = json!({"child_healthchecks":mask});
+            }
+            assert_eq!(
+                complete(&v, 2, "Calculated child health checks"),
+                accepted,
+                "{location}: {mask}"
+            );
+        }
+    }
+    let mut v = fixture();
+    v["resource_changes"][4]["change"]["after_sensitive"] =
+        json!({"cloudwatch_alarm_name":[false]});
+    assert!(!complete(&v, 4, "Health check metric alarm"));
+}
