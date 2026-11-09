@@ -23,7 +23,7 @@ fn rule(kind: &str, path: &str) -> Option<(&'static str, &'static str, bool, &'s
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     rule(kind, path).map(|r| r.3)
 }
-fn unique<'a>(
+pub(super) fn unique<'a>(
     refs: &'a [AttributeReference],
     target: usize,
     path: &str,
@@ -34,7 +34,7 @@ fn unique<'a>(
     let r = found.next()?;
     found.next().is_none().then_some(r)
 }
-fn parent(
+pub(super) fn parent(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     evidence: &[(&Value, &Value)],
@@ -147,17 +147,33 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     })
 }
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    present_network(
+        raw,
+        graph,
+        "aws_lambdacore_network_connector",
+        (SUBNETS, GROUPS),
+        bindings,
+    );
+}
+
+pub(super) fn present_network(
+    raw: &Input,
+    graph: &mut Graph,
+    kind: &str,
+    paths: (&str, &str),
+    compatible: fn(&Input, &AttributeReference) -> bool,
+) {
     for (target, node) in raw
         .nodes
         .iter()
         .enumerate()
-        .filter(|(_, n)| n.resource_type == "aws_lambdacore_network_connector")
+        .filter(|(_, n)| n.resource_type == kind)
     {
         let proof = |path| {
             unique(&raw.attributes, target, path)
-                .filter(|r| r.service_reference_verified && bindings(raw, r))
+                .filter(|r| r.service_reference_verified && compatible(raw, r))
         };
-        let Some((subnets, groups)) = proof(SUBNETS).zip(proof(GROUPS)) else {
+        let Some((subnets, groups)) = proof(paths.0).zip(proof(paths.1)) else {
             continue;
         };
         let [parent] = subnets.endpoint_network_context.as_slice() else {
