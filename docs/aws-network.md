@@ -832,3 +832,22 @@ subnet. Computed network_interface_id/vpc_id and IP addresses do not establish
 managed ownership. Literal, unknown, sensitive, incomplete and noncurrent evidence
 falls back conservatively; policies, directory paths and synchronization payloads
 are not interpreted or displayed.
+
+### S3 Tables (#981)
+
+Table buckets and tables have independent spatial cards. Namespaces resolve exact
+bucket ARNs. A table's namespace reference requires matching known table_bucket_arn;
+table-bucket references also accept the matching namespace's table_bucket_arn.
+Table policies require the complete name/namespace/bucket identity. Unique helper
+owners retain independent action/provenance. Warehouse locations, maintenance
+settings and table metadata never generate S3 resources or child tables.
+
+Encryption configuration is an object, with a known aws:kms sse_algorithm and
+an explicit matching KMS key ARN. Replication helpers resolve exact source ARNs,
+IAM role ARNs and a complete correlated destination set under the single rule
+block. Configured destinations may be in the same or another known region with
+compatible same-account evidence; cross-account proof is deferred. This follows
+[AWS's replication contract](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-replication-tables.html)
+without asserting execution, permissions or health. Unknown/sensitive/incomplete,
+noncurrent or foreign evidence stays unresolved; policy/metadata payloads remain
+opaque.

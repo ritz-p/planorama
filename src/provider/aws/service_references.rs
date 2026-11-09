@@ -16,6 +16,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::s3files::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::s3tables::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::kms::label(resource, attribute) {
         return Some(label);
     }
@@ -795,6 +798,7 @@ pub(crate) fn annotate(
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::kms::bindings(raw, reference)
+        && super::s3tables::bindings(raw, reference)
         && super::s3files::bindings(raw, reference)
         && super::secrets_manager::bindings(raw, reference)
         && (super::identity_center::label(
@@ -1386,7 +1390,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::secrets_manager::indexed(&node.resource_type, &reference.attribute)
+        if super::s3tables::indexed(&node.resource_type, &reference.attribute)
+            || super::secrets_manager::indexed(&node.resource_type, &reference.attribute)
             || super::route53_records::indexed(&node.resource_type, &reference.attribute)
             || super::appsync::indexed(&node.resource_type, &reference.attribute)
             || super::s3_access::indexed(&node.resource_type, &reference.attribute)

@@ -53097,10 +53097,10 @@
       }
     },
     "aws_s3tables_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: table-bucket ARN owner; namespace name is bucket-qualified. Follow-up #981. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53110,10 +53110,10 @@
           "table_bucket_arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_s3tables_namespace; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Missing: verified namespace-to-table-bucket owner navigation; preserve namespace identity.",
+        "ownership": "Supported: unique verified bucket/table owner navigation preserves independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_s3tables_namespace has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: table-bucket ARN owner; namespace name is bucket-qualified. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: table_bucket_arn -> exact table bucket.arn with current compatible evidence; namespace identity remains bucket-qualified.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Deferred: aws_s3tables_namespace settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3tables_namespace.html.markdown",
         "shapes": {
@@ -53143,15 +53143,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
     "aws_s3tables_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: table-bucket ARN, bucket-qualified namespace and mode-gated KMS ARN; warehouse URI is not a configured S3 bucket. Follow-up #981. Missing: Logical table is independent structured storage; review presentation together with bucket/namespace ownership. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53163,11 +53165,11 @@
           "arn",
           "encryption_configuration"
         ],
-        "placement": "Missing: Logical table is independent structured storage; review presentation together with bucket/namespace ownership.",
-        "ownership": "Not applicable: retain independent aws_s3tables_table identity and action; references do not establish exclusive presentation ownership.",
+        "placement": "Supported: independent Spatial storage card; namespace navigation does not create network containment.",
+        "ownership": "Not applicable: independent Spatial storage retains its own identity; references to buckets, namespaces and keys do not embed the table.",
         "network": "Not applicable: aws_s3tables_table has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: table-bucket ARN, bucket-qualified namespace and mode-gated KMS ARN; warehouse URI is not a configured S3 bucket. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: table_bucket_arn -> bucket.arn or matching namespace.table_bucket_arn; namespace -> namespace.namespace with matching bucket ARN. Object encryption_configuration uses known aws:kms mode and exact key ARN; warehouse URI never identifies a configured S3 bucket.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Deferred: aws_s3tables_table settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3tables_table.html.markdown",
         "shapes": {
@@ -53215,15 +53217,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
     "aws_s3tables_table_bucket": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: mode-gated KMS key ARN; no implicit table children from maintenance settings. Follow-up #981. Missing: Logical table bucket is independent storage; review Spatial presentation. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53233,11 +53237,11 @@
           "arn",
           "encryption_configuration"
         ],
-        "placement": "Missing: Logical table bucket is independent storage; review Spatial presentation.",
-        "ownership": "Not applicable: retain independent aws_s3tables_table_bucket identity and action; references do not establish exclusive presentation ownership.",
+        "placement": "Supported: independent Spatial storage card; namespace navigation does not create network containment.",
+        "ownership": "Not applicable: independent Spatial storage retains its own identity; references to buckets, namespaces and keys do not embed the table.",
         "network": "Not applicable: aws_s3tables_table_bucket has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: mode-gated KMS key ARN; no implicit table children from maintenance settings. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: object encryption_configuration.kms_key_arn resolves exact key ARN only with known aws:kms mode; maintenance settings never generate children.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Deferred: aws_s3tables_table_bucket settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3tables_table_bucket.html.markdown",
         "shapes": {
@@ -53277,15 +53281,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
     "aws_s3tables_table_bucket_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: explicit table-bucket ARN; policy document remains opaque. Follow-up #981. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53294,10 +53300,10 @@
           "table_bucket_arn"
         ],
         "placement": "Supported: retain Logical Policy default for aws_s3tables_table_bucket_policy; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_s3tables_table_bucket_policy identity and action; references do not establish exclusive presentation ownership.",
+        "ownership": "Supported: unique verified bucket/table owner navigation preserves independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_s3tables_table_bucket_policy has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: explicit table-bucket ARN; policy document remains opaque. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: table_bucket_arn -> exact table bucket.arn with current compatible evidence; namespace identity remains bucket-qualified.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Intentionally unsupported: aws_s3tables_table_bucket_policy policy/grantee contents and effective authorization are not interpreted or emitted.",
         "officialDocumentation": "website/docs/r/s3tables_table_bucket_policy.html.markdown",
         "shapes": {
@@ -53323,15 +53329,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
     "aws_s3tables_table_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: table identity requires bucket ARN plus namespace and table name, not name alone. Follow-up #981. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53342,10 +53350,10 @@
           "table_bucket_arn"
         ],
         "placement": "Supported: retain Logical Policy default for aws_s3tables_table_policy; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_s3tables_table_policy identity and action; references do not establish exclusive presentation ownership.",
+        "ownership": "Supported: unique verified bucket/table owner navigation preserves independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_s3tables_table_policy has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: table identity requires bucket ARN plus namespace and table name, not name alone. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: name -> table.name only with matching known namespace and table_bucket_arn; table identity is bucket-qualified.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Intentionally unsupported: aws_s3tables_table_policy policy/grantee contents and effective authorization are not interpreted or emitted.",
         "officialDocumentation": "website/docs/r/s3tables_table_policy.html.markdown",
         "shapes": {
@@ -53379,15 +53387,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
     "aws_s3tables_table_bucket_replication": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: source table_bucket ARN, role ARN and list-rule/set-destination table-bucket ARN references; no replication health inference. Follow-up #981. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53398,10 +53408,10 @@
           "rule.destination.destination_table_bucket_arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_s3tables_table_bucket_replication; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_s3tables_table_bucket_replication identity and action; references do not establish exclusive presentation ownership.",
+        "ownership": "Supported: unique verified bucket/table owner navigation preserves independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_s3tables_table_bucket_replication has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: source table_bucket ARN, role ARN and list-rule/set-destination table-bucket ARN references; no replication health inference. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: exact source table/table-bucket ARN and role ARN; correlated list-rule/set-destination bucket ARN references require complete known values. Same-account replication may cross known regions; cross-account replication remains unresolved.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Deferred: aws_s3tables_table_bucket_replication settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3tables_table_bucket_replication.html.markdown",
         "shapes": {
@@ -53437,15 +53447,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
     "aws_s3tables_table_replication": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 981,
-      "gap": "#719 audit: Missing: source table ARN, role ARN and list-rule/set-destination table-bucket ARN references; no replication health inference. Follow-up #981. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #981 exact Table Bucket/qualified namespace/table references, encryption-mode proof and complete replication destination sets. See docs/aws-network.md; policies and table metadata remain opaque.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53456,10 +53468,10 @@
           "rule.destination.destination_table_bucket_arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_s3tables_table_replication; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_s3tables_table_replication identity and action; references do not establish exclusive presentation ownership.",
+        "ownership": "Supported: unique verified bucket/table owner navigation preserves independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_s3tables_table_replication has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: source table ARN, role ARN and list-rule/set-destination table-bucket ARN references; no replication health inference. Follow-up #981.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: exact source table/table-bucket ARN and role ARN; correlated list-rule/set-destination bucket ARN references require complete known values. Same-account replication may cross known regions; cross-account replication remains unresolved.",
+        "scope": "Partial: known compatible regional/account bindings; only replication destination references may cross regions. IAM roles retain global scope; cross-account replication is deferred.",
         "summaries": "Deferred: aws_s3tables_table_replication settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3tables_table_replication.html.markdown",
         "shapes": {
@@ -53495,7 +53507,9 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3tables.rs",
+          "tests/unit/semantic/s3tables.rs"
         ]
       }
     },
