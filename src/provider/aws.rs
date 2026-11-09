@@ -64,6 +64,7 @@ mod fsx;
 pub(crate) mod global_accelerator;
 mod glue;
 mod iam;
+pub(crate) mod iam_policies;
 mod icons;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
@@ -243,6 +244,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_iam_user_group_membership"
         | "aws_iam_user_policy_attachment"
         | "aws_iam_group_policy_attachment"
+        | "aws_iam_role_policy_attachment"
         | "aws_iam_policy"
         | "aws_iam_role_policy"
         | "aws_iam_instance_profile"

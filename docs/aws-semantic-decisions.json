@@ -6418,7 +6418,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: permissions_boundary -> policy.arn with same-account proof; no trust/policy evaluation. Not applicable: #517 Logical identity, no spatial service promotion. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -6428,11 +6428,11 @@
           "name",
           "permissions_boundary"
         ],
-        "placement": "Supported: Identity / Identity; Logical / Logical; Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
         "ownership": "Not applicable: #517 Logical identity, no spatial service promotion.",
         "network": "Not applicable: aws_iam_user is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permissions_boundary -> policy.arn with same-account proof; no trust/policy evaluation.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permissions_boundary -> policy.arn with same-account proof; no trust/policy evaluation.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_user summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_user.html.markdown",
         "shapes": {
@@ -6479,7 +6479,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -61812,7 +61814,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: group_name -> group.name and complete policy_names -> exact inline policy.name scoped to the same group; not managed policy ARNs. Missing: group-owned exclusive inline-policy controller, empty set is removal intent, not missing data. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61821,11 +61823,11 @@
           "group_name",
           "policy_names"
         ],
-        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: group-owned exclusive inline-policy controller, empty set is removal intent, not missing data.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: group-owned exclusive inline-policy controller, empty set is removal intent, not missing data.",
         "network": "Not applicable: aws_iam_group_policies_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: group_name -> group.name and complete policy_names -> exact inline policy.name scoped to the same group; not managed policy ARNs.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: group_name -> group.name and complete policy_names -> exact inline policy.name scoped to the same group; not managed policy ARNs.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_group_policies_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_group_policies_exclusive.html.markdown",
         "shapes": {
@@ -61855,7 +61857,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -61863,7 +61867,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: group_name -> group.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management. Missing: group-owned exclusive attachment controller; policies remain shared identities. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61872,11 +61876,11 @@
           "group_name",
           "policy_arns"
         ],
-        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: group-owned exclusive attachment controller; policies remain shared identities.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: group-owned exclusive attachment controller; policies remain shared identities.",
         "network": "Not applicable: aws_iam_group_policy_attachments_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: group_name -> group.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: group_name -> group.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_group_policy_attachments_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_group_policy_attachments_exclusive.html.markdown",
         "shapes": {
@@ -61906,7 +61910,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -61914,7 +61920,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: user_name -> user.name and complete policy_names -> exact inline policy.name scoped to the same user; not managed policy ARNs. Missing: user-owned exclusive inline-policy controller, empty set is removal intent, not missing data. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61923,11 +61929,11 @@
           "user_name",
           "policy_names"
         ],
-        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned exclusive inline-policy controller, empty set is removal intent, not missing data.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: user-owned exclusive inline-policy controller, empty set is removal intent, not missing data.",
         "network": "Not applicable: aws_iam_user_policies_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: user_name -> user.name and complete policy_names -> exact inline policy.name scoped to the same user; not managed policy ARNs.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: user_name -> user.name and complete policy_names -> exact inline policy.name scoped to the same user; not managed policy ARNs.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_user_policies_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_user_policies_exclusive.html.markdown",
         "shapes": {
@@ -61957,7 +61963,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -61965,7 +61973,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: user_name -> user.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management. Missing: user-owned exclusive attachment controller; policies remain shared identities. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61974,11 +61982,11 @@
           "user_name",
           "policy_arns"
         ],
-        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: user-owned exclusive attachment controller; policies remain shared identities.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: user-owned exclusive attachment controller; policies remain shared identities.",
         "network": "Not applicable: aws_iam_user_policy_attachments_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: user_name -> user.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: user_name -> user.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_user_policy_attachments_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_user_policy_attachments_exclusive.html.markdown",
         "shapes": {
@@ -62008,7 +62016,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62016,7 +62026,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: role_name -> role.name and complete policy_names -> exact inline policy.name scoped to the same role; not managed policy ARNs. Missing: role-owned exclusive inline-policy controller, empty set is removal intent, not missing data. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62025,11 +62035,11 @@
           "role_name",
           "policy_names"
         ],
-        "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: role-owned exclusive inline-policy controller, empty set is removal intent, not missing data.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: role-owned exclusive inline-policy controller, empty set is removal intent, not missing data.",
         "network": "Not applicable: aws_iam_role_policies_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: role_name -> role.name and complete policy_names -> exact inline policy.name scoped to the same role; not managed policy ARNs.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: role_name -> role.name and complete policy_names -> exact inline policy.name scoped to the same role; not managed policy ARNs.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_role_policies_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_role_policies_exclusive.html.markdown",
         "shapes": {
@@ -62059,7 +62069,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62067,7 +62079,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: role_name -> role.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management. Missing: role-owned exclusive attachment controller; policies remain shared identities. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62076,11 +62088,11 @@
           "role_name",
           "policy_arns"
         ],
-        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: role-owned exclusive attachment controller; policies remain shared identities.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: role-owned exclusive attachment controller; policies remain shared identities.",
         "network": "Not applicable: aws_iam_role_policy_attachments_exclusive is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: role_name -> role.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: role_name -> role.name and complete policy_arns -> IAM policy.arn; empty set is valid exclusive management.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_role_policy_attachments_exclusive summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_role_policy_attachments_exclusive.html.markdown",
         "shapes": {
@@ -62110,7 +62122,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62118,7 +62132,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: role -> IAM role.name with exact known value/account proof; legacy generic Role label is not a dedicated verified contract. Not applicable: profile is independent role configuration, not a running instance. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62128,11 +62142,11 @@
           "arn",
           "name"
         ],
-        "placement": "Supported: Policy / Policy; Logical / Logical; Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
         "ownership": "Not applicable: profile is independent role configuration, not a running instance.",
         "network": "Not applicable: aws_iam_instance_profile is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: role -> IAM role.name with exact known value/account proof; legacy generic Role label is not a dedicated verified contract.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: role -> IAM role.name with exact known value/account proof; legacy generic Role label is not a dedicated verified contract.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_instance_profile summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_instance_profile.html.markdown",
         "shapes": {
@@ -62172,7 +62186,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62348,7 +62364,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: explicit policy.arn and complete role/group/user name collections, independently scoped; deprecated resource is not an alias of direct attachments. Not applicable: exclusive multi-principal association; do not infer ownership of shared policy. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62359,11 +62375,11 @@
           "roles",
           "users"
         ],
-        "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
         "ownership": "Not applicable: exclusive multi-principal association; do not infer ownership of shared policy.",
         "network": "Not applicable: aws_iam_policy_attachment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: explicit policy.arn and complete role/group/user name collections, independently scoped; deprecated resource is not an alias of direct attachments.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: explicit policy.arn and complete role/group/user name collections, independently scoped; deprecated resource is not an alias of direct attachments.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_policy_attachment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_policy_attachment.html.markdown",
         "shapes": {
@@ -62407,7 +62423,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62415,7 +62433,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: permissions_boundary -> IAM policy.arn and complete deprecated managed_policy_arns; trust/inline policy JSON excluded. Not applicable: independent Logical role identity, deprecated inline_policy does not create separate managed policy resources. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62427,11 +62445,11 @@
           "managed_policy_arns",
           "inline_policy"
         ],
-        "placement": "Supported: Identity / Identity; Logical / Logical; Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
         "ownership": "Not applicable: independent Logical role identity, deprecated inline_policy does not create separate managed policy resources.",
         "network": "Not applicable: aws_iam_role is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: permissions_boundary -> IAM policy.arn and complete deprecated managed_policy_arns; trust/inline policy JSON excluded.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: permissions_boundary -> IAM policy.arn and complete deprecated managed_policy_arns; trust/inline policy JSON excluded.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_role summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_role.html.markdown",
         "shapes": {
@@ -62489,7 +62507,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62497,7 +62517,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: role -> IAM role.name; inline policy.name belongs to role, not global managed policy namespace. Missing: role-owned inline policy navigation with independent change metadata. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62507,11 +62527,11 @@
           "name",
           "policy"
         ],
-        "placement": "Supported: Policy / Policy; Logical / Logical; Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: role-owned inline policy navigation with independent change metadata.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
+        "ownership": "Supported: role-owned inline policy navigation with independent change metadata.",
         "network": "Not applicable: aws_iam_role_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: role -> IAM role.name; inline policy.name belongs to role, not global managed policy namespace.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: role -> IAM role.name; inline policy.name belongs to role, not global managed policy namespace.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_role_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_role_policy.html.markdown",
         "shapes": {
@@ -62542,7 +62562,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },
@@ -62550,7 +62572,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1138,
-      "gap": "#726 audit: Missing: role -> role.name and policy_arn -> policy.arn; source references must be typed and known. Not applicable: direct attachment association, shared policy remains independent. Implementation follow-up #1138. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1138 exact principal names, managed policy ARNs, complete collections and same-owner inline-policy names; independent helper actions and global account boundaries remain intact. Policy/trust JSON is opaque. See aws-network.md#iam-policy-management-1138.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -62559,11 +62581,11 @@
           "role",
           "policy_arn"
         ],
-        "placement": "Supported: Association / Association; Spatial / Spatial; Iam / AWS Identity and Access Management runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
+        "placement": "Supported: Logical IAM identity/configuration; exclusive controllers and role inline policies have verified owner navigation. Shared policies and instance profiles remain independent.",
         "ownership": "Not applicable: direct attachment association, shared policy remains independent.",
         "network": "Not applicable: aws_iam_role_policy_attachment is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: role -> role.name and policy_arn -> policy.arn; source references must be typed and known.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: role -> role.name and policy_arn -> policy.arn; source references must be typed and known.",
+        "scope": "Supported: global IAM references require compatible provider bindings and same-account proof. Cross-region aliases require known matching accounts; missing or conflicting account evidence cannot establish identity.",
         "summaries": "Deferred: no additional iam_role_policy_attachment summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/iam_role_policy_attachment.html.markdown",
         "shapes": {
@@ -62590,7 +62612,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/iam_policies.rs",
+          "tests/unit/semantic/iam_policies.rs"
         ]
       }
     },

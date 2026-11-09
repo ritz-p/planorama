@@ -736,3 +736,9 @@ ENIs or function-owned instances are synthesized from provider configuration.
 MicroVMs have independent spatial cards; images retain independent logical identities. Image/base-image references require an exact current managed ARN and a known matching image version. Build/execution roles use exact IAM role ARNs. Connector references require complete lists of managed Lambda Core connector ARNs. They do not establish traffic direction, reachability or network containment; `INTERNET_EGRESS` and AWS-managed identifiers never create managed endpoints.
 
 Singleton `logging.cloudwatch` blocks resolve exact log-group/stream names. A stream additionally requires explicit matching log-group provenance from both the MicroVM and the stream. Unknown/sensitive values, incomplete collections, incompatible scopes and lifecycle mismatches retain conservative fallback. Code URIs, endpoint URLs, payloads and runtime states remain opaque.
+
+### IAM policy management (#1138)
+
+Role policies, direct role attachments and instance profiles resolve explicit role name outputs. Permissions boundaries, direct/legacy policy attachments and deprecated role policy sets resolve exact managed policy ARNs. Global IAM references require same-account evidence; known matching accounts permit cross-region provider aliases. Trust and inline policy documents remain opaque.
+
+Exclusive controllers retain independent change metadata and owner navigation, including empty policy sets (removal intent). Complete inline-policy name sets additionally require explicit matching owner references from each inline policy; these names never resolve against the managed-policy namespace. Multi-principal attachments require complete role/group/user name collections independently. Shared policies and profiles are not embedded, and IAM resources remain logical.

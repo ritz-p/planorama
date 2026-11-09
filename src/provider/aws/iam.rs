@@ -25,11 +25,14 @@ fn rule(resource: &str, attribute: &str) -> Option<(&'static str, &'static str, 
         ("aws_iam_user_policy_attachment" | "aws_iam_group_policy_attachment", "policy_arn") => {
             Some(("aws_iam_policy", "arn", false))
         }
-        _ => None,
+        _ => super::iam_policies::rule(resource, attribute),
     }
 }
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::iam_policies::label(resource, attribute) {
+        return Some(label);
+    }
     rule(resource, attribute)?;
     Some(match attribute {
         "users" => "Member users",
