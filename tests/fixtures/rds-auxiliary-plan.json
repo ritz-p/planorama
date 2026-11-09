@@ -1,0 +1,319 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_rds_cluster.source",
+      "type": "aws_rds_cluster",
+      "name": "source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:rds:us-east-1:111111111111:cluster:source",
+          "cluster_identifier": "source",
+          "id": "source",
+          "cluster_scalability_type": "limitless"
+        }
+      }
+    },
+    {
+      "address": "aws_db_instance.source",
+      "type": "aws_db_instance",
+      "name": "source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "db-source",
+          "arn": "arn:aws:rds:us-east-1:111111111111:db:source"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.rds",
+      "type": "aws_kms_key",
+      "name": "rds",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/rds",
+          "key_id": "rds",
+          "id": "rds"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_namespace.target",
+      "type": "aws_redshiftserverless_namespace",
+      "name": "target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:redshift-serverless:us-east-1:111111111111:namespace/warehouse",
+          "namespace_name": "warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_cluster.target",
+      "type": "aws_redshift_cluster",
+      "name": "target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_namespace_arn": "arn:aws:redshift:us-east-1:111111111111:namespace:warehouse",
+          "arn": "arn:aws:redshift:us-east-1:111111111111:cluster:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_activity_stream.audit",
+      "type": "aws_rds_cluster_activity_stream",
+      "name": "audit",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:rds:us-east-1:111111111111:cluster:source",
+          "kms_key_id": "rds",
+          "mode": "async",
+          "kinesis_stream_name": "PRIVATE_COMPUTED_STREAM"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_instance_state.state",
+      "type": "aws_rds_instance_state",
+      "name": "state",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "db-source",
+          "state": "PRIVATE_RUNTIME_STATE"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_shard_group.shard",
+      "type": "aws_rds_shard_group",
+      "name": "shard",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_cluster_identifier": "source",
+          "db_shard_group_identifier": "shard"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_integration.serverless",
+      "type": "aws_rds_integration",
+      "name": "serverless",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_arn": "arn:aws:rds:us-east-1:111111111111:cluster:source",
+          "target_arn": "arn:aws:redshift-serverless:us-east-1:111111111111:namespace/warehouse",
+          "kms_key_id": "arn:aws:kms:us-east-1:111111111111:key/rds",
+          "data_filter": "PRIVATE_FILTER"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_integration.provisioned",
+      "type": "aws_rds_integration",
+      "name": "provisioned",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_arn": "arn:aws:rds:us-east-1:111111111111:db:source",
+          "target_arn": "arn:aws:redshift:us-east-1:111111111111:namespace:warehouse"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_rds_cluster.source",
+          "type": "aws_rds_cluster",
+          "name": "source",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_instance.source",
+          "type": "aws_db_instance",
+          "name": "source",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.rds",
+          "type": "aws_kms_key",
+          "name": "rds",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshiftserverless_namespace.target",
+          "type": "aws_redshiftserverless_namespace",
+          "name": "target",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_cluster.target",
+          "type": "aws_redshift_cluster",
+          "name": "target",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rds_cluster_activity_stream.audit",
+          "type": "aws_rds_cluster_activity_stream",
+          "name": "audit",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_rds_cluster.source.arn"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.rds.key_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_instance_state.state",
+          "type": "aws_rds_instance_state",
+          "name": "state",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identifier": {
+              "references": [
+                "aws_db_instance.source.identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_shard_group.shard",
+          "type": "aws_rds_shard_group",
+          "name": "shard",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.source.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_integration.serverless",
+          "type": "aws_rds_integration",
+          "name": "serverless",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_arn": {
+              "references": [
+                "aws_rds_cluster.source.arn"
+              ]
+            },
+            "target_arn": {
+              "references": [
+                "aws_redshiftserverless_namespace.target.arn"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.rds.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_integration.provisioned",
+          "type": "aws_rds_integration",
+          "name": "provisioned",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_arn": {
+              "references": [
+                "aws_db_instance.source.arn"
+              ]
+            },
+            "target_arn": {
+              "references": [
+                "aws_redshift_cluster.target.cluster_namespace_arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
