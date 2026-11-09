@@ -57743,10 +57743,10 @@
       }
     },
     "aws_rum_app_monitor": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 997,
-      "gap": "#730 audit: Missing: guest IAM role ARN and Cognito identity pool ID; domain/URLs are not Route53/CloudFront identity. Computed cw_log_group is not configured managed ownership. Follow-up #997. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Implemented #997 guest role ARN, identity pool ID, app monitor name and Evidently-mode IAM role references. Computed log groups and unsupported experiment endpoints remain deferred. See docs/aws.md.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -57761,8 +57761,8 @@
         "placement": "Supported: retain Logical Node default for aws_rum_app_monitor; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_rum_app_monitor identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_rum_app_monitor has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: guest IAM role ARN and Cognito identity pool ID; domain/URLs are not Route53/CloudFront identity. Computed cw_log_group is not configured managed ownership. Follow-up #997.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "references": "Supported: exact guest IAM role ARN and Cognito identity pool ID in singleton app_monitor_configuration with complete indexed evidence. Domain/URLs and computed cw_log_group never prove endpoints or ownership.",
+        "scope": "Supported: independent provider/account/region proof, with global IAM role scope preserved.",
         "summaries": "Deferred: aws_rum_app_monitor configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/rum_app_monitor.html.markdown",
         "shapes": {
@@ -57810,10 +57810,10 @@
       }
     },
     "aws_rum_metrics_destination": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 997,
-      "gap": "#730 audit: Missing: app-monitor name and Evidently-mode IAM role ARN. destination_arn is an experiment ARN, not project/launch ARN; no managed experiment type in pinned inventory, so defer experiment endpoint until supported data/external identity proof. Follow-up #997. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Implemented #997 guest role ARN, identity pool ID, app monitor name and Evidently-mode IAM role references. Computed log groups and unsupported experiment endpoints remain deferred. See docs/aws.md.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -57825,10 +57825,10 @@
           "iam_role_arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_rum_metrics_destination; configuration/monitor identity remains independently selectable without automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_rum_metrics_destination identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
+        "ownership": "Supported: uniquely referenced app monitor navigation preserves metrics destination identity; role and pool consumers do not establish shared endpoint ownership.",
         "network": "Not applicable: aws_rum_metrics_destination has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: app-monitor name and Evidently-mode IAM role ARN. destination_arn is an experiment ARN, not project/launch ARN; no managed experiment type in pinned inventory, so defer experiment endpoint until supported data/external identity proof. Follow-up #997.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "references": "Partial: explicit app monitor name and Evidently-mode IAM role ARN. destination_arn is an experiment ARN, not project/launch ARN; pinned inventory has no managed experiment endpoint.",
+        "scope": "Supported: independent provider/account/region proof, with global IAM role scope preserved.",
         "summaries": "Deferred: aws_rum_metrics_destination configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/rum_metrics_destination.html.markdown",
         "shapes": {

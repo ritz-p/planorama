@@ -107,6 +107,7 @@ mod redshift_tests;
 pub(crate) mod route53_dnssec;
 pub(crate) mod route53_health;
 pub(crate) mod route_server;
+pub(crate) mod rum;
 pub(crate) mod s3_access;
 mod s3_exports;
 pub(crate) mod s3files;

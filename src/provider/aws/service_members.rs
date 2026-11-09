@@ -68,6 +68,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Registered domain owner",
                 "Delegation signers",
             ),
+            "aws_rum_metrics_destination" => (
+                "app_monitor_name",
+                "RUM app monitor",
+                "Metrics destinations",
+            ),
             "aws_vpclattice_resource_configuration" => (
                 "resource_configuration_group_id",
                 "Parent resource group",

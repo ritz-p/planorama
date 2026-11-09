@@ -562,3 +562,13 @@ Unknown or malformed parent blocks cannot establish a report relationship. The
 same current-resource, complete-reference and independent scope checks as the
 agent/location rules apply. Report prefixes, transfer options and runtime progress
 are not emitted as summaries.
+### RUM configuration references (#997)
+
+App monitors reference guest IAM role ARNs and Cognito identity pool IDs through
+complete, correlated singleton `app_monitor_configuration` evidence. Metrics
+destinations navigate to exact app monitor names; destination IAM roles require
+known Evidently mode. IAM roles remain global and identity pools retain their
+independently verified region/account. Domains, URLs, computed log groups and
+monitor IDs do not imply ownership. Evidently experiment endpoints remain deferred
+because the pinned inventory has no managed experiment resource; project and
+launch ARNs are not substitutes. No telemetry payload or runtime health is shown.
