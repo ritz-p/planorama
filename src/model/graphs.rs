@@ -29,6 +29,7 @@ pub struct AttributeReference {
     pub source_attributes_by_instance:
         std::collections::BTreeMap<usize, std::collections::BTreeSet<String>>,
     pub service_reference_verified: bool,
+    pub service_reference_region: Option<super::RegionScope>,
     pub service_reference_owner_account: Option<super::AwsAccountScope>,
     pub service_reference_shared: bool,
     pub direct_connect_proof: Option<DirectConnectProof>,

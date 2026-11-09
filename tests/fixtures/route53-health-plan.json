@@ -1,0 +1,218 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_route53_health_check.http",
+      "type": "aws_route53_health_check",
+      "name": "http",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "health-http",
+          "type": "HTTP",
+          "fqdn": "PRIVATE_HEALTH_PAYLOAD",
+          "resource_path": "PRIVATE_HEALTH_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_health_check.tcp",
+      "type": "aws_route53_health_check",
+      "name": "tcp",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "health-tcp",
+          "type": "TCP",
+          "ip_address": "192.0.2.1"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_health_check.calculated",
+      "type": "aws_route53_health_check",
+      "name": "calculated",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "health-calculated",
+          "type": "CALCULATED",
+          "child_healthchecks": [
+            "health-tcp",
+            "health-http"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.main",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "alarm_name": "health-alarm",
+          "arn": "arn:aws:cloudwatch:us-east-1:111111111111:alarm:health-alarm"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_health_check.metric",
+      "type": "aws_route53_health_check",
+      "name": "metric",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "health-metric",
+          "type": "CLOUDWATCH_METRIC",
+          "cloudwatch_alarm_name": "health-alarm",
+          "cloudwatch_alarm_region": "us-east-1"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoverycontrolconfig_routing_control.main",
+      "type": "aws_route53recoverycontrolconfig_routing_control",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:route53-recovery-control::111111111111:controlpanel/p/routingcontrol/c"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_health_check.recovery",
+      "type": "aws_route53_health_check",
+      "name": "recovery",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "health-recovery",
+          "type": "RECOVERY_CONTROL",
+          "routing_control_arn": "arn:aws:route53-recovery-control::111111111111:controlpanel/p/routingcontrol/c"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_route53_health_check.http",
+          "type": "aws_route53_health_check",
+          "name": "http",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53_health_check.tcp",
+          "type": "aws_route53_health_check",
+          "name": "tcp",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53_health_check.calculated",
+          "type": "aws_route53_health_check",
+          "name": "calculated",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "child_healthchecks": {
+              "references": [
+                "aws_route53_health_check.http.id",
+                "aws_route53_health_check.tcp.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_metric_alarm.main",
+          "type": "aws_cloudwatch_metric_alarm",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53_health_check.metric",
+          "type": "aws_route53_health_check",
+          "name": "metric",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cloudwatch_alarm_name": {
+              "references": [
+                "aws_cloudwatch_metric_alarm.main.alarm_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53recoverycontrolconfig_routing_control.main",
+          "type": "aws_route53recoverycontrolconfig_routing_control",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53_health_check.recovery",
+          "type": "aws_route53_health_check",
+          "name": "recovery",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "routing_control_arn": {
+              "references": [
+                "aws_route53recoverycontrolconfig_routing_control.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

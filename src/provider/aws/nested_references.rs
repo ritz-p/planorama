@@ -69,7 +69,7 @@ fn rows<'a>(
         };
         rows(&value[*field], &mask[*field], rest, prefix, lengths, result)?;
     } else {
-        if !matches!(mask, Value::Null | Value::Bool(false)) {
+        if !known_leaf(value, mask) {
             return None;
         }
         result.push((prefix, lengths, value));
@@ -192,5 +192,18 @@ pub(super) fn value<'a>(mut value: &'a Value, mut mask: &Value, path: &str) -> O
             mask = &mask[field];
         }
     }
-    matches!(mask, Value::Null | Value::Bool(false)).then_some(value)
+    known_leaf(value, mask).then_some(value)
+}
+
+fn known_leaf(value: &Value, mask: &Value) -> bool {
+    matches!(mask, Value::Null | Value::Bool(false))
+        || value
+            .as_array()
+            .zip(mask.as_array())
+            .is_some_and(|(values, masks)| {
+                values.len() == masks.len()
+                    && masks
+                        .iter()
+                        .all(|m| matches!(m, Value::Null | Value::Bool(false)))
+            })
 }
