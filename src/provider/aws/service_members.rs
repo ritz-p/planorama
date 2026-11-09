@@ -77,6 +77,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     "Classic ELB policies",
                 )
             }
+            "aws_oam_sink_policy" => ("sink_identifier", "OAM policy sink", "Sink configuration"),
             "aws_rds_shard_group" => (
                 "db_cluster_identifier",
                 "Shard group cluster",

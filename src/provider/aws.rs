@@ -93,6 +93,7 @@ mod network;
 mod network_acl;
 pub(crate) mod networkfirewall;
 pub(crate) mod networkmanager;
+pub(crate) mod oam;
 mod observability;
 mod opensearch_serverless;
 pub(crate) mod organization_accounts;

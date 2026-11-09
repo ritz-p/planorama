@@ -256,6 +256,7 @@ pub(super) fn annotate(
     crate::provider::aws::classic_elb::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::networkmanager::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudwan::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::oam::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::xray_encryption::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::synthetics::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::rum::annotate(nodes, references, &elbv2_evidence);

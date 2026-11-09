@@ -56449,10 +56449,10 @@
       }
     },
     "aws_oam_link": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 994,
-      "gap": "#730 audit: Missing: explicit sink ARN across independently proven source/monitoring accounts; filters do not resolve managed log groups. sink_arn is computed, not substitute for configured sink_identifier. Follow-up #994. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: implemented #994 explicit sink ARN references, independently proven source/monitoring accounts and sink-policy ownership; filters and computed sink_arn never resolve sources or authorization.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56465,10 +56465,10 @@
           "sink_arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_oam_link; configuration/monitor identity remains independently selectable without automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_oam_link identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
+        "ownership": "Not applicable: shared sink and source link remain independent across account boundaries.",
         "network": "Not applicable: aws_oam_link has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: explicit sink ARN across independently proven source/monitoring accounts; filters do not resolve managed log groups. sink_arn is computed, not substitute for configured sink_identifier. Follow-up #994.",
-        "scope": "Partial: Regional eligibility does not prove source account; basic fallback clears account. Sink account remains independent, cross-account sharing cannot merge account containers.",
+        "references": "Supported: #994 explicit sink_identifier to aws_oam_sink.arn or deprecated ARN-valued id with matching known values; sink_id and computed sink_arn are not substitutes.",
+        "scope": "Supported: same independently known region; links require independently proven nonconflicting accounts on both sides, policies require compatible same-account binding.",
         "summaries": "Deferred: aws_oam_link configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/oam_link.html.markdown",
         "shapes": {
@@ -56537,10 +56537,10 @@
       }
     },
     "aws_oam_sink": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 994,
-      "gap": "#730 audit: Not applicable: shared receiving identity has no configured outgoing endpoint; ARN differs from sink_id. Follow-up #994. Missing: Logical sink is an independent observability destination; review Spatial presentation without embedding source accounts. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: implemented #994 explicit sink ARN references, independently proven source/monitoring accounts and sink-policy ownership; filters and computed sink_arn never resolve sources or authorization.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56550,11 +56550,11 @@
           "arn",
           "sink_id"
         ],
-        "placement": "Missing: Logical sink is an independent observability destination; review Spatial presentation without embedding source accounts.",
-        "ownership": "Not applicable: retain independent aws_oam_sink identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
+        "placement": "Supported: independent Spatial observability destination; source accounts are not embedded.",
+        "ownership": "Not applicable: shared sink and source link remain independent across account boundaries.",
         "network": "Not applicable: aws_oam_sink has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Not applicable: shared receiving identity has no configured outgoing endpoint; ARN differs from sink_id. Follow-up #994.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "references": "Not applicable: shared receiving identity has no configured outgoing endpoint; sink_id is distinct from ARN.",
+        "scope": "Supported: same independently known region; links require independently proven nonconflicting accounts on both sides, policies require compatible same-account binding.",
         "summaries": "Deferred: aws_oam_sink configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/oam_sink.html.markdown",
         "shapes": {
@@ -56612,10 +56612,10 @@
       }
     },
     "aws_oam_sink_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 994,
-      "gap": "#730 audit: Missing: sink ARN owner; policy JSON does not prove authorization. Follow-up #994. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: implemented #994 explicit sink ARN references, independently proven source/monitoring accounts and sink-policy ownership; filters and computed sink_arn never resolve sources or authorization.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56626,10 +56626,10 @@
           "sink_id"
         ],
         "placement": "Supported: retain Logical Policy default for aws_oam_sink_policy; configuration/monitor identity remains independently selectable without automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_oam_sink_policy identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
+        "ownership": "Supported: policy has unique same-scope sink owner; policy JSON does not establish authorization.",
         "network": "Not applicable: aws_oam_sink_policy has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: sink ARN owner; policy JSON does not prove authorization. Follow-up #994.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "references": "Supported: #994 explicit sink_identifier to aws_oam_sink.arn or deprecated ARN-valued id with matching known values; sink_id and computed sink_arn are not substitutes.",
+        "scope": "Supported: same independently known region; links require independently proven nonconflicting accounts on both sides, policies require compatible same-account binding.",
         "summaries": "Intentionally unsupported: aws_oam_sink_policy policy/principal/credential contents and effective permissions are not emitted.",
         "officialDocumentation": "website/docs/r/oam_sink_policy.html.markdown",
         "shapes": {

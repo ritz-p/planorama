@@ -1082,7 +1082,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_notifications_organizations_access", "AWS User Notifications", Controller, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSUserNotifications))),
     entry!("aws_notificationscontacts_email_contact", "AWS User Notifications Contacts", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSUserNotifications))),
     entry!("aws_oam_link", "Amazon CloudWatch Observability Access Manager", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
-    entry!("aws_oam_sink", "Amazon CloudWatch Observability Access Manager", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
+    entry!("aws_oam_sink", "Amazon CloudWatch Observability Access Manager", Node, Spatial, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_oam_sink_policy", "Amazon CloudWatch Observability Access Manager", Policy, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_observabilityadmin_centralization_rule_for_organization", "Amazon CloudWatch Observability Admin", Policy, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_observabilityadmin_s3_table_integration", "Amazon CloudWatch Observability Admin", Controller, Logical, Regional, Some(ResourceIcon::Monitoring)),
