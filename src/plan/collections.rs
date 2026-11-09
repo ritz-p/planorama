@@ -247,6 +247,7 @@ pub(super) fn annotate(
     crate::provider::aws::query_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route53_records::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudfront::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::secrets_manager::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::kms::annotate(nodes, references, &elbv2_evidence);
 
     crate::provider::aws::eni::annotate(nodes, references, &elbv2_evidence);

@@ -85,6 +85,7 @@ mod messaging;
 pub(crate) mod messaging_policies;
 pub(crate) mod microvms;
 mod monitoring;
+mod nested_references;
 mod network;
 mod network_acl;
 pub(crate) mod networkfirewall;
@@ -111,6 +112,7 @@ mod scraper;
 pub(crate) mod search;
 pub(crate) mod search_connections;
 pub(crate) mod secondary_network;
+pub(crate) mod secrets_manager;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;

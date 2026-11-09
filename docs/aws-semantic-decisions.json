@@ -4812,7 +4812,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1135,
-      "gap": "#727 audit: Missing: kms_key_id -> exact KMS key and mode-gated replica region/KMS proof; replica blocks are not standalone secret resources. Not applicable: independent secret card #543; do not embed shared keys. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1135 exact current references and secret-owned helper navigation; no secret payload or policy interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -4826,8 +4826,8 @@
         "placement": "Supported: Node / Node; Spatial / Spatial; SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: independent secret card #543; do not embed shared keys.",
         "network": "Not applicable: aws_secretsmanager_secret is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: kms_key_id -> exact KMS key and mode-gated replica region/KMS proof; replica blocks are not standalone secret resources.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: kms_key_id resolves exact current KMS key variants; replica region/KMS proof requires complete correlated blocks, a distinct known destination region and compatible accounts. Replica blocks are not standalone secret resources.",
+        "scope": "Partial: known regional bindings and compatible account evidence are required; only explicit replica KMS references may cross regions. IAM partner roles retain global scope.",
         "summaries": "Deferred: no additional secretsmanager_secret summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/secretsmanager_secret.html.markdown",
         "shapes": {
@@ -4883,7 +4883,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/secrets_manager.rs",
+          "tests/unit/semantic/secrets_manager_references.rs"
         ]
       }
     },
@@ -60197,7 +60199,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1135,
-      "gap": "#727 audit: Missing: secret_arn -> secret.arn; no policy-body inference. Missing: secret-owned policy helper with independent metadata. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1135 exact current references and secret-owned helper navigation; no secret payload or policy interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60207,10 +60209,10 @@
           "policy"
         ],
         "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: secret-owned policy helper with independent metadata.",
+        "ownership": "Supported: unique verified secret-owner navigation retains independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_secretsmanager_secret_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: secret_arn -> secret.arn; no policy-body inference.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: secret_arn -> secret.arn only; policy bodies remain opaque.",
+        "scope": "Partial: known regional bindings and compatible account evidence are required; only explicit replica KMS references may cross regions. IAM partner roles retain global scope.",
         "summaries": "Deferred: no additional secretsmanager_secret_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/secretsmanager_secret_policy.html.markdown",
         "shapes": {
@@ -60234,7 +60236,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/secrets_manager.rs",
+          "tests/unit/semantic/secrets_manager_references.rs"
         ]
       }
     },
@@ -60242,7 +60246,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1135,
-      "gap": "#727 audit: Missing: secret_id -> secret.id/arn/name with exact output equality; configured Lambda/partner role must be mode-gated. Missing: secret-owned rotation helper; no automatic rotation/health assertion. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1135 exact current references and secret-owned helper navigation; no secret payload or policy interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60255,10 +60259,10 @@
           "rotation_rules"
         ],
         "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: secret-owned rotation helper; no automatic rotation/health assertion.",
+        "ownership": "Supported: unique verified secret-owner navigation retains independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_secretsmanager_secret_rotation is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: secret_id -> secret.id/arn/name with exact output equality; configured Lambda/partner role must be mode-gated.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: secret_id -> secret.id/arn/name with exact equality; configured Lambda or partner role requires known rotation_enabled and exclusive mode fields. No runtime rotation or health assertion.",
+        "scope": "Partial: known regional bindings and compatible account evidence are required; only explicit replica KMS references may cross regions. IAM partner roles retain global scope.",
         "summaries": "Deferred: no additional secretsmanager_secret_rotation summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/secretsmanager_secret_rotation.html.markdown",
         "shapes": {
@@ -60307,7 +60311,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/secrets_manager.rs",
+          "tests/unit/semantic/secrets_manager_references.rs"
         ]
       }
     },
@@ -60315,7 +60321,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1135,
-      "gap": "#727 audit: Missing: secret_id -> secret.id; composite helper id is not owner identity. Missing: secret-owned tag helper; tag values remain excluded. Implementation follow-up #1135. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented #1135 exact current references and secret-owned helper navigation; no secret payload or policy interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60326,10 +60332,10 @@
           "id"
         ],
         "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); SecretsManager / AWS Secrets Manager runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: secret-owned tag helper; tag values remain excluded.",
+        "ownership": "Supported: unique verified secret-owner navigation retains independent action, provenance and exactly-once coverage.",
         "network": "Not applicable: aws_secretsmanager_tag is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: secret_id -> secret.id; composite helper id is not owner identity.",
-        "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: secret_id -> secret.id; composite helper id is not owner identity. Tag keys and values remain excluded.",
+        "scope": "Partial: known regional bindings and compatible account evidence are required; only explicit replica KMS references may cross regions. IAM partner roles retain global scope.",
         "summaries": "Deferred: no additional secretsmanager_tag summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/secretsmanager_tag.html.markdown",
         "shapes": {
@@ -60357,7 +60363,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/secrets_manager.rs",
+          "tests/unit/semantic/secrets_manager_references.rs"
         ]
       }
     },

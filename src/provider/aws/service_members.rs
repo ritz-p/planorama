@@ -32,6 +32,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     "Policy management",
                 )
             }
+            "aws_secretsmanager_secret_policy" => {
+                ("secret_arn", "Secret owner", "Secret configuration")
+            }
+            "aws_secretsmanager_secret_rotation" | "aws_secretsmanager_tag" => {
+                ("secret_id", "Secret owner", "Secret configuration")
+            }
             "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener" => {
                 ("accelerator_arn", "Listener accelerator", "Listeners")
             }
