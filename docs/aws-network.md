@@ -956,3 +956,16 @@ matching the alarm's independently resolved region. RECOVERY_CONTROL checks
 reference routing control ARNs. All modes require explicit current managed
 references, known values and compatible accounts. FQDN, IP, paths, probe regions
 and runtime health never establish application endpoints or network containment.
+
+### Route 53 DNSSEC and delegation signers (#923)
+
+Hosted-zone DNSSEC and key-signing keys navigate to a uniquely referenced hosted
+zone ID. A KSK forwarding `hosted_zone_id` is not a direct zone reference. KSKs
+separately reference KMS key ARNs whose independently resolved region is
+`us-east-1`; aliases and key IDs are not interchangeable. The pinned provider
+constructs KSK IDs from hosted-zone ID and KSK name, not the KMS key identifier.
+
+Delegation signer records navigate to explicit registered/domain resource
+`domain_name` outputs. Registrations and KMS keys remain independent. Matching
+domain names, computed hosted-zone IDs, public keys, DNSKEY/DS records and signing
+status do not establish relationships, ownership or cryptographic validity.
