@@ -1013,3 +1013,32 @@ current/deposed and selection boundaries remain intact.
 These relationships do not embed devices in sites or synthesize VPC containment.
 Physical address, zone labels, coordinates, BGP, policy data and computed network
 edges are not interpreted or displayed.
+
+## Cloud WAN attachments (#789)
+
+Core policy, prefix-list, routing-label, Connect, Direct Connect gateway, VPN,
+peering and VPC attachment helpers reference configured core-network IDs.
+Prefix lists, gateways and VPNs use their exact managed ARN outputs. Direct
+Connect edge locations must be a complete known nonempty list; these coordinates
+are not interpreted as containers or routes.
+
+VPC attachment VPC/subnet ARN references require a complete subnet set whose
+explicit VPC-ID references identify that same VPC. Connect transport must be a
+VPC attachment on the same core, with known GRE/NO_ENCAP protocol and configured
+edge location matching independent VPC/subnet regions. Connect peers reference
+`connect_attachment_id` via `id` or `attachment_id`; subnet ARN is accepted only
+for NO_ENCAP, with the same transport VPC and region. Provider service-region
+settings never relocate the global core.
+
+Transit-gateway route-table attachments reference a peering ID and route-table
+ARN whose explicit transit-gateway ID matches the peered gateway. Routing labels
+require the same configured core as their attachment. Accepters discriminate
+CONNECT, DIRECT_CONNECT_GATEWAY, SITE_TO_SITE_VPN, TRANSIT_GATEWAY_ROUTE_TABLE and
+VPC; Connect exports `attachment_id` and `id`, while the other supported attachment
+resources export `id`. Acceptance is not ownership. Only configured paths supply
+proof; computed core IDs, edge locations and attachment metadata are not substitutes.
+
+Compatible accounts, independently known endpoint regions, complete identities,
+unknown/sensitive masks, lifecycle and state boundaries are checked. Cross-account
+or incomplete evidence remains unresolved. Policy/segment/label contents, BGP,
+addresses and runtime routing are not interpreted or summarized.

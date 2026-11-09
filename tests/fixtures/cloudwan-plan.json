@@ -1,0 +1,753 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_networkmanager_core_network.main",
+      "type": "aws_networkmanager_core_network",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "core-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main",
+          "arn": "arn:aws:ec2:us-east-1:111111111111:vpc/vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "arn": "arn:aws:ec2:us-east-1:111111111111:subnet/subnet-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_vpc_attachment.main",
+      "type": "aws_networkmanager_vpc_attachment",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "attachment-vpc",
+          "core_network_id": "core-main",
+          "vpc_arn": "arn:aws:ec2:us-east-1:111111111111:vpc/vpc-main",
+          "subnet_arns": [
+            "arn:aws:ec2:us-east-1:111111111111:subnet/subnet-main"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_connect_attachment.main",
+      "type": "aws_networkmanager_connect_attachment",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "attachment-connect",
+          "attachment_id": "attachment-connect",
+          "core_network_id": "core-main",
+          "transport_attachment_id": "attachment-vpc",
+          "edge_location": "us-east-1",
+          "options": [
+            {
+              "protocol": "NO_ENCAP"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_connect_peer.main",
+      "type": "aws_networkmanager_connect_peer",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connect_attachment_id": "attachment-connect",
+          "subnet_arn": "arn:aws:ec2:us-east-1:111111111111:subnet/subnet-main",
+          "peer_address": "PRIVATE_PEER",
+          "inside_cidr_blocks": [
+            "PRIVATE_CIDR"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_managed_prefix_list.main",
+      "type": "aws_ec2_managed_prefix_list",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pl-main",
+          "arn": "arn:aws:ec2:us-east-1:111111111111:prefix-list/pl-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_prefix_list_association.main",
+      "type": "aws_networkmanager_prefix_list_association",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "core_network_id": "core-main",
+          "prefix_list_arn": "arn:aws:ec2:us-east-1:111111111111:prefix-list/pl-main",
+          "prefix_list_alias": "PRIVATE_ALIAS"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_gateway.main",
+      "type": "aws_dx_gateway",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dx-main",
+          "arn": "arn:aws:directconnect::111111111111:dx-gateway/dx-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_dx_gateway_attachment.main",
+      "type": "aws_networkmanager_dx_gateway_attachment",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "attachment-dx",
+          "core_network_id": "core-main",
+          "direct_connect_gateway_arn": "arn:aws:directconnect::111111111111:dx-gateway/dx-main",
+          "edge_locations": [
+            "us-east-1",
+            "us-west-2"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpn_connection.main",
+      "type": "aws_vpn_connection",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpn-main",
+          "arn": "arn:aws:ec2:us-east-1:111111111111:vpn-connection/vpn-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_site_to_site_vpn_attachment.main",
+      "type": "aws_networkmanager_site_to_site_vpn_attachment",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "attachment-vpn",
+          "core_network_id": "core-main",
+          "vpn_connection_arn": "arn:aws:ec2:us-east-1:111111111111:vpn-connection/vpn-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.main",
+      "type": "aws_ec2_transit_gateway",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-main",
+          "arn": "arn:aws:ec2:us-east-1:111111111111:transit-gateway/tgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_transit_gateway_peering.main",
+      "type": "aws_networkmanager_transit_gateway_peering",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "peering-main",
+          "core_network_id": "core-main",
+          "transit_gateway_arn": "arn:aws:ec2:us-east-1:111111111111:transit-gateway/tgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_route_table.main",
+      "type": "aws_ec2_transit_gateway_route_table",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-rt-main",
+          "arn": "arn:aws:ec2:us-east-1:111111111111:transit-gateway-route-table/tgw-rt-main",
+          "transit_gateway_id": "tgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_transit_gateway_route_table_attachment.main",
+      "type": "aws_networkmanager_transit_gateway_route_table_attachment",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "attachment-table",
+          "peering_id": "peering-main",
+          "transit_gateway_route_table_arn": "arn:aws:ec2:us-east-1:111111111111:transit-gateway-route-table/tgw-rt-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_core_network_policy_attachment.main",
+      "type": "aws_networkmanager_core_network_policy_attachment",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "core_network_id": "core-main",
+          "policy_document": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_attachment_routing_policy_label.main",
+      "type": "aws_networkmanager_attachment_routing_policy_label",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "core_network_id": "core-main",
+          "attachment_id": "attachment-vpc",
+          "routing_policy_label": "PRIVATE_LABEL"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_attachment_accepter.vpc",
+      "type": "aws_networkmanager_attachment_accepter",
+      "name": "vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "attachment_id": "attachment-vpc",
+          "attachment_type": "VPC"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_attachment_accepter.connect",
+      "type": "aws_networkmanager_attachment_accepter",
+      "name": "connect",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "attachment_id": "attachment-connect",
+          "attachment_type": "CONNECT"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_attachment_accepter.direct_connect_gateway",
+      "type": "aws_networkmanager_attachment_accepter",
+      "name": "direct_connect_gateway",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "attachment_id": "attachment-dx",
+          "attachment_type": "DIRECT_CONNECT_GATEWAY"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_attachment_accepter.site_to_site_vpn",
+      "type": "aws_networkmanager_attachment_accepter",
+      "name": "site_to_site_vpn",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "attachment_id": "attachment-vpn",
+          "attachment_type": "SITE_TO_SITE_VPN"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_attachment_accepter.transit_gateway_route_table",
+      "type": "aws_networkmanager_attachment_accepter",
+      "name": "transit_gateway_route_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "attachment_id": "attachment-table",
+          "attachment_type": "TRANSIT_GATEWAY_ROUTE_TABLE"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_networkmanager_core_network.main",
+          "type": "aws_networkmanager_core_network",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.main",
+          "type": "aws_vpc",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.main",
+          "type": "aws_subnet",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_vpc_attachment.main",
+          "type": "aws_networkmanager_vpc_attachment",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "vpc_arn": {
+              "references": [
+                "aws_vpc.main.arn"
+              ]
+            },
+            "subnet_arns": {
+              "references": [
+                "aws_subnet.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_connect_attachment.main",
+          "type": "aws_networkmanager_connect_attachment",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "transport_attachment_id": {
+              "references": [
+                "aws_networkmanager_vpc_attachment.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_connect_peer.main",
+          "type": "aws_networkmanager_connect_peer",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connect_attachment_id": {
+              "references": [
+                "aws_networkmanager_connect_attachment.main.attachment_id"
+              ]
+            },
+            "subnet_arn": {
+              "references": [
+                "aws_subnet.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_managed_prefix_list.main",
+          "type": "aws_ec2_managed_prefix_list",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_prefix_list_association.main",
+          "type": "aws_networkmanager_prefix_list_association",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "prefix_list_arn": {
+              "references": [
+                "aws_ec2_managed_prefix_list.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_gateway.main",
+          "type": "aws_dx_gateway",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_dx_gateway_attachment.main",
+          "type": "aws_networkmanager_dx_gateway_attachment",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "direct_connect_gateway_arn": {
+              "references": [
+                "aws_dx_gateway.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpn_connection.main",
+          "type": "aws_vpn_connection",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_site_to_site_vpn_attachment.main",
+          "type": "aws_networkmanager_site_to_site_vpn_attachment",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "vpn_connection_arn": {
+              "references": [
+                "aws_vpn_connection.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway.main",
+          "type": "aws_ec2_transit_gateway",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_transit_gateway_peering.main",
+          "type": "aws_networkmanager_transit_gateway_peering",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "transit_gateway_arn": {
+              "references": [
+                "aws_ec2_transit_gateway.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_route_table.main",
+          "type": "aws_ec2_transit_gateway_route_table",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_transit_gateway_route_table_attachment.main",
+          "type": "aws_networkmanager_transit_gateway_route_table_attachment",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "peering_id": {
+              "references": [
+                "aws_networkmanager_transit_gateway_peering.main.id"
+              ]
+            },
+            "transit_gateway_route_table_arn": {
+              "references": [
+                "aws_ec2_transit_gateway_route_table.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_core_network_policy_attachment.main",
+          "type": "aws_networkmanager_core_network_policy_attachment",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_attachment_routing_policy_label.main",
+          "type": "aws_networkmanager_attachment_routing_policy_label",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "core_network_id": {
+              "references": [
+                "aws_networkmanager_core_network.main.id"
+              ]
+            },
+            "attachment_id": {
+              "references": [
+                "aws_networkmanager_vpc_attachment.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_attachment_accepter.vpc",
+          "type": "aws_networkmanager_attachment_accepter",
+          "name": "vpc",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "attachment_id": {
+              "references": [
+                "aws_networkmanager_vpc_attachment.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_attachment_accepter.connect",
+          "type": "aws_networkmanager_attachment_accepter",
+          "name": "connect",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "attachment_id": {
+              "references": [
+                "aws_networkmanager_connect_attachment.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_attachment_accepter.direct_connect_gateway",
+          "type": "aws_networkmanager_attachment_accepter",
+          "name": "direct_connect_gateway",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "attachment_id": {
+              "references": [
+                "aws_networkmanager_dx_gateway_attachment.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_attachment_accepter.site_to_site_vpn",
+          "type": "aws_networkmanager_attachment_accepter",
+          "name": "site_to_site_vpn",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "attachment_id": {
+              "references": [
+                "aws_networkmanager_site_to_site_vpn_attachment.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_attachment_accepter.transit_gateway_route_table",
+          "type": "aws_networkmanager_attachment_accepter",
+          "name": "transit_gateway_route_table",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "attachment_id": {
+              "references": [
+                "aws_networkmanager_transit_gateway_route_table_attachment.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -15001,10 +15001,10 @@
       }
     },
     "aws_networkmanager_attachment_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Discriminate CONNECT/DIRECT_CONNECT_GATEWAY/SITE_TO_SITE_VPN/TRANSIT_GATEWAY_ROUTE_TABLE/VPC before matching attachment output. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15014,10 +15014,10 @@
           "attachment_type"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Intentionally unsupported: accepting attachment does not establish ownership of source network.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Discriminate CONNECT/DIRECT_CONNECT_GATEWAY/SITE_TO_SITE_VPN/TRANSIT_GATEWAY_ROUTE_TABLE/VPC before matching attachment output.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_attachment_accepter uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (attachment_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_attachment_accepter.html.markdown",
         "shapes": {
@@ -15031,10 +15031,10 @@
       }
     },
     "aws_networkmanager_attachment_routing_policy_label": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Both attachment and core-network IDs must agree; routing_policy_label is not a Terraform policy endpoint. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15045,10 +15045,10 @@
           "routing_policy_label"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Both attachment and core-network IDs must agree; routing_policy_label is not a Terraform policy endpoint.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_attachment_routing_policy_label uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (attachment_id, core_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_attachment_routing_policy_label.html.markdown",
         "shapes": {
@@ -15065,10 +15065,10 @@
       }
     },
     "aws_networkmanager_connect_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Core network and transport attachment; GRE/NO_ENCAP and edge location govern peer contract, not runtime routes. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15081,10 +15081,10 @@
           "options.protocol"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Core network and transport attachment; GRE/NO_ENCAP and edge location govern peer contract, not runtime routes.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_connect_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (attachment_id, core_network_id, transport_attachment_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_connect_attachment.html.markdown",
         "shapes": {
@@ -15108,10 +15108,10 @@
       }
     },
     "aws_networkmanager_connect_peer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Connect attachment output attachment_id; subnet ARN only for NO_ENCAP. Peer IPs are not Terraform endpoints. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15122,10 +15122,10 @@
           "subnet_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Missing: explicit NO_ENCAP subnet context #789; GRE inside CIDRs never prove containment.",
-        "references": "Missing: Connect attachment output attachment_id; subnet ARN only for NO_ENCAP. Peer IPs are not Terraform endpoints.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_connect_peer uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (connect_peer_id, connect_attachment_id, subnet_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_connect_peer.html.markdown",
         "shapes": {
@@ -15225,10 +15225,10 @@
       }
     },
     "aws_networkmanager_core_network_policy_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: core_network_id -> core network id; JSON policy remains opaque. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15237,10 +15237,10 @@
           "core_network_id"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: core_network_id -> core network id; JSON policy remains opaque.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_core_network_policy_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (core_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_core_network_policy_attachment.html.markdown",
         "shapes": {
@@ -15333,10 +15333,10 @@
       }
     },
     "aws_networkmanager_dx_gateway_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Global DX gateway ARN and core-network ID; edge_locations set is not a collection of Terraform resources. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15348,10 +15348,10 @@
           "edge_locations"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Global DX gateway ARN and core-network ID; edge_locations set is not a collection of Terraform resources.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_dx_gateway_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, direct_connect_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_dx_gateway_attachment.html.markdown",
         "shapes": {
@@ -15482,10 +15482,10 @@
       }
     },
     "aws_networkmanager_prefix_list_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Core-network id and EC2 managed prefix-list arn; alias only names a policy variable. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15496,10 +15496,10 @@
           "prefix_list_alias"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Core-network id and EC2 managed prefix-list arn; alias only names a policy variable.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_prefix_list_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (core_network_id, prefix_list_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_prefix_list_association.html.markdown",
         "shapes": {
@@ -15551,10 +15551,10 @@
       }
     },
     "aws_networkmanager_site_to_site_vpn_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Core-network ID and site-to-site VPN ARN; no tunnel inference. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15565,10 +15565,10 @@
           "vpn_connection_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Core-network ID and site-to-site VPN ARN; no tunnel inference.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_site_to_site_vpn_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, vpn_connection_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_site_to_site_vpn_attachment.html.markdown",
         "shapes": {
@@ -15623,10 +15623,10 @@
       }
     },
     "aws_networkmanager_transit_gateway_peering": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Core-network ID and TGW ARN; computed attachment ID is not an independent Terraform resource. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15637,10 +15637,10 @@
           "transit_gateway_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Core-network ID and TGW ARN; computed attachment ID is not an independent Terraform resource.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_transit_gateway_peering uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, transit_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_peering.html.markdown",
         "shapes": {
@@ -15687,10 +15687,10 @@
       }
     },
     "aws_networkmanager_transit_gateway_route_table_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Peering id and TGW route-table ARN with gateway agreement; no route policy interpretation. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15701,10 +15701,10 @@
           "transit_gateway_route_table_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Peering id and TGW route-table ARN with gateway agreement; no route policy interpretation.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Intentionally unsupported: references do not synthesize routing, segment or edge-location containers.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_transit_gateway_route_table_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, peering_id, transit_gateway_route_table_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_route_table_attachment.html.markdown",
         "shapes": {
@@ -15721,10 +15721,10 @@
       }
     },
     "aws_networkmanager_vpc_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 789,
-      "gap": "#716 reviewed: Core network ID and VPC/subnet ARNs with complete collections. Current basic Logical display has no dedicated relationships. Follow-up #789; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #789 typed configured ID/ARN references, same-core joins, exact attachment kinds and independent endpoint scope. Policies, labels, coordinates, computed endpoints and runtime routing remain intentionally unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15736,10 +15736,10 @@
           "subnet_arns"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Missing: common-VPC proof from vpc_arn/subnet_arns #789; core network stays global.",
-        "references": "Missing: Core network ID and VPC/subnet ARNs with complete collections.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: acceptance, policy and attachment references do not establish exclusive ownership.",
+        "network": "Supported: complete subnet ARN set with explicit common-VPC proof; core network stays global. No synthesized subnet or attachment containment.",
+        "references": "Supported: #789 explicit unique typed ID/ARN endpoints with matching known values; Connect transport is a same-core VPC attachment at the configured edge, peer subnet requires NO_ENCAP, and route-table identity is qualified by the peered transit gateway.",
+        "scope": "Supported: global core/attachment scope remains global; same compatible account and independently known endpoint regions are rechecked. Unknown or cross-account proof stays conservative.",
         "summaries": "Not applicable: aws_networkmanager_vpc_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, core_network_id, vpc_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_vpc_attachment.html.markdown",
         "shapes": {
