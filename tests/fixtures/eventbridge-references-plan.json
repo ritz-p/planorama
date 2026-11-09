@@ -1,0 +1,461 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_cloudwatch_event_bus.endpoint_0",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_rule.consumer_0",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_bus_name": "PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_bus.endpoint_1",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:events:us-east-1:111122223333:PRIVATE_ENDPOINT_1"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_rule.consumer_1",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_bus_name": "arn:aws:events:us-east-1:111122223333:PRIVATE_ENDPOINT_1"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.endpoint_2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111122223333:PRIVATE_ENDPOINT_2"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_rule.consumer_2",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "role_arn": "arn:aws:iam::111122223333:PRIVATE_ENDPOINT_2"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_bus.endpoint_3",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_bus_policy.consumer_3",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_bus_name": "PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_bus.endpoint_4",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_permission.consumer_4",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_permission",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_bus_name": "PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_bus.endpoint_5",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:events:us-east-1:111122223333:PRIVATE_ENDPOINT_5"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_archive.consumer_5",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_archive",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "event_source_arn": "arn:aws:events:us-east-1:111122223333:PRIVATE_ENDPOINT_5"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_connection.endpoint_6",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_connection",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:events:us-east-1:111122223333:PRIVATE_ENDPOINT_6"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_api_destination.consumer_6",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_api_destination",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connection_arn": "arn:aws:events:us-east-1:111122223333:PRIVATE_ENDPOINT_6"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.endpoint_7",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111122223333:PRIVATE_ENDPOINT_7"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.consumer_7",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "role_arn": "arn:aws:iam::111122223333:PRIVATE_ENDPOINT_7"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.endpoint_8",
+      "mode": "managed",
+      "type": "aws_sqs_queue",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_QUEUE"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_target.consumer_8",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "dead_letter_config": [
+            {
+              "arn": "arn:aws:sqs:us-east-1:111122223333:PRIVATE_QUEUE"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudwatch_event_bus.endpoint_0",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_rule.consumer_0",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_rule",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.endpoint_0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_bus.endpoint_1",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_rule.consumer_1",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_rule",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.endpoint_1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.endpoint_2",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_rule.consumer_2",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_rule",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.endpoint_2.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_bus.endpoint_3",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_bus_policy.consumer_3",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus_policy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.endpoint_3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_bus.endpoint_4",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_permission.consumer_4",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_permission",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_bus_name": {
+              "references": [
+                "aws_cloudwatch_event_bus.endpoint_4.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_bus.endpoint_5",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_archive.consumer_5",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_archive",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event_source_arn": {
+              "references": [
+                "aws_cloudwatch_event_bus.endpoint_5.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_connection.endpoint_6",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_connection",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_api_destination.consumer_6",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_api_destination",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connection_arn": {
+              "references": [
+                "aws_cloudwatch_event_connection.endpoint_6.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.endpoint_7",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_target.consumer_7",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.endpoint_7.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sqs_queue.endpoint_8",
+          "mode": "managed",
+          "type": "aws_sqs_queue",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_event_target.consumer_8",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "dead_letter_config": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_sqs_queue.endpoint_8.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

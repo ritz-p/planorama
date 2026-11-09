@@ -1,0 +1,303 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_traffic_mirror_filter.main",
+      "type": "aws_ec2_traffic_mirror_filter",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "filter-1"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_ec2_traffic_mirror_filter_rule.ingress",
+      "type": "aws_ec2_traffic_mirror_filter_rule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "traffic_mirror_filter_id": "filter-1",
+          "traffic_direction": "ingress",
+          "rule_action": "accept",
+          "rule_number": 1
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_ec2_traffic_mirror_filter_rule.egress",
+      "type": "aws_ec2_traffic_mirror_filter_rule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "traffic_mirror_filter_id": "filter-1",
+          "traffic_direction": "egress",
+          "rule_action": "reject",
+          "rule_number": 2
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_network_interface.main",
+      "type": "aws_network_interface",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "eni-1"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_lb.main",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/mirror/1",
+          "load_balancer_type": "network"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_vpc_endpoint.main",
+      "type": "aws_vpc_endpoint",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpce-1",
+          "vpc_endpoint_type": "GatewayLoadBalancer"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_ec2_traffic_mirror_target.eni",
+      "type": "aws_ec2_traffic_mirror_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "target-eni",
+          "network_interface_id": "eni-1"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_ec2_traffic_mirror_target.nlb",
+      "type": "aws_ec2_traffic_mirror_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "target-nlb",
+          "network_load_balancer_arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/mirror/1"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_ec2_traffic_mirror_target.gateway",
+      "type": "aws_ec2_traffic_mirror_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "target-gateway",
+          "gateway_load_balancer_endpoint_id": "vpce-1"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_ec2_traffic_mirror_session.main",
+      "type": "aws_ec2_traffic_mirror_session",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "session-1",
+          "network_interface_id": "eni-1",
+          "traffic_mirror_filter_id": "filter-1",
+          "traffic_mirror_target_id": "target-nlb",
+          "session_number": 1
+        },
+        "after_unknown": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_traffic_mirror_filter.main",
+          "type": "aws_ec2_traffic_mirror_filter",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_traffic_mirror_filter_rule.ingress",
+          "type": "aws_ec2_traffic_mirror_filter_rule",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "traffic_mirror_filter_id": {
+              "references": [
+                "aws_ec2_traffic_mirror_filter.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_traffic_mirror_filter_rule.egress",
+          "type": "aws_ec2_traffic_mirror_filter_rule",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "traffic_mirror_filter_id": {
+              "references": [
+                "aws_ec2_traffic_mirror_filter.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_network_interface.main",
+          "type": "aws_network_interface",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb.main",
+          "type": "aws_lb",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_endpoint.main",
+          "type": "aws_vpc_endpoint",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_traffic_mirror_target.eni",
+          "type": "aws_ec2_traffic_mirror_target",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "network_interface_id": {
+              "references": [
+                "aws_network_interface.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_traffic_mirror_target.nlb",
+          "type": "aws_ec2_traffic_mirror_target",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "network_load_balancer_arn": {
+              "references": [
+                "aws_lb.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_traffic_mirror_target.gateway",
+          "type": "aws_ec2_traffic_mirror_target",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_load_balancer_endpoint_id": {
+              "references": [
+                "aws_vpc_endpoint.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_traffic_mirror_session.main",
+          "type": "aws_ec2_traffic_mirror_session",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "network_interface_id": {
+              "references": [
+                "aws_network_interface.main.id"
+              ]
+            },
+            "traffic_mirror_filter_id": {
+              "references": [
+                "aws_ec2_traffic_mirror_filter.main.id"
+              ]
+            },
+            "traffic_mirror_target_id": {
+              "references": [
+                "aws_ec2_traffic_mirror_target.nlb.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

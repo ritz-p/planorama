@@ -1,0 +1,309 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_eks_cluster.main",
+      "type": "aws_eks_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Pod"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_access_entry.main",
+      "type": "aws_eks_access_entry",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "cluster",
+          "principal_arn": "arn:aws:iam::123456789012:role/Pod"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_access_policy_association.main",
+      "type": "aws_eks_access_policy_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "cluster",
+          "principal_arn": "arn:aws:iam::123456789012:role/Pod",
+          "policy_arn": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_addon.main",
+      "type": "aws_eks_addon",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "cluster",
+          "pod_identity_association": [
+            {
+              "role_arn": "arn:aws:iam::123456789012:role/Pod",
+              "service_account": "PRIVATE_SERVICE_ACCOUNT"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_launch_template.main",
+      "type": "aws_launch_template",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "lt-example",
+          "name": "template",
+          "latest_version": 3
+        }
+      }
+    },
+    {
+      "address": "aws_eks_node_group.main",
+      "type": "aws_eks_node_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "cluster",
+          "launch_template": [
+            {
+              "id": "lt-example",
+              "version": "3"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_eks_capability.main",
+      "type": "aws_eks_capability",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "cluster",
+          "role_arn": "arn:aws:iam::123456789012:role/Pod"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_pod_identity_association.main",
+      "type": "aws_eks_pod_identity_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_name": "cluster",
+          "role_arn": "arn:aws:iam::123456789012:role/Pod"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_eks_cluster.main",
+          "type": "aws_eks_cluster",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.main",
+          "type": "aws_iam_role",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_eks_access_entry.main",
+          "type": "aws_eks_access_entry",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.main.name"
+              ]
+            },
+            "principal_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_access_policy_association.main",
+          "type": "aws_eks_access_policy_association",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.main.name"
+              ]
+            },
+            "principal_arn": {
+              "references": [
+                "aws_eks_access_entry.main.principal_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_addon.main",
+          "type": "aws_eks_addon",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.main.name"
+              ]
+            },
+            "pod_identity_association": [
+              {
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_launch_template.main",
+          "type": "aws_launch_template",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_eks_node_group.main",
+          "type": "aws_eks_node_group",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.main.name"
+              ]
+            },
+            "launch_template": [
+              {
+                "id": {
+                  "references": [
+                    "aws_launch_template.main.id"
+                  ]
+                },
+                "version": {
+                  "references": [
+                    "aws_launch_template.main.latest_version"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_eks_capability.main",
+          "type": "aws_eks_capability",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.main.name"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_pod_identity_association.main",
+          "type": "aws_eks_pod_identity_association",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_name": {
+              "references": [
+                "aws_eks_cluster.main.name"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

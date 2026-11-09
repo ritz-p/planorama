@@ -6,10 +6,19 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::cloudfront::resource(resource)
+        && (aws::s3vectors::resource(resource)
+            || aws::vpclattice::resource(resource)
+            || aws::synthetics::resource(resource)
+            || aws::rum::resource(resource)
+            || aws::s3tables::resource(resource)
+            || aws::secrets_manager::resource(resource)
+            || aws::cloudfront::resource(resource)
+            || aws::cloudfront_security::resource(resource)
             || aws::elbv2_cognito::block(resource).is_some()
             || aws::s3::indexed_resource(resource)
             || resource == "aws_networkfirewall_logging_configuration"
+            || matches!(resource, "aws_appsync_graphql_api" | "aws_appsync_api")
+            || resource == "aws_s3control_object_lambda_access_point"
             || aws::elbv2_network::resource(resource)
             || matches!(
                 resource,
@@ -25,7 +34,17 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::cloudfront::indexed(resource, attribute)
+        && (aws::s3vectors::indexed(resource, attribute)
+            || aws::vpclattice::indexed(resource, attribute)
+            || aws::synthetics::indexed(resource, attribute)
+            || aws::rum::indexed(resource, attribute)
+            || aws::s3tables::indexed(resource, attribute)
+            || aws::secrets_manager::indexed(resource, attribute)
+            || aws::cloudfront::indexed(resource, attribute)
+            || aws::cloudfront_security::indexed(resource, attribute)
+            || aws::appsync::indexed(resource, attribute)
+            || aws::appsync_events::indexed(resource, attribute)
+            || aws::s3_access::indexed(resource, attribute)
             || aws::elbv2_cognito::indexed(resource, attribute)
             || aws::s3::indexed_attribute(resource, attribute).is_some()
             || aws::networkfirewall::indexed_attribute(resource, attribute)

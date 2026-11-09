@@ -1,0 +1,161 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_service_discovery_private_dns_namespace.main",
+      "type": "aws_service_discovery_private_dns_namespace",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ns-main",
+          "vpc": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_service_discovery_service.main",
+      "type": "aws_service_discovery_service",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "srv-main",
+          "type": "DNS_HTTP",
+          "namespace_id": "ns-main",
+          "dns_config": [
+            {
+              "namespace_id": "ns-main"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_service_discovery_instance.main",
+      "type": "aws_service_discovery_instance",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "instance",
+          "service_id": "srv-main",
+          "attributes": {
+            "AWS_INSTANCE_IPV4": "PRIVATE_IP"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_service_discovery_http_namespace.main",
+      "type": "aws_service_discovery_http_namespace",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ns-http"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "type": "aws_vpc",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_service_discovery_private_dns_namespace.main",
+          "type": "aws_service_discovery_private_dns_namespace",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_service_discovery_service.main",
+          "type": "aws_service_discovery_service",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "dns_config": [
+              {
+                "namespace_id": {
+                  "references": [
+                    "aws_service_discovery_private_dns_namespace.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_service_discovery_instance.main",
+          "type": "aws_service_discovery_instance",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_id": {
+              "references": [
+                "aws_service_discovery_service.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_service_discovery_http_namespace.main",
+          "type": "aws_service_discovery_http_namespace",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

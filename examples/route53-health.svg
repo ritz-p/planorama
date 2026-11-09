@@ -1,0 +1,157 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1040" height="2370" viewBox="0 0 1040 2370" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">7 resources (0 spatial cards, 7 logical resources in 3 group cards) · 4 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">7 resources (0 spatial cards, 7 logical resources in 3 group cards) · 4 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_metric_alarm.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_health_check.calculated&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e68747470-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_health_check.http&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e6d6574726963-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_health_check.metric&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e7265636f76657279-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_health_check.recovery&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e746370-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53_health_check.tcp&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f726f75746535337265636f76657279636f6e74726f6c636f6e6669675f726f7574696e675f636f6e74726f6c2e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_route53recoverycontrolconfig_routing_control.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_cloudwatch_metric_alarm.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_route53_health_check.metric&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e6d6574726963-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e68747470-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_route53_health_check.http&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_route53_health_check.calculated&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e746370-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_route53_health_check.tcp&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_route53_health_check.calculated&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f726f75746535337265636f76657279636f6e74726f6c636f6e6669675f726f7574696e675f636f6e74726f6c2e6d61696e-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_route53recoverycontrolconfig_routing_control.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_route53_health_check.recovery&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e7265636f76657279-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;dimensions&quot;,&quot;complete&quot;:false,&quot;consumer&quot;:&quot;terraform:6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[&quot;UnverifiedMonitoring&quot;],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[]},{&quot;attribute&quot;:&quot;child_healthchecks&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_route53_health_check.http&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_route53_health_check.tcp&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;cloudwatch_alarm_name&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e6d6574726963-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_metric_alarm.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;routing_control_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f726f75746535335f6865616c74685f636865636b2e7265636f76657279-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_route53recoverycontrolconfig_routing_control.main&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (7)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-annotation-area="true" data-packing-width="1040" data-measured-height="1512">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="672" height="1488" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="960"><rect width="672" height="1488" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="384" height="376" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_cloudwatch_metric_alarm" data-mode="managed"><title>aws_cloudwatch_metric_alarm · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_cloudwatch_metric_alarm · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Controller — manages or configures se</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">rvices, workloads or related resources; does</text>
+<text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve"> not prove runtime control, traffic or relat</text>
+<text data-role-explanation="true" x="16" y="126" font-size="12" fill="#475569" xml:space="preserve">ionships.</text>
+<g data-action-section="create"><rect x="8" y="146" width="368" height="202" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon CloudWatch" data-display-name="CloudWatch" x="234" y="158" width="130" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="244" y="180" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">CloudWatch</text><g id="resource-6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_cloudwatch_metric_alarm.main" data-qualified-address="module.root.aws_cloudwatch_metric_alarm.main" data-mode="managed" transform="translate(0 202)" data-role="controller"><title>module.root.aws_cloudwatch_metric_alarm.main — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_cloudwatch_metric_alarm.main</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">controller</text>
+<g data-resource-references="true"><title>Monitors: unresolved [dimensions; unresolved attribute reference]</title><text x="16" y="96" font-size="11" font-weight="700" fill="#475569">Uses</text><g data-reference-status="unresolved"><title>Monitors: unresolved [dimensions; unresolved attribute reference]</title><text x="16" y="114" font-size="11" fill="#334155" xml:space="preserve">Monitors: unresolved</text>
+</g></g>
+<line data-resource-underline="true" x1="16" y1="130" x2="368" y2="130" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g data-annotation-card="true" transform="translate(16 444)"><rect width="640" height="762" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_route53_health_check" data-mode="managed"><title>aws_route53_health_check · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_route53_health_check · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<g data-action-section="create"><rect x="8" y="66" width="624" height="668" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (5)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (5)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="network" data-service-full-name="Amazon Route 53" data-display-name="Route 53" x="512" y="78" width="108" height="32" rx="4" fill="#dbeafe"/><text data-service-name="true" x="522" y="100" font-size="18" font-weight="700" fill="#1e3a8a" xml:space="preserve">Route 53</text><g id="resource-6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current" data-architecture-id="terraform:6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_route53_health_check.calculated" data-qualified-address="module.root.aws_route53_health_check.calculated" data-mode="managed" transform="translate(0 122)"><title>module.root.aws_route53_health_check.calculated — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_route53_health_check.calculated</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<g data-resource-references="true"><title>Calculated child health checks: module.root.aws_route53_health_check.http [child_healthchecks; direct attribute reference]
+Calculated child health checks: module.root.aws_route53_health_check.tcp [child_healthchecks; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f726f75746535335f6865616c74685f636865636b2e68747470-current" data-reference-attribute="child_healthchecks"><title>Calculated child health checks: module.root.aws_route53_health_check.http [child_healthchecks; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Calculated child health checks: module.root.aws_route53_health_check.http</text>
+</a><a href="#resource-6177735f726f75746535335f6865616c74685f636865636b2e746370-current" data-reference-attribute="child_healthchecks"><title>Calculated child health checks: module.root.aws_route53_health_check.tcp [child_healthchecks; direct attribute reference]</title><text x="16" y="130" font-size="11" fill="#334155" xml:space="preserve">Calculated child health checks: module.root.aws_route53_health_check.tcp</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="164" x2="624" y2="164" stroke="#047857" stroke-width="2"/></g>
+<g id="resource-6177735f726f75746535335f6865616c74685f636865636b2e68747470-current" data-architecture-id="terraform:6177735f726f75746535335f6865616c74685f636865636b2e68747470-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_route53_health_check.http" data-qualified-address="module.root.aws_route53_health_check.http" data-mode="managed" transform="translate(0 302)"><title>module.root.aws_route53_health_check.http — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_route53_health_check.http</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<line data-resource-underline="true" x1="16" y1="56" x2="624" y2="56" stroke="#047857" stroke-width="2"/></g>
+<g id="resource-6177735f726f75746535335f6865616c74685f636865636b2e6d6574726963-current" data-architecture-id="terraform:6177735f726f75746535335f6865616c74685f636865636b2e6d6574726963-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_route53_health_check.metric" data-qualified-address="module.root.aws_route53_health_check.metric" data-mode="managed" transform="translate(0 374)"><title>module.root.aws_route53_health_check.metric — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_route53_health_check.metric</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<g data-resource-references="true"><title>Health check metric alarm: module.root.aws_cloudwatch_metric_alarm.main [cloudwatch_alarm_name; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current" data-reference-attribute="cloudwatch_alarm_name"><title>Health check metric alarm: module.root.aws_cloudwatch_metric_alarm.main [cloudwatch_alarm_name; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Health check metric alarm: module.root.aws_cloudwatch_metric_alarm.main</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="128" x2="624" y2="128" stroke="#047857" stroke-width="2"/></g>
+<g id="resource-6177735f726f75746535335f6865616c74685f636865636b2e7265636f76657279-current" data-architecture-id="terraform:6177735f726f75746535335f6865616c74685f636865636b2e7265636f76657279-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_route53_health_check.recovery" data-qualified-address="module.root.aws_route53_health_check.recovery" data-mode="managed" transform="translate(0 518)"><title>module.root.aws_route53_health_check.recovery — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_route53_health_check.recovery</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<g data-resource-references="true"><title>Health check routing control: module.root.aws_route53recoverycontrolconfig_routing_control.main [routing_control_arn; direct attribute reference]</title><text x="16" y="76" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f726f75746535337265636f76657279636f6e74726f6c636f6e6669675f726f7574696e675f636f6e74726f6c2e6d61696e-current" data-reference-attribute="routing_control_arn"><title>Health check routing control: module.root.aws_route53recoverycontrolconfig_routing_control.main [routing_control_arn; direct attribute reference]</title><text x="16" y="94" font-size="11" fill="#334155" xml:space="preserve">Health check routing control: module.root.</text>
+<text x="16" y="112" font-size="11" fill="#334155" xml:space="preserve">aws_route53recoverycontrolconfig_routing_control.main</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="128" x2="624" y2="128" stroke="#047857" stroke-width="2"/></g>
+<g id="resource-6177735f726f75746535335f6865616c74685f636865636b2e746370-current" data-architecture-id="terraform:6177735f726f75746535335f6865616c74685f636865636b2e746370-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_route53_health_check.tcp" data-qualified-address="module.root.aws_route53_health_check.tcp" data-mode="managed" transform="translate(0 662)"><title>module.root.aws_route53_health_check.tcp — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_route53_health_check.tcp</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<line data-resource-underline="true" x1="16" y1="56" x2="624" y2="56" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g data-annotation-card="true" transform="translate(16 1226)"><rect width="552" height="246" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_route53recoverycontrolconfig_routing_control" data-mode="managed"><title>aws_route53recoverycontrolconfig_routing_control · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_route53recoverycontrolconfig_routing_control · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<g data-action-section="create"><rect x="8" y="66" width="536" height="152" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="98" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon Application Recovery Controller" data-display-name="Amazon Application Recovery Controller" x="204" y="78" width="328" height="56" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="214" y="100" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon Application Recovery </text><text data-service-name="true" x="214" y="124" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Controller</text><g id="resource-6177735f726f75746535337265636f76657279636f6e74726f6c636f6e6669675f726f7574696e675f636f6e74726f6c2e6d61696e-current" data-architecture-id="terraform:6177735f726f75746535337265636f76657279636f6e74726f6c636f6e6669675f726f7574696e675f636f6e74726f6c2e6d61696e-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_route53recoverycontrolconfig_routing_control.main" data-qualified-address="module.root.aws_route53recoverycontrolconfig_routing_control.main" data-mode="managed" transform="translate(0 146)"><title>module.root.aws_route53recoverycontrolconfig_routing_control.main — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_route53recoverycontrolconfig_routing_control.main</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<line data-resource-underline="true" x1="16" y1="56" x2="536" y2="56" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g></g>
+</g>
+<g data-architecture="true" transform="translate(0 1512)">
+<g data-edge-kind="dependency" data-source="resource-6177735f636c6f756477617463685f6d65747269635f616c61726d2e6d61696e-current" data-target="resource-6177735f726f75746535335f6865616c74685f636865636b2e6d6574726963-current"><title>module.root.aws_cloudwatch_metric_alarm.main → module.root.aws_route53_health_check.metric</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f726f75746535335f6865616c74685f636865636b2e68747470-current" data-target="resource-6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current"><title>module.root.aws_route53_health_check.http → module.root.aws_route53_health_check.calculated</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f726f75746535335f6865616c74685f636865636b2e746370-current" data-target="resource-6177735f726f75746535335f6865616c74685f636865636b2e63616c63756c61746564-current"><title>module.root.aws_route53_health_check.tcp → module.root.aws_route53_health_check.calculated</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f726f75746535337265636f76657279636f6e74726f6c636f6e6669675f726f7574696e675f636f6e74726f6c2e6d61696e-current" data-target="resource-6177735f726f75746535335f6865616c74685f636865636b2e7265636f76657279-current"><title>module.root.aws_route53recoverycontrolconfig_routing_control.main → module.root.aws_route53_health_check.recovery</title></g>
+</g>
+</g>
+</g>
+</svg>

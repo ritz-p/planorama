@@ -1,0 +1,513 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_dx_lag.partner",
+      "type": "aws_dx_lag",
+      "name": "partner",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxlag-partner"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_gateway.customer",
+      "type": "aws_dx_gateway",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxgw-customer"
+        }
+      }
+    },
+    {
+      "address": "aws_vpn_gateway.customer",
+      "type": "aws_vpn_gateway",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vgw-customer"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_connection.customer",
+      "type": "aws_dx_hosted_connection",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxcon-hosted",
+          "connection_id": "dxlag-partner",
+          "owner_account_id": "222222222222",
+          "connection_region": "us-east-1",
+          "region": "eu-west-1"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_connection_confirmation.customer",
+      "type": "aws_dx_connection_confirmation",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connection_id": "dxcon-hosted"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_private_virtual_interface.customer",
+      "type": "aws_dx_hosted_private_virtual_interface",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-private",
+          "connection_id": "dxlag-partner",
+          "owner_account_id": "222222222222",
+          "bgp_auth_key": "PRIVATE_HOSTED_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_private_virtual_interface_accepter.customer",
+      "type": "aws_dx_hosted_private_virtual_interface_accepter",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "virtual_interface_id": "dxvif-private",
+          "dx_gateway_id": "dxgw-customer",
+          "vpn_gateway_id": null
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_public_virtual_interface.customer",
+      "type": "aws_dx_hosted_public_virtual_interface",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-public",
+          "connection_id": "dxlag-partner",
+          "owner_account_id": "222222222222",
+          "bgp_auth_key": "PRIVATE_HOSTED_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_public_virtual_interface_accepter.customer",
+      "type": "aws_dx_hosted_public_virtual_interface_accepter",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "virtual_interface_id": "dxvif-public"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_transit_virtual_interface.customer",
+      "type": "aws_dx_hosted_transit_virtual_interface",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dxvif-transit",
+          "connection_id": "dxlag-partner",
+          "owner_account_id": "222222222222",
+          "bgp_auth_key": "PRIVATE_HOSTED_DX_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_hosted_transit_virtual_interface_accepter.customer",
+      "type": "aws_dx_hosted_transit_virtual_interface_accepter",
+      "name": "customer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "virtual_interface_id": "dxvif-transit",
+          "dx_gateway_id": "dxgw-customer",
+          "vpn_gateway_id": null
+        }
+      }
+    },
+    {
+      "address": "aws_dx_gateway_association.local",
+      "type": "aws_dx_gateway_association",
+      "name": "local",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "dx_gateway_id": "dxgw-customer",
+          "associated_gateway_id": "vgw-customer",
+          "dx_gateway_owner_account_id": "222222222222",
+          "associated_gateway_owner_account_id": "222222222222",
+          "proposal_id": null
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.partner",
+      "type": "aws_ec2_transit_gateway",
+      "name": "partner",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-partner"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_gateway_association_proposal.partner",
+      "type": "aws_dx_gateway_association_proposal",
+      "name": "partner",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "proposal-main",
+          "dx_gateway_id": "dxgw-customer",
+          "associated_gateway_id": "tgw-partner",
+          "dx_gateway_owner_account_id": "222222222222",
+          "associated_gateway_owner_account_id": "111111111111"
+        }
+      }
+    },
+    {
+      "address": "aws_dx_gateway_association.cross",
+      "type": "aws_dx_gateway_association",
+      "name": "cross",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "dx_gateway_id": "dxgw-customer",
+          "associated_gateway_id": "tgw-partner",
+          "dx_gateway_owner_account_id": "222222222222",
+          "associated_gateway_owner_account_id": "111111111111",
+          "proposal_id": "proposal-main",
+          "transit_gateway_attachment_id": "computed-only"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.allocator": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "allocator",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111111111111:role/fixture"
+              }
+            }
+          ]
+        }
+      },
+      "aws.customer": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "customer",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::222222222222:role/fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dx_lag.partner",
+          "type": "aws_dx_lag",
+          "name": "partner",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dx_gateway.customer",
+          "type": "aws_dx_gateway",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpn_gateway.customer",
+          "type": "aws_vpn_gateway",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dx_hosted_connection.customer",
+          "type": "aws_dx_hosted_connection",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_lag.partner.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_connection_confirmation.customer",
+          "type": "aws_dx_connection_confirmation",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_hosted_connection.customer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_hosted_private_virtual_interface.customer",
+          "type": "aws_dx_hosted_private_virtual_interface",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_lag.partner.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_hosted_private_virtual_interface_accepter.customer",
+          "type": "aws_dx_hosted_private_virtual_interface_accepter",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {
+            "virtual_interface_id": {
+              "references": [
+                "aws_dx_hosted_private_virtual_interface.customer.id"
+              ]
+            },
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.customer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_hosted_public_virtual_interface.customer",
+          "type": "aws_dx_hosted_public_virtual_interface",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_lag.partner.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_hosted_public_virtual_interface_accepter.customer",
+          "type": "aws_dx_hosted_public_virtual_interface_accepter",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {
+            "virtual_interface_id": {
+              "references": [
+                "aws_dx_hosted_public_virtual_interface.customer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_hosted_transit_virtual_interface.customer",
+          "type": "aws_dx_hosted_transit_virtual_interface",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_dx_lag.partner.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_hosted_transit_virtual_interface_accepter.customer",
+          "type": "aws_dx_hosted_transit_virtual_interface_accepter",
+          "name": "customer",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {
+            "virtual_interface_id": {
+              "references": [
+                "aws_dx_hosted_transit_virtual_interface.customer.id"
+              ]
+            },
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.customer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_gateway_association.local",
+          "type": "aws_dx_gateway_association",
+          "name": "local",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.customer.id"
+              ]
+            },
+            "associated_gateway_id": {
+              "references": [
+                "aws_vpn_gateway.customer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway.partner",
+          "type": "aws_ec2_transit_gateway",
+          "name": "partner",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dx_gateway_association_proposal.partner",
+          "type": "aws_dx_gateway_association_proposal",
+          "name": "partner",
+          "mode": "managed",
+          "provider_config_key": "aws.allocator",
+          "expressions": {
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.customer.id"
+              ]
+            },
+            "associated_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.partner.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dx_gateway_association.cross",
+          "type": "aws_dx_gateway_association",
+          "name": "cross",
+          "mode": "managed",
+          "provider_config_key": "aws.customer",
+          "expressions": {
+            "dx_gateway_id": {
+              "references": [
+                "aws_dx_gateway.customer.id"
+              ]
+            },
+            "proposal_id": {
+              "references": [
+                "aws_dx_gateway_association_proposal.partner.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

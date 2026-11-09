@@ -92,6 +92,80 @@ const ec2VpcExpected=[
 ];
 const dimensions=['placement','ownership','network','references','scope','summaries'];
 
+test('#726 covers exactly 75 IAM, federation and directory managed types',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services='iam identitystore ssoadmin ds directoryservicedata rolesanywhere accountaccess verifiedpermissions'.split(' ');
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===726);
+ assert.equal(expected.length,75);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'ccebb5f8972b59cd4603958cf849777ef4a2eafc');
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),path);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#726 audit:/);
+  if(dimensions.some(k=>/\b[Mm]issing\b/.test(r[k])))assert.ok(issue>=1138&&issue<=1145,type);
+ }
+});
+
+test('#726 separates directory targets, global IAM, regional trust and policy namespaces',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.match(r('directory_service_region').references,/deployment region, distinct from API control region/);
+ assert.match(r('directory_service_shared_directory_accepter').references,/owner\/recipient account proof/);
+ assert.equal(r('iam_virtual_mfa_device').contracts.user_name,'computed');
+ assert.match(r('iam_virtual_mfa_device').references,/Seeds and QR code bytes are credentials/);
+ assert.match(r('rolesanywhere_profile').references,/regional despite no region input/);
+ assert.match(r('ssoadmin_customer_managed_policy_attachment').references,/target accounts, not the SSO administration account/);
+ assert.match(r('iam_role_policies_exclusive').references,/inline policy.name.*not managed policy ARNs/);
+ assert.deepEqual(r('identitystore_group_membership').shapes.member_id,['string']);
+ assert.equal(r('accountaccess_application').contracts['identity_source.identity_center.application_arn'],'computed');
+ assert.match(r('verifiedpermissions_identity_source').references,/OIDC issuer URL is not IAM provider identity/);
+});
+
+test('#727 covers all 44 key, certificate and application identity types with pinned contracts',()=>{
+ const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
+ const services='kms secretsmanager acm acmpca cloudhsmv2 paymentcryptography cognitoidentity cognitoidp signer'.split(' ');
+ const expected=inventory.resources.filter(r=>services.includes(r.service));
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===727);
+ assert.equal(expected.length,44);
+ assert.deepEqual(entries.map(([t])=>t).sort(),expected.map(r=>r.type).sort());
+ for(const [type,{review:r,gap,issue}] of entries){
+  assert.equal(r.implementationCommit,'ccebb5f8972b59cd4603958cf849777ef4a2eafc');
+  assert.match(r.implementationCommit,/^[a-f0-9]{40}$/);
+  assert.equal(r.providerCommit,inventory.commit);
+  assert.equal(r.officialDocumentation,expected.find(x=>x.type===type).documentation);
+  assert.deepEqual(Object.keys(r.shapes),r.fields);
+  assert.deepEqual(Object.keys(r.contracts),r.fields);
+  for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
+  for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),path);
+  assert.ok(r.managedDataContract);
+  assert.ok(r.dataContracts);
+  assert.match(gap,/#727 audit:/);
+  if(dimensions.some(k=>/\b[Mm]issing\b/.test(r[k])))assert.ok(issue>=1130&&issue<=1136,type);
+ }
+});
+
+test('#727 preserves version identity, external replicas and Cognito control distinctions',()=>{
+ const d=read('docs/aws-semantic-decisions.json').types;
+ const r=t=>d['aws_'+t].review;
+ assert.match(r('secretsmanager_secret_version').references,/deprecated arn is secret ARN, never version ARN/);
+ assert.equal(r('acm_certificate_validation').contracts.id,'optional/computed');
+ assert.match(r('acm_certificate_validation').ownership,/issuance time/);
+ assert.match(r('kms_replica_external_key').references,/external primary key.*cross-region/);
+ assert.match(r('cognito_managed_user_pool_client').references,/not an alias/);
+ assert.match(r('cognito_user_pool_domain').references,/computed distribution ARN is not/);
+ assert.match(r('cloudhsm_v2_hsm').network,/AZ\/IP equality is insufficient/);
+ assert.deepEqual(r('signer_signing_job').shapes['source.s3.bucket'],['list','list','string']);
+ assert.ok(!r('kms_ciphertext').fields.includes('plaintext'));
+});
+
 test('#730 covers exactly 77 observability types with bounded evidence',()=>{
  const inventory=read('tests/fixtures/aws-inventory/6.70.0.json');
  const services='cloudwatch logs cloudwatchomni amp grafana oam observabilityadmin xray synthetics rum evidently internetmonitor applicationinsights'.split(' ');
@@ -168,7 +242,7 @@ test('#719 preserves storage identity and shape boundaries',()=>{
  assert.deepEqual(r('s3tables_table_replication').shapes['rule.destination.destination_table_bucket_arn'],['list','set','string']);
  assert.match(r('s3control_bucket_policy').references,/Outposts bucket ARN, not general-purpose bucket name/);
  assert.match(r('s3files_access_point').references,/incoming Lambda #950/);
- assert.match(r('s3files_mount_target').network,/Missing:.*one compatible VPC/);
+ assert.match(r('s3files_mount_target').network,/Supported:.*common-VPC proof/);
  assert.match(r('s3_directory_bucket').network,/cannot place.*subnet/);
  assert.match(r('s3control_multi_region_access_point').scope,/Unknown/);
 });
@@ -253,7 +327,7 @@ test('#710 retains exactly its 83 managed types and six evidenced decisions',()=
   for(const key of dimensions)assert.match(r[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
   for(const path of r.implementationEvidence)assert.ok(fs.existsSync(path),type+': '+path);
   assert.ok(r.managedDataContract);
-  assert.match(gap,/#710 audit:|Implemented #(897|895|899|902|890|903):/);
+  assert.match(gap,/#710 audit:|Implemented #(897|895|896|898|899|902|890|903|889|891|900|893|904|894):/);
   if(dimensions.some(k=>/Missing:|missing[: ]/i.test(r[k])))assert.ok(Number.isInteger(issue)&&issue>0,type+' missing follow-up');
  }
 });
@@ -375,7 +449,7 @@ test('filesystem audit covers 70 exact types and distinguishes configured refere
  assert.equal(d.aws_transfer_web_app.review.contracts['endpoint_details.vpc.vpc_endpoint_id'],'computed');
  assert.match(d.aws_transfer_ssh_key.review.references,/server ID AND user_name/);
  assert.match(d.aws_efs_access_point.review.ownership,/#548/);
- assert.match(d.aws_backup_plan.review.references,/#508.*one rule/);
+ assert.match(d.aws_backup_plan.review.references,/#821.*complete aggregate rule/);
 });
 
 test('compute audit covers 52 types and keeps names, ARNs and collection evidence distinct',()=>{
@@ -626,7 +700,7 @@ test('NoSQL audit covers its exact managed denominator with six dimensions and p
 test('streaming audit covers its exact managed denominator and preserves bounded evidence',()=>{
  const services=new Set('kafka kafkaconnect mq kinesis kinesisanalytics kinesisanalyticsv2 kinesisvideo firehose events scheduler pipes schemas sns sqs sfn swf mwaa'.split(' '));
  const expected=read('tests/fixtures/aws-inventory/6.70.0.json').resources.filter(r=>services.has(r.service));
- const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>d.review?.issue===721);
+ const entries=Object.entries(read('docs/aws-semantic-decisions.json').types).filter(([,d])=>[721,748,755].includes(d.review?.issue));
  assert.equal(expected.length,55);
  assert.deepEqual(entries.map(([type])=>type).sort(),expected.map(r=>r.type).sort());
  for(const [type,{review,gap}] of entries) {
@@ -635,7 +709,7 @@ test('streaming audit covers its exact managed denominator and preserves bounded
   assert.equal(review.officialDocumentation,expected.find(r=>r.type===type).documentation);
   assert.deepEqual(Object.keys(review.shapes),review.fields);
   for(const key of ['placement','ownership','network','references','scope','summaries']) assert.match(review[key],/^(Supported|Partial|Missing|Not applicable|Intentionally unsupported|Deferred):/,type+': '+key);
-  assert.match(gap,/#721/);
+  assert.ok(gap.includes('#'+review.issue),type+': current review issue');
  }
  const decisions=Object.fromEntries(entries);
  assert.deepEqual(decisions.aws_mq_broker.review.shapes.subnet_ids,[['set','string']]);

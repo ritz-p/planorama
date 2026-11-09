@@ -1,3 +1,6 @@
+use unicode_segmentation::UnicodeSegmentation;
+use unicode_width::UnicodeWidthStr;
+
 pub(crate) fn wrap(text: &str, limit: usize) -> Vec<&str> {
     wrap_with_boundaries(text, limit, false)
 }
@@ -11,11 +14,18 @@ pub(crate) fn moved_from(previous: &str) -> String {
 }
 
 pub(crate) fn width(text: &str) -> usize {
-    text.chars().map(advance).sum()
+    if text.is_ascii() {
+        return text.len();
+    }
+    text.graphemes(true).map(advance).sum()
 }
 
-fn advance(character: char) -> usize {
-    if character.is_ascii() { 1 } else { 2 }
+fn advance(grapheme: &str) -> usize {
+    if grapheme.is_ascii() {
+        grapheme.len()
+    } else {
+        grapheme.width_cjk()
+    }
 }
 
 fn wrap_with_boundaries(text: &str, limit: usize, address: bool) -> Vec<&str> {
@@ -24,8 +34,8 @@ fn wrap_with_boundaries(text: &str, limit: usize, address: bool) -> Vec<&str> {
     let mut width = 0;
     let mut boundary = None;
     let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
-    for (offset, character) in text.char_indices() {
-        let advance = advance(character);
+    for (offset, grapheme) in text.grapheme_indices(true) {
+        let advance = advance(grapheme);
         while width > 0 && width + advance > limit {
             if let Some((end, preceding_width)) = boundary.take() {
                 lines.push(&text[start..end]);
@@ -39,19 +49,21 @@ fn wrap_with_boundaries(text: &str, limit: usize, address: bool) -> Vec<&str> {
         }
         width += advance;
         if address {
-            match (escaped, quoted, character) {
-                (true, _, _) => escaped = false,
-                (_, true, '\\') => escaped = true,
-                (_, _, '"') if depth > 0 => quoted = !quoted,
-                (_, false, '[') => depth += 1,
-                (_, false, ']') => depth = depth.saturating_sub(1),
-                (_, false, '.' | ':') if depth == 0 && width > advance => {
-                    boundary = Some((offset + character.len_utf8(), width));
+            for character in grapheme.chars() {
+                match (escaped, quoted, character) {
+                    (true, _, _) => escaped = false,
+                    (_, true, '\\') => escaped = true,
+                    (_, _, '"') if depth > 0 => quoted = !quoted,
+                    (_, false, '[') => depth += 1,
+                    (_, false, ']') => depth = depth.saturating_sub(1),
+                    (_, false, '.' | ':') if depth == 0 && width > advance => {
+                        boundary = Some((offset + grapheme.len(), width));
+                    }
+                    (_, false, c) if depth == 0 && c.is_whitespace() && width > advance => {
+                        boundary = Some((offset + grapheme.len(), width));
+                    }
+                    _ => {}
                 }
-                (_, false, c) if depth == 0 && c.is_whitespace() && width > advance => {
-                    boundary = Some((offset + character.len_utf8(), width));
-                }
-                _ => {}
             }
         }
     }

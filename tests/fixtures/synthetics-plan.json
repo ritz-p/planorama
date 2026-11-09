@@ -1,0 +1,397 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main",
+          "cidr_block": "10.0.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "type": "aws_subnet",
+      "name": "a",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "type": "aws_subnet",
+      "name": "b",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "type": "aws_security_group",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.canary",
+      "type": "aws_iam_role",
+      "name": "canary",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/canary",
+          "name": "canary"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.script",
+      "type": "aws_s3_bucket",
+      "name": "script",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "canary-script",
+          "bucket": "canary-script"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.environment",
+      "type": "aws_kms_key",
+      "name": "environment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/environment",
+          "id": "environment"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.artifact",
+      "type": "aws_kms_key",
+      "name": "artifact",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/artifact",
+          "id": "artifact"
+        }
+      }
+    },
+    {
+      "address": "aws_synthetics_canary.main",
+      "type": "aws_synthetics_canary",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "canary-main",
+          "arn": "arn:aws:synthetics:us-east-1:111111111111:canary:canary-main",
+          "execution_role_arn": "arn:aws:iam::111111111111:role/canary",
+          "s3_bucket": "canary-script",
+          "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/environment",
+          "artifact_config": [
+            {
+              "s3_encryption": [
+                {
+                  "encryption_mode": "SSE_KMS",
+                  "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/artifact"
+                }
+              ]
+            }
+          ],
+          "vpc_config": [
+            {
+              "subnet_ids": [
+                "subnet-b",
+                "subnet-a"
+              ],
+              "security_group_ids": [
+                "sg-main"
+              ],
+              "vpc_id": "vpc-main"
+            }
+          ],
+          "engine_arn": "PRIVATE_SYNTHETICS_PAYLOAD",
+          "source_location_arn": "PRIVATE_SYNTHETICS_PAYLOAD",
+          "artifact_s3_location": "PRIVATE_SYNTHETICS_PAYLOAD",
+          "run_config": [
+            {
+              "environment_variables": {
+                "SECRET": "PRIVATE_SYNTHETICS_PAYLOAD"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_synthetics_group.main",
+      "type": "aws_synthetics_group",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "canary-group",
+          "id": "group-id"
+        }
+      }
+    },
+    {
+      "address": "aws_synthetics_group_association.main",
+      "type": "aws_synthetics_group_association",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_name": "canary-group",
+          "canary_arn": "arn:aws:synthetics:us-east-1:111111111111:canary:canary-main",
+          "group_id": "group-id"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "type": "aws_vpc",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "type": "aws_subnet",
+          "name": "a",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "type": "aws_subnet",
+          "name": "b",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "type": "aws_security_group",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.canary",
+          "type": "aws_iam_role",
+          "name": "canary",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.script",
+          "type": "aws_s3_bucket",
+          "name": "script",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.environment",
+          "type": "aws_kms_key",
+          "name": "environment",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.artifact",
+          "type": "aws_kms_key",
+          "name": "artifact",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_synthetics_canary.main",
+          "type": "aws_synthetics_canary",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.canary.arn"
+              ]
+            },
+            "s3_bucket": {
+              "references": [
+                "aws_s3_bucket.script.bucket"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.environment.arn"
+              ]
+            },
+            "artifact_config": [
+              {
+                "s3_encryption": [
+                  {
+                    "kms_key_arn": {
+                      "references": [
+                        "aws_kms_key.artifact.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "vpc_config": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_synthetics_group.main",
+          "type": "aws_synthetics_group",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_synthetics_group_association.main",
+          "type": "aws_synthetics_group_association",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_name": {
+              "references": [
+                "aws_synthetics_group.main.name"
+              ]
+            },
+            "canary_arn": {
+              "references": [
+                "aws_synthetics_canary.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,506 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key-main",
+          "key_id": "key-main",
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/mrk-main",
+          "multi_region": true
+        }
+      }
+    },
+    {
+      "address": "aws_kms_external_key.main",
+      "type": "aws_kms_external_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key-ext",
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/mrk-external",
+          "multi_region": true,
+          "key_material_base64": "PRIVATE_KMS_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_replica_key.main",
+      "type": "aws_kms_replica_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key-main",
+          "key_id": "key-main",
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/mrk-main",
+          "primary_key_arn": "arn:aws:kms:us-east-1:123456789012:key/mrk-main"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_replica_external_key.main",
+      "type": "aws_kms_replica_external_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key-ext",
+          "key_id": "key-ext",
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/mrk-external",
+          "primary_key_arn": "arn:aws:kms:us-east-1:123456789012:key/mrk-external"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_alias.external",
+      "type": "aws_kms_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_key_id": "key-ext"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_alias.replica",
+      "type": "aws_kms_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_key_id": "key-main"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_alias.external_replica",
+      "type": "aws_kms_alias",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_key_id": "arn:aws:kms:us-west-2:123456789012:key/mrk-external"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_ciphertext.main",
+      "type": "aws_kms_ciphertext",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_id": "arn:aws:kms:us-east-1:123456789012:key/mrk-main",
+          "plaintext": "PRIVATE_KMS_PAYLOAD",
+          "ciphertext_blob": "PRIVATE_KMS_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/example"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_user.main",
+      "type": "aws_iam_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:user/example"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_grant.main",
+      "type": "aws_kms_grant",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_id": "key-main",
+          "grantee_principal": "arn:aws:iam::123456789012:role/example",
+          "retiring_principal": "arn:aws:iam::123456789012:user/example",
+          "grant_token": "PRIVATE_KMS_PAYLOAD",
+          "operations": [
+            "Decrypt"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key_policy.main",
+      "type": "aws_kms_key_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_id": "key-main",
+          "policy": "PRIVATE_KMS_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudhsm_v2_cluster.main",
+      "type": "aws_cloudhsm_v2_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cluster-main",
+          "cluster_id": "cluster-main"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_custom_key_store.hsm",
+      "type": "aws_kms_custom_key_store",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "store-hsm",
+          "custom_key_store_type": "AWS_CLOUDHSM",
+          "cloud_hsm_cluster_id": "cluster-main",
+          "key_store_password": "PRIVATE_KMS_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_endpoint_service.main",
+      "type": "aws_vpc_endpoint_service",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "service_name": "vpce.service"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_custom_key_store.xks",
+      "type": "aws_kms_custom_key_store",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "store-xks",
+          "custom_key_store_type": "EXTERNAL_KEY_STORE",
+          "xks_proxy_connectivity": "VPC_ENDPOINT_SERVICE",
+          "xks_proxy_vpc_endpoint_service_name": "vpce.service"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.custom",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key-custom",
+          "key_id": "key-custom",
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/custom",
+          "custom_key_store_id": "store-hsm"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {},
+          "type": "aws_kms_key",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_external_key.main",
+          "provider_config_key": "aws",
+          "expressions": {},
+          "type": "aws_kms_external_key",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_replica_key.main",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "primary_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          },
+          "type": "aws_kms_replica_key",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_replica_external_key.main",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "primary_key_arn": {
+              "references": [
+                "aws_kms_external_key.main.arn"
+              ]
+            }
+          },
+          "type": "aws_kms_replica_external_key",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_alias.external",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_key_id": {
+              "references": [
+                "aws_kms_external_key.main.id"
+              ]
+            }
+          },
+          "type": "aws_kms_alias",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_alias.replica",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "target_key_id": {
+              "references": [
+                "aws_kms_replica_key.main.key_id"
+              ]
+            }
+          },
+          "type": "aws_kms_alias",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_alias.external_replica",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "target_key_id": {
+              "references": [
+                "aws_kms_replica_external_key.main.arn"
+              ]
+            }
+          },
+          "type": "aws_kms_alias",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_ciphertext.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_id": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          },
+          "type": "aws_kms_ciphertext",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_iam_role.main",
+          "provider_config_key": "aws",
+          "expressions": {},
+          "type": "aws_iam_role",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_iam_user.main",
+          "provider_config_key": "aws",
+          "expressions": {},
+          "type": "aws_iam_user",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_grant.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_id": {
+              "references": [
+                "aws_kms_key.main.id"
+              ]
+            },
+            "grantee_principal": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            },
+            "retiring_principal": {
+              "references": [
+                "aws_iam_user.main.arn"
+              ]
+            }
+          },
+          "type": "aws_kms_grant",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_key_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_id": {
+              "references": [
+                "aws_kms_key.main.key_id"
+              ]
+            }
+          },
+          "type": "aws_kms_key_policy",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_cloudhsm_v2_cluster.main",
+          "provider_config_key": "aws",
+          "expressions": {},
+          "type": "aws_cloudhsm_v2_cluster",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_custom_key_store.hsm",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cloud_hsm_cluster_id": {
+              "references": [
+                "aws_cloudhsm_v2_cluster.main.cluster_id"
+              ]
+            }
+          },
+          "type": "aws_kms_custom_key_store",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_vpc_endpoint_service.main",
+          "provider_config_key": "aws",
+          "expressions": {},
+          "type": "aws_vpc_endpoint_service",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_custom_key_store.xks",
+          "provider_config_key": "aws",
+          "expressions": {
+            "xks_proxy_vpc_endpoint_service_name": {
+              "references": [
+                "aws_vpc_endpoint_service.main.service_name"
+              ]
+            }
+          },
+          "type": "aws_kms_custom_key_store",
+          "mode": "managed"
+        },
+        {
+          "address": "aws_kms_key.custom",
+          "provider_config_key": "aws",
+          "expressions": {
+            "custom_key_store_id": {
+              "references": [
+                "aws_kms_custom_key_store.hsm.id"
+              ]
+            }
+          },
+          "type": "aws_kms_key",
+          "mode": "managed"
+        }
+      ]
+    }
+  },
+  "terraform_version": "1.16.6"
+}

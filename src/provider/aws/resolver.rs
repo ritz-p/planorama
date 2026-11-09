@@ -166,6 +166,10 @@ mod tests;
 #[path = "../../../tests/unit/semantic/resolver_config.rs"]
 mod config_tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/dns_firewall.rs"]
+mod firewall_tests;
+
 pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
     match (kind, field) {
         (
@@ -179,6 +183,17 @@ pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
         ("aws_route53_resolver_rule", "resolver_endpoint_id") => Some("Outbound resolver endpoint"),
         ("aws_route53_resolver_rule_association", "resolver_rule_id") => Some("Resolver rule"),
         ("aws_route53_resolver_rule_association", "vpc_id") => Some("Associated VPC"),
+        (
+            "aws_route53_resolver_firewall_rule"
+            | "aws_route53_resolver_firewall_rule_group_association",
+            "firewall_rule_group_id",
+        ) => Some("DNS Firewall rule group"),
+        ("aws_route53_resolver_firewall_rule", "firewall_domain_list_id") => {
+            Some("DNS Firewall domain list")
+        }
+        ("aws_route53_resolver_firewall_rule_group_association", "vpc_id") => {
+            Some("DNS Firewall VPC")
+        }
         _ => None,
     }
 }
@@ -212,6 +227,8 @@ pub(crate) fn annotate(
         let kind = match r.attribute.as_str() {
             "resolver_endpoint_id" => "aws_route53_resolver_endpoint",
             "resolver_rule_id" => "aws_route53_resolver_rule",
+            "firewall_rule_group_id" => "aws_route53_resolver_firewall_rule_group",
+            "firewall_domain_list_id" => "aws_route53_resolver_firewall_domain_list",
             "vpc_id" | "resource_id" => "aws_vpc",
             _ => continue,
         };
@@ -223,7 +240,10 @@ pub(crate) fn annotate(
         }
         let rule = if r.attribute == "resolver_endpoint_id" {
             Some(r.target)
-        } else if r.attribute == "resolver_rule_id" {
+        } else if matches!(
+            r.attribute.as_str(),
+            "resolver_rule_id" | "firewall_rule_group_id"
+        ) {
             Some(source)
         } else {
             None
@@ -237,6 +257,19 @@ pub(crate) fn annotate(
         let actual = super::service_evidence::known(evidence, r.target, &r.attribute);
         if actual.is_none() || actual != super::service_evidence::known(evidence, source, "id") {
             continue;
+        }
+        if r.attribute == "firewall_domain_list_id" {
+            let (v, m) = evidence[r.target];
+            if ![
+                "dns_threat_protection",
+                "confidence_threshold",
+                "firewall_threat_protection_id",
+            ]
+            .iter()
+            .all(|f| super::vpc_gateways::absent(v, m, f))
+            {
+                continue;
+            }
         }
         if r.attribute == "resolver_endpoint_id"
             && (super::service_evidence::known(evidence, r.target, "rule_type") != Some("FORWARD")

@@ -5,6 +5,51 @@ fn fixture() -> Value {
     serde_json::from_str(include_str!("../../fixtures/s3-replication-plan.json")).unwrap()
 }
 
+#[test]
+fn replication_kms_arns_keep_key_and_alias_discriminators() {
+    for kind in ["aws_kms_key", "aws_kms_alias"] {
+        for mismatch in [false, true] {
+            let mut value = fixture();
+            let suffix = if (kind == "aws_kms_key") != mismatch {
+                "key/test"
+            } else {
+                "alias/test"
+            };
+            let arn = format!("arn:aws:kms:eu-west-1:123456789012:{suffix}");
+            let address = format!("{kind}.replica");
+            value["resource_changes"].as_array_mut().unwrap().push(json!({
+                "address":address,"type":kind,"mode":"managed","change":{"actions":["no-op"],"after":{"arn":arn}}
+            }));
+            let consumer = value["resource_changes"]
+                .as_array_mut()
+                .unwrap()
+                .iter_mut()
+                .find(|node| node["address"] == "aws_s3_bucket_replication_configuration.assets")
+                .unwrap();
+            consumer["change"]["after"]["rule"][0]["destination"][0]["encryption_configuration"] =
+                json!([{"replica_kms_key_id":arn}]);
+            let resources = value["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap();
+            resources.push(json!({"address":address,"provider_config_key":"aws"}));
+            let consumer = resources
+                .iter_mut()
+                .find(|node| node["address"] == "aws_s3_bucket_replication_configuration.assets")
+                .unwrap();
+            consumer["expressions"]["rule"][0]["destination"][0]["encryption_configuration"] =
+                json!([{"replica_kms_key_id":{"references":[format!("{address}.arn")]}}]);
+            assert_eq!(
+                reference(
+                    &graph(&value),
+                    "rule.0.destination.0.encryption_configuration.0.replica_kms_key_id"
+                )
+                .complete,
+                !mismatch
+            );
+        }
+    }
+}
+
 fn graph(value: &Value) -> ArchitectureGraph {
     semantic::transform(&plan::parse(&value.to_string()).unwrap())
 }

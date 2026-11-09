@@ -4,6 +4,51 @@
 
 ## S3 bucket configuration
 
+### Access points and Outposts (#977)
+
+Access points distinguish ordinary bucket `id`/`bucket` names from Outposts bucket
+`arn`/`id` outputs. VPC configuration is an independent access restriction, never
+bucket containment. Access-point policy helpers use `arn`; Outposts bucket policy
+and lifecycle helpers use bucket ARNs and retain distinct actions and coverage.
+Object Lambda uses a supporting access-point ARN and a complete, explicitly
+correlated transformation set of Lambda ARNs. Payloads are not read or displayed.
+Object Lambda policy names require matching known account qualifiers and provider
+accounts; composite IDs are not parsed as names or bucket identities.
+
+Outposts buckets and endpoints have independent Spatial cards. Endpoint subnet
+placement requires explicit current Subnet/SG references, matching VPC IDs and
+the subnet's known Outpost ARN matching the configured Outpost ID. No computed
+network interfaces are synthesized. The pinned managed inventory has no Outpost,
+customer-owned IP pool or directory-bucket access-point endpoint resource;
+those references remain unproven with diagnostics rather than targeting data or
+invented resources. All new links require matching known non-sensitive outputs,
+compatible provider/account/region and current managed identities. Shared resources
+remain independent; literal values, unknown/sensitive, ambiguous, filtered and
+cross-state evidence do not establish dedicated links or effective access.
+
+### Object destinations and encryption (#976)
+
+`aws_s3_object`, `aws_s3_bucket_object` and `aws_s3_object_copy` retain independent
+Logical identities, actions and coverage. `bucket` accepts an explicit current
+managed Bucket or Directory Bucket `id`/`bucket` reference with an equal known
+value. Upload resources also accept Access Point `arn`; copy destinations do not.
+`kms_key_id` accepts Key `arn` or managed Alias `target_key_arn`, requiring a key
+ARN and absent or known KMS encryption mode. Alias ARNs and data sources are not
+accepted. Provider/account/region bindings must be compatible. Unknown, ambiguous,
+deleted/deposed, mismatched or unavailable endpoints retain conservative fallback.
+These references do not move resources or establish network ownership.
+
+The pinned AWS Provider 6.70.0
+[object contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_object.html.markdown),
+[legacy contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_bucket_object.html.markdown),
+and [copy contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_object_copy.html.markdown)
+and registered SDK schemas define scalar string bucket/key inputs and optional
+computed KMS inputs. Computed object ARN/version outputs do not synthesize nodes.
+Copy source parsing and version provenance remain deferred; local file source,
+content and object keys are not infrastructure endpoints or displayed payloads.
+
+### Bucket settings
+
 `aws_s3_bucket_policy` is a regional Logical Policy resource with the S3 service label,
 independent identity, action and coverage. Its `Policy bucket reference` requires
 a complete explicit unique current managed AWS Bucket reference to `id` or
@@ -22,6 +67,26 @@ AWS Provider 5.100.0/6.0.0 installed schemas and the
 define the initial scope. See the synthetic [fixture](../tests/fixtures/s3-policy-plan.json),
 [SVG](../examples/s3-policy.svg) and [offline HTML](../examples/s3-policy.html).
 
+The bucket configuration resources `aws_s3_bucket_abac`,
+`aws_s3_bucket_accelerate_configuration`, `aws_s3_bucket_acl`,
+`aws_s3_bucket_cors_configuration`, `aws_s3_bucket_intelligent_tiering_configuration`,
+`aws_s3_bucket_lifecycle_configuration`, `aws_s3_bucket_object_lock_configuration`,
+`aws_s3_bucket_ownership_controls`, `aws_s3_bucket_public_access_block`,
+`aws_s3_bucket_request_payment_configuration`, `aws_s3_bucket_versioning`,
+`aws_s3_bucket_website_configuration` and `aws_s3_bucket_metric` expose
+`Configuration bucket reference` for explicit `bucket` inputs to general-purpose
+Bucket `id`/`bucket`. They retain independent identities, actions and coverage.
+The same current managed type/value proof and unresolved fallback apply.
+Metric additionally accepts Directory Bucket `id`/`bucket` and a singleton
+`filter.0.access_point` reference to Access Point `arn`; the filter is not ownership.
+No ACL grantee, CORS origin, lifecycle transition, website host, credential or
+configuration status becomes an endpoint or an assertion of effective access.
+
+Directory buckets are independent regional Spatial storage resources. Location
+zone IDs and name suffixes do not identify customer subnets or VPC containers;
+Directory Bucket is not an alias of general-purpose Bucket.
+These additions use AWS Provider 6.70.0's
+[Metric contract](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/s3_bucket_metric.html.markdown).
 Bucket notifications are regional Logical Controllers. The independent
 `Notification bucket reference` uses the same Bucket identity proof.
 Queue, topic and Lambda function references accept only exact managed AWS
@@ -55,7 +120,7 @@ configuration resource contributes one identity/action and coverage count.
 
 References describe configuration whether a rule is enabled or disabled; they
 do not assert replication activity, permission, versioning or transfer success.
-IAM role dependencies remain ordinary Terraform references. Rule IDs, filter
+The explicit `role` reference requires a current managed IAM Role `arn`. Rule IDs, filter
 values, payloads and policy bodies are not emitted. Missing/filtered, ambiguous,
 dynamic, unknown, wrong-provider/type and deleted/deposed endpoints cannot be
 resolved from names or matching ARN strings alone.
@@ -130,6 +195,29 @@ and [Access Point](https://github.com/hashicorp/terraform-provider-aws/blob/v5.1
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
 fields and reference shapes.
 
+## EFS configuration (#824)
+
+The pinned AWS Provider 6.70.0 [EFS source and schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/efs)
+define these additional contracts:
+
+- Filesystem `kms_key_id` accepts an explicit KMS key `arn` with known `encrypted=true`.
+- Mount-target filesystem/subnet `id` references require compatible provider and region evidence.
+  `security_groups` must exactly match the complete explicit SG `id` collection; every SG's
+  known VPC must equal the verified subnet's VPC. The shared filesystem remains regional.
+- Backup and filesystem policies embed only under a uniquely verified filesystem `id` owner.
+  Policy content and backup status never identify a Backup plan or appear as summaries.
+- Replication uses explicit `source_file_system_id` to filesystem `id`, and a single destination
+  block with optional configured `file_system_id` to filesystem `id`. Destination `kms_key_id`
+  accepts key `id`/`key_id`/`arn` or alias `name`/`arn`. The destination region must match its
+  independently configured endpoint region; both providers must prove the same account.
+  Cross-account or unknown account destinations fall back. Replicas remain independent.
+
+Known matching outputs, current managed identities and complete unique configuration provenance
+are required. Unknown, literal-only, ambiguous, incompatible, deleted/deposed or filtered owners
+retain independent coverage and fallback references. Computed replica IDs and source ARN/region
+outputs do not create configured relationships. AZ names never identify a subnet.
+The [fixture](../tests/fixtures/efs-configuration-plan.json) exercises these paths without credentials.
+
 ## EBS
 
 EBS Volumes are regional Spatial Nodes with the Amazon EBS label. Their AWS AZ
@@ -150,6 +238,73 @@ The AWS Provider 5.100.0 [Volume](https://github.com/hashicorp/terraform-provide
 and [Attachment](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/volume_attachment.html.markdown)
 documentation, installed schema and Terraform 1.9.8 offline plan confirm these
 fields and reference shapes.
+
+## FSx child relationships (#827)
+
+FSx SVMs and volumes use independent Spatial cards with explicit parent-membership
+references. OpenZFS parent chains must terminate at a verified filesystem root;
+cycles and incomplete ancestor chains are rejected. No computed root volume is
+synthesized as a managed resource. Membership
+does not infer subnet placement or embed a shared endpoint; selecting a child alone
+preserves its identity. Snapshots, backups and association helpers retain their
+own lifecycle identities.
+
+| Resource and configured path | Verified endpoint |
+| --- | --- |
+| ONTAP SVM `file_system_id` | ONTAP filesystem `id` |
+| ONTAP volume `storage_virtual_machine_id` | SVM `id`; known `volume_type = ONTAP` |
+| OpenZFS volume `parent_volume_id` | OpenZFS volume `id` or filesystem `root_volume_id` |
+| OpenZFS volume `origin_snapshot.snapshot_arn` | Snapshot `arn`; CLONE, FULL_COPY or INCREMENTAL_COPY provenance, separate from ownership |
+| OpenZFS snapshot `volume_id` | OpenZFS volume `id` or filesystem `root_volume_id` |
+| Backup `file_system_id` | Lustre or Windows filesystem `id`, with `volume_id` known absent |
+| Backup `volume_id` | ONTAP volume `id`, with `file_system_id` known absent |
+| Data repository association `file_system_id` | Lustre filesystem `id` |
+| S3 access point attachment `openzfs_configuration.volume_id` | OpenZFS volume `id` or filesystem `root_volume_id`; known `type = OPENZFS` |
+| Attachment `s3_access_point.vpc_configuration.vpc_id` | VPC `id`, as access restriction only |
+
+All paths require unique explicit references, matching known outputs, current
+managed identities and compatible independent provider/account/region evidence.
+Missing, ambiguous, unknown, deleted/deposed and incompatible evidence retains
+generic fallback within its named state. ONTAP volume's computed `file_system_id`
+and backup's computed `kms_key_id` cannot substitute for configured provenance.
+Association S3/NFS paths, self-managed AD domain/DNS/credentials, policies and the
+attachment's generated `s3_access_point_arn` create no managed endpoints or summaries.
+Contracts use the pinned [Provider source and schemas](aws-inventory.md), including
+its distinct root-volume output identity. See the
+[fixture](../tests/fixtures/fsx-children-plan.json) and
+[tests](../tests/unit/semantic/fsx_children.rs).
+
+## FSx networking (#826)
+
+Windows, ONTAP, OpenZFS filesystems and file caches remain independent Spatial
+cards. Configured `subnet_ids` and `security_group_ids` require complete, unique
+explicit references to matching known managed subnet and security-group IDs.
+Their verified VPC parents and the filesystem's known `vpc_id` must agree.
+Single-AZ deployments require one subnet; Multi-AZ requires two. ONTAP accepts
+SINGLE_AZ_1/2 and MULTI_AZ_1/2; Windows and OpenZFS accept SINGLE_AZ_1/2 and
+MULTI_AZ_1. A cache requires one subnet. Unknown modes retain fallback placement.
+ONTAP and Multi-AZ require `preferred_subnet_id` membership; populated preferred
+subnet and route-table collections require their own verified references.
+
+| Configured path | Verified endpoint |
+| --- | --- |
+| `kms_key_id` | KMS key `arn`, including cache (the pinned source validates ARN) |
+| `preferred_subnet_id` | Subnet `id` within the complete filesystem subnet set |
+| ONTAP/OpenZFS `route_table_ids` | Complete route-table IDs in the same VPC |
+| Windows/OpenZFS `backup_id` | FSx backup `id` |
+| Windows `active_directory_id` | Directory Service directory `id` |
+| Windows `self_managed_active_directory.domain_join_service_account_secret` | Secrets Manager secret `arn` |
+| Windows `audit_log_configuration.audit_log_destination` | Logs group or Firehose delivery stream `arn`; both audit levels known and at least one enabled |
+
+References require compatible provider/account/region evidence and current managed
+identities. Computed outputs without configuration provenance, incomplete or
+ambiguous references, deleted/deposed targets and incompatible scopes retain
+generic fallback. Filtering and named-state boundaries preserve resource identity.
+No DNS names, passwords, repository paths, runtime reachability or file content
+are exposed. OpenZFS `root_volume_id` creates no synthetic resource.
+See the [fixture](../tests/fixtures/fsx-network-plan.json) and
+[tests](../tests/unit/semantic/fsx_network.rs). Contracts are pinned to
+[AWS Provider 6.70.0 FSx source](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/fsx).
 
 ## FSx Lustre networking and encryption (#702)
 
@@ -187,3 +342,47 @@ and schema distinguish the subnet list, SG set and persistent-only KMS ARN.
 unknown evidence, with [SVG](../examples/fsx-lustre.svg) and
 [HTML](../examples/fsx-lustre.html) examples.
 Native/Wasm parity covers the same fixture and conservative fallbacks.
+
+AWS Provider 6.70.0 export references additionally cover:
+
+| Resource | Configured paths and managed targets |
+| --- | --- |
+| Bucket analytics | `bucket` → Bucket `id`/`bucket`; `storage_class_analysis.data_export.destination.s3_bucket_destination.bucket_arn` → Bucket `arn` |
+| Bucket inventory | `bucket` → general-purpose or Directory Bucket `id`/`bucket`; `destination.bucket.bucket_arn` → general-purpose Bucket `arn`; `destination.bucket.encryption.sse_kms.key_id` → KMS Key `arn` |
+| Bucket logging | `bucket`, `target_bucket` → Bucket `id`/`bucket` |
+| Bucket metadata | `bucket` → Bucket `id`/`bucket`; inventory/journal table `encryption_configuration.kms_key_arn` → KMS Key `arn` only with `sse_algorithm = aws:kms` |
+| Bucket replication | `role` → IAM Role `arn`; indexed `rule.destination.encryption_configuration.replica_kms_key_id` → KMS Key or Alias `arn`, with matching `key/` or `alias/` discriminator |
+| Storage Lens | `storage_lens_configuration.data_export.s3_bucket_destination.arn` and `expanded_prefixes_data_export.s3_bucket_destination.arn` → Bucket `arn`; data-export `encryption.sse_kms.key_id` → KMS Key `arn`; `aws_org.arn` → Organization `arn`; `include.buckets` / `exclude.buckets` → complete Bucket ARN sets |
+
+Nested export blocks require singleton list shapes. Bucket selectors require the
+whole evaluated set to match explicit unique current managed references; partial,
+unknown or ambiguous sets stay unresolved. Optional analytics/inventory destination
+account IDs constrain the endpoint when present; unknown account evidence cannot
+prove the destination. Storage Lens export requires a matching known owner account.
+Targets keep their own scope, including cross-region replication KMS keys.
+Computed metadata destinations, table-export flags, prefixes and retention settings
+do not synthesize resources, ownership or runtime guarantees. Unproven inputs retain
+ordinary Terraform navigation independently of dedicated references.
+
+## Backup vaults (#820)
+
+Pinned AWS Provider 6.70.0 [Backup source/schema](https://github.com/hashicorp/terraform-provider-aws/tree/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/backup) defines these explicit contracts:
+
+- The logically air-gapped vault is an independent regional Spatial card. Its configured encryption_key_arn must match a managed KMS key arn; computed encryption alone does not establish provenance.
+- Lock configuration, notification and policy helpers use backup_vault_name to a vault name/id. Both standard and logically air-gapped vaults keep distinct identities. A known computed backup_vault_arn must corroborate the owner's arn; it cannot replace configured name provenance.
+- Notification sns_topic_arn matches a managed SNS topic arn independently of ownership.
+
+Every relation requires unique complete explicit current managed references, known output equality and compatible provider/account/region bindings. Proven helpers embed with their own actions and coverage; unknown, ambiguous, incomplete, mismatched, deleted/deposed or filtered owners fall back independently. Shared KMS/SNS resources remain independent. No policies, retention claims or runtime recovery guarantees are displayed. See the [fixture](../tests/fixtures/backup-vaults-plan.json).
+
+## Backup plan rules (#821)
+
+The pinned [Backup plan schema/source](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/backup/plan.go) uses sets for rule, copy_action and scan_setting. Complete aggregate references are supported for:
+
+- rule.target_vault_name to standard vault name/id, including multiple rules.
+- rule.target_logically_air_gapped_backup_vault_arn to the distinct air-gapped vault arn.
+- rule.copy_action.destination_vault_arn to standard/air-gapped vault arn.
+- scan_setting.scanner_role_arn to IAM role arn, with known GUARDDUTY malware_scanner.
+
+Known output values must equal the complete set of explicitly referenced compatible current managed endpoints. Repeated uses of one endpoint and set reordering are allowed; this proves plan-level references, not positional rule-to-rule relationships. Missing fields in collection ancestry, mixed literals, unknown masks, ambiguous identical outputs, incomplete provenance, deleted/deposed endpoints and incompatible scopes retain fallback. Optional paths present in only part of a rule collection remain conservative fallback.
+
+Ordinary vault targets use compatible local provider scope; scanner roles use the global IAM account contract. Copy ARNs must match each destination's independently configured region. A single known destination account is required across the copy collection. Same-provider copies can use that common binding; cross-region aliases additionally require independent matching account evidence. Cross-account copies remain fallback. No plan containment, recovery guarantee or runtime copy status is inferred. See the [fixture](../tests/fixtures/backup-plan-rules-plan.json).

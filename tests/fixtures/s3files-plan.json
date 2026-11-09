@@ -1,0 +1,322 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.main",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::files",
+          "id": "files",
+          "bucket": "files"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/files"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key",
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/files"
+        }
+      }
+    },
+    {
+      "address": "aws_s3files_file_system.main",
+      "type": "aws_s3files_file_system",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-files",
+          "arn": "arn:files",
+          "bucket": "arn:aws:s3:::files",
+          "role_arn": "arn:aws:iam::123456789012:role/files",
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/files"
+        }
+      }
+    },
+    {
+      "address": "aws_s3files_access_point.main",
+      "type": "aws_s3files_access_point",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "access",
+          "arn": "arn:access",
+          "file_system_id": "fs-files",
+          "root_directory": [
+            {
+              "path": "PRIVATE_FILES_PAYLOAD"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3files_file_system_policy.main",
+      "type": "aws_s3files_file_system_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "file_system_id": "fs-files",
+          "policy": "PRIVATE_FILES_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_s3files_synchronization_configuration.main",
+      "type": "aws_s3files_synchronization_configuration",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "file_system_id": "fs-files",
+          "import_data_rule": [
+            {
+              "prefix": "PRIVATE_FILES_PAYLOAD"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-files"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-files",
+          "vpc_id": "vpc-files"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-files",
+          "vpc_id": "vpc-files"
+        }
+      }
+    },
+    {
+      "address": "aws_s3files_mount_target.main",
+      "type": "aws_s3files_mount_target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "mount",
+          "file_system_id": "fs-files",
+          "subnet_id": "subnet-files",
+          "security_groups": [
+            "sg-files"
+          ],
+          "network_interface_id": "eni-computed",
+          "vpc_id": "vpc-files"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3files_file_system.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.main.arn"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3files_access_point.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_s3files_file_system.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3files_file_system_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_s3files_file_system.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3files_synchronization_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_s3files_file_system.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3files_mount_target.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_s3files_file_system.main.id"
+              ]
+            },
+            "subnet_id": {
+              "references": [
+                "aws_subnet.main.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

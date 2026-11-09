@@ -1,0 +1,156 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "type": "aws_vpc",
+      "address": "aws_vpc.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "type": "aws_subnet",
+      "address": "aws_subnet.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "type": "aws_vpc_dhcp_options",
+      "address": "aws_vpc_dhcp_options.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dopt-main"
+        }
+      }
+    },
+    {
+      "type": "aws_vpc_dhcp_options_association",
+      "address": "aws_vpc_dhcp_options_association.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_id": "vpc-main",
+          "dhcp_options_id": "dopt-main"
+        }
+      }
+    },
+    {
+      "type": "aws_vpc_block_public_access_exclusion",
+      "address": "aws_vpc_block_public_access_exclusion.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "subnet_id": "subnet-main",
+          "internet_gateway_exclusion_mode": "allow-egress"
+        }
+      }
+    },
+    {
+      "type": "aws_vpc_encryption_control",
+      "address": "aws_vpc_encryption_control.main",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_id": "vpc-main",
+          "mode": "enforce"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_dhcp_options.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_dhcp_options_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            },
+            "dhcp_options_id": {
+              "references": [
+                "aws_vpc_dhcp_options.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_block_public_access_exclusion.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_id": {
+              "references": [
+                "aws_subnet.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_encryption_control.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

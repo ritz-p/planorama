@@ -1,0 +1,237 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_api_gateway_rest_api.one",
+      "type": "aws_api_gateway_rest_api",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "api-one"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api.two",
+      "type": "aws_api_gateway_rest_api",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "api-two"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_stage.one",
+      "type": "aws_api_gateway_stage",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "stage-one",
+          "stage_name": "prod",
+          "rest_api_id": "api-one"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_stage.two",
+      "type": "aws_api_gateway_stage",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "stage-two",
+          "stage_name": "prod",
+          "rest_api_id": "api-two"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_usage_plan.main",
+      "type": "aws_api_gateway_usage_plan",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "plan",
+          "api_stages": [
+            {
+              "api_id": "api-one",
+              "stage": "prod"
+            },
+            {
+              "api_id": "api-two",
+              "stage": "prod"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_api_key.main",
+      "type": "aws_api_gateway_api_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "key",
+          "value": "PRIVATE_KEY_VALUE"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_usage_plan_key.main",
+      "type": "aws_api_gateway_usage_plan_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_type": "API_KEY",
+          "key_id": "key",
+          "usage_plan_id": "plan",
+          "value": "PRIVATE_KEY_VALUE"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_api_gateway_rest_api.one",
+          "type": "aws_api_gateway_rest_api",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_rest_api.two",
+          "type": "aws_api_gateway_rest_api",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_stage.one",
+          "type": "aws_api_gateway_stage",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.one.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_stage.two",
+          "type": "aws_api_gateway_stage",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.two.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_usage_plan.main",
+          "type": "aws_api_gateway_usage_plan",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_stages": [
+              {
+                "api_id": {
+                  "references": [
+                    "aws_api_gateway_rest_api.one.id"
+                  ]
+                },
+                "stage": {
+                  "references": [
+                    "aws_api_gateway_stage.one.stage_name"
+                  ]
+                }
+              },
+              {
+                "api_id": {
+                  "references": [
+                    "aws_api_gateway_rest_api.two.id"
+                  ]
+                },
+                "stage": {
+                  "references": [
+                    "aws_api_gateway_stage.two.stage_name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_api_gateway_api_key.main",
+          "type": "aws_api_gateway_api_key",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_usage_plan_key.main",
+          "type": "aws_api_gateway_usage_plan_key",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_id": {
+              "references": [
+                "aws_api_gateway_api_key.main.id"
+              ]
+            },
+            "usage_plan_id": {
+              "references": [
+                "aws_api_gateway_usage_plan.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

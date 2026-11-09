@@ -10,6 +10,165 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::secrets_manager::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::route53_health::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::route53_dnssec::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::rum::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::synthetics::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::xray_encryption::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::direct_connect::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::vpclattice::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3files::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3tables::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3vectors::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::kms::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudfront_observability::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudfront_security::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudfront_functions::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::search_connections::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::search::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::efs_evidence::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::backup_plan::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::identity_center::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::identitystore::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::iam_credentials::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::iam_policies::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::microvms::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::lambda_capacity::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::lambda_core::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::route_server::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::traffic_mirror::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::secondary_network::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ipam::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::prefix_list_entries::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::kinesis_owners::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::messaging_policies::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::backup_vaults::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::vpc_controls::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::query_logs::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::appsync::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::profiles::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3_access::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::api_usage::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloud_map::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::eks_auxiliary::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::default_network::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::scraper::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::observability::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::application_scaling::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::scaling::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::dax::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::memorydb::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudwatch_metrics::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudwatch_alarms::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::database_events::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::database_snapshots::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloudwatch_delivery::label(resource, attribute) {
         return Some(label);
     }
@@ -61,6 +220,12 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::elbv2::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::flow_logs::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::network_acl::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::security_group_rules::label(resource, attribute) {
         return Some(label);
     }
@@ -83,6 +248,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     if let Some(label) = super::sagemaker::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::datasync::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::fsx::label(resource, attribute) {
@@ -120,6 +288,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(rule.label);
     }
     if let Some(label) = super::lambda::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3_exports::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::s3::label(resource, attribute) {
@@ -211,6 +382,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 }
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
+    if super::kms::label(resource, attribute).is_some() {
+        return super::kms::fields(resource, attribute, source);
+    }
     let dynamodb = super::dynamodb::source_fields(resource, attribute, source);
     if !dynamodb.is_empty() {
         return dynamodb;
@@ -437,6 +611,15 @@ pub(crate) fn annotate(
 ) {
     for reference in references.iter_mut() {
         let node = &nodes[reference.target];
+        if super::dax::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified = super::dax::verify(nodes, reference, evidence);
+            continue;
+        }
+        if super::memorydb::label(&node.resource_type, &reference.attribute).is_some() {
+            reference.service_reference_verified =
+                super::memorydb::verify(nodes, reference, evidence);
+            continue;
+        }
         if super::eventbridge::label(&node.resource_type, &reference.attribute).is_some() {
             reference.service_reference_verified =
                 super::eventbridge::verify(nodes, reference, evidence);
@@ -518,6 +701,16 @@ pub(crate) fn annotate(
         reference.service_reference_verified &=
             super::waf::verify_scope(nodes, reference, evidence);
         reference.service_reference_verified &= super::dynamodb::verify(nodes, reference, evidence);
+        if super::s3::object(&node.resource_type) {
+            reference.service_reference_verified &=
+                super::s3::verify_object(nodes, reference, evidence);
+        }
+        if node.resource_type == "aws_s3_bucket_replication_configuration"
+            && reference.attribute.ends_with("replica_kms_key_id")
+        {
+            reference.service_reference_verified &=
+                actual.is_some_and(|arn| super::s3_exports::kms_arn(&endpoint.resource_type, arn));
+        }
         if (node.resource_type == "aws_ecs_service" && reference.attribute == "cluster")
             || node.resource_type == "aws_redshift_cluster"
             || (node.resource_type == "aws_backup_plan"
@@ -576,12 +769,19 @@ pub(crate) fn annotate(
             );
         }
     }
+    super::s3_exports::annotate(nodes, references, evidence);
+    super::observability::annotate(nodes, references, evidence);
+    super::scraper::annotate(nodes, references, evidence);
     super::streaming::annotate(nodes, references, evidence);
     super::vpc_routes::annotate(nodes, references, evidence);
     super::vpc_gateways::annotate(nodes, references, evidence);
     super::privatelink::annotate(nodes, references, evidence);
     super::security_group_rules::annotate(nodes, references, evidence);
+    super::network_acl::annotate(nodes, references, evidence);
+    super::default_network::annotate(nodes, references, evidence);
     super::databases::annotate(nodes, references, evidence);
+    super::database_events::annotate(nodes, references, evidence);
+    super::database_snapshots::annotate(nodes, references, evidence);
     super::apprunner::annotate(nodes, references, evidence);
     super::sagemaker::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
@@ -590,9 +790,19 @@ pub(crate) fn annotate(
     super::ecs_workloads::annotate(nodes, references, evidence);
     super::autoscaling_network::annotate(nodes, references, evidence);
     super::fsx::annotate(nodes, references, evidence);
+    super::datasync::annotate(nodes, references, evidence);
     super::networkfirewall::annotate(nodes, references, evidence);
     super::lambda::annotate(nodes, references, evidence);
     super::api_gateway::annotate(nodes, references, evidence);
+    super::eks_auxiliary::annotate(nodes, references, evidence);
+    super::cloud_map::annotate(nodes, references, evidence);
+    super::api_usage::annotate(nodes, references, evidence);
+    super::efs_evidence::annotate(nodes, references, evidence);
+    super::backup_plan::annotate(nodes, references, evidence);
+    super::backup_vaults::annotate(nodes, references, evidence);
+    super::vpc_controls::annotate(nodes, references, evidence);
+    super::scaling::annotate(nodes, references, evidence);
+    super::application_scaling::annotate(nodes, references, evidence);
     super::rds_proxy::validate_targets(nodes, references, evidence);
     let aliases: Vec<_> = references
         .iter()
@@ -611,12 +821,258 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::kms::bindings(raw, reference)
+        && super::s3vectors::bindings(raw, reference)
+        && super::s3tables::bindings(raw, reference)
+        && super::s3files::bindings(raw, reference)
+        && super::vpclattice::bindings(raw, reference)
+        && super::direct_connect::bindings(raw, reference)
+        && super::xray_encryption::bindings(raw, reference)
+        && super::synthetics::bindings(raw, reference)
+        && super::rum::bindings(raw, reference)
+        && super::route53_dnssec::bindings(raw, reference)
+        && super::route53_health::bindings(raw, reference)
+        && super::secrets_manager::bindings(raw, reference)
+        && (super::identity_center::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::identity_center::bindings(raw, reference))
+        && (super::identitystore::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && (super::iam_credentials::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::iam_credentials::bindings(raw, reference))
+        && (super::iam_policies::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::iam_policies::bindings(raw, reference))
+        && (super::microvms::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::microvms::bindings(raw, reference))
+        && (super::lambda_capacity::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::lambda_capacity::bindings(raw, reference))
+        && (super::traffic_mirror::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && super::cloudfront_multitenant::bindings(raw, reference)
+        && super::global_accelerator::bindings(raw, reference)
+        && (super::lambda_core::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::lambda_core::bindings(raw, reference))
+        && (super::route_server::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::route_server::bindings(raw, reference))
+        && (super::secondary_network::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && super::ipam::bindings(raw, reference)
+        && (super::prefix_list_entries::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && (super::kinesis_owners::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && (super::messaging_policies::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && super::cloudfront_functions::bindings(raw, reference)
+        && super::cloudfront_security::bindings(raw, reference)
+        && super::cloudfront_observability::bindings(raw, reference)
+        && (super::search_connections::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::search_connections::bindings(raw, reference))
+        && (super::search::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::search::bindings(raw, reference))
+        && (super::efs_evidence::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::efs_evidence::bindings(raw, reference))
+        && (super::backup_plan::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::backup_plan::bindings(raw, reference))
+        && (super::backup_vaults::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && (super::vpc_controls::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::apprunner::bindings(raw, reference))
+        && (super::datasync::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::datasync::bindings(raw, reference))
+        && (super::query_logs::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::query_logs::bindings(raw, reference))
+        && (super::appsync::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::appsync::bindings(raw, reference))
+        && (super::profiles::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::profiles::bindings(raw, reference))
+        && (super::s3_access::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::s3_access::bindings(raw, reference))
+        && (super::api_usage::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::vpc_routes::bindings(raw, reference))
+        && (super::cloud_map::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::vpc_routes::bindings(raw, reference))
+        && (super::eks_auxiliary::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::eks_auxiliary::bindings(raw, reference))
+        && (super::default_network::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::vpc_routes::bindings(raw, reference))
+        && (super::scraper::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::scraper::bindings(raw, reference))
+        && (super::observability::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::observability::bindings(raw, reference))
+        && (super::dax::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::dax::bindings(raw, reference))
+        && (super::memorydb::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::memorydb::bindings(raw, reference))
+        && (super::flow_logs::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::flow_logs::bindings(raw, reference))
+        && (super::network_acl::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
+        && (super::database_events::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
+        && (super::database_snapshots::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::database_snapshots::bindings(raw, reference))
         && (super::cloudwatch_delivery::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
         )
         .is_none()
             || super::cloudwatch_delivery::bindings(raw, reference))
+        && (super::cloudwatch_metrics::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::cloudwatch_metrics::bindings(raw, reference))
+        && (super::cloudwatch_alarms::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::streaming::bindings(raw, reference))
         && (super::cloudwatch_logs::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -966,10 +1422,19 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::route53_records::indexed(&node.resource_type, &reference.attribute)
+        if super::s3vectors::indexed(&node.resource_type, &reference.attribute)
+            || super::vpclattice::indexed(&node.resource_type, &reference.attribute)
+            || super::synthetics::indexed(&node.resource_type, &reference.attribute)
+            || super::rum::indexed(&node.resource_type, &reference.attribute)
+            || super::s3tables::indexed(&node.resource_type, &reference.attribute)
+            || super::secrets_manager::indexed(&node.resource_type, &reference.attribute)
+            || super::route53_records::indexed(&node.resource_type, &reference.attribute)
+            || super::appsync::indexed(&node.resource_type, &reference.attribute)
+            || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
             || super::cloudfront::indexed(&node.resource_type, &reference.attribute)
+            || super::cloudfront_security::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_cognito::indexed(&node.resource_type, &reference.attribute)
             || super::elbv2_network::indexed(&node.resource_type, &reference.attribute)
             || super::s3::aggregate(raw, reference)
@@ -1008,7 +1473,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                             | "Global datastore membership"
                             | "Cache replication group membership"
                             | "Cache user membership"
+                            | "MemoryDB user membership"
+                            | "MemoryDB multi-region membership"
                             | "Schedule group membership"
+                            | "ONTAP filesystem membership"
+                            | "ONTAP SVM membership"
+                            | "OpenZFS parent membership"
                     ) || matches!(
                         node.resource_type.as_str(),
                         "aws_iam_group_membership" | "aws_iam_user_group_membership"

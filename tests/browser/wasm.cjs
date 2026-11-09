@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict');
+const {full} = require('./wasm-suite.cjs');
 const {fork} = require('node:child_process');
 const {readFileSync, mkdtempSync, rmSync, existsSync, appendFileSync} = require('node:fs');
 const {join, resolve} = require('node:path');
@@ -69,6 +70,7 @@ async function main() {
       native: nativeReference,
     });
     checkpoint('resources');
+    require('./wasm-flow-logs.cjs')({run, native: nativeReference});
     require('./wasm-options.cjs')({
       driver, small, run, submit, status,
       native: nativeReference,
@@ -83,86 +85,130 @@ async function main() {
     ]) {
       const result = run(small, options);
       assert.equal(result.ok, true, JSON.stringify(result));
+      assert.deepEqual(driver.execute_script('return progressStages.map(event => event.stage)'), ['parsing', 'selection', 'placement', 'routing', 'output']);
+      assert.equal(driver.execute_script("return progressStages.every(event => Object.keys(event).sort().join(',') === 'request,stage,type')"), true);
       const native = nativeReference(small, args);
       assert.equal(result.content, native, `Native/Wasm exact parity: ${JSON.stringify(options)}`);
       console.log(JSON.stringify({fixture: 'viewer-plan', options, elapsed_ms: result.elapsed_ms, memory_bytes: result.memory_bytes, output_bytes: Buffer.byteLength(result.content)}));
     }
     checkpoint('viewer-parity');
-    const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
-    const serverless = JSON.parse(readFileSync(join(root, 'tests/fixtures/opensearch-serverless-plan.json'), 'utf8'));
-    serverless.resource_changes[4].change.after_unknown = {subnet_ids: [false, true]};
-    for (const format of ['svg', 'html']) {
-      const input = JSON.stringify(serverless);
-      const result = run(input, {format});
-      assert.equal(result.ok, true, JSON.stringify(result));
-      assert.equal(result.content, nativeReference(input, ['--format', format]), 'Serverless unknown network native/Wasm '+format);
-      assert.ok(!result.content.includes('PRIVATE_'));
+    for (const scenario of ['complete', 'incomplete', 'filtered']) {
+      const metrics = JSON.parse(readFileSync(join(root, 'tests/fixtures/cloudwatch-metrics-plan.json'), 'utf8'));
+      if (scenario === 'incomplete') {
+        metrics.resource_changes[4].change.after_unknown = {firehose_arn: true};
+        metrics.resource_changes[5].change.after_unknown = {template_name: true};
+      }
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(metrics);
+        const options = scenario === 'filtered' ? {format, focus: 'aws_cloudwatch_metric_stream.metrics', focus_depth: 0} : {format};
+        const args = scenario === 'filtered' ? ['--format', format, '--focus', options.focus, '--focus-depth', '0'] : ['--format', format];
+        const result = run(input, options);
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, args), `CloudWatch metrics native/Wasm ${format}/${scenario}`);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
     }
-    checkpoint('incomplete-serverless');
-    const batch = JSON.parse(readFileSync(join(root, 'tests/fixtures/batch-plan.json'), 'utf8'));
-    batch.resource_changes[7].change.after_unknown = {compute_environment_order: [{}, {compute_environment: true}]};
-    for (const format of ['svg', 'html']) {
-      const input = JSON.stringify(batch);
-      const result = run(input, {format});
-      assert.equal(result.ok, true, JSON.stringify(result));
-      assert.equal(result.content, nativeReference(input, ['--format', format]), 'Batch incomplete queue native/Wasm '+format);
-      assert.ok(!result.content.includes('PRIVATE_'));
+    checkpoint('cloudwatch-metrics');
+    for (const scenario of ['complete', 'incomplete', 'filtered']) {
+      const alarms = JSON.parse(readFileSync(join(root, 'tests/fixtures/cloudwatch-alarms-plan.json'), 'utf8'));
+      if (scenario === 'incomplete') alarms.resource_changes[3].change.after_unknown = {alarm_actions: [false, true, false]};
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(alarms);
+        const options = scenario === 'filtered' ? {format, focus: 'aws_cloudwatch_alarm_mute_rule.maintenance', focus_depth: 0} : {format};
+        const args = scenario === 'filtered' ? ['--format', format, '--focus', options.focus, '--focus-depth', '0'] : ['--format', format];
+        const result = run(input, options);
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, args), `CloudWatch alarms native/Wasm ${format}/${scenario}`);
+      }
     }
-    checkpoint('incomplete-batch');
-    const dms = JSON.parse(readFileSync(join(root, 'tests/fixtures/dms-plan.json'), 'utf8'));
-    dms.resource_changes[5].change.after_unknown = {subnet_ids: [false, true]};
-    dms.resource_changes[7].change.after_unknown = {endpoint_type: true};
-    for (const format of ['svg', 'html']) {
-      const input = JSON.stringify(dms);
-      const result = run(input, {format});
-      assert.equal(result.ok, true, JSON.stringify(result));
-      assert.equal(result.content, nativeReference(input, ['--format', format]), 'DMS incomplete network/direction native/Wasm '+format);
-      assert.ok(!result.content.includes('PRIVATE_'));
-    }
-    checkpoint('incomplete-dms');
-    const sagemaker = JSON.parse(readFileSync(join(root, 'tests/fixtures/sagemaker-plan.json'), 'utf8'));
-    sagemaker.resource_changes[7].change.after_unknown = {production_variants: [{}, {model_name: true}]};
-    sagemaker.resource_changes[5].change.after_unknown = {vpc_config: [{subnets: [false, true]}]};
-    for (const format of ['svg', 'html']) {
-      const input = JSON.stringify(sagemaker);
-      const result = run(input, {format});
-      assert.equal(result.ok, true, JSON.stringify(result));
-      assert.equal(result.content, nativeReference(input, ['--format', format]), 'SageMaker incomplete model/network native/Wasm '+format);
-      assert.ok(!result.content.includes('PRIVATE_'));
-    }
-    checkpoint('incomplete-sagemaker');
-    const logs = JSON.parse(readFileSync(join(root, 'tests/fixtures/cloudwatch-delivery-plan.json'), 'utf8'));
-    for (const resource of logs.resource_changes) {
-      if (resource.type === 'aws_cloudwatch_log_delivery_destination') resource.change.after_unknown = {delivery_destination_type: true};
-      if (resource.type === 'aws_cloudwatch_log_delivery_source') resource.change.after_unknown = {log_type: true};
-    }
-    for (const format of ['svg', 'html']) {
-      const input = JSON.stringify(logs);
-      const result = run(input, {format, focus: 'aws_cloudwatch_log_delivery.delivery', focus_depth: 0});
-      assert.equal(result.ok, true, JSON.stringify(result));
-      assert.equal(result.content, nativeReference(input, ['--format', format, '--focus', 'aws_cloudwatch_log_delivery.delivery', '--focus-depth', '0']), 'CloudWatch incomplete/filtered native/Wasm '+format);
-      assert.ok(!result.content.includes('PRIVATE_'));
-    }
-    for (const fixture of ['api-gateway-v2-plan', 'dynamodb-plan', 'elasticache-configuration-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'autoscaling-network-plan', 'dms-plan', 'sagemaker-plan', 'cloudwatch-delivery-plan', 'cloudwatch-logs-plan', 'lambda-policy-plan', 'lambda-async-plan', 'lambda-qualified-plan', 'lambda-config-plan', 'lambda-events-plan', 'ecs-capacity-plan', 'ecs-workloads-plan']) {
+    checkpoint('cloudwatch-alarms');
+    for (const fixture of ['eventbridge-references-plan', 'eventbridge-schemas-plan']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
       for (const format of ['svg', 'html']) {
         const result = run(input, {format});
         assert.equal(result.ok, true, JSON.stringify(result));
         assert.equal(result.content, nativeReference(input, ['--format', format]), fixture+' native/Wasm '+format);
         assert.ok(!result.content.includes('PRIVATE_'));
-        checkpoint(`${fixture}-${format}`);
       }
     }
-    for (const format of ['svg', 'html']) {
-      for (const icon_mode of ['service-name']) {
-        const result = run(aliases, {format, icon_mode});
+    if (full) {
+      require('./wasm-s3.cjs')({root, run, native: nativeReference});
+      const aliases = readFileSync(join(root, 'tests/fixtures/aws-aliases-plan.json'), 'utf8');
+      const serverless = JSON.parse(readFileSync(join(root, 'tests/fixtures/opensearch-serverless-plan.json'), 'utf8'));
+      serverless.resource_changes[4].change.after_unknown = {subnet_ids: [false, true]};
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(serverless);
+        const result = run(input, {format});
         assert.equal(result.ok, true, JSON.stringify(result));
-        const native = nativeReference(aliases, ['--format', format, '--icon-mode', icon_mode]);
-        assert.equal(result.content, native, `AWS aliases native/Wasm ${format}/${icon_mode}`);
-        assert.ok(result.content.includes('aws_alb.web'));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), 'Serverless unknown network native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
       }
+      checkpoint('incomplete-serverless');
+      const batch = JSON.parse(readFileSync(join(root, 'tests/fixtures/batch-plan.json'), 'utf8'));
+      batch.resource_changes[7].change.after_unknown = {compute_environment_order: [{}, {compute_environment: true}]};
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(batch);
+        const result = run(input, {format});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), 'Batch incomplete queue native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
+      checkpoint('incomplete-batch');
+      const dms = JSON.parse(readFileSync(join(root, 'tests/fixtures/dms-plan.json'), 'utf8'));
+      dms.resource_changes[5].change.after_unknown = {subnet_ids: [false, true]};
+      dms.resource_changes[7].change.after_unknown = {endpoint_type: true};
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(dms);
+        const result = run(input, {format});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), 'DMS incomplete network/direction native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
+      checkpoint('incomplete-dms');
+      const sagemaker = JSON.parse(readFileSync(join(root, 'tests/fixtures/sagemaker-plan.json'), 'utf8'));
+      sagemaker.resource_changes[7].change.after_unknown = {production_variants: [{}, {model_name: true}]};
+      sagemaker.resource_changes[5].change.after_unknown = {vpc_config: [{subnets: [false, true]}]};
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(sagemaker);
+        const result = run(input, {format});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), 'SageMaker incomplete model/network native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
+      checkpoint('incomplete-sagemaker');
+      const logs = JSON.parse(readFileSync(join(root, 'tests/fixtures/cloudwatch-delivery-plan.json'), 'utf8'));
+      for (const resource of logs.resource_changes) {
+        if (resource.type === 'aws_cloudwatch_log_delivery_destination') resource.change.after_unknown = {delivery_destination_type: true};
+        if (resource.type === 'aws_cloudwatch_log_delivery_source') resource.change.after_unknown = {log_type: true};
+      }
+      for (const format of ['svg', 'html']) {
+        const input = JSON.stringify(logs);
+        const result = run(input, {format, focus: 'aws_cloudwatch_log_delivery.delivery', focus_depth: 0});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format, '--focus', 'aws_cloudwatch_log_delivery.delivery', '--focus-depth', '0']), 'CloudWatch incomplete/filtered native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+      }
+      for (const fixture of ['api-gateway-rest-plan', 'api-gateway-v2-plan', 'dynamodb-plan', 'elasticache-configuration-plan', 'memorydb-plan', 'dax-plan', 'eventbridge-configuration-plan', 'msk-plan', 'mq-plan', 'docdb-plan', 'neptune-plan', 'database-endpoints-plan', 'database-configuration-plan', 'database-snapshots-plan', 'database-events-plan', 'redshift-serverless-plan', 'apprunner-plan', 'networkfirewall-plan', 'opensearch-serverless-plan', 'batch-plan', 'fsx-lustre-plan', 'fsx-network-plan', 'efs-configuration-plan', 'ipam-plan', 'prefix-list-entries-plan', 'kinesis-owners-plan', 'messaging-policies-plan', 'backup-plan-rules-plan', 'backup-vaults-plan', 'vpc-controls-plan', 'cloudfront-observability-plan', 'cloudfront-security-plan', 'cloudfront-functions-plan', 'appsync-domains-plan', 'appsync-events-plan', 'search-connections-plan', 'search-domains-plan', 'search-network-plan', 'search-applications-plan', 'fsx-children-plan', 'datasync-plan', 'autoscaling-network-plan', 'dms-plan', 'sagemaker-plan', 'cloudwatch-delivery-plan', 'cloudwatch-logs-plan', 'lambda-policy-plan', 'lambda-async-plan', 'lambda-qualified-plan', 'lambda-config-plan', 'lambda-events-plan', 'ecs-capacity-plan', 'ecs-workloads-plan']) {
+        const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'.json'), 'utf8');
+        for (const format of ['svg', 'html']) {
+          const result = run(input, {format});
+          assert.equal(result.ok, true, JSON.stringify(result));
+          assert.equal(result.content, nativeReference(input, ['--format', format]), fixture+' native/Wasm '+format);
+          assert.ok(!result.content.includes('PRIVATE_'));
+          checkpoint(`${fixture}-${format}`);
+        }
+      }
+      for (const format of ['svg', 'html']) {
+        for (const icon_mode of ['service-name']) {
+          const result = run(aliases, {format, icon_mode});
+          assert.equal(result.ok, true, JSON.stringify(result));
+          const native = nativeReference(aliases, ['--format', format, '--icon-mode', icon_mode]);
+          assert.equal(result.content, native, `AWS aliases native/Wasm ${format}/${icon_mode}`);
+          assert.ok(result.content.includes('aws_alb.web'));
+        }
+      }
+      checkpoint('aliases');
     }
-    checkpoint('aliases');
     for (const [json, options, code] of [
       ['secret{', {}, 'invalid_json'],
       ['{"format_version":"secret"}', {}, 'unsupported_input'],
@@ -191,6 +237,17 @@ async function main() {
       }
     }
     checkpoint('spatial-parity');
+    for (const fixture of ['route53-health', 'direct-connect-hosted', 'direct-connect', 'vpclattice-resources', 'vpclattice', 's3vectors', 's3tables', 's3files', 'secrets-manager-references', 'kms-references', 'global-accelerator-custom', 'traffic-mirror', 'lambda-capacity', 'microvms', 'iam-policies', 'iam-credentials', 'identitystore', 'identity-center']) {
+      const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'-plan.json'), 'utf8');
+      for (const format of ['svg', 'html']) {
+        const result = run(input, {format});
+        assert.equal(result.ok, true, JSON.stringify(result));
+        assert.equal(result.content, nativeReference(input, ['--format', format]), fixture+' native/Wasm '+format);
+        assert.ok(!result.content.includes('PRIVATE_'));
+        assert.ok(!result.content.includes('OPAQUE_POLICY_PAYLOAD'));
+      }
+    }
+    checkpoint('network-identity-parity');
     for (const fixture of ['aws-basic', 'service-labels']) {
       const basic = readFileSync(join(root, `tests/fixtures/${fixture}-plan.json`), 'utf8');
       for (const format of ['svg', 'html']) {
@@ -244,7 +301,11 @@ async function main() {
     checkpoint('hostile-preview');
     const largePath = join(root, 'examples/terraform-large/plan.json');
     const large = readFileSync(largePath, 'utf8');
-    submit(large, 'svg');
+    driver.execute_script(`
+      window.StateWorker = Worker;
+      window.Worker = class { postMessage() {} terminate() {} };
+    `);
+    submit(small, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker start');
     driver.execute_script(`
       window.oldCompletion = worker.onmessage;
@@ -255,21 +316,23 @@ async function main() {
     assert.ok(status().startsWith('Settings changed.'));
     assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
     driver.find_element(By.CSS_SELECTOR, '#reset-settings').click();
-    submit(large, 'svg');
+    submit(small, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before reset');
     driver.find_element(By.CSS_SELECTOR, '#reset-settings').click();
     assert.equal(driver.execute_script('return worker === undefined'), true);
     assert.ok(status().startsWith('Settings reset'));
-    submit(large, 'svg');
+    submit(small, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before file replacement');
     driver.execute_script("window.replacedWorker = worker; document.getElementById('file').dispatchEvent(new Event('change', {bubbles: true}));");
     assert.equal(driver.execute_script('return worker !== replacedWorker'), true);
-    submit(large, 'svg');
+    submit(small, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before error');
     driver.execute_script("worker.onerror({preventDefault() {}});");
     assert.equal(status(), 'Diagram generation failed. Try a smaller plan.');
     assert.equal(driver.execute_script('return worker === undefined'), true);
     assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
+    driver.execute_script('window.Worker = StateWorker;');
+    checkpoint('controlled-worker-state');
     submit(large, 'svg');
     wait(() => driver.execute_script('return !!worker'), 'worker before cancel');
     wait(() => status() === 'Routing connections…', 'large fixture routing stage', 180000);
@@ -289,15 +352,17 @@ async function main() {
     assert.equal(status(), currentStatus, 'Stale completion cannot replace a newer result');
     assert.equal(driver.execute_script('return elapsedTimer === undefined'), true);
     checkpoint('large-progress-cancel-retry');
-    const largeResult = run(large);
-    assert.equal(largeResult.ok, true);
-    assert.deepEqual(driver.execute_script('return progressStages.map(event => event.stage)'), ['parsing', 'selection', 'placement', 'routing', 'output']);
-    assert.equal(driver.execute_script("return progressStages.every(event => Object.keys(event).sort().join(',') === 'request,stage,type')"), true);
-    checkpoint('large-wasm-completion');
-    const native = nativeReference(large, [], {timeout: 180000, maxBuffer: 64 * 1024 * 1024});
-    assert.equal(largeResult.content, native, 'Large native/Wasm exact parity');
-    checkpoint('large-native-parity');
-    console.log(JSON.stringify({fixture: 'terraform-large', input_bytes: Buffer.byteLength(large), elapsed_ms: largeResult.elapsed_ms, memory_bytes: largeResult.memory_bytes, output_bytes: Buffer.byteLength(largeResult.content)}));
+    if (full) {
+      const largeResult = run(large);
+      assert.equal(largeResult.ok, true);
+      assert.deepEqual(driver.execute_script('return progressStages.map(event => event.stage)'), ['parsing', 'selection', 'placement', 'routing', 'output']);
+      assert.equal(driver.execute_script("return progressStages.every(event => Object.keys(event).sort().join(',') === 'request,stage,type')"), true);
+      checkpoint('large-wasm-completion');
+      const native = nativeReference(large, [], {timeout: 180000, maxBuffer: 64 * 1024 * 1024});
+      assert.equal(largeResult.content, native, 'Large native/Wasm exact parity');
+      checkpoint('large-native-parity');
+      console.log(JSON.stringify({fixture: 'terraform-large', input_bytes: Buffer.byteLength(large), elapsed_ms: largeResult.elapsed_ms, memory_bytes: largeResult.memory_bytes, output_bytes: Buffer.byteLength(largeResult.content)}));
+    }
     const requests = driver.get_log('performance').map(entry => JSON.parse(entry.message).message)
       .filter(entry => entry.method === 'Network.requestWillBeSent' && /^https?:/.test(entry.params.request.url));
     assert.deepEqual(requests, [], 'No HTTP requests after assets load, including after worker cancellation');

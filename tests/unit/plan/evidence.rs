@@ -47,6 +47,82 @@ const STATIC: &str = r#"provider "aws" {
   assume_role { role_arn = "arn:aws:iam::123456789012:role/Test" }
 }"#;
 
+#[test]
+fn authentication_schema_is_selected_by_exact_provider_version() {
+    for provider in ["5.100.0", "6.0.0", "6.70.0"] {
+        assert!(complete_provider(&json!({"region":"us-east-1"}), provider));
+        assert!(!complete_provider(
+            &json!({"unknown_auth":"private"}),
+            provider
+        ));
+        assert!(!complete_provider(
+            &json!({"profile":"${var.profile}"}),
+            provider
+        ));
+        assert_eq!(
+            complete_provider(&json!({"user_agent":["fixture"]}), provider),
+            provider == "6.70.0"
+        );
+        assert_eq!(
+            complete_provider(
+                &json!({"endpoints":[{"simpledb":"http://localhost"}]}),
+                provider
+            ),
+            provider == "5.100.0"
+        );
+    }
+    let input = fixture().to_string();
+    for (core, provider) in [
+        ("1.16.5", "6.0.0"),
+        ("1.16.5", "6.70.0"),
+        ("1.10.4", "6.0.0"),
+        ("1.10.4", "6.70.0"),
+    ] {
+        let mut input: Value = serde_json::from_str(&input).unwrap();
+        input["terraform_version"] = json!(core);
+        let runtime = json!({"terraform_version":core,"provider_selections":{"registry.terraform.io/hashicorp/aws":provider}});
+        assert!(
+            Evidence::validate_runtime(&input.to_string(), &serde_json::to_vec(&runtime).unwrap())
+                .is_err()
+        );
+    }
+}
+
+#[test]
+fn captured_archives_resolve_root_alias_and_child_module_for_every_verified_pair() {
+    for &(core, provider) in VERIFIED_PAIRS {
+        let directory = std::path::Path::new(env!("CARGO_MANIFEST_DIR"))
+            .join("tests/fixtures/provider-plan/captured")
+            .join(format!("{core}-{provider}"));
+        for (name, known) in [("static", true), ("dynamic", false), ("variable", false)] {
+            let input = std::fs::read_to_string(directory.join(format!("{name}.json"))).unwrap();
+            let saved = std::fs::read(directory.join(format!("{name}.plan"))).unwrap();
+            let evidence = Evidence::validate(&saved, &input, input.as_bytes()).unwrap();
+            let runtime = json!({"terraform_version":core,"provider_selections":{"registry.terraform.io/hashicorp/aws":provider}});
+            evidence
+                .validate_installed(&serde_json::to_vec(&runtime).unwrap())
+                .unwrap();
+            let mut plan = crate::plan::parse(&input).unwrap();
+            evidence.apply(&mut plan);
+            assert_eq!(plan.nodes.len(), 2);
+            for node in &plan.nodes {
+                assert_eq!(
+                    node.provider_configuration
+                        .as_ref()
+                        .unwrap()
+                        .account
+                        .is_some(),
+                    known,
+                    "{core}/{provider}/{name}"
+                );
+            }
+            assert!(
+                Evidence::validate(&saved[..saved.len() / 2], &input, input.as_bytes()).is_err()
+            );
+        }
+    }
+}
+
 pub(crate) fn parse_fixture(json: &str) -> Result<TerraformPlan, String> {
     let mut value: Value = serde_json::from_str(json).unwrap();
     value["terraform_version"] = json!("1.9.8");
@@ -217,9 +293,9 @@ fn stale_missing_modules_and_overrides_are_rejected() {
 #[test]
 fn json_static_and_dynamic_provider_declarations() {
     let good = br#"{"provider":{"aws":[{"alias":"prod","assume_role":[{"role_arn":"arn:aws:iam::123456789012:role/Test"}]}]}}"#;
-    assert!(json_providers(good).unwrap()[0].2.is_some());
+    assert!(json_providers(good, "5.100.0").unwrap()[0].2.is_some());
     let dynamic = br#"{"provider":{"aws":{"assume_role":{"role_arn":"arn:aws:iam::123456789012:role/Test"},"dynamic":{"assume_role":{"for_each":"${var.roles}"}}}}}"#;
-    assert!(json_providers(dynamic).unwrap()[0].2.is_none());
+    assert!(json_providers(dynamic, "5.100.0").unwrap()[0].2.is_none());
 }
 
 #[test]
@@ -287,7 +363,7 @@ fn unexamined_provider_version_cannot_establish_completeness() {
         ("tfplan", "fixture"),
         (
             ".terraform.lock.hcl",
-            "provider \"registry.terraform.io/hashicorp/aws\" { version = \"6.0.0\" }",
+            "provider \"registry.terraform.io/hashicorp/aws\" { version = \"6.1.0\" }",
         ),
         ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
         ("tfconfig/m-/main.tf", STATIC),
@@ -296,25 +372,46 @@ fn unexamined_provider_version_cannot_establish_completeness() {
     let error = Evidence::validate(&archive(&files), &json, json.as_bytes())
         .err()
         .unwrap();
-    assert!(error.contains("5.100.0"));
+    assert!(error.contains("embedded dependency lock"));
 }
 
 #[test]
 fn core_binary_archive_json_and_lock_are_independently_checked() {
-    for core in ["1.9.8", "1.16.6"] {
+    for &(core, provider) in VERIFIED_PAIRS {
         let mut input = fixture();
         input["terraform_version"] = json!(core);
         let json = input.to_string();
         let header = format!("\u{8}\u{3}r{}{core}", char::from(core.len() as u8));
         let saved = archive(&[
             ("tfplan", &header),
+            (
+                ".terraform.lock.hcl",
+                &format!(
+                    "provider \"registry.terraform.io/hashicorp/aws\" {{ version = \"{provider}\" }}"
+                ),
+            ),
             ("tfconfig/modules.json", r#"[{"Key":""},{"Key":"child"}]"#),
             ("tfconfig/m-/main.tf", STATIC),
             ("tfconfig/m-child/main.tf", ""),
         ]);
-        let version = json!({"terraform_version":core,"provider_selections":{"registry.terraform.io/hashicorp/aws":"5.100.0"}});
+        let version = json!({"terraform_version":core,"provider_selections":{"registry.terraform.io/hashicorp/aws":provider}});
         Evidence::validate_runtime(&json, &serde_json::to_vec(&version).unwrap()).unwrap();
         let evidence = Evidence::validate(&saved, &json, json.as_bytes()).unwrap();
+        evidence
+            .validate_installed(&serde_json::to_vec(&version).unwrap())
+            .unwrap();
+        let mut mismatched = version.clone();
+        mismatched["provider_selections"]["registry.terraform.io/hashicorp/aws"] =
+            json!(if provider == "5.100.0" {
+                "6.0.0"
+            } else {
+                "5.100.0"
+            });
+        assert!(
+            evidence
+                .validate_installed(&serde_json::to_vec(&mismatched).unwrap())
+                .is_err()
+        );
         let mut parsed = crate::plan::parse(&json).unwrap();
         evidence.apply(&mut parsed);
         assert_eq!(
@@ -342,7 +439,7 @@ fn core_binary_archive_json_and_lock_are_independently_checked() {
             assert!(!error.contains(wrong));
             assert!(validate_header(header.as_bytes(), wrong).is_none());
         }
-        for provider in ["6.0.0", "5.99.0", "secret-value"] {
+        for provider in ["6.1.0", "5.99.0", "secret-value"] {
             let mut version = version.clone();
             version["provider_selections"]["registry.terraform.io/hashicorp/aws"] = json!(provider);
             assert!(
@@ -409,7 +506,11 @@ fn evidence_keeps_data_current_deposed_and_removed_objects_distinct() {
 #[test]
 fn entire_provider_and_nested_authentication_must_be_known_literals() {
     assert!(
-        hcl_providers(include_bytes!("../../fixtures/provider-plan/main.tf")).unwrap()[0]
+        hcl_providers(
+            include_bytes!("../../fixtures/provider-plan/main.tf"),
+            "5.100.0"
+        )
+        .unwrap()[0]
             .2
             .is_some()
     );
@@ -426,7 +527,9 @@ fn entire_provider_and_nested_authentication_must_be_known_literals() {
     ] {
         let source = STATIC.replace("  alias", &format!("  {extra}\n  alias"));
         assert!(
-            hcl_providers(source.as_bytes()).unwrap()[0].2.is_none(),
+            hcl_providers(source.as_bytes(), "5.100.0").unwrap()[0]
+                .2
+                .is_none(),
             "{extra}"
         );
     }
@@ -444,11 +547,15 @@ fn entire_provider_and_nested_authentication_must_be_known_literals() {
             .extend(extra.as_object().unwrap().clone());
         let body = json!({"provider":{"aws":declaration}});
         assert!(
-            json_providers(&serde_json::to_vec(&body).unwrap()).unwrap()[0]
+            json_providers(&serde_json::to_vec(&body).unwrap(), "5.100.0").unwrap()[0]
                 .2
                 .is_none()
         );
     }
     let literal = STATIC.replace("  alias", "  profile = \"local\"\n default_tags { tags = { Name = \"test\" } }\n endpoints { sts = \"http://127.0.0.1:1234\" }\n  alias");
-    assert!(hcl_providers(literal.as_bytes()).unwrap()[0].2.is_some());
+    assert!(
+        hcl_providers(literal.as_bytes(), "5.100.0").unwrap()[0]
+            .2
+            .is_some()
+    );
 }

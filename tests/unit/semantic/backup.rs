@@ -168,7 +168,7 @@ fn backup_resources_require_compatible_provider_and_regional_scope() {
 }
 
 #[test]
-fn backup_single_rule_proof_and_filtered_indexed_state_identity() {
+fn backup_repeated_rule_proof_and_filtered_indexed_state_identity() {
     let mut value: Value = serde_json::from_str(FIXTURE).unwrap();
     let rule = value["resource_changes"][1]["change"]["after"]["rule"][0].clone();
     value["resource_changes"][1]["change"]["after"]["rule"]
@@ -181,7 +181,7 @@ fn backup_single_rule_proof_and_filtered_indexed_state_identity() {
             .attributes
             .iter()
             .filter(|r| r.attribute == "rule.target_vault_name")
-            .all(|r| !r.service_reference_verified)
+            .all(|r| r.service_reference_verified)
     );
     let indexed = FIXTURE.replace("aws_s3_bucket.data", "aws_s3_bucket.data[0]");
     let graph = semantic::transform(&plan::parse(&indexed).unwrap());

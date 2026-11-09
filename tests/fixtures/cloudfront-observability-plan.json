@@ -1,0 +1,267 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "eu-west-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.logs",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesis_stream.logs",
+          "mode": "managed",
+          "type": "aws_kinesis_stream",
+          "name": "logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudfront_realtime_log_config.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_realtime_log_config",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "endpoint": [
+              {
+                "kinesis_stream_config": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.logs.arn"
+                      ]
+                    },
+                    "stream_arn": {
+                      "references": [
+                        "aws_kinesis_stream.logs.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.first",
+          "mode": "managed",
+          "type": "aws_cloudfront_distribution",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {
+            "default_cache_behavior": [
+              {
+                "realtime_log_config_arn": {
+                  "references": [
+                    "aws_cloudfront_realtime_log_config.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_distribution.second",
+          "mode": "managed",
+          "type": "aws_cloudfront_distribution",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "default_cache_behavior": [
+              {
+                "realtime_log_config_arn": {
+                  "references": [
+                    "aws_cloudfront_realtime_log_config.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudfront_monitoring_subscription.main",
+          "mode": "managed",
+          "type": "aws_cloudfront_monitoring_subscription",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "distribution_id": {
+              "references": [
+                "aws_cloudfront_distribution.first.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.logs",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "logs",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "logs",
+          "arn": "arn:aws:iam::111111111111:role/logs",
+          "assume_role_policy": "PRIVATE_POLICY"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_kinesis_stream.logs",
+      "mode": "managed",
+      "type": "aws_kinesis_stream",
+      "name": "logs",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "logs",
+          "arn": "arn:aws:kinesis:eu-west-1:111111111111:stream/logs",
+          "name": "logs"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_realtime_log_config.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_realtime_log_config",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "arn": "arn:aws:cloudfront::111111111111:realtime-log-config/logs",
+          "name": "logs",
+          "fields": [
+            "timestamp",
+            "c-ip"
+          ],
+          "sampling_rate": 50,
+          "endpoint": [
+            {
+              "stream_type": "Kinesis",
+              "kinesis_stream_config": [
+                {
+                  "role_arn": "arn:aws:iam::111111111111:role/logs",
+                  "stream_arn": "arn:aws:kinesis:eu-west-1:111111111111:stream/logs"
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.first",
+      "mode": "managed",
+      "type": "aws_cloudfront_distribution",
+      "name": "first",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "distribution-first",
+          "arn": "arn:aws:cloudfront::111111111111:distribution/first",
+          "default_cache_behavior": [
+            {
+              "realtime_log_config_arn": "arn:aws:cloudfront::111111111111:realtime-log-config/logs"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_distribution.second",
+      "mode": "managed",
+      "type": "aws_cloudfront_distribution",
+      "name": "second",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "distribution-second",
+          "arn": "arn:aws:cloudfront::111111111111:distribution/second",
+          "default_cache_behavior": [
+            {
+              "realtime_log_config_arn": "arn:aws:cloudfront::111111111111:realtime-log-config/logs"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_cloudfront_monitoring_subscription.main",
+      "mode": "managed",
+      "type": "aws_cloudfront_monitoring_subscription",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "distribution-first",
+          "distribution_id": "distribution-first",
+          "monitoring_subscription": [
+            {
+              "realtime_metrics_subscription_config": [
+                {
+                  "realtime_metrics_subscription_status": "Enabled"
+                }
+              ]
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ]
+}

@@ -1,4 +1,48 @@
 use super::{width, wrap, wrap_address};
+use unicode_segmentation::UnicodeSegmentation;
+
+#[test]
+fn unicode_width_handles_combining_marks_and_emoji_sequences() {
+    assert_eq!(width("é"), width("e\u{301}"));
+    assert_eq!(width("が"), width("か\u{3099}"));
+    assert_eq!(width("か\u{3099}"), 2);
+    for emoji in ["👩‍💻", "👍🏽", "🇯🇵", "1️⃣"] {
+        assert_eq!(width(emoji), 2, "{emoji}");
+    }
+    assert_eq!(width("a\u{200b}b"), 2);
+    assert_eq!(width("→—"), 4);
+}
+
+#[test]
+fn wrapping_never_splits_a_grapheme_even_when_it_exceeds_the_limit() {
+    for text in [
+        "cafe\u{301}.か\u{3099}.👩‍💻.👍🏽.🇯🇵.1️⃣",
+        "\u{301}a\u{200b}b",
+        "module.か\u{3099}.test.item[\"👩‍💻.e\u{301}\"].id",
+        "module.x[\"a\\\".か\u{3099}\"].id",
+    ] {
+        let boundaries: Vec<_> = text
+            .grapheme_indices(true)
+            .map(|(i, _)| i)
+            .chain([text.len()])
+            .collect();
+        for limit in 0..=20 {
+            for lines in [wrap(text, limit), wrap_address(text, limit)] {
+                assert_eq!(lines.concat(), text);
+                let mut end = 0;
+                for line in lines {
+                    assert!(!line.is_empty());
+                    end += line.len();
+                    assert!(boundaries.contains(&end), "{text:?}: {end}");
+                    assert!(
+                        width(line) <= limit
+                            || line.graphemes(true).filter(|g| width(g) > 0).count() <= 1
+                    );
+                }
+            }
+        }
+    }
+}
 
 #[test]
 fn addresses_prefer_component_boundaries() {

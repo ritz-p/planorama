@@ -1,0 +1,171 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_schemas_registry.endpoint_0",
+      "mode": "managed",
+      "type": "aws_schemas_registry",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_REGISTRY"
+        }
+      }
+    },
+    {
+      "address": "aws_schemas_schema.consumer_0",
+      "mode": "managed",
+      "type": "aws_schemas_schema",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "registry_name": "PRIVATE_REGISTRY",
+          "content": "PRIVATE_CONTENT",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_schemas_registry.endpoint_1",
+      "mode": "managed",
+      "type": "aws_schemas_registry",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "PRIVATE_REGISTRY"
+        }
+      }
+    },
+    {
+      "address": "aws_schemas_registry_policy.consumer_1",
+      "mode": "managed",
+      "type": "aws_schemas_registry_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "registry_name": "PRIVATE_REGISTRY",
+          "content": "PRIVATE_CONTENT",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_event_bus.endpoint_2",
+      "mode": "managed",
+      "type": "aws_cloudwatch_event_bus",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:events:us-east-1:111122223333:event-bus/PRIVATE_BUS"
+        }
+      }
+    },
+    {
+      "address": "aws_schemas_discoverer.consumer_2",
+      "mode": "managed",
+      "type": "aws_schemas_discoverer",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_arn": "arn:aws:events:us-east-1:111122223333:event-bus/PRIVATE_BUS",
+          "content": "PRIVATE_CONTENT",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_schemas_registry.endpoint_0",
+          "mode": "managed",
+          "type": "aws_schemas_registry",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_schemas_schema.consumer_0",
+          "mode": "managed",
+          "type": "aws_schemas_schema",
+          "provider_config_key": "aws",
+          "expressions": {
+            "registry_name": {
+              "references": [
+                "aws_schemas_registry.endpoint_0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_schemas_registry.endpoint_1",
+          "mode": "managed",
+          "type": "aws_schemas_registry",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_schemas_registry_policy.consumer_1",
+          "mode": "managed",
+          "type": "aws_schemas_registry_policy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "registry_name": {
+              "references": [
+                "aws_schemas_registry.endpoint_1.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_event_bus.endpoint_2",
+          "mode": "managed",
+          "type": "aws_cloudwatch_event_bus",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_schemas_discoverer.consumer_2",
+          "mode": "managed",
+          "type": "aws_schemas_discoverer",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_arn": {
+              "references": [
+                "aws_cloudwatch_event_bus.endpoint_2.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

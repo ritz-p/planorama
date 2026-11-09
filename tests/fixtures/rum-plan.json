@@ -1,0 +1,186 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.rum",
+      "type": "aws_iam_role",
+      "name": "rum",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/rum",
+          "name": "rum"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_pool.rum",
+      "type": "aws_cognito_identity_pool",
+      "name": "rum",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-east-1:pool"
+        }
+      }
+    },
+    {
+      "address": "aws_rum_app_monitor.main",
+      "type": "aws_rum_app_monitor",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "rum-main",
+          "app_monitor_id": "opaque-monitor-id",
+          "cw_log_group": "computed-log",
+          "domain": "PRIVATE_RUM_PAYLOAD",
+          "app_monitor_configuration": [
+            {
+              "guest_role_arn": "arn:aws:iam::111111111111:role/rum",
+              "identity_pool_id": "us-east-1:pool",
+              "included_pages": [
+                "PRIVATE_RUM_PAYLOAD"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_rum_metrics_destination.evidently",
+      "type": "aws_rum_metrics_destination",
+      "name": "evidently",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "app_monitor_name": "rum-main",
+          "destination": "Evidently",
+          "iam_role_arn": "arn:aws:iam::111111111111:role/rum",
+          "destination_arn": "arn:aws:evidently:us-east-1:111111111111:project/p/experiment/e"
+        }
+      }
+    },
+    {
+      "address": "aws_rum_metrics_destination.cloudwatch",
+      "type": "aws_rum_metrics_destination",
+      "name": "cloudwatch",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "app_monitor_name": "rum-main",
+          "destination": "CloudWatch"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.rum",
+          "type": "aws_iam_role",
+          "name": "rum",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cognito_identity_pool.rum",
+          "type": "aws_cognito_identity_pool",
+          "name": "rum",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rum_app_monitor.main",
+          "type": "aws_rum_app_monitor",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "app_monitor_configuration": [
+              {
+                "guest_role_arn": {
+                  "references": [
+                    "aws_iam_role.rum.arn"
+                  ]
+                },
+                "identity_pool_id": {
+                  "references": [
+                    "aws_cognito_identity_pool.rum.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_rum_metrics_destination.evidently",
+          "type": "aws_rum_metrics_destination",
+          "name": "evidently",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "app_monitor_name": {
+              "references": [
+                "aws_rum_app_monitor.main.name"
+              ]
+            },
+            "iam_role_arn": {
+              "references": [
+                "aws_iam_role.rum.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rum_metrics_destination.cloudwatch",
+          "type": "aws_rum_metrics_destination",
+          "name": "cloudwatch",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "app_monitor_name": {
+              "references": [
+                "aws_rum_app_monitor.main.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

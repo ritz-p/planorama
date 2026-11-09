@@ -61,6 +61,18 @@ pub fn available(additional: u64) -> bool {
         .is_some_and(|limit| fits(capacity, additional, limit))
 }
 
+#[cfg(target_arch = "wasm32")]
+pub fn check_inspection(additional: u64) -> Result<(), Error> {
+    if LIMIT.get().is_none() {
+        return Err(Error::MemoryBudgetMismatch);
+    }
+    if available(additional) {
+        Ok(())
+    } else {
+        Err(Error::MemoryLimit)
+    }
+}
+
 #[cfg(any(test, target_arch = "wasm32"))]
 pub fn fits(capacity: u64, additional: u64, limit: u64) -> bool {
     capacity

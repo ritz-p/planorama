@@ -1,0 +1,576 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.app",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-app",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.first",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-first",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.second",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-second",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.storage",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "11111111-1111-4111-8111-111111111111",
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/11111111-1111-4111-8111-111111111111"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.standby",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-standby",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_route_table.storage",
+      "mode": "managed",
+      "type": "aws_route_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rtb-storage",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_backup.source",
+      "mode": "managed",
+      "type": "aws_fsx_backup",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "backup-source"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_directory.storage",
+      "mode": "managed",
+      "type": "aws_directory_service_directory",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "d-storage"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.join",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:join-abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.audit",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fsx/audit"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_windows_file_system.verified",
+      "mode": "managed",
+      "type": "aws_fsx_windows_file_system",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-windows_file_system",
+          "subnet_ids": [
+            "subnet-app",
+            "subnet-standby"
+          ],
+          "security_group_ids": [
+            "sg-first",
+            "sg-second"
+          ],
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/11111111-1111-4111-8111-111111111111",
+          "vpc_id": "vpc-main",
+          "deployment_type": "MULTI_AZ_1",
+          "preferred_subnet_id": "subnet-app",
+          "backup_id": "backup-source",
+          "active_directory_id": "d-storage",
+          "audit_log_configuration": [
+            {
+              "audit_log_destination": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fsx/audit",
+              "file_access_audit_log_level": "SUCCESS_AND_FAILURE",
+              "file_share_access_audit_log_level": "DISABLED"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_ontap_file_system.verified",
+      "mode": "managed",
+      "type": "aws_fsx_ontap_file_system",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-ontap_file_system",
+          "subnet_ids": [
+            "subnet-app",
+            "subnet-standby"
+          ],
+          "security_group_ids": [
+            "sg-first",
+            "sg-second"
+          ],
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/11111111-1111-4111-8111-111111111111",
+          "vpc_id": "vpc-main",
+          "deployment_type": "MULTI_AZ_1",
+          "preferred_subnet_id": "subnet-app",
+          "route_table_ids": [
+            "rtb-storage"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_file_system.verified",
+      "mode": "managed",
+      "type": "aws_fsx_openzfs_file_system",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-openzfs_file_system",
+          "subnet_ids": [
+            "subnet-app",
+            "subnet-standby"
+          ],
+          "security_group_ids": [
+            "sg-first",
+            "sg-second"
+          ],
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/11111111-1111-4111-8111-111111111111",
+          "vpc_id": "vpc-main",
+          "deployment_type": "MULTI_AZ_1",
+          "preferred_subnet_id": "subnet-app",
+          "route_table_ids": [
+            "rtb-storage"
+          ],
+          "backup_id": "backup-source"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_file_cache.verified",
+      "mode": "managed",
+      "type": "aws_fsx_file_cache",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-file_cache",
+          "subnet_ids": [
+            "subnet-app"
+          ],
+          "security_group_ids": [
+            "sg-first",
+            "sg-second"
+          ],
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/11111111-1111-4111-8111-111111111111",
+          "vpc_id": "vpc-main",
+          "file_cache_type": "LUSTRE",
+          "lustre_configuration": [
+            {
+              "deployment_type": "CACHE_1"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.app",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.first",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "first",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.second",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.storage",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "storage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.standby",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "standby",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route_table.storage",
+          "mode": "managed",
+          "type": "aws_route_table",
+          "name": "storage",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_backup.source",
+          "mode": "managed",
+          "type": "aws_fsx_backup",
+          "name": "source",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_directory_service_directory.storage",
+          "mode": "managed",
+          "type": "aws_directory_service_directory",
+          "name": "storage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.join",
+          "mode": "managed",
+          "type": "aws_secretsmanager_secret",
+          "name": "join",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.audit",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "audit",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_windows_file_system.verified",
+          "mode": "managed",
+          "type": "aws_fsx_windows_file_system",
+          "name": "verified",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.app.id",
+                "aws_subnet.standby.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.first.id",
+                "aws_security_group.second.id"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.storage.arn"
+              ]
+            },
+            "preferred_subnet_id": {
+              "references": [
+                "aws_subnet.app.id"
+              ]
+            },
+            "backup_id": {
+              "references": [
+                "aws_fsx_backup.source.id"
+              ]
+            },
+            "active_directory_id": {
+              "references": [
+                "aws_directory_service_directory.storage.id"
+              ]
+            },
+            "audit_log_configuration": [
+              {
+                "audit_log_destination": {
+                  "references": [
+                    "aws_cloudwatch_log_group.audit.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_fsx_ontap_file_system.verified",
+          "mode": "managed",
+          "type": "aws_fsx_ontap_file_system",
+          "name": "verified",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.app.id",
+                "aws_subnet.standby.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.first.id",
+                "aws_security_group.second.id"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.storage.arn"
+              ]
+            },
+            "preferred_subnet_id": {
+              "references": [
+                "aws_subnet.app.id"
+              ]
+            },
+            "route_table_ids": {
+              "references": [
+                "aws_route_table.storage.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_openzfs_file_system.verified",
+          "mode": "managed",
+          "type": "aws_fsx_openzfs_file_system",
+          "name": "verified",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.app.id",
+                "aws_subnet.standby.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.first.id",
+                "aws_security_group.second.id"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.storage.arn"
+              ]
+            },
+            "preferred_subnet_id": {
+              "references": [
+                "aws_subnet.app.id"
+              ]
+            },
+            "route_table_ids": {
+              "references": [
+                "aws_route_table.storage.id"
+              ]
+            },
+            "backup_id": {
+              "references": [
+                "aws_fsx_backup.source.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_file_cache.verified",
+          "mode": "managed",
+          "type": "aws_fsx_file_cache",
+          "name": "verified",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.app.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.first.id",
+                "aws_security_group.second.id"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.storage.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

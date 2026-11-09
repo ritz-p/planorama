@@ -7,11 +7,49 @@ use std::io::{Cursor, Read};
 #[path = "../../tests/unit/plan/evidence.rs"]
 pub(crate) mod tests;
 
-pub(crate) struct Evidence(BTreeMap<String, (Option<AwsAccountScope>, bool)>);
+pub(crate) struct Evidence(BTreeMap<String, (Option<AwsAccountScope>, bool)>, String);
 
-const VERIFIED_PAIRS: &[(&str, &str)] = &[("1.9.8", "5.100.0"), ("1.16.6", "5.100.0")];
+const VERIFIED_PAIRS: &[(&str, &str)] = &[
+    ("1.9.8", "5.100.0"),
+    ("1.9.8", "6.0.0"),
+    ("1.9.8", "6.70.0"),
+    ("1.10.5", "5.100.0"),
+    ("1.10.5", "6.0.0"),
+    ("1.10.5", "6.70.0"),
+    ("1.11.4", "5.100.0"),
+    ("1.11.4", "6.0.0"),
+    ("1.11.4", "6.70.0"),
+    ("1.12.2", "5.100.0"),
+    ("1.12.2", "6.0.0"),
+    ("1.12.2", "6.70.0"),
+    ("1.13.5", "5.100.0"),
+    ("1.13.5", "6.0.0"),
+    ("1.13.5", "6.70.0"),
+    ("1.14.9", "5.100.0"),
+    ("1.14.9", "6.0.0"),
+    ("1.14.9", "6.70.0"),
+    ("1.15.9", "5.100.0"),
+    ("1.15.9", "6.0.0"),
+    ("1.15.9", "6.70.0"),
+    ("1.16.6", "5.100.0"),
+    ("1.16.6", "6.0.0"),
+    ("1.16.6", "6.70.0"),
+];
 
 impl Evidence {
+    pub(crate) fn validate_installed(&self, version: &[u8]) -> Result<(), String> {
+        let version: Value = serde_json::from_slice(version)
+            .map_err(|_| "provider plan: invalid Terraform version response")?;
+        if version["provider_selections"]["registry.terraform.io/hashicorp/aws"].as_str()
+            != Some(self.1.as_str())
+        {
+            return Err(
+                "provider plan: installed AWS Provider does not match embedded dependency lock"
+                    .into(),
+            );
+        }
+        Ok(())
+    }
     pub(crate) fn validate_runtime(input: &str, version: &[u8]) -> Result<(), String> {
         let input: Value = serde_json::from_str(input.trim_start_matches('\u{feff}'))
             .map_err(|_| "provider plan: invalid input JSON")?;
@@ -87,21 +125,28 @@ impl Evidence {
                     && block.labels[0].as_str() == "registry.terraform.io/hashicorp/aws"
             })
             .collect();
-        let supported = match aws.as_slice() {
+        let provider_version = match aws.as_slice() {
             [provider] => {
                 let versions: Vec<_> = provider
                     .body
                     .attributes()
                     .filter(|a| a.key() == "version")
                     .collect();
-                matches!(versions.as_slice(), [version] if matches!(&version.expr,
-                    hcl::Expression::String(provider) if VERIFIED_PAIRS.contains(&(core, provider.as_str()))))
+                match versions.as_slice() {
+                    [version] => match &version.expr {
+                        hcl::Expression::String(provider)
+                            if VERIFIED_PAIRS.contains(&(core, provider.as_str())) =>
+                        {
+                            Some(provider.as_str())
+                        }
+                        _ => None,
+                    },
+                    _ => None,
+                }
             }
-            _ => false,
-        };
-        if !supported {
-            return Err("provider plan evidence requires hashicorp/aws 5.100.0 in the embedded dependency lock".into());
+            _ => None,
         }
+        .ok_or("provider plan: unsupported AWS version in the embedded dependency lock")?;
         let manifest: Value =
             serde_json::from_slice(files.get("tfconfig/modules.json").ok_or_else(invalid)?)
                 .map_err(|_| invalid())?;
@@ -137,9 +182,9 @@ impl Evidence {
                 );
             }
             let providers = if name.ends_with(".tf.json") {
-                json_providers(bytes)?
+                json_providers(bytes, provider_version)?
             } else if name.ends_with(".tf") {
-                hcl_providers(bytes)?
+                hcl_providers(bytes, provider_version)?
             } else {
                 return Err(invalid());
             };
@@ -190,7 +235,7 @@ impl Evidence {
                 );
             }
         }
-        Ok(Self(accounts))
+        Ok(Self(accounts, provider_version.to_owned()))
     }
 
     pub(crate) fn apply(&self, plan: &mut TerraformPlan) {
@@ -397,16 +442,25 @@ fn matches_schema(value: &Value, schema: &Value, provider: bool) -> bool {
     })
 }
 
-fn complete_provider(value: &Value) -> bool {
-    static SCHEMA: std::sync::OnceLock<Value> = std::sync::OnceLock::new();
-    let schema = SCHEMA.get_or_init(|| {
-        serde_json::from_str(include_str!("evidence/aws-5.100.0.json"))
-            .expect("embedded provider schema")
+fn complete_provider(value: &Value, version: &str) -> bool {
+    static SCHEMAS: std::sync::OnceLock<[Value; 3]> = std::sync::OnceLock::new();
+    let schemas = SCHEMAS.get_or_init(|| {
+        [
+            include_str!("evidence/aws-5.100.0.json"),
+            include_str!("evidence/aws-6.0.0.json"),
+            include_str!("evidence/aws-6.70.0.json"),
+        ]
+        .map(|source| serde_json::from_str(source).expect("embedded provider schema"))
     });
-    matches_schema(value, schema, true)
+    let index = match version {
+        "5.100.0" => 0,
+        "6.0.0" => 1,
+        "6.70.0" => 2,
+        _ => return false,
+    };
+    matches_schema(value, &schemas[index], true)
 }
-
-fn hcl_providers(bytes: &[u8]) -> Result<Vec<Declaration>, String> {
+fn hcl_providers(bytes: &[u8], version: &str) -> Result<Vec<Declaration>, String> {
     let source =
         std::str::from_utf8(bytes).map_err(|_| "provider plan: invalid configuration encoding")?;
     let body = hcl::parse(source).map_err(|_| "provider plan: invalid HCL configuration")?;
@@ -423,7 +477,7 @@ fn hcl_providers(bytes: &[u8]) -> Result<Vec<Declaration>, String> {
         let mut expressions = json!({});
         let mut complete = literal_body(&block.body)
             .as_ref()
-            .is_some_and(complete_provider);
+            .is_some_and(|value| complete_provider(value, version));
         for attribute in block.body.attributes() {
             if attribute.key() == "alias" {
                 if let hcl::Expression::String(value) = &attribute.expr {
@@ -476,7 +530,7 @@ fn hcl_providers(bytes: &[u8]) -> Result<Vec<Declaration>, String> {
     Ok(result)
 }
 
-fn json_providers(bytes: &[u8]) -> Result<Vec<Declaration>, String> {
+fn json_providers(bytes: &[u8], version: &str) -> Result<Vec<Declaration>, String> {
     let body: Value =
         serde_json::from_slice(bytes).map_err(|_| "provider plan: invalid JSON configuration")?;
     let Some(providers) = body.get("provider") else {
@@ -494,7 +548,7 @@ fn json_providers(bytes: &[u8]) -> Result<Vec<Declaration>, String> {
         };
         for declaration in declarations {
             let mut expressions = json!({});
-            let mut complete = complete_provider(declaration);
+            let mut complete = complete_provider(declaration, version);
             let alias = declaration
                 .get("alias")
                 .map(|v| {

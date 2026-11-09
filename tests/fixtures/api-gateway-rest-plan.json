@@ -53,7 +53,14 @@
           "id": "rest-synthetic",
           "root_resource_id": "root-synthetic",
           "name": "synthetic-rest",
-          "body": "SYNTHETIC_BODY_NOT_FOR_OUTPUT"
+          "body": "SYNTHETIC_BODY_NOT_FOR_OUTPUT",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "REGIONAL"
+              ]
+            }
+          ]
         }
       }
     },
@@ -69,7 +76,8 @@
         "after": {
           "id": "resource-synthetic",
           "rest_api_id": "rest-synthetic",
-          "path_part": "app"
+          "path_part": "app",
+          "parent_id": "root-synthetic"
         }
       }
     },
@@ -86,7 +94,12 @@
           "rest_api_id": "rest-synthetic",
           "resource_id": "resource-synthetic",
           "http_method": "GET",
-          "authorization": "NONE"
+          "authorization": "CUSTOM",
+          "authorizer_id": "authorizer-id",
+          "request_validator_id": "validator-id",
+          "request_models": {
+            "application/json": "Response"
+          }
         }
       }
     },
@@ -160,7 +173,9 @@
           "rest_api_id": "rest-synthetic",
           "type": "REQUEST",
           "name": "synthetic-authorizer",
-          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations"
+          "authorizer_uri": "arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/arn:aws:lambda:us-east-1:123456789012:function:synthetic/invocations",
+          "id": "authorizer-id",
+          "authorizer_credentials": "arn:aws:iam::123456789012:role/logging"
         }
       }
     },
@@ -191,7 +206,530 @@
         "after": {
           "rest_api_id": "rest-synthetic",
           "stage_name": "live",
-          "deployment_id": "deployment-synthetic"
+          "deployment_id": "deployment-synthetic",
+          "client_certificate_id": "certificate-stage",
+          "documentation_version": "v1",
+          "access_log_settings": [
+            {
+              "destination_arn": "arn:aws:logs:us-east-1:123456789012:log-group:stage-access",
+              "format": "$context.requestId"
+            }
+          ],
+          "canary_settings": [
+            {
+              "deployment_id": "deployment-synthetic"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_client_certificate.stage",
+      "mode": "managed",
+      "type": "aws_api_gateway_client_certificate",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "certificate-stage"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.stage",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "stage-access",
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:stage-access"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_documentation_version.stage",
+      "mode": "managed",
+      "type": "aws_api_gateway_documentation_version",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "version": "v1",
+          "rest_api_id": "rest-synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.logging",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/logging"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_account.logging",
+      "mode": "managed",
+      "type": "aws_api_gateway_account",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cloudwatch_role_arn": "arn:aws:iam::123456789012:role/logging"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_model.response",
+      "mode": "managed",
+      "type": "aws_api_gateway_model",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "name": "Response",
+          "id": "model-id",
+          "content_type": "application/json",
+          "schema": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_request_validator.request",
+      "mode": "managed",
+      "type": "aws_api_gateway_request_validator",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "id": "validator-id",
+          "name": "request"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_method_response.ok",
+      "mode": "managed",
+      "type": "aws_api_gateway_method_response",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "resource_id": "resource-synthetic",
+          "http_method": "GET",
+          "status_code": "200",
+          "response_models": {
+            "application/json": "Response"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_integration_response.ok",
+      "mode": "managed",
+      "type": "aws_api_gateway_integration_response",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "resource_id": "resource-synthetic",
+          "http_method": "GET",
+          "status_code": "200"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_method_settings.all",
+      "mode": "managed",
+      "type": "aws_api_gateway_method_settings",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "stage_name": "live",
+          "method_path": "*/*",
+          "settings": [
+            {
+              "logging_level": "OFF"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_documentation_part.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_documentation_part",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "location": [
+            {
+              "type": "API"
+            }
+          ],
+          "properties": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_gateway_response.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_gateway_response",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "response_type": "DEFAULT_4XX",
+          "status_code": "400"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api_policy.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_rest_api_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "policy": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api_put.helper",
+      "mode": "managed",
+      "type": "aws_api_gateway_rest_api_put",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rest_api_id": "rest-synthetic",
+          "body": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool.users",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_synthetic",
+          "id": "us-east-1_synthetic",
+          "name": "users"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_authorizer.cognito",
+      "mode": "managed",
+      "type": "aws_api_gateway_authorizer",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cognito-id",
+          "name": "cognito",
+          "rest_api_id": "rest-synthetic",
+          "type": "COGNITO_USER_POOLS",
+          "provider_arns": [
+            "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_synthetic"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.domain",
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic",
+          "domain_name": "api.example.invalid"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name.regional",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "regional.example.invalid",
+          "domain_name_id": null,
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/regional.example.invalid",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "REGIONAL"
+              ]
+            }
+          ],
+          "regional_certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name.private",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "private.example.invalid",
+          "domain_name_id": "private-id",
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/private.example.invalid",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "PRIVATE"
+              ]
+            }
+          ],
+          "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name.edge",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "edge.example.invalid",
+          "domain_name_id": null,
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/edge.example.invalid",
+          "endpoint_configuration": [
+            {
+              "types": [
+                "EDGE"
+              ]
+            }
+          ],
+          "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_base_path_mapping.private",
+      "mode": "managed",
+      "type": "aws_api_gateway_base_path_mapping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "rest-synthetic",
+          "domain_name": "private.example.invalid",
+          "domain_name_id": "private-id",
+          "stage_name": "live"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_endpoint.domain",
+      "mode": "managed",
+      "type": "aws_vpc_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpce-domain",
+          "vpc_endpoint_type": "Interface"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_domain_name_access_association.private",
+      "mode": "managed",
+      "type": "aws_api_gateway_domain_name_access_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name_arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnames/private.example.invalid",
+          "access_association_source_type": "VPCE",
+          "access_association_source": "vpce-domain",
+          "arn": "arn:aws:apigateway:us-east-1:123456789012:/domainnameaccessassociations/synthetic"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_domain_name.mapping",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_domain_name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "v2.example.invalid",
+          "domain_name": "v2.example.invalid",
+          "domain_name_configuration": [
+            {
+              "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic",
+              "ownership_verification_certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/synthetic",
+              "endpoint_type": "REGIONAL",
+              "security_policy": "TLS_1_2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_api.mapping",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "http-mapping",
+          "protocol_type": "HTTP",
+          "name": "mapping"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_stage.mapping",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_stage",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "http-mapping",
+          "name": "live",
+          "id": "live",
+          "auto_deploy": true
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_api_mapping.http",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_api_mapping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "http-mapping",
+          "domain_name": "v2.example.invalid",
+          "stage": "live"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_routing_rule.rest",
+      "mode": "managed",
+      "type": "aws_apigatewayv2_routing_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "v2.example.invalid",
+          "priority": 1,
+          "action": [
+            {
+              "invoke_api": [
+                {
+                  "api_id": "rest-synthetic",
+                  "stage": "live"
+                }
+              ]
+            }
+          ],
+          "condition": [
+            {
+              "match_base_paths": [
+                {
+                  "any_of": [
+                    "example"
+                  ]
+                }
+              ]
+            }
+          ]
         }
       }
     }
@@ -242,6 +780,11 @@
                 "aws_api_gateway_rest_api.app.id",
                 "aws_api_gateway_rest_api.app"
               ]
+            },
+            "parent_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.root_resource_id"
+              ]
             }
           }
         },
@@ -261,6 +804,21 @@
               "references": [
                 "aws_api_gateway_resource.path.id",
                 "aws_api_gateway_resource.path"
+              ]
+            },
+            "authorizer_id": {
+              "references": [
+                "aws_api_gateway_authorizer.request.id"
+              ]
+            },
+            "request_validator_id": {
+              "references": [
+                "aws_api_gateway_request_validator.request.id"
+              ]
+            },
+            "request_models": {
+              "references": [
+                "aws_api_gateway_model.response.name"
               ]
             }
           }
@@ -360,6 +918,11 @@
                 "aws_lambda_function.app.invoke_arn",
                 "aws_lambda_function.app"
               ]
+            },
+            "authorizer_credentials": {
+              "references": [
+                "aws_iam_role.logging.arn"
+              ]
             }
           }
         },
@@ -394,7 +957,484 @@
                 "aws_api_gateway_deployment.release.id",
                 "aws_api_gateway_deployment.release"
               ]
+            },
+            "client_certificate_id": {
+              "references": [
+                "aws_api_gateway_client_certificate.stage.id"
+              ]
+            },
+            "documentation_version": {
+              "references": [
+                "aws_api_gateway_documentation_version.stage.version"
+              ]
+            },
+            "access_log_settings": [
+              {
+                "destination_arn": {
+                  "references": [
+                    "aws_cloudwatch_log_group.stage.arn"
+                  ]
+                }
+              }
+            ],
+            "canary_settings": [
+              {
+                "deployment_id": {
+                  "references": [
+                    "aws_api_gateway_deployment.release.id",
+                    "aws_api_gateway_deployment.release"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_api_gateway_client_certificate.stage",
+          "mode": "managed",
+          "type": "aws_api_gateway_client_certificate",
+          "name": "stage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.stage",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "stage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_documentation_version.stage",
+          "mode": "managed",
+          "type": "aws_api_gateway_documentation_version",
+          "name": "stage",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id",
+                "aws_api_gateway_rest_api.app"
+              ]
             }
+          }
+        },
+        {
+          "address": "aws_iam_role.logging",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "logging",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_account.logging",
+          "mode": "managed",
+          "type": "aws_api_gateway_account",
+          "name": "logging",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cloudwatch_role_arn": {
+              "references": [
+                "aws_iam_role.logging.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_model.response",
+          "mode": "managed",
+          "type": "aws_api_gateway_model",
+          "name": "response",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_request_validator.request",
+          "mode": "managed",
+          "type": "aws_api_gateway_request_validator",
+          "name": "request",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_method_response.ok",
+          "mode": "managed",
+          "type": "aws_api_gateway_method_response",
+          "name": "ok",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "resource_id": {
+              "references": [
+                "aws_api_gateway_resource.path.id"
+              ]
+            },
+            "http_method": {
+              "references": [
+                "aws_api_gateway_method.get.http_method"
+              ]
+            },
+            "response_models": {
+              "references": [
+                "aws_api_gateway_model.response.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_integration_response.ok",
+          "mode": "managed",
+          "type": "aws_api_gateway_integration_response",
+          "name": "ok",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "resource_id": {
+              "references": [
+                "aws_api_gateway_resource.path.id"
+              ]
+            },
+            "http_method": {
+              "references": [
+                "aws_api_gateway_method.get.http_method"
+              ]
+            },
+            "status_code": {
+              "references": [
+                "aws_api_gateway_method_response.ok.status_code"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_method_settings.all",
+          "mode": "managed",
+          "type": "aws_api_gateway_method_settings",
+          "name": "all",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "stage_name": {
+              "references": [
+                "aws_api_gateway_stage.live.stage_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_documentation_part.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_documentation_part",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_gateway_response.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_gateway_response",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_rest_api_policy.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_rest_api_policy",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_rest_api_put.helper",
+          "mode": "managed",
+          "type": "aws_api_gateway_rest_api_put",
+          "name": "helper",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool.users",
+          "mode": "managed",
+          "type": "aws_cognito_user_pool",
+          "name": "users",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_authorizer.cognito",
+          "mode": "managed",
+          "type": "aws_api_gateway_authorizer",
+          "name": "cognito",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "provider_arns": {
+              "references": [
+                "aws_cognito_user_pool.users.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acm_certificate.domain",
+          "mode": "managed",
+          "type": "aws_acm_certificate",
+          "name": "domain",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_domain_name.regional",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name",
+          "name": "regional",
+          "provider_config_key": "aws",
+          "expressions": {
+            "regional_certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_domain_name.private",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_domain_name.edge",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name",
+          "name": "edge",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_base_path_mapping.private",
+          "mode": "managed",
+          "type": "aws_api_gateway_base_path_mapping",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.app.id"
+              ]
+            },
+            "domain_name": {
+              "references": [
+                "aws_api_gateway_domain_name.private.domain_name"
+              ]
+            },
+            "domain_name_id": {
+              "references": [
+                "aws_api_gateway_domain_name.private.domain_name_id"
+              ]
+            },
+            "stage_name": {
+              "references": [
+                "aws_api_gateway_stage.live.stage_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc_endpoint.domain",
+          "mode": "managed",
+          "type": "aws_vpc_endpoint",
+          "name": "domain",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_domain_name_access_association.private",
+          "mode": "managed",
+          "type": "aws_api_gateway_domain_name_access_association",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name_arn": {
+              "references": [
+                "aws_api_gateway_domain_name.private.arn"
+              ]
+            },
+            "access_association_source": {
+              "references": [
+                "aws_vpc_endpoint.domain.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_domain_name.mapping",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_domain_name",
+          "name": "mapping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name_configuration": [
+              {
+                "certificate_arn": {
+                  "references": [
+                    "aws_acm_certificate.domain.arn"
+                  ]
+                },
+                "ownership_verification_certificate_arn": {
+                  "references": [
+                    "aws_acm_certificate.domain.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_api.mapping",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_api",
+          "name": "mapping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_stage.mapping",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_stage",
+          "name": "mapping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.mapping.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_api_mapping.http",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_api_mapping",
+          "name": "http",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.mapping.id"
+              ]
+            },
+            "domain_name": {
+              "references": [
+                "aws_apigatewayv2_domain_name.mapping.id"
+              ]
+            },
+            "stage": {
+              "references": [
+                "aws_apigatewayv2_stage.mapping.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_routing_rule.rest",
+          "mode": "managed",
+          "type": "aws_apigatewayv2_routing_rule",
+          "name": "rest",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name": {
+              "references": [
+                "aws_apigatewayv2_domain_name.mapping.domain_name"
+              ]
+            },
+            "action": [
+              {
+                "invoke_api": [
+                  {
+                    "api_id": {
+                      "references": [
+                        "aws_api_gateway_rest_api.app.id"
+                      ]
+                    },
+                    "stage": {
+                      "references": [
+                        "aws_api_gateway_stage.live.stage_name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
           }
         }
       ]

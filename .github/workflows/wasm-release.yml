@@ -1,5 +1,7 @@
 name: Wasm engine release
 on:
+  push:
+    branches: [release]
   workflow_dispatch:
     inputs:
       publish:
@@ -21,6 +23,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Validate release request
+        if: github.event_name == 'workflow_dispatch'
         uses: actions/github-script@v9.0.0
         with:
           script: |
@@ -28,16 +31,14 @@ jobs:
             require('./.github/scripts/release.cjs').validateRequest(context, version, ${{ inputs.publish }});
       - run: docker compose up -d --build dev
       - name: Build and verify both distributions
-        run: |
-          docker compose exec -T dev cargo build --locked --release --bin planorama
-          docker compose exec -T dev sh scripts/build-wasm.sh
-          docker compose exec -T dev node tests/browser/memory.cjs output/browser/pkg
-          docker compose exec -T dev node tests/browser/wasm.cjs
-          docker compose exec -T dev cargo test --locked --no-default-features --lib
-          docker compose exec -T dev cargo build --locked --release --bin planorama --no-default-features
-          docker compose exec -T dev sh scripts/build-wasm-engine.sh
-          docker compose exec -T dev node tests/browser/memory.cjs
-          docker compose exec -T dev node tests/browser/wasm-engine.cjs
+        run: docker compose exec -T -e WASM_CI_SUITE=full dev sh scripts/wasm-ci.sh
+      - name: Upload measurements
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: wasm-release-timings-${{ github.sha }}-${{ github.run_attempt }}
+          path: output/wasm-ci
+          retention-days: 7
       - uses: actions/upload-artifact@v7.0.2
         with:
           name: wasm-no-artwork
@@ -45,7 +46,7 @@ jobs:
           if-no-files-found: error
   publish:
     needs: build
-    if: inputs.publish
+    if: github.event_name == 'workflow_dispatch' && inputs.publish
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

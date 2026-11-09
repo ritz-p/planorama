@@ -693,3 +693,15 @@ fn caller_module_outputs_override_colliding_private_resource_addresses() {
         }
     }
 }
+
+#[test]
+fn duplicate_resource_change_identities_are_rejected_before_overwrite() {
+    for deposed in [serde_json::Value::Null, serde_json::json!("old")] {
+        let change = serde_json::json!({"address":"aws_cloudwatch_event_bus.PRIVATE_BUS","type":"aws_cloudwatch_event_bus","deposed":deposed,"change":{"actions":["create"],"after":{"name":"PRIVATE_NAME"}}});
+        let input = serde_json::json!({"format_version":"1.2","resource_changes":[change,change]});
+        assert_eq!(
+            parse(&input.to_string()).unwrap_err(),
+            "duplicate resource change identity"
+        );
+    }
+}

@@ -15,6 +15,171 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::identity_center::owner(kind).is_some() => {
+                let (field, label) = super::identity_center::owner(kind).unwrap();
+                (field, label, "Identity Center configuration")
+            }
+            kind if super::iam_credentials::owner(kind).is_some() => (
+                super::iam_credentials::owner(kind).unwrap(),
+                "Credential owner",
+                "Credentials",
+            ),
+            kind if super::iam_policies::owner(kind).is_some() => {
+                let (field, _) = super::iam_policies::owner(kind).unwrap();
+                (
+                    field,
+                    super::iam_policies::label(kind, field).unwrap(),
+                    "Policy management",
+                )
+            }
+            "aws_secretsmanager_secret_policy" => {
+                ("secret_arn", "Secret owner", "Secret configuration")
+            }
+            "aws_secretsmanager_secret_rotation" | "aws_secretsmanager_tag" => {
+                ("secret_id", "Secret owner", "Secret configuration")
+            }
+            "aws_s3files_access_point"
+            | "aws_s3files_file_system_policy"
+            | "aws_s3files_synchronization_configuration" => (
+                "file_system_id",
+                "S3 Files file system",
+                "File system configuration",
+            ),
+            "aws_s3tables_namespace"
+            | "aws_s3tables_table_bucket_policy"
+            | "aws_s3tables_table_bucket_replication" => (
+                "table_bucket_arn",
+                "Table bucket",
+                "Table bucket configuration",
+            ),
+            "aws_s3tables_table_policy" => ("name", "Qualified table owner", "Table configuration"),
+            "aws_s3tables_table_replication" => (
+                "table_arn",
+                "Replication source table",
+                "Table configuration",
+            ),
+            "aws_route53_hosted_zone_dnssec" | "aws_route53_key_signing_key" => (
+                "hosted_zone_id",
+                "DNSSEC hosted zone",
+                "DNSSEC configuration",
+            ),
+            "aws_route53domains_delegation_signer_record" => (
+                "domain_name",
+                "Registered domain owner",
+                "Delegation signers",
+            ),
+            "aws_rum_metrics_destination" => (
+                "app_monitor_name",
+                "RUM app monitor",
+                "Metrics destinations",
+            ),
+            "aws_vpclattice_resource_configuration" => (
+                "resource_configuration_group_id",
+                "Parent resource group",
+                "Child resources",
+            ),
+            "aws_vpclattice_listener" => {
+                let path = if raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target == index && r.attribute == "service_identifier")
+                {
+                    "service_identifier"
+                } else {
+                    "service_arn"
+                };
+                (path, "Lattice service", "Listeners")
+            }
+            "aws_vpclattice_listener_rule" => {
+                ("listener_identifier", "Rule listener", "Listener rules")
+            }
+            "aws_s3vectors_index" => (
+                "vector_bucket_name",
+                "Vector bucket owner",
+                "Vector indexes",
+            ),
+            "aws_s3vectors_vector_bucket_policy" => (
+                "vector_bucket_arn",
+                "Vector bucket owner",
+                "Vector bucket configuration",
+            ),
+            "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener" => {
+                ("accelerator_arn", "Listener accelerator", "Listeners")
+            }
+            "aws_globalaccelerator_endpoint_group"
+            | "aws_globalaccelerator_custom_routing_endpoint_group" => {
+                ("listener_arn", "Group listener", "Endpoint groups")
+            }
+            "aws_ec2_traffic_mirror_filter_rule" => (
+                "traffic_mirror_filter_id",
+                "Traffic mirror filter",
+                "Mirror rules",
+            ),
+            "aws_vpc_route_server_peer" => {
+                ("route_server_endpoint_id", "BGP peer endpoint", "BGP peers")
+            }
+            "aws_ec2_subnet_cidr_reservation" => {
+                ("subnet_id", "Reservation subnet", "CIDR reservations")
+            }
+            "aws_vpc_ipam_scope" => ("ipam_id", "Scope IPAM", "IPAM scopes"),
+            "aws_vpc_ipam_pool_cidr"
+            | "aws_vpc_ipam_pool_cidr_allocation"
+            | "aws_vpc_ipam_preview_next_cidr" => {
+                ("ipam_pool_id", "IPAM pool owner", "Pool configuration")
+            }
+            "aws_vpc_ipv4_cidr_block_association" | "aws_vpc_ipv6_cidr_block_association" => {
+                ("vpc_id", "CIDR VPC owner", "CIDR associations")
+            }
+            "aws_ec2_managed_prefix_list_entry" => {
+                ("prefix_list_id", "Prefix list owner", "Prefix list entries")
+            }
+            "aws_vpc_encryption_control" => {
+                ("vpc_id", "Encryption control VPC", "Encryption control")
+            }
+            "aws_vpc_block_public_access_exclusion" => {
+                let field = if raw.attributes.iter().any(|r| {
+                    r.target == index
+                        && r.attribute == "vpc_id"
+                        && super::service_references::verified(raw, r)
+                }) {
+                    "vpc_id"
+                } else {
+                    "subnet_id"
+                };
+                (field, "Exclusion target", "Public access exclusions")
+            }
+            "aws_cloudfront_monitoring_subscription" => {
+                ("distribution_id", "Monitoring distribution", "Monitoring")
+            }
+            kind if super::cloudfront_functions::helper(kind) => (
+                "key_value_store_arn",
+                "Owner KeyValueStore",
+                "Key management",
+            ),
+            kind if super::search::helper(kind) => {
+                ("domain_name", "Search domain", "Domain configuration")
+            }
+            "aws_efs_backup_policy" | "aws_efs_file_system_policy" => {
+                ("file_system_id", "File system", "Policies")
+            }
+            kind if super::backup_vaults::helper(kind) => (
+                "backup_vault_name",
+                "Backup vault owner",
+                "Vault configuration",
+            ),
+            "aws_flow_log" => {
+                let Some(field) = super::flow_logs::MONITORED.iter().copied().find(|field| {
+                    raw.attributes.iter().any(|r| {
+                        r.target == index
+                            && r.attribute == *field
+                            && super::service_references::verified(raw, r)
+                    })
+                }) else {
+                    continue;
+                };
+                (field, "Monitored resource", "Flow logs")
+            }
+            "aws_network_acl_rule" => ("network_acl_id", "Network ACL owner", "Rules"),
             "aws_security_group_rule"
             | "aws_vpc_security_group_ingress_rule"
             | "aws_vpc_security_group_egress_rule" => {
@@ -61,6 +226,31 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
+            "aws_appsync_channel_namespace" => {
+                ("api_id", "Namespace Event API", "Channel namespaces")
+            }
+            "aws_appsync_datasource" => ("api_id", "Data source GraphQL API", "Data sources"),
+            "aws_appsync_api_cache" => ("api_id", "Cache GraphQL API", "API cache"),
+            "aws_appsync_api_key" => ("api_id", "AppSync key API", "API keys"),
+            "aws_appsync_type" => ("api_id", "Type GraphQL API", "Schema types"),
+            "aws_s3control_access_point_policy" => (
+                "access_point_arn",
+                "Access point policy owner",
+                "Access point policy",
+            ),
+            "aws_s3control_bucket_policy" => ("bucket", "Outposts bucket owner", "Bucket policy"),
+            "aws_s3control_bucket_lifecycle_configuration" => {
+                ("bucket", "Outposts bucket owner", "Bucket lifecycle")
+            }
+            "aws_s3control_object_lambda_access_point_policy" => {
+                ("name", "Named access point owner", "Object Lambda policy")
+            }
+            "aws_route53_resolver_firewall_rule" => (
+                "firewall_rule_group_id",
+                "DNS Firewall rule group",
+                "DNS Firewall rules",
+            ),
+            "aws_route53_query_log" => ("zone_id", "Query logging hosted zone", "Query logging"),
             "aws_route53_resolver_config"
             | "aws_route53_resolver_dnssec_config"
             | "aws_route53_resolver_firewall_config" => (
@@ -74,6 +264,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             }
             "aws_ecs_task_set" => ("service", "Task set service", "Task sets"),
             "aws_kms_alias" => ("target_key_id", "Alias key", "Aliases"),
+            "aws_kms_grant" | "aws_kms_key_policy" => {
+                ("key_id", "Configured KMS key", "Key configuration")
+            }
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
             "aws_glue_catalog_table" => {
                 if raw.attributes.iter().any(|reference| {
@@ -119,12 +312,31 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label,
             section,
         });
-        if matches!(
+        if ((matches!(
             node.resource_type.as_str(),
-            "aws_networkfirewall_logging_configuration"
-                | "aws_route53_records_exclusive"
-                | "aws_ecs_task_set"
-        ) {
+            "aws_globalaccelerator_listener"
+                | "aws_globalaccelerator_custom_routing_listener"
+                | "aws_vpc_route_server_peer"
+                | "aws_flow_log"
+                | "aws_cloudfront_monitoring_subscription"
+        ) || super::ipam::owner(&node.resource_type).is_some())
+            && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
+            || node.resource_type == "aws_appsync_channel_namespace"
+            || super::search::helper(&node.resource_type)
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_networkfirewall_logging_configuration"
+                    | "aws_efs_backup_policy"
+                    | "aws_efs_file_system_policy"
+                    | "aws_backup_vault_lock_configuration"
+                    | "aws_backup_vault_notifications"
+                    | "aws_backup_vault_policy"
+                    | "aws_vpc_encryption_control"
+                    | "aws_vpc_block_public_access_exclusion"
+                    | "aws_route53_records_exclusive"
+                    | "aws_ecs_task_set"
+            )
+        {
             graph.nodes[index].placement = crate::model::Placement::Spatial;
         }
     }

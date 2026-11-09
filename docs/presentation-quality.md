@@ -58,6 +58,11 @@ across a large diagram. Badge ownership and linked container frames use maps.
 
 ## Limitations
 
+Rust wrapping preserves extended Unicode grapheme clusters and estimates their
+column widths with East Asian ambiguous characters counted as wide. This keeps
+combining marks and emoji sequences together, but is not font shaping or pixel
+measurement; the browser checks below remain necessary.
+
 This report is explicitly **browser-observed bounding-box geometry**. The Rust
 [layout report](layout-diagnostics.md) remains a separate measurement-based
 routing approximation; its schema and baseline contract are unchanged.

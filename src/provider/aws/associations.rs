@@ -13,6 +13,25 @@ mod ebs_tests;
 pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str); 2]> {
     let resource_type = super::aliases::canonical(resource_type);
     match resource_type {
+        "aws_vpc_ipam_resource_discovery_association" => Some([
+            ("ipam_id", "aws_vpc_ipam"),
+            (
+                "ipam_resource_discovery_id",
+                "aws_vpc_ipam_resource_discovery",
+            ),
+        ]),
+        "aws_vpc_dhcp_options_association" => Some([
+            ("dhcp_options_id", "aws_vpc_dhcp_options"),
+            ("vpc_id", "aws_vpc"),
+        ]),
+        "aws_appsync_domain_name_api_association" => Some([
+            ("domain_name", "aws_appsync_domain_name"),
+            ("api_id", "aws_appsync_graphql_api"),
+        ]),
+        "aws_opensearch_package_association" => Some([
+            ("package_id", "aws_opensearch_package"),
+            ("domain_name", "aws_opensearch_domain"),
+        ]),
         "aws_vpc_security_group_vpc_association" => Some([
             ("security_group_id", "aws_security_group"),
             ("vpc_id", "aws_vpc"),
@@ -57,6 +76,10 @@ pub(super) fn rule(resource_type: &str) -> Option<[(&'static str, &'static str);
             ("instance_id", "aws_instance"),
             ("volume_id", "aws_ebs_volume"),
         ]),
+        "aws_network_acl_association" => Some([
+            ("network_acl_id", "aws_network_acl"),
+            ("subnet_id", "aws_subnet"),
+        ]),
         "aws_route_table_association" => Some([
             ("subnet_id", "aws_subnet"),
             ("route_table_id", "aws_route_table"),
@@ -97,7 +120,18 @@ pub(super) fn lower(raw: &Input) -> Graph {
         {
             continue;
         }
-        let endpoints = if super::aliases::node_type(node) == "aws_lb_target_group_attachment" {
+        let endpoints = if matches!(
+            node.resource_type.as_str(),
+            "aws_vpc_route_server_propagation" | "aws_vpc_route_server_vpc_association"
+        ) {
+            super::route_server::association(raw, index)
+        } else if node.resource_type == "aws_vpc_ipam_resource_discovery_association" {
+            super::ipam::association(raw, index)
+        } else if node.resource_type == "aws_appsync_domain_name_api_association" {
+            super::appsync_domains::association(raw, index)
+        } else if node.resource_type == "aws_opensearch_package_association" {
+            super::search::association(raw, index)
+        } else if super::aliases::node_type(node) == "aws_lb_target_group_attachment" {
             super::elbv2::association(raw, index)
         } else if super::aliases::node_type(node) == "aws_lb_listener_certificate" {
             super::elbv2_tls::association(raw, index)
@@ -106,6 +140,10 @@ pub(super) fn lower(raw: &Input) -> Graph {
             "aws_network_interface_attachment" | "aws_network_interface_sg_attachment"
         ) {
             super::eni::association(raw, index)
+        } else if node.resource_type == "aws_vpc_dhcp_options_association" {
+            super::vpc_controls::association(raw, index)
+        } else if node.resource_type == "aws_network_acl_association" {
+            super::network_acl::association(raw, index)
         } else if node.resource_type == "aws_vpc_security_group_vpc_association" {
             super::security_group_rules::association(raw, index)
         } else if matches!(

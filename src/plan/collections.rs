@@ -224,13 +224,45 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::iam_credentials::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::iam_policies::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::lambda_core::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::microvms::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::lambda_capacity::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::route_server::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::secondary_network::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::traffic_mirror::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::ipam::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::prefix_list_entries::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::kinesis_owners::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::messaging_policies::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::search::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route53::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::resolver::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::appsync::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::s3_access::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::profiles::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::query_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route53_records::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudfront::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::s3vectors::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::s3tables::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::s3files::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::vpclattice::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::direct_connect::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::xray_encryption::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::synthetics::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::rum::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::route53_dnssec::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::route53_health::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::secrets_manager::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::kms::annotate(nodes, references, &elbv2_evidence);
 
     crate::provider::aws::eni::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::peering::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::search_connections::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2_network::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudfront_vpc_origin::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::elbv2::annotate(nodes, references, &elbv2_evidence);
@@ -238,8 +270,11 @@ pub(super) fn annotate(
     crate::provider::aws::lambda_config::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_qualified::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_policy::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::cloudwatch_alarms::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudwatch_logs::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::cloudwatch_metrics::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::cloudwatch_delivery::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::flow_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_events::annotate(nodes, references, &elbv2_evidence);
     for reference in references {
         let consumer = &nodes[reference.target];

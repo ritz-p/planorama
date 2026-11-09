@@ -1,0 +1,617 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_fsx_ontap_file_system.storage",
+      "type": "aws_fsx_ontap_file_system",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-ontap"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_ontap_storage_virtual_machine.svm",
+      "type": "aws_fsx_ontap_storage_virtual_machine",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "svm-main",
+          "file_system_id": "fs-ontap"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_ontap_volume.data",
+      "type": "aws_fsx_ontap_volume",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-ontap",
+          "storage_virtual_machine_id": "svm-main",
+          "file_system_id": "fs-ontap",
+          "volume_type": "ONTAP"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_file_system.storage",
+      "type": "aws_fsx_openzfs_file_system",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-openzfs",
+          "root_volume_id": "vol-root"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_volume.parent",
+      "type": "aws_fsx_openzfs_volume",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-parent",
+          "parent_volume_id": "vol-root"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_volume.child",
+      "type": "aws_fsx_openzfs_volume",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-child",
+          "parent_volume_id": "vol-parent",
+          "origin_snapshot": [
+            {
+              "snapshot_arn": "arn:aws:fsx:us-east-1:123456789012:snapshot/snap-root",
+              "copy_strategy": "CLONE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_snapshot.root",
+      "type": "aws_fsx_openzfs_snapshot",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "snap-root",
+          "arn": "arn:aws:fsx:us-east-1:123456789012:snapshot/snap-root",
+          "volume_id": "vol-root"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_snapshot.child",
+      "type": "aws_fsx_openzfs_snapshot",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "snap-child",
+          "volume_id": "vol-child"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_lustre_file_system.storage",
+      "type": "aws_fsx_lustre_file_system",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-lustre"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_windows_file_system.storage",
+      "type": "aws_fsx_windows_file_system",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-windows"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_backup.filesystem",
+      "type": "aws_fsx_backup",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "backup-fs",
+          "file_system_id": "fs-lustre",
+          "kms_key_id": "PRIVATE_COMPUTED_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_backup.volume",
+      "type": "aws_fsx_backup",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "backup-volume",
+          "volume_id": "vol-ontap"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_data_repository_association.repository",
+      "type": "aws_fsx_data_repository_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dra-main",
+          "file_system_id": "fs-lustre",
+          "data_repository_path": "s3://PRIVATE_BUCKET/private"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.restricted",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-access"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_s3_access_point_attachment.root",
+      "type": "aws_fsx_s3_access_point_attachment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "root-attachment",
+          "type": "OPENZFS",
+          "openzfs_configuration": [
+            {
+              "volume_id": "vol-root"
+            }
+          ],
+          "s3_access_point": [
+            {
+              "vpc_configuration": [
+                {
+                  "vpc_id": "vpc-access"
+                }
+              ]
+            }
+          ],
+          "s3_access_point_arn": "PRIVATE_GENERATED_ACCESS_POINT"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_s3_access_point_attachment.child",
+      "type": "aws_fsx_s3_access_point_attachment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "child-attachment",
+          "type": "OPENZFS",
+          "openzfs_configuration": [
+            {
+              "volume_id": "vol-child"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_backup.windows",
+      "type": "aws_fsx_backup",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "backup-windows",
+          "file_system_id": "fs-windows"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_volume.literal",
+      "type": "aws_fsx_openzfs_volume",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-literal",
+          "parent_volume_id": "vol-root"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_openzfs_volume.cycle",
+      "type": "aws_fsx_openzfs_volume",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-cycle",
+          "parent_volume_id": "vol-cycle"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_ontap_volume.computed",
+      "type": "aws_fsx_ontap_volume",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-computed",
+          "file_system_id": "fs-ontap",
+          "volume_type": "ONTAP"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_fsx_ontap_file_system.storage",
+          "type": "aws_fsx_ontap_file_system",
+          "name": "storage",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_ontap_storage_virtual_machine.svm",
+          "type": "aws_fsx_ontap_storage_virtual_machine",
+          "name": "svm",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_fsx_ontap_file_system.storage.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_ontap_volume.data",
+          "type": "aws_fsx_ontap_volume",
+          "name": "data",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_virtual_machine_id": {
+              "references": [
+                "aws_fsx_ontap_storage_virtual_machine.svm.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_openzfs_file_system.storage",
+          "type": "aws_fsx_openzfs_file_system",
+          "name": "storage",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_openzfs_volume.parent",
+          "type": "aws_fsx_openzfs_volume",
+          "name": "parent",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parent_volume_id": {
+              "references": [
+                "aws_fsx_openzfs_file_system.storage.root_volume_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_openzfs_volume.child",
+          "type": "aws_fsx_openzfs_volume",
+          "name": "child",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parent_volume_id": {
+              "references": [
+                "aws_fsx_openzfs_volume.parent.id"
+              ]
+            },
+            "origin_snapshot": [
+              {
+                "snapshot_arn": {
+                  "references": [
+                    "aws_fsx_openzfs_snapshot.root.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_fsx_openzfs_snapshot.root",
+          "type": "aws_fsx_openzfs_snapshot",
+          "name": "root",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "volume_id": {
+              "references": [
+                "aws_fsx_openzfs_file_system.storage.root_volume_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_openzfs_snapshot.child",
+          "type": "aws_fsx_openzfs_snapshot",
+          "name": "child",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "volume_id": {
+              "references": [
+                "aws_fsx_openzfs_volume.child.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_lustre_file_system.storage",
+          "type": "aws_fsx_lustre_file_system",
+          "name": "storage",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_windows_file_system.storage",
+          "type": "aws_fsx_windows_file_system",
+          "name": "storage",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_backup.filesystem",
+          "type": "aws_fsx_backup",
+          "name": "filesystem",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_fsx_lustre_file_system.storage.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_backup.volume",
+          "type": "aws_fsx_backup",
+          "name": "volume",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "volume_id": {
+              "references": [
+                "aws_fsx_ontap_volume.data.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_data_repository_association.repository",
+          "type": "aws_fsx_data_repository_association",
+          "name": "repository",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_fsx_lustre_file_system.storage.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.restricted",
+          "type": "aws_vpc",
+          "name": "restricted",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_s3_access_point_attachment.root",
+          "type": "aws_fsx_s3_access_point_attachment",
+          "name": "root",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "openzfs_configuration": [
+              {
+                "volume_id": {
+                  "references": [
+                    "aws_fsx_openzfs_file_system.storage.root_volume_id"
+                  ]
+                }
+              }
+            ],
+            "s3_access_point": [
+              {
+                "vpc_configuration": [
+                  {
+                    "vpc_id": {
+                      "references": [
+                        "aws_vpc.restricted.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_fsx_s3_access_point_attachment.child",
+          "type": "aws_fsx_s3_access_point_attachment",
+          "name": "child",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "openzfs_configuration": [
+              {
+                "volume_id": {
+                  "references": [
+                    "aws_fsx_openzfs_volume.child.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_fsx_backup.windows",
+          "type": "aws_fsx_backup",
+          "name": "windows",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "file_system_id": {
+              "references": [
+                "aws_fsx_windows_file_system.storage.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_openzfs_volume.literal",
+          "type": "aws_fsx_openzfs_volume",
+          "name": "literal",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_openzfs_volume.cycle",
+          "type": "aws_fsx_openzfs_volume",
+          "name": "cycle",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parent_volume_id": {
+              "references": [
+                "aws_fsx_openzfs_volume.cycle.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_fsx_ontap_volume.computed",
+          "type": "aws_fsx_ontap_volume",
+          "name": "computed",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

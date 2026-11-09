@@ -17,10 +17,11 @@ on:
       - .github/workflows/wasm.yml
   workflow_dispatch:
     inputs:
-      full_library:
-        description: 'Run the complete no-default-feature library suite for comparison'
-        type: boolean
-        default: false
+      suite:
+        description: 'PR representative checks or full release validation'
+        type: choice
+        options: [pr, full]
+        default: pr
 permissions:
   contents: read
 concurrency:
@@ -40,10 +41,10 @@ jobs:
         id: identity
         env:
           CONFIG: ${{ hashFiles('Dockerfile', '.dockerignore', 'compose*.yaml', 'rust-toolchain.toml', 'Cargo.lock', 'Cargo.toml', '.cargo/**', 'build.rs', 'assets/**', 'scripts/**', '.github/workflows/wasm.yml') }}
-        run: echo "key=wasm-ci-v2-${{ runner.os }}-${{ runner.arch }}-$CONFIG" >> "$GITHUB_OUTPUT"
+        run: echo "key=wasm-ci-v3-${{ runner.os }}-${{ runner.arch }}-$CONFIG" >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v3
       - name: Build pinned environment
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7.4.0
         with:
           context: .
           load: true
@@ -64,7 +65,6 @@ jobs:
         with:
           path: |
             .wasm-ci/target/shared/release
-            .wasm-ci/target/shared/debug
           key: ${{ steps.identity.outputs.key }}-native
       - name: Restore wasm
         id: wasm
@@ -78,12 +78,12 @@ jobs:
           mkdir -p .wasm-ci/registry .wasm-ci/git .wasm-ci/target
           docker compose up -d --no-build dev
           docker compose exec -T dev sccache --zero-stats
-      - name: Verify native reference cache
-        run: docker compose exec -T dev node --test tests/support/native-reference.test.cjs
+      - name: Verify build orchestration and native reference cache
+        run: docker compose exec -T dev node --test tests/ci/wasm-ci.test.cjs tests/support/native-reference.test.cjs
       - name: Build and verify both distributions
         env:
-          WASM_CI_FULL_LIB: ${{ inputs.full_library && '1' || '0' }}
-        run: docker compose exec -T -e WASM_CI_FULL_LIB dev sh scripts/wasm-ci.sh
+          WASM_CI_SUITE: ${{ inputs.suite || 'pr' }}
+        run: docker compose exec -T -e WASM_CI_SUITE dev sh scripts/wasm-ci.sh
       - name: Prepare dependency caches
         run: |
           docker compose exec -T dev sh -c 'find /workspace/target -depth \( -name "*planorama*" -o -name "cli-*" \) -exec rm -rf {} +'
@@ -102,7 +102,6 @@ jobs:
         with:
           path: |
             .wasm-ci/target/shared/release
-            .wasm-ci/target/shared/debug
           key: ${{ steps.native.outputs.cache-primary-key }}
       - name: Save wasm
         if: success() && steps.wasm.outputs.cache-hit != 'true'

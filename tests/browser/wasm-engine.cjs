@@ -5,6 +5,7 @@ const {createHash} = require('node:crypto');
 const {join, resolve} = require('node:path');
 const {tmpdir} = require('node:os');
 const {Driver, wait} = require('./webdriver.cjs');
+const {full} = require('./wasm-suite.cjs');
 
 async function main() {
   const version = fs.readFileSync('Cargo.toml', 'utf8').match(/^version = "([^"]+)"/m)[1];
@@ -46,7 +47,10 @@ async function main() {
     assert.deepEqual(JSON.parse(driver.execute_script('return window.engine.memory_capabilities();')), manifest.memory);
     require('./memory-chromium.cjs')(driver, fs.readFileSync(join(temp, 'planorama.js'), 'utf8'), `/v${version}/planorama_bg.wasm`, fs.readFileSync('tests/fixtures/viewer-plan.json', 'utf8'));
     const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
-    for (const fixture of ['api-gateway-v2-plan', 'viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan', 'lambda-config-plan', 'lambda-events-plan']) {
+    const fixtures = full
+      ? ['api-gateway-rest-plan', 'api-gateway-v2-plan', 'viewer-plan', 'aws-basic-plan', 'terraform-plan', 'changed-paths-plan', 'lambda-config-plan', 'lambda-events-plan']
+      : ['viewer-plan', 'changed-paths-plan'];
+    for (const fixture of fixtures) {
       const json = fs.readFileSync(`tests/fixtures/${fixture}.json`, 'utf8');
       for (const format of ['svg', 'html']) {
         for (const icon_mode of fixture === 'viewer-plan' ? [undefined, 'service-name'] : [undefined]) {

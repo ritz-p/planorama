@@ -171,7 +171,9 @@ mod states;
 mod terraform;
 pub(crate) use diagnostics::Resolution;
 pub use diagnostics::{Diagnostic, DiagnosticReason};
-pub use graphs::{ArchitectureGraph, AttributeReference, PeeringProof, StateOutput};
+pub use graphs::{
+    ArchitectureGraph, AttributeReference, DirectConnectProof, PeeringProof, StateOutput,
+};
 pub use operations::{
     AttributePathStep, ChangeMetadata, ChangedPaths, DriftRecord, ImportMetadata,
     RelevantAttribute, StateRemoval,

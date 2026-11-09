@@ -1,0 +1,222 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_sns_topic.events",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:events"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.example",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "db"
+        }
+      }
+    },
+    {
+      "address": "aws_db_event_subscription.example",
+      "mode": "managed",
+      "type": "aws_db_event_subscription",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_type": "db-cluster",
+          "source_ids": [
+            "db"
+          ],
+          "sns_topic": "arn:aws:sns:us-east-1:123456789012:events",
+          "event_categories": [
+            "PRIVATE_CATEGORY"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster.example",
+      "mode": "managed",
+      "type": "aws_docdb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "docdb"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_event_subscription.example",
+      "mode": "managed",
+      "type": "aws_docdb_event_subscription",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_type": "db-cluster",
+          "source_ids": [
+            "docdb"
+          ],
+          "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:events",
+          "event_categories": [
+            "PRIVATE_CATEGORY"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster.example",
+      "mode": "managed",
+      "type": "aws_neptune_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "neptune"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_event_subscription.example",
+      "mode": "managed",
+      "type": "aws_neptune_event_subscription",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_type": "db-cluster",
+          "source_ids": [
+            "neptune"
+          ],
+          "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:events",
+          "event_categories": [
+            "PRIVATE_CATEGORY"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_sns_topic.events",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rds_cluster.example",
+          "mode": "managed",
+          "type": "aws_rds_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_event_subscription.example",
+          "mode": "managed",
+          "type": "aws_db_event_subscription",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_rds_cluster.example.cluster_identifier"
+              ]
+            },
+            "sns_topic": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_cluster.example",
+          "mode": "managed",
+          "type": "aws_docdb_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_docdb_event_subscription.example",
+          "mode": "managed",
+          "type": "aws_docdb_event_subscription",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_docdb_cluster.example.cluster_identifier"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster.example",
+          "mode": "managed",
+          "type": "aws_neptune_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_neptune_event_subscription.example",
+          "mode": "managed",
+          "type": "aws_neptune_event_subscription",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_neptune_cluster.example.cluster_identifier"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

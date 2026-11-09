@@ -25,3 +25,8 @@ resource "aws_vpc" "fixture" {
   provider = aws.verified
   cidr_block = "10.0.0.0/16"
 }
+
+module "child" {
+  source = "./child"
+  providers = { aws = aws.verified }
+}

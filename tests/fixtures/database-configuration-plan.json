@@ -1,0 +1,496 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_db_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_db_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "aws_db_parameter_group",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_db_option_group.shared",
+      "mode": "managed",
+      "type": "aws_db_option_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "aws_db_option_group",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_rds_cluster_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "aws_rds_cluster_parameter_group",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_docdb_cluster_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "aws_docdb_cluster_parameter_group",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_neptune_cluster_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "aws_neptune_cluster_parameter_group",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_parameter_group.shared",
+      "mode": "managed",
+      "type": "aws_neptune_parameter_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "aws_neptune_parameter_group",
+          "parameter": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.monitor",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/monitor"
+        }
+      }
+    },
+    {
+      "address": "aws_db_instance.main",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "aws_db_instance",
+          "cluster_identifier": "aws_db_instance",
+          "parameter_group_name": "aws_db_parameter_group",
+          "option_group_name": "aws_db_option_group",
+          "monitoring_role_arn": "arn:aws:iam::123456789012:role/monitor"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.main",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "aws_rds_cluster",
+          "cluster_identifier": "aws_rds_cluster",
+          "db_cluster_parameter_group_name": "aws_rds_cluster_parameter_group",
+          "db_instance_parameter_group_name": "aws_db_parameter_group",
+          "iam_roles": [
+            "arn:aws:iam::123456789012:role/monitor"
+          ],
+          "monitoring_role_arn": "arn:aws:iam::123456789012:role/monitor"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_instance.main",
+      "mode": "managed",
+      "type": "aws_rds_cluster_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "aws_rds_cluster_instance",
+          "cluster_identifier": "aws_rds_cluster_instance",
+          "db_parameter_group_name": "aws_db_parameter_group",
+          "monitoring_role_arn": "arn:aws:iam::123456789012:role/monitor"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster.main",
+      "mode": "managed",
+      "type": "aws_docdb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "aws_docdb_cluster",
+          "cluster_identifier": "aws_docdb_cluster",
+          "db_cluster_parameter_group_name": "aws_docdb_cluster_parameter_group"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster.main",
+      "mode": "managed",
+      "type": "aws_neptune_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "aws_neptune_cluster",
+          "cluster_identifier": "aws_neptune_cluster",
+          "neptune_cluster_parameter_group_name": "aws_neptune_cluster_parameter_group",
+          "neptune_instance_parameter_group_name": "aws_neptune_parameter_group",
+          "iam_roles": [
+            "arn:aws:iam::123456789012:role/monitor"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster_instance.main",
+      "mode": "managed",
+      "type": "aws_neptune_cluster_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "aws_neptune_cluster_instance",
+          "cluster_identifier": "aws_neptune_cluster_instance",
+          "neptune_parameter_group_name": "aws_neptune_parameter_group"
+        }
+      }
+    },
+    {
+      "address": "aws_db_instance_role_association.main",
+      "mode": "managed",
+      "type": "aws_db_instance_role_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_instance_identifier": "aws_db_instance",
+          "role_arn": "arn:aws:iam::123456789012:role/monitor"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_role_association.main",
+      "mode": "managed",
+      "type": "aws_rds_cluster_role_association",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_cluster_identifier": "aws_rds_cluster",
+          "role_arn": "arn:aws:iam::123456789012:role/monitor"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_db_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_db_parameter_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_option_group.shared",
+          "mode": "managed",
+          "type": "aws_db_option_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rds_cluster_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_rds_cluster_parameter_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_docdb_cluster_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_docdb_cluster_parameter_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_neptune_cluster_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_neptune_cluster_parameter_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_neptune_parameter_group.shared",
+          "mode": "managed",
+          "type": "aws_neptune_parameter_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.monitor",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_instance.main",
+          "mode": "managed",
+          "type": "aws_db_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parameter_group_name": {
+              "references": [
+                "aws_db_parameter_group.shared.name"
+              ]
+            },
+            "option_group_name": {
+              "references": [
+                "aws_db_option_group.shared.name"
+              ]
+            },
+            "monitoring_role_arn": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster.main",
+          "mode": "managed",
+          "type": "aws_rds_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_parameter_group_name": {
+              "references": [
+                "aws_rds_cluster_parameter_group.shared.name"
+              ]
+            },
+            "db_instance_parameter_group_name": {
+              "references": [
+                "aws_db_parameter_group.shared.name"
+              ]
+            },
+            "iam_roles": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            },
+            "monitoring_role_arn": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster_instance.main",
+          "mode": "managed",
+          "type": "aws_rds_cluster_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_parameter_group_name": {
+              "references": [
+                "aws_db_parameter_group.shared.name"
+              ]
+            },
+            "monitoring_role_arn": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_cluster.main",
+          "mode": "managed",
+          "type": "aws_docdb_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_parameter_group_name": {
+              "references": [
+                "aws_docdb_cluster_parameter_group.shared.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster.main",
+          "mode": "managed",
+          "type": "aws_neptune_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "neptune_cluster_parameter_group_name": {
+              "references": [
+                "aws_neptune_cluster_parameter_group.shared.name"
+              ]
+            },
+            "neptune_instance_parameter_group_name": {
+              "references": [
+                "aws_neptune_parameter_group.shared.name"
+              ]
+            },
+            "iam_roles": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster_instance.main",
+          "mode": "managed",
+          "type": "aws_neptune_cluster_instance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "neptune_parameter_group_name": {
+              "references": [
+                "aws_neptune_parameter_group.shared.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_db_instance_role_association.main",
+          "mode": "managed",
+          "type": "aws_db_instance_role_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_instance_identifier": {
+              "references": [
+                "aws_db_instance.main.identifier"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster_role_association.main",
+          "mode": "managed",
+          "type": "aws_rds_cluster_role_association",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.main.cluster_identifier"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.monitor.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

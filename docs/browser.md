@@ -3,7 +3,7 @@
 The browser API accepts a `terraform show -json <saved-plan>` JSON string or explicit named inputs and
 returns SVG or self-contained HTML in memory. It uses the native CLI's parser,
 semantic rules, selection, layout and rendering. JSON-only AWS accounts remain
-unknown; no provider evidence or account inference is added.
+unknown; no verified saved-plan provider evidence or account inference is added.
 
 Generated HTML includes the shared [generation information contract](viewer.md#generation-information),
 including effective selection settings, generator version and the revision compiled
@@ -26,6 +26,8 @@ uses the same acquisition and fallback rules for native and Wasm builds.
 | Rust `planorama::inspect_modules(json)` | `Result<Vec<ModuleInventoryEntry>, Error>` |
 | Rust `planorama::inspect_resources(json)` | `Result<Vec<ResourceInventoryEntry>, Error>` |
 | `inspect_input(json)` | Both inventories from one parse; used by the sample Worker |
+| Rust `planorama::inspect_input_summary(json)` | `Result<InputSummary, Error>`; bounded action/provider summary |
+| Rust `planorama::inspect_named_input_summaries(&[NamedInput])` | `Result<NamedInputSummary, InspectionError>`; input rows and aggregate |
 
 Wasm `wasm_bindgen.inspect_modules(jsonString)` and
 `wasm_bindgen.inspect_resources(jsonString)` serialize the corresponding arrays;
@@ -85,6 +87,78 @@ inventories, and stale results cannot replace newer ones. Unsupported input form
 include state JSON, event streams, binary plans and provider evidence; use the CLI
 for Terraform execution and configuration/preset files.
 
+## Input summaries
+
+Wasm `inspect_input_summary(jsonString)` and
+`inspect_named_input_summaries(inputsJson)` return JSON strings with the same
+schema as their Rust counterparts. They use the shared parser without selection,
+semantic projection, layout or routing. The sample UI does not consume these APIs.
+
+```js
+const summary = JSON.parse(wasm_bindgen.inspect_input_summary(planJson));
+const named = JSON.parse(wasm_bindgen.inspect_named_input_summaries(
+  JSON.stringify([{state: 'network', json: planJson}])));
+```
+
+Each summary has `counts`, `providers` and `omitted_provider_objects`:
+
+- `counts.resources` counts distinct parsed resource addresses, including data
+  resources. `counts.objects` counts current and deposed objects separately;
+  `current + deposed` and `managed + data` each equal `objects`.
+- `counts.actions` contains exclusive object counts: `unchanged`, `create`,
+  `update`, `delete`, `replacement`, `read`, `other`. Their sum equals `objects`.
+  A create/delete replacement in either order counts once as `replacement`.
+  Data mode and read action are independent dimensions. A planned object with
+  no change record is `unchanged`; a change record with missing/unrecognized
+  actions is `other`. Deposed objects contribute their own actions. As in the
+  parser, repeated records for the same address/deposed key describe one object.
+- `providers` groups objects by normalized `source` and `evidence` (`explicit`,
+  `inferred`, `unknown`). Explicit means a declaration selected by the shared
+  parser, not verification: resource-change provider names take precedence over
+  planned-value/configuration declarations, including conflicts. Distinct sources
+  on different objects remain separate. AWS and Terraform built-in type inference
+  stays `inferred` even when another object explicitly declares that source.
+  Unknown identities have `source: null` and `source_unavailable: true`.
+  Explicit sources outside the bounded display syntax also return null/unavailable:
+  at most 256 bytes, three nonempty slash-separated components of ASCII lowercase
+  letters, digits, periods, underscores or hyphens, after parser normalization.
+  Each row includes `objects`; this is resource evidence, not a list of unused
+  provider configurations. No versions, workspace, account, environment, attributes,
+  resource addresses or deposed keys are returned.
+
+Provider rows are sorted by source (null first), then evidence, and capped at 64.
+`omitted_provider_objects` counts objects in omitted groups; adding it to returned
+provider object counts equals `counts.objects`. Counts are never truncated.
+An empty supported plan returns zero counts and no provider rows.
+
+Named output is `{inputs: [{state, summary}], aggregate}` in caller input order.
+The aggregate sums counts across states without deduplicating equal addresses;
+provider grouping uses all input evidence before truncation. Each input and the
+aggregate have their own provider cap. Failures return no partial summary. Rust
+`InspectionError` contains `code: Error` and optional zero-based `input_index`;
+Wasm errors contain the safe `code`, static `message`, and `input_index` when row
+validation/parsing identifies a row. Envelope errors have no index, and errors
+about the input count have a null index. No raw parser errors are returned.
+
+Summary limits apply to both Rust and Wasm: 32 MiB decoded UTF-8 input in total,
+1–64 named inputs, 32,768 JSON values/map keys across all inputs, nesting below
+64 levels, 4,096 parsed objects in total and 65,536 parsed edges per input.
+The existing named-envelope bound also applies. Limit failures use
+`input_too_large` or `resource_limit`; ordinary malformed/unsupported input and
+state-name errors retain their existing codes.
+
+Wasm requires the [configured imported-memory budget](browser-engine.md#per-generation-memory-selection).
+It checks memory headroom before envelope decoding and each shared parse,
+returning `memory_limit` when insufficient (`memory_budget_mismatch` if not
+configured). Conservative parse reservation is 64 times decoded input bytes plus
+16 MiB; the configured budget may reject input below the byte limit. The imported
+memory maximum is the hard ceiling, and allocation traps must still be sanitized
+by the caller. These synchronous APIs belong in a fresh dedicated Worker: cancel
+by terminating it, and reject stale request IDs before accepting results. They do
+not offer cooperative steps or cancellation callbacks. The host must bound file
+and envelope sizes before passing strings into Wasm; the Wasm budget does not
+cover JavaScript memory.
+
 ## Named state inputs
 
 Enable **Use named states**, then **Add state input** for each file. Enter each
@@ -126,7 +200,7 @@ selectors are `STATE:ADDRESS`. Identical addresses and current/deposed objects i
 different states stay independent. Counts refer to original inputs, before filters.
 Generation shares native state-local parsing, semantic transformation, selection
 and SVG/HTML rendering. Explicit remote-state mappings use the shared CLI resolver
-as described below. Provider evidence remains CLI-only. Equal names or ARNs do
+as described below. Verified saved-plan provider evidence remains CLI-only. Equal names or ARNs do
 not automatically create cross-state connections.
 
 Named requests follow the [shared lifecycle](#privacy-and-lifecycle), snapshotting

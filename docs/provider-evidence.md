@@ -26,13 +26,20 @@ equal provider keys in different states do not share evidence.
 
 The verified pairs are explicit; other combinations are input errors:
 
-| Terraform Core | hashicorp/aws | Archive | Authentication schema |
-| --- | --- | --- | --- |
-| 1.9.8 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
-| 1.16.6 | 5.100.0 | tfplan format 3, embedded configuration and lock | AWS 5.100.0 |
+| Terraform Core | hashicorp/aws |
+| --- | --- |
+| 1.9.8 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.10.5 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.11.4 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.12.2 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.13.5 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.14.9 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.15.9 | 5.100.0, 6.0.0, 6.70.0 |
+| 1.16.6 | 5.100.0, 6.0.0, 6.70.0 |
 
-AWS 6.0.0 remains unsupported for saved-plan evidence even though it is in the
-separate JSON/region compatibility matrix.
+Each row covers all three exact Provider versions (24 pairs total). All use tfplan
+format 3 with embedded configuration and lock, and the schema for the selected
+Provider version. Other patch releases are not implicitly accepted.
 
 The exact Terraform version used to create and export the plan must be on `PATH`.
 Initialize that plan's working directory and fixed provider version yourself
@@ -67,7 +74,8 @@ identities. Removed/deposed resources without a current binding remain unknown.
 A supported provider must have literal values throughout its complete block,
 including region, endpoints, profile, tags and all authentication options.
 Attribute types and nested block names are checked against the captured
-[AWS 5.100.0 provider schema](../src/plan/evidence/aws-5.100.0.json).
+provider schema selected by the embedded lock: [5.100.0](../src/plan/evidence/aws-5.100.0.json),
+[6.0.0](../src/plan/evidence/aws-6.0.0.json), or [6.70.0](../src/plan/evidence/aws-6.70.0.json).
 Literal booleans and numbers are also accepted for string attributes, matching
 Terraform's primitive conversion (for example `skip_metadata_api_check = true`).
 Unknown fields, nested blocks, nulls, functions and expressions that require
@@ -98,9 +106,12 @@ Account IDs are intentional deployment metadata visible in SVG/HTML. Region,
 account, provider binding and Terraform state remain independent identities.
 
 The development Docker image defaults to Terraform 1.9.8. The evidence harness
-installs checksum-pinned 1.9.8 and 1.16.6 binaries into separate directories in
+installs checksum-pinned binaries for the listed Core versions into separate directories in
 `output/provider-plan/bin`, with separate initialized work directories and pinned
-provider locks. It does not change the image's default executable. Run:
+provider locks. The three Provider locks are shared from the pinned 1.9.8 JSON
+fixtures; each Core initializes its own directory with the lock read-only. A local
+Provider cache avoids downloading each binary for every Core. The default
+executable in the image is unchanged. Run:
 
 ```sh
 docker compose exec -T dev cargo test --locked --lib plan::evidence
@@ -111,14 +122,20 @@ docker run --rm --network none --volumes-from "$(docker compose ps -q dev)" \
 ```
 
 The preparation step downloads binaries and initializes the pinned provider.
-Verification runs without external networking and generates real saved plans
-with fabricated credentials and a local STS fixture. Both Core versions must
-produce the captured provider schema. Checks cover static roles, omitted dynamic
+Verification reads committed public saved plans in `tests/fixtures/provider-plan/captured`
+without external networking. To regenerate them, run the same networkless command
+with `capture` instead of `verify`; capture uses fabricated credentials and a local
+STS fixture. Each verified pair must produce its captured provider schema.
+An optional final argument such as `1.9.8/6.70.0` selects one exact pair; omit it
+for the full verification. Prepare all pairs first for the incompatible-binary checks.
+Checks cover static roles, omitted dynamic
 roles, other variable references, incompatible binaries, JSON mismatches,
 JSON-only fallback, state isolation and suppressed logging/CLI arguments.
 It performs no apply. `sh tests/support/verify_provider_plan.sh` is a convenience
-wrapper for both phases inside the existing container; CI uses the networkless
-verification command above. Unit and CLI tests cover malformed snapshots, archive
+wrapper for preparation, capture and verification inside the existing container.
+The release-branch Compatibility output workflow uses the networkless verification
+command above with the same CLI build as JSON output checks.
+Unit and CLI tests cover malformed snapshots, archive
 headers, lock/version mismatches, unknown authentication fields, binding and
 privacy failures.
 
@@ -126,7 +143,8 @@ privacy failures.
 
 Inspect the target Core's `internal/plans/planproto/planfile.proto` and
 `internal/plans/planfile` implementation independently of the AWS authentication
-schema. The examined [1.9.8 protobuf](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/plans/planproto/planfile.proto)
+schema. The examined [1.9.8 protobuf](https://github.com/hashicorp/terraform/blob/v1.9.8/internal/plans/planproto/planfile.proto),
+[1.10.5 protobuf](https://github.com/hashicorp/terraform/blob/v1.10.5/internal/plans/planproto/planfile.proto)
 and [1.16.6 protobuf](https://github.com/hashicorp/terraform/blob/v1.16.6/internal/plans/planproto/planfile.proto)
 store format at field 1 and Core version at field 14. Unknown top-level fields
 are skipped by wire type; malformed or duplicate version fields are rejected.

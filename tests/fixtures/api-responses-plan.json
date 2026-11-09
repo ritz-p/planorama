@@ -1,0 +1,210 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_apigatewayv2_api.main",
+      "type": "aws_apigatewayv2_api",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "api-main",
+          "protocol_type": "WEBSOCKET"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_integration.main",
+      "type": "aws_apigatewayv2_integration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "integration",
+          "api_id": "api-main",
+          "integration_type": "MOCK"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_route.main",
+      "type": "aws_apigatewayv2_route",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "route",
+          "api_id": "api-main"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_model.main",
+      "type": "aws_apigatewayv2_model",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "model-id",
+          "name": "Response",
+          "api_id": "api-main",
+          "schema": "PRIVATE_SCHEMA"
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_integration_response.main",
+      "type": "aws_apigatewayv2_integration_response",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "api-main",
+          "integration_id": "integration",
+          "integration_response_key": "/200/",
+          "response_templates": {
+            "json": "PRIVATE_TEMPLATE"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_apigatewayv2_route_response.main",
+      "type": "aws_apigatewayv2_route_response",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "api_id": "api-main",
+          "route_id": "route",
+          "route_response_key": "$default",
+          "response_models": {
+            "json": "Response"
+          }
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_apigatewayv2_api.main",
+          "type": "aws_apigatewayv2_api",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apigatewayv2_integration.main",
+          "type": "aws_apigatewayv2_integration",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_route.main",
+          "type": "aws_apigatewayv2_route",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_model.main",
+          "type": "aws_apigatewayv2_model",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_integration_response.main",
+          "type": "aws_apigatewayv2_integration_response",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.main.id"
+              ]
+            },
+            "integration_id": {
+              "references": [
+                "aws_apigatewayv2_integration.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apigatewayv2_route_response.main",
+          "type": "aws_apigatewayv2_route_response",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_id": {
+              "references": [
+                "aws_apigatewayv2_api.main.id"
+              ]
+            },
+            "route_id": {
+              "references": [
+                "aws_apigatewayv2_route.main.id"
+              ]
+            },
+            "response_models": {
+              "references": [
+                "aws_apigatewayv2_model.main.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

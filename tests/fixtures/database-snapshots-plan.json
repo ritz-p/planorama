@@ -1,0 +1,384 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_db_instance.example",
+      "mode": "managed",
+      "type": "aws_db_instance",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "database"
+        }
+      }
+    },
+    {
+      "address": "aws_db_snapshot.example",
+      "mode": "managed",
+      "type": "aws_db_snapshot",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_instance_identifier": "database",
+          "db_snapshot_arn": "arn:aws:rds:us-east-1:123456789012:snapshot:aws_db_snapshot",
+          "vpc_id": "vpc-independent"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.example",
+      "mode": "managed",
+      "type": "aws_rds_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "aws_rds_cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_db_cluster_snapshot.example",
+      "mode": "managed",
+      "type": "aws_db_cluster_snapshot",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_cluster_identifier": "aws_rds_cluster",
+          "db_cluster_snapshot_arn": "arn:aws:rds:us-east-1:123456789012:cluster-snapshot:aws_db_cluster_snapshot",
+          "vpc_id": "vpc-independent"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster.example",
+      "mode": "managed",
+      "type": "aws_docdb_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "aws_docdb_cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_docdb_cluster_snapshot.example",
+      "mode": "managed",
+      "type": "aws_docdb_cluster_snapshot",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_cluster_identifier": "aws_docdb_cluster",
+          "db_cluster_snapshot_arn": "arn:aws:rds:us-east-1:123456789012:cluster-snapshot:aws_docdb_cluster_snapshot",
+          "vpc_id": "vpc-independent"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster.example",
+      "mode": "managed",
+      "type": "aws_neptune_cluster",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "aws_neptune_cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_neptune_cluster_snapshot.example",
+      "mode": "managed",
+      "type": "aws_neptune_cluster_snapshot",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "db_cluster_identifier": "aws_neptune_cluster",
+          "db_cluster_snapshot_arn": "arn:aws:rds:us-east-1:123456789012:cluster-snapshot:aws_neptune_cluster_snapshot",
+          "vpc_id": "vpc-independent"
+        }
+      }
+    },
+    {
+      "address": "aws_db_snapshot_copy.example",
+      "mode": "managed",
+      "type": "aws_db_snapshot_copy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_db_snapshot_identifier": "arn:aws:rds:us-east-1:123456789012:snapshot:aws_db_snapshot"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster_snapshot_copy.example",
+      "mode": "managed",
+      "type": "aws_rds_cluster_snapshot_copy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_db_cluster_snapshot_identifier": "arn:aws:rds:us-east-1:123456789012:cluster-snapshot:aws_db_cluster_snapshot"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.example",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "exports",
+          "id": "exports"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.example",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/export"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.example",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/example"
+        }
+      }
+    },
+    {
+      "address": "aws_rds_export_task.example",
+      "mode": "managed",
+      "type": "aws_rds_export_task",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_arn": "arn:aws:rds:us-east-1:123456789012:snapshot:aws_db_snapshot",
+          "s3_bucket_name": "exports",
+          "iam_role_arn": "arn:aws:iam::123456789012:role/export",
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/example"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_db_instance.example",
+          "mode": "managed",
+          "type": "aws_db_instance",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_snapshot.example",
+          "mode": "managed",
+          "type": "aws_db_snapshot",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_instance_identifier": {
+              "references": [
+                "aws_db_instance.example.identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster.example",
+          "mode": "managed",
+          "type": "aws_rds_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_db_cluster_snapshot.example",
+          "mode": "managed",
+          "type": "aws_db_cluster_snapshot",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_identifier": {
+              "references": [
+                "aws_rds_cluster.example.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_docdb_cluster.example",
+          "mode": "managed",
+          "type": "aws_docdb_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_docdb_cluster_snapshot.example",
+          "mode": "managed",
+          "type": "aws_docdb_cluster_snapshot",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_identifier": {
+              "references": [
+                "aws_docdb_cluster.example.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_neptune_cluster.example",
+          "mode": "managed",
+          "type": "aws_neptune_cluster",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_neptune_cluster_snapshot.example",
+          "mode": "managed",
+          "type": "aws_neptune_cluster_snapshot",
+          "provider_config_key": "aws",
+          "expressions": {
+            "db_cluster_identifier": {
+              "references": [
+                "aws_neptune_cluster.example.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_db_snapshot_copy.example",
+          "mode": "managed",
+          "type": "aws_db_snapshot_copy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_db_snapshot_identifier": {
+              "references": [
+                "aws_db_snapshot.example.db_snapshot_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rds_cluster_snapshot_copy.example",
+          "mode": "managed",
+          "type": "aws_rds_cluster_snapshot_copy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_db_cluster_snapshot_identifier": {
+              "references": [
+                "aws_db_cluster_snapshot.example.db_cluster_snapshot_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.example",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.example",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.example",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rds_export_task.example",
+          "mode": "managed",
+          "type": "aws_rds_export_task",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_arn": {
+              "references": [
+                "aws_db_snapshot.example.db_snapshot_arn"
+              ]
+            },
+            "s3_bucket_name": {
+              "references": [
+                "aws_s3_bucket.example.id"
+              ]
+            },
+            "iam_role_arn": {
+              "references": [
+                "aws_iam_role.example.arn"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.example.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

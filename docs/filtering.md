@@ -14,8 +14,9 @@ are rejected explicitly.
 
 Each row gives a selector, evidence kind, direct resource-instance count and count
 including descendants. Managed and data instances both count; current and each
-deposed object count separately, with duplicate address/deposed records counted
-once. Group cards are never counted. Root rows are marked not selectable. Named
+deposed object count separately. An identity appearing in both planned values and
+resource changes counts once; repeated address/deposed identities within
+`resource_changes` are rejected. Group cards are never counted. Root rows are marked not selectable. Named
 states show `STATE:` prefixes. Rows backed by resource identities or values-module
 records are instances (including known empty instances); configuration rows are
 marked aggregates and may cover several backed instances. Zero means no backed

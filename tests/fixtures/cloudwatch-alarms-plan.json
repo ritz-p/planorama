@@ -1,0 +1,251 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_sns_topic.alerts",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "alerts",
+          "arn": "arn:aws:sns:us-east-1:123456789012:alerts"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.notify",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "function_name": "notify",
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:notify"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_policy.scale",
+      "mode": "managed",
+      "type": "aws_autoscaling_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "scale",
+          "arn": "arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:synthetic:autoScalingGroupName:workers:policyName:scale"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.metric",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "alarm_name": "metric",
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:metric",
+          "namespace": "AWS/EC2",
+          "metric_name": "CPUUtilization",
+          "alarm_actions": [
+            "arn:aws:sns:us-east-1:123456789012:alerts",
+            "arn:aws:lambda:us-east-1:123456789012:function:notify",
+            "arn:aws:autoscaling:us-east-1:123456789012:scalingPolicy:synthetic:autoScalingGroupName:workers:policyName:scale"
+          ],
+          "ok_actions": [
+            "arn:aws:sns:us-east-1:123456789012:alerts"
+          ],
+          "insufficient_data_actions": [
+            "arn:aws:sns:us-east-1:123456789012:alerts"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_composite_alarm.composite",
+      "mode": "managed",
+      "type": "aws_cloudwatch_composite_alarm",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "alarm_name": "composite",
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:composite",
+          "alarm_rule": "ALARM(metric)",
+          "actions_suppressor": [
+            {
+              "alarm": "metric",
+              "extension_period": 60,
+              "wait_period": 60
+            }
+          ],
+          "alarm_actions": [
+            "arn:aws:sns:us-east-1:123456789012:alerts"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_alarm_mute_rule.maintenance",
+      "mode": "managed",
+      "type": "aws_cloudwatch_alarm_mute_rule",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "maintenance",
+          "mute_targets": [
+            {
+              "alarm_names": [
+                "metric",
+                "composite"
+              ]
+            }
+          ],
+          "rule": [
+            {
+              "schedule": [
+                {
+                  "expression": "cron(0 2 * * *)",
+                  "duration": "PT1H"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_sns_topic.alerts",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "alerts",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.notify",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "notify",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_autoscaling_policy.scale",
+          "mode": "managed",
+          "type": "aws_autoscaling_policy",
+          "name": "scale",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_metric_alarm.metric",
+          "mode": "managed",
+          "type": "aws_cloudwatch_metric_alarm",
+          "name": "metric",
+          "provider_config_key": "aws",
+          "expressions": {
+            "alarm_actions": {
+              "references": [
+                "aws_sns_topic.alerts.arn",
+                "aws_lambda_function.notify.arn",
+                "aws_autoscaling_policy.scale.arn"
+              ]
+            },
+            "ok_actions": {
+              "references": [
+                "aws_sns_topic.alerts.arn"
+              ]
+            },
+            "insufficient_data_actions": {
+              "references": [
+                "aws_sns_topic.alerts.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_composite_alarm.composite",
+          "mode": "managed",
+          "type": "aws_cloudwatch_composite_alarm",
+          "name": "composite",
+          "provider_config_key": "aws",
+          "expressions": {
+            "actions_suppressor": [
+              {
+                "alarm": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.metric.alarm_name"
+                  ]
+                }
+              }
+            ],
+            "alarm_actions": {
+              "references": [
+                "aws_sns_topic.alerts.arn"
+              ]
+            },
+            "alarm_rule": {
+              "references": [
+                "aws_cloudwatch_metric_alarm.metric.alarm_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_alarm_mute_rule.maintenance",
+          "mode": "managed",
+          "type": "aws_cloudwatch_alarm_mute_rule",
+          "name": "maintenance",
+          "provider_config_key": "aws",
+          "expressions": {
+            "mute_targets": [
+              {
+                "alarm_names": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.metric.alarm_name",
+                    "aws_cloudwatch_composite_alarm.composite.alarm_name"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -19,6 +19,7 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
         | "aws_internet_gateway"
         | "aws_egress_only_internet_gateway" => Some(("vpc_id", "aws_vpc")),
         "aws_network_interface"
+        | "aws_s3outposts_endpoint"
         | "aws_ec2_instance_connect_endpoint"
         | "aws_instance"
         | "aws_nat_gateway"
@@ -44,6 +45,32 @@ pub(super) fn infer(raw: &Input) -> Graph {
         {
             continue;
         }
+        if super::default_network::parent_field(&child.resource_type)
+            == Some(reference.attribute.as_str())
+        {
+            if super::service_references::verified(raw, reference) {
+                if let [parent] = reference.sources.as_slice() {
+                    relationships.insert((*parent, reference.target));
+                }
+            }
+            continue;
+        }
+        if child.resource_type == "aws_vpc_route_server_endpoint"
+            && reference.attribute == "subnet_id"
+        {
+            if super::service_references::verified(raw, reference) {
+                relationships.insert((reference.sources[0], reference.target));
+            }
+            continue;
+        }
+        if super::secondary_network::label(&child.resource_type, &reference.attribute).is_some() {
+            if super::service_references::verified(raw, reference) {
+                if let [parent] = reference.sources.as_slice() {
+                    relationships.insert((*parent, reference.target));
+                }
+            }
+            continue;
+        }
         let rule = if child.resource_type == "aws_nat_gateway" && reference.attribute == "vpc_id" {
             Some(("vpc_id", "aws_vpc"))
         } else {
@@ -66,7 +93,9 @@ pub(super) fn infer(raw: &Input) -> Graph {
         }
         if matches!(
             child.resource_type.as_str(),
-            "aws_network_interface" | "aws_ec2_instance_connect_endpoint"
+            "aws_network_interface"
+                | "aws_ec2_instance_connect_endpoint"
+                | "aws_s3outposts_endpoint"
         ) && !super::service_references::verified(raw, reference)
         {
             continue;
@@ -77,7 +106,19 @@ pub(super) fn infer(raw: &Input) -> Graph {
         if let [parent] = reference.sources.as_slice() {
             let node = &raw.nodes[*parent];
             if *parent != reference.target
-                && node.resource_type == parent_type
+                && (node.resource_type == parent_type
+                    || (node.resource_type == "aws_default_vpc"
+                        && parent_type == "aws_vpc"
+                        && reference.instances_explicit
+                        && reference.issues.is_empty()
+                        && reference.ids_only
+                        && reference.scalar_id_matches
+                        && child.action != crate::model::Action::Delete
+                        && child.deposed_key.is_none()
+                        && node.mode == EntityMode::Managed
+                        && node.action != crate::model::Action::Delete
+                        && node.deposed_key.is_none()
+                        && super::vpc_routes::bindings(raw, reference)))
                 && node.provider.is_aws()
                 && node.role == ResourceRole::Container
             {

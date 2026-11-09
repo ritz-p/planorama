@@ -1,0 +1,18 @@
+{
+  "aws_vpc": {
+    "version": 1,
+    "region": null
+  },
+  "aws_subnet": {
+    "version": 1,
+    "region": null
+  },
+  "aws_cloudwatch_log_group": {
+    "version": 0,
+    "region": null
+  },
+  "aws_iam_role": {
+    "version": 0,
+    "region": null
+  }
+}

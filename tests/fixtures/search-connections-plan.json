@@ -1,0 +1,192 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "configuration": {
+    "provider_config": {
+      "local": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111111111111:role/Fixture"
+              }
+            }
+          ]
+        }
+      },
+      "remote": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::222222222222:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_opensearch_domain.local",
+          "mode": "managed",
+          "type": "aws_opensearch_domain",
+          "name": "local",
+          "provider_config_key": "local",
+          "expressions": {}
+        },
+        {
+          "address": "aws_opensearch_domain.remote",
+          "mode": "managed",
+          "type": "aws_opensearch_domain",
+          "name": "remote",
+          "provider_config_key": "remote",
+          "expressions": {}
+        },
+        {
+          "address": "aws_opensearch_outbound_connection.main",
+          "mode": "managed",
+          "type": "aws_opensearch_outbound_connection",
+          "name": "main",
+          "provider_config_key": "local",
+          "expressions": {
+            "local_domain_info": [
+              {
+                "domain_name": {
+                  "references": [
+                    "aws_opensearch_domain.local.domain_name"
+                  ]
+                }
+              }
+            ],
+            "remote_domain_info": [
+              {
+                "domain_name": {
+                  "references": [
+                    "aws_opensearch_domain.remote.domain_name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_opensearch_inbound_connection_accepter.main",
+          "mode": "managed",
+          "type": "aws_opensearch_inbound_connection_accepter",
+          "name": "main",
+          "provider_config_key": "remote",
+          "expressions": {
+            "connection_id": {
+              "references": [
+                "aws_opensearch_outbound_connection.main.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "aws_opensearch_domain.local",
+      "mode": "managed",
+      "type": "aws_opensearch_domain",
+      "name": "local",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "local",
+          "arn": "arn:aws:es:us-east-1:111111111111:domain/local"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_opensearch_domain.remote",
+      "mode": "managed",
+      "type": "aws_opensearch_domain",
+      "name": "remote",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "remote",
+          "arn": "arn:aws:es:us-west-2:222222222222:domain/remote"
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_opensearch_outbound_connection.main",
+      "mode": "managed",
+      "type": "aws_opensearch_outbound_connection",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "connection-example",
+          "connection_mode": "DIRECT",
+          "connection_alias": "search-link",
+          "local_domain_info": [
+            {
+              "domain_name": "local",
+              "owner_id": "111111111111",
+              "region": "us-east-1"
+            }
+          ],
+          "remote_domain_info": [
+            {
+              "domain_name": "remote",
+              "owner_id": "222222222222",
+              "region": "us-west-2"
+            }
+          ],
+          "connection_properties": [
+            {
+              "endpoint": "PRIVATE_RUNTIME_ENDPOINT"
+            }
+          ]
+        },
+        "after_unknown": {}
+      }
+    },
+    {
+      "address": "aws_opensearch_inbound_connection_accepter.main",
+      "mode": "managed",
+      "type": "aws_opensearch_inbound_connection_accepter",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "connection-example",
+          "connection_id": "connection-example",
+          "connection_status": "PENDING_ACCEPTANCE"
+        },
+        "after_unknown": {}
+      }
+    }
+  ]
+}
