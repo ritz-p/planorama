@@ -1368,7 +1368,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_s3tables_table_policy", "Amazon S3 Tables", Policy, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3tables_table_replication", "Amazon S3 Tables", Node, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3vectors_index", "Amazon S3 Vectors", Node, Logical, Regional, Some(ResourceIcon::Storage)),
-    entry!("aws_s3vectors_vector_bucket", "Amazon S3 Vectors", Node, Logical, Regional, Some(ResourceIcon::Storage)),
+    entry!("aws_s3vectors_vector_bucket", "Amazon S3 Vectors", Node, Spatial, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_s3vectors_vector_bucket_policy", "Amazon S3 Vectors", Policy, Logical, Regional, Some(ResourceIcon::Storage)),
     entry!("aws_sagemaker_algorithm", "Amazon SageMaker AI", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
     entry!("aws_sagemaker_app", "Amazon SageMaker AI", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),

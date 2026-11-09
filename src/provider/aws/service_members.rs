@@ -58,6 +58,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Replication source table",
                 "Table configuration",
             ),
+            "aws_s3vectors_index" => (
+                "vector_bucket_name",
+                "Vector bucket owner",
+                "Vector indexes",
+            ),
+            "aws_s3vectors_vector_bucket_policy" => (
+                "vector_bucket_arn",
+                "Vector bucket owner",
+                "Vector bucket configuration",
+            ),
             "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener" => {
                 ("accelerator_arn", "Listener accelerator", "Listeners")
             }

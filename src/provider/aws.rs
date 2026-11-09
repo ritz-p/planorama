@@ -108,6 +108,7 @@ pub(crate) mod s3_access;
 mod s3_exports;
 pub(crate) mod s3files;
 pub(crate) mod s3tables;
+pub(crate) mod s3vectors;
 mod sagemaker;
 mod scaling;
 mod scraper;
