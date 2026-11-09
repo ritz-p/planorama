@@ -57870,10 +57870,10 @@
       }
     },
     "aws_synthetics_canary": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 998,
-      "gap": "#730 audit: Missing: execution role, script bucket name and distinct environment/artifact KMS ARNs. artifact_s3_location URI and computed engine Lambda/layer do not establish managed ownership. Follow-up #998. Missing: Logical canary is independently scheduled workload; review Spatial presentation without synthesizing engine Lambda. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Implemented #998 independent canary card, exact role/script bucket/environment and artifact KMS references, configured common-VPC attachment and group association endpoints. Computed engine/layer/VPC and artifact URI remain non-evidence. See docs/aws.md.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -57892,11 +57892,11 @@
           "engine_arn",
           "source_location_arn"
         ],
-        "placement": "Missing: Logical canary is independently scheduled workload; review Spatial presentation without synthesizing engine Lambda.",
+        "placement": "Supported: independent Spatial canary workload without synthesizing an engine Lambda.",
         "ownership": "Not applicable: retain independent aws_synthetics_canary identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
-        "network": "Missing: complete configured subnet/SG evidence and common VPC; computed vpc_id alone cannot prove containment.",
-        "references": "Missing: execution role, script bucket name and distinct environment/artifact KMS ARNs. artifact_s3_location URI and computed engine Lambda/layer do not establish managed ownership. Follow-up #998.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "network": "Supported: VPC containment requires complete configured subnet and security-group sets with explicit common-VPC parent evidence. Computed vpc_id alone never proves containment.",
+        "references": "Supported: execution role ARN, script bucket name and separate environment/artifact KMS ARNs, with SSE_KMS mode for artifact encryption. Complete configured subnet/SG ID sets. Computed engine_arn/source_location_arn and artifact_s3_location URI do not prove managed ownership.",
+        "scope": "Supported: independent provider/account/region bindings, preserving global IAM role scope and shared canary identity.",
         "summaries": "Deferred: aws_synthetics_canary configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/synthetics_canary.html.markdown",
         "shapes": {
@@ -58037,10 +58037,10 @@
       }
     },
     "aws_synthetics_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 998,
-      "gap": "#730 audit: Missing: group name and canary ARN; group_id is computed, not configured parent proof. Follow-up #998. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Implemented #998 independent canary card, exact role/script bucket/environment and artifact KMS references, configured common-VPC attachment and group association endpoints. Computed engine/layer/VPC and artifact URI remain non-evidence. See docs/aws.md.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -58053,8 +58053,8 @@
         "placement": "Supported: retain Logical Association default for aws_synthetics_group_association; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: grouping association preserves shared canary identity; no exclusive parent from group membership.",
         "network": "Not applicable: aws_synthetics_group_association has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: group name and canary ARN; group_id is computed, not configured parent proof. Follow-up #998.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
+        "references": "Supported: explicit group name and canary ARN outputs; computed group_id does not establish a configured owner.",
+        "scope": "Supported: independent provider/account/region bindings, preserving global IAM role scope and shared canary identity.",
         "summaries": "Deferred: aws_synthetics_group_association configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/synthetics_group_association.html.markdown",
         "shapes": {

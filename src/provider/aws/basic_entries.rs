@@ -1576,7 +1576,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_storagegateway_working_storage", "AWS Storage Gateway", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSStorageGateway))),
     entry!("aws_subnet", "Amazon VPC", Node, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_swf_domain", "Amazon Simple Workflow Service", Node, Logical, Regional, None),
-    entry!("aws_synthetics_canary", "Amazon CloudWatch Synthetics", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
+    entry!("aws_synthetics_canary", "Amazon CloudWatch Synthetics", Node, Spatial, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_synthetics_group", "Amazon CloudWatch Synthetics", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_synthetics_group_association", "Amazon CloudWatch Synthetics", Association, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_timestreaminfluxdb_db_cluster", "Amazon Timestream for InfluxDB", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonTimestream))),

@@ -572,3 +572,17 @@ independently verified region/account. Domains, URLs, computed log groups and
 monitor IDs do not imply ownership. Evidently experiment endpoints remain deferred
 because the pinned inventory has no managed experiment resource; project and
 launch ARNs are not substitutes. No telemetry payload or runtime health is shown.
+
+### Synthetics canaries (#998)
+
+Canaries have independent Spatial workload cards. Exact references identify the
+execution IAM role, script bucket name and separate environment/artifact KMS
+ARNs. Artifact encryption requires known `SSE_KMS` mode and singleton nested
+blocks. Configured subnet/security-group sets must be complete; VPC containment
+requires both sets to have explicit parents in the same VPC and compatible
+account/region bindings. Computed `vpc_id` alone cannot prove containment.
+
+Group associations reference group names and canary ARNs while preserving shared
+canary identity. Computed group IDs, engine Lambda/layer ARNs and artifact S3 URIs
+do not establish ownership or create managed resources. Script contents,
+environment values and runtime health are excluded from presentation.
