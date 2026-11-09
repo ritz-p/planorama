@@ -73,7 +73,12 @@ fn table_owners_require_exact_current_and_bucket_qualified_identity() {
 #[test]
 fn table_encryption_requires_object_shape_known_kms_mode_and_key_arn() {
     for t in [1, 3] {
-        for case in 0..9 {
+        super::super::service_references::tests::check_service_fixture(
+            &pair(0, t).to_string(),
+            "Table encryption key",
+            "encryption_configuration",
+        );
+        for case in 0..13 {
             let mut v = pair(0, t);
             match case {
                 1 => {
@@ -95,12 +100,27 @@ fn table_encryption_requires_object_shape_known_kms_mode_and_key_arn() {
                         json!([b]);
                 }
                 5 => {
-                    v["configuration"]["root_module"]["resources"][1]["expressions"]["encryption_configuration"]
-                        ["kms_key_arn"] = json!({"constant_value":"literal"})
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["encryption_configuration"] = json!({"constant_value":{"sse_algorithm":"aws:kms","kms_key_arn":"literal"}})
                 }
                 6 => v["resource_changes"][0]["type"] = json!("aws_kms_alias"),
                 7 => v["resource_changes"][0]["change"]["actions"] = json!(["delete"]),
                 8 => v["resource_changes"][0]["change"]["after_sensitive"] = json!({"arn":true}),
+                9 => {
+                    v["resource_changes"][1]["change"]["after_unknown"] =
+                        json!({"encryption_configuration":{"kms_key_arn":true}})
+                }
+                10 => {
+                    v["resource_changes"][1]["change"]["after_sensitive"] =
+                        json!({"encryption_configuration":{"kms_key_arn":true}})
+                }
+                11 => {
+                    v["resource_changes"][1]["change"]["after"]["encryption_configuration"]["kms_key_arn"] =
+                        json!("different")
+                }
+                12 => {
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["encryption_configuration"] =
+                        json!({"references":["aws_kms_key.main.id"]})
+                }
                 _ => {}
             }
             assert_eq!(
@@ -178,12 +198,15 @@ fn tables_remain_independent_and_payloads_are_never_rendered() {
 }
 
 #[test]
-fn replication_set_rows_do_not_swap_and_direct_bucket_outputs_work() {
+fn direct_bucket_outputs_work() {
     let mut v = pair(1, 3);
     v["configuration"]["root_module"]["resources"][1]["expressions"]["table_bucket_arn"] =
         json!({"references":["aws_s3tables_table_bucket.main.arn"]});
     assert!(complete(&v, "Table bucket", false));
-    let mut v = pair(7, 8);
+}
+
+fn destinations(t: usize) -> Value {
+    let mut v = pair(7, t);
     let mut bucket = v["resource_changes"][0].clone();
     bucket["address"] = json!("aws_s3tables_table_bucket.second");
     bucket["change"]["after"]["arn"] =
@@ -192,10 +215,85 @@ fn replication_set_rows_do_not_swap_and_direct_bucket_outputs_work() {
     v["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":"aws_s3tables_table_bucket.second","provider_config_key":"aws.west","expressions":{}}));
     v["resource_changes"][1]["change"]["after"]["rule"][0]["destination"].as_array_mut().unwrap().push(json!({"destination_table_bucket_arn":"arn:aws:s3tables:us-west-2:123456789012:bucket/second"}));
     v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"].as_array_mut().unwrap().push(json!({"destination_table_bucket_arn":{"references":["aws_s3tables_table_bucket.second.arn"]}}));
-    assert!(complete(&v, "Configured replication destinations", true));
-    v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"]
-        .as_array_mut()
-        .unwrap()
-        .swap(0, 1);
-    assert!(!complete(&v, "Configured replication destinations", true));
+    v
+}
+
+#[test]
+fn replication_destinations_accept_independent_configuration_and_value_order() {
+    for t in [8, 9] {
+        for config_swap in [false, true] {
+            for value_swap in [false, true] {
+                let mut v = destinations(t);
+                if config_swap {
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"].as_array_mut().unwrap().swap(0, 1);
+                }
+                if value_swap {
+                    v["resource_changes"][1]["change"]["after"]["rule"][0]["destination"]
+                        .as_array_mut()
+                        .unwrap()
+                        .swap(0, 1);
+                }
+                assert!(
+                    complete(&v, "Configured replication destinations", true),
+                    "{t}: config={config_swap}, value={value_swap}"
+                );
+            }
+        }
+    }
+}
+
+#[test]
+fn replication_destination_sets_reject_incomplete_or_ambiguous_evidence() {
+    for t in [8, 9] {
+        for case in 0..11 {
+            let mut v = destinations(t);
+            match case {
+                0 => {
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"]
+                        [1] = json!({})
+                }
+                1 => {
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"]
+                        [1] = json!({"destination_table_bucket_arn":{"constant_value":"literal"}})
+                }
+                2 => {
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"]
+                        [1] = json!({"destination_table_bucket_arn":{"references":["aws_s3tables_table_bucket.second.id"]}})
+                }
+                3 => {
+                    v["resource_changes"][1]["change"]["after"]["rule"][0]["destination"][1] =
+                        json!({"destination_table_bucket_arn":"different"})
+                }
+                4 => {
+                    v["resource_changes"][1]["change"]["after"]["rule"][0]["destination"][1] =
+                        v["resource_changes"][1]["change"]["after"]["rule"][0]["destination"][0]
+                            .clone()
+                }
+                5 => {
+                    v["resource_changes"][1]["change"]["after_unknown"] = json!({"rule":[{"destination":[{}, {"destination_table_bucket_arn":true}]}]})
+                }
+                6 => {
+                    v["resource_changes"][1]["change"]["after_sensitive"] = json!({"rule":[{"destination":[{}, {"destination_table_bucket_arn":true}]}]})
+                }
+                7 => {
+                    v["resource_changes"][1]["change"]["after_unknown"] =
+                        json!({"rule":[{"destination":[{}]}]})
+                }
+                8 => {
+                    v["resource_changes"][2]["change"]["after"]["arn"] =
+                        v["resource_changes"][0]["change"]["after"]["arn"].clone()
+                }
+                9 => {
+                    v["configuration"]["root_module"]["resources"][1]["expressions"]["rule"][0]["destination"]
+                        [1] = json!({"destination_table_bucket_arn":{"references":["aws_s3tables_table_bucket.second.arn", "var.extra"]}})
+                }
+                10 => v["resource_changes"][2]["change"]["after_sensitive"] = json!({"arn":true}),
+                _ => unreachable!(),
+            }
+            assert!(
+                !complete(&v, "Configured replication destinations", true),
+                "{t}: {case}"
+            );
+        }
+    }
 }

@@ -842,10 +842,11 @@ Table policies require the complete name/namespace/bucket identity. Unique helpe
 owners retain independent action/provenance. Warehouse locations, maintenance
 settings and table metadata never generate S3 resources or child tables.
 
-Encryption configuration is an object, with a known aws:kms sse_algorithm and
-an explicit matching KMS key ARN. Replication helpers resolve exact source ARNs,
-IAM role ARNs and a complete correlated destination set under the single rule
-block. Configured destinations may be in the same or another known region with
+Encryption configuration uses whole-object expression references, with a known
+aws:kms sse_algorithm and an explicit matching KMS key ARN. Replication helpers
+resolve exact source ARNs, IAM role ARNs and a complete destination ARN set under
+the single rule block, independent of configuration and planned set ordering.
+Configured destinations may be in the same or another known region with
 compatible same-account evidence; cross-account proof is deferred. This follows
 [AWS's replication contract](https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-tables-replication-tables.html)
 without asserting execution, permissions or health. Unknown/sensitive/incomplete,

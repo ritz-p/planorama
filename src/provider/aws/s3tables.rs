@@ -1,6 +1,7 @@
-use crate::model::{AttributeReference, TerraformEntity};
+use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
 use crate::semantic::Input;
 use serde_json::Value;
+use std::collections::BTreeSet;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/s3tables.rs"]
@@ -38,10 +39,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
             "aws_s3tables_table_bucket_replication" | "aws_s3tables_table_replication",
             DESTINATION,
         ) => Some("Configured replication destinations"),
-        (
-            "aws_s3tables_table" | "aws_s3tables_table_bucket",
-            "encryption_configuration.kms_key_arn",
-        ) => Some("Table encryption key"),
+        ("aws_s3tables_table" | "aws_s3tables_table_bucket", "encryption_configuration") => {
+            Some("Table encryption key")
+        }
         _ => None,
     }
 }
@@ -55,9 +55,7 @@ fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
         ("aws_s3tables_table_policy", "name", "aws_s3tables_table") => &["name"],
         ("aws_s3tables_table_replication", "table_arn", "aws_s3tables_table")
         | (_, "role", "aws_iam_role") => &["arn"],
-        (_, "encryption_configuration.kms_key_arn", _)
-            if !super::kms::key_outputs(source).is_empty() =>
-        {
+        (_, "encryption_configuration", _) if !super::kms::key_outputs(source).is_empty() => {
             &["arn"]
         }
         _ => &[],
@@ -71,6 +69,78 @@ pub(crate) fn indexed(kind: &str, path: &str) -> bool {
         .join(".");
     normal != path && label(kind, &normal).is_some()
 }
+fn verify_set(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+) -> Option<()> {
+    let current = |node: &TerraformEntity| {
+        node.provider.is_aws()
+            && node.mode == EntityMode::Managed
+            && node.action != Action::Delete
+            && node.deposed_key.is_none()
+    };
+    if !current(&nodes[r.target])
+        || !r.complete
+        || !r.instances_explicit
+        || !r.issues.is_empty()
+        || refs
+            .iter()
+            .filter(|other| other.target == r.target && other.attribute == r.attribute)
+            .count()
+            != 1
+    {
+        return None;
+    }
+    let (v, m) = evidence[r.target];
+    let known = |path: &str| super::nested_references::value(v, m, path)?.as_str();
+    let actual: BTreeSet<_> = if r.attribute == "encryption_configuration" {
+        if known("encryption_configuration.sse_algorithm")? != "aws:kms" {
+            return None;
+        }
+        [known("encryption_configuration.kms_key_arn")?].into()
+    } else {
+        if v["rule"].as_array()?.len() != 1 {
+            return None;
+        }
+        let rows = v["rule"][0]["destination"].as_array()?;
+        if !(1..=5).contains(&rows.len()) {
+            return None;
+        }
+        let values: BTreeSet<_> = (0..rows.len())
+            .map(|i| {
+                known(&format!(
+                    "rule.0.destination.{i}.destination_table_bucket_arn"
+                ))
+            })
+            .collect::<Option<_>>()?;
+        if values.len() != rows.len() {
+            return None;
+        }
+        values
+    };
+    let mut expected = BTreeSet::new();
+    for &source in &r.sources {
+        let endpoint = &nodes[source];
+        let outputs = fields(
+            &nodes[r.target].resource_type,
+            &r.attribute,
+            super::aliases::entity_type(endpoint),
+        );
+        let attrs = r.source_attributes_by_instance.get(&source)?;
+        if source == r.target || !current(endpoint) || attrs.len() != 1 {
+            return None;
+        }
+        let output = attrs.iter().next()?;
+        if !outputs.contains(&output.as_str())
+            || !expected.insert(super::service_evidence::known(evidence, source, output)?)
+        {
+            return None;
+        }
+    }
+    (actual == expected && !actual.contains("")).then_some(())
+}
 pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
@@ -81,6 +151,12 @@ pub(crate) fn annotate(
         .map(|r| {
             if label(&nodes[r.target].resource_type, &r.attribute).is_none() {
                 return r.service_reference_verified;
+            }
+            if matches!(
+                r.attribute.as_str(),
+                "encryption_configuration" | DESTINATION
+            ) {
+                return verify_set(nodes, refs, evidence, r).is_some();
             }
             super::nested_references::verify(nodes, refs, evidence, r, fields, |source, path| {
                 let (v, m) = evidence[r.target];
@@ -100,22 +176,6 @@ pub(crate) fn annotate(
                         equal("namespace")
                     }
                     "name" => equal("namespace") && equal("table_bucket_arn"),
-                    "encryption_configuration.kms_key_arn" => {
-                        v["encryption_configuration"].is_object()
-                            && super::nested_references::value(
-                                v,
-                                m,
-                                "encryption_configuration.sse_algorithm",
-                            )
-                            .and_then(Value::as_str)
-                                == Some("aws:kms")
-                    }
-                    DESTINATION => {
-                        v["rule"].as_array().is_some_and(|a| a.len() == 1)
-                            && v["rule"][0]["destination"]
-                                .as_array()
-                                .is_some_and(|a| (1..=5).contains(&a.len()))
-                    }
                     _ => true,
                 }
             })

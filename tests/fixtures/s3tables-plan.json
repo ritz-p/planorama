@@ -227,14 +227,9 @@
           "provider_config_key": "aws",
           "expressions": {
             "encryption_configuration": {
-              "sse_algorithm": {
-                "constant_value": "aws:kms"
-              },
-              "kms_key_arn": {
-                "references": [
-                  "aws_kms_key.main.arn"
-                ]
-              }
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
             }
           }
         },
@@ -264,14 +259,9 @@
               ]
             },
             "encryption_configuration": {
-              "sse_algorithm": {
-                "constant_value": "aws:kms"
-              },
-              "kms_key_arn": {
-                "references": [
-                  "aws_kms_key.main.arn"
-                ]
-              }
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
             }
           }
         },
