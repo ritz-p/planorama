@@ -164,3 +164,4 @@ examples/iam-credentials.svg
 examples/identitystore.svg
 examples/identity-center.svg
 examples/global-accelerator-custom.svg
+examples/kms-references.svg

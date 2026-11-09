@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::kms::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::cloudfront_observability::label(resource, attribute) {
         return Some(label);
     }
@@ -346,6 +349,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
 }
 
 fn source_fields(resource: &str, attribute: &str, source: &str) -> &'static [&'static str] {
+    if super::kms::label(resource, attribute).is_some() {
+        return super::kms::fields(resource, attribute, source);
+    }
     let dynamodb = super::dynamodb::source_fields(resource, attribute, source);
     if !dynamodb.is_empty() {
         return dynamodb;
@@ -782,6 +788,7 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::kms::bindings(raw, reference)
         && (super::identity_center::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

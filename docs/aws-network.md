@@ -781,3 +781,24 @@ singleton list for accelerator attributes. The [AWS Resource contract](https://d
 requires ARNs for cross-account endpoint identities. Unknown, sensitive, literal,
 ambiguous, historical and incompatible references remain unresolved. Configuration
 payloads, generated IP/DNS outputs and runtime health are not interpreted.
+
+### KMS configuration and replication (#1130)
+
+Alias targets, ciphertext operations, grants and key policies resolve exact current
+managed key outputs. Standard/replica keys expose id/key_id/arn; external primary
+keys expose id/arn. Alias target_key_arn is computed and never creates ownership.
+Aliases, grants and policies retain independent changes and unique key-owner
+navigation. Ciphertext operations and all key variants remain independent.
+
+Custom key stores use a known AWS_CLOUDHSM mode and exact cluster ID, or known
+EXTERNAL_KEY_STORE/VPC_ENDPOINT_SERVICE modes and an exact endpoint service name.
+Configured keys reference their store ID; XKS external key IDs and public proxy
+URLs never identify managed AWS resources. Grant principals accept only explicit
+IAM role/user ARNs; groups and service-name literals do not establish principals.
+
+Replicas require the corresponding standard or external primary key ARN, known
+primary multi_region=true, compatible accounts and known distinct regions. Other
+key references require the same region; IAM principals retain global scope.
+Unknown/sensitive/ambiguous, wrong-output and noncurrent evidence remains unresolved.
+Key material, credentials, plaintext, ciphertext, contexts and policy bodies are
+excluded from presentation and interpretation.

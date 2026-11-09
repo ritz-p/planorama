@@ -1,6 +1,22 @@
 use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
 use serde_json::Value;
 
+pub(super) fn known_value<'a>(
+    evidence: &[(&'a Value, &Value)],
+    index: usize,
+    path: &[&str],
+) -> Option<&'a Value> {
+    let (mut value, mut mask) = evidence[index];
+    for field in path {
+        if !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_)) {
+            return None;
+        }
+        value = value.get(*field)?;
+        mask = &mask[*field];
+    }
+    matches!(mask, Value::Null | Value::Bool(false)).then_some(value)
+}
+
 pub(super) fn annotate_scalar(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],

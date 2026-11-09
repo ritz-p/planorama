@@ -71,6 +71,7 @@ pub(crate) mod identity_center;
 pub(crate) mod identitystore;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
+pub(crate) mod kms;
 mod lambda;
 pub(crate) mod lambda_capacity;
 pub(crate) mod lambda_config;
