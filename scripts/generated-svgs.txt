@@ -161,3 +161,4 @@ examples/lambda-capacity.svg
 examples/microvms.svg
 examples/iam-policies.svg
 examples/iam-credentials.svg
+examples/identitystore.svg

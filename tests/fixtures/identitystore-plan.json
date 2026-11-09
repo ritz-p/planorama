@@ -1,0 +1,100 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_identitystore_group.main",
+      "mode": "managed",
+      "type": "aws_identitystore_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_id": "group-main",
+          "identity_store_id": "d-store"
+        }
+      }
+    },
+    {
+      "address": "aws_identitystore_user.main",
+      "mode": "managed",
+      "type": "aws_identitystore_user",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_id": "user-main",
+          "identity_store_id": "d-store"
+        }
+      }
+    },
+    {
+      "address": "aws_identitystore_group_membership.main",
+      "mode": "managed",
+      "type": "aws_identitystore_group_membership",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_id": "group-main",
+          "member_id": "user-main",
+          "identity_store_id": "d-store",
+          "membership_id": "membership-main"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_identitystore_group.main",
+          "mode": "managed",
+          "type": "aws_identitystore_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_identitystore_user.main",
+          "mode": "managed",
+          "type": "aws_identitystore_user",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_identitystore_group_membership.main",
+          "mode": "managed",
+          "type": "aws_identitystore_group_membership",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_id": {
+              "references": [
+                "aws_identitystore_group.main.group_id"
+              ]
+            },
+            "member_id": {
+              "references": [
+                "aws_identitystore_user.main.user_id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
