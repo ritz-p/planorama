@@ -108,6 +108,7 @@ pub(crate) mod secondary_network;
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
 mod streaming;
+pub(crate) mod traffic_mirror;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]

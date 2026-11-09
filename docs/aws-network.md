@@ -694,3 +694,23 @@ Anycast list IDs only. Omitted default groups, routing-endpoint DNS and managed
 certificate requests do not create configured children. Shared endpoints keep
 independent identity, scope, coverage and selection; these are configuration
 references, not network containment or runtime enforcement claims.
+
+## Traffic mirroring (#894)
+
+Filter rules reference only explicit managed filter `id` outputs. Known ingress or
+egress direction, accept/reject action and integer rule number are required for
+filter-owned rule navigation. Each rule retains its own identity and action.
+Sessions reference managed ENI, filter and target `id` outputs independently;
+session ordering does not prove packet delivery.
+
+Targets require exactly one configured endpoint: ENI `id`, LB `arn` with known
+`load_balancer_type=network`, or VPC endpoint `id` with known
+`vpc_endpoint_type=GatewayLoadBalancer`. Competing unknown/sensitive variants
+remain unresolved. The pinned Provider schema's three-way ExactlyOneOf constraint
+is authoritative over the older two-variant note in its target documentation.
+
+All links require unique explicit references, equal known outputs and compatible
+current managed scope. Account compatibility is rechecked after enrichment.
+Configuration objects keep logical identities; backing ENIs, LBs and subnets do
+not contain targets or sessions. Computed EC2 primary-interface IDs, literals,
+CIDRs and packet rules never fabricate resources or establish reachability.

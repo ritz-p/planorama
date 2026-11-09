@@ -36900,7 +36900,7 @@
         "ownership": "Not applicable: aws_ec2_traffic_mirror_filter remains independently tracked configuration; references alone do not prove embedded ownership.",
         "network": "Not applicable: aws_ec2_traffic_mirror_filter is configuration/association rather than a workload network container; its references do not establish containment.",
         "references": "Not applicable: amazon-dns is a service selector, not a managed DNS endpoint; shared filter remains independent.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "scope": "Supported: independent compatible provider/account/region and named-state evidence; current managed identities only, with late account compatibility rechecked.",
         "summaries": "Intentionally unsupported: filter match effects and mirrored packet contents are outside architecture summaries.",
         "officialDocumentation": "website/docs/r/ec2_traffic_mirror_filter.html.markdown",
         "shapes": {
@@ -36936,16 +36936,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/traffic_mirror.rs",
+          "tests/unit/semantic/traffic_mirror.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_ec2_traffic_mirror_filter_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 894,
-      "gap": "#710 audit: Missing: traffic_mirror_filter_id to filter id, not name; preserve direction and rule identity without evaluating packets. Follow-up #894.",
+      "gap": "Implemented #894: exact current managed filter/session/typed-target references and filter-owned rules. See aws-network.md#traffic-mirroring-894. Packet matching, delivery and generated endpoint inference are excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36957,10 +36959,10 @@
           "rule_number"
         ],
         "placement": "Supported: retain Policy / Logical default for aws_ec2_traffic_mirror_filter_rule; basic classification is not dedicated semantics.",
-        "ownership": "Missing: filter-owned rule presentation; shared filter remains independent.",
+        "ownership": "Supported: filter-owned rule navigation with independent action/provenance and direction-specific rule identity; shared filters retain their own identity.",
         "network": "Not applicable: aws_ec2_traffic_mirror_filter_rule is configuration/association rather than a workload network container; its references do not establish containment.",
-        "references": "Missing: traffic_mirror_filter_id to filter id, not name; preserve direction and rule identity without evaluating packets.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: traffic_mirror_filter_id -> filter.id with known ingress/egress direction, accept/reject action and integer rule identity; no name matching or packet evaluation.",
+        "scope": "Supported: independent compatible provider/account/region and named-state evidence; current managed identities only, with late account compatibility rechecked.",
         "summaries": "Not applicable: aws_ec2_traffic_mirror_filter_rule is reviewed for identity and navigation only. Selected traffic_mirror_filter_id, traffic_direction, rule_action fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_traffic_mirror_filter_rule.html.markdown",
         "shapes": {
@@ -36997,16 +36999,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/traffic_mirror.rs",
+          "tests/unit/semantic/traffic_mirror.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_ec2_traffic_mirror_session": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 894,
-      "gap": "#710 audit: Missing: source ENI, shared filter and target references; session ordering is not proof of packet delivery. Follow-up #894.",
+      "gap": "Implemented #894: exact current managed filter/session/typed-target references and filter-owned rules. See aws-network.md#traffic-mirroring-894. Packet matching, delivery and generated endpoint inference are excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37020,8 +37024,8 @@
         "placement": "Supported: retain Node / Logical default for aws_ec2_traffic_mirror_session; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: aws_ec2_traffic_mirror_session remains independently tracked configuration; references alone do not prove embedded ownership.",
         "network": "Intentionally unsupported: session relates mirror endpoints and does not contain them.",
-        "references": "Missing: source ENI, shared filter and target references; session ordering is not proof of packet delivery.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: network_interface_id -> network_interface.id, traffic_mirror_filter_id -> filter.id and traffic_mirror_target_id -> target.id; session ordering does not establish delivery.",
+        "scope": "Supported: independent compatible provider/account/region and named-state evidence; current managed identities only, with late account compatibility rechecked.",
         "summaries": "Not applicable: aws_ec2_traffic_mirror_session is reviewed for identity and navigation only. Selected network_interface_id, traffic_mirror_filter_id, traffic_mirror_target_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_traffic_mirror_session.html.markdown",
         "shapes": {
@@ -37058,16 +37062,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/traffic_mirror.rs",
+          "tests/unit/semantic/traffic_mirror.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_ec2_traffic_mirror_target": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 894,
-      "gap": "#710 audit: Missing: mutually exclusive ENI/NLB/GWLB-endpoint variants with exact LB/endpoint subtype checks; no target ownership. Follow-up #894.",
+      "gap": "Implemented #894: exact current managed filter/session/typed-target references and filter-owned rules. See aws-network.md#traffic-mirroring-894. Packet matching, delivery and generated endpoint inference are excluded.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37080,8 +37086,8 @@
         "placement": "Supported: retain Controller / Logical default for aws_ec2_traffic_mirror_target; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: aws_ec2_traffic_mirror_target remains independently tracked configuration; references alone do not prove embedded ownership.",
         "network": "Intentionally unsupported: backing ENI/LB subnet does not contain the target configuration.",
-        "references": "Missing: mutually exclusive ENI/NLB/GWLB-endpoint variants with exact LB/endpoint subtype checks; no target ownership.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
+        "references": "Supported: exactly one known ENI.id, network LB.arn or GatewayLoadBalancer VPC endpoint.id; subtype checks and known absence of competing variants are required.",
+        "scope": "Supported: independent compatible provider/account/region and named-state evidence; current managed identities only, with late account compatibility rechecked.",
         "summaries": "Not applicable: aws_ec2_traffic_mirror_target is reviewed for identity and navigation only. Selected network_interface_id, network_load_balancer_arn, gateway_load_balancer_endpoint_id fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_traffic_mirror_target.html.markdown",
         "shapes": {
@@ -37114,7 +37120,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/traffic_mirror.rs",
+          "tests/unit/semantic/traffic_mirror.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
