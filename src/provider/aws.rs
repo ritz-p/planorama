@@ -78,6 +78,7 @@ mod members;
 mod memorydb;
 mod messaging;
 pub(crate) mod messaging_policies;
+pub(crate) mod microvms;
 mod monitoring;
 mod network;
 mod network_acl;

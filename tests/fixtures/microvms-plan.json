@@ -1,0 +1,250 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.runtime",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "runtime",
+          "arn": "arn:aws:iam::123456789012:role/runtime"
+        }
+      }
+    },
+    {
+      "address": "aws_lambdamicrovms_image.base",
+      "mode": "managed",
+      "type": "aws_lambdamicrovms_image",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:microvm-image:base",
+          "image_version": "1.0"
+        }
+      }
+    },
+    {
+      "address": "aws_lambdacore_network_connector.shared",
+      "mode": "managed",
+      "type": "aws_lambdacore_network_connector",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:network-connector:shared"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.logs",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/microvm"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_stream.logs",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_stream",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "runtime",
+          "log_group_name": "/microvm"
+        }
+      }
+    },
+    {
+      "address": "aws_lambdamicrovms_image.app",
+      "mode": "managed",
+      "type": "aws_lambdamicrovms_image",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:microvm-image:app",
+          "image_version": "2.0",
+          "base_image_arn": "arn:aws:lambda:us-east-1:123456789012:microvm-image:base",
+          "base_image_version": "1.0",
+          "build_role_arn": "arn:aws:iam::123456789012:role/runtime",
+          "egress_network_connectors": [
+            "arn:aws:lambda:us-east-1:123456789012:network-connector:shared"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambdamicrovms_microvm.app",
+      "mode": "managed",
+      "type": "aws_lambdamicrovms_microvm",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "microvm_id": "mvm-app",
+          "image_arn": "arn:aws:lambda:us-east-1:123456789012:microvm-image:app",
+          "image_version": "2.0",
+          "execution_role_arn": "arn:aws:iam::123456789012:role/runtime",
+          "ingress_network_connectors": [
+            "arn:aws:lambda:us-east-1:123456789012:network-connector:shared"
+          ],
+          "logging": [
+            {
+              "cloudwatch": [
+                {
+                  "log_group": "/microvm",
+                  "log_stream": "runtime"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.runtime",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambdamicrovms_image.base",
+          "mode": "managed",
+          "type": "aws_lambdamicrovms_image",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambdacore_network_connector.shared",
+          "mode": "managed",
+          "type": "aws_lambdacore_network_connector",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.logs",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_stream.logs",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_stream",
+          "provider_config_key": "aws",
+          "expressions": {
+            "log_group_name": {
+              "references": [
+                "aws_cloudwatch_log_group.logs.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambdamicrovms_image.app",
+          "mode": "managed",
+          "type": "aws_lambdamicrovms_image",
+          "provider_config_key": "aws",
+          "expressions": {
+            "base_image_arn": {
+              "references": [
+                "aws_lambdamicrovms_image.base.arn"
+              ]
+            },
+            "build_role_arn": {
+              "references": [
+                "aws_iam_role.runtime.arn"
+              ]
+            },
+            "egress_network_connectors": {
+              "references": [
+                "aws_lambdacore_network_connector.shared.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambdamicrovms_microvm.app",
+          "mode": "managed",
+          "type": "aws_lambdamicrovms_microvm",
+          "provider_config_key": "aws",
+          "expressions": {
+            "image_arn": {
+              "references": [
+                "aws_lambdamicrovms_image.app.arn"
+              ]
+            },
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.runtime.arn"
+              ]
+            },
+            "ingress_network_connectors": {
+              "references": [
+                "aws_lambdacore_network_connector.shared.arn"
+              ]
+            },
+            "logging": [
+              {
+                "cloudwatch": [
+                  {
+                    "log_group": {
+                      "references": [
+                        "aws_cloudwatch_log_group.logs.name"
+                      ]
+                    },
+                    "log_stream": {
+                      "references": [
+                        "aws_cloudwatch_log_stream.logs.name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

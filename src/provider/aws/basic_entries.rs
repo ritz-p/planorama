@@ -908,7 +908,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_lambda_runtime_management_config", "AWS Lambda", Controller, Logical, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambdacore_network_connector", "AWS Lambda Core", Node, Spatial, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_lambdamicrovms_image", "AWS Lambda MicroVMs", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
-    entry!("aws_lambdamicrovms_microvm", "AWS Lambda MicroVMs", Node, Logical, Regional, Some(ResourceIcon::Lambda)),
+    entry!("aws_lambdamicrovms_microvm", "AWS Lambda MicroVMs", Node, Spatial, Regional, Some(ResourceIcon::Lambda)),
     entry!("aws_launch_configuration", "Amazon EC2 Auto Scaling", Controller, Logical, Regional, Some(ResourceIcon::Scaling)),
     entry!("aws_launch_template", "Amazon EC2", Controller, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_lb", "Elastic Load Balancing", Node, Logical, Regional, Some(ResourceIcon::LoadBalancer)),
