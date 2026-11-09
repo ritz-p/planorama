@@ -52704,10 +52704,10 @@
       }
     },
     "aws_s3files_file_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 980,
-      "gap": "#719 audit: Missing: bucket ARN, role ARN and KMS identity; not an EFS alias. Follow-up #980. Missing: Logical file system is independent storage; review Spatial presentation. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #980 exact S3 Files references and independent filesystem/mount endpoint presentation; no EFS aliasing, computed ENI ownership or payload interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52719,11 +52719,11 @@
           "role_arn",
           "kms_key_id"
         ],
-        "placement": "Missing: Logical file system is independent storage; review Spatial presentation.",
-        "ownership": "Not applicable: retain independent aws_s3files_file_system identity and action; bucket navigation is separate from embedded presentation.",
+        "placement": "Supported: independent Spatial storage/endpoint card; filesystem is not placed in a mount-target subnet.",
+        "ownership": "Not applicable: independent filesystem and mount target retain deployment identity; no ownership relocates the backing bucket.",
         "network": "Not applicable: backing S3 bucket is not network placement; mount-target subnet does not contain the entire filesystem.",
-        "references": "Missing: bucket ARN, role ARN and KMS identity; not an EFS alias. Follow-up #980.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: bucket -> S3 bucket.arn, role_arn -> IAM role.arn and kms_key_id -> exact managed KMS key.arn (the pinned ARN schema does not accept a bare key ID).",
+        "scope": "Partial: known regional scope and compatible account binding required; IAM roles remain global. Unknown/foreign/deleted/deposed/filter and named-state boundaries stay conservative.",
         "summaries": "Deferred: aws_s3files_file_system settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3files_file_system.html.markdown",
         "shapes": {
@@ -52774,7 +52774,9 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3files.rs",
+          "tests/unit/semantic/s3files.rs"
         ]
       }
     },
@@ -52782,7 +52784,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 980,
-      "gap": "#719 audit: Missing: explicit S3 Files filesystem ID; incoming Lambda #950 reference does not implement outgoing filesystem ownership. Follow-up #980. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #980 exact S3 Files references and independent filesystem/mount endpoint presentation; no EFS aliasing, computed ENI ownership or payload interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52793,10 +52795,10 @@
           "id"
         ],
         "placement": "Supported: retain Logical Node default for aws_s3files_access_point; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Missing: verified S3 Files filesystem helper navigation; embedded presentation requires unique owner and exactly-once coverage, not EFS type reuse.",
+        "ownership": "Supported: verified S3 Files filesystem helper navigation retains independent action, provenance and coverage.",
         "network": "Not applicable: aws_s3files_access_point has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: explicit S3 Files filesystem ID; incoming Lambda #950 reference does not implement outgoing filesystem ownership. Follow-up #980.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: file_system_id -> exact S3 Files filesystem.id; complete mount-target subnet/SG relationships require a common explicit managed VPC. Existing incoming Lambda #950 access-point ARN references are preserved.",
+        "scope": "Partial: known regional scope and compatible account binding required; IAM roles remain global. Unknown/foreign/deleted/deposed/filter and named-state boundaries stay conservative.",
         "summaries": "Deferred: aws_s3files_access_point settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3files_access_point.html.markdown",
         "shapes": {
@@ -52841,15 +52843,17 @@
           "tests/unit/semantic/s3_replication.rs",
           "tests/unit/semantic/encryption.rs",
           "src/provider/aws/lambda_config.rs",
-          "tests/unit/semantic/lambda_config.rs"
+          "tests/unit/semantic/lambda_config.rs",
+          "src/provider/aws/s3files.rs",
+          "tests/unit/semantic/s3files.rs"
         ]
       }
     },
     "aws_s3files_file_system_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 980,
-      "gap": "#719 audit: Missing: explicit S3 Files filesystem ID; retain separate policy/configuration identity; payload/rules are not network paths. Follow-up #980. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #980 exact S3 Files references and independent filesystem/mount endpoint presentation; no EFS aliasing, computed ENI ownership or payload interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52858,10 +52862,10 @@
           "file_system_id"
         ],
         "placement": "Supported: retain Logical Policy default for aws_s3files_file_system_policy; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Missing: verified S3 Files filesystem helper navigation; embedded presentation requires unique owner and exactly-once coverage, not EFS type reuse.",
+        "ownership": "Supported: verified S3 Files filesystem helper navigation retains independent action, provenance and coverage.",
         "network": "Not applicable: aws_s3files_file_system_policy has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: explicit S3 Files filesystem ID; retain separate policy/configuration identity; payload/rules are not network paths. Follow-up #980.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: file_system_id -> exact S3 Files filesystem.id; complete mount-target subnet/SG relationships require a common explicit managed VPC.",
+        "scope": "Partial: known regional scope and compatible account binding required; IAM roles remain global. Unknown/foreign/deleted/deposed/filter and named-state boundaries stay conservative.",
         "summaries": "Intentionally unsupported: aws_s3files_file_system_policy policy/grantee contents and effective authorization are not interpreted or emitted.",
         "officialDocumentation": "website/docs/r/s3files_file_system_policy.html.markdown",
         "shapes": {
@@ -52887,15 +52891,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3files.rs",
+          "tests/unit/semantic/s3files.rs"
         ]
       }
     },
     "aws_s3files_synchronization_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 980,
-      "gap": "#719 audit: Missing: explicit S3 Files filesystem ID; retain separate policy/configuration identity; payload/rules are not network paths. Follow-up #980. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #980 exact S3 Files references and independent filesystem/mount endpoint presentation; no EFS aliasing, computed ENI ownership or payload interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52904,10 +52910,10 @@
           "file_system_id"
         ],
         "placement": "Supported: retain Logical Controller default for aws_s3files_synchronization_configuration; configuration/access identity remains independently selectable; no automatic card promotion.",
-        "ownership": "Missing: verified S3 Files filesystem helper navigation; embedded presentation requires unique owner and exactly-once coverage, not EFS type reuse.",
+        "ownership": "Supported: verified S3 Files filesystem helper navigation retains independent action, provenance and coverage.",
         "network": "Not applicable: aws_s3files_synchronization_configuration has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: explicit S3 Files filesystem ID; retain separate policy/configuration identity; payload/rules are not network paths. Follow-up #980.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "references": "Supported: file_system_id -> exact S3 Files filesystem.id; complete mount-target subnet/SG relationships require a common explicit managed VPC.",
+        "scope": "Partial: known regional scope and compatible account binding required; IAM roles remain global. Unknown/foreign/deleted/deposed/filter and named-state boundaries stay conservative.",
         "summaries": "Deferred: aws_s3files_synchronization_configuration settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3files_synchronization_configuration.html.markdown",
         "shapes": {
@@ -52933,15 +52939,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3files.rs",
+          "tests/unit/semantic/s3files.rs"
         ]
       }
     },
     "aws_s3files_mount_target": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 980,
-      "gap": "#719 audit: Missing: S3 Files filesystem ID and complete subnet/SG relationships; computed network_interface_id is not a managed ENI owner. Follow-up #980. Missing: Logical mount target needs network endpoint presentation, independently of filesystem ownership. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #980 exact S3 Files references and independent filesystem/mount endpoint presentation; no EFS aliasing, computed ENI ownership or payload interpretation. See docs/aws-network.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52953,11 +52961,11 @@
           "network_interface_id",
           "vpc_id"
         ],
-        "placement": "Missing: Logical mount target needs network endpoint presentation, independently of filesystem ownership.",
-        "ownership": "Not applicable: retain independent aws_s3files_mount_target identity and action; references do not establish exclusive presentation ownership.",
-        "network": "Missing: complete known subnet and SG evidence with one compatible VPC; mount-target placement cannot relocate filesystem or bucket.",
-        "references": "Missing: S3 Files filesystem ID and complete subnet/SG relationships; computed network_interface_id is not a managed ENI owner. Follow-up #980.",
-        "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
+        "placement": "Supported: independent Spatial storage/endpoint card; filesystem is not placed in a mount-target subnet.",
+        "ownership": "Not applicable: independent filesystem and mount target retain deployment identity; no ownership relocates the backing bucket.",
+        "network": "Supported: complete known subnet and security_groups references with explicit common-VPC proof place only the mount target in its subnet. Computed network_interface_id/vpc_id do not create managed owners.",
+        "references": "Supported: file_system_id -> exact S3 Files filesystem.id; complete mount-target subnet/SG relationships require a common explicit managed VPC.",
+        "scope": "Partial: known regional scope and compatible account binding required; IAM roles remain global. Unknown/foreign/deleted/deposed/filter and named-state boundaries stay conservative.",
         "summaries": "Deferred: aws_s3files_mount_target settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3files_mount_target.html.markdown",
         "shapes": {
@@ -53011,7 +53019,9 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3files.rs",
+          "tests/unit/semantic/s3files.rs"
         ]
       }
     },

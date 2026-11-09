@@ -13,6 +13,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::secrets_manager::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::s3files::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::kms::label(resource, attribute) {
         return Some(label);
     }
@@ -792,6 +795,7 @@ pub(crate) fn annotate(
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::kms::bindings(raw, reference)
+        && super::s3files::bindings(raw, reference)
         && super::secrets_manager::bindings(raw, reference)
         && (super::identity_center::label(
             &raw.nodes[reference.target].resource_type,
