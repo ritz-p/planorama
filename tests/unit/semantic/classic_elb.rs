@@ -136,6 +136,67 @@ fn policy_names_and_ports_are_qualified_by_the_same_explicit_classic_elb() {
     assert!(!complete(&v, 11, "Classic load balancer"));
 }
 #[test]
+fn shared_backend_ports_preserve_policy_ownership_and_check_every_protocol() {
+    for case in 0..6 {
+        let mut v = fixture();
+        v["resource_changes"][6]["change"]["after"]["listener"][0]["instance_protocol"] =
+            json!("TCP");
+        v["resource_changes"][6]["change"]["after"]["listener"][1]["instance_port"] = json!(8080);
+        v["resource_changes"][11]["change"]["after"]["instance_ports"] = json!(["8080"]);
+        match case {
+            1 => {
+                v["resource_changes"][6]["change"]["after"]["listener"][1]["instance_protocol"] =
+                    json!("HTTP")
+            }
+            2 => {
+                v["resource_changes"][6]["change"]["after_unknown"] =
+                    json!({"listener":[{}, {"instance_protocol":true}]})
+            }
+            3 => {
+                v["resource_changes"][6]["change"]["after_sensitive"] =
+                    json!({"listener":[{}, {"instance_protocol":true}]})
+            }
+            4 => {
+                v["resource_changes"][6]["change"]["after_unknown"] =
+                    json!({"listener":[{}, {"instance_port":true}]})
+            }
+            5 => v["resource_changes"][6]["change"]["after"]["listener"][1]["lb_port"] = json!(443),
+            _ => {}
+        }
+        assert_eq!(
+            complete(&v, 11, "Classic load balancer"),
+            matches!(case, 0 | 5),
+            "proxy {case}"
+        );
+        assert_eq!(
+            complete(&v, 14, "Qualified Classic ELB policies"),
+            case != 4,
+            "backend {case}"
+        );
+        assert_eq!(
+            complete(&v, 13, "Classic load balancer"),
+            case != 5,
+            "listener {case}"
+        );
+        let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
+        for (kind, expected) in [
+            ("aws_proxy_protocol_policy", matches!(case, 0 | 5)),
+            ("aws_load_balancer_backend_server_policy", case != 4),
+        ] {
+            assert_eq!(
+                g.nodes
+                    .iter()
+                    .find(|n| n.resource_type == kind)
+                    .unwrap()
+                    .member_owner
+                    .is_some(),
+                expected,
+                "{kind} {case}"
+            );
+        }
+    }
+}
+#[test]
 fn elb_reference_lifecycle_and_filter_boundaries_are_preserved() {
     for (s, t, path, label) in [
         (1, 6, "subnets", "Classic ELB subnets"),

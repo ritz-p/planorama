@@ -157,9 +157,12 @@ fn ports(e: &[(&Value, &Value)], t: usize, s: usize, kind: &str) -> bool {
         })
         .collect();
     available.is_some_and(|a| {
-        requested
-            .iter()
-            .all(|p| a.iter().filter(|(q, _)| q == p).count() == 1 && a.contains(&(*p, true)))
+        requested.iter().all(|p| {
+            let matches: Vec<_> = a.iter().filter(|(q, _)| q == p).collect();
+            !matches.is_empty()
+                && (output == "instance_port" || matches.len() == 1)
+                && matches.iter().all(|(_, allowed)| *allowed)
+        })
     })
 }
 pub(crate) fn annotate(
