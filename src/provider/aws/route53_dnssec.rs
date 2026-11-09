@@ -11,6 +11,8 @@ pub(super) fn resource(kind: &str) -> bool {
         "aws_route53_hosted_zone_dnssec"
             | "aws_route53_key_signing_key"
             | "aws_route53domains_delegation_signer_record"
+            | "aws_route53domains_registered_domain"
+            | "aws_route53domains_domain"
     )
 }
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {

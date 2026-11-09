@@ -48427,7 +48427,7 @@
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: independent registration identity sufficient; computed hosted_zone_id is service-created, not configured zone ownership. Name-server/glue-IP values do not establish managed DNS/server links.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "scope": "Supported: global registration scope retains independently verified provider account evidence for delegation signer ownership. Provider region does not define deployment; regional targets retain separate scope.",
         "summaries": "Deferred: auto-renew/transfer-lock summary until a registration-management view is requested; contacts/WHOIS/PII and expiry status excluded.",
         "officialDocumentation": "website/docs/r/route53domains_domain.html.markdown",
         "shapes": {
@@ -48487,7 +48487,7 @@
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
         "references": "Supported: independent registration identity sufficient; adopts an existing registration; not an alias of domain creation. Name-server/glue-IP values do not establish managed DNS/server links.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "scope": "Supported: global registration scope retains independently verified provider account evidence for delegation signer ownership. Provider region does not define deployment; regional targets retain separate scope.",
         "summaries": "Deferred: auto-renew/transfer-lock summary until a registration-management view is requested; contacts/WHOIS/PII and expiry status excluded.",
         "officialDocumentation": "website/docs/r/route53domains_registered_domain.html.markdown",
         "shapes": {

@@ -152,3 +152,48 @@ fn dnssec_owners_preserve_shared_keys_and_hide_key_material() {
         assert!(!out.contains("computed-key"));
     }
 }
+
+#[test]
+fn registered_domain_navigation_preserves_independently_verified_account_scope() {
+    for kind in [
+        "aws_route53domains_registered_domain",
+        "aws_route53domains_domain",
+    ] {
+        let mut v = fixture();
+        v["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::111111111111:role/fixture"}}]);
+        let text = v
+            .to_string()
+            .replace("aws_route53domains_registered_domain", kind);
+        for mismatch in [false, true] {
+            let mut p = crate::plan::evidence::tests::parse_fixture(&text).unwrap();
+            if mismatch {
+                p.nodes
+                    .iter_mut()
+                    .find(|n| n.resource_type == kind)
+                    .unwrap()
+                    .provider_configuration
+                    .as_mut()
+                    .unwrap()
+                    .account = crate::model::AwsAccountScope::new("222222222222");
+            }
+            let g = semantic::transform(&p);
+            let owner = g.nodes.iter().find(|n| n.resource_type == kind).unwrap();
+            assert!(
+                owner.entity.scope.as_ref().unwrap().account.is_some(),
+                "{kind}"
+            );
+            let signer = g
+                .nodes
+                .iter()
+                .find(|n| n.resource_type == "aws_route53domains_delegation_signer_record")
+                .unwrap();
+            assert_eq!(
+                signer.member_owner.is_some(),
+                !mismatch,
+                "{kind} {mismatch}"
+            );
+            assert!(owner.member_owner.is_none());
+        }
+    }
+}
