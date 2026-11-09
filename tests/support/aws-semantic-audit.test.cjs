@@ -242,7 +242,7 @@ test('#719 preserves storage identity and shape boundaries',()=>{
  assert.deepEqual(r('s3tables_table_replication').shapes['rule.destination.destination_table_bucket_arn'],['list','set','string']);
  assert.match(r('s3control_bucket_policy').references,/Outposts bucket ARN, not general-purpose bucket name/);
  assert.match(r('s3files_access_point').references,/incoming Lambda #950/);
- assert.match(r('s3files_mount_target').network,/Missing:.*one compatible VPC/);
+ assert.match(r('s3files_mount_target').network,/Supported:.*common-VPC proof/);
  assert.match(r('s3_directory_bucket').network,/cannot place.*subnet/);
  assert.match(r('s3control_multi_region_access_point').scope,/Unknown/);
 });

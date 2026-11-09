@@ -106,6 +106,7 @@ mod redshift_tests;
 pub(crate) mod route_server;
 pub(crate) mod s3_access;
 mod s3_exports;
+pub(crate) mod s3files;
 mod sagemaker;
 mod scaling;
 mod scraper;
@@ -330,6 +331,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     autoscaling::present(&raw, &mut graph);
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
+    s3files::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);
     cloudfront_vpc_origin::present(&raw, &mut graph);

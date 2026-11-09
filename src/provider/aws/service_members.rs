@@ -38,6 +38,13 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_secretsmanager_secret_rotation" | "aws_secretsmanager_tag" => {
                 ("secret_id", "Secret owner", "Secret configuration")
             }
+            "aws_s3files_access_point"
+            | "aws_s3files_file_system_policy"
+            | "aws_s3files_synchronization_configuration" => (
+                "file_system_id",
+                "S3 Files file system",
+                "File system configuration",
+            ),
             "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener" => {
                 ("accelerator_arn", "Listener accelerator", "Listeners")
             }

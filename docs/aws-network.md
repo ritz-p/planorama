@@ -817,3 +817,18 @@ and a known absent competing mode field. This does not assert successful rotatio
 permissions or health. Secret values, policy bodies, tag values and partner
 metadata remain opaque. Unknown, sensitive, ambiguous, foreign or noncurrent
 inputs stay unresolved. Existing secret-version identities are unchanged.
+
+### S3 Files (#980)
+
+File systems have independent spatial cards and resolve configured S3 bucket ARN,
+IAM role ARN and KMS key ARN (the pinned provider uses an ARN-typed kms_key_id).
+Access points, policies and synchronization helpers use exact S3 Files filesystem
+IDs and retain separate changes/provenance. These types are not EFS aliases.
+
+Mount targets remain independent spatial endpoints. Subnet and complete security
+group references must prove one compatible managed VPC before the mount target
+is placed in its subnet. File systems and backing buckets remain outside that
+subnet. Computed network_interface_id/vpc_id and IP addresses do not establish
+managed ownership. Literal, unknown, sensitive, incomplete and noncurrent evidence
+falls back conservatively; policies, directory paths and synchronization payloads
+are not interpreted or displayed.
