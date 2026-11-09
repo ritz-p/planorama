@@ -852,3 +852,18 @@ compatible same-account evidence; cross-account proof is deferred. This follows
 without asserting execution, permissions or health. Unknown/sensitive/incomplete,
 noncurrent or foreign evidence stays unresolved; policy/metadata payloads remain
 opaque.
+
+### S3 Vectors (#982)
+
+Vector buckets have independent spatial cards. Index owners resolve exactly
+vector_bucket_name -> vector bucket.vector_bucket_name; policy owners use
+vector_bucket_arn -> vector bucket.vector_bucket_arn. Generic arn/id/name outputs
+are not aliases for these contracts, and index_arn is not a generic ARN output.
+Helpers retain independent action, provenance and coverage.
+
+Encryption configuration is a singleton list, unlike S3 Tables' object. An exact
+KMS key ARN reference is accepted only with known aws:kms sse_type and compatible
+regional/account evidence. Missing, ambiguous, unknown/sensitive and noncurrent
+evidence stays unresolved. Dimensions, distance metrics, metadata configuration
+and policy documents do not create vector resources or network ownership; arbitrary
+payloads remain excluded from presentation.

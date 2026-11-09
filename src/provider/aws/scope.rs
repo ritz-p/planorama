@@ -41,6 +41,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .and_then(|c| c.account.clone());
     if basic.is_some()
         && !super::kms::resource(resource)
+        && !super::s3vectors::resource(resource)
         && !super::s3tables::resource(resource)
         && !super::s3files::resource(resource)
         && !super::secrets_manager::resource(resource)

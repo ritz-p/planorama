@@ -1,0 +1,162 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/vectors",
+          "id": "key"
+        }
+      }
+    },
+    {
+      "address": "aws_s3vectors_vector_bucket.main",
+      "type": "aws_s3vectors_vector_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vector_bucket_name": "vectors",
+          "vector_bucket_arn": "arn:aws:s3vectors:us-east-1:123456789012:bucket/vectors",
+          "encryption_configuration": [
+            {
+              "sse_type": "aws:kms",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/vectors"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3vectors_index.main",
+      "type": "aws_s3vectors_index",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "index_name": "embedding",
+          "index_arn": "arn:aws:s3vectors:us-east-1:123456789012:bucket/vectors/index/embedding",
+          "vector_bucket_name": "vectors",
+          "dimension": 128,
+          "data_type": "float32",
+          "distance_metric": "cosine",
+          "encryption_configuration": [
+            {
+              "sse_type": "aws:kms",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/vectors"
+            }
+          ],
+          "metadata_configuration": [
+            {
+              "non_filterable_metadata_keys": [
+                "PRIVATE_VECTOR_PAYLOAD"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3vectors_vector_bucket_policy.main",
+      "type": "aws_s3vectors_vector_bucket_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vector_bucket_arn": "arn:aws:s3vectors:us-east-1:123456789012:bucket/vectors",
+          "policy": "PRIVATE_VECTOR_PAYLOAD"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3vectors_vector_bucket.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_configuration": [
+              {
+                "sse_type": {
+                  "constant_value": "aws:kms"
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3vectors_index.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vector_bucket_name": {
+              "references": [
+                "aws_s3vectors_vector_bucket.main.vector_bucket_name"
+              ]
+            },
+            "encryption_configuration": [
+              {
+                "sse_type": {
+                  "constant_value": "aws:kms"
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3vectors_vector_bucket_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vector_bucket_arn": {
+              "references": [
+                "aws_s3vectors_vector_bucket.main.vector_bucket_arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
