@@ -6,21 +6,45 @@ use serde_json::Value;
 #[path = "../../../tests/unit/semantic/global_accelerator.rs"]
 mod tests;
 
+#[cfg(test)]
+#[path = "../../../tests/unit/semantic/global_accelerator_custom.rs"]
+mod custom_tests;
+
 pub(super) fn resource(kind: &str) -> bool {
     matches!(
         kind,
         "aws_globalaccelerator_accelerator"
             | "aws_globalaccelerator_listener"
             | "aws_globalaccelerator_endpoint_group"
+            | "aws_globalaccelerator_custom_routing_accelerator"
+            | "aws_globalaccelerator_custom_routing_listener"
+            | "aws_globalaccelerator_custom_routing_endpoint_group"
+            | "aws_globalaccelerator_cross_account_attachment"
     )
 }
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
-        ("aws_globalaccelerator_accelerator", "attributes.flow_logs_s3_bucket") => {
-            Some("Flow log bucket")
+        (
+            "aws_globalaccelerator_accelerator"
+            | "aws_globalaccelerator_custom_routing_accelerator",
+            "attributes.flow_logs_s3_bucket",
+        ) => Some("Flow log bucket"),
+        (
+            "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener",
+            "accelerator_arn",
+        ) => Some("Listener accelerator"),
+        (
+            "aws_globalaccelerator_endpoint_group"
+            | "aws_globalaccelerator_custom_routing_endpoint_group",
+            "listener_arn",
+        ) => Some("Group listener"),
+        (
+            "aws_globalaccelerator_custom_routing_endpoint_group",
+            "endpoint_configuration.endpoint_id",
+        ) => Some("Configured subnets"),
+        ("aws_globalaccelerator_cross_account_attachment", "resource.endpoint_id") => {
+            Some("Shared endpoints")
         }
-        ("aws_globalaccelerator_listener", "accelerator_arn") => Some("Listener accelerator"),
-        ("aws_globalaccelerator_endpoint_group", "listener_arn") => Some("Group listener"),
         ("aws_globalaccelerator_endpoint_group", "endpoint_configuration.endpoint_id") => {
             Some("Configured endpoints")
         }
@@ -32,6 +56,31 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 }
 pub(super) fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
     match (kind, path, source) {
+        (
+            "aws_globalaccelerator_custom_routing_accelerator",
+            "attributes.flow_logs_s3_bucket",
+            "aws_s3_bucket",
+        ) => &["bucket"],
+        (
+            "aws_globalaccelerator_custom_routing_listener",
+            "accelerator_arn",
+            "aws_globalaccelerator_custom_routing_accelerator",
+        )
+        | (
+            "aws_globalaccelerator_custom_routing_endpoint_group",
+            "listener_arn",
+            "aws_globalaccelerator_custom_routing_listener",
+        )
+        | (
+            "aws_globalaccelerator_cross_account_attachment",
+            "resource.endpoint_id",
+            "aws_lb" | "aws_instance" | "aws_subnet",
+        ) => &["arn"],
+        (
+            "aws_globalaccelerator_custom_routing_endpoint_group",
+            "endpoint_configuration.endpoint_id",
+            "aws_subnet",
+        ) => &["id"],
         (
             "aws_globalaccelerator_accelerator",
             "attributes.flow_logs_s3_bucket",
@@ -70,6 +119,7 @@ pub(super) fn valid(
     evidence: &[(&Value, &Value)],
     r: &AttributeReference,
     source: usize,
+    path: &str,
 ) -> bool {
     if !resource(&nodes[r.target].resource_type) {
         return true;
@@ -93,12 +143,25 @@ pub(super) fn valid(
                     Value::Null | Value::Bool(false)
                 )
         }
-        "endpoint_configuration.endpoint_id" => {
+        "endpoint_configuration.endpoint_id" | "resource.endpoint_id" => {
             let endpoint = &nodes[source];
             let region = super::scope::scope(endpoint).and_then(|s| s.region);
             region.is_some_and(|region| {
-                super::service_evidence::known(evidence, r.target, "endpoint_group_region")
-                    == Some(region.0.as_str())
+                if r.attribute == "resource.endpoint_id" {
+                    let Some(index) = path.split('.').nth(1).and_then(|s| s.parse::<usize>().ok())
+                    else {
+                        return false;
+                    };
+                    let row = &value["resource"][index];
+                    let row_mask = &mask["resource"][index];
+                    matches!(&row_mask["region"], Value::Null | Value::Bool(false))
+                        && row["region"].as_str() == Some(region.0.as_str())
+                        && matches!(&row_mask["cidr_block"], Value::Null | Value::Bool(false))
+                        && (row["cidr_block"].is_null() || row["cidr_block"] == "")
+                } else {
+                    super::service_evidence::known(evidence, r.target, "endpoint_group_region")
+                        == Some(region.0.as_str())
+                }
             }) && (super::aliases::entity_type(endpoint) != "aws_lb"
                 || matches!(
                     super::service_evidence::known(evidence, source, "load_balancer_type"),
@@ -139,7 +202,11 @@ pub(super) fn present(graph: &mut crate::model::Graph) {
         .iter()
         .enumerate()
         .filter_map(|(index, node)| {
-            if node.resource_type != "aws_globalaccelerator_endpoint_group" {
+            if !matches!(
+                node.resource_type.as_str(),
+                "aws_globalaccelerator_endpoint_group"
+                    | "aws_globalaccelerator_custom_routing_endpoint_group"
+            ) {
                 return None;
             }
             let owner = node.member_owner.as_ref()?;
@@ -148,7 +215,11 @@ pub(super) fn present(graph: &mut crate::model::Graph) {
                 .iter()
                 .any(|n| {
                     n.entity.provenance.contains(&owner.target)
-                        && n.resource_type == "aws_globalaccelerator_listener"
+                        && matches!(
+                            n.resource_type.as_str(),
+                            "aws_globalaccelerator_listener"
+                                | "aws_globalaccelerator_custom_routing_listener"
+                        )
                         && n.member_owner.is_some()
                         && n.placement == crate::model::Placement::Spatial
                 })

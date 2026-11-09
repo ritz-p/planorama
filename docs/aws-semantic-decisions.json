@@ -47227,10 +47227,10 @@
       }
     },
     "aws_globalaccelerator_custom_routing_accelerator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 918,
-      "gap": "#715 audit: Missing: enabled flow-log S3 bucket reference; DNS/hosted-zone outputs are alias targets owned by Route53 record follow-up. Missing: current Logical Connector omits independent accelerator architecture. Follow-up #918. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47243,11 +47243,11 @@
           "dns_name",
           "hosted_zone_id"
         ],
-        "placement": "Missing: current Logical Connector omits independent accelerator architecture.",
-        "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
+        "placement": "Supported: independent Spatial accelerator.",
+        "ownership": "Not applicable: independent accelerator or shared attachment; endpoints remain independent.",
         "network": "Not applicable: Global accelerator is not contained in endpoint subnets.",
-        "references": "Missing: enabled flow-log S3 bucket reference; DNS/hosted-zone outputs are alias targets owned by Route53 record follow-up.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Partial: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
+        "scope": "Supported: global control scope with compatible account bindings; regional endpoints retain their scope.",
         "summaries": "Intentionally unsupported: IP/port mapping outcomes and effective cross-account authorization; no arbitrary aws_globalaccelerator_custom_routing_accelerator attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_custom_routing_accelerator.html.markdown",
         "shapes": {
@@ -47314,10 +47314,10 @@
       }
     },
     "aws_globalaccelerator_custom_routing_listener": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 918,
-      "gap": "#715 audit: Missing: exact globalaccelerator_custom_routing_accelerator ARN ownership; standard and custom routing listeners must not cross-match. Follow-up #918. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47328,10 +47328,10 @@
           "port_range"
         ],
         "placement": "Supported: retain Logical Node for aws_globalaccelerator_custom_routing_listener; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique accelerator ARN membership; do not manufacture inline port-range resources.",
+        "ownership": "Supported: explicit unique custom ARN owner; independent lifecycle and coverage retained.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: exact globalaccelerator_custom_routing_accelerator ARN ownership; standard and custom routing listeners must not cross-match.",
-        "scope": "Partial: Global eligibility in scope.rs; basic fallback clears account. No provider-region deployment; regional targets retain separate scope.",
+        "references": "Partial: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
+        "scope": "Supported: global control scope with compatible account bindings; regional endpoints retain their scope.",
         "summaries": "Intentionally unsupported: IP/port mapping outcomes and effective cross-account authorization; no arbitrary aws_globalaccelerator_custom_routing_listener attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_custom_routing_listener.html.markdown",
         "shapes": {
@@ -47364,10 +47364,10 @@
       }
     },
     "aws_globalaccelerator_custom_routing_endpoint_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 918,
-      "gap": "#715 audit: Missing: custom listener ARN and subnet ID endpoint set; custom routing endpoint_id is not an instance or load balancer ID. Follow-up #918. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47379,10 +47379,10 @@
           "endpoint_configuration.endpoint_id"
         ],
         "placement": "Supported: retain Logical Node for aws_globalaccelerator_custom_routing_endpoint_group; this presentation alone does not prove relationships.",
-        "ownership": "Missing: unique matching listener membership; endpoints remain independent shared objects.",
+        "ownership": "Supported: explicit unique custom ARN owner; independent lifecycle and coverage retained.",
         "network": "Not applicable: endpoint membership is not containment of the Global control object; endpoint_group_region describes target deployment.",
-        "references": "Missing: custom listener ARN and subnet ID endpoint set; custom routing endpoint_id is not an instance or load balancer ID.",
-        "scope": "Partial: current Global control scope; endpoint_group_region needs independent regional endpoint proof, not provider-region substitution.",
+        "references": "Partial: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
+        "scope": "Supported: global control scope with compatible account bindings; regional endpoints retain their scope.",
         "summaries": "Intentionally unsupported: IP/port mapping outcomes and effective cross-account authorization; no arbitrary aws_globalaccelerator_custom_routing_endpoint_group attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_custom_routing_endpoint_group.html.markdown",
         "shapes": {
@@ -47420,10 +47420,10 @@
       }
     },
     "aws_globalaccelerator_cross_account_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 918,
-      "gap": "#715 audit: Missing: typed shared endpoint references with per-resource region; principals are account IDs, CIDRs do not identify resources. Coordinate standard endpoint attachment_arn without duplicating endpoint ownership. Follow-up #918. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -47436,10 +47436,10 @@
           "resource.cidr_block"
         ],
         "placement": "Supported: retain Logical Association for aws_globalaccelerator_cross_account_attachment; this presentation alone does not prove relationships.",
-        "ownership": "Not applicable: cross-account authorization is not ownership or effective access.",
+        "ownership": "Not applicable: independent accelerator or shared attachment; endpoints remain independent.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: typed shared endpoint references with per-resource region; principals are account IDs, CIDRs do not identify resources. Coordinate standard endpoint attachment_arn without duplicating endpoint ownership.",
-        "scope": "Partial: Global attachment control identity; resource.region and principal account are endpoint/consumer facts, not attachment deployment scope.",
+        "references": "Partial: Implemented #918: exact custom hierarchy, enabled flow-log bucket, complete subnet ID endpoints and per-row regional shared endpoint ARNs. No traffic, principal authorization or CIDR inference. See docs/aws-network.md.",
+        "scope": "Supported: global control scope with compatible account bindings; regional endpoints retain their scope.",
         "summaries": "Intentionally unsupported: IP/port mapping outcomes and effective cross-account authorization; no arbitrary aws_globalaccelerator_cross_account_attachment attribute summary.",
         "officialDocumentation": "website/docs/r/globalaccelerator_cross_account_attachment.html.markdown",
         "shapes": {

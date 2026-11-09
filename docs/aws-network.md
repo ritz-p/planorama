@@ -758,3 +758,26 @@ Application helpers resolve explicit managed `application_arn`/`arn` outputs. Pe
 USER/GROUP principals use exact managed `user_id`/`group_id` outputs and require instance/store correlation: both the instance owner and principal must explicitly reference the same current `data.aws_ssoadmin_instances`, whose known `arns` and `identity_store_ids` lists each contain exactly one entry. This lookup supplies correlation evidence only; it is not a managed principal. Multiple-instance lists, unknown/sensitive values and literal-only correlation remain unproven. Application assignments obtain the instance through their verified application.
 
 AWS_ACCOUNT targets resolve exact Organizations account IDs independently from principal and permission-set evidence. The represented target account is distinct from the administration provider account. Customer policy name/path applies in target accounts, AWS-managed policy ARNs do not identify in-plan customer policies, and authorized-target strings and policy JSON remain opaque. No configured assignment flag or reference asserts effective access.
+### Global Accelerator custom routing (#918)
+
+Custom accelerators have independent architecture cards. Listener and endpoint-group
+ownership requires explicit matching custom resource ARNs; standard hierarchy types
+are not interchangeable. Enabled flow logs use an exact managed S3 bucket name.
+Endpoint groups require complete, element-correlated subnet ID references and a
+known endpoint-group region matching each subnet. These references do not place
+the accelerator inside a subnet or prove packet delivery.
+
+Cross-account attachments retain independent identity. Shared endpoints require
+explicit LB, instance or subnet ARN outputs, complete correlated endpoint entries,
+and each entry's known region matching the endpoint. LB types must be application
+or network. CIDR entries and principals do not identify managed resources; unknown
+or competing CIDR configuration rejects an endpoint entry. All configured endpoints
+must share the attachment owner's compatible account evidence. This does not assert
+authorization for an accelerator in another account. EIP allocation IDs are not
+ARN outputs and are not accepted as shared attachment endpoint identities.
+
+The pinned AWS Provider 6.70.0 schemas use sets for endpoint/resource blocks and a
+singleton list for accelerator attributes. The [AWS Resource contract](https://docs.aws.amazon.com/global-accelerator/latest/api/API_Resource.html)
+requires ARNs for cross-account endpoint identities. Unknown, sensitive, literal,
+ambiguous, historical and incompatible references remain unresolved. Configuration
+payloads, generated IP/DNS outputs and runtime health are not interpreted.

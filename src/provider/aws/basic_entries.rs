@@ -723,7 +723,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_glacier_vault_lock", "Amazon S3 Glacier", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSimpleStorageServiceGlacier))),
     entry!("aws_globalaccelerator_accelerator", "AWS Global Accelerator", Connector, Spatial, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_cross_account_attachment", "AWS Global Accelerator", Association, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
-    entry!("aws_globalaccelerator_custom_routing_accelerator", "AWS Global Accelerator", Connector, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
+    entry!("aws_globalaccelerator_custom_routing_accelerator", "AWS Global Accelerator", Connector, Spatial, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_custom_routing_endpoint_group", "AWS Global Accelerator", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_custom_routing_listener", "AWS Global Accelerator", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_endpoint_group", "AWS Global Accelerator", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
