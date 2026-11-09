@@ -32,10 +32,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     "Policy management",
                 )
             }
-            "aws_globalaccelerator_listener" => {
+            "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener" => {
                 ("accelerator_arn", "Listener accelerator", "Listeners")
             }
-            "aws_globalaccelerator_endpoint_group" => {
+            "aws_globalaccelerator_endpoint_group"
+            | "aws_globalaccelerator_custom_routing_endpoint_group" => {
                 ("listener_arn", "Group listener", "Endpoint groups")
             }
             "aws_ec2_traffic_mirror_filter_rule" => (
@@ -240,6 +241,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if ((matches!(
             node.resource_type.as_str(),
             "aws_globalaccelerator_listener"
+                | "aws_globalaccelerator_custom_routing_listener"
                 | "aws_vpc_route_server_peer"
                 | "aws_flow_log"
                 | "aws_cloudfront_monitoring_subscription"

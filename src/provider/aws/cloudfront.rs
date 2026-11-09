@@ -194,6 +194,7 @@ fn rows<'a>(
                 "origin"
                     | "cache_behavior"
                     | "endpoint_configuration"
+                    | "resource"
                     | "ordered_cache_behavior"
                     | "function_association"
                     | "lambda_function_association"
@@ -351,7 +352,7 @@ fn verify(
             if !super::cloudfront_multitenant::valid(nodes, evidence, r, source) {
                 return None;
             }
-            if !super::global_accelerator::valid(nodes, evidence, r, source) {
+            if !super::global_accelerator::valid(nodes, evidence, r, source, &path) {
                 return None;
             }
             if !super::cloudfront_functions::live(nodes, evidence, source) {

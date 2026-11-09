@@ -1,0 +1,298 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_globalaccelerator_custom_routing_accelerator.main",
+      "type": "aws_globalaccelerator_custom_routing_accelerator",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:custom",
+          "attributes": [
+            {
+              "flow_logs_enabled": true,
+              "flow_logs_s3_bucket": "logs"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_globalaccelerator_custom_routing_listener.main",
+      "type": "aws_globalaccelerator_custom_routing_listener",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:listener",
+          "accelerator_arn": "arn:custom"
+        }
+      }
+    },
+    {
+      "address": "aws_globalaccelerator_custom_routing_endpoint_group.main",
+      "type": "aws_globalaccelerator_custom_routing_endpoint_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:group",
+          "listener_arn": "arn:listener",
+          "endpoint_group_region": "us-east-1",
+          "endpoint_configuration": [
+            {
+              "endpoint_id": "subnet-a"
+            },
+            {
+              "endpoint_id": "subnet-b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "arn": "arn:subnet-a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "arn": "arn:subnet-b"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.logs",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "logs"
+        }
+      }
+    },
+    {
+      "address": "aws_globalaccelerator_cross_account_attachment.main",
+      "type": "aws_globalaccelerator_cross_account_attachment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:attachment",
+          "principals": [
+            "210987654321"
+          ],
+          "resource": [
+            {
+              "endpoint_id": "arn:lb",
+              "region": "us-east-1"
+            },
+            {
+              "endpoint_id": "arn:instance",
+              "region": "us-east-1"
+            },
+            {
+              "endpoint_id": "arn:subnet-a",
+              "region": "us-east-1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lb.main",
+      "type": "aws_lb",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:lb",
+          "load_balancer_type": "network"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.main",
+      "type": "aws_instance",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:instance",
+          "id": "i-main"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_globalaccelerator_custom_routing_accelerator.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "attributes": [
+              {
+                "flow_logs_s3_bucket": {
+                  "references": [
+                    "aws_s3_bucket.logs.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_globalaccelerator_custom_routing_listener.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "accelerator_arn": {
+              "references": [
+                "aws_globalaccelerator_custom_routing_accelerator.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_globalaccelerator_custom_routing_endpoint_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "listener_arn": {
+              "references": [
+                "aws_globalaccelerator_custom_routing_listener.main.arn"
+              ]
+            },
+            "endpoint_configuration": [
+              {
+                "endpoint_id": {
+                  "references": [
+                    "aws_subnet.a.id"
+                  ]
+                }
+              },
+              {
+                "endpoint_id": {
+                  "references": [
+                    "aws_subnet.b.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_subnet.a",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.b",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_globalaccelerator_cross_account_attachment.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource": [
+              {
+                "endpoint_id": {
+                  "references": [
+                    "aws_lb.main.arn"
+                  ]
+                }
+              },
+              {
+                "endpoint_id": {
+                  "references": [
+                    "aws_instance.main.arn"
+                  ]
+                }
+              },
+              {
+                "endpoint_id": {
+                  "references": [
+                    "aws_subnet.a.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lb.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_instance.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
