@@ -969,3 +969,27 @@ Delegation signer records navigate to explicit registered/domain resource
 `domain_name` outputs. Registrations and KMS keys remain independent. Matching
 domain names, computed hosted-zone IDs, public keys, DNSKEY/DS records and signing
 status do not establish relationships, ownership or cryptographic validity.
+
+## Classic ELB (#906)
+
+`aws_elb` has an independent Spatial card. Complete configured subnet and security
+group ID sets establish VPC context only when every endpoint explicitly references
+the same VPC. Instance ID sets remain references. Availability zones, generated
+security groups and EC2-Classic settings do not manufacture network membership.
+`aws_elb_attachment` associates an exact Classic ELB name/id with an instance ID,
+retaining the attachment's action and identity.
+
+Listener certificate ARNs require correlated known HTTPS/SSL listeners (ACM or
+IAM server certificate). Log bucket name/id references require an explicitly
+known enabled access-log block. Optional/computed values without configuration
+references do not establish relationships.
+
+Cookie, SSL negotiation, proxy protocol and load-balancer policy helpers reference
+Classic ELB names/ids, never ELBv2 ARNs. Listener/backend port selectors must match
+known ports on that ELB; cookie policies require HTTP/HTTPS, SSL negotiation
+HTTPS/SSL and proxy protocol TCP/SSL. Complete `policy_names` sets reference
+explicit policy-name outputs whose independently verified owner is the same ELB.
+AWS predefined policy names alone remain unresolved. Only uniquely verified
+helpers receive service-owner navigation; shared certificates/buckets remain
+independent. Regions/accounts and selected current identities are rechecked.
+No cookie values, policy attributes, health or traffic interpretation is exposed.

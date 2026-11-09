@@ -26,6 +26,7 @@ fn rows<'a>(
                     | "rule"
                     | "destination"
                     | "target_groups"
+                    | "listener"
                     | "origin"
                     | "cache_behavior"
                     | "endpoint_configuration"

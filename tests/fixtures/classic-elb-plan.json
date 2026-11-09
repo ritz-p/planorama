@@ -1,0 +1,547 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.one",
+      "type": "aws_subnet",
+      "name": "one",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-one",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.elb",
+      "type": "aws_security_group",
+      "name": "elb",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-elb",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.app",
+      "type": "aws_instance",
+      "name": "app",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "i-app"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.tls",
+      "type": "aws_acm_certificate",
+      "name": "tls",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:111111111111:certificate/tls"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.logs",
+      "type": "aws_s3_bucket",
+      "name": "logs",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "classic-logs",
+          "bucket": "classic-logs"
+        }
+      }
+    },
+    {
+      "address": "aws_elb.main",
+      "type": "aws_elb",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "classic",
+          "name": "classic",
+          "subnets": [
+            "subnet-one"
+          ],
+          "security_groups": [
+            "sg-elb"
+          ],
+          "instances": [
+            "i-app"
+          ],
+          "listener": [
+            {
+              "lb_port": 443,
+              "lb_protocol": "HTTPS",
+              "instance_port": 8080,
+              "instance_protocol": "HTTP",
+              "ssl_certificate_id": "arn:aws:acm:us-east-1:111111111111:certificate/tls"
+            },
+            {
+              "lb_port": 8443,
+              "lb_protocol": "SSL",
+              "instance_port": 8443,
+              "instance_protocol": "TCP",
+              "ssl_certificate_id": "arn:aws:acm:us-east-1:111111111111:certificate/tls"
+            }
+          ],
+          "access_logs": [
+            {
+              "bucket": "classic-logs",
+              "enabled": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_elb_attachment.app",
+      "type": "aws_elb_attachment",
+      "name": "app",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "elb": "classic",
+          "instance": "i-app"
+        }
+      }
+    },
+    {
+      "address": "aws_app_cookie_stickiness_policy.config",
+      "type": "aws_app_cookie_stickiness_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer": "classic",
+          "name": "aws_app_cookie_stickiness_policy",
+          "lb_port": 443,
+          "cookie_name": "PRIVATE_COOKIE"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_cookie_stickiness_policy.config",
+      "type": "aws_lb_cookie_stickiness_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer": "classic",
+          "name": "aws_lb_cookie_stickiness_policy",
+          "lb_port": 443,
+          "cookie_name": "PRIVATE_COOKIE"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_ssl_negotiation_policy.config",
+      "type": "aws_lb_ssl_negotiation_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer": "classic",
+          "name": "aws_lb_ssl_negotiation_policy",
+          "lb_port": 443,
+          "cookie_name": "PRIVATE_COOKIE"
+        }
+      }
+    },
+    {
+      "address": "aws_proxy_protocol_policy.config",
+      "type": "aws_proxy_protocol_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer": "classic",
+          "instance_ports": [
+            "8443"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_load_balancer_policy.config",
+      "type": "aws_load_balancer_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_name": "classic",
+          "policy_name": "custom",
+          "policy_type_name": "PRIVATE_POLICY_TYPE",
+          "policy_attribute": [
+            {
+              "name": "PRIVATE_ATTRIBUTE",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_load_balancer_listener_policy.config",
+      "type": "aws_load_balancer_listener_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_name": "classic",
+          "load_balancer_port": 443,
+          "policy_names": [
+            "custom"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_load_balancer_backend_server_policy.config",
+      "type": "aws_load_balancer_backend_server_policy",
+      "name": "config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_name": "classic",
+          "instance_port": 8080,
+          "policy_names": [
+            "custom"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "type": "aws_vpc",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.one",
+          "type": "aws_subnet",
+          "name": "one",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.elb",
+          "type": "aws_security_group",
+          "name": "elb",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_instance.app",
+          "type": "aws_instance",
+          "name": "app",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.tls",
+          "type": "aws_acm_certificate",
+          "name": "tls",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.logs",
+          "type": "aws_s3_bucket",
+          "name": "logs",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_elb.main",
+          "type": "aws_elb",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnets": {
+              "references": [
+                "aws_subnet.one.id"
+              ]
+            },
+            "security_groups": {
+              "references": [
+                "aws_security_group.elb.id"
+              ]
+            },
+            "instances": {
+              "references": [
+                "aws_instance.app.id"
+              ]
+            },
+            "listener": [
+              {
+                "ssl_certificate_id": {
+                  "references": [
+                    "aws_acm_certificate.tls.arn"
+                  ]
+                }
+              },
+              {
+                "ssl_certificate_id": {
+                  "references": [
+                    "aws_acm_certificate.tls.arn"
+                  ]
+                }
+              }
+            ],
+            "access_logs": [
+              {
+                "bucket": {
+                  "references": [
+                    "aws_s3_bucket.logs.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_elb_attachment.app",
+          "type": "aws_elb_attachment",
+          "name": "app",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "elb": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            },
+            "instance": {
+              "references": [
+                "aws_instance.app.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_app_cookie_stickiness_policy.config",
+          "type": "aws_app_cookie_stickiness_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb_cookie_stickiness_policy.config",
+          "type": "aws_lb_cookie_stickiness_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb_ssl_negotiation_policy.config",
+          "type": "aws_lb_ssl_negotiation_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_proxy_protocol_policy.config",
+          "type": "aws_proxy_protocol_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_load_balancer_policy.config",
+          "type": "aws_load_balancer_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer_name": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_load_balancer_listener_policy.config",
+          "type": "aws_load_balancer_listener_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer_name": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            },
+            "policy_names": {
+              "references": [
+                "aws_load_balancer_policy.config.policy_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_load_balancer_backend_server_policy.config",
+          "type": "aws_load_balancer_backend_server_policy",
+          "name": "config",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "load_balancer_name": {
+              "references": [
+                "aws_elb.main.name"
+              ]
+            },
+            "policy_names": {
+              "references": [
+                "aws_load_balancer_policy.config.policy_name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

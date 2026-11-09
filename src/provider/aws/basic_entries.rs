@@ -670,7 +670,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_elasticsearch_vpc_endpoint", "Amazon OpenSearch Service", Node, Logical, Regional, Some(ResourceIcon::Search)),
     entry!("aws_elastictranscoder_pipeline", "Amazon Elastic Transcoder", Node, Logical, Regional, None),
     entry!("aws_elastictranscoder_preset", "Amazon Elastic Transcoder", Node, Logical, Regional, None),
-    entry!("aws_elb", "Elastic Load Balancing", Connector, Logical, Regional, Some(ResourceIcon::LoadBalancer)),
+    entry!("aws_elb", "Elastic Load Balancing", Connector, Spatial, Regional, Some(ResourceIcon::LoadBalancer)),
     entry!("aws_elb_attachment", "Elastic Load Balancing", Association, Logical, Regional, Some(ResourceIcon::LoadBalancer)),
     entry!("aws_emr_block_public_access_configuration", "Amazon EMR", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emr_cluster", "Amazon EMR", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
