@@ -124,6 +124,7 @@ pub(crate) mod secrets_manager;
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
 mod streaming;
+pub(crate) mod synthetics;
 pub(crate) mod traffic_mirror;
 pub(crate) mod vpclattice;
 
@@ -340,6 +341,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     service_references::present(&raw, &mut graph);
     s3files::present(&raw, &mut graph);
     vpclattice::present(&raw, &mut graph);
+    synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);
     cloudfront_vpc_origin::present(&raw, &mut graph);

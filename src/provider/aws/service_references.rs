@@ -22,6 +22,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::rum::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::synthetics::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::direct_connect::label(resource, attribute) {
         return Some(label);
     }
@@ -821,6 +824,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::s3files::bindings(raw, reference)
         && super::vpclattice::bindings(raw, reference)
         && super::direct_connect::bindings(raw, reference)
+        && super::synthetics::bindings(raw, reference)
         && super::rum::bindings(raw, reference)
         && super::route53_dnssec::bindings(raw, reference)
         && super::route53_health::bindings(raw, reference)
@@ -1416,6 +1420,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         }
         if super::s3vectors::indexed(&node.resource_type, &reference.attribute)
             || super::vpclattice::indexed(&node.resource_type, &reference.attribute)
+            || super::synthetics::indexed(&node.resource_type, &reference.attribute)
             || super::rum::indexed(&node.resource_type, &reference.attribute)
             || super::s3tables::indexed(&node.resource_type, &reference.attribute)
             || super::secrets_manager::indexed(&node.resource_type, &reference.attribute)

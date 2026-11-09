@@ -176,3 +176,4 @@ examples/direct-connect-hosted.svg
 examples/route53-health.svg
 examples/route53-dnssec.svg
 examples/rum.svg
+examples/synthetics.svg
