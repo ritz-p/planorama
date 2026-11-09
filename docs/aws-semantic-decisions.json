@@ -15838,10 +15838,10 @@
       }
     },
     "aws_vpclattice_access_log_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Service/network ID or ARN plus explicit supported destination ARN; cross-account resource requires ARN; SERVICE/RESOURCE discriminator. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15854,7 +15854,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Service/network ID or ARN plus explicit supported destination ARN; cross-account resource requires ARN; SERVICE/RESOURCE discriminator.",
+        "references": "Supported: exact service/network/resource-configuration ID/ARN with known compatible SERVICE/RESOURCE mode, plus an exact CloudWatch log-group, S3 bucket or Firehose delivery-stream ARN. Computed log resources are not synthesized.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_access_log_subscription uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (resource_identifier, destination_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_access_log_subscription.html.markdown",
@@ -15872,10 +15872,10 @@
       }
     },
     "aws_vpclattice_auth_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Service/network ID or ARN; auth type controls activation, not effective authorization. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15887,7 +15887,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Service/network ID or ARN; auth type controls activation, not effective authorization.",
+        "references": "Supported: service/network ARN only, as required by the pinned Provider ValidARN validator; the API/docs ID wording does not broaden Terraform input proof. No policy or authorization interpretation.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_auth_policy uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (resource_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_auth_policy.html.markdown",
@@ -15944,10 +15944,10 @@
       }
     },
     "aws_vpclattice_listener": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Exclusive service ARN/ID; forward target-group ID/ARN versus fixed_response; listener_id differs from composite identity. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15960,9 +15960,9 @@
           "default_action.forward.target_groups.target_group_identifier"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Missing: unique service ownership navigation #790; preserve shared target groups.",
+        "ownership": "Supported: unique verified service ownership navigation; shared target groups retain independent identity.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Exclusive service ARN/ID; forward target-group ID/ARN versus fixed_response; listener_id differs from composite identity.",
+        "references": "Supported: service_identifier uses service.id and service_arn uses service.arn, with agreement when both are available. Complete positional forward target-group ID/ARN references require forward mode. listener_id/arn, never composite id, identify a listener endpoint.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_listener uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, listener_id, service_arn, service_identifier, default_action.forward.target_groups.target_group_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_listener.html.markdown",
@@ -15989,10 +15989,10 @@
       }
     },
     "aws_vpclattice_listener_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Service/listener parent consistency and typed forward group references; predicates remain opaque. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16005,9 +16005,9 @@
           "action.forward.target_groups.target_group_identifier"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Missing: unique listener/service navigation #790; no embedding by matching names.",
+        "ownership": "Supported: unique verified listener ownership navigation with matching service; actions/provenance remain independent.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Service/listener parent consistency and typed forward group references; predicates remain opaque.",
+        "references": "Supported: explicit service and listener references require the same verified parent service; complete positional forward target-group ID/ARN references require forward mode. Rule predicates remain opaque.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_listener_rule uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, rule_id, service_identifier, listener_identifier, action.forward.target_groups.target_group_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_listener_rule.html.markdown",
@@ -16134,10 +16134,10 @@
       }
     },
     "aws_vpclattice_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Explicit service/network resource identifier; verify API accepted ID/ARN form and owner type rather than trusting field suffix. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16148,7 +16148,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Explicit service/network resource identifier; verify API accepted ID/ARN form and owner type rather than trusting field suffix.",
+        "references": "Supported: exact ARN of a service, service network or resource configuration, following the API owner variants and pinned Provider ValidARN validator.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_resource_policy uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (resource_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_resource_policy.html.markdown",
@@ -16160,10 +16160,10 @@
       }
     },
     "aws_vpclattice_service": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Certificate ARN -> ACM certificate; custom domain and computed hosted zone are not Route53 ownership. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16173,10 +16173,10 @@
           "arn",
           "certificate_arn"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "placement": "Supported: independent Spatial architecture card; service networks are not EC2 VPC containers.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Intentionally unsupported: service-network association does not place service in a VPC.",
-        "references": "Missing: Certificate ARN -> ACM certificate; custom domain and computed hosted zone are not Route53 ownership.",
+        "references": "Supported: exact ACM certificate ARN; custom domain and computed hosted-zone outputs remain opaque.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_service uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, certificate_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service.html.markdown",
@@ -16194,10 +16194,10 @@
       }
     },
     "aws_vpclattice_service_network": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: No outgoing resource reference; incoming association contracts #790. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16206,10 +16206,10 @@
           "arn",
           "auth_type"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "placement": "Supported: independent Spatial architecture card; service networks are not EC2 VPC containers.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Intentionally unsupported: service network is not an EC2 VPC container.",
-        "references": "Not applicable: No outgoing resource reference; incoming association contracts #790.",
+        "references": "Not applicable: independent service-network card has no outgoing configured endpoint; incoming association references preserve shared identities.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_service_network uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network.html.markdown",
@@ -16262,10 +16262,10 @@
       }
     },
     "aws_vpclattice_service_network_service_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Service and network ID/ARN pair; cross-account network requires ARN; shared service is not embedded. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16279,7 +16279,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Service and network ID/ARN pair; cross-account network requires ARN; shared service is not embedded.",
+        "references": "Supported: explicit service and service-network ID/ARN references. Cross-account service-network references require ARN and independently known compatible account/region evidence.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_service_network_service_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, service_identifier, service_network_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network_service_association.html.markdown",
@@ -16300,10 +16300,10 @@
       }
     },
     "aws_vpclattice_service_network_vpc_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Service network ID/ARN and VPC ID with SG set; cross-account ARN proof. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16317,8 +16317,8 @@
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Missing: association VPC/SG context #790; never contains entire service network.",
-        "references": "Missing: Service network ID/ARN and VPC ID with SG set; cross-account ARN proof.",
+        "network": "Supported: complete common-VPC association/security-group context; never contains the service network.",
+        "references": "Supported: exact service-network ID/ARN, VPC id and complete security-group IDs with explicit common-VPC proof. Empty known security-group configuration permits the VPC reference; unknown or incomplete collections do not.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_service_network_vpc_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, service_network_identifier, vpc_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network_vpc_association.html.markdown",
@@ -16345,10 +16345,10 @@
       }
     },
     "aws_vpclattice_target_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: VPC ID applies to network target variants; LAMBDA/INSTANCE/ALB/IP contract governs attachments. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16361,8 +16361,8 @@
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Missing: explicit config.vpc_identifier context #790; no Lambda subnet inheritance.",
-        "references": "Missing: VPC ID applies to network target variants; LAMBDA/INSTANCE/ALB/IP contract governs attachments.",
+        "network": "Supported: exact configured VPC reference for network target variants; no target or Lambda containment inference.",
+        "references": "Supported: explicit config.vpc_identifier matches VPC id only for INSTANCE/ALB/IP groups; the type discriminates incoming attachment targets.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_target_group uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, config.vpc_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_target_group.html.markdown",
@@ -16384,10 +16384,10 @@
       }
     },
     "aws_vpclattice_target_group_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 790,
-      "gap": "#716 reviewed: Group ID/ARN plus target.id: INSTANCE ID, LAMBDA ARN, ALB ARN; IP values intentionally unsupported as Terraform references. Current basic Logical display has no dedicated relationships. Follow-up #790; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #790 typed Lattice references, parent/variant proof and independent service/network presentation. See docs/aws-network.md; policies, predicates, DNS and runtime state remain opaque.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16400,7 +16400,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Group ID/ARN plus target.id: INSTANCE ID, LAMBDA ARN, ALB ARN; IP values intentionally unsupported as Terraform references.",
+        "references": "Supported: exact target-group ID/ARN plus target.id as INSTANCE id, LAMBDA ARN or application LB ARN with a known matching group type. IP values intentionally unsupported as Terraform references; strings never reconstruct endpoints.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_target_group_attachment uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (target_group_identifier, target.id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_target_group_attachment.html.markdown",

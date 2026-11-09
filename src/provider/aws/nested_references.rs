@@ -25,6 +25,7 @@ fn rows<'a>(
                 "replica"
                     | "rule"
                     | "destination"
+                    | "target_groups"
                     | "origin"
                     | "cache_behavior"
                     | "endpoint_configuration"
