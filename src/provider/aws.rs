@@ -127,6 +127,7 @@ mod streaming;
 pub(crate) mod synthetics;
 pub(crate) mod traffic_mirror;
 pub(crate) mod vpclattice;
+pub(crate) mod xray_encryption;
 
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/rds_global.rs"]
