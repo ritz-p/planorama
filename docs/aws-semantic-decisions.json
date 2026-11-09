@@ -62994,7 +62994,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1141,
-      "gap": "#726 audit: Missing: group_id -> group.group_id and member_id -> user.user_id, all with equal known identity_store_id; composite id is not principal identity. Not applicable: association preserves independent user/group identities. Implementation follow-up #1141. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented #1141 typed group/member references with matching known identity_store_id, current managed provenance and compatible regional bindings. Composite IDs and personal data remain excluded. See aws-network.md#identity-store-membership-1141.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63008,8 +63008,8 @@
         "placement": "Supported: Association / Unknown; Logical / Spatial (unresolved); Service(AWSIAMIdentityCenter) / AWS IAM Identity Center runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: association preserves independent user/group identities.",
         "network": "Not applicable: aws_identitystore_group_membership is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: group_id -> group.group_id and member_id -> user.user_id, all with equal known identity_store_id; composite id is not principal identity.",
-        "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
+        "references": "Supported: group_id -> group.group_id and member_id -> user.user_id, all with equal known identity_store_id; composite id is not principal identity.",
+        "scope": "Supported: matching known store identifiers plus compatible provider/account/region and named-state boundaries; late account evidence is rechecked.",
         "summaries": "Deferred: no additional identitystore_group_membership summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/identitystore_group_membership.html.markdown",
         "shapes": {
@@ -63044,7 +63044,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/identitystore.rs",
+          "tests/unit/semantic/identitystore.rs"
         ]
       }
     },

@@ -224,6 +224,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::iam_credentials::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::iam_policies::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_core::annotate(nodes, references, &elbv2_evidence);

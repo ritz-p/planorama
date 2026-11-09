@@ -746,3 +746,7 @@ Exclusive controllers retain independent change metadata and owner navigation, i
 ### IAM credential owners (#1139)
 
 Access keys, login profiles, service-specific credentials, signing certificates and SSH keys resolve only their exact configured IAM user name (`user`, `user_name` or `username`). Verified current managed users provide owner navigation while each helper retains its own action and identity. Global references require same-account evidence; known matching accounts permit cross-region aliases. Credential outputs, encrypted values, fingerprints and key/certificate bodies are neither interpreted nor displayed.
+
+### Identity Store membership (#1141)
+
+Membership `group_id` and `member_id` resolve only explicit managed `group.group_id` and `user.user_id` outputs with matching known `identity_store_id`. Composite resource IDs are not principal identifiers. Each endpoint is verified independently with current lifecycle and compatible provider/account/region evidence. Memberships, users and groups retain independent identities and changes; no network containment or personal-data summaries are inferred.

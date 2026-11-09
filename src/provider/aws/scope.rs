@@ -55,6 +55,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_globalaccelerator_listener"
                 | "aws_globalaccelerator_endpoint_group"
                 | "aws_globalaccelerator_cross_account_attachment"
+                | "aws_identitystore_group_membership"
                 | "aws_lambdamicrovms_image"
                 | "aws_lambdamicrovms_microvm"
                 | "aws_lambda_capacity_provider"
