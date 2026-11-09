@@ -167,3 +167,4 @@ examples/global-accelerator-custom.svg
 examples/kms-references.svg
 examples/secrets-manager-references.svg
 examples/s3files.svg
+examples/s3tables.svg

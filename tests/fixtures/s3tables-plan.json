@@ -1,0 +1,371 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/table",
+          "id": "key"
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table_bucket.main",
+      "type": "aws_s3tables_table_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "source",
+          "arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source",
+          "encryption_configuration": {
+            "sse_algorithm": "aws:kms",
+            "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/table"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_namespace.main",
+      "type": "aws_s3tables_namespace",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "namespace": "analytics",
+          "table_bucket_arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source"
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table.main",
+      "type": "aws_s3tables_table",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "events",
+          "namespace": "analytics",
+          "table_bucket_arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source",
+          "arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source/table/events",
+          "encryption_configuration": {
+            "sse_algorithm": "aws:kms",
+            "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/table"
+          },
+          "warehouse_location": "PRIVATE_TABLE_PAYLOAD",
+          "metadata": [
+            {
+              "iceberg": [
+                {
+                  "properties": {
+                    "private": "PRIVATE_TABLE_PAYLOAD"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table_bucket_policy.main",
+      "type": "aws_s3tables_table_bucket_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_bucket_arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source",
+          "resource_policy": "PRIVATE_TABLE_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table_policy.main",
+      "type": "aws_s3tables_table_policy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "events",
+          "namespace": "analytics",
+          "table_bucket_arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source",
+          "resource_policy": "PRIVATE_TABLE_PAYLOAD"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.replicate",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/replicate"
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table_bucket.destination",
+      "type": "aws_s3tables_table_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "destination",
+          "arn": "arn:aws:s3tables:us-west-2:123456789012:bucket/destination"
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table_bucket_replication.main",
+      "type": "aws_s3tables_table_bucket_replication",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_bucket_arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source",
+          "role": "arn:aws:iam::123456789012:role/replicate",
+          "rule": [
+            {
+              "destination": [
+                {
+                  "destination_table_bucket_arn": "arn:aws:s3tables:us-west-2:123456789012:bucket/destination"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3tables_table_replication.main",
+      "type": "aws_s3tables_table_replication",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "mode": "managed",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_arn": "arn:aws:s3tables:us-east-1:123456789012:bucket/source/table/events",
+          "role": "arn:aws:iam::123456789012:role/replicate",
+          "rule": [
+            {
+              "destination": [
+                {
+                  "destination_table_bucket_arn": "arn:aws:s3tables:us-west-2:123456789012:bucket/destination"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "alias": "west",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3tables_table_bucket.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_configuration": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3tables_namespace.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_bucket_arn": {
+              "references": [
+                "aws_s3tables_table_bucket.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3tables_table.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "namespace": {
+              "references": [
+                "aws_s3tables_namespace.main.namespace"
+              ]
+            },
+            "table_bucket_arn": {
+              "references": [
+                "aws_s3tables_namespace.main.table_bucket_arn"
+              ]
+            },
+            "encryption_configuration": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3tables_table_bucket_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_bucket_arn": {
+              "references": [
+                "aws_s3tables_table_bucket.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3tables_table_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "references": [
+                "aws_s3tables_table.main.name"
+              ]
+            },
+            "namespace": {
+              "references": [
+                "aws_s3tables_table.main.namespace"
+              ]
+            },
+            "table_bucket_arn": {
+              "references": [
+                "aws_s3tables_table.main.table_bucket_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.replicate",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3tables_table_bucket.destination",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3tables_table_bucket_replication.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_bucket_arn": {
+              "references": [
+                "aws_s3tables_table_bucket.main.arn"
+              ]
+            },
+            "role": {
+              "references": [
+                "aws_iam_role.replicate.arn"
+              ]
+            },
+            "rule": [
+              {
+                "destination": [
+                  {
+                    "destination_table_bucket_arn": {
+                      "references": [
+                        "aws_s3tables_table_bucket.destination.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3tables_table_replication.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_arn": {
+              "references": [
+                "aws_s3tables_table.main.arn"
+              ]
+            },
+            "role": {
+              "references": [
+                "aws_iam_role.replicate.arn"
+              ]
+            },
+            "rule": [
+              {
+                "destination": [
+                  {
+                    "destination_table_bucket_arn": {
+                      "references": [
+                        "aws_s3tables_table_bucket.destination.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

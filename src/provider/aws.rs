@@ -107,6 +107,7 @@ pub(crate) mod route_server;
 pub(crate) mod s3_access;
 mod s3_exports;
 pub(crate) mod s3files;
+pub(crate) mod s3tables;
 mod sagemaker;
 mod scaling;
 mod scraper;

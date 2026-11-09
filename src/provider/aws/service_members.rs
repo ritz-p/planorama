@@ -45,6 +45,19 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "S3 Files file system",
                 "File system configuration",
             ),
+            "aws_s3tables_namespace"
+            | "aws_s3tables_table_bucket_policy"
+            | "aws_s3tables_table_bucket_replication" => (
+                "table_bucket_arn",
+                "Table bucket",
+                "Table bucket configuration",
+            ),
+            "aws_s3tables_table_policy" => ("name", "Qualified table owner", "Table configuration"),
+            "aws_s3tables_table_replication" => (
+                "table_arn",
+                "Replication source table",
+                "Table configuration",
+            ),
             "aws_globalaccelerator_listener" | "aws_globalaccelerator_custom_routing_listener" => {
                 ("accelerator_arn", "Listener accelerator", "Listeners")
             }
