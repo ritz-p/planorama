@@ -15902,10 +15902,10 @@
       }
     },
     "aws_vpclattice_domain_verification": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 791,
-      "gap": "#716 reviewed: No outbound Terraform endpoint: incoming resource_configuration.domain_verification_id only. Domain/TXT strings never imply Route53 ownership. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #791 resource-gateway common-VPC placement and typed resource-configuration/group/domain relationships. See docs/aws-network.md; ARN target proof, DNS/IP inference and runtime verification remain excluded.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15920,7 +15920,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Not applicable: No outbound Terraform endpoint: incoming resource_configuration.domain_verification_id only. Domain/TXT strings never imply Route53 ownership.",
+        "references": "Not applicable: no outbound configured endpoint. Incoming explicit domain-verification ID references are supported; TXT outputs never create Route53 records.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Intentionally unsupported: DNS TXT contents and verified status are not architecture/security summaries.",
         "officialDocumentation": "website/docs/r/vpclattice_domain_verification.html.markdown",
@@ -16034,10 +16034,10 @@
       }
     },
     "aws_vpclattice_resource_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 791,
-      "gap": "#716 reviewed: Gateway/group/domain-verification IDs with SINGLE/GROUP/CHILD/ARN discrimination. ARN target deferred until endpoint allowlist chosen; DNS/IP never reconstruct endpoints. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #791 resource-gateway common-VPC placement and typed resource-configuration/group/domain relationships. See docs/aws-network.md; ARN target proof, DNS/IP inference and runtime verification remain excluded.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16052,9 +16052,9 @@
           "resource_configuration_definition.arn_resource.arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Missing: CHILD parent-group navigation #791; shared targets retain identity.",
+        "ownership": "Supported: CHILD navigation to a unique explicitly referenced GROUP preserves independent action/provenance; no ownership of external target resources.",
         "network": "Intentionally unsupported: gateway attachment does not prove target network containment.",
-        "references": "Missing: Gateway/group/domain-verification IDs with SINGLE/GROUP/CHILD/ARN discrimination. ARN target deferred until endpoint allowlist chosen; DNS/IP never reconstruct endpoints.",
+        "references": "Supported: known SINGLE/GROUP/ARN gateway ID/ARN, CHILD parent-group id with known GROUP type, and domain-verification id. Initial ARN endpoint proof remains deferred; IP/DNS variants never reconstruct targets.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_resource_configuration uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, resource_gateway_identifier, resource_configuration_group_id, domain_verification_id, resource_configuration_definition.arn_resource.arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_resource_configuration.html.markdown",
@@ -16086,10 +16086,10 @@
       }
     },
     "aws_vpclattice_resource_gateway": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 791,
-      "gap": "#716 reviewed: Explicit VPC/subnet/SG ids with complete common-VPC proof. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #791 resource-gateway common-VPC placement and typed resource-configuration/group/domain relationships. See docs/aws-network.md; ARN target proof, DNS/IP inference and runtime verification remain excluded.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16101,10 +16101,10 @@
           "subnet_ids",
           "security_group_ids"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
+        "placement": "Supported: independent Spatial resource gateway card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Missing: complete common-VPC containment #791.",
-        "references": "Missing: Explicit VPC/subnet/SG ids with complete common-VPC proof.",
+        "network": "Supported: containment in the explicit common VPC only after complete current compatible subnet/security-group proof; endpoints are never synthesized.",
+        "references": "Supported: exact VPC id and complete subnet/security-group ID collections with explicitly proven common-VPC parents.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_resource_gateway uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, vpc_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_resource_gateway.html.markdown",
@@ -16224,10 +16224,10 @@
       }
     },
     "aws_vpclattice_service_network_resource_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 791,
-      "gap": "#716 reviewed: Explicit resource configuration and service network identifiers; no DNS-based links. Current basic Logical display has no dedicated relationships. Follow-up #791; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: Implemented #791 resource-gateway common-VPC placement and typed resource-configuration/group/domain relationships. See docs/aws-network.md; ARN target proof, DNS/IP inference and runtime verification remain excluded.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -16241,7 +16241,7 @@
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
         "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
         "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Explicit resource configuration and service network identifiers; no DNS-based links.",
+        "references": "Supported: exact independent resource-configuration and service-network ID/ARN references; only SINGLE/GROUP/ARN configurations are directly associated. Cross-account references require ARN outputs and independently known accounts.",
         "scope": "Partial: Regional eligibility in basic_entries.rs/scope.rs, account cleared by basic fallback; known compatible provider/resource region and owner evidence required.",
         "summaries": "Not applicable: aws_vpclattice_service_network_resource_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, resource_configuration_identifier, service_network_identifier) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/vpclattice_service_network_resource_association.html.markdown",

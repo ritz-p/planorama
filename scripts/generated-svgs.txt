@@ -170,3 +170,4 @@ examples/s3files.svg
 examples/s3tables.svg
 examples/s3vectors.svg
 examples/vpclattice.svg
+examples/vpclattice-resources.svg

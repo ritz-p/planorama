@@ -335,6 +335,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     messaging::present(&raw, &mut graph);
     service_references::present(&raw, &mut graph);
     s3files::present(&raw, &mut graph);
+    vpclattice::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);
     cloudfront_vpc_origin::present(&raw, &mut graph);

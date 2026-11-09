@@ -58,6 +58,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Replication source table",
                 "Table configuration",
             ),
+            "aws_vpclattice_resource_configuration" => (
+                "resource_configuration_group_id",
+                "Parent resource group",
+                "Child resources",
+            ),
             "aws_vpclattice_listener" => {
                 let path = if raw
                     .attributes
