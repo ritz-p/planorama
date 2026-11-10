@@ -15142,10 +15142,10 @@
       }
     },
     "aws_networkmanager_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Verify device pair and optional link pair in same global network; no physical connectivity inference. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15158,10 +15158,10 @@
           "connected_link_id"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Verify device pair and optional link pair in same global network; no physical connectivity inference.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_connection uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, connected_device_id, link_id, connected_link_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_connection.html.markdown",
         "shapes": {
@@ -15184,10 +15184,10 @@
       }
     },
     "aws_networkmanager_core_network": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: global_network_id -> global network; base policy regions and computed edges/segments do not synthesize networks. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15198,11 +15198,11 @@
           "global_network_id",
           "base_policy_regions"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: global_network_id -> global network; base policy regions and computed edges/segments do not synthesize networks.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "placement": "Supported: independent Spatial architecture card; global management scope does not inherit endpoint region.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_core_network uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (id, arn, global_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_core_network.html.markdown",
         "shapes": {
@@ -15251,10 +15251,10 @@
       }
     },
     "aws_networkmanager_customer_gateway_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Explicit global network/device/optional link and customer-gateway ARN with global-network agreement. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15266,10 +15266,10 @@
           "customer_gateway_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Explicit global network/device/optional link and customer-gateway ARN with global-network agreement.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_customer_gateway_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, link_id, customer_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_customer_gateway_association.html.markdown",
         "shapes": {
@@ -15289,10 +15289,10 @@
       }
     },
     "aws_networkmanager_device": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: global_network_id/site_id and optional AWS subnet ARN; physical address/coordinates and zone do not prove subnet. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15304,11 +15304,11 @@
           "aws_location.subnet_arn",
           "aws_location.zone"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Missing: explicit subnet ARN context #788; global management scope remains separate.",
-        "references": "Missing: global_network_id/site_id and optional AWS subnet ARN; physical address/coordinates and zone do not prove subnet.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "placement": "Supported: independent Spatial architecture card; global management scope does not inherit endpoint region.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_device uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, global_network_id, site_id, aws_location.subnet_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_device.html.markdown",
         "shapes": {
@@ -15374,10 +15374,10 @@
       }
     },
     "aws_networkmanager_global_network": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: No outbound managed endpoint; incoming core/site/device/link references and architecture review #788. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15386,11 +15386,11 @@
           "arn",
           "description"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Not applicable: No outbound managed endpoint; incoming core/site/device/link references and architecture review #788.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "placement": "Supported: independent Spatial architecture card; global management scope does not inherit endpoint region.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Not applicable: independent global-network identity has no configured outgoing endpoint.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_global_network uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_global_network.html.markdown",
         "shapes": {
@@ -15404,10 +15404,10 @@
       }
     },
     "aws_networkmanager_link": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Site and global-network IDs with parent agreement; link bandwidth does not imply traffic delivery. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15419,11 +15419,11 @@
           "bandwidth.upload_speed",
           "bandwidth.download_speed"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Site and global-network IDs with parent agreement; link bandwidth does not imply traffic delivery.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "placement": "Supported: independent Spatial architecture card; global management scope does not inherit endpoint region.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_link uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, global_network_id, site_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_link.html.markdown",
         "shapes": {
@@ -15448,10 +15448,10 @@
       }
     },
     "aws_networkmanager_link_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Global-network/device/link tuple with consistent membership. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15462,10 +15462,10 @@
           "link_id"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Global-network/device/link tuple with consistent membership.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_link_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, link_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_link_association.html.markdown",
         "shapes": {
@@ -15516,10 +15516,10 @@
       }
     },
     "aws_networkmanager_site": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Global network ID; geographic address does not identify AWS subnet. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15529,11 +15529,11 @@
           "global_network_id",
           "location.address"
         ],
-        "placement": "Missing: independent architecture representation review is tracked with the linked implementation issue; current default is Logical, not a spatial network container.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Global network ID; geographic address does not identify AWS subnet.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "placement": "Supported: independent Spatial architecture card; global management scope does not inherit endpoint region.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_site uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (arn, global_network_id) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_site.html.markdown",
         "shapes": {
@@ -15585,10 +15585,10 @@
       }
     },
     "aws_networkmanager_transit_gateway_connect_peer_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Global-network/device/optional link and TGW Connect peer ARN; not Cloud WAN connect-peer ARN. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15600,10 +15600,10 @@
           "transit_gateway_connect_peer_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Global-network/device/optional link and TGW Connect peer ARN; not Cloud WAN connect-peer ARN.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_transit_gateway_connect_peer_association uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, device_id, link_id, transit_gateway_connect_peer_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_connect_peer_association.html.markdown",
         "shapes": {
@@ -15657,10 +15657,10 @@
       }
     },
     "aws_networkmanager_transit_gateway_registration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 788,
-      "gap": "#716 reviewed: Global network ID and TGW ARN; registration is not containment. Current basic Logical display has no dedicated relationships. Follow-up #788; see six dimensions and pinned contracts in review.",
+      "gap": "#716 audit: implemented #788 explicit typed ID/ARN references with matching same-global-network joins. No physical location, BGP, policy or computed topology inference.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15670,10 +15670,10 @@
           "transit_gateway_arn"
         ],
         "placement": "Supported: retain Logical basic presentation; configuration/helper identity is not an independent workload card.",
-        "ownership": "Not applicable: retain independent identity; related resources may be shared and references do not prove embedded ownership.",
-        "network": "Not applicable: no configured VPC/subnet containment contract; external connectivity is not subnet ownership.",
-        "references": "Missing: Global network ID and TGW ARN; registration is not containment.",
-        "scope": "Partial: Global management eligibility in basic_entries.rs/scope.rs; account remains unknown. Regional endpoints do not propagate region to global object.",
+        "ownership": "Not applicable: independent architecture/configuration identities; topology references do not establish exclusive service ownership.",
+        "network": "Intentionally unsupported: global topology and physical coordinates do not imply VPC containment; explicit device subnet ARN is reference context only.",
+        "references": "Supported: #788 explicit global_network_id and exact typed site/device/link IDs or configured regional endpoint ARN; topology joins require the same independently verified global network.",
+        "scope": "Supported: global management scope retains independently known account; regional endpoint scope is independently verified and never inherited by the global node.",
         "summaries": "Not applicable: aws_networkmanager_transit_gateway_registration uses an identity/navigation-only presentation in this scope. Reviewed identifier fields (global_network_id, transit_gateway_arn) are relationship evidence, not raw-value badges. Configuration details require a separate user-facing use case before extending the allowlist; policy contents, credentials and runtime status remain intentionally excluded.",
         "officialDocumentation": "website/docs/r/networkmanager_transit_gateway_registration.html.markdown",
         "shapes": {

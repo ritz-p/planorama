@@ -48,6 +48,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::direct_connect::resource(resource)
         && !super::rds_auxiliary::resource(resource)
         && !super::classic_elb::resource(resource)
+        && !super::networkmanager::resource(resource)
         && !super::xray_encryption::resource(resource)
         && !super::synthetics::resource(resource)
         && !super::rum::resource(resource)

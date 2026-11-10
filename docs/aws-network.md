@@ -993,3 +993,23 @@ AWS predefined policy names alone remain unresolved. Only uniquely verified
 helpers receive service-owner navigation; shared certificates/buckets remain
 independent. Regions/accounts and selected current identities are rechecked.
 No cookie values, policy attributes, health or traffic interpretation is exposed.
+
+## Network Manager topology (#788)
+
+Global networks, core networks, sites, devices and links have independent Spatial
+cards in global management scope. Core/site/device/link and topology helpers
+reference exact `global_network_id` outputs. Device/link site references,
+connection device/link pairs and association device/link references require
+explicit ID references whose endpoints independently resolve the same global
+network. Equal strings alone do not establish membership.
+
+Device `aws_location.subnet_arn` requires a single known location block without
+a conflicting zone and an explicit managed subnet ARN. Customer gateway,
+transit-gateway Connect peer and transit-gateway registration helpers use their
+respective endpoint ARN outputs. Regional endpoints require independent known
+region and compatible account evidence; they keep their own scope. Named-state,
+current/deposed and selection boundaries remain intact.
+
+These relationships do not embed devices in sites or synthesize VPC containment.
+Physical address, zone labels, coordinates, BGP, policy data and computed network
+edges are not interpreted or displayed.

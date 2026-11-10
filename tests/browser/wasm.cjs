@@ -237,7 +237,7 @@ async function main() {
       }
     }
     checkpoint('spatial-parity');
-    for (const fixture of ['classic-elb', 'rds-auxiliary', 'route53-health', 'direct-connect-hosted', 'direct-connect', 'vpclattice-resources', 'vpclattice', 's3vectors', 's3tables', 's3files', 'secrets-manager-references', 'kms-references', 'global-accelerator-custom', 'traffic-mirror', 'lambda-capacity', 'microvms', 'iam-policies', 'iam-credentials', 'identitystore', 'identity-center']) {
+    for (const fixture of ['networkmanager', 'classic-elb', 'rds-auxiliary', 'route53-health', 'direct-connect-hosted', 'direct-connect', 'vpclattice-resources', 'vpclattice', 's3vectors', 's3tables', 's3files', 'secrets-manager-references', 'kms-references', 'global-accelerator-custom', 'traffic-mirror', 'lambda-capacity', 'microvms', 'iam-policies', 'iam-credentials', 'identitystore', 'identity-center']) {
       const input = readFileSync(join(root, 'tests/fixtures/'+fixture+'-plan.json'), 'utf8');
       for (const format of ['svg', 'html']) {
         const result = run(input, {format});
