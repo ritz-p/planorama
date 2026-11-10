@@ -234,3 +234,41 @@ fn endpoint_account_and_region_are_independent_of_global_control_scope() {
         );
     }
 }
+
+#[test]
+fn indirect_core_proof_rechecks_the_peering_account_for_labels_and_accepters() {
+    for case in 0..4 {
+        let mut v = fixture();
+        v["resource_changes"][17]["change"]["after"]["attachment_id"] = json!("attachment-table");
+        v["configuration"]["root_module"]["resources"][17]["expressions"]["attachment_id"] = json!({"references":["aws_networkmanager_transit_gateway_route_table_attachment.main.id"]});
+        let mut p = plan::parse(&v.to_string()).unwrap();
+        for n in &mut p.nodes {
+            let c = n.provider_configuration.as_mut().unwrap();
+            c.account = crate::model::AwsAccountScope::new("111111111111");
+            if n.resource_type == "aws_networkmanager_transit_gateway_peering" {
+                match case {
+                    1 => c.account = crate::model::AwsAccountScope::new("222222222222"),
+                    2 => c.account_conflict = true,
+                    3 => c.account = None,
+                    _ => {}
+                }
+            }
+        }
+        let g = semantic::transform(&p);
+        for (t, label) in [
+            (17, "Routing label attachment"),
+            (22, "Accepted attachment"),
+        ] {
+            let n = g
+                .nodes
+                .iter()
+                .find(|n| n.address == v["resource_changes"][t]["address"].as_str().unwrap())
+                .unwrap();
+            assert_eq!(
+                n.references.iter().any(|r| r.label == label && r.complete),
+                case == 0,
+                "{label} {case}"
+            );
+        }
+    }
+}

@@ -246,6 +246,11 @@ fn proof(
                 return None;
             }
             context.push(parent);
+            for &source in &r.sources {
+                if nodes[source].resource_type == TABLE {
+                    context.push(endpoint(nodes, refs, e, source, "peering_id")?);
+                }
+            }
         }
         (ACCEPT, "attachment_id") => {
             let [s] = r.sources.as_slice() else {
@@ -255,6 +260,9 @@ fn proof(
                 return None;
             }
             context.push(core(nodes, refs, e, *s)?);
+            if nodes[*s].resource_type == TABLE {
+                context.push(endpoint(nodes, refs, e, *s, "peering_id")?);
+            }
         }
         (DX, "direct_connect_gateway_arn") => {
             let a = value(e, t, "edge_locations")?.as_array()?;
