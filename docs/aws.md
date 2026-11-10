@@ -617,3 +617,19 @@ compatible account binding and independently known equal regions. Unknown,
 sensitive, ambiguous, filtered and cross-state proof remains conservative.
 Shared keys and warehouses stay independent. Filters, encryption context,
 credentials and activity/state payloads are not displayed or interpreted.
+
+## OAM sink and cross-account links (#994)
+
+OAM sinks have independent Spatial cards. Link `sink_identifier` references
+`aws_oam_sink.arn` or its deprecated ARN-valued `id`; `sink_id` is a different
+identity. A link requires independently verified, nonconflicting source and
+monitoring accounts and the same independently known region. An ordinary JSON
+plan's role ARN or sink ARN cannot establish account evidence by itself.
+
+Sink policies reference the same sink outputs with compatible same-account scope
+and receive service-owner navigation only after verification. Links and shared
+sinks remain independent. Current managed identities, exact known values,
+unknown/sensitive masks, provider/state boundaries and selection are preserved.
+Computed `sink_arn`, resource-type selectors and log/metric filters do not resolve
+managed log groups or synthesize monitoring relationships. Policy contents do not
+prove authorization; filters, policies and telemetry payloads are not displayed.

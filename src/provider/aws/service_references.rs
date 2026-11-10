@@ -37,6 +37,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::cloudwan::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::oam::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::xray_encryption::label(resource, attribute) {
         return Some(label);
     }
@@ -843,6 +846,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::classic_elb::bindings(raw, reference)
         && super::networkmanager::bindings(raw, reference)
         && super::cloudwan::bindings(raw, reference)
+        && super::oam::bindings(raw, reference)
         && super::xray_encryption::bindings(raw, reference)
         && super::synthetics::bindings(raw, reference)
         && super::rum::bindings(raw, reference)

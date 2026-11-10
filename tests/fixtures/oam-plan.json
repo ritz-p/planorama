@@ -1,0 +1,146 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_oam_sink.monitor",
+      "type": "aws_oam_sink",
+      "name": "monitor",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "monitor",
+          "arn": "arn:aws:oam:us-east-1:222222222222:sink/sink-main",
+          "id": "arn:aws:oam:us-east-1:222222222222:sink/sink-main",
+          "sink_id": "sink-main"
+        }
+      }
+    },
+    {
+      "address": "aws_oam_sink_policy.monitor",
+      "type": "aws_oam_sink_policy",
+      "name": "monitor",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "sink_identifier": "arn:aws:oam:us-east-1:222222222222:sink/sink-main",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_oam_link.source",
+      "type": "aws_oam_link",
+      "name": "source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "sink_identifier": "arn:aws:oam:us-east-1:222222222222:sink/sink-main",
+          "sink_arn": "PRIVATE_COMPUTED_SINK",
+          "resource_types": [
+            "AWS::Logs::LogGroup",
+            "AWS::CloudWatch::Metric"
+          ],
+          "link_configuration": [
+            {
+              "log_group_configuration": [
+                {
+                  "filter": "PRIVATE_FILTER"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws.monitor": {
+        "name": "aws",
+        "alias": "monitor",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::222222222222:role/fixture"
+              }
+            }
+          ]
+        }
+      },
+      "aws.source": {
+        "name": "aws",
+        "alias": "source",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111111111111:role/fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_oam_sink.monitor",
+          "type": "aws_oam_sink",
+          "name": "monitor",
+          "mode": "managed",
+          "provider_config_key": "aws.monitor",
+          "expressions": {}
+        },
+        {
+          "address": "aws_oam_sink_policy.monitor",
+          "type": "aws_oam_sink_policy",
+          "name": "monitor",
+          "mode": "managed",
+          "provider_config_key": "aws.monitor",
+          "expressions": {
+            "sink_identifier": {
+              "references": [
+                "aws_oam_sink.monitor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_oam_link.source",
+          "type": "aws_oam_link",
+          "name": "source",
+          "mode": "managed",
+          "provider_config_key": "aws.source",
+          "expressions": {
+            "sink_identifier": {
+              "references": [
+                "aws_oam_sink.monitor.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
