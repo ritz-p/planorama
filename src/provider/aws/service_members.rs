@@ -68,6 +68,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Registered domain owner",
                 "Delegation signers",
             ),
+            "aws_rds_shard_group" => (
+                "db_cluster_identifier",
+                "Shard group cluster",
+                "Shard groups",
+            ),
             "aws_rum_metrics_destination" => (
                 "app_monitor_name",
                 "RUM app monitor",

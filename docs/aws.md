@@ -595,3 +595,25 @@ name. Key IDs and aliases do not substitute for key ARNs. Independent account an
 region evidence must agree. `NONE` selects default encryption; it does not mean
 unencrypted. The configuration and shared KMS key remain independent, without a
 new encryption-status summary or effective-security claim.
+
+## RDS auxiliary resources (#769)
+
+Activity streams reference an explicitly configured `aws_rds_cluster.arn` and
+managed KMS key ID/ARN or alias name/ARN. The pinned provider reads clusters, so
+DB instance ARNs are not accepted for this resource. Computed Kinesis stream
+names do not create stream relationships. Instance-state helpers reference
+`aws_db_instance.identifier` without exposing or interpreting runtime state.
+Shard groups become logical service children only with a unique
+`aws_rds_cluster.cluster_identifier`/`id` reference and known
+`cluster_scalability_type = limitless`; this does not establish subnet placement.
+
+Zero-ETL integrations reference RDS cluster/DB instance ARNs and the warehouse
+namespace: `aws_redshift_cluster.cluster_namespace_arn` or
+`aws_redshiftserverless_namespace.arn`. Cluster ARNs and Workgroup ARNs are not
+namespace identities. Explicit managed KMS key ID/ARN references are supported;
+aliases and computed defaults remain unresolved for integration encryption.
+All references require matching known values, current unique managed endpoints,
+compatible account binding and independently known equal regions. Unknown,
+sensitive, ambiguous, filtered and cross-state proof remains conservative.
+Shared keys and warehouses stay independent. Filters, encryption context,
+credentials and activity/state payloads are not displayed or interpreted.

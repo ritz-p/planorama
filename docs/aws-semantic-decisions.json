@@ -11750,10 +11750,10 @@
       }
     },
     "aws_rds_cluster_activity_stream": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 769,
-      "gap": "#717 reviewed: Missing: resource ARN/key navigation #769; computed Kinesis name is not explicit configured stream reference.  Not applicable: activity-stream configuration has no network selectors.",
+      "gap": "#717 audit follow-up. Supported: #769 explicit cluster ARN and KMS key ID/ARN or alias name/ARN. Computed Kinesis stream names are intentionally unsupported. No network, health, policy or payload inference.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11766,8 +11766,8 @@
         "placement": "Supported: retain Logical presentation for aws_rds_cluster_activity_stream; current classification/display is not complete semantic support.",
         "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
         "network": "Not applicable: activity-stream configuration has no network selectors.",
-        "references": "Missing: resource ARN/key navigation #769; computed Kinesis name is not explicit configured stream reference.",
-        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "references": "Supported: #769 explicit cluster ARN and KMS key ID/ARN or alias name/ARN. Computed Kinesis stream names are intentionally unsupported.",
+        "scope": "Supported: same compatible account and independently known equal region; state/lifecycle/filter boundaries retained.",
         "summaries": "Intentionally unsupported: engine-native audit payloads, live stream state and security inference.",
         "officialDocumentation": "website/docs/r/rds_cluster_activity_stream.html.markdown",
         "shapes": {
@@ -12050,10 +12050,10 @@
       }
     },
     "aws_rds_instance_state": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 769,
-      "gap": "#717 reviewed: Missing: identifier -> DB instance identifier #769; controller is not another DB instance.  Not applicable: start/stop intent does not establish placement.",
+      "gap": "#717 audit follow-up. Supported: #769 explicit DB instance identifier, without interpreting runtime state. No network, health, policy or payload inference.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12065,8 +12065,8 @@
         "placement": "Supported: retain Logical presentation for aws_rds_instance_state; current classification/display is not complete semantic support.",
         "ownership": "Not applicable: retain independent configuration/service identity; references alone do not prove exclusive embedded ownership.",
         "network": "Not applicable: start/stop intent does not establish placement.",
-        "references": "Missing: identifier -> DB instance identifier #769; controller is not another DB instance.",
-        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "references": "Supported: #769 explicit DB instance identifier, without interpreting runtime state.",
+        "scope": "Supported: same compatible account and independently known equal region; state/lifecycle/filter boundaries retained.",
         "summaries": "Intentionally unsupported: desired state must not be reported as live health.",
         "officialDocumentation": "website/docs/r/rds_instance_state.html.markdown",
         "shapes": {
@@ -12080,10 +12080,10 @@
       }
     },
     "aws_rds_integration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 769,
-      "gap": "#717 reviewed: Missing: typed database source and Redshift namespace/warehouse target #769; deprecated id is ARN, not integration_identifier.  Not applicable: zero-ETL relationship is not network containment.",
+      "gap": "#717 audit follow-up. Supported: #769 RDS cluster/instance source ARN, Redshift cluster_namespace_arn or Serverless namespace arn, and explicit managed KMS key ID/ARN. Alias and computed-key fallback intentionally unsupported. No network, health, policy or payload inference.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12098,8 +12098,8 @@
         "placement": "Supported: retain Logical presentation for aws_rds_integration; current classification/display is not complete semantic support.",
         "ownership": "Not applicable: source and target remain independent.",
         "network": "Not applicable: zero-ETL relationship is not network containment.",
-        "references": "Missing: typed database source and Redshift namespace/warehouse target #769; deprecated id is ARN, not integration_identifier.",
-        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "references": "Supported: #769 RDS cluster/instance source ARN, Redshift cluster_namespace_arn or Serverless namespace arn, and explicit managed KMS key ID/ARN. Alias and computed-key fallback intentionally unsupported.",
+        "scope": "Supported: same compatible account and independently known equal region; state/lifecycle/filter boundaries retained.",
         "summaries": "Intentionally unsupported: data_filter/encryption context and replication health.",
         "officialDocumentation": "website/docs/r/rds_integration.html.markdown",
         "shapes": {
@@ -12152,10 +12152,10 @@
       }
     },
     "aws_rds_shard_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 769,
-      "gap": "#717 reviewed: Missing: cluster owner #769; cluster scalability/Limitless mode needs exact matching proof. Missing: currently Logical; review service-child presentation #769. Not applicable: shard membership must not invent subnet.",
+      "gap": "#717 audit follow-up. Supported: #769 explicit cluster_identifier/id of a known Limitless RDS cluster. No network, health, policy or payload inference.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -12164,11 +12164,11 @@
           "db_cluster_identifier",
           "db_shard_group_identifier"
         ],
-        "placement": "Missing: currently Logical; review service-child presentation #769.",
-        "ownership": "Missing: unique cluster relation #769.",
+        "placement": "Supported: Logical service child under a uniquely verified Limitless cluster; no subnet inference.",
+        "ownership": "Supported: cluster-qualified service membership; shared endpoints remain independent.",
         "network": "Not applicable: shard membership must not invent subnet.",
-        "references": "Missing: cluster owner #769; cluster scalability/Limitless mode needs exact matching proof.",
-        "scope": "Partial: Regional (conditional) eligibility; basic fallback clears account. Regional identity requires known provider/resource-region evidence; global identity does not supply member region. Managed decisions do not apply to data sources or historical identities.",
+        "references": "Supported: #769 explicit cluster_identifier/id of a known Limitless RDS cluster.",
+        "scope": "Supported: same compatible account and independently known equal region; state/lifecycle/filter boundaries retained.",
         "summaries": "Deferred: no aws_rds_shard_group value allowlist; revisit only with a specific useful configuration summary and known/unknown/sensitive contract. Identity/actions remain visible.",
         "officialDocumentation": "website/docs/r/rds_shard_group.html.markdown",
         "shapes": {
