@@ -29,6 +29,7 @@ pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
 mod cloudtrail_tests;
+pub(crate) mod cloudwan;
 pub(crate) mod cloudwatch_alarms;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;

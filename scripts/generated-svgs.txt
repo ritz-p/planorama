@@ -181,3 +181,4 @@ examples/xray-encryption.svg
 examples/rds-auxiliary.svg
 examples/classic-elb.svg
 examples/networkmanager.svg
+examples/cloudwan.svg
