@@ -51,6 +51,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::networkmanager::resource(resource)
         && !super::cloudwan::resource(resource)
         && !super::oam::resource(resource)
+        && !super::transfer_server::resource(resource)
         && !super::xray_encryption::resource(resource)
         && !super::synthetics::resource(resource)
         && !super::rum::resource(resource)

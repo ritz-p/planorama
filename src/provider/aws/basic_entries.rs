@@ -1594,7 +1594,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_transfer_connector", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_host_key", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_profile", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
-    entry!("aws_transfer_server", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
+    entry!("aws_transfer_server", "AWS Transfer Family", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_ssh_key", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_tag", "AWS Transfer Family", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_user", "AWS Transfer Family", Identity, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),

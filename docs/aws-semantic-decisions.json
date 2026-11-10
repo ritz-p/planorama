@@ -24149,10 +24149,10 @@
       }
     },
     "aws_transfer_server": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 832,
-      "gap": "#720 reviewed: Missing: mode-gated VPC/subnet/SG/EIP/endpoint, ACM certificate ARN (not Transfer certificate), directory ID, Lambda ARN, IAM roles, structured log destinations and workflow IDs/roles. Follow-up #832. Missing: Logical server is an architecture endpoint; review Spatial card in #832. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: implemented #832 Spatial server and mode-gated explicit VPC/subnet/SG/EIP/endpoint, FTPS ACM, directory/Lambda/IAM, structured logs and upload workflow references. Unknown/incomplete proof stays conservative; no runtime reachability or payload summaries.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24178,11 +24178,11 @@
           "workflow_details.on_partial_upload.execution_role",
           "identity_provider_type"
         ],
-        "placement": "Missing: Logical server is an architecture endpoint; review Spatial card in #832.",
-        "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
-        "network": "Missing: PUBLIC/VPC/VPC_ENDPOINT contracts must be separate in #832; public address allocation and mode do not establish reachability.",
-        "references": "Missing: mode-gated VPC/subnet/SG/EIP/endpoint, ACM certificate ARN (not Transfer certificate), directory ID, Lambda ARN, IAM roles, structured log destinations and workflow IDs/roles. Follow-up #832.",
-        "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
+        "placement": "Supported: independent Spatial Transfer server card for PUBLIC, VPC and VPC_ENDPOINT modes.",
+        "ownership": "Not applicable: shared workflow, role, certificate, directory, logs and network endpoints stay independent.",
+        "network": "Supported: VPC-mode complete subnet/SG references and explicit common VPC establish VPC context; EIPs require known IPv4 mode and complete matching subnet cardinality. VPC_ENDPOINT uses an explicit Interface endpoint ID; PUBLIC has no inferred network.",
+        "references": "Supported: #832 exact mode-gated endpoint IDs, FTPS ACM ARN, identity-provider directory ID/Lambda ARN/invocation role ARN, logging role, complete CloudWatch log ARN set (optional terminal :*), and singleton upload/partial-upload workflow IDs and role ARNs.",
+        "scope": "Supported: compatible account and independently known same-region endpoints; IAM roles stay global; provider/state and current/deposed boundaries preserved.",
         "summaries": "Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
         "officialDocumentation": "website/docs/r/transfer_server.html.markdown",
         "shapes": {
