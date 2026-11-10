@@ -68,6 +68,15 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Registered domain owner",
                 "Delegation signers",
             ),
+            kind if kind != "aws_elb_attachment"
+                && super::classic_elb::owner_path(kind).is_some() =>
+            {
+                (
+                    super::classic_elb::owner_path(kind).unwrap(),
+                    "Classic load balancer",
+                    "Classic ELB policies",
+                )
+            }
             "aws_rds_shard_group" => (
                 "db_cluster_identifier",
                 "Shard group cluster",

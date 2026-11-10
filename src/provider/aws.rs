@@ -17,6 +17,7 @@ mod backup_plan;
 mod backup_vaults;
 mod basic;
 mod batch;
+pub(crate) mod classic_elb;
 mod classification;
 mod cloud_map;
 pub(crate) mod cloudfront;
@@ -343,6 +344,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     service_references::present(&raw, &mut graph);
     s3files::present(&raw, &mut graph);
     vpclattice::present(&raw, &mut graph);
+    classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);

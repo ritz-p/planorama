@@ -44479,10 +44479,10 @@
       }
     },
     "aws_elb": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: Classic ELB name/id relationships, complete subnet/SG and instance sets, protocol-gated listener certificate and enabled log bucket references; not an alias of aws_lb. Missing: current Logical Connector omits an independent Classic ELB architecture card. Missing: complete VPC subnet/SG proof; availability_zones and EC2-Classic do not identify VPC/subnet objects. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: complete subnet/SG/instance sets, correlated HTTPS/SSL listener certificate ARN and explicitly enabled log bucket name. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44498,11 +44498,11 @@
           "access_logs.enabled",
           "availability_zones"
         ],
-        "placement": "Missing: current Logical Connector omits an independent Classic ELB architecture card.",
+        "placement": "Supported: independent Spatial Classic ELB card.",
         "ownership": "Not applicable: independent shared identity; consumer references do not establish exclusive ownership or embedding.",
-        "network": "Missing: complete VPC subnet/SG proof; availability_zones and EC2-Classic do not identify VPC/subnet objects.",
-        "references": "Missing: Classic ELB name/id relationships, complete subnet/SG and instance sets, protocol-gated listener certificate and enabled log bucket references; not an alias of aws_lb.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "network": "Supported: complete subnet and SG sets with explicit common-VPC proof; AZ names and EC2-Classic do not establish VPC containment.",
+        "references": "Supported: complete subnet/SG/instance sets, correlated HTTPS/SSL listener certificate ARN and explicitly enabled log bucket name. Literal names and ELBv2 ARNs do not establish identity. Classic ELB is not an alias of ELBv2.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie/SSL/proxy settings and effective forwarding; no arbitrary aws_elb attribute summary.",
         "officialDocumentation": "website/docs/r/elb.html.markdown",
         "shapes": {
@@ -44594,10 +44594,10 @@
       }
     },
     "aws_elb_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: ELB name plus instance ID association; associations.rs has no Classic ELB lowering rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id and instance ID association with lifecycle provenance. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44609,8 +44609,8 @@
         "placement": "Supported: retain Logical Association for aws_elb_attachment; this presentation alone does not prove relationships.",
         "ownership": "Not applicable: attachment is a two-endpoint association; the instance remains independent.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: ELB name plus instance ID association; associations.rs has no Classic ELB lowering rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id and instance ID association with lifecycle provenance. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie/SSL/proxy settings and effective forwarding; no arbitrary aws_elb_attachment attribute summary.",
         "officialDocumentation": "website/docs/r/elb_attachment.html.markdown",
         "shapes": {
@@ -44639,10 +44639,10 @@
       }
     },
     "aws_app_cookie_stickiness_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44653,10 +44653,10 @@
           "name"
         ],
         "placement": "Supported: retain Logical Policy for aws_app_cookie_stickiness_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/app_cookie_stickiness_policy.html.markdown",
         "shapes": {
@@ -44689,10 +44689,10 @@
       }
     },
     "aws_lb_cookie_stickiness_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44703,10 +44703,10 @@
           "name"
         ],
         "placement": "Supported: retain Logical Policy for aws_lb_cookie_stickiness_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/lb_cookie_stickiness_policy.html.markdown",
         "shapes": {
@@ -44739,10 +44739,10 @@
       }
     },
     "aws_lb_ssl_negotiation_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44753,10 +44753,10 @@
           "name"
         ],
         "placement": "Supported: retain Logical Policy for aws_lb_ssl_negotiation_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/lb_ssl_negotiation_policy.html.markdown",
         "shapes": {
@@ -44789,10 +44789,10 @@
       }
     },
     "aws_load_balancer_backend_server_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer_name references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44803,10 +44803,10 @@
           "policy_names"
         ],
         "placement": "Supported: retain Logical Policy for aws_load_balancer_backend_server_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer_name references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/load_balancer_backend_server_policy.html.markdown",
         "shapes": {
@@ -44848,10 +44848,10 @@
       }
     },
     "aws_load_balancer_listener_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer_name references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44862,10 +44862,10 @@
           "policy_names"
         ],
         "placement": "Supported: retain Logical Policy for aws_load_balancer_listener_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer_name references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/load_balancer_listener_policy.html.markdown",
         "shapes": {
@@ -44907,10 +44907,10 @@
       }
     },
     "aws_load_balancer_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer_name references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44921,10 +44921,10 @@
           "policy_type_name"
         ],
         "placement": "Supported: retain Logical Policy for aws_load_balancer_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer_name references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/load_balancer_policy.html.markdown",
         "shapes": {
@@ -44957,10 +44957,10 @@
       }
     },
     "aws_proxy_protocol_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 906,
-      "gap": "#715 audit: Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule. Follow-up #906. Six dimensions and pinned fields: aws-semantic-decisions.json.",
+      "gap": "#715 audit: implemented #906: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. No policy, cookie, health or reachability interpretation.",
       "review": {
         "issue": 715,
         "implementationCommit": "f7f5d8bfb39ded416c786a21037935232b8f1eda",
@@ -44970,10 +44970,10 @@
           "instance_ports"
         ],
         "placement": "Supported: retain Logical Policy for aws_proxy_protocol_policy; this presentation alone does not prove relationships.",
-        "ownership": "Missing: prove unique Classic ELB context before helper embedding; inline listeners are not managed children.",
+        "ownership": "Supported: unique verified Classic ELB service owner; qualified ports remain inline selectors, not synthesized resources.",
         "network": "Not applicable: logical service configuration has no subnet attachment contract; references do not imply network containment.",
-        "references": "Missing: load_balancer references a Classic ELB name, not an ELBv2 ARN; qualify policy names and inline port selectors by that ELB. No dedicated rule.",
-        "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Require known resource/provider region and compatible account/state; names do not supply scope.",
+        "references": "Supported: Classic ELB name/id owner and qualified known listener/backend port selectors; policy_names resolves complete explicit policy name sets on the same ELB. Literal names and ELBv2 ARNs do not establish identity.",
+        "scope": "Supported: compatible account and independently known equal regional scope; IAM server certificates remain global.",
         "summaries": "Intentionally unsupported: cookie names, SSL policy attributes, proxy behavior and effective policy are not architecture summaries.",
         "officialDocumentation": "website/docs/r/proxy_protocol_policy.html.markdown",
         "shapes": {
