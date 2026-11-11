@@ -34,6 +34,7 @@ fn rows<'a>(
                     | "ordered_cache_behavior"
                     | "function_association"
                     | "lambda_function_association"
+                    | "representations"
             )
         ) && values.len() != 1
         {

@@ -885,3 +885,56 @@ ambiguous, deleted, deposed or filtered evidence retains conservative fallback.
 Scope/selection checks preserve individual lifecycle actions and exactly-once
 coverage. Runtime defaults can be queried with
 `scripts/update-resource-support.sh aws_osis_`.
+
+## Glue catalog metadata (#845)
+
+The pinned AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` defines the following configured
+references. `aws_glue_catalog` has an independent Spatial card; its computed
+`catalog_id` identifies the parent catalog and never establishes its own identity
+or implied ownership of databases. Existing database/table presentation is retained.
+
+| Consumer | Configured path | Verified managed output and qualification |
+| --- | --- | --- |
+| Catalog / database | `federated_catalog.connection_name` / `federated_database.connection_name` | Connection `name`, equal known `catalog_id` |
+| Catalog | `target_redshift_catalog.catalog_arn` | Glue catalog `arn`; never a Redshift cluster/namespace ARN |
+| Catalog | `catalog_properties.data_lake_access_properties.data_transfer_role`, `catalog_properties.iceberg_optimization_properties.role_arn` | IAM role `arn` with compatible global role scope |
+| Catalog | `catalog_properties.data_lake_access_properties.kms_key` | Supported managed KMS key `arn` outputs |
+| Database | `target_database.database_name` | Database `name` and equal known target `catalog_id` |
+| Table | `target_table.name` | Table `name`, target `catalog_id` and `database_name` |
+| Table | `storage_descriptor.schema_reference.schema_id.schema_arn` / `schema_name` | Schema `arn` / `schema_name`; name variant also matches `registry_name`; known positive version number must equal schema `latest_schema_version` |
+| Table | `storage_descriptor.schema_reference.schema_id.registry_name` | Registry `registry_name`, only the schema-name variant |
+| Table | `view_definition.sub_objects` | Complete list of table `arn` outputs |
+| Table | `view_definition.representations.validation_connection` | Each representation's connection `name`, qualified by the table's `catalog_id` |
+| Optimizer / partition / partition index | `table_name` | Table `name`, equal known `catalog_id` and `database_name` |
+| Optimizer | `configuration.role_arn` | IAM role `arn` only when `enabled` is known true |
+| Data quality ruleset | `target_table.table_name` | Table `name`, target `catalog_id` and `database_name` |
+| Schema | `registry_arn` | Registry `arn`; no synthetic default registry |
+| User-defined function | `database_name` | Database `name` and equal known `catalog_id` |
+
+Nested blocks are singleton lists, except `view_definition.representations`, which
+is a list verified element by element with matching configuration indices and
+cardinality. View base-table lists must be complete and duplicate-free. Schema
+ARN and registry/name variants are exclusive. The provider exposes no managed
+schema-version ID output: `schema_version_id` remains ordinary provenance and
+cannot be substituted for a schema ARN or version number. Older/unknown version
+selectors retain ordinary references. Target database/table region selectors,
+when present, must agree with the source; cross-region targets remain conservative.
+
+Optimizers require a known `compaction`, `retention` or `orphan_file_deletion`
+type. Table-owned optimizer/partition/index and database-owned function helpers
+retain their lifecycle identity. Unshared schemas may be presented under their
+verified registry; referenced schemas and existing shared tables remain independent.
+No relationship implies network containment or execution/data lineage.
+
+Every link requires explicit unique Terraform references, exact known output
+values, current managed identities and compatible provider/account/region/state
+boundaries. Missing catalog qualifiers, unknowns, invalid collection shapes,
+ambiguous references and filtered owners retain ordinary fallback. External
+federation identifiers, computed workgroup names, URI schemes, SQL/DQDL, schema
+bodies, partition data, class names and principal strings remain opaque.
+
+The source contracts are `website/docs/r/glue_*.html.markdown` and the matching
+`internal/service/glue/*.go` files for the nine consumer types above at the pinned
+revision. Runtime support defaults are generated with
+`scripts/update-resource-support.sh aws_glue_`.
