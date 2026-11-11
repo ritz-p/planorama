@@ -4977,7 +4977,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 847,
-      "gap": "#722 reviewed: Partial: #504 execution role ARN verification retained. Missing: complete connection names and security-configuration name. S3 script reference remains generic; arguments, source-control auth_token and script bodies stay opaque. Follow-up #847.",
+      "gap": "#722 follow-up implemented #847: Preserves #504 execution-role ARN. Adds complete catalog/account-qualified connection names and security-configuration name; scripts, arguments and source-control credentials remain opaque. Shared connections never relocate jobs. See aws-data.md#glue-workload-references-847.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -5041,7 +5041,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 847,
-      "gap": "#722 reviewed: Partial: #504 verifies execution-role ARN; role names stay ordinary references. Missing: classifier/security-configuration/connection names, typed SQS and DynamoDB targets. Defer catalog database/table links until catalog-account proof accompanies names; crawler has no general catalog_id. Paths and exclusions do not identify datasets. Follow-up #847.",
+      "gap": "#722 follow-up implemented #847: Preserves #504 execution-role ARN. Adds complete classifier names, security configuration, catalog/account-qualified connection names, SQS event queues and exact DynamoDB table names. Database/table targets remain generic without catalog-account proof; paths and connection use never imply datasets or network placement. See aws-data.md#glue-workload-references-847.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26244,10 +26244,10 @@
       }
     },
     "aws_glue_ml_transform": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 847,
-      "gap": "#722 reviewed: Missing: role ARN and catalog-qualified input table/connection references; transforms consume rather than own shared tables. Algorithm parameters/labels not interpreted. Follow-up #847.",
+      "gap": "#722 follow-up implemented #847: Adds execution-role ARN and per-row catalog-qualified database/table/connection references. Input tables remain shared consumers, and algorithm parameters are opaque. See aws-data.md#glue-workload-references-847.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26581,10 +26581,10 @@
       }
     },
     "aws_glue_trigger": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 847,
-      "gap": "#722 reviewed: Missing: workflow owner and typed action/predicate job/crawler names plus security configuration. Predicates are configuration, never observed execution order. Follow-up #847.",
+      "gap": "#722 follow-up implemented #847: Adds workflow helper ownership and typed job/crawler action/predicate references plus job-action security configuration. Requires known trigger type, exclusive target variants and indexed list evidence; conditions never imply observed execution order. See aws-data.md#glue-workload-references-847.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

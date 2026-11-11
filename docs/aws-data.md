@@ -973,3 +973,51 @@ values, current managed identities and compatible provider/account/region/state
 bindings. Unknown, partial, duplicate, malformed or historical evidence retains
 conservative fallback. Filtering preserves each resource's independent action
 and coverage. Runtime defaults use `scripts/update-resource-support.sh aws_glue_`.
+
+## Glue workload references (#847)
+
+The pinned Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` defines these additional managed
+relationships. Existing crawler/job execution-role ARN handling is retained.
+
+| Consumer | Configured path | Verified managed output |
+| --- | --- | --- |
+| Crawler | `classifiers` | Complete classifier `name` / `id` list (`id` is the classifier name) |
+| Crawler / job | `security_configuration` | Security configuration `name` |
+| Crawler | `{jdbc,mongodb,s3,catalog,delta,hudi,iceberg}_target.connection_name` | Connection `name` with catalog-account proof |
+| Job | `connections` | Complete connection `name` list with catalog-account proof |
+| Crawler | `{s3,catalog}_target.event_queue_arn` / `dlq_event_queue_arn` | SQS queue `arn` |
+| Crawler | `dynamodb_target.path` | DynamoDB table `name`; no path/ARN parsing |
+| ML transform | `role_arn` | IAM role `arn`, with compatible global role scope |
+| ML transform | `input_record_tables.database_name` / `table_name` / `connection_name` | Database / table / connection `name`, qualified by that row's known `catalog_id`; table also matches `database_name` |
+| Trigger | `workflow_name` | Workflow `name`; trigger retains its own action and identity |
+| Trigger | `actions.job_name` / `crawler_name` | Job / crawler `name` |
+| Trigger | `actions.security_configuration` | Security configuration `name`, only a job action |
+| Trigger | `predicate.conditions.job_name` / `crawler_name` | Job / crawler `name`, only a `CONDITIONAL` trigger |
+
+Crawler/job connection names require every source connection's known catalog ID
+to equal the consumer's independently verified provider account. JSON-only input
+cannot prove that account and keeps these links generic; saved-plan provider
+proof enables them. Catalog IDs never set the resource's own account. Crawler
+`database_name` and catalog-target database/table names lack a general catalog
+selector and remain ordinary references.
+
+Target, input-table, action and condition blocks are lists verified per index
+and cardinality; `predicate` is a singleton list. Scalar names, complete lists and
+optional absent fields retain their respective shapes. Trigger types must be
+known (`ON_DEMAND`, `SCHEDULED`, `CONDITIONAL`, `EVENT`), and job/crawler variants
+are exclusive. Predicates describe configuration, not observed execution order.
+Shared workflows, tables and connection endpoints preserve independent identities;
+using a connection never places a workload in its subnet or VPC.
+
+Every dedicated reference requires complete unique explicit Terraform evidence,
+matching known outputs, current managed identities and compatible provider,
+account, region and state boundaries. Unknowns, partial collections, mismatched
+catalogs, wrong outputs, ambiguous or historical targets retain fallback.
+SQL, script locations/bodies, source-control authentication, arguments, classifier
+patterns, algorithm parameters, credentials and dataset paths remain opaque.
+
+The source contracts are `website/docs/r/glue_{crawler,job,ml_transform,trigger,
+classifier,connection,security_configuration,workflow}.html.markdown` and their
+corresponding `internal/service/glue/*.go` files at the pinned revision. Runtime
+support defaults use `scripts/update-resource-support.sh aws_glue_`.

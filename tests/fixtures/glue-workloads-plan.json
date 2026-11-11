@@ -1,0 +1,893 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.execution",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/job"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_connection.shared",
+      "type": "aws_glue_connection",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "shared",
+          "catalog_id": "123456789012",
+          "connection_type": "JDBC",
+          "physical_connection_requirements": [
+            {
+              "subnet_id": "subnet-glue",
+              "security_group_id_list": [
+                "sg-glue"
+              ],
+              "availability_zone": "us-east-1a"
+            }
+          ],
+          "connection_properties": {
+            "PASSWORD": "PRIVATE_CREDENTIAL"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_glue_security_configuration.secure",
+      "type": "aws_glue_security_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "secure"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_classifier.json",
+      "type": "aws_glue_classifier",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "json",
+          "id": "json",
+          "json_classifier": [
+            {
+              "json_path": "PRIVATE_JSON_PATH"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_classifier.csv",
+      "type": "aws_glue_classifier",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "csv",
+          "id": "csv",
+          "csv_classifier": [
+            {
+              "header": [
+                "PRIVATE_HEADER"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.events",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:123456789012:events"
+        }
+      }
+    },
+    {
+      "address": "aws_sqs_queue.failed",
+      "type": "aws_sqs_queue",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sqs:us-east-1:123456789012:failed"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.data",
+      "type": "aws_dynamodb_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "data",
+          "arn": "arn:aws:dynamodb:us-east-1:123456789012:table/data"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_database.data",
+      "type": "aws_glue_catalog_database",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "data",
+          "catalog_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table.first",
+      "type": "aws_glue_catalog_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "first",
+          "database_name": "data",
+          "catalog_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table.second",
+      "type": "aws_glue_catalog_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "second",
+          "database_name": "data",
+          "catalog_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_workflow.flow",
+      "type": "aws_glue_workflow",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "flow",
+          "default_run_properties": {
+            "token": "PRIVATE_RUN_PROPERTY"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_glue_job.job",
+      "type": "aws_glue_job",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "job",
+          "role_arn": "arn:aws:iam::123456789012:role/job",
+          "connections": [
+            "shared",
+            "second"
+          ],
+          "security_configuration": "secure",
+          "command": [
+            {
+              "script_location": "PRIVATE_SCRIPT_URI"
+            }
+          ],
+          "source_control_details": [
+            {
+              "auth_token": "PRIVATE_AUTH_TOKEN"
+            }
+          ],
+          "default_arguments": {
+            "private": "PRIVATE_ARGUMENT"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_glue_crawler.crawler",
+      "type": "aws_glue_crawler",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "crawler",
+          "database_name": "data",
+          "role": "arn:aws:iam::123456789012:role/job",
+          "classifiers": [
+            "json",
+            "csv"
+          ],
+          "security_configuration": "secure",
+          "jdbc_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH"
+            },
+            {
+              "connection_name": "second",
+              "path": "PRIVATE_SECOND_PATH"
+            }
+          ],
+          "mongodb_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH"
+            }
+          ],
+          "s3_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH",
+              "event_queue_arn": "arn:aws:sqs:us-east-1:123456789012:events",
+              "dlq_event_queue_arn": "arn:aws:sqs:us-east-1:123456789012:failed"
+            }
+          ],
+          "catalog_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH",
+              "event_queue_arn": "arn:aws:sqs:us-east-1:123456789012:events",
+              "dlq_event_queue_arn": "arn:aws:sqs:us-east-1:123456789012:failed",
+              "database_name": "data",
+              "tables": [
+                "first"
+              ]
+            }
+          ],
+          "delta_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH"
+            }
+          ],
+          "hudi_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH"
+            }
+          ],
+          "iceberg_target": [
+            {
+              "connection_name": "shared",
+              "path": "PRIVATE_TARGET_PATH"
+            }
+          ],
+          "dynamodb_target": [
+            {
+              "path": "data"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_ml_transform.transform",
+      "type": "aws_glue_ml_transform",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "transform",
+          "role_arn": "arn:aws:iam::123456789012:role/job",
+          "input_record_tables": [
+            {
+              "catalog_id": "123456789012",
+              "database_name": "data",
+              "table_name": "first",
+              "connection_name": "shared"
+            },
+            {
+              "catalog_id": "123456789012",
+              "database_name": "data",
+              "table_name": "second",
+              "connection_name": "second"
+            }
+          ],
+          "parameters": [
+            {
+              "transform_type": "FIND_MATCHES",
+              "find_matches_parameters": [
+                {
+                  "primary_key_column_name": "PRIVATE_COLUMN"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_trigger.trigger",
+      "type": "aws_glue_trigger",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "trigger",
+          "type": "CONDITIONAL",
+          "workflow_name": "flow",
+          "actions": [
+            {
+              "job_name": "job",
+              "crawler_name": null,
+              "security_configuration": "secure",
+              "arguments": {
+                "private": "PRIVATE_TRIGGER_ARGUMENT"
+              }
+            },
+            {
+              "crawler_name": "crawler",
+              "job_name": null,
+              "security_configuration": null
+            }
+          ],
+          "predicate": [
+            {
+              "logical": "AND",
+              "conditions": [
+                {
+                  "job_name": "job",
+                  "crawler_name": null,
+                  "state": "SUCCEEDED",
+                  "logical_operator": "EQUALS"
+                },
+                {
+                  "crawler_name": "crawler",
+                  "job_name": null,
+                  "crawl_state": "SUCCEEDED",
+                  "logical_operator": "EQUALS"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.glue",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-glue"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.glue",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-glue",
+          "vpc_id": "vpc-glue",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.glue",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-glue",
+          "vpc_id": "vpc-glue"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_connection.second",
+      "type": "aws_glue_connection",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "second",
+          "catalog_id": "123456789012",
+          "connection_type": "JDBC"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.execution",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_connection.shared",
+          "type": "aws_glue_connection",
+          "provider_config_key": "aws",
+          "expressions": {
+            "physical_connection_requirements": [
+              {
+                "subnet_id": {
+                  "references": [
+                    "aws_subnet.glue.id"
+                  ]
+                },
+                "security_group_id_list": {
+                  "references": [
+                    "aws_security_group.glue.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_security_configuration.secure",
+          "type": "aws_glue_security_configuration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_classifier.json",
+          "type": "aws_glue_classifier",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_classifier.csv",
+          "type": "aws_glue_classifier",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sqs_queue.events",
+          "type": "aws_sqs_queue",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sqs_queue.failed",
+          "type": "aws_sqs_queue",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dynamodb_table.data",
+          "type": "aws_dynamodb_table",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_catalog_database.data",
+          "type": "aws_glue_catalog_database",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_catalog_table.first",
+          "type": "aws_glue_catalog_table",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.data.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_catalog_table.second",
+          "type": "aws_glue_catalog_table",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.data.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_workflow.flow",
+          "type": "aws_glue_workflow",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_job.job",
+          "type": "aws_glue_job",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.execution.arn"
+              ]
+            },
+            "connections": {
+              "references": [
+                "aws_glue_connection.shared.name",
+                "aws_glue_connection.second.name"
+              ]
+            },
+            "security_configuration": {
+              "references": [
+                "aws_glue_security_configuration.secure.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_crawler.crawler",
+          "type": "aws_glue_crawler",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role": {
+              "references": [
+                "aws_iam_role.execution.arn"
+              ]
+            },
+            "classifiers": {
+              "references": [
+                "aws_glue_classifier.json.name",
+                "aws_glue_classifier.csv.id"
+              ]
+            },
+            "security_configuration": {
+              "references": [
+                "aws_glue_security_configuration.secure.name"
+              ]
+            },
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.data.name"
+              ]
+            },
+            "jdbc_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              },
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.second.name"
+                  ]
+                }
+              }
+            ],
+            "mongodb_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              }
+            ],
+            "s3_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                },
+                "event_queue_arn": {
+                  "references": [
+                    "aws_sqs_queue.events.arn"
+                  ]
+                },
+                "dlq_event_queue_arn": {
+                  "references": [
+                    "aws_sqs_queue.failed.arn"
+                  ]
+                }
+              }
+            ],
+            "catalog_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                },
+                "event_queue_arn": {
+                  "references": [
+                    "aws_sqs_queue.events.arn"
+                  ]
+                },
+                "dlq_event_queue_arn": {
+                  "references": [
+                    "aws_sqs_queue.failed.arn"
+                  ]
+                },
+                "database_name": {
+                  "references": [
+                    "aws_glue_catalog_database.data.name"
+                  ]
+                },
+                "tables": {
+                  "references": [
+                    "aws_glue_catalog_table.first.name"
+                  ]
+                }
+              }
+            ],
+            "delta_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              }
+            ],
+            "hudi_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              }
+            ],
+            "iceberg_target": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              }
+            ],
+            "dynamodb_target": [
+              {
+                "path": {
+                  "references": [
+                    "aws_dynamodb_table.data.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_ml_transform.transform",
+          "type": "aws_glue_ml_transform",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.execution.arn"
+              ]
+            },
+            "input_record_tables": [
+              {
+                "database_name": {
+                  "references": [
+                    "aws_glue_catalog_database.data.name"
+                  ]
+                },
+                "table_name": {
+                  "references": [
+                    "aws_glue_catalog_table.first.name"
+                  ]
+                },
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              },
+              {
+                "database_name": {
+                  "references": [
+                    "aws_glue_catalog_database.data.name"
+                  ]
+                },
+                "table_name": {
+                  "references": [
+                    "aws_glue_catalog_table.second.name"
+                  ]
+                },
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.second.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_trigger.trigger",
+          "type": "aws_glue_trigger",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workflow_name": {
+              "references": [
+                "aws_glue_workflow.flow.name"
+              ]
+            },
+            "actions": [
+              {
+                "job_name": {
+                  "references": [
+                    "aws_glue_job.job.name"
+                  ]
+                },
+                "security_configuration": {
+                  "references": [
+                    "aws_glue_security_configuration.secure.name"
+                  ]
+                }
+              },
+              {
+                "crawler_name": {
+                  "references": [
+                    "aws_glue_crawler.crawler.name"
+                  ]
+                }
+              }
+            ],
+            "predicate": [
+              {
+                "conditions": [
+                  {
+                    "job_name": {
+                      "references": [
+                        "aws_glue_job.job.name"
+                      ]
+                    }
+                  },
+                  {
+                    "crawler_name": {
+                      "references": [
+                        "aws_glue_crawler.crawler.name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_vpc.glue",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.glue",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.glue.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.glue",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.glue.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_connection.second",
+          "type": "aws_glue_connection",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
