@@ -846,3 +846,42 @@ Official contracts: `website/docs/r/opensearchserverless_{collection,collection_
 and `internal/service/opensearchserverless/{collection,collection_group,security_config}.go`
 at the pinned provider revision. Runtime support defaults can be queried using
 `scripts/update-resource-support.sh aws_opensearchserverless_`.
+
+## OpenSearch Ingestion (#800)
+
+Contracts are pinned to AWS Provider 6.70.0
+(`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`), using the official
+`website/docs/r/osis_{pipeline,pipeline_endpoint,resource_policy}.html.markdown`
+and `internal/service/osis/{pipeline,pipeline_endpoint,resource_policy}.go` schemas.
+
+`aws_osis_pipeline` has an independent Spatial card. Its explicit
+`pipeline_role_arn` references managed IAM role `arn` (including compatible global
+role scope); `encryption_at_rest_options.kms_key_arn` references managed KMS key
+`arn`. The enabled log destination
+`log_publishing_options.cloudwatch_log_destination.log_group` references managed
+CloudWatch log group `name`, only when `is_logging_enabled` is known true.
+Every intermediate configuration block must be a singleton list.
+
+Both pipeline and pipeline endpoint verify complete, nonempty, duplicate-free
+`vpc_options.subnet_ids` and `vpc_options.security_group_ids` sets against explicit
+managed subnet/SG `id` references. Common-VPC context additionally requires each
+member's verified `vpc_id` reference. Pipelines use this context only for known
+`vpc_endpoint_management = SERVICE`; CUSTOMER, absent and unknown management
+retain regional placement and verified network navigation. No service ENIs or
+default security groups are synthesized. Endpoints prove their own common VPC;
+they never inherit pipeline placement. A present endpoint computed `vpc_id`
+must agree with the proven VPC, and unknown corroboration suppresses placement.
+It is never treated as a configured reference.
+
+Endpoint `pipeline_arn` and resource-policy `resource_arn` link only to managed
+pipeline `pipeline_arn`, with an exact OSIS `pipeline/` ARN. Deprecated pipeline
+`id`, other ARN kinds, wildcards and output URLs are excluded. Endpoints and
+resource policies remain independent Logical resources. YAML pipeline bodies
+and policy JSON remain opaque.
+
+References require unique explicit provenance, known matching values, compatible
+provider/account/region/state boundaries and current managed identities. Missing,
+ambiguous, deleted, deposed or filtered evidence retains conservative fallback.
+Scope/selection checks preserve individual lifecycle actions and exactly-once
+coverage. Runtime defaults can be queried with
+`scripts/update-resource-support.sh aws_osis_`.

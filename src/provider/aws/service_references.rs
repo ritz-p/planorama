@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::osis::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::serverless_references::label(resource, attribute) {
         return Some(label);
     }
@@ -807,6 +810,7 @@ pub(crate) fn annotate(
     super::sagemaker::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
     super::serverless_references::annotate(nodes, references, evidence);
+    super::osis::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -843,6 +847,12 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && (super::osis::label(
+            &raw.nodes[reference.target].resource_type,
+            &reference.attribute,
+        )
+        .is_none()
+            || super::osis::bindings(raw, reference))
         && (super::serverless_references::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
