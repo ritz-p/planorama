@@ -5,9 +5,10 @@ const directory = process.argv[2] || 'output/wasm-engine';
 const binding = new Function(readFileSync(`${directory}/planorama.js`, 'utf8') + '\nreturn wasm_bindgen;')();
 binding.initSync({module: readFileSync(`${directory}/planorama_bg.wasm`), memory_budget_mib: 512});
 const native = require('../support/native-reference.cjs')(resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama'));
-for (const scenario of ['complete', 'unknown', 'filtered']) {
+for (const scenario of ['complete', 'unknown', 'sensitive', 'filtered']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/serverless-references-plan.json', 'utf8'));
   if (scenario === 'unknown') plan.resource_changes[4].change.after_unknown = {type: true};
+  if (scenario === 'sensitive') plan.resource_changes[4].change.after_sensitive = {iam_identity_center_options: [{instance_arn: true}]};
   const input = JSON.stringify(plan);
   for (const format of ['svg', 'html']) {
     const options = {format, icon_mode: 'service-name'};
