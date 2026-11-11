@@ -4,6 +4,8 @@
 
 ## Build and run
 
+For direct execution on WSL 2 / Ubuntu 26.04 LTS, follow the [WSL setup](wsl-development.md).
+
 ```sh
 docker compose up -d --build dev
 docker compose exec -T dev sh scripts/build-wasm.sh
