@@ -96,6 +96,7 @@ fn placement_available(
             | "aws_osis_pipeline_endpoint"
             | "aws_glue_connection"
             | "aws_glue_dev_endpoint"
+            | "aws_transfer_web_app"
     ) {
         return true;
     }

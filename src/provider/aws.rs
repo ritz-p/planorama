@@ -74,6 +74,7 @@ pub(crate) mod iam_credentials;
 pub(crate) mod iam_policies;
 mod icons;
 pub(crate) mod identity_center;
+mod identity_center_instance;
 pub(crate) mod identitystore;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
@@ -141,6 +142,7 @@ pub(crate) mod traffic_mirror;
 pub(crate) mod transfer_as2;
 pub(crate) mod transfer_identity;
 pub(crate) mod transfer_server;
+pub(crate) mod transfer_webapp;
 pub(crate) mod vpclattice;
 pub(crate) mod xray_encryption;
 
@@ -360,6 +362,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     s3files::present(&raw, &mut graph);
     vpclattice::present(&raw, &mut graph);
     transfer_server::present(&raw, &mut graph);
+    transfer_webapp::present(&raw, &mut graph);
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
