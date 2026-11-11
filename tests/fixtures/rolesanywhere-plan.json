@@ -1,0 +1,218 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.worker",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/worker",
+          "name": "worker",
+          "assume_role_policy": "PRIVATE_TRUST_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.admin",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/admin",
+          "name": "admin",
+          "assume_role_policy": "PRIVATE_TRUST_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_policy.read",
+      "type": "aws_iam_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:policy/read",
+          "name": "read",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_policy.write",
+      "type": "aws_iam_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:policy/write",
+          "name": "write",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate_authority.main",
+      "type": "aws_acmpca_certificate_authority",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/12345678-1234-1234-1234-123456789012",
+          "type": "ROOT",
+          "usage_mode": "GENERAL_PURPOSE"
+        }
+      }
+    },
+    {
+      "address": "aws_rolesanywhere_profile.sessions",
+      "type": "aws_rolesanywhere_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "name": "sessions",
+          "role_arns": [
+            "arn:aws:iam::123456789012:role/worker",
+            "arn:aws:iam::123456789012:role/admin"
+          ],
+          "managed_policy_arns": [
+            "arn:aws:iam::123456789012:policy/read",
+            "arn:aws:iam::123456789012:policy/write"
+          ],
+          "session_policy": "PRIVATE_SESSION_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_rolesanywhere_trust_anchor.root",
+      "type": "aws_rolesanywhere_trust_anchor",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "root",
+          "source": [
+            {
+              "source_type": "AWS_ACM_PCA",
+              "source_data": [
+                {
+                  "acm_pca_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/12345678-1234-1234-1234-123456789012"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.worker",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.admin",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_policy.read",
+          "type": "aws_iam_policy",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_policy.write",
+          "type": "aws_iam_policy",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acmpca_certificate_authority.main",
+          "type": "aws_acmpca_certificate_authority",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_rolesanywhere_profile.sessions",
+          "type": "aws_rolesanywhere_profile",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arns": {
+              "references": [
+                "aws_iam_role.worker.arn",
+                "aws_iam_role.admin.arn"
+              ]
+            },
+            "managed_policy_arns": {
+              "references": [
+                "aws_iam_policy.read.arn",
+                "aws_iam_policy.write.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_rolesanywhere_trust_anchor.root",
+          "type": "aws_rolesanywhere_trust_anchor",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": [
+              {
+                "source_data": [
+                  {
+                    "acm_pca_arn": {
+                      "references": [
+                        "aws_acmpca_certificate_authority.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -63092,7 +63092,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1143,
-      "gap": "#726 audit: Missing: complete role_arns -> IAM role.arn and managed_policy_arns -> policy.arn; profile is regional despite no region input in pinned resource. Not applicable: reusable regional profile; shared IAM identities stay global. Implementation follow-up #1143. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented follow-up #1143. Complete role_arns and managed_policy_arns use exact managed IAM role/policy ARN references while the profile remains regional and IAM identities global. Shared identities remain independent. See aws-security.md#roles-anywhere-1143.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -63156,7 +63156,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1143,
-      "gap": "#726 audit: Missing: AWS_ACM_PCA source -> CA.arn; CERTIFICATE_BUNDLE is excluded PEM payload, not another CA. Not applicable: independent regional trust anchor; no certificate subject/chain inference. Implementation follow-up #1143. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: Implemented follow-up #1143. Known AWS_ACM_PCA sources use exact managed CA ARN references through singleton source/source_data blocks; CERTIFICATE_BUNDLE and PEM content are excluded. Shared identities remain independent. See aws-security.md#roles-anywhere-1143.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
