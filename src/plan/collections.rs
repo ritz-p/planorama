@@ -196,7 +196,6 @@ pub(super) fn annotate(
         &evidence,
         &before_evidence,
     );
-    crate::provider::aws::service_references::annotate(nodes, references, &evidence);
     let mut sensitive = BTreeMap::new();
     sensitivities(&plan["planned_values"]["root_module"], &mut sensitive);
     let masks: Vec<_> = nodes
@@ -224,6 +223,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::iam_credentials::annotate(nodes, references, &elbv2_evidence);
