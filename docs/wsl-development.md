@@ -6,6 +6,8 @@ Docker を起動せずに開発・通常検証・生成する手順です。CI �
 
 通常の PowerShell で `wsl --list --verbose` と `wsl --list --online` を確認します。対象は `Ubuntu-26.04`、WSL の VERSION は `2` です。`docker-desktop` は開発用 Ubuntu として使いません。
 
+登録名が `Ubuntu` の場合は以下の `-d Ubuntu-26.04` を `-d Ubuntu` に読み替えます。起動後に `cat /etc/os-release` で `VERSION_ID="26.04"` を確認してください。
+
 未導入の場合は以下を実行します。WSL 自体の初回導入・Windows 機能の有効化には **管理者として起動した PowerShell** が必要です。既に WSL が有効なら Ubuntu の追加は通常の PowerShell から実行し、昇格を要求された場合だけ管理者権限を使います。再起動を要求されたら Windows を再起動してください。
 
 ```powershell
@@ -46,6 +48,7 @@ checkout は `~/src/planorama`、Rust の出力はその `target/` に置きま�
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/planorama-rustup.sh
 sh /tmp/planorama-rustup.sh -y --profile minimal --default-toolchain none
 . "$HOME/.cargo/env"
+rustup toolchain install 1.85.1 --profile minimal --component rustfmt,clippy
 rustup show
 rustup target add wasm32-unknown-unknown
 cargo install wasm-bindgen-cli --version 0.2.100 --locked
@@ -53,7 +56,7 @@ command -v cargo rustc node
 cargo metadata --locked --no-deps --format-version 1 | jq -r .target_directory
 ```
 
-`rustup show` は checkout の `rust-toolchain.toml` に従って Rust / rustfmt / clippy を導入します。`wasm-bindgen-cli` は `Dockerfile` と同じ版です。`command -v` が Windows の実行ファイルを指していないこと、metadata が `~/src/planorama/target` の絶対パスを返すことを確認します。mold / sccache は高速化用で通常検証の必須条件ではありません。Docker 専用の linker / wrapper 環境変数は WSL に持ち込まないでください。
+Rust の版は checkout の `rust-toolchain.toml` と揃えます。`rustup show` で使用中のツールチェーンを確認します。`wasm-bindgen-cli` は `Dockerfile` と同じ版です。`command -v` が Windows の実行ファイルを指していないこと、metadata が `~/src/planorama/target` の絶対パスを返すことを確認します。mold / sccache は高速化用で通常検証の必須条件ではありません。Docker 専用の linker / wrapper 環境変数は WSL に持ち込まないでください。
 
 ブラウザテストは `/usr/bin/chromedriver` を起動します。Ubuntu のパッケージは Debian の Docker イメージと異なり [Chromium snap への移行パッケージ](https://packages.ubuntu.com/resolute/chromium-chromedriver) です。
 
@@ -64,7 +67,7 @@ chromium-browser --version
 /usr/bin/chromedriver --version
 ```
 
-systemd / snapd が動作しない場合は [WSL の systemd 設定](https://learn.microsoft.com/en-us/windows/wsl/systemd) を確認します。`/etc/wsl.conf` の既存設定を保持して `[boot]` の `systemd=true` を設定し、通常の PowerShell で `wsl --terminate Ubuntu-26.04` を実行して再起動します。終了前に Ubuntu 内の作業を保存してください。ブラウザが起動しない場合はテスト成功とは扱わず、対象 SHA とエラーを報告します。
+systemd / snapd が動作しない場合は [WSL の systemd 設定](https://learn.microsoft.com/en-us/windows/wsl/systemd) を確認します。`/etc/wsl.conf` の既存設定を保持して `[boot]` の `systemd=true` を設定し、通常の PowerShell で `wsl --terminate Ubuntu-26.04` を実行して再起動します。終了前に Ubuntu 内の作業を保存してください。snap の導入が停止した場合は `snap changes` / `snap tasks <ID>` で状況を確認します。中止する場合は自分が開始した操作の ID を確認して `sudo snap abort <ID>` を使い、APT が終了してから `sudo dpkg --configure -a` と通常依存の導入を再実行します。ブラウザが導入・起動できない場合はテスト成功とは扱わず、対象 SHA とエラーを報告します。
 
 ## ビルド・検証・生成
 
