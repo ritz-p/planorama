@@ -23,8 +23,8 @@
 
 - 回復可能な失敗は Result で返し、分岐が必要なエラーは型で区別する。エラーを伝播または処理する。
 - 自然な借用を優先し、clone 削減だけのために所有権を複雑にしない。テストは tests 配下に置き、重複を避ける。
-- 基本 Docker を使う。セットアップ・通常検証・生成は [CONTRIBUTING.md](CONTRIBUTING.md)。不足機能は導入し、それでも実行できなければ中断して報告する。Docker の修正もコミットする。実環境の plan/state・認証情報はコミットしない。
-- レンダリング・生成入力・fixture・SVG 生成スクリプトを変更したら Docker 内で sh scripts/update-examples.sh を実行する。scripts/generated-svgs.txt を正本に差分・表示を確認し、必要な SVG を同じ PR に含める。
+- 開発・通常検証・生成には Docker または WSL 2 の Ubuntu 26.04 LTS を使う。セットアップは [CONTRIBUTING.md](CONTRIBUTING.md)。WSL では checkout と Rust の target を Linux ファイルシステムに置き、Windows / Docker のビルド出力を共有しない。不足機能は導入し、それでも実行できなければ中断して報告する。開発環境の修正もコミットする。実環境の plan/state・認証情報はコミットしない。
+- レンダリング・生成入力・fixture・SVG 生成スクリプトを変更したら準備済みの Docker または WSL 内で sh scripts/update-examples.sh を実行する。scripts/generated-svgs.txt を正本に差分・表示を確認し、必要な SVG を同じ PR に含める。
 - 配置・配線・寸法・描画対象、または品質比較の fixture・診断契約・baseline・budget に影響する変更は layout-quality ラベルを付ける。迷う場合も実行する。図に影響しない操作・文書・配布 CI だけなら原則対象外。
 - [Layout quality](docs/ci.md#layout-quality-comparison-390) は最終 push のコミットで完了・結果を確認する。リリース時も公開予定 SHA と checkout SHA を照合し、同じ SHA の成功結果がなければ手動実行する。未依頼の tag 作成・公開はしない。
 - 品質失敗は fixture ごとの差分と SVG を確認する。意図した変更の理由を PR に記載できる場合だけ baseline/budget を更新し、他の改善で退行を相殺しない。通常 Tests・SVG 更新・Routing regressions の代わりにせず、条件付きチェックを全 PR 必須にしない。

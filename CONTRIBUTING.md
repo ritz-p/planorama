@@ -6,6 +6,10 @@ CI の起動条件・公開チェック・復旧手順の正本は [docs/ci.md](
 
 ## 開発環境
 
+Docker または [WSL 2 / Ubuntu 26.04 LTS](docs/wsl-development.md) を選べます。WSL の導入、Linux 側の checkout・Rust target、依存の準備と直接実行するコマンドはリンク先を参照してください。
+
+### Docker
+
 Docker Desktop を Linux コンテナモードで起動し、リポジトリのルートで実行します。
 
 ```sh
@@ -90,7 +94,7 @@ docker compose exec -T dev sh scripts/update-resource-support.sh aws_lambda_
 
 ## SVG の更新
 
-レンダリングの挙動・生成入力・fixture・生成スクリプトを変更した場合は、Docker 内で再生成し、差分と表示を確認して実装と同じ PR に含めます。生成入力・fixture・生成スクリプトの変更は、図に差分が出ない想定でも再生成して確認します。
+レンダリングの挙動・生成入力・fixture・生成スクリプトを変更した場合は、準備済みの Docker または WSL 内で再生成し、差分と表示を確認して実装と同じ PR に含めます。生成入力・fixture・生成スクリプトの変更は、図に差分が出ない想定でも再生成して確認します。
 
 ```sh
 docker compose exec -T dev sh scripts/update-examples.sh
