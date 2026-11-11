@@ -24553,7 +24553,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 834,
-      "gap": "#720 reviewed: Missing: complete Transfer certificate_ids matching certificate_id with LOCAL/PARTNER semantics; certificates remain shared independently. Follow-up #834. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #834. Complete certificate_ids match managed Transfer certificate_id outputs with known LOCAL/PARTNER profile type and SIGNING/ENCRYPTION certificate usage. Certificates remain shared; no key-content inference. See aws.md#transfer-as2-and-connectors-834.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24602,7 +24602,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 834,
-      "gap": "#720 reviewed: Missing: server ID, role ARN and typed LOCAL/PARTNER profile IDs; preserve server-qualified agreement ID. Follow-up #834. Missing: verified server agreement hierarchy in #834; shared profiles are referenced, not embedded. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #834. Exact server ID ownership, IAM role ARN and typed LOCAL/PARTNER profile_id references. Server-qualified agreement identity remains independent. See aws.md#transfer-as2-and-connectors-834.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24658,7 +24658,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 834,
-      "gap": "#720 reviewed: Missing: IAM roles, typed AS2 profiles, SFTP secret name/ARN and VPC Lattice resource-configuration ARN. URL and trusted_host_keys are not endpoint provenance. Follow-up #834. Missing: current Logical connector is an independent transfer endpoint; review Spatial presentation in #834. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #834. Independent Spatial endpoint with IAM roles, typed AS2 profiles, SFTP secret name/ARN and VPC Lattice resource-configuration ARN references. AS2/SFTP singleton modes are exclusive; Lattice egress requires SFTP and null URL, without target-VPC containment. See aws.md#transfer-as2-and-connectors-834.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",

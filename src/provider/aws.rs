@@ -138,6 +138,7 @@ mod step_functions_tests;
 mod streaming;
 pub(crate) mod synthetics;
 pub(crate) mod traffic_mirror;
+pub(crate) mod transfer_as2;
 pub(crate) mod transfer_identity;
 pub(crate) mod transfer_server;
 pub(crate) mod vpclattice;

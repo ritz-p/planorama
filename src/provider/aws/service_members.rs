@@ -18,6 +18,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             kind if super::transfer_identity::owner(kind).is_some() => {
                 super::transfer_identity::owner(kind).unwrap()
             }
+            "aws_transfer_agreement" => ("server_id", "Agreement server", "Agreements"),
             "aws_acmpca_permission" => {
                 ("certificate_authority_arn", "Permission CA", "Permissions")
             }
