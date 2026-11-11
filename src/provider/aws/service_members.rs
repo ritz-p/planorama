@@ -15,6 +15,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            "aws_acmpca_permission" => {
+                ("certificate_authority_arn", "Permission CA", "Permissions")
+            }
+            "aws_acmpca_policy" => ("resource_arn", "Policy CA", "Policies"),
             "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
             kind if super::glue_catalog::owner(kind).is_some() => {
                 if kind == "aws_glue_schema"

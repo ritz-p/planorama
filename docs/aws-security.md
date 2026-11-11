@@ -59,6 +59,35 @@ and [installation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.1
 contracts were checked against the installed schema and a Terraform 1.9.8
 offline plan.
 
+### Private CA permissions, policies and CRL storage (#1131)
+
+The pinned Provider 6.70.0
+[authority](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/acmpca_certificate_authority.html.markdown),
+[permission](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/acmpca_permission.html.markdown)
+and [policy](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/acmpca_policy.html.markdown)
+SDK contracts add these managed references:
+
+| Consumer | Configured input | Verified output |
+| --- | --- | --- |
+| Authority | `revocation_configuration.crl_configuration.s3_bucket_name` | S3 bucket `id` / `bucket`, only when CRL `enabled` is known true |
+| Permission | `certificate_authority_arn` | Authority `arn` |
+| Policy | `resource_arn` | Authority `arn` |
+
+Both revocation and CRL blocks must be singleton lists. Inputs are scalar strings,
+with unique explicit Terraform references and exact known output equality. Every
+endpoint must be current, managed and compatible in provider/account/region/state.
+Unknown, disabled, malformed, literal-only, ambiguous, deleted or deposed evidence
+keeps unresolved fallback; filtered owners never create replacement identities.
+Cross-region inference is not supported.
+
+Permissions and policies may be presented under their verified CA while retaining
+independent actions and exactly-once coverage. The CRL bucket stays independent;
+revocation configuration never owns the bucket or makes the CA a network container.
+Existing CA, certificate issuance and installation contracts remain unchanged.
+`principal`, `source_account`, policy bodies, certificate subjects, DNS/CNAMEs and
+URLs do not identify additional resources or imply permissions or revocation health.
+Runtime support defaults use `scripts/update-resource-support.sh aws_acmpca_`.
+
 ## Cognito
 
 `aws_cognito_user_pool`, `aws_cognito_user_pool_client` and
