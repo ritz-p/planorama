@@ -126,6 +126,48 @@ fn serverless_direct_references_reject_incomplete_and_incompatible_evidence() {
     }
 }
 #[test]
+fn serverless_direct_references_reject_sensitive_evidence() {
+    for (target, source, path, output) in [
+        (3, 0, "collection_group_name", "name"),
+        (3, 1, "encryption_config.kms_key_arn", "arn"),
+        (4, 2, "iam_identity_center_options.instance_arn", "arns"),
+    ] {
+        for planned in [false, true] {
+            for source_mask in [false, true] {
+                for whole in [false, true] {
+                    let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
+                    let index = if source_mask { source } else { target };
+                    let mask = if whole {
+                        json!(true)
+                    } else if source_mask {
+                        json!({output: if output == "arns" { json!([true]) } else { json!(true) }})
+                    } else if let Some((block, field)) = path.split_once('.') {
+                        json!({block:[{field:true}]})
+                    } else {
+                        json!({path:true})
+                    };
+                    if planned {
+                        v["planned_values"] = json!({"root_module":{"resources":[{
+                            "address":v["resource_changes"][index]["address"],
+                            "mode":v["resource_changes"][index]["mode"],
+                            "type":v["resource_changes"][index]["type"],
+                            "provider_name":v["resource_changes"][index]["provider_name"],
+                            "values":v["resource_changes"][index]["change"]["after"],
+                            "sensitive_values":mask
+                        }]}});
+                    } else {
+                        v["resource_changes"][index]["change"]["after_sensitive"] = mask;
+                    }
+                    assert!(
+                        !complete(&v, target, path),
+                        "{path} planned={planned} source={source_mask} whole={whole}"
+                    );
+                }
+            }
+        }
+    }
+}
+#[test]
 fn serverless_discriminators_and_singleton_shapes_are_required() {
     for case in [
         "aws-owned",
