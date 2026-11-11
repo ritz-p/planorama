@@ -938,3 +938,38 @@ The source contracts are `website/docs/r/glue_*.html.markdown` and the matching
 `internal/service/glue/*.go` files for the nine consumer types above at the pinned
 revision. Runtime support defaults are generated with
 `scripts/update-resource-support.sh aws_glue_`.
+
+## Glue connections and development endpoints (#846)
+
+The pinned Provider 6.70.0
+[connection](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/glue_connection.html.markdown)
+and [development endpoint](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/glue_dev_endpoint.html.markdown)
+SDK schemas define these configured references:
+
+| Resource | Input | Managed output |
+| --- | --- | --- |
+| Connection | `physical_connection_requirements.subnet_id` | Subnet `id` (scalar) |
+| Connection | `physical_connection_requirements.security_group_id_list` | Complete Security Group `id` set |
+| Connection | `authentication_configuration.kms_key_arn` / `secret_arn` | Supported KMS key `arn` / Secrets Manager secret `arn` |
+| Development endpoint | `subnet_id` / `security_group_ids` | Subnet `id` / complete Security Group `id` set |
+| Development endpoint | `role_arn` | IAM role `arn`, with compatible global role scope |
+| Development endpoint | `security_configuration` | Glue security configuration `name` |
+
+Connection physical/authentication blocks must be singleton lists. Authentication
+references require known `BASIC`, `CUSTOM`, `IAM` or `OAUTH2` type. Connection type
+does not change the meaning of these explicit network inputs. Both network paths
+must resolve completely and independently prove the same VPC before adding VPC
+context. Optional connection availability zone only corroborates the referenced
+subnet; an unknown or mismatched zone suppresses VPC context. Development endpoint
+computed `vpc_id`, when present, must corroborate that proof and never selects a VPC.
+
+Development endpoints have independent Spatial cards; connections remain reusable
+Logical resources. Neither relationship implies ownership, and a connection's
+network never relocates its consumers. IPs, URLs, connection properties, credential
+maps, arguments, key material and script/library paths remain opaque.
+
+Typed links require unique explicit Terraform references, exact known output
+values, current managed identities and compatible provider/account/region/state
+bindings. Unknown, partial, duplicate, malformed or historical evidence retains
+conservative fallback. Filtering preserves each resource's independent action
+and coverage. Runtime defaults use `scripts/update-resource-support.sh aws_glue_`.

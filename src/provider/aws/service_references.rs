@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::glue_network::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::glue_catalog::label(resource, attribute) {
         return Some(label);
     }
@@ -815,6 +818,7 @@ pub(crate) fn annotate(
     super::serverless_references::annotate(nodes, references, evidence);
     super::osis::annotate(nodes, references, evidence);
     super::glue_catalog::annotate(nodes, references, evidence);
+    super::glue_network::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -852,6 +856,7 @@ pub(crate) fn annotate(
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::glue_catalog::bindings(raw, reference)
+        && super::glue_network::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

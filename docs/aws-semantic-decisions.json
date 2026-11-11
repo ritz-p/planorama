@@ -25989,10 +25989,10 @@
       }
     },
     "aws_glue_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 846,
-      "gap": "#722 reviewed: Missing: subnet/SG, authentication KMS and secret ARN references; connection_properties/URLs and credential maps excluded. Follow-up #846.",
+      "gap": "#722 follow-up implemented #846: Verified singleton physical subnet/complete SG set and typed authentication KMS/secret ARN references. Common-VPC context requires explicit member proof and optional AZ corroboration; shared consumers are never relocated. See aws-data.md#glue-connections-and-development-endpoints-846.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26182,10 +26182,10 @@
       }
     },
     "aws_glue_dev_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 846,
-      "gap": "#722 reviewed: Missing: role ARN, security-configuration name and configured subnet/SG references; computed vpc_id/IPs are not configured proof. Follow-up #846.",
+      "gap": "#722 follow-up implemented #846: Independent Spatial endpoint with verified role ARN, security-configuration name and scalar subnet/complete SG set. Computed VPC ID only corroborates common-VPC proof; addresses and library paths remain opaque. See aws-data.md#glue-connections-and-development-endpoints-846.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

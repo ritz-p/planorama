@@ -292,6 +292,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_glue_schema"
                 | "aws_glue_registry"
                 | "aws_glue_connection"
+                | "aws_glue_dev_endpoint"
+                | "aws_glue_security_configuration"
                 | "aws_glue_user_defined_function"
                 | "aws_osis_pipeline"
                 | "aws_osis_pipeline_endpoint"
