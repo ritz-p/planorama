@@ -24298,7 +24298,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 833,
-      "gap": "#720 reviewed: Missing: server ID and IAM role ARN; external_id is directory group SID, not Terraform external ID. Home-directory strings/policies cannot identify S3/EFS ownership. Follow-up #833. Missing: verified server-owned identity in #833, without exposing POSIX/home directory/policy content. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #833. Exact managed server ID ownership and global-compatible IAM role ARN references. Helpers retain independent action/coverage and filtered fallback; keys, home directories, policies and tag values remain opaque. See aws.md#transfer-identities-keys-and-tags-833.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24344,7 +24344,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 833,
-      "gap": "#720 reviewed: Missing: server ID and IAM role ARN; user_name is server-qualified, not globally unique. Home-directory strings/policies cannot identify S3/EFS ownership. Follow-up #833. Missing: verified server-owned identity in #833, without exposing POSIX/home directory/policy content. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #833. Exact managed server ID ownership and global-compatible IAM role ARN references. Helpers retain independent action/coverage and filtered fallback; keys, home directories, policies and tag values remain opaque. See aws.md#transfer-identities-keys-and-tags-833.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24390,7 +24390,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 833,
-      "gap": "#720 reviewed: Missing: verified server ID owner; host_key_id distinct from server-qualified Terraform identity. Private key, write-only body and fingerprint excluded. Follow-up #833. Missing: verified server key helper in #833; never display key body. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #833. Exact managed server ID ownership. Helpers retain independent action/coverage and filtered fallback; keys, home directories, policies and tag values remain opaque. See aws.md#transfer-identities-keys-and-tags-833.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24431,7 +24431,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 833,
-      "gap": "#720 reviewed: Missing: matching server ID AND user_name; same username across servers cannot select an owner. Public key body excluded. Follow-up #833. Missing: server-qualified user ownership in #833; preserve key identity. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #833. Server-qualified user ownership requires matching verified server ID AND user_name references. Helpers retain independent action/coverage and filtered fallback; keys, home directories, policies and tag values remain opaque. See aws.md#transfer-identities-keys-and-tags-833.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24472,7 +24472,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 833,
-      "gap": "#720 reviewed: Missing: verified compatible Transfer resource_arn owner; composite id is not parsed and tag value is not displayed. Follow-up #833. Missing: verified Transfer resource helper in #833; no arbitrary ARN owner. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #833. Exact managed taggable Transfer resource ARN ownership; arbitrary ARN targets are excluded. Helpers retain independent action/coverage and filtered fallback; keys, home directories, policies and tag values remain opaque. See aws.md#transfer-identities-keys-and-tags-833.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
