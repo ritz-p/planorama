@@ -1,0 +1,271 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_redshift_cluster.main",
+      "type": "aws_redshift_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_cluster_snapshot.history",
+      "type": "aws_redshift_cluster_snapshot",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "snapshot_identifier": "history",
+          "cluster_identifier": "warehouse",
+          "owner_account": "123456789012",
+          "kms_key_id": "PRIVATE_COMPUTED_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_snapshot_schedule.daily",
+      "type": "aws_redshift_snapshot_schedule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "daily",
+          "definitions": [
+            "PRIVATE_SCHEDULE"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_snapshot_schedule_association.daily",
+      "type": "aws_redshift_snapshot_schedule_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "warehouse",
+          "schedule_identifier": "daily"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.copy",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "example",
+          "key_id": "example",
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/example"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_snapshot_copy_grant.west",
+      "type": "aws_redshift_snapshot_copy_grant",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "snapshot_copy_grant_name": "west",
+          "kms_key_id": "arn:aws:kms:us-west-2:123456789012:key/example"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_snapshot_copy.west",
+      "type": "aws_redshift_snapshot_copy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_identifier": "warehouse",
+          "destination_region": "us-west-2",
+          "snapshot_copy_grant_name": "west"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_namespace.lake",
+      "type": "aws_redshiftserverless_namespace",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "namespace_name": "lake"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_snapshot.history",
+      "type": "aws_redshiftserverless_snapshot",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "snapshot_name": "history",
+          "namespace_name": "lake",
+          "namespace_arn": "PRIVATE_NAMESPACE",
+          "kms_key_id": "PRIVATE_KEY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_redshift_cluster.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_cluster_snapshot.history",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.main.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_snapshot_schedule.daily",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_snapshot_schedule_association.daily",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.main.cluster_identifier"
+              ]
+            },
+            "schedule_identifier": {
+              "references": [
+                "aws_redshift_snapshot_schedule.daily.identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.copy",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_snapshot_copy_grant.west",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.copy.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_snapshot_copy.west",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.main.cluster_identifier"
+              ]
+            },
+            "snapshot_copy_grant_name": {
+              "references": [
+                "aws_redshift_snapshot_copy_grant.west.snapshot_copy_grant_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshiftserverless_namespace.lake",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshiftserverless_snapshot.history",
+          "provider_config_key": "aws",
+          "expressions": {
+            "namespace_name": {
+              "references": [
+                "aws_redshiftserverless_namespace.lake.namespace_name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

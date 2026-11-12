@@ -791,3 +791,31 @@ Selection removes placement if its supporting group, subnet or SG evidence is hi
 All references require current managed endpoints, known matching values, unique
 explicit provenance and compatible provider/region/state evidence. Sensitive values
 cannot supply proof. Snapshots and reusable configuration never inherit cluster VPCs.
+
+## Redshift snapshots, copying and schedules (#851)
+
+Cluster snapshots verify configured `cluster_identifier` against the managed
+cluster's exact identifier. Serverless snapshots similarly verify `namespace_name`
+against the managed namespace. Both remain independent historical resources;
+computed owner, KMS and namespace-ARN outputs do not create configured encryption
+references or inherit a live source's VPC placement.
+
+Snapshot-copy helpers verify their source `cluster_identifier` and can navigate to
+that cluster. Their `snapshot_copy_grant_name` matches the destination grant's exact
+name only when known `destination_region` matches the grant's effective region and
+provider accounts are compatible. The qualifier never changes the helper's own
+region. Cross-alias references require independently verified account evidence;
+JSON-only inputs with unproven accounts retain generic fallback.
+
+Copy grants remain reusable independent resources. Explicit `kms_key_id` references
+accept managed KMS key `id`, `key_id` or `arn`; optional/computed default values do
+not manufacture a reference. A foreign-account key requires an ARN whose account
+and region agree with independently verified source scope; a key ID cannot qualify
+another account. The key and grant must have the same effective region.
+
+Schedule associations verify `cluster_identifier` and `schedule_identifier`, the
+latter against `aws_redshift_snapshot_schedule.identifier`. Associations retain
+identity and cluster-owner navigation; schedules remain independent and schedule
+expressions stay opaque. All paths require unique explicit provenance, exact known
+scalar values, current managed endpoints and compatible provider/state boundaries.
+Unknown, sensitive, malformed, deleted/deposed or filtered evidence preserves fallback.
