@@ -27505,7 +27505,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 851,
-      "gap": "#722 reviewed: Missing: explicit source cluster identifier; computed KMS/owner corroborate historical snapshot only, not configured encryption links. Snapshot never inherits cluster VPC. Follow-up #851.",
+      "gap": "#722 reviewed: #851 adds exact configured snapshot source, copy/grant/key or schedule references as applicable. Destination region qualifies only the grant; foreign-account KMS keys require ARN and verified scope. Snapshots, grants and schedules remain independent; computed historical fields and omitted defaults do not create links. Unknown/sensitive/incompatible evidence retains fallback.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27554,7 +27554,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 851,
-      "gap": "#722 reviewed: Missing: source cluster and destination-qualified grant name. destination_region qualifies grant, not source helper scope. Follow-up #851.",
+      "gap": "#722 reviewed: #851 adds exact configured snapshot source, copy/grant/key or schedule references as applicable. Destination region qualifies only the grant; foreign-account KMS keys require ARN and verified scope. Snapshots, grants and schedules remain independent; computed historical fields and omitted defaults do not create links. Unknown/sensitive/incompatible evidence retains fallback.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27593,7 +27593,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 851,
-      "gap": "#722 reviewed: Missing: explicitly configured KMS ID/ARN; optional/computed default key cannot manufacture reference. Reusable destination grant remains independent. Follow-up #851.",
+      "gap": "#722 reviewed: #851 adds exact configured snapshot source, copy/grant/key or schedule references as applicable. Destination region qualifies only the grant; foreign-account KMS keys require ARN and verified scope. Snapshots, grants and schedules remain independent; computed historical fields and omitted defaults do not create links. Unknown/sensitive/incompatible evidence retains fallback.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27673,7 +27673,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 851,
-      "gap": "#722 reviewed: Missing: exact cluster identifier and schedule identifier; preserve association identity and shared schedule. Follow-up #851.",
+      "gap": "#722 reviewed: #851 adds exact configured snapshot source, copy/grant/key or schedule references as applicable. Destination region qualifies only the grant; foreign-account KMS keys require ARN and verified scope. Snapshots, grants and schedules remain independent; computed historical fields and omitted defaults do not create links. Unknown/sensitive/incompatible evidence retains fallback.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28475,7 +28475,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 851,
-      "gap": "#722 reviewed: Missing: explicit namespace_name source; namespace_arn and kms_key_id are computed snapshot outputs, not configured references. Follow-up #851.",
+      "gap": "#722 reviewed: #851 adds exact configured snapshot source, copy/grant/key or schedule references as applicable. Destination region qualifies only the grant; foreign-account KMS keys require ARN and verified scope. Snapshots, grants and schedules remain independent; computed historical fields and omitted defaults do not create links. Unknown/sensitive/incompatible evidence retains fallback.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

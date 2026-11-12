@@ -21,6 +21,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_transfer_web_app_customization" => {
                 ("web_app_id", "Web app owner", "Customization")
             }
+            kind if super::redshift_snapshots::owner(kind).is_some() => {
+                super::redshift_snapshots::owner(kind).unwrap()
+            }
             "aws_redshift_cluster_iam_roles" => {
                 ("cluster_identifier", "IAM roles cluster", "IAM roles")
             }
