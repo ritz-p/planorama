@@ -1070,3 +1070,42 @@ CloudWatch Logs, S3 or Firehose. Destination ARNs require their exact managed ty
 Configured delivery does not establish runtime health. All paths reject unknown,
 sensitive, literal-only, ambiguous, incompatible, deleted/deposed or data-only
 endpoints. Named states, filtering and exactly-once coverage remain independent.
+
+## DataZone domains and catalog metadata (#860)
+
+Managed DataZone domains are independent architecture cards. Projects, asset/form
+types, glossaries and glossary terms retain Logical presentation and independent
+lifecycle coverage. Their ownership navigation is domain → project → catalog
+metadata, or glossary → term; none of these relationships is network containment.
+Data-source placement and identity remain separate.
+
+Domains verify `domain_execution_role` against an IAM role ARN, `service_role`
+against an IAM role ARN only with known `domain_version = V2`, and
+`kms_key_identifier` against a KMS key ARN. Computed root-domain-unit IDs, creator
+identities and portal URLs never synthesize managed resources.
+
+Projects verify `domain_identifier` against a domain ID and complete
+`glossary_terms` lists against managed term IDs in that same explicitly verified
+domain. Asset/form types and glossaries verify their owning project ID with an
+independently matching domain. Glossary terms verify their glossary ID; their
+`domain_identifier` is optional in the pinned schema. A known omission derives
+only domain qualification from the explicit glossary owner. A configured value
+must agree; unknown values or conflicting references retain fallback. No omitted
+domain relationship is fabricated.
+
+Asset `forms_input` is a set of entries with local, unique `map_block_key` aliases.
+`type_identifier` references form `name`, and `type_revision` references form
+`revision`. Each selected form needs a matching known name/revision pair and domain;
+when both fields contain references, they must select the same managed instance.
+A known literal revision can qualify an explicit form-name reference. Names alone,
+stale revisions and source values from another domain are insufficient. Smithy
+models and computed form imports are opaque.
+
+Term `term_relations` is a singleton list whose `classifies` and `is_a` members are
+complete term-ID sets. They verify same-domain taxonomy associations, including
+terms in different glossaries, without changing ownership. Every resource path
+requires unique explicit provenance, correct known outputs, current managed identity
+and compatible provider/account/region. Domain and glossary qualification also
+checks those boundaries; matching literal IDs cannot substitute for domain identity.
+Unknown/sensitive, ambiguous, incomplete, data-only, deleted/deposed, filtered and
+cross-state evidence retains conservative fallback.

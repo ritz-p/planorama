@@ -28978,10 +28978,10 @@
       }
     },
     "aws_datazone_domain": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: execution role, V2 service role and KMS ARN; root_domain_unit_id is computed service identity, not configured child. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29032,10 +29032,10 @@
       }
     },
     "aws_datazone_project": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain ID owner and complete domain-qualified glossary term IDs; created_by is not a configured principal. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29247,10 +29247,10 @@
       }
     },
     "aws_datazone_asset_type": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain/project and revision-qualified form type references; forms_input map_block_key is local alias, not form identity. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29313,10 +29313,10 @@
       }
     },
     "aws_datazone_form_type": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain/project owner; Smithy model and computed imports do not establish Terraform dependencies. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29357,10 +29357,10 @@
       }
     },
     "aws_datazone_glossary": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain/project owner; display names are not unique qualified IDs. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29396,10 +29396,10 @@
       }
     },
     "aws_datazone_glossary_term": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: glossary owner and domain-qualified term IDs; classifies/is_a are semantic taxonomy links, not resource containment. domain_identifier is optional in schema despite required docs. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

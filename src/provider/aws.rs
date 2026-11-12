@@ -45,6 +45,7 @@ mod database_events;
 mod database_snapshots;
 mod databases;
 mod datasync;
+pub(crate) mod datazone;
 mod dax;
 mod default_network;
 pub(super) mod diagnostics;
@@ -237,6 +238,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
             crate::model::Placement::Spatial
         }
+        "aws_datazone_domain" => crate::model::Placement::Spatial,
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
