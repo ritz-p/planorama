@@ -205,14 +205,15 @@ fn evaluators(
     {
         return None;
     }
-    let rows = value(e, r.target, "evaluator")?.as_array()?;
+    let rows = e[r.target].0["evaluator"].as_array()?;
     if !(1..=10).contains(&rows.len()) {
         return None;
     }
     let mut actual = BTreeSet::new();
     let mut builtins = 0;
-    for row in rows {
-        let id = row.as_object()?.get("evaluator_id")?.as_str()?;
+    for (i, row) in rows.iter().enumerate() {
+        row.as_object()?;
+        let id = string(e, r.target, &format!("evaluator.{i}.evaluator_id"))?;
         if !actual.insert(id) {
             return None;
         }

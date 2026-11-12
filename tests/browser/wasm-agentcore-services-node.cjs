@@ -5,11 +5,12 @@ const directory = process.argv[2] || 'output/wasm-engine';
 const binding = new Function(readFileSync(`${directory}/planorama.js`, 'utf8') + '\nreturn wasm_bindgen;')();
 binding.initSync({module: readFileSync(`${directory}/planorama_bg.wasm`), memory_budget_mib: 512});
 const native = require('../support/native-reference.cjs')(resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama'));
-for (const scenario of ['complete', 'reordered-set', 'unknown-evaluator', 'unknown-memory', 'filtered']) {
+for (const scenario of ['complete', 'set-mask', 'reordered-set', 'unknown-evaluator', 'unknown-memory', 'filtered']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/agentcore-services-plan.json', 'utf8'));
   if (scenario === 'reordered-set') plan.resource_changes[17].change.after.evaluator.reverse();
   if (scenario === 'unknown-evaluator') plan.resource_changes[17].change.after_unknown = {evaluator: [{}, {evaluator_id: true}, {}]};
   if (scenario === 'unknown-memory') plan.resource_changes[14].change.after_unknown = {id: true};
+  if (scenario === 'set-mask') plan.resource_changes[17].change.after_sensitive = {evaluator: [{}, {}, {}]};
   const input = JSON.stringify(plan);
   for (const format of ['svg', 'html']) {
     const options = {format, icon_mode: 'service-name'};

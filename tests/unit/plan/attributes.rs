@@ -470,3 +470,25 @@ fn module_input_references_are_resolved_without_copying_attribute_values() {
     assert_eq!(reference.sources, [vpc]);
     assert!(reference.complete);
 }
+#[test]
+fn root_null_constants_are_distinct_from_present_non_null_expressions() {
+    use serde_json::json;
+    let input = json!({"format_version":"1.2","resource_changes":[{"address":"terraform_data.consumer","type":"terraform_data"}],"configuration":{"root_module":{"resources":[{"address":"terraform_data.consumer","expressions":{
+        "null_input":{"constant_value":null},"string_input":{"constant_value":"PRIVATE_VALUE"},"variable_input":{"references":["var.target"]},"object_input":{"constant_value":{"constant_value":null}}
+    }}]}}});
+    let raw = plan::parse(&input.to_string()).unwrap();
+    for field in [
+        "null_input",
+        "string_input",
+        "variable_input",
+        "object_input",
+    ] {
+        let r = raw
+            .attributes
+            .iter()
+            .find(|r| r.attribute == field)
+            .unwrap();
+        assert_eq!(r.root_constant_null, field == "null_input");
+    }
+    assert!(!format!("{raw:?}").contains("PRIVATE_VALUE"));
+}

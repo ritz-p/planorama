@@ -525,3 +525,26 @@ fn agentcore_services_lifecycle_data_filters_named_states_and_personal_data_rema
         assert!(!o.content.contains("PRIVATE_"));
     }
 }
+#[test]
+fn agentcore_services_evaluator_set_masks_are_checked_per_identity_leaf() {
+    for mask in ["after_unknown", "after_sensitive"] {
+        for (m, expected) in [
+            (json!([{}, {}, {}]), true),
+            (json!([{"evaluator_id":false}, {}, {}]), true),
+            (json!([{"opaque":true}, {}, {}]), true),
+            (json!([{"evaluator_id":true}, {}, {}]), false),
+            (json!([{}, {"evaluator_id":true}, {}]), false),
+            (json!([{}, {}, {"evaluator_id":true}]), false),
+            (json!([{}, true, {}]), false),
+            (json!([{}]), false),
+        ] {
+            let mut v = fixture();
+            v["resource_changes"][17]["change"][mask] = json!({"evaluator":m});
+            assert_eq!(
+                verified(&v, 17, "evaluator.evaluator_id"),
+                expected,
+                "{mask} {m}"
+            );
+        }
+    }
+}

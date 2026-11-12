@@ -57,8 +57,8 @@ fn target_scope(
         return None;
     }
     let (account, region) = target_paths(&nodes[t].resource_type)?;
-    super::lambda_core::unique(refs, t, account)?;
-    super::lambda_core::unique(refs, t, region)?;
+    super::lambda_core::unique(refs, t, account).filter(|r| !r.root_constant_null)?;
+    super::lambda_core::unique(refs, t, region).filter(|r| !r.root_constant_null)?;
     let account = AwsAccountScope::new(string(e, t, account)?)?;
     let region = string(e, t, region)?;
     let parts: Vec<_> = region.split('-').collect();

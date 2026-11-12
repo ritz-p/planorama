@@ -204,8 +204,12 @@ fn form(
         return false;
     };
     let base = format!("forms_input.{index}");
-    if string(e, t, &format!("{base}.type_identifier")) != string(e, s, "name")
-        || string(e, t, &format!("{base}.type_revision")) != string(e, s, "revision")
+    if string(e, t, &format!("{base}.type_identifier"))
+        .zip(string(e, s, "name"))
+        .is_none_or(|(a, b)| a != b)
+        || string(e, t, &format!("{base}.type_revision"))
+            .zip(string(e, s, "revision"))
+            .is_none_or(|(a, b)| a != b)
     {
         return false;
     }

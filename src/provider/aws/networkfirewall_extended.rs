@@ -107,13 +107,22 @@ fn tgw_mode(v: &Value, m: &Value) -> bool {
         && known("transit_gateway_id")
             .and_then(Value::as_str)
             .is_some_and(|s| !s.is_empty())
-        && known("availability_zone_mapping")
-            .and_then(Value::as_array)
+        && v["availability_zone_mapping"]
+            .as_array()
             .is_some_and(|rows| {
                 !rows.is_empty() && {
                     let zones = rows
                         .iter()
-                        .map(|r| r["availability_zone_id"].as_str().filter(|z| !z.is_empty()))
+                        .enumerate()
+                        .map(|(i, _)| {
+                            super::nested_references::value(
+                                v,
+                                m,
+                                &format!("availability_zone_mapping.{i}.availability_zone_id"),
+                            )
+                            .and_then(Value::as_str)
+                            .filter(|z| !z.is_empty())
+                        })
                         .collect::<Option<std::collections::BTreeSet<_>>>();
                     zones.is_some_and(|z| z.len() == rows.len())
                 }
