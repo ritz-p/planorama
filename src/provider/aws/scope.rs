@@ -300,6 +300,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_glue_classifier"
                 | "aws_glue_trigger"
                 | "aws_glue_workflow"
+                | "aws_rolesanywhere_profile"
+                | "aws_rolesanywhere_trust_anchor"
                 | "aws_acmpca_permission"
                 | "aws_acmpca_policy"
                 | "aws_glue_user_defined_function"
