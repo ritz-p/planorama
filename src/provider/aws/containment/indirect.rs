@@ -117,6 +117,12 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         let Some(parent) = parent else {
             continue;
         };
+        if node.resource_type == "aws_redshift_cluster"
+            && static_reference(raw, target, attribute)
+                .is_none_or(|r| r.endpoint_network_context != [parent])
+        {
+            continue;
+        }
         if parent == target || raw.nodes[parent].role != ResourceRole::Container {
             continue;
         }
@@ -126,6 +132,16 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
                 .iter()
                 .map(|&source| crate::semantic::relationships::reference(&graph, source, group)),
         );
+        if node.resource_type == "aws_redshift_cluster" {
+            if let Some(groups) = static_reference(raw, target, "vpc_security_group_ids") {
+                proof.extend(groups.sources.iter().flat_map(|&s| {
+                    [
+                        crate::semantic::relationships::reference(&graph, parent, s),
+                        crate::semantic::relationships::reference(&graph, s, target),
+                    ]
+                }));
+            }
+        }
         proof.push(crate::semantic::relationships::reference(
             &graph, group, target,
         ));

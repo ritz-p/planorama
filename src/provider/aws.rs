@@ -112,6 +112,7 @@ pub(crate) mod profiles;
 pub(crate) mod query_logs;
 pub(crate) mod rds_auxiliary;
 mod rds_proxy;
+mod redshift_cluster;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;

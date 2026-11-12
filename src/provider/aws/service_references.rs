@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::redshift_cluster::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::transfer_webapp::label(resource, attribute) {
         return Some(label);
     }
@@ -840,6 +843,7 @@ pub(crate) fn annotate(
     super::glue_workloads::annotate(nodes, references, evidence);
     super::private_ca_references::annotate(nodes, references, evidence);
     super::rolesanywhere::annotate(nodes, references, evidence);
+    super::redshift_cluster::annotate(nodes, references, evidence);
     super::transfer_identity::annotate(nodes, references, evidence);
     super::transfer_as2::annotate(nodes, references, evidence);
     super::transfer_webapp::annotate(nodes, references, evidence);
@@ -884,6 +888,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::glue_workloads::bindings(raw, reference)
         && super::private_ca_references::bindings(raw, reference)
         && super::rolesanywhere::bindings(raw, reference)
+        && super::redshift_cluster::bindings(raw, reference)
         && super::transfer_identity::bindings(raw, reference)
         && super::transfer_as2::bindings(raw, reference)
         && super::transfer_webapp::bindings(raw, reference)

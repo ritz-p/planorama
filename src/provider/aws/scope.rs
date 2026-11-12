@@ -301,6 +301,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_glue_classifier"
                 | "aws_glue_trigger"
                 | "aws_glue_workflow"
+                | "aws_redshift_cluster_iam_roles"
                 | "aws_transfer_web_app_customization"
                 | "aws_transfer_access"
                 | "aws_transfer_user"
