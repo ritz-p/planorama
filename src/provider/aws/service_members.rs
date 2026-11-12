@@ -21,6 +21,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_transfer_web_app_customization" => {
                 ("web_app_id", "Web app owner", "Customization")
             }
+            "aws_redshift_cluster_iam_roles" => {
+                ("cluster_identifier", "IAM roles cluster", "IAM roles")
+            }
             "aws_transfer_agreement" => ("server_id", "Agreement server", "Agreements"),
             "aws_acmpca_permission" => {
                 ("certificate_authority_arn", "Permission CA", "Permissions")

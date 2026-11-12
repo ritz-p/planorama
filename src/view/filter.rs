@@ -50,7 +50,8 @@ fn placement_available(
     let node = &graph.nodes[child];
     if matches!(
         node.resource_type.as_str(),
-        "aws_docdb_cluster"
+        "aws_redshift_cluster"
+            | "aws_docdb_cluster"
             | "aws_neptune_cluster"
             | "aws_dms_replication_instance"
             | "aws_memorydb_cluster"

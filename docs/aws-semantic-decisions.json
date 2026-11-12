@@ -5781,7 +5781,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 850,
-      "gap": "#722 reviewed: Partial: #506 verified subnet/parameter names and complete SG ID collection retained (network.rs). Missing: IAM sets, default role and mode-gated KMS ARN (encrypted is string in schema), credential-key and qualified restore source. Restore owner_account belongs to source snapshot, not cluster scope. Follow-up #850.",
+      "gap": "#722 reviewed: #850 adds complete IAM ARN sets/default role, string-mode-gated KMS ARN and managed-credential key references, qualified snapshot restore and subnet/SG common-VPC coherence. Unknown, sensitive or incomplete evidence retains fallback; owner_account qualifies only the source snapshot.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27463,7 +27463,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 850,
-      "gap": "#722 reviewed: Missing: cluster identifier and complete role ARNs; do not duplicate inline iam_roles or interpret permissions. Follow-up #850.",
+      "gap": "#722 reviewed: #850 verifies cluster_identifier ownership and complete role ARN/default-role references. Roles remain independent; inline membership and permissions are not duplicated or inferred.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

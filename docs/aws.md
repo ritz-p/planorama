@@ -762,3 +762,32 @@ filtered fallback. Computed `application_arn`, `vpc_endpoint_id` and access endp
 never manufacture managed children. Titles, logos, favicons and URLs remain opaque.
 Unknown, malformed, literal-only, partial, foreign and deleted/deposed evidence
 keeps safe fallback without inferring runtime access or network reachability.
+
+## Provisioned Redshift cluster extensions (#850)
+
+The pinned Provider 6.70.0 cluster contract uses a string `encrypted` discriminator.
+Cluster `iam_roles` and helper `iam_role_arns` require complete explicit IAM role
+ARN sets; `default_iam_role_arn` requires one exact role ARN. Roles remain global,
+independent resources. The IAM helper's `cluster_identifier` verifies the managed
+cluster's `cluster_identifier` and supplies owner navigation without duplicating
+inline role management or inferring permissions.
+
+Cluster `kms_key_id` accepts a managed key ARN only with known `encrypted = "true"`.
+`master_password_secret_kms_key_id` verifies a managed key's `key_id` or `arn` only
+with known `manage_master_password = true`. Credentials remain opaque.
+
+Restore `snapshot_arn` / `snapshot_identifier` are exclusive and match the exact
+managed snapshot output. A configured `snapshot_cluster_identifier` must match the
+snapshot's source cluster identifier. `owner_account` qualifies the snapshot and
+must agree with its known owner and independently verified provider account; it
+never changes cluster scope. Without that qualifier, ordinary same-account
+bindings apply. Unknown selectors, unverified cross-account inputs and computed
+outputs alone retain generic fallback.
+
+VPC placement retains the verified subnet-group path and additionally requires a
+complete explicit security-group ID set with verified VPC parents agreeing with
+all group subnets. Missing, partial or cross-VPC evidence leaves the cluster regional.
+Selection removes placement if its supporting group, subnet or SG evidence is hidden.
+All references require current managed endpoints, known matching values, unique
+explicit provenance and compatible provider/region/state evidence. Sensitive values
+cannot supply proof. Snapshots and reusable configuration never inherit cluster VPCs.
