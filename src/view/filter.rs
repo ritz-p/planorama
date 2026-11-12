@@ -54,6 +54,8 @@ fn placement_available(
             | "aws_imagebuilder_infrastructure_configuration"
             | "aws_networkfirewall_vpc_endpoint_association"
             | "aws_networkmonitor_probe"
+            | "aws_directory_service_directory"
+            | "aws_directory_service_region"
             | "aws_redshift_endpoint_access"
             | "aws_docdb_cluster"
             | "aws_neptune_cluster"

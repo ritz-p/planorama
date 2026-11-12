@@ -60751,10 +60751,10 @@
       }
     },
     "aws_directory_service_directory": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: type-gated complete vpc_settings/connect_settings VPC and subnet references; computed SG output does not synthesize an SG. Not applicable: independent directory, not an IAM identity or a DC instance. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60854,10 +60854,10 @@
       }
     },
     "aws_directory_service_conditional_forwarder": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. DNS/IP strings do not identify a remote directory. Missing: directory-owned conditional_forwarder helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60910,10 +60910,10 @@
       }
     },
     "aws_directory_service_directory_setting": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. Setting value is arbitrary configuration, not a resource ID. Missing: directory-owned directory_setting helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60968,10 +60968,10 @@
       }
     },
     "aws_directory_service_ip_route": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. CIDR route content is not a destination resource identity. Missing: directory-owned ip_route helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61021,10 +61021,10 @@
       }
     },
     "aws_directory_service_ip_routes_exclusive": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. Complete exclusive route set is not remote network ownership. Missing: directory-owned ip_routes_exclusive helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61069,10 +61069,10 @@
       }
     },
     "aws_directory_service_radius_settings": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. RADIUS server strings and shared secret do not identify managed compute. Missing: directory-owned radius_settings helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61125,10 +61125,10 @@
       }
     },
     "aws_directory_service_trust": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. Remote domain and trust state are not verified remote directory identity; trust password excluded. Missing: directory-owned trust helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61183,10 +61183,10 @@
       }
     },
     "aws_directory_service_log_subscription": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory.id owner and log_group_name -> CloudWatch log group.name with exact output equality. Missing: directory-owned log subscription; configured delivery is not health. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61231,10 +61231,10 @@
       }
     },
     "aws_directory_service_region": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: primary directory.id and target region VPC/subnets; region_name is deployment region, distinct from API control region. Missing: directory-owned additional-region helper; preserve independent region lifecycle. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61294,10 +61294,10 @@
       }
     },
     "aws_directory_service_shared_directory": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: owner directory.id and target.id -> Organizations account.id only with ACCOUNT discriminator; shared_directory_id belongs to recipient account. Not applicable: sharing association between independent accounts; no recipient directory synthesis. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61359,10 +61359,10 @@
       }
     },
     "aws_directory_service_shared_directory_accepter": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: recipient shared_directory_id -> explicit sharing resource.shared_directory_id with independent owner/recipient account proof; owner_directory_id output is not configured ownership. Not applicable: acceptance has recipient identity and lifecycle; no same-account shortcut. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61412,10 +61412,10 @@
       }
     },
     "aws_directoryservicedata_group": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id; sam_account_name is directory-scoped and SID is not an Identity Store ID. Missing: directory-owned group identity; personal attributes/credentials excluded. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61465,10 +61465,10 @@
       }
     },
     "aws_directoryservicedata_user": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id; sam_account_name is directory-scoped and SID is not an Identity Store ID. Missing: directory-owned user identity; personal attributes/credentials excluded. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",

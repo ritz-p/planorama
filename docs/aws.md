@@ -983,3 +983,36 @@ network context, removed when its evidence is missing, incompatible or filtered.
 The monitor receives no subnet containment. Both monitor and probe retain Logical
 presentation. Destination IP addresses, agent status, packet settings, measured
 health and reachability never supply inferred endpoints or summaries.
+
+## Directory Service and Directory Service Data (#1140)
+
+Directory Service resources retain Logical presentation and independent action
+coverage. Directory `type` selects singleton `vpc_settings` for SimpleAD/MicrosoftAD
+or `connect_settings` for ADConnector. Exact VPC IDs and complete subnet-ID sets
+require explicit current managed outputs, compatible bindings and a common VPC
+proven by every subnet. Unknown, ambiguous or mismatched blocks retain fallback.
+Computed `security_group_id`, DNS/IP matches and credentials never create resources.
+
+Conditional forwarders, directory settings, routes/exclusive route sets, RADIUS,
+trusts, log subscriptions, additional regions and Directory Service Data users/groups
+verify `directory_id` against the directory's `id` for owner navigation. Log
+subscriptions separately verify `log_group_name` against the log group's `name`.
+Users/groups are directory identities; SID and account names do not identify IAM
+or Identity Store resources. Personal attributes, passwords, secrets, DNS settings,
+route contents and remote domains are excluded from relationship inference.
+
+Additional-region helpers require a MicrosoftAD primary directory. `region_name`
+qualifies their complete `vpc_settings` destination network while the helper keeps
+its API control region and independent lifecycle. The primary directory's VPC is
+never inherited. Network context requires independently compatible account and
+region evidence and disappears when supporting resources are filtered.
+
+Shared directories verify the MicrosoftAD owner directory and singleton
+`target.id` against an Organizations account ID only with `target.type = ACCOUNT`.
+They remain independent sharing associations. Accepters verify the sharing
+resource's `shared_directory_id` output, not its `id` or computed owner outputs.
+The sharing resource's provider account and the accepter's provider account must
+be independently known, distinct, in the same control region, and match the
+configured recipient. No recipient directory or owner relationship is synthesized.
+Literal-only, unknown/sensitive, ambiguous, data-only, deleted/deposed, incompatible
+or cross-state endpoints retain conservative fallback.
