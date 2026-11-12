@@ -447,3 +447,30 @@ fn networkfirewall_extended_named_states_filter_and_outputs_keep_safe_identity()
         assert!(!output.content.contains("PRIVATE_"));
     }
 }
+#[test]
+fn networkfirewall_extended_az_masks_are_checked_per_identity_leaf() {
+    for mask in ["after_unknown", "after_sensitive"] {
+        for (m, expected) in [
+            (json!([{}, {}]), true),
+            (
+                json!([{"availability_zone_id":false}, {"availability_zone_id":false}]),
+                true,
+            ),
+            (json!([{"opaque":true}, {}]), true),
+            (json!([{"availability_zone_id":true}, {}]), false),
+            (json!([{}, {"availability_zone_id":true}]), false),
+            (json!([{}, true]), false),
+            (json!([{}]), false),
+            (json!(true), false),
+        ] {
+            let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
+            v["resource_changes"][16]["change"][mask] = json!({"availability_zone_mapping":m});
+            for (t, p) in [
+                (16, "transit_gateway_id"),
+                (18, "transit_gateway_attachment_id"),
+            ] {
+                assert_eq!(verified(&v, t, p), expected, "{mask} {m} {p}");
+            }
+        }
+    }
+}

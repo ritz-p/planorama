@@ -13,6 +13,7 @@ type IndexedExpressionPaths = BTreeMap<String, (BTreeSet<String>, bool, Vec<usiz
 struct ResourceExpressions {
     attributes: ExpressionPaths,
     indexed: IndexedExpressionPaths,
+    root_nulls: BTreeSet<String>,
 }
 
 #[cfg(test)]
@@ -108,6 +109,7 @@ pub(super) fn collect(
                     target,
                     attribute: attribute.clone(),
                     has_references: !refs.is_empty(),
+                    root_constant_null: attributes.root_nulls.contains(attribute),
                     sources: resolution.sources,
                     complete: resolution.complete && *structurally_complete,
                     instances_explicit: resolution.instances_explicit,
@@ -164,6 +166,13 @@ fn collect_expressions(
             for (name, expression) in resource["expressions"].as_object().into_iter().flatten() {
                 if graph_only {
                     continue;
+                }
+                if expression
+                    .as_object()
+                    .is_some_and(super::references::expression_object)
+                    && expression.get("constant_value").is_some_and(Value::is_null)
+                {
+                    resource_expressions.root_nulls.insert(name.clone());
                 }
                 let mut refs = BTreeSet::new();
                 references(expression, &mut refs);
