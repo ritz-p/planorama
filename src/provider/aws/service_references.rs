@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::network_monitors::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::networkfirewall_extended::label(resource, attribute) {
         return Some(label);
     }
@@ -867,6 +870,7 @@ pub(crate) fn annotate(
     super::imagebuilder::annotate(nodes, references, evidence);
     super::imagebuilder_distribution::annotate(nodes, references, evidence);
     super::networkfirewall_extended::annotate(nodes, references, evidence);
+    super::network_monitors::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -917,6 +921,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::imagebuilder::bindings(raw, reference)
         && super::imagebuilder_distribution::bindings(raw, reference)
         && super::networkfirewall_extended::bindings(raw, reference)
+        && super::network_monitors::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1536,7 +1541,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::networkfirewall_extended::indexed(&node.resource_type, &reference.attribute)
+        if super::network_monitors::indexed(&node.resource_type, &reference.attribute)
+            || super::networkfirewall_extended::indexed(&node.resource_type, &reference.attribute)
             || super::imagebuilder_distribution::indexed(&node.resource_type, &reference.attribute)
             || super::imagebuilder::indexed(&node.resource_type, &reference.attribute)
             || super::s3vectors::indexed(&node.resource_type, &reference.attribute)

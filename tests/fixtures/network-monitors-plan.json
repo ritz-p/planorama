@@ -1,0 +1,330 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main",
+          "arn": "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "arn": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_cluster.main",
+      "type": "aws_eks_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:eks:us-east-1:123456789012:cluster/main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkflowmonitor_scope.main",
+      "type": "aws_networkflowmonitor_scope",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scope_arn": "arn:aws:networkflowmonitor:us-east-1:123456789012:scope/main",
+          "scope_id": "scope-main",
+          "target": [
+            {
+              "region": "us-east-1",
+              "target_identifier": [
+                {
+                  "target_type": "ACCOUNT",
+                  "target_id": [
+                    {
+                      "account_id": "123456789012"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "region": "us-east-1",
+              "target_identifier": [
+                {
+                  "target_type": "ACCOUNT",
+                  "target_id": [
+                    {
+                      "account_id": "999999999999"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkflowmonitor_monitor.main",
+      "type": "aws_networkflowmonitor_monitor",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "monitor_name": "flow",
+          "scope_arn": "arn:aws:networkflowmonitor:us-east-1:123456789012:scope/main",
+          "local_resource": [
+            {
+              "type": "AWS::EC2::VPC",
+              "identifier": "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-main"
+            },
+            {
+              "type": "AWS::EC2::Subnet",
+              "identifier": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-main"
+            },
+            {
+              "type": "AWS::EKS::Cluster",
+              "identifier": "arn:aws:eks:us-east-1:123456789012:cluster/main"
+            }
+          ],
+          "remote_resource": [
+            {
+              "type": "AWS::EC2::VPC",
+              "identifier": "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-main"
+            },
+            {
+              "type": "AWS::EC2::Subnet",
+              "identifier": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-main"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkmonitor_monitor.main",
+      "type": "aws_networkmonitor_monitor",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "monitor_name": "network",
+          "arn": "arn:aws:networkmonitor:us-east-1:123456789012:monitor/network",
+          "aggregation_period": 60
+        }
+      }
+    },
+    {
+      "address": "aws_networkmonitor_probe.main",
+      "type": "aws_networkmonitor_probe",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "monitor_name": "network",
+          "source_arn": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-main",
+          "destination": "192.0.2.1",
+          "protocol": "TCP",
+          "port": 443,
+          "packet_size": 56
+        }
+      }
+    },
+    {
+      "address": "aws_instance.unrelated",
+      "type": "aws_instance",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "i-unrelated",
+          "private_ip": "192.0.2.1",
+          "user_data": "PRIVATE_USER_DATA"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.selector",
+      "type": "aws_organizations_account",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "999999999999",
+          "name": "selector",
+          "email": "PRIVATE_EMAIL"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eks_cluster.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkflowmonitor_scope.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkflowmonitor_monitor.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "scope_arn": {
+              "references": [
+                "aws_networkflowmonitor_scope.main.scope_arn"
+              ]
+            },
+            "local_resource": [
+              {
+                "identifier": {
+                  "references": [
+                    "aws_vpc.main.arn"
+                  ]
+                }
+              },
+              {
+                "identifier": {
+                  "references": [
+                    "aws_subnet.main.arn"
+                  ]
+                }
+              },
+              {
+                "identifier": {
+                  "references": [
+                    "aws_eks_cluster.main.arn"
+                  ]
+                }
+              }
+            ],
+            "remote_resource": [
+              {
+                "identifier": {
+                  "references": [
+                    "aws_vpc.main.arn"
+                  ]
+                }
+              },
+              {
+                "identifier": {
+                  "references": [
+                    "aws_subnet.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkmonitor_monitor.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmonitor_probe.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "monitor_name": {
+              "references": [
+                "aws_networkmonitor_monitor.main.monitor_name"
+              ]
+            },
+            "source_arn": {
+              "references": [
+                "aws_subnet.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_instance.unrelated",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.selector",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

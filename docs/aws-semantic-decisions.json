@@ -14911,7 +14911,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: scope_arn -> scope output; typed VPC/subnet/EKS selectors require exact endpoint contracts; AZ/Region selectors are not resources. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: exact scope_arn and complete type-discriminated local/remote resource ARN collections. EKS is local-only in pinned SDK; AZ/Region/service selectors remain opaque and do not create endpoints. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14961,7 +14961,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: No direct managed endpoint from account ID; scope_arn is incoming monitor endpoint. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: retain Logical independent control scope and typed incoming scope_arn identity. Target account/region selectors do not establish Organizations relationships, ownership or health. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15765,7 +15765,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: No outgoing endpoint; incoming probe monitor_name requires explicit reference to monitor_name output. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: retain Logical independent identity and monitor_name output for explicit probe references; monitored subnets never place the monitor. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15799,7 +15799,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: Explicit monitor_name and subnet source_arn; destination IP cannot reconstruct an endpoint. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: explicit monitor_name owner navigation and source subnet ARN proof with separate common-VPC context. Preserve independent lifecycle; destination IP never identifies a managed endpoint. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",

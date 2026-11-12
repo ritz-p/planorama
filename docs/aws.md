@@ -951,3 +951,35 @@ be mixed. Provider shapes are singleton rule-group/reference-set lists, an IP-se
 reference set and nested IP-set-reference lists. Rules, CIDRs, filters, TLS material
 and KMS key/alias settings are not interpreted. Existing VPC firewall, rule-group
 policy and logging contracts remain separate.
+
+## Network Flow Monitor and Network Monitor (#793)
+
+`aws_networkflowmonitor_monitor.scope_arn` verifies the exact managed
+`aws_networkflowmonitor_scope.scope_arn` output. Complete `local_resource` and
+`remote_resource` sets verify `identifier` against managed VPC/subnet ARNs, selected
+by `type = AWS::EC2::VPC` / `AWS::EC2::Subnet`. Local sets additionally accept
+`AWS::EKS::Cluster` with a managed EKS cluster ARN. Provider 6.70.0 pins SDK
+Network Flow Monitor 1.19.4: its remote-resource enum excludes EKS, despite the
+provider documentation's combined local/remote description.
+
+Availability Zone, Region and AWS-service selectors are non-resource scope. A
+collection containing these selectors, unsupported types, unknown/sensitive rows
+or unresolved endpoints retains conservative fallback as a whole. Identifiers
+alone never identify resources; each resource row requires unique explicit
+provenance, the correct output, matching known value and compatible provider,
+account, region and current managed identity. Monitors remain independent Logical
+resources and do not inherit monitored VPC placement.
+
+Scope `target.target_identifier.target_id.account_id` selects monitoring accounts.
+It does not establish Organizations ownership or relocate the scope. The pinned
+shape is a target set with singleton target-identifier and target-ID lists; no
+resources are reconstructed from these account/region selectors.
+
+`aws_networkmonitor_probe.monitor_name` verifies the exact managed monitor's
+`monitor_name` output and records owner navigation while retaining the probe's
+independent lifecycle and coverage. `source_arn` requires an explicit managed
+subnet ARN. That subnet's complete explicit VPC proof supplies separate probe
+network context, removed when its evidence is missing, incompatible or filtered.
+The monitor receives no subnet containment. Both monitor and probe retain Logical
+presentation. Destination IP addresses, agent status, packet settings, measured
+health and reachability never supply inferred endpoints or summaries.
