@@ -1298,3 +1298,57 @@ account, region and parent identities. Rule conditions, wildcard principals,
 configuration bundles, external connector/model selectors, schema payloads,
 URLs and runtime qualifiers do not establish permissions, reachability or
 additional managed ownership.
+
+## AgentCore evaluators, memory and policies (#876)
+
+These eight managed types remain Logical and retain their independently known
+account/Region. Memory Strategy uses explicit `memory_id -> memory.id`; Policy
+uses `policy_engine_id -> policy_engine.policy_engine_id`. Resource Policy accepts
+only Runtime `agent_runtime_arn` or Gateway `gateway_arn`, as supported by
+[PutResourcePolicy](https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_PutResourcePolicy.html).
+The endpoint resource's derived Runtime ARN does not identify a Runtime resource.
+Verified helpers navigate to their owners; targets remain independent, without
+network containment. Strategy references additionally require the same explicit
+Memory owner and independently compatible bindings.
+
+Contracts follow AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/bedrockagentcore/{evaluator,memory,memory_strategy,online_evaluation_config,policy,policy_engine,resource_policy,token_vault_cmk}.go`
+and their resource documentation. Nested paths below are singleton Lists except
+Online Evaluation's `evaluator` Set (1–10 objects) and its `log_group_names` List:
+
+- Evaluator `kms_key_arn -> kms_key.arn`; selected
+  `evaluator_config.code_based.lambda_config.lambda_arn -> lambda_function.arn/qualified_arn`.
+  `code_based` and `llm_as_a_judge` are exclusive. The latter's
+  `model_config.bedrock_evaluator_model_config.model_id` is a
+  [foundation-model selector](https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_BedrockEvaluatorModelConfig.html),
+  without fabricated managed model identity.
+- Memory `memory_execution_role_arn -> iam_role.arn`,
+  `encryption_key_arn -> kms_key.arn`, and
+  `stream_delivery_resources.resource.kinesis.data_stream_arn -> kinesis_stream.arn`.
+  All three stream nesting levels contain exactly one object.
+- Strategy's deprecated `memory_execution_role_arn -> iam_role.arn` stays distinct
+  from Memory's role. Root `type=CUSTOM` and `configuration.type=SELF_MANAGED`
+  select `configuration.self_managed_configuration.invocation_configuration`:
+  `topic_arn -> sns_topic.arn`, `payload_delivery_bucket_name -> s3_bucket.bucket/id`.
+  Consolidation, extraction and reflection alternatives must be known inactive.
+  Namespace fields are not interchangeable identities.
+- Online Evaluation `evaluation_execution_role_arn -> iam_role.arn`, and complete
+  `data_source_config.cloudwatch_logs.log_group_names -> cloudwatch_log_group.name`.
+  The object Set `evaluator.evaluator_id` uses a dedicated order-independent proof:
+  every custom ID must match one unique explicit current Evaluator `evaluator_id`,
+  with complete indexed configuration evidence. Known `Builtin.*` literal rows
+  may coexist but never create managed nodes. Unknown rows, duplicate IDs, partial
+  custom collections or unreferenced custom literals invalidate the whole proof.
+- Policy Engine `encryption_key_arn -> kms_key.arn`; engines shared by Gateways
+  remain independent. Policy contents do not establish additional relationships.
+- Token Vault CMK `kms_configuration.key_type=CustomerManagedKey` selects
+  `kms_configuration.kms_key_arn -> kms_key.arn`. `ServiceManagedKey` provides no
+  managed-key identity; the default vault is service-owned.
+
+Every endpoint requires explicit, unique, exact known output evidence and compatible
+provider/account/Region, current managed state and complete collections. IAM roles
+are global within the account. Nested shape checks do not inspect opaque payloads;
+unknown/sensitive identity or discriminator values still fail. Unverified selectors
+retain normal reference/dependency fallback. No records, prompts, scores, policies,
+credentials, namespace contents or runtime reachability are summarized.

@@ -15,6 +15,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::agentcore_services::owner(kind).is_some() => {
+                super::agentcore_services::owner(kind).unwrap()
+            }
             kind if super::agentcore_gateway::owner(kind).is_some() => {
                 super::agentcore_gateway::owner(kind).unwrap()
             }
