@@ -823,3 +823,26 @@ Contracts use AWS Provider 6.70.0 [domain documentation](https://github.com/hash
 | aws_appsync_domain_name_api_association.domain_name | Custom domain.domain_name in matching regional scope; id and service-created appsync_domain_name outputs are not substitutes |
 
 Domains remain independent Logical resources; certificate references do not imply certificate ownership or network containment. An association lowers only when both uniquely referenced endpoints are current, compatible and have exact known matching values. Domain and GraphQL API resources remain independently shared, while the association retains its provenance, action and exactly-once coverage. A missing/filtered endpoint, unknown or sensitive value, literal-only reference, ambiguity, wrong provider/type/output, deleted/deposed or data object keeps conservative fallback. Named states remain separate. Certificate bodies, private keys, descriptions, service URLs and runtime validation results are not parsed or rendered. See the [custom-domain example](../examples/appsync-domains.svg).
+
+## OpenSearch Serverless direct references (#799)
+
+At AWS Provider 6.70.0 (`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`),
+`collection.collection_group_name` references a managed collection group's `name`.
+The group stays independent Logical shared capacity; the collection retains its
+Spatial card. Neither relationship creates ownership or network containment.
+`collection.encryption_config` must be one list element with a known configured
+`kms_key_arn` matching managed `aws_kms_key.arn`; an AWS-owned key, unknown mask,
+multiple elements and computed top-level `kms_key_arn` cannot prove this link.
+`security_config` requires known `type = iamidentitycenter` and one
+`iam_identity_center_options` element. Its `instance_arn` can reference only
+`data.aws_ssoadmin_instances.arns` (or `[0]`) with exactly one known ARN.
+This data-source identity contract does not create a managed Identity Center instance.
+
+All links require explicit unique Terraform provenance, matching known values,
+compatible provider/account/region bindings and current selected identities.
+Literal, unknown, ambiguous, deleted or deposed evidence falls back to generic
+provenance. SAML XML, federation mappings and policy bodies remain opaque.
+Official contracts: `website/docs/r/opensearchserverless_{collection,collection_group,security_config}.html.markdown`
+and `internal/service/opensearchserverless/{collection,collection_group,security_config}.go`
+at the pinned provider revision. Runtime support defaults can be queried using
+`scripts/update-resource-support.sh aws_opensearchserverless_`.

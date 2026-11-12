@@ -1,0 +1,176 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_opensearchserverless_collection_group.shared",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_collection_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "shared",
+          "id": "group-id"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.key",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/key-id"
+        }
+      }
+    },
+    {
+      "address": "data.aws_ssoadmin_instances.identity",
+      "mode": "data",
+      "type": "aws_ssoadmin_instances",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arns": [
+            "arn:aws:sso:::instance/ssoins-example"
+          ],
+          "identity_store_ids": [
+            "d-example"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_collection.search",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_collection",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "search",
+          "collection_group_name": "shared",
+          "encryption_config": [
+            {
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/key-id",
+              "aws_owned_key": false
+            }
+          ],
+          "kms_key_arn": "PRIVATE_COMPUTED"
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_security_config.identity",
+      "mode": "managed",
+      "type": "aws_opensearchserverless_security_config",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "identity",
+          "type": "iamidentitycenter",
+          "iam_identity_center_options": [
+            {
+              "instance_arn": "arn:aws:sso:::instance/ssoins-example"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_opensearchserverless_collection_group.shared",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_collection_group",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.key",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "key",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "data.aws_ssoadmin_instances.identity",
+          "mode": "data",
+          "type": "aws_ssoadmin_instances",
+          "name": "identity",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_opensearchserverless_collection.search",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_collection",
+          "name": "search",
+          "provider_config_key": "aws",
+          "expressions": {
+            "collection_group_name": {
+              "references": [
+                "aws_opensearchserverless_collection_group.shared.name"
+              ]
+            },
+            "encryption_config": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.key.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_opensearchserverless_security_config.identity",
+          "mode": "managed",
+          "type": "aws_opensearchserverless_security_config",
+          "name": "identity",
+          "provider_config_key": "aws",
+          "expressions": {
+            "iam_identity_center_options": [
+              {
+                "instance_arn": {
+                  "references": [
+                    "data.aws_ssoadmin_instances.identity.arns"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

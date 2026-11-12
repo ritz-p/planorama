@@ -337,7 +337,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 799,
-      "gap": "Implemented #696: collection retains its independent Spatial card; endpoint has verified complete VPC/subnet/SG ID navigation and common-VPC context. Optional/computed SGs without explicit complete evidence do not establish containment. Policies never establish collection membership or reachability. See aws.md#opensearch-serverless-696. #724 review preserves the historical baseline; direct collection group/key/identity references remain #799.",
+      "gap": "#724 follow-up implemented #799: collection_group_name -> managed collection_group.name and singleton encryption_config.kms_key_arn -> managed KMS key ARN. Spatial collection and #696 endpoint network behavior remain unchanged. Computed top-level kms_key_arn and policy bodies are not evidence. See aws-data.md#opensearch-serverless-direct-references-799.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17848,10 +17848,10 @@
       }
     },
     "aws_opensearchserverless_collection_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 799,
-      "gap": "#724 reviewed: Not applicable: shared capacity group stays independent Logical, not an implicit container. Not applicable: capacity group has no configured resource endpoint; collection_group_name relationship originates at collection. Follow-up #799. Deferred: generation/capacity bounds need a presentation use case and unknown-value policy; no cost/performance prediction.",
+      "gap": "#724 follow-up implemented #799: collection consumers navigate to the shared group by verified name. The group remains independent Logical capacity, with no embedded owner, configured network endpoint or synthetic children. See aws-data.md#opensearch-serverless-direct-references-799.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17938,10 +17938,10 @@
       }
     },
     "aws_opensearchserverless_security_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 799,
-      "gap": "#724 reviewed: Missing: type=iamidentitycenter instance_arn reference; saml XML and IAM federation attribute names are not endpoint identities. Follow-up #799. Intentionally unsupported: SAML metadata and federation attribute mappings remain private.",
+      "gap": "#724 follow-up implemented #799: known iamidentitycenter type and singleton iam_identity_center_options.instance_arn -> one known data.aws_ssoadmin_instances.arns identity. Managed/data modes stay distinct. SAML XML and IAM federation mappings remain opaque. See aws-data.md#opensearch-serverless-direct-references-799.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",

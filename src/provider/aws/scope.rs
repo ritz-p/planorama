@@ -282,6 +282,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_batch_compute_environment"
                 | "aws_batch_job_queue"
                 | "aws_batch_scheduling_policy"
+                | "aws_opensearchserverless_collection_group"
+                | "aws_opensearchserverless_security_config"
                 | "aws_opensearchserverless_collection"
                 | "aws_opensearchserverless_vpc_endpoint"
                 | "aws_docdb_cluster_instance"
