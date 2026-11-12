@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::datazone_access::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::datazone_environments::label(resource, attribute) {
         return Some(label);
     }
@@ -887,6 +890,7 @@ pub(crate) fn annotate(
     super::cognito::annotate(nodes, references, evidence);
     super::datazone::annotate(nodes, references, evidence);
     super::datazone_environments::annotate(nodes, references, evidence);
+    super::datazone_access::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -942,6 +946,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::cognito::bindings(raw, reference)
         && super::datazone::bindings(raw, reference)
         && super::datazone_environments::bindings(raw, reference)
+        && super::datazone_access::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,

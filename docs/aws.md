@@ -1141,3 +1141,32 @@ and configuration `environment_blueprint_id` are service lookup values, not a
 managed blueprint or interchangeable configuration Terraform ID. `enabled_regions`
 creates no regional copies. Computed provisioned resources, creators, deployment
 payloads and arbitrary parameters create no children or inferred relationships.
+
+## DataZone users and policy grants (#862)
+
+User profiles are Logical helpers owned by an explicitly verified DataZone domain.
+Their external IAM identities remain independent: `user_type = IAM_USER` selects
+IAM user `arn`, and `IAM_ROLE` selects IAM role `arn`. The required configured
+`user_identifier` must explicitly reference that exact current managed output.
+The computed profile `type` is a different enum and cannot replace `user_type`.
+SSO GUID mapping needs Identity Store/domain proof; `SSO_USER` and
+`IAM_ROLE_SESSION` therefore retain fallback. Computed personal details and names
+are never used for identity matching or displayed.
+
+Policy grants remain independent Logical resources. `entity_identifier` selects
+asset type `name` for `ASSET_TYPE`, environment profile `id` for
+`ENVIRONMENT_PROFILE`, or configuration `environment_blueprint_id` for
+`ENVIRONMENT_BLUEPRINT_CONFIGURATION`. Asset revision and a fabricated
+configuration `id` are not interchangeable with these identities. Both endpoints
+must refer to the same verified domain, with compatible provider, account and
+control-plane region. IAM identity references retain their actual global scope.
+
+The pinned Provider uses singleton `principal` lists and singleton variant lists.
+Exactly one known variant may be active. Project principals select DataZone
+project `id` with a known `OWNER`, `CONTRIBUTOR` or `PROJECT_CATALOG_STEWARD`
+designation. An optional domain-unit filter does not replace the project identity.
+User principals select DataZone user-profile `id`; an active or unknown
+`all_users_grant_filter` cannot prove an individual user. Group and domain-unit
+endpoints have no selected managed resource contract and remain external, including
+computed domain root-unit IDs. Policy types, details and wildcard effects do not
+establish additional resources, permissions or reachability.

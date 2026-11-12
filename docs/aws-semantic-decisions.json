@@ -29459,10 +29459,10 @@
       }
     },
     "aws_datazone_policy_grant": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 862,
-      "gap": "#723 reviewed: Missing: entity-type-gated domain-qualified asset/profile/blueprint configuration and typed principal links. Domain-unit/group endpoints absent from managed denominator stay deferred until typed resources exist. Policy/wildcard effects not interpreted. Follow-up #862.",
+      "gap": "#723 audit: Independent Logical grant with exact entity_type-gated asset name, environment profile ID or blueprint configuration environment_blueprint_id in the same verified domain. Singleton principal unions select domain-qualified project IDs or user-profile IDs; user all-users alternatives and unknown/ambiguous choices retain fallback. Group/domain-unit endpoints remain deferred; policy/detail/wildcard effects are not interpreted.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29524,10 +29524,10 @@
       }
     },
     "aws_datazone_user_profile": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 862,
-      "gap": "#723 reviewed: Missing: domain owner and IAM/SSO-type-gated configured user identity. Computed details contain personal data; no display or name matching. Defer SSO GUID mapping until Identity Store proof is explicit. Follow-up #862.",
+      "gap": "#723 audit: Logical profile with verified domain owner and user_type-gated IAM user/role ARN identity; independently qualified provider/account/control-region, global IAM region compatibility, and current managed endpoints. SSO GUID and role-session mapping remain deferred without explicit typed proof; computed details and names never identify or display users.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
