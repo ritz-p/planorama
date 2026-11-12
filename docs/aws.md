@@ -1170,3 +1170,52 @@ User principals select DataZone user-profile `id`; an active or unknown
 endpoints have no selected managed resource contract and remain external, including
 computed domain root-unit IDs. Policy types, details and wildcard effects do not
 establish additional resources, permissions or reachability.
+
+## AgentCore runtime, tools and harnesses (#874)
+
+Runtime, Browser, Code Interpreter and Harness are independent Spatial resources;
+Runtime Endpoint is Logical and navigates to its Runtime only after an explicit
+`agent_runtime_id` → `agent_runtime_id` match and known equal
+`agent_runtime_version` values. Unknown versions do not mean latest. An explicit
+version reference must select that same Runtime. Runtime and endpoint ARNs are
+different identifiers; URLs never identify owners.
+
+The contracts use AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, its respective resource docs and schemas:
+
+- Runtime `role_arn`, and Browser/Interpreter/Harness `execution_role_arn`, select
+  IAM role `arn`. IAM is global but account evidence remains independent.
+- Runtime `network_configuration.network_mode_config.{subnets,security_groups}`
+  and Browser/Interpreter `network_configuration.vpc_config.{subnets,security_groups}`
+  use singleton list blocks and complete string sets of subnet/SG `id` references.
+  Only known `VPC` mode and a common explicitly proven VPC permit containment.
+  `PUBLIC`, `SANDBOX`, partial sets and mismatched VPC parents do not.
+- Harness uses the Runtime network schema below
+  `environment.agentcore_runtime_environment`. These references describe its
+  generated runtime context, not physical Harness containment or a synthesized
+  managed Runtime. JWT private endpoints are a separate connectivity contract.
+- Runtime and Harness runtime-environment `filesystem_configuration` is a list
+  of up to five exclusive EFS/S3 Files/session-storage choices. The two configured
+  `access_point_arn` inputs select the corresponding access-point `arn`.
+- Runtime `agent_runtime_artifact.code_configuration.code.s3.bucket` selects S3
+  `bucket` only for the code artifact choice. Image URLs, object prefixes and
+  version strings do not identify managed repositories or objects.
+- Browser and Interpreter `certificate.location.secrets_manager.secret_arn`
+  select Secrets Manager `arn`. Certificate is a list of 1–200 entries; location
+  and secrets-manager blocks are singleton lists. Browser
+  `enterprise_policy.location.s3.bucket` is a list of up to 100 policies with
+  singleton location/S3 blocks. `recording.s3_location.bucket` requires known
+  `recording.enabled = true`. Both bucket inputs select S3 `bucket`.
+- Harness `memory.agentcore_memory_configuration.arn` selects existing Memory
+  `arn`, with managed-memory and disabled alternatives inactive. Its repeatable
+  `tool` list requires matching `type` and a single selected `config` variant:
+  browser `browser_arn`, interpreter `code_interpreter_arn` or gateway `gateway_arn`
+  select those exact resource outputs. Model Gemini/LiteLLM/OpenAI `api_key_arn`
+  selects Secrets Manager `arn` only for that selected singleton model variant.
+
+Every path requires exact configured provenance, complete indexed collections,
+known non-sensitive matching values, current managed endpoints and compatible
+provider/account/region evidence. Shared endpoints stay independent. Computed
+Harness runtime/memory outputs, inline tools, prompts, execution payloads,
+credentials, arbitrary URLs and model selectors do not establish managed
+ownership, network reachability or permission effects.

@@ -31558,10 +31558,10 @@
       }
     },
     "aws_bedrockagentcore_agent_runtime": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Runtime role, filesystem access-point and source S3 references; image URI alone is not an ECR endpoint. Authorizer private endpoints are separate from runtime networking. #874. VPC mode plus complete subnet/SG collections required; PUBLIC must not inherit VPC placement. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial runtime with exact role ARN, exclusive filesystem EFS/S3 Files ARN and code source bucket references. VPC mode requires complete subnet/SG ID sets and common explicit VPC parents; PUBLIC stays outside. Container URI, object selectors and authorizer connectivity do not imply ownership. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31647,10 +31647,10 @@
       }
     },
     "aws_bedrockagentcore_agent_runtime_endpoint": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Endpoint runtime ID and version, not endpoint URL, identify owner. #874. Version-aware runtime ownership; endpoint ARN distinct from runtime ARN. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Logical endpoint with explicit Runtime agent_runtime_id and known matching agent_runtime_version ownership. Explicit version references must select the same Runtime; unknown/latest guesses and runtime/endpoint ARN aliases are rejected. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31778,10 +31778,10 @@
       }
     },
     "aws_bedrockagentcore_browser": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Role/certificate-secret and recording/enterprise-policy S3 bucket links; browser profile is a separate resource, not ownership inferred from browser name. #874. VPC-mode subnet/SG context; PUBLIC excluded. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial browser with execution role, repeated certificate secret ARNs, enabled recording and enterprise-policy S3 bucket references. Complete VPC-mode subnet/SG sets and common explicit VPC parent required for containment; no profile ownership by name. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31923,10 +31923,10 @@
       }
     },
     "aws_bedrockagentcore_code_interpreter": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Role and certificate-secret references; interpreter execution payload excluded. #874. VPC mode only; SANDBOX and PUBLIC do not supply subnet containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial interpreter with execution role and repeated certificate secret ARN references. Complete VPC-mode subnet/SG sets and common explicit VPC parent required for containment; PUBLIC/SANDBOX and execution payloads excluded. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32326,10 +32326,10 @@
       }
     },
     "aws_bedrockagentcore_harness": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Explicit tool browser/interpreter/gateway, existing memory, secret and role references; computed managed runtime/memory outputs do not create Terraform ownership. #874. Generated runtime VPC context distinct from harness JWT private endpoints. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial harness with selected typed browser/interpreter/gateway tools, existing Memory ARN, model secret ARN, role and generated-runtime filesystem/network context. No physical Harness VPC containment or managed resources from computed runtime/memory outputs. JWT connectivity is separate. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",

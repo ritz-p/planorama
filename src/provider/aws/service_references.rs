@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::agentcore_runtime::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::datazone_access::label(resource, attribute) {
         return Some(label);
     }
@@ -891,6 +894,7 @@ pub(crate) fn annotate(
     super::datazone::annotate(nodes, references, evidence);
     super::datazone_environments::annotate(nodes, references, evidence);
     super::datazone_access::annotate(nodes, references, evidence);
+    super::agentcore_runtime::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -947,6 +951,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::datazone::bindings(raw, reference)
         && super::datazone_environments::bindings(raw, reference)
         && super::datazone_access::bindings(raw, reference)
+        && super::agentcore_runtime::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1566,7 +1571,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::datazone::indexed(&node.resource_type, &reference.attribute)
+        if super::agentcore_runtime::indexed(&node.resource_type, &reference.attribute)
+            || super::datazone::indexed(&node.resource_type, &reference.attribute)
             || super::cognito::indexed(&node.resource_type, &reference.attribute)
             || super::directory_service::indexed(&node.resource_type, &reference.attribute)
             || super::network_monitors::indexed(&node.resource_type, &reference.attribute)
