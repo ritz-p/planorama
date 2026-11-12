@@ -105,6 +105,7 @@ pub(crate) mod organizations;
 mod osis;
 mod placement;
 pub(crate) mod prefix_list_entries;
+pub(crate) mod private_ca_references;
 mod privatelink;
 pub(crate) mod profiles;
 pub(crate) mod query_logs;

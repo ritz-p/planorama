@@ -5540,7 +5540,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1131,
-      "gap": "#727 audit: Missing: enabled CRL s3_bucket_name -> bucket.id/bucket; no DNS/CNAME inference. Not applicable: independent CA card #541; revocation configuration does not own the bucket. Implementation follow-up #1131. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented follow-up #1131. Adds enabled CRL bucket name references to managed S3 id/bucket with strict singleton blocks. Existing independent CA and certificate contracts remain; bucket ownership and DNS/CNAME inference are excluded. See aws-security.md#private-ca-permissions-policies-and-crl-storage-1131.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58569,7 +58569,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1131,
-      "gap": "#727 audit: Missing: certificate_authority_arn -> CA.arn; principal service strings and source_account alone do not identify principals. Missing: CA permission helper ownership with independent action coverage. Implementation follow-up #1131. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented follow-up #1131. Adds exact certificate_authority_arn to managed CA.arn and CA-owned helper presentation with independent action/coverage. Principal strings and source_account do not identify principals. See aws-security.md#private-ca-permissions-policies-and-crl-storage-1131.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58627,7 +58627,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1131,
-      "gap": "#727 audit: Missing: resource_arn -> CA.arn; policy body interpretation excluded. Missing: CA-owned policy helper, distinct from certificate issuance. Implementation follow-up #1131. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: Implemented follow-up #1131. Adds exact resource_arn to managed CA.arn and CA-owned policy helper presentation, separate from issuance. Policy bodies remain opaque. See aws-security.md#private-ca-permissions-policies-and-crl-storage-1131.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
