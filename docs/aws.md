@@ -1219,3 +1219,82 @@ provider/account/region evidence. Shared endpoints stay independent. Computed
 Harness runtime/memory outputs, inline tools, prompts, execution payloads,
 credentials, arbitrary URLs and model selectors do not establish managed
 ownership, network reachability or permission effects.
+
+## AgentCore gateways, registries and credentials (#875)
+
+Gateway is an independent Spatial resource. Both Registry types and API-key/OAuth
+credential providers remain independent Logical resources. Gateway Rule and
+Gateway Target are Logical helpers owned only through an explicit
+`gateway_identifier` → Gateway `gateway_id` reference. The new
+`aws_agentregistry_registry` and deprecated `aws_bedrockagentcore_registry` use
+distinct factories and schemas; neither aliases the other. ORGANIZATION discovery
+does not change the new registry's regional scope.
+
+Contracts follow AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` and its resource docs/schemas; OAuth
+vendor values follow its Bedrock AgentCore Control SDK v1.74.0.
+
+| Configured input | Verified managed output |
+| --- | --- |
+| New Registry `encryption_configuration.kms_key_arn`; Gateway `kms_key_arn` | KMS key `arn` |
+| Gateway `role_arn` | IAM role `arn`, with independent account proof |
+| Gateway `interceptor_configuration.interceptor.lambda.arn` | Lambda function `arn` or `qualified_arn` |
+| Gateway `policy_engine_configuration.arn` | Policy Engine `policy_engine_arn` |
+| Gateway/legacy Registry JWT `allowed_workload_configuration.hosting_environment.arn` | Gateway `gateway_arn` only |
+| API-key provider `api_key_secret_config.secret_id` | Secrets Manager `id` or `arn`, only for known EXTERNAL source |
+| OAuth selected provider config `client_secret_config.secret_id` | Secrets Manager `id` or `arn`, only for known EXTERNAL source |
+| Custom OAuth `private_key_jwt_config.private_key_source.kms_key_source.kms_key_arn` | KMS key `arn` |
+| Target `target_configuration.http.agentcore_runtime.arn` | Runtime `agent_runtime_arn`; endpoint resources and their derived outputs are distinct |
+| Target `target_configuration.mcp.lambda.lambda_arn` | Lambda function `arn` or `qualified_arn` |
+| Target `target_configuration.mcp.api_gateway.rest_api_id` | REST API `id` |
+| Target `target_configuration.mcp.api_gateway.stage` | Stage `stage_name`, whose explicit `rest_api_id` selects the same REST API |
+| Target `credential_provider_configuration.{api_key,oauth}.provider_arn` | The corresponding credential provider `credential_provider_arn` |
+| Rule `action.route_to_target.static_route.target_name` or `action.route_to_target.weighted_route.traffic_split.target_name` | Target `name`, whose explicit owner selects the same Gateway |
+
+Nested blocks are singleton lists except interceptor configurations (1–2), JWT
+hosting environments (1–10), Rule actions (1–2), weighted traffic splits (exactly
+2), and private endpoint overrides (up to 5). Every action selects one of
+configuration bundle/route; route selects static/weighted. Weighted target links
+require two distinct variant names and target names, known weights 1–99 summing
+to 100, and complete typed references. Target configuration selects HTTP/inference/
+MCP and its actual nested union. HTTP requires a Gateway with known absent
+`protocol_type`; MCP requires `MCP`. Credential configuration selects one of
+API key, caller IAM, gateway IAM, JWT passthrough or OAuth.
+
+OAuth requires exactly one configured vendor block matching its known vendor.
+The eight dedicated vendor blocks and the included-provider block use their
+pinned SDK vendor allowlist. Selected singleton-block shape is checked separately
+from opaque sensitive child values, so a sensitive client ID does not invalidate
+a known Secret ID. Unknown blocks, selectors and endpoint values still fail proof. Unknown vendors, multiple alternatives and computed
+managed secret ARNs do not establish external-secret ownership. Secret values,
+client IDs, write-only inputs and claims are never displayed or interpreted.
+
+Private endpoints describe connectivity, never physical Gateway/Registry/Target/
+credential-provider containment. Supported roots are:
+
+- New Registry: `discovery_configuration.authorizer_configuration.custom_jwt_authorizer`.
+- Gateway and legacy Registry: `authorizer_configuration.custom_jwt_authorizer`.
+- Custom OAuth: `oauth2_provider_config.custom_oauth2_provider_config`.
+- Gateway Target: root `private_endpoint`.
+
+JWT roots require known `CUSTOM_JWT`. New Registry and OAuth use singular
+`private_endpoint_override`; Gateway/legacy Registry use plural
+`private_endpoint_overrides`. Each override contains its own singleton
+`private_endpoint`. OAuth overrides additionally require the base private
+endpoint. Other factories do not impose that requirement.
+
+Each endpoint selects `managed_vpc_resource` or `self_managed_lattice_resource`.
+Managed VPC inputs require explicit VPC `vpc_identifier` → `id`, a complete subnet
+`subnet_ids` set, known IPV4/IPV6 and optional complete SG `security_group_ids`
+(up to 5). Every subnet/SG must independently prove that row's VPC parent.
+Different override rows may use different VPCs. Lattice
+`resource_configuration_identifier` selects Resource Configuration `id` or `arn`.
+This optional-SG connectivity contract does not reuse Runtime's required paired
+subnet/SG physical placement contract.
+
+All references require matching known non-sensitive values, current managed
+resources, complete indexed provenance and independently compatible provider,
+account, region and parent identities. Rule conditions, wildcard principals,
+configuration bundles, external connector/model selectors, schema payloads,
+URLs and runtime qualifiers do not establish permissions, reachability or
+additional managed ownership.
