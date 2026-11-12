@@ -5185,7 +5185,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Partial: #504/#545 preserve independent database and table owner endpoint. Missing: qualified federated connection and target database references. location_uri can be HDFS; no universal S3 inference. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Preserves #504/#545 database/table behavior; adds catalog-qualified federated connection and target database references. URI values remain opaque. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -5253,7 +5253,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Partial: #504/#545 service_references.rs/glue.rs verify database name, equal catalog IDs and known region. Missing: qualified target table, registry/schema/version, view sub-object ARNs and validation connection; SQL/view text and storage URI alone do not identify resources. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Preserves #504/#545 database ownership and shared tables; adds qualified target table, version-qualified schema ARN/name, registry name, complete view base-table ARNs and per-representation validation connections. Schema-version ID has no managed endpoint output and remains generic. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25796,10 +25796,10 @@
       }
     },
     "aws_glue_catalog": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: qualified connection name, target Redshift catalog ARN and role/KMS ARNs. catalog_id denotes parent catalog; computed managed_workgroup_name is not configured workgroup ownership. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Independent Spatial catalog; catalog-qualified connection name, target Glue catalog ARN and role/KMS ARN references. Computed parent catalog_id and managed_workgroup_name do not create ownership. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25881,10 +25881,10 @@
       }
     },
     "aws_glue_catalog_table_optimizer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: catalog-qualified table owner and execution role ARN; type selects compaction/retention/orphan deletion, without interpreting optimizer policy. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Qualified table helper and known enabled execution-role ARN with validated optimizer type; lifecycle preserved independently. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26130,10 +26130,10 @@
       }
     },
     "aws_glue_data_quality_ruleset": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: catalog-qualified table target; DQDL and recommendation run outputs are not lineage/health evidence. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Catalog/database-qualified target table navigation; DQDL and recommendation outputs remain opaque. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26307,10 +26307,10 @@
       }
     },
     "aws_glue_partition": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: catalog-qualified table reference; partition data/keys are not network or lineage. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Catalog/database-qualified table helper ownership; partition data excluded. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26346,10 +26346,10 @@
       }
     },
     "aws_glue_partition_index": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: catalog-qualified table reference; partition_index data/keys are not network or lineage. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Catalog/database-qualified table helper ownership; index keys excluded. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26456,10 +26456,10 @@
       }
     },
     "aws_glue_schema": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: registry_arn proof; absent default registry cannot create a managed owner. Schema definition/version outputs are data contracts, not dataflow. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Explicit registry ARN ownership for unshared schemas; referenced schemas remain independent and default registry is never synthesized. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26652,10 +26652,10 @@
       }
     },
     "aws_glue_user_defined_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 845,
-      "gap": "#722 reviewed: Missing: catalog-qualified database owner; owner_name/type are metastore principals, not IAM identities. Resource URIs/class names are opaque executable content. Follow-up #845.",
+      "gap": "#722 follow-up implemented #845: Catalog-qualified database helper ownership; class/resource URIs and metastore principal fields remain opaque. See aws-data.md#glue-catalog-metadata-845.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

@@ -1,0 +1,817 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.catalog",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.catalog",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_connection.federated",
+      "type": "aws_glue_connection",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "federated",
+          "catalog_id": "123456789012",
+          "connection_type": "JDBC",
+          "connection_properties": {
+            "JDBC_CONNECTION_URL": "PRIVATE_URL"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_glue_registry.schemas",
+      "type": "aws_glue_registry",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "registry_name": "schemas",
+          "arn": "arn:aws:glue:us-east-1:123456789012:registry/schemas"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_schema.used",
+      "type": "aws_glue_schema",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "schema_name": "used",
+          "registry_name": "schemas",
+          "registry_arn": "arn:aws:glue:us-east-1:123456789012:registry/schemas",
+          "arn": "arn:aws:glue:us-east-1:123456789012:schema/schemas/used",
+          "latest_schema_version": 3,
+          "schema_definition": "PRIVATE_SCHEMA",
+          "data_format": "JSON",
+          "compatibility": "NONE"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_schema.unshared",
+      "type": "aws_glue_schema",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "schema_name": "unshared",
+          "registry_name": "schemas",
+          "registry_arn": "arn:aws:glue:us-east-1:123456789012:registry/schemas",
+          "arn": "arn:aws:glue:us-east-1:123456789012:schema/schemas/unshared",
+          "latest_schema_version": 3,
+          "schema_definition": "PRIVATE_SCHEMA",
+          "data_format": "JSON",
+          "compatibility": "NONE"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog.target",
+      "type": "aws_glue_catalog",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "redshift",
+          "catalog_id": "123456789012",
+          "arn": "arn:aws:glue:us-east-1:123456789012:catalog/redshift",
+          "federated_catalog": [
+            {
+              "identifier": "PRIVATE_EXTERNAL",
+              "connection_name": "federated"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog.source",
+      "type": "aws_glue_catalog",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "source",
+          "catalog_id": "123456789012",
+          "arn": "arn:aws:glue:us-east-1:123456789012:catalog/source",
+          "federated_catalog": [
+            {
+              "connection_name": "federated",
+              "identifier": "PRIVATE_EXTERNAL"
+            }
+          ],
+          "target_redshift_catalog": [
+            {
+              "catalog_arn": "arn:aws:glue:us-east-1:123456789012:catalog/redshift"
+            }
+          ],
+          "catalog_properties": [
+            {
+              "data_lake_access_properties": [
+                {
+                  "data_transfer_role": "arn:aws:iam::123456789012:role/catalog",
+                  "kms_key": "arn:aws:kms:us-east-1:123456789012:key/catalog"
+                }
+              ],
+              "iceberg_optimization_properties": [
+                {
+                  "role_arn": "arn:aws:iam::123456789012:role/catalog"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_database.main",
+      "type": "aws_glue_catalog_database",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "main",
+          "catalog_id": "123456789012",
+          "arn": "arn:aws:glue:us-east-1:123456789012:database/main",
+          "location_uri": "PRIVATE_HDFS"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_database.link",
+      "type": "aws_glue_catalog_database",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "link",
+          "catalog_id": "123456789012",
+          "arn": "arn:aws:glue:us-east-1:123456789012:database/link",
+          "federated_database": [
+            {
+              "connection_name": "federated",
+              "identifier": "PRIVATE_EXTERNAL"
+            }
+          ],
+          "target_database": [
+            {
+              "catalog_id": "123456789012",
+              "database_name": "main",
+              "region": "us-east-1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table.base",
+      "type": "aws_glue_catalog_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "base",
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "arn": "arn:aws:glue:us-east-1:123456789012:table/main/base",
+          "storage_descriptor": [
+            {
+              "schema_reference": [
+                {
+                  "schema_version_number": 3,
+                  "schema_id": [
+                    {
+                      "schema_arn": "arn:aws:glue:us-east-1:123456789012:schema/schemas/used"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table.link",
+      "type": "aws_glue_catalog_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "link",
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "arn": "arn:aws:glue:us-east-1:123456789012:table/main/link",
+          "target_table": [
+            {
+              "catalog_id": "123456789012",
+              "database_name": "main",
+              "name": "base",
+              "region": "us-east-1"
+            }
+          ],
+          "storage_descriptor": [
+            {
+              "schema_reference": [
+                {
+                  "schema_version_number": 3,
+                  "schema_id": [
+                    {
+                      "registry_name": "schemas",
+                      "schema_name": "used"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table.view",
+      "type": "aws_glue_catalog_table",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "view",
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "arn": "arn:aws:glue:us-east-1:123456789012:table/main/view",
+          "view_definition": [
+            {
+              "sub_objects": [
+                "arn:aws:glue:us-east-1:123456789012:table/main/base",
+                "arn:aws:glue:us-east-1:123456789012:table/main/link"
+              ],
+              "representations": [
+                {
+                  "dialect": "ATHENA",
+                  "validation_connection": "federated",
+                  "view_original_text": "PRIVATE_SQL"
+                },
+                {
+                  "dialect": "SPARK",
+                  "validation_connection": "federated",
+                  "view_expanded_text": "PRIVATE_SQL"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table_optimizer.compact",
+      "type": "aws_glue_catalog_table_optimizer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "table_name": "base",
+          "type": "compaction",
+          "configuration": [
+            {
+              "enabled": true,
+              "role_arn": "arn:aws:iam::123456789012:role/catalog"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_data_quality_ruleset.quality",
+      "type": "aws_glue_data_quality_ruleset",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "quality",
+          "ruleset": "PRIVATE_DQDL",
+          "target_table": [
+            {
+              "catalog_id": "123456789012",
+              "database_name": "main",
+              "table_name": "base"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_partition.partition",
+      "type": "aws_glue_partition",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "table_name": "base",
+          "partition_values": [
+            "PRIVATE_PARTITION"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_partition_index.partition",
+      "type": "aws_glue_partition_index",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "table_name": "base",
+          "partition_values": [
+            "PRIVATE_PARTITION"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_user_defined_function.function",
+      "type": "aws_glue_user_defined_function",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "function",
+          "catalog_id": "123456789012",
+          "database_name": "main",
+          "class_name": "PRIVATE_CLASS",
+          "owner_name": "PRIVATE_OWNER",
+          "owner_type": "USER",
+          "resource_uris": [
+            {
+              "resource_type": "JAR",
+              "uri": "PRIVATE_URI"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.catalog",
+          "type": "aws_iam_role",
+          "name": "catalog",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.catalog",
+          "type": "aws_kms_key",
+          "name": "catalog",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_connection.federated",
+          "type": "aws_glue_connection",
+          "name": "federated",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_registry.schemas",
+          "type": "aws_glue_registry",
+          "name": "schemas",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_schema.used",
+          "type": "aws_glue_schema",
+          "name": "used",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "registry_arn": {
+              "references": [
+                "aws_glue_registry.schemas.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_schema.unshared",
+          "type": "aws_glue_schema",
+          "name": "unshared",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "registry_arn": {
+              "references": [
+                "aws_glue_registry.schemas.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_catalog.target",
+          "type": "aws_glue_catalog",
+          "name": "target",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "federated_catalog": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.federated.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog.source",
+          "type": "aws_glue_catalog",
+          "name": "source",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "federated_catalog": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.federated.name"
+                  ]
+                }
+              }
+            ],
+            "target_redshift_catalog": [
+              {
+                "catalog_arn": {
+                  "references": [
+                    "aws_glue_catalog.target.arn"
+                  ]
+                }
+              }
+            ],
+            "catalog_properties": [
+              {
+                "data_lake_access_properties": [
+                  {
+                    "data_transfer_role": {
+                      "references": [
+                        "aws_iam_role.catalog.arn"
+                      ]
+                    },
+                    "kms_key": {
+                      "references": [
+                        "aws_kms_key.catalog.arn"
+                      ]
+                    }
+                  }
+                ],
+                "iceberg_optimization_properties": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.catalog.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog_database.main",
+          "type": "aws_glue_catalog_database",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_catalog_database.link",
+          "type": "aws_glue_catalog_database",
+          "name": "link",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "federated_database": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.federated.name"
+                  ]
+                }
+              }
+            ],
+            "target_database": [
+              {
+                "database_name": {
+                  "references": [
+                    "aws_glue_catalog_database.main.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog_table.base",
+          "type": "aws_glue_catalog_table",
+          "name": "base",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.main.name"
+              ]
+            },
+            "storage_descriptor": [
+              {
+                "schema_reference": [
+                  {
+                    "schema_id": [
+                      {
+                        "schema_arn": {
+                          "references": [
+                            "aws_glue_schema.used.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog_table.link",
+          "type": "aws_glue_catalog_table",
+          "name": "link",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.main.name"
+              ]
+            },
+            "target_table": [
+              {
+                "name": {
+                  "references": [
+                    "aws_glue_catalog_table.base.name"
+                  ]
+                }
+              }
+            ],
+            "storage_descriptor": [
+              {
+                "schema_reference": [
+                  {
+                    "schema_id": [
+                      {
+                        "registry_name": {
+                          "references": [
+                            "aws_glue_registry.schemas.registry_name"
+                          ]
+                        },
+                        "schema_name": {
+                          "references": [
+                            "aws_glue_schema.used.schema_name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog_table.view",
+          "type": "aws_glue_catalog_table",
+          "name": "view",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.main.name"
+              ]
+            },
+            "view_definition": [
+              {
+                "sub_objects": {
+                  "references": [
+                    "aws_glue_catalog_table.base.arn",
+                    "aws_glue_catalog_table.link.arn"
+                  ]
+                },
+                "representations": [
+                  {
+                    "validation_connection": {
+                      "references": [
+                        "aws_glue_connection.federated.name"
+                      ]
+                    }
+                  },
+                  {
+                    "validation_connection": {
+                      "references": [
+                        "aws_glue_connection.federated.name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog_table_optimizer.compact",
+          "type": "aws_glue_catalog_table_optimizer",
+          "name": "compact",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_name": {
+              "references": [
+                "aws_glue_catalog_table.base.name"
+              ]
+            },
+            "configuration": [
+              {
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.catalog.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_data_quality_ruleset.quality",
+          "type": "aws_glue_data_quality_ruleset",
+          "name": "quality",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_table": [
+              {
+                "table_name": {
+                  "references": [
+                    "aws_glue_catalog_table.base.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_partition.partition",
+          "type": "aws_glue_partition",
+          "name": "partition",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_name": {
+              "references": [
+                "aws_glue_catalog_table.base.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_partition_index.partition",
+          "type": "aws_glue_partition_index",
+          "name": "partition",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_name": {
+              "references": [
+                "aws_glue_catalog_table.base.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_user_defined_function.function",
+          "type": "aws_glue_user_defined_function",
+          "name": "function",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.main.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -728,7 +728,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_globalaccelerator_custom_routing_listener", "AWS Global Accelerator", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_endpoint_group", "AWS Global Accelerator", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_listener", "AWS Global Accelerator", Node, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
-    entry!("aws_glue_catalog", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
+    entry!("aws_glue_catalog", "AWS Glue", Node, Spatial, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_catalog_database", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_catalog_table", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_catalog_table_optimizer", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),

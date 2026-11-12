@@ -6,7 +6,8 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::s3vectors::resource(resource)
+        && (aws::glue_catalog::resource(resource)
+            || aws::s3vectors::resource(resource)
             || aws::vpclattice::resource(resource)
             || aws::networkmanager::resource(resource)
             || aws::transfer_server::resource(resource)
@@ -37,7 +38,8 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::s3vectors::indexed(resource, attribute)
+        && (aws::glue_catalog::indexed(resource, attribute)
+            || aws::s3vectors::indexed(resource, attribute)
             || aws::vpclattice::indexed(resource, attribute)
             || aws::networkmanager::indexed(resource, attribute)
             || aws::transfer_server::indexed(resource, attribute)
