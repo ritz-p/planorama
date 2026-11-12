@@ -27707,7 +27707,7 @@
       "status": "Basic-only",
       "priority": "P1",
       "issue": 852,
-      "gap": "#722 reviewed: Missing: owner-qualified cluster reference, subnet-group name and complete SG IDs; endpoint network is independent of cluster VPC. Follow-up #852.",
+      "gap": "#722 reviewed: #852 adds Spatial endpoint architecture, owner-qualified exact cluster references, subnet-group name/id and complete SG ID references. Complete subnet/SG evidence places the endpoint in its own common VPC independently of the accessed cluster. Computed ENIs do not create children; incomplete or filtered evidence retains regional fallback.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27759,7 +27759,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 852,
-      "gap": "#722 reviewed: Missing: explicit cluster and grantee-account-qualified VPC IDs; omitted VPC set means authorization scope, not all managed VPC links. Follow-up #852.",
+      "gap": "#722 reviewed: #852 adds exact source-cluster references and grantee-account-qualified complete explicit VPC IDs. Empty or omitted VPC sets do not manufacture links. Cluster owner navigation retains policy identity; account qualifiers do not relocate the helper or imply network containment.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

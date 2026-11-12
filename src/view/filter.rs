@@ -51,6 +51,7 @@ fn placement_available(
     if matches!(
         node.resource_type.as_str(),
         "aws_redshift_cluster"
+            | "aws_redshift_endpoint_access"
             | "aws_docdb_cluster"
             | "aws_neptune_cluster"
             | "aws_dms_replication_instance"

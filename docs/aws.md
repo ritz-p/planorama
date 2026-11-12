@@ -819,3 +819,28 @@ identity and cluster-owner navigation; schedules remain independent and schedule
 expressions stay opaque. All paths require unique explicit provenance, exact known
 scalar values, current managed endpoints and compatible provider/state boundaries.
 Unknown, sensitive, malformed, deleted/deposed or filtered evidence preserves fallback.
+
+## Provisioned Redshift endpoints (#852)
+
+Managed `aws_redshift_endpoint_access` is Spatial. Its explicit `cluster_identifier`
+verifies the cluster's exact `cluster_identifier`; known `resource_owner` qualifies
+only that reference and requires independently verified source account evidence.
+An absent owner uses ordinary same-account bindings. An unknown or sensitive owner
+keeps the cluster reference unresolved without suppressing independent network proof.
+
+Endpoint `subnet_group_name` matches a managed Redshift subnet group's `name` or
+`id`. Placement requires that group's complete explicit subnet ID set and the
+endpoint's complete explicit `vpc_security_group_ids` to have one verified common
+VPC. This VPC is independent of the accessed cluster's network. Missing, partial,
+incompatible or filtered network evidence leaves the endpoint regional while a
+valid cluster reference remains available. Computed `vpc_endpoint` and network
+interface outputs never manufacture managed children or placement.
+
+`aws_redshift_endpoint_authorization` remains a Logical policy with verified cluster
+owner navigation. Its `cluster_identifier` uses the source cluster's exact output;
+`account` qualifies only the complete explicit `vpc_ids` set, whose managed VPC
+accounts must be independently verified. Empty or omitted VPC sets represent
+account-wide authorization scope, not links to every managed VPC. Qualifiers do not
+relocate either resource, and authorization never implies network containment or
+runtime reachability. All paths require current managed identities, unique explicit
+provenance, matching known values and compatible provider/region/state boundaries.
