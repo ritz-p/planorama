@@ -94,6 +94,8 @@ fn placement_available(
             | "aws_opensearchserverless_vpc_endpoint"
             | "aws_osis_pipeline"
             | "aws_osis_pipeline_endpoint"
+            | "aws_glue_connection"
+            | "aws_glue_dev_endpoint"
     ) {
         return true;
     }

@@ -67,6 +67,7 @@ mod fsx;
 pub(crate) mod global_accelerator;
 mod glue;
 pub(crate) mod glue_catalog;
+mod glue_network;
 mod iam;
 pub(crate) mod iam_credentials;
 pub(crate) mod iam_policies;
@@ -338,6 +339,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
     osis::present(&raw, &mut graph);
+    glue_network::present(&raw, &mut graph);
     search::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
     autoscaling_network::present(&raw, &mut graph);

@@ -737,7 +737,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_glue_crawler", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_data_catalog_encryption_settings", "AWS Glue", Controller, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_data_quality_ruleset", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
-    entry!("aws_glue_dev_endpoint", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
+    entry!("aws_glue_dev_endpoint", "AWS Glue", Node, Spatial, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_job", "AWS Glue", Controller, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_ml_transform", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
     entry!("aws_glue_partition", "AWS Glue", Node, Logical, Regional, Some(ResourceIcon::Glue)),
