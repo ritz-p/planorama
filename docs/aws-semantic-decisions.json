@@ -7831,7 +7831,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
+      "gap": "#716 reviewed; #792 implemented: TGW ID with complete AZ mappings and owner-qualified account proof; preserve existing VPC/policy contracts without synthetic endpoints. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -7883,7 +7883,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
+      "gap": "#716 reviewed; #792 implemented: TLS inspection configuration ARN in singleton firewall-policy list; retain existing rule-group contracts. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -7930,7 +7930,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
+      "gap": "#716 reviewed; #792 implemented: complete stateful prefix-list/resource-group or container-association IP-set references; reject mixed families and preserve existing policy references. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14746,7 +14746,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: type ECS/EKS discriminates cluster_arn endpoints; same account and region required. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: complete ECS/EKS-discriminated cluster ARN list within verified account/region; no inferred cluster containment. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14781,7 +14781,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: Explicit firewall computed-attachment provenance required; no synthetic EC2 attachment endpoint. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: exact explicit firewall computed-attachment provenance with verified TGW-owner account; no invented EC2 attachment. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14807,7 +14807,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: resource_arn accepts rule group or firewall policy; verify exact type and ARN, never policy JSON. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: typed firewall policy/rule-group ARN navigation; policy content remains opaque. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14833,7 +14833,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: Outbound CA certificate and inbound certificate ARNs reference ACM certificates, not ACM PCA authorities. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: ACM certificate ARNs for CA and complete server certificate list; never confuse ACM PCA authority. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14872,7 +14872,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: Explicit firewall/VPC/subnet inputs; computed endpoint_id cannot synthesize a resource. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: explicit firewall ARN, VPC ID and singleton subnet ID with independent common-VPC context; retain Logical identity. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",

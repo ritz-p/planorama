@@ -52,6 +52,7 @@ fn placement_available(
         node.resource_type.as_str(),
         "aws_redshift_cluster"
             | "aws_imagebuilder_infrastructure_configuration"
+            | "aws_networkfirewall_vpc_endpoint_association"
             | "aws_redshift_endpoint_access"
             | "aws_docdb_cluster"
             | "aws_neptune_cluster"
