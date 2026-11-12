@@ -1126,7 +1126,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_organizations_policy_attachment", "AWS Organizations", Association, Logical, Global, Some(ResourceIcon::Organizations)),
     entry!("aws_organizations_resource_policy", "AWS Organizations", Policy, Logical, Global, Some(ResourceIcon::Organizations)),
     entry!("aws_organizations_tag", "AWS Organizations", Controller, Logical, Global, Some(ResourceIcon::Organizations)),
-    entry!("aws_osis_pipeline", "Amazon OpenSearch Ingestion", Node, Logical, Regional, Some(ResourceIcon::Search)),
+    entry!("aws_osis_pipeline", "Amazon OpenSearch Ingestion", Node, Spatial, Regional, Some(ResourceIcon::Search)),
     entry!("aws_osis_pipeline_endpoint", "Amazon OpenSearch Ingestion", Node, Logical, Regional, Some(ResourceIcon::Search)),
     entry!("aws_osis_resource_policy", "Amazon OpenSearch Ingestion", Policy, Logical, Regional, Some(ResourceIcon::Search)),
     entry!("aws_outposts_capacity_task", "AWS Outposts", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSOutpostsfamily))),

@@ -1,0 +1,375 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.connector",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-connector",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.pipeline",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/ingestion"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.buffer",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/buffer"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.pipeline",
+      "type": "aws_cloudwatch_log_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/aws/osis/pipeline"
+        }
+      }
+    },
+    {
+      "address": "aws_osis_pipeline.ingestion",
+      "type": "aws_osis_pipeline",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "pipeline_name": "ingestion",
+          "pipeline_arn": "arn:aws:osis:us-east-1:123456789012:pipeline/ingestion",
+          "id": "ingestion",
+          "pipeline_role_arn": "arn:aws:iam::123456789012:role/ingestion",
+          "pipeline_configuration_body": "PRIVATE_YAML",
+          "vpc_options": [
+            {
+              "subnet_ids": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_group_ids": [
+                "sg-connector"
+              ],
+              "vpc_endpoint_management": "SERVICE"
+            }
+          ],
+          "encryption_at_rest_options": [
+            {
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/buffer"
+            }
+          ],
+          "log_publishing_options": [
+            {
+              "is_logging_enabled": true,
+              "cloudwatch_log_destination": [
+                {
+                  "log_group": "/aws/osis/pipeline"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_osis_pipeline_endpoint.endpoint",
+      "type": "aws_osis_pipeline_endpoint",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "endpoint",
+          "pipeline_arn": "arn:aws:osis:us-east-1:123456789012:pipeline/ingestion",
+          "vpc_id": "vpc-main",
+          "vpc_options": [
+            {
+              "subnet_ids": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "security_group_ids": [
+                "sg-connector"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_osis_resource_policy.policy",
+      "type": "aws_osis_resource_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:osis:us-east-1:123456789012:pipeline/ingestion",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.connector",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.pipeline",
+          "type": "aws_iam_role",
+          "name": "pipeline",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.buffer",
+          "type": "aws_kms_key",
+          "name": "buffer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.pipeline",
+          "type": "aws_cloudwatch_log_group",
+          "name": "pipeline",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_osis_pipeline.ingestion",
+          "type": "aws_osis_pipeline",
+          "name": "ingestion",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "pipeline_role_arn": {
+              "references": [
+                "aws_iam_role.pipeline.arn"
+              ]
+            },
+            "vpc_options": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.connector.id"
+                  ]
+                }
+              }
+            ],
+            "encryption_at_rest_options": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.buffer.arn"
+                  ]
+                }
+              }
+            ],
+            "log_publishing_options": [
+              {
+                "cloudwatch_log_destination": [
+                  {
+                    "log_group": {
+                      "references": [
+                        "aws_cloudwatch_log_group.pipeline.name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_osis_pipeline_endpoint.endpoint",
+          "type": "aws_osis_pipeline_endpoint",
+          "name": "endpoint",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "pipeline_arn": {
+              "references": [
+                "aws_osis_pipeline.ingestion.pipeline_arn"
+              ]
+            },
+            "vpc_options": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.connector.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_osis_resource_policy.policy",
+          "type": "aws_osis_resource_policy",
+          "name": "policy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_osis_pipeline.ingestion.pipeline_arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

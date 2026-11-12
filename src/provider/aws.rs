@@ -99,6 +99,7 @@ mod opensearch_serverless;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
+mod osis;
 mod placement;
 pub(crate) mod prefix_list_entries;
 mod privatelink;
@@ -335,6 +336,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
+    osis::present(&raw, &mut graph);
     search::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
     autoscaling_network::present(&raw, &mut graph);

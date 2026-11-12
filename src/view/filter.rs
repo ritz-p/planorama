@@ -92,6 +92,8 @@ fn placement_available(
             | "aws_redshiftserverless_endpoint_access"
             | "aws_apprunner_vpc_connector"
             | "aws_opensearchserverless_vpc_endpoint"
+            | "aws_osis_pipeline"
+            | "aws_osis_pipeline_endpoint"
     ) {
         return true;
     }

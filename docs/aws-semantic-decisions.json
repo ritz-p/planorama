@@ -17978,10 +17978,10 @@
       }
     },
     "aws_osis_pipeline": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 800,
-      "gap": "#724 reviewed: Missing: Logical ingestion pipeline merits independent-card review. Missing: complete VPC subnet/SG proof with CUSTOMER/SERVICE endpoint-management distinction; no invented service ENIs. Missing: role ARN, enabled log-group name, buffer key ARN and configured network IDs; id is deprecated pipeline name, use pipeline_arn for endpoint linkage. YAML source/sink reconstruction excluded. Follow-up #800. Deferred: buffer/encryption flags need enabled/unknown allowlist; pipeline YAML and ingest URLs excluded.",
+      "gap": "#724 follow-up implemented #800: Independent Spatial pipeline; verified role ARN, buffer KMS key ARN, enabled log-group name and complete subnet/SG references. Common-VPC placement requires known SERVICE management; CUSTOMER/unknown stay regional. Deprecated id and YAML remain excluded. See aws-data.md#opensearch-ingestion-800.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18057,10 +18057,10 @@
       }
     },
     "aws_osis_pipeline_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 800,
-      "gap": "#724 reviewed: Missing: endpoint common-VPC proof, without inheriting pipeline ownership as subnet placement. Missing: pipeline_arn -> pipeline.pipeline_arn and complete configured subnet/SG sets. vpc_id is computed corroboration, not configured reference. Follow-up #800. Intentionally unsupported: computed status and VPC ID do not establish endpoint health; network navigation is tracked separately.",
+      "gap": "#724 follow-up implemented #800: Verified pipeline_arn navigation and independent complete subnet/SG common-VPC proof. Computed vpc_id only corroborates; no inherited pipeline containment. Endpoint stays Logical. See aws-data.md#opensearch-ingestion-800.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18107,10 +18107,10 @@
       }
     },
     "aws_osis_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 800,
-      "gap": "#724 reviewed: Missing: verified pipeline helper navigation. Missing: resource_arn -> supported pipeline.pipeline_arn; reject other ARN kinds, preserve opaque policy. Follow-up #800. Intentionally unsupported: policy contents and effective pipeline access; resource ARN navigation is tracked separately.",
+      "gap": "#724 follow-up implemented #800: Verified resource_arn -> managed pipeline.pipeline_arn with OSIS pipeline ARN validation. Policy JSON remains opaque; helper stays independent Logical. See aws-data.md#opensearch-ingestion-800.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
