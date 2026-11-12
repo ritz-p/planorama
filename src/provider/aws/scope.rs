@@ -40,6 +40,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .as_ref()
         .and_then(|c| c.account.clone());
     if basic.is_some()
+        && !matches!(
+            resource,
+            "aws_redshift_endpoint_access" | "aws_redshift_endpoint_authorization"
+        )
         && !super::redshift_snapshots::resource(resource)
         && !super::kms::resource(resource)
         && !super::s3vectors::resource(resource)

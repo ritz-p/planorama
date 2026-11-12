@@ -1222,7 +1222,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_redshift_cluster_snapshot", "Amazon Redshift", Node, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshift_data_share_authorization", "Amazon Redshift", Policy, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshift_data_share_consumer_association", "Amazon Redshift", Association, Logical, Regional, Some(ResourceIcon::Redshift)),
-    entry!("aws_redshift_endpoint_access", "Amazon Redshift", Controller, Logical, Regional, Some(ResourceIcon::Redshift)),
+    entry!("aws_redshift_endpoint_access", "Amazon Redshift", Controller, Spatial, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshift_endpoint_authorization", "Amazon Redshift", Policy, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshift_event_subscription", "Amazon Redshift", Controller, Logical, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_redshift_hsm_client_certificate", "Amazon Redshift", Node, Logical, Regional, Some(ResourceIcon::Redshift)),

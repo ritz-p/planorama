@@ -28,8 +28,10 @@ fn static_reference<'a>(
 pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> Option<&[usize]> {
     let (attribute, group_type) = group_rule(&raw.nodes[target].resource_type)?;
     let group_ref = static_reference(raw, target, attribute)?;
-    if raw.nodes[target].resource_type == "aws_redshift_cluster"
-        && !group_ref.service_reference_verified
+    if matches!(
+        raw.nodes[target].resource_type.as_str(),
+        "aws_redshift_cluster" | "aws_redshift_endpoint_access"
+    ) && !group_ref.service_reference_verified
     {
         return None;
     }
@@ -45,8 +47,10 @@ pub(in crate::provider::aws) fn resolved_subnets(raw: &Input, target: usize) -> 
         return None;
     }
     let subnets = static_reference(raw, *group, "subnet_ids")?;
-    if raw.nodes[target].resource_type == "aws_redshift_cluster"
-        && !subnets.service_reference_verified
+    if matches!(
+        raw.nodes[target].resource_type.as_str(),
+        "aws_redshift_cluster" | "aws_redshift_endpoint_access"
+    ) && !subnets.service_reference_verified
     {
         return None;
     }
@@ -71,6 +75,7 @@ pub(in crate::provider::aws) fn group_configuration_matches(
 
 fn group_rule(resource_type: &str) -> Option<(&'static str, &'static str)> {
     match resource_type {
+        "aws_redshift_endpoint_access" => Some(("subnet_group_name", "aws_redshift_subnet_group")),
         "aws_redshift_cluster" => Some(("cluster_subnet_group_name", "aws_redshift_subnet_group")),
         "aws_db_instance" | "aws_rds_cluster" => {
             Some(("db_subnet_group_name", "aws_db_subnet_group"))
@@ -106,7 +111,9 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
             .sources[0];
         let parent = if matches!(
             node.resource_type.as_str(),
-            "aws_elasticache_replication_group" | "aws_redshift_cluster"
+            "aws_elasticache_replication_group"
+                | "aws_redshift_cluster"
+                | "aws_redshift_endpoint_access"
         ) {
             (parents[group].len() == 1)
                 .then(|| *parents[group].first().expect("one parent"))
@@ -117,9 +124,11 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
         let Some(parent) = parent else {
             continue;
         };
-        if node.resource_type == "aws_redshift_cluster"
-            && static_reference(raw, target, attribute)
-                .is_none_or(|r| r.endpoint_network_context != [parent])
+        if matches!(
+            node.resource_type.as_str(),
+            "aws_redshift_cluster" | "aws_redshift_endpoint_access"
+        ) && static_reference(raw, target, attribute)
+            .is_none_or(|r| r.endpoint_network_context != [parent])
         {
             continue;
         }
@@ -132,7 +141,10 @@ pub(super) fn infer(raw: &Input, mut graph: Graph) -> Graph {
                 .iter()
                 .map(|&source| crate::semantic::relationships::reference(&graph, source, group)),
         );
-        if node.resource_type == "aws_redshift_cluster" {
+        if matches!(
+            node.resource_type.as_str(),
+            "aws_redshift_cluster" | "aws_redshift_endpoint_access"
+        ) {
             if let Some(groups) = static_reference(raw, target, "vpc_security_group_ids") {
                 proof.extend(groups.sources.iter().flat_map(|&s| {
                     [

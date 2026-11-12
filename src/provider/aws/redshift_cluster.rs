@@ -111,48 +111,9 @@ pub(super) fn annotate(
             r.service_reference_owner_account = proof.flatten();
         }
     }
-    let contexts: Vec<_> = refs
-        .iter()
-        .map(|r| {
-            if nodes[r.target].resource_type != CLUSTER
-                || r.attribute != "cluster_subnet_group_name"
-            {
-                return None;
-            }
-            let proof = || {
-                if !r.service_reference_verified {
-                    return None;
-                }
-                let [group] = r.sources.as_slice() else {
-                    return None;
-                };
-                let subnets = super::lambda_core::unique(refs, *group, "subnet_ids")?;
-                let groups = super::lambda_core::unique(refs, r.target, "vpc_security_group_ids")?;
-                if !super::network::verified(nodes, subnets, e)
-                    || !super::network::verified(nodes, groups, e)
-                {
-                    return None;
-                }
-                let parents = subnets
-                    .sources
-                    .iter()
-                    .chain(&groups.sources)
-                    .map(|&s| super::lambda_core::parent(nodes, refs, e, s))
-                    .collect::<Option<std::collections::BTreeSet<_>>>()?;
-                if parents.len() != 1 {
-                    return None;
-                }
-                parents.first().copied()
-            };
-            Some(proof().into_iter().collect::<Vec<_>>())
-        })
-        .collect();
-    for (r, c) in refs.iter_mut().zip(contexts) {
-        if let Some(c) = c {
-            r.endpoint_network_context = c;
-        }
-    }
+    super::network::annotate_subnet_group(nodes, refs, e, CLUSTER, "cluster_subnet_group_name");
 }
+
 pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     if label(&raw.nodes[r.target].resource_type, &r.attribute).is_none() {
         return true;

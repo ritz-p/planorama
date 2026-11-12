@@ -24,6 +24,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             kind if super::redshift_snapshots::owner(kind).is_some() => {
                 super::redshift_snapshots::owner(kind).unwrap()
             }
+            "aws_redshift_endpoint_authorization" => (
+                "cluster_identifier",
+                "Authorized cluster",
+                "Endpoint authorizations",
+            ),
             "aws_redshift_cluster_iam_roles" => {
                 ("cluster_identifier", "IAM roles cluster", "IAM roles")
             }
