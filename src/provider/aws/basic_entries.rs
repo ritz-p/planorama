@@ -1598,7 +1598,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_transfer_ssh_key", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_tag", "AWS Transfer Family", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_user", "AWS Transfer Family", Identity, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
-    entry!("aws_transfer_web_app", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
+    entry!("aws_transfer_web_app", "AWS Transfer Family", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_web_app_customization", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_transfer_workflow", "AWS Transfer Family", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSTransferFamily))),
     entry!("aws_uxc_account_customizations", "Amazon User Experience Customization", Node, Logical, Global, None),

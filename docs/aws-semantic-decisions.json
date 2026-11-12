@@ -24729,7 +24729,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 835,
-      "gap": "#720 reviewed: Missing: Identity Center instance ARN/IAM role and complete configured VPC/subnet/SG proof. application_arn and vpc_endpoint_id are service-created outputs, not managed child provenance. Follow-up #835. Missing: Logical web app is an architecture endpoint; review Spatial presentation in #835. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #835. Independent Spatial web app with singleton Identity Center data-instance/IAM-role references and complete explicitly configured common-VPC, subnet and SG proof. Computed application/endpoint outputs never create managed children. See aws.md#transfer-web-apps-835.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -24820,7 +24820,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 835,
-      "gap": "#720 reviewed: Missing: web_app_id to web app web_app_id; branding files/title remain opaque. Follow-up #835. Missing: verified web-app helper in #835; preserve fallback without dumping logo/favicon. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: Implemented follow-up #835. Exact managed web_app_id reference and verified web-app helper owner with independent actions and filtered fallback. Branding payloads remain opaque. See aws.md#transfer-web-apps-835.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",

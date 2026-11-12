@@ -1,4 +1,4 @@
-use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
+use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 
 #[cfg(test)]
@@ -48,27 +48,7 @@ fn verify(
     }
     let source = r.sources[0];
     if identity {
-        let n = &nodes[r.target];
-        let s = &nodes[source];
-        if !r.complete
-            || !r.instances_explicit
-            || !r.issues.is_empty()
-            || !n.provider.is_aws()
-            || !s.provider.is_aws()
-            || n.mode != EntityMode::Managed
-            || s.mode != EntityMode::Data
-            || n.action == Action::Delete
-            || s.action == Action::Delete
-            || n.deposed_key.is_some()
-            || s.deposed_key.is_some()
-            || s.resource_type != "aws_ssoadmin_instances"
-            || !r
-                .source_attributes
-                .iter()
-                .all(|f| f == "arns" || f == "arns[0]")
-            || super::service_evidence::known(evidence, r.target, "type")
-                != Some("iamidentitycenter")
-        {
+        if super::service_evidence::known(evidence, r.target, "type") != Some("iamidentitycenter") {
             return false;
         }
         let Some((block, mask)) = singleton(value, mask, "iam_identity_center_options") else {
@@ -77,9 +57,7 @@ fn verify(
         let Some(actual) = super::streaming::scalar(block, &mask, "instance_arn") else {
             return false;
         };
-        let (v, m) = evidence[source];
-        return super::streaming::values(v, m, "arns", true)
-            .is_some_and(|values| values.len() == 1 && values.contains(actual));
+        return super::identity_center_instance::verify(nodes, r, evidence, actual);
     }
     if !super::service_evidence::eligible(nodes, r) {
         return false;

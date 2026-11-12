@@ -1,0 +1,387 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main",
+          "cidr_block": "10.0.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other",
+          "cidr_block": "10.1.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.web",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-web",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.web",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/WebApp",
+          "name": "WebApp"
+        }
+      }
+    },
+    {
+      "address": "data.aws_ssoadmin_instances.identity",
+      "type": "aws_ssoadmin_instances",
+      "mode": "data",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arns": [
+            "arn:aws:sso:::instance/ssoins-example"
+          ],
+          "identity_store_ids": [
+            "d-example"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_web_app.private",
+      "type": "aws_transfer_web_app",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_app_id": "webapp-private",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:webapp/webapp-private",
+          "identity_provider_details": [
+            {
+              "identity_center_config": [
+                {
+                  "instance_arn": "arn:aws:sso:::instance/ssoins-example",
+                  "role": "arn:aws:iam::123456789012:role/WebApp",
+                  "application_arn": "PRIVATE_COMPUTED_APPLICATION"
+                }
+              ]
+            }
+          ],
+          "endpoint_details": [
+            {
+              "vpc": [
+                {
+                  "vpc_id": "vpc-main",
+                  "subnet_ids": [
+                    "subnet-a",
+                    "subnet-b"
+                  ],
+                  "security_group_ids": [
+                    "sg-web"
+                  ],
+                  "vpc_endpoint_id": "PRIVATE_COMPUTED_ENDPOINT"
+                }
+              ]
+            }
+          ],
+          "access_endpoint": "PRIVATE_COMPUTED_URL"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_web_app_customization.branding",
+      "type": "aws_transfer_web_app_customization",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "web_app_id": "webapp-private",
+          "title": "PRIVATE_TITLE",
+          "logo_file": "PRIVATE_LOGO",
+          "favicon_file": "PRIVATE_FAVICON"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_web_app.public",
+      "type": "aws_transfer_web_app",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_app_id": "webapp-public",
+          "identity_provider_details": [
+            {
+              "identity_center_config": [
+                {
+                  "instance_arn": "arn:aws:sso:::instance/ssoins-example",
+                  "role": "arn:aws:iam::123456789012:role/WebApp",
+                  "application_arn": "PRIVATE_COMPUTED_APPLICATION"
+                }
+              ]
+            }
+          ],
+          "endpoint_details": [],
+          "access_endpoint": "PRIVATE_PUBLIC_URL"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "type": "aws_vpc",
+          "mode": "managed",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "type": "aws_vpc",
+          "mode": "managed",
+          "name": "other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "type": "aws_subnet",
+          "mode": "managed",
+          "name": "a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "type": "aws_subnet",
+          "mode": "managed",
+          "name": "b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.web",
+          "type": "aws_security_group",
+          "mode": "managed",
+          "name": "web",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.web",
+          "type": "aws_iam_role",
+          "mode": "managed",
+          "name": "web",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "data.aws_ssoadmin_instances.identity",
+          "type": "aws_ssoadmin_instances",
+          "mode": "data",
+          "name": "identity",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_web_app.private",
+          "type": "aws_transfer_web_app",
+          "mode": "managed",
+          "name": "private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_provider_details": [
+              {
+                "identity_center_config": [
+                  {
+                    "instance_arn": {
+                      "references": [
+                        "data.aws_ssoadmin_instances.identity.arns"
+                      ]
+                    },
+                    "role": {
+                      "references": [
+                        "aws_iam_role.web.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "endpoint_details": [
+              {
+                "vpc": [
+                  {
+                    "vpc_id": {
+                      "references": [
+                        "aws_vpc.main.id"
+                      ]
+                    },
+                    "subnet_ids": {
+                      "references": [
+                        "aws_subnet.a.id",
+                        "aws_subnet.b.id"
+                      ]
+                    },
+                    "security_group_ids": {
+                      "references": [
+                        "aws_security_group.web.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_transfer_web_app_customization.branding",
+          "type": "aws_transfer_web_app_customization",
+          "mode": "managed",
+          "name": "branding",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_app_id": {
+              "references": [
+                "aws_transfer_web_app.private.web_app_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_web_app.public",
+          "type": "aws_transfer_web_app",
+          "mode": "managed",
+          "name": "public",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_provider_details": [
+              {
+                "identity_center_config": [
+                  {
+                    "instance_arn": {
+                      "references": [
+                        "data.aws_ssoadmin_instances.identity.arns"
+                      ]
+                    },
+                    "role": {
+                      "references": [
+                        "aws_iam_role.web.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

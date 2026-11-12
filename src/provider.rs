@@ -6,7 +6,8 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::transfer_as2::resource(resource)
+        && (aws::transfer_webapp::resource(resource)
+            || aws::transfer_as2::resource(resource)
             || aws::rolesanywhere::resource(resource)
             || aws::private_ca_references::resource(resource)
             || aws::glue_workloads::resource(resource)
@@ -42,7 +43,8 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::transfer_as2::indexed(resource, attribute)
+        && (aws::transfer_webapp::indexed(resource, attribute)
+            || aws::transfer_as2::indexed(resource, attribute)
             || aws::rolesanywhere::indexed(resource, attribute)
             || aws::private_ca_references::indexed(resource, attribute)
             || aws::glue_workloads::indexed(resource, attribute)

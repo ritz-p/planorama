@@ -727,3 +727,38 @@ All references require unique explicit Terraform provenance, exact known values,
 complete collections, compatible provider/account/region/state and current managed
 endpoints. Global IAM roles retain their own scope. Deleted/deposed, filtered,
 ambiguous and unproven inputs never manufacture an owner or endpoint.
+
+## Transfer web apps (#835)
+
+The pinned Provider 6.70.0 [web app](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_web_app.html.markdown)
+and [customization](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_web_app_customization.html.markdown)
+Framework contracts support these references:
+
+| Consumer | Configured input | Verified output |
+| --- | --- | --- |
+| Web app | `identity_provider_details.identity_center_config.instance_arn` | Current `data.aws_ssoadmin_instances.arns` with exactly one known ARN (`arns` or `arns[0]` reference) |
+| Web app | `identity_provider_details.identity_center_config.role` | Managed IAM role `arn` |
+| Web app | `endpoint_details.vpc.vpc_id` | Managed VPC `id` |
+| Web app | `endpoint_details.vpc.subnet_ids`, `endpoint_details.vpc.security_group_ids` | Complete managed subnet / SG `id` sets in the configured VPC |
+| Customization | `web_app_id` | Managed web app `web_app_id` |
+
+Web apps are independent Spatial endpoints. Both levels of identity-provider and
+endpoint blocks must be singleton lists. VPC placement requires explicit VPC proof
+and complete explicit subnet/SG sets whose own verified VPC references agree.
+Optional/computed default SG values alone supply no placement. An absent endpoint
+block leaves the web app regional/public; it does not imply a customer subnet.
+Filtered subnet/SG proof removes placement instead of restoring hidden context.
+
+The Identity Center data-source verifier is shared with OpenSearch Serverless only
+for its identical single known `arns` output contract. Each consumer validates its
+own block shapes and discriminators separately. Managed Identity Center resources
+and ambiguous/unknown instance collections do not substitute for that data contract.
+IAM roles retain global scope; other references require compatible known regions.
+All links require unique explicit Terraform provenance, matching known values,
+compatible provider/account/state and current endpoints of the required mode.
+
+Customization retains its own identity/action and verified owner navigation with
+filtered fallback. Computed `application_arn`, `vpc_endpoint_id` and access endpoints
+never manufacture managed children. Titles, logos, favicons and URLs remain opaque.
+Unknown, malformed, literal-only, partial, foreign and deleted/deposed evidence
+keeps safe fallback without inferring runtime access or network reachability.
