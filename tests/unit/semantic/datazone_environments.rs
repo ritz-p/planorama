@@ -360,3 +360,21 @@ fn datazone_target_scope_display_and_computed_payload_exclusions_match_svg_and_h
         assert!(!o.content.contains("PRIVATE_"));
     }
 }
+#[test]
+fn datazone_deployment_targets_reject_explicit_null_with_retained_computed_values() {
+    for (t, account, region) in [
+        (8, "aws_account_id", "aws_account_region"),
+        (9, "account_identifier", "account_region"),
+    ] {
+        for field in [account, region] {
+            let mut v = fixture();
+            v["configuration"]["root_module"]["resources"][t]["expressions"][field] =
+                json!({"constant_value":null});
+            assert!(
+                node(&graph(&v), &v, t).entity.deployment_target.is_none(),
+                "{t} {field}"
+            );
+            assert!(node(&graph(&v), &v, t).entity.scope.is_some());
+        }
+    }
+}

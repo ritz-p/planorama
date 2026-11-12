@@ -16,6 +16,7 @@ pub struct AttributeReference {
     pub target: usize,
     pub attribute: String,
     pub has_references: bool,
+    pub root_constant_null: bool,
     pub sources: Vec<usize>,
     pub complete: bool,
     pub instances_explicit: bool,
