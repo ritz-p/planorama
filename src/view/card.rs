@@ -11,6 +11,7 @@ pub(crate) struct Metrics {
     pub previous_y: usize,
     pub previous_line_limit: usize,
     pub references_y: usize,
+    pub target_y: usize,
     pub routes_y: usize,
     pub header_height: usize,
     pub height: usize,
@@ -97,8 +98,14 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         super::text::wrap_address(&super::text::moved_from(previous), previous_line_limit).len()
             * 18
     });
-    let header_height =
-        crate::layout::NODE_HEIGHT + extra + previous_height + super::references::height(node);
+    let target_height = super::scope::target(node).map_or(0, |text| {
+        super::text::wrap(&text, previous_line_limit).len() * 18
+    });
+    let header_height = crate::layout::NODE_HEIGHT
+        + extra
+        + previous_height
+        + target_height
+        + super::references::height(node);
     Metrics {
         inset,
         line_limit,
@@ -109,7 +116,8 @@ pub(crate) fn measure(node: &Node) -> Metrics {
         service_width,
         previous_y: 86 + extra,
         previous_line_limit,
-        references_y: 86 + extra + previous_height,
+        target_y: 86 + extra + previous_height,
+        references_y: 86 + extra + previous_height + target_height,
         routes_y: header_height - 2,
         header_height,
         height: header_height + node.routes.reserved_height,

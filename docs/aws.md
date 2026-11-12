@@ -1109,3 +1109,35 @@ and compatible provider/account/region. Domain and glossary qualification also
 checks those boundaries; matching literal IDs cannot substitute for domain identity.
 Unknown/sensitive, ambiguous, incomplete, data-only, deleted/deposed, filtered and
 cross-state evidence retains conservative fallback.
+
+## DataZone environments and deployment targets (#861)
+
+Managed environments are independent architecture cards; environment profiles stay
+Logical and independent. Blueprint configurations are Logical helpers with
+verified `domain_id` owner navigation. All three keep their effective provider
+account and control-plane region. These relationships do not establish network
+containment.
+
+`domain_identifier`/`domain_id` require explicit managed domain `id` references.
+Environment/profile `project_identifier`, environment `profile_identifier`, and
+complete environment `glossary_terms` lists require known exact `id` values in the
+same explicitly verified domain. Profiles and environments may refer to different
+projects within that domain. Blueprint configuration `manage_access_role_arn` and
+`provisioning_role_arn` select IAM role `arn`, independently qualified by account.
+
+Environment `account_identifier`/`account_region` and profile
+`aws_account_id`/`aws_account_region` describe intended deployment targets. Only a
+configured, known, nonsensitive pair with a 12-digit account and DataZone's bounded
+region syntax is displayed as a separate **Configured deployment target**. The
+control-plane scope remains unchanged. Optional/computed fields that appear only
+in state do not establish configured targets; profiles never supply an inferred
+environment target. Unknown, partial, deleted, deposed or data-only evidence does
+not produce a target annotation.
+
+Pinned AWS Provider 6.70.0 schemas use scalar strings and a glossary-term list.
+Environment target fields and profile account are optional/computed; profile
+region is required. `blueprint_identifier`, `environment_blueprint_identifier`
+and configuration `environment_blueprint_id` are service lookup values, not a
+managed blueprint or interchangeable configuration Terraform ID. `enabled_regions`
+creates no regional copies. Computed provisioned resources, creators, deployment
+payloads and arbitrary parameters create no children or inferred relationships.

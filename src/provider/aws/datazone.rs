@@ -13,9 +13,13 @@ pub(super) const GLOSSARY: &str = "aws_datazone_glossary";
 pub(super) const TERM: &str = "aws_datazone_glossary_term";
 pub(crate) fn resource(k: &str) -> bool {
     matches!(k, DOMAIN | PROJECT | ASSET | FORM | GLOSSARY | TERM)
+        || super::datazone_environments::resource(k)
 }
 pub(super) fn owner(k: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match k {
+        super::datazone_environments::CONFIGURATION => {
+            Some(("domain_id", "DataZone domain", "Blueprint configurations"))
+        }
         PROJECT => Some(("domain_identifier", "DataZone domain", "Projects")),
         ASSET | FORM | GLOSSARY => Some((
             "owning_project_identifier",
@@ -62,7 +66,7 @@ fn fields(k: &str, p: &str, s: &str) -> &'static [&'static str] {
         | (TERM, "term_relations.classifies" | "term_relations.is_a", TERM) => &["id"],
         (ASSET, "forms_input.type_identifier", FORM) => &["name"],
         (ASSET, "forms_input.type_revision", FORM) => &["revision"],
-        _ => &[],
+        _ => super::datazone_environments::fields(k, p, s),
     }
 }
 pub(super) fn current(n: &TerraformEntity) -> bool {
@@ -98,7 +102,17 @@ pub(super) fn direct_domain(
     e: &[(&Value, &Value)],
     t: usize,
 ) -> Option<usize> {
-    simple(nodes, refs, e, t, "domain_identifier")
+    simple(
+        nodes,
+        refs,
+        e,
+        t,
+        if nodes[t].resource_type == super::datazone_environments::CONFIGURATION {
+            "domain_id"
+        } else {
+            "domain_identifier"
+        },
+    )
 }
 pub(super) fn domain(
     nodes: &[TerraformEntity],
@@ -127,6 +141,7 @@ pub(super) fn domain(
             Some(domain)
         }
         PROJECT | ASSET | FORM | GLOSSARY => direct_domain(nodes, refs, e, t),
+        k if super::datazone_environments::resource(k) => direct_domain(nodes, refs, e, t),
         _ => None,
     }
 }
@@ -266,7 +281,9 @@ pub(super) fn domain_bound(raw: &Input, t: usize) -> bool {
     if k == DOMAIN {
         return true;
     }
-    let path = if k == TERM {
+    let path = if k == super::datazone_environments::CONFIGURATION {
+        "domain_id"
+    } else if k == TERM {
         "glossary_identifier"
     } else {
         "domain_identifier"

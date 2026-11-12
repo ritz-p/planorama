@@ -29074,10 +29074,10 @@
       }
     },
     "aws_datazone_environment": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 861,
-      "gap": "#723 reviewed: Missing: domain/project/profile IDs and glossary terms with consistent domain. Blueprint identifiers are lookup contracts, not managed blueprint resources. Provisioned resources are computed and cannot synthesize Terraform children. Follow-up #861.",
+      "gap": "#723 audit: Verified domain/project/profile IDs and complete glossary-term lists with current managed same-domain identities; independent Spatial environment, control account/region retained, separately configured known deployment account/region; blueprint lookup and computed provisioned resources do not establish managed ownership.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29141,10 +29141,10 @@
       }
     },
     "aws_datazone_environment_profile": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 861,
-      "gap": "#723 reviewed: Missing: domain/project references; blueprint is service lookup, not managed configuration identity. aws_account_id is optional/computed in schema despite required docs. Follow-up #861.",
+      "gap": "#723 audit: Verified domain/project IDs within the same explicit domain; independent Logical profile and control scope retained; configured known aws_account_id/aws_account_region recorded as a separate intended target, never inherited into environments; blueprint lookup remains external.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29195,10 +29195,10 @@
       }
     },
     "aws_datazone_environment_blueprint_configuration": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 861,
-      "gap": "#723 reviewed: Missing: domain ID and IAM role ARNs; environment_blueprint_id is not configuration Terraform ID. enabled_regions configure availability, not multi-region resource ownership; arbitrary parameters opaque. Follow-up #861.",
+      "gap": "#723 audit: Verified domain_id owner and typed IAM role ARNs with independent provider/account/control-region proof; Logical domain-qualified configuration. environment_blueprint_id is a lookup value, enabled_regions is availability, and arbitrary parameters remain opaque.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
