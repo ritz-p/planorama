@@ -52,6 +52,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::cloudwan::resource(resource)
         && !super::oam::resource(resource)
         && !super::transfer_server::resource(resource)
+        && !(entity.mode == EntityMode::Managed && super::transfer_identity::taggable(resource))
         && !super::xray_encryption::resource(resource)
         && !super::synthetics::resource(resource)
         && !super::rum::resource(resource)
@@ -300,6 +301,11 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_glue_classifier"
                 | "aws_glue_trigger"
                 | "aws_glue_workflow"
+                | "aws_transfer_access"
+                | "aws_transfer_user"
+                | "aws_transfer_host_key"
+                | "aws_transfer_ssh_key"
+                | "aws_transfer_tag"
                 | "aws_rolesanywhere_profile"
                 | "aws_rolesanywhere_trust_anchor"
                 | "aws_acmpca_permission"

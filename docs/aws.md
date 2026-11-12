@@ -659,3 +659,38 @@ All endpoints require exact known values, compatible accounts, independently kno
 regions (with global IAM roles), current unique managed identity and preserved
 state/selection boundaries. Host keys, banners, authentication URLs and file or
 workflow payloads are not summarized. This does not change EFS, Backup or FSx scope.
+
+## Transfer identities, keys and tags (#833)
+
+Pinned Provider 6.70.0 managed contracts add the following references and optional
+owner presentation, retaining each helper's action, provenance and coverage:
+
+| Resource | Configured input | Verified output / owner |
+| --- | --- | --- |
+| Access, user, host key, SSH key | `server_id` | Managed Transfer server `id` |
+| Access, user | `role` | Managed IAM role `arn` with compatible global scope |
+| SSH key | `user_name` | Managed Transfer user `user_name`, qualified by the same verified server |
+| Tag | `resource_arn` | Managed Transfer server, user, host key, certificate, profile, agreement, connector, web app or workflow `arn` |
+
+Access grants, users and host keys have server owners; SSH keys have user owners;
+tags have exact Transfer owners. Managed taggable targets retain independently
+verified provider accounts for this ownership proof. Logical defaults and the shared presentation
+fallback remain in force. Nested owners are not embedded without view support.
+User names alone are insufficient: both key and user require complete explicit
+`server_id` references to the same current managed server, with known ID equality
+and compatible scope. Composite Terraform IDs are not parsed as owner evidence.
+
+All inputs are scalar strings with unique explicit references, exact known output
+equality, compatible provider/account/region/state and current managed endpoints.
+Unknown, literal-only, ambiguous, foreign, deleted/deposed and filtered inputs
+retain safe fallback. These links add no network containment or storage ownership.
+Directory SIDs, POSIX values, home directories, policies, key bodies/fingerprints,
+tag values and computed composite IDs are not displayed or interpreted.
+
+The pinned [access](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_access.html.markdown),
+[user](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_user.html.markdown),
+[host key](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_host_key.html.markdown),
+[SSH key](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_ssh_key.html.markdown)
+and [tag](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_tag.html.markdown)
+contracts distinguish resource IDs from API identities. Runtime support uses
+`scripts/update-resource-support.sh aws_transfer_`.

@@ -1,0 +1,323 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_transfer_server.one",
+      "type": "aws_transfer_server",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "s-one",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:server/s-one",
+          "endpoint_type": "PUBLIC",
+          "identity_provider_type": "SERVICE_MANAGED",
+          "protocols": [
+            "SFTP"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_server.two",
+      "type": "aws_transfer_server",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "s-two",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:server/s-two",
+          "endpoint_type": "PUBLIC",
+          "identity_provider_type": "SERVICE_MANAGED",
+          "protocols": [
+            "SFTP"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.transfer",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Transfer",
+          "name": "Transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_access.directory",
+      "type": "aws_transfer_access",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "server_id": "s-one",
+          "role": "arn:aws:iam::123456789012:role/Transfer",
+          "external_id": "PRIVATE_SID",
+          "home_directory": "PRIVATE_HOME",
+          "policy": "PRIVATE_POLICY",
+          "posix_profile": [
+            {
+              "uid": 1001,
+              "gid": 1001
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_user.one",
+      "type": "aws_transfer_user",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "server_id": "s-one",
+          "user_name": "same-user",
+          "role": "arn:aws:iam::123456789012:role/Transfer",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:user/s-one/same-user",
+          "home_directory": "PRIVATE_HOME",
+          "policy": "PRIVATE_USER_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_user.two",
+      "type": "aws_transfer_user",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "server_id": "s-two",
+          "user_name": "same-user",
+          "role": "arn:aws:iam::123456789012:role/Transfer",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:user/s-two/same-user",
+          "home_directory": "PRIVATE_HOME",
+          "policy": "PRIVATE_USER_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_host_key.host",
+      "type": "aws_transfer_host_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "server_id": "s-one",
+          "host_key_id": "key-host",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:host-key/s-one/key-host",
+          "host_key_body": "PRIVATE_HOST_KEY",
+          "host_key_body_wo": "PRIVATE_WRITE_ONLY",
+          "host_key_fingerprint": "PRIVATE_FINGERPRINT"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_ssh_key.login",
+      "type": "aws_transfer_ssh_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "server_id": "s-one",
+          "user_name": "same-user",
+          "ssh_key_id": "key-login",
+          "body": "PRIVATE_PUBLIC_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_tag.custom",
+      "type": "aws_transfer_tag",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:transfer:us-east-1:123456789012:server/s-one",
+          "key": "PRIVATE_TAG_KEY",
+          "value": "PRIVATE_TAG_VALUE",
+          "id": "PRIVATE_COMPOSITE_ID"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.files",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "files",
+          "arn": "arn:aws:s3:::files"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_transfer_server.one",
+          "type": "aws_transfer_server",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_server.two",
+          "type": "aws_transfer_server",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.transfer",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_access.directory",
+          "type": "aws_transfer_access",
+          "provider_config_key": "aws",
+          "expressions": {
+            "server_id": {
+              "references": [
+                "aws_transfer_server.one.id"
+              ]
+            },
+            "role": {
+              "references": [
+                "aws_iam_role.transfer.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_user.one",
+          "type": "aws_transfer_user",
+          "provider_config_key": "aws",
+          "expressions": {
+            "server_id": {
+              "references": [
+                "aws_transfer_server.one.id"
+              ]
+            },
+            "role": {
+              "references": [
+                "aws_iam_role.transfer.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_user.two",
+          "type": "aws_transfer_user",
+          "provider_config_key": "aws",
+          "expressions": {
+            "server_id": {
+              "references": [
+                "aws_transfer_server.two.id"
+              ]
+            },
+            "role": {
+              "references": [
+                "aws_iam_role.transfer.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_host_key.host",
+          "type": "aws_transfer_host_key",
+          "provider_config_key": "aws",
+          "expressions": {
+            "server_id": {
+              "references": [
+                "aws_transfer_server.one.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_ssh_key.login",
+          "type": "aws_transfer_ssh_key",
+          "provider_config_key": "aws",
+          "expressions": {
+            "server_id": {
+              "references": [
+                "aws_transfer_server.one.id"
+              ]
+            },
+            "user_name": {
+              "references": [
+                "aws_transfer_user.one.user_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_tag.custom",
+          "type": "aws_transfer_tag",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_transfer_server.one.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.files",
+          "type": "aws_s3_bucket",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
