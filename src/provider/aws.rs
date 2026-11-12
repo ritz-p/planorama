@@ -77,6 +77,7 @@ pub(crate) mod identity_center;
 mod identity_center_instance;
 pub(crate) mod identitystore;
 pub(crate) mod imagebuilder;
+pub(crate) mod imagebuilder_distribution;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
 pub(crate) mod kms;
