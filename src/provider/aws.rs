@@ -68,6 +68,7 @@ pub(crate) mod global_accelerator;
 mod glue;
 pub(crate) mod glue_catalog;
 mod glue_network;
+pub(crate) mod glue_workloads;
 mod iam;
 pub(crate) mod iam_credentials;
 pub(crate) mod iam_policies;

@@ -35,6 +35,17 @@ fn rows<'a>(
                     | "function_association"
                     | "lambda_function_association"
                     | "representations"
+                    | "jdbc_target"
+                    | "mongodb_target"
+                    | "s3_target"
+                    | "catalog_target"
+                    | "delta_target"
+                    | "hudi_target"
+                    | "iceberg_target"
+                    | "dynamodb_target"
+                    | "input_record_tables"
+                    | "actions"
+                    | "conditions"
             )
         ) && values.len() != 1
         {
