@@ -428,3 +428,21 @@ fn datazone_lifecycle_filters_data_separation_named_states_and_payload_privacy_r
         assert!(!o.content.contains("PRIVATE_"));
     }
 }
+#[test]
+fn datazone_form_qualification_never_matches_two_unknown_or_sensitive_values() {
+    for mask in ["after_unknown", "after_sensitive"] {
+        for (input, output) in [("type_identifier", "name"), ("type_revision", "revision")] {
+            let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
+            v["resource_changes"][12]["change"][mask] = json!({"forms_input":[{input:true},{}]});
+            v["resource_changes"][10]["change"][mask] = json!({output:true});
+            assert!(
+                !verified(&v, 12, "forms_input.type_identifier"),
+                "{mask} {input}"
+            );
+            assert!(
+                !verified(&v, 12, "forms_input.type_revision"),
+                "{mask} {input}"
+            );
+        }
+    }
+}
