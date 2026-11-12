@@ -76,6 +76,7 @@ mod icons;
 pub(crate) mod identity_center;
 mod identity_center_instance;
 pub(crate) mod identitystore;
+pub(crate) mod imagebuilder;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
 pub(crate) mod kms;
@@ -366,6 +367,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     vpclattice::present(&raw, &mut graph);
     transfer_server::present(&raw, &mut graph);
     transfer_webapp::present(&raw, &mut graph);
+    imagebuilder::present(&raw, &mut graph);
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);

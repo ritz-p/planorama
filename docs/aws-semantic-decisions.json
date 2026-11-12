@@ -19962,7 +19962,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct. See per-dimension review; Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -19992,7 +19992,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 component ARNs, KMS and service-qualified target repository. Parent image may be Docker image, Image Builder image or AMI; never infer ECR from arbitrary image strings. See per-dimension review; Intentionally unsupported: Dockerfile template, URI and parameters remain opaque.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20118,7 +20118,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required. See per-dimension review; Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20169,7 +20169,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required. See per-dimension review; Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20220,7 +20220,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 versioned components, exact parent AMI/Image Builder identity and EBS KMS/snapshot references. Wildcards/public catalog IDs cannot match local resources. See per-dimension review; Intentionally unsupported: user data and component parameters are payloads, not summaries.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20267,7 +20267,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 profile name, SNS, S3 logging and exclusive host/resource-group targets. Missing: #813 verified subnet/SG build context; retain Logical infrastructure configuration, not a synthetic build instance. See per-dimension review; Intentionally unsupported: instance types/log prefixes do not establish produced workloads.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20374,7 +20374,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct. See per-dimension review; Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",

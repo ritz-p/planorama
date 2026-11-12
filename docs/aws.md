@@ -844,3 +844,44 @@ account-wide authorization scope, not links to every managed VPC. Qualifiers do 
 relocate either resource, and authorization never implies network containment or
 runtime reachability. All paths require current managed identities, unique explicit
 provenance, matching known values and compatible provider/region/state boundaries.
+
+## Image Builder recipes and build infrastructure (#813)
+
+Components and workflows verify configured `kms_key_id` against a managed KMS
+key ARN. Image/container recipes verify complete `component.component_arn` lists
+against exact managed component ARN/ID outputs. `parent_image` accepts an exact
+managed Image Builder image build ARN, or an AMI `id` for image recipes. Public
+catalog images, wildcard versions, SSM selectors and container URIs remain opaque.
+Container recipes require `container_type = DOCKER`; their singleton
+`target_repository.repository_name` requires `service = ECR` and a repository name.
+
+Images and pipelines verify `infrastructure_configuration_arn`,
+`distribution_configuration_arn`, exclusive `image_recipe_arn` /
+`container_recipe_arn`, complete `workflow.workflow_arn` lists and IAM
+`execution_role` ARNs. Component, workflow and image references require exact
+numeric semantic/build versions; recipes require exact numeric semantic versions.
+Optional/computed defaults do not manufacture configured references.
+
+Infrastructure verifies scalar `subnet_id`, complete `security_group_ids`, IAM
+`instance_profile_name`, `sns_topic_arn` and
+`logging.s3_logs.s3_bucket_name` (bucket/id). Complete subnet/SG evidence with one
+common verified VPC records build-network context on the infrastructure
+configuration while retaining its Logical default. Missing or filtered network
+proof removes this context.
+Recipes, components, workflows, pipelines and images remain Logical and never
+inherit this VPC.
+
+Bounded volume references cover image-recipe `block_device_mapping.ebs` and
+container-recipe `instance_configuration.block_device_mapping.ebs`: `snapshot_id`
+uses managed EBS snapshot `id`; `kms_key_id` uses key ARN only with the pinned
+nullable-bool string `encrypted = "true"`. Removed mappings do not supply either
+reference. Container recipe `kms_key_id` is restricted to an exact managed key ARN.
+
+Provider 6.70.0 uses ordered component/workflow lists, block-device mapping sets,
+singleton `ebs`, `instance_configuration`, `target_repository`, `logging` and
+`s3_logs` lists, and SG ID sets. Collection expansion is enabled only for these
+verified paths; other resource contracts keep their existing shape checks. All
+references require unique explicit current managed endpoints, matching known
+values and compatible provider/account/region/state evidence. Sensitive and
+unknown values retain fallback. Dockerfiles, YAML, parameters, user data, policies
+and generated instance/image outputs are neither interpreted nor displayed.
