@@ -694,3 +694,36 @@ The pinned [access](https://github.com/hashicorp/terraform-provider-aws/blob/5e1
 and [tag](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_tag.html.markdown)
 contracts distinguish resource IDs from API identities. Runtime support uses
 `scripts/update-resource-support.sh aws_transfer_`.
+
+## Transfer AS2 and connectors (#834)
+
+Provider 6.70.0 [profile](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_profile.html.markdown),
+[agreement](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_agreement.html.markdown)
+and [connector](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/transfer_connector.html.markdown)
+SDK contracts add these exact managed references:
+
+| Consumer | Configured input | Verified output |
+| --- | --- | --- |
+| Profile | `certificate_ids` | Complete Transfer certificate `certificate_id` set |
+| Agreement | `server_id`, `access_role` | Transfer server `id`, IAM role `arn` |
+| Agreement | `local_profile_id`, `partner_profile_id` | Transfer profile `profile_id` with matching LOCAL/PARTNER type |
+| Connector | `access_role`, `logging_role` | IAM role `arn` |
+| Connector | `as2_config.local_profile_id`, `as2_config.partner_profile_id` | Typed Transfer profile `profile_id` |
+| Connector | `sftp_config.user_secret_id` | Secrets Manager secret `name` or `arn`, matching the configured output |
+| Connector | `egress_config.vpc_lattice.resource_configuration_arn` | VPC Lattice resource configuration `arn` |
+
+Profiles require a known LOCAL/PARTNER type; certificates require known SIGNING or
+ENCRYPTION usage. Private keys, PEM and chains never classify a certificate as
+local or partner. Certificates and profiles remain shared independent resources.
+Agreements have verified server owners with independent actions and server-qualified
+identity; composite IDs are not parsed. Connectors are independent Spatial endpoints.
+A Lattice target does not put the connector in that target's VPC.
+
+AS2 and SFTP blocks are exclusive singleton lists. Both egress and vpc_lattice
+blocks are singletons; Lattice egress requires known SFTP mode and a known absent/null
+URL. Unknown mode, mixed variants or malformed blocks retain generic fallback.
+URLs, trusted host keys, AS2 IDs, message subjects, directories and secrets are opaque.
+All references require unique explicit Terraform provenance, exact known values,
+complete collections, compatible provider/account/region/state and current managed
+endpoints. Global IAM roles retain their own scope. Deleted/deposed, filtered,
+ambiguous and unproven inputs never manufacture an owner or endpoint.

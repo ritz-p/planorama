@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::transfer_as2::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::transfer_identity::label(resource, attribute) {
         return Some(label);
     }
@@ -835,6 +838,7 @@ pub(crate) fn annotate(
     super::private_ca_references::annotate(nodes, references, evidence);
     super::rolesanywhere::annotate(nodes, references, evidence);
     super::transfer_identity::annotate(nodes, references, evidence);
+    super::transfer_as2::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -877,6 +881,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::private_ca_references::bindings(raw, reference)
         && super::rolesanywhere::bindings(raw, reference)
         && super::transfer_identity::bindings(raw, reference)
+        && super::transfer_as2::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
