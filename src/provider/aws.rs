@@ -48,6 +48,7 @@ mod dax;
 mod default_network;
 pub(super) mod diagnostics;
 pub(crate) mod direct_connect;
+pub(crate) mod directory_service;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
@@ -362,6 +363,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     networkfirewall::present(&raw, &mut graph);
     networkfirewall_extended::present(&raw, &mut graph);
     network_monitors::present(&raw, &mut graph);
+    directory_service::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
