@@ -46,6 +46,7 @@ mod database_snapshots;
 mod databases;
 mod datasync;
 pub(crate) mod datazone;
+pub(crate) mod datazone_access;
 pub(crate) mod datazone_environments;
 mod dax;
 mod default_network;

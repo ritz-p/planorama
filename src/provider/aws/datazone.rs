@@ -14,11 +14,15 @@ pub(super) const TERM: &str = "aws_datazone_glossary_term";
 pub(crate) fn resource(k: &str) -> bool {
     matches!(k, DOMAIN | PROJECT | ASSET | FORM | GLOSSARY | TERM)
         || super::datazone_environments::resource(k)
+        || super::datazone_access::resource(k)
 }
 pub(super) fn owner(k: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match k {
         super::datazone_environments::CONFIGURATION => {
             Some(("domain_id", "DataZone domain", "Blueprint configurations"))
+        }
+        super::datazone_access::USER => {
+            Some(("domain_identifier", "DataZone domain", "User profiles"))
         }
         PROJECT => Some(("domain_identifier", "DataZone domain", "Projects")),
         ASSET | FORM | GLOSSARY => Some((
@@ -37,7 +41,9 @@ fn canonical(p: &str) -> String {
         .join(".")
 }
 pub(crate) fn indexed(k: &str, p: &str) -> bool {
-    p.split('.').any(|s| s.parse::<usize>().is_ok()) && label(k, &canonical(p)).is_some()
+    p.split('.').any(|s| s.parse::<usize>().is_ok())
+        && (label(k, &canonical(p)).is_some()
+            || super::datazone_access::label(k, &canonical(p)).is_some())
 }
 pub(super) fn label(k: &str, p: &str) -> Option<&'static str> {
     match (k, p) {
@@ -66,6 +72,7 @@ fn fields(k: &str, p: &str, s: &str) -> &'static [&'static str] {
         | (TERM, "term_relations.classifies" | "term_relations.is_a", TERM) => &["id"],
         (ASSET, "forms_input.type_identifier", FORM) => &["name"],
         (ASSET, "forms_input.type_revision", FORM) => &["revision"],
+        _ if super::datazone_access::resource(k) => super::datazone_access::fields(k, p, s),
         _ => super::datazone_environments::fields(k, p, s),
     }
 }
@@ -141,7 +148,9 @@ pub(super) fn domain(
             Some(domain)
         }
         PROJECT | ASSET | FORM | GLOSSARY => direct_domain(nodes, refs, e, t),
-        k if super::datazone_environments::resource(k) => direct_domain(nodes, refs, e, t),
+        k if super::datazone_environments::resource(k) || super::datazone_access::resource(k) => {
+            direct_domain(nodes, refs, e, t)
+        }
         _ => None,
     }
 }
@@ -277,7 +286,7 @@ pub(super) fn compatible(raw: &Input, a: usize, b: usize) -> bool {
         r.provider_configuration.as_ref(),
         l.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
         r.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
-        r.resource_type == "aws_iam_role",
+        matches!(r.resource_type.as_str(), "aws_iam_role" | "aws_iam_user"),
     )
 }
 pub(super) fn domain_bound(raw: &Input, t: usize) -> bool {
