@@ -62,6 +62,7 @@ pub enum ArchitectureEntityKind {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ArchitectureEntity {
+    pub deployment_target: Option<DeploymentScope>,
     pub represented_account: Option<super::AwsAccountScope>,
     pub id: ArchitectureId,
     pub kind: ArchitectureEntityKind,
@@ -81,6 +82,7 @@ impl ArchitectureEntity {
     pub fn terraform(source: TerraformEntityId) -> Self {
         Self {
             represented_account: None,
+            deployment_target: None,
             id: ArchitectureId::terraform(&source),
             kind: ArchitectureEntityKind::Terraform,
             provenance: vec![source],
@@ -92,6 +94,7 @@ impl ArchitectureEntity {
         provenance.dedup();
         Self {
             represented_account: None,
+            deployment_target: None,
             id: ArchitectureId::synthetic(kind, key),
             kind: ArchitectureEntityKind::Synthetic,
             provenance,

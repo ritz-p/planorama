@@ -46,6 +46,7 @@ mod database_snapshots;
 mod databases;
 mod datasync;
 pub(crate) mod datazone;
+pub(crate) mod datazone_environments;
 mod dax;
 mod default_network;
 pub(super) mod diagnostics;
@@ -238,7 +239,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
             crate::model::Placement::Spatial
         }
-        "aws_datazone_domain" => crate::model::Placement::Spatial,
+        "aws_datazone_domain" | "aws_datazone_environment" => crate::model::Placement::Spatial,
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
@@ -368,6 +369,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     network_monitors::present(&raw, &mut graph);
     directory_service::present(&raw, &mut graph);
     cognito::present(&raw, &mut graph);
+    datazone_environments::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
