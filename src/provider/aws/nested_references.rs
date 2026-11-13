@@ -214,7 +214,11 @@ pub(super) fn verify_collections(
     (sources == r.sources.iter().copied().collect()).then_some(())
 }
 
-pub(super) fn value<'a>(mut value: &'a Value, mut mask: &Value, path: &str) -> Option<&'a Value> {
+fn at<'a, 'b>(
+    mut value: &'a Value,
+    mut mask: &'b Value,
+    path: &str,
+) -> Option<(&'a Value, &'b Value)> {
     for field in path.split('.') {
         if let Ok(index) = field.parse::<usize>() {
             let values = value.as_array()?;
@@ -235,7 +239,25 @@ pub(super) fn value<'a>(mut value: &'a Value, mut mask: &Value, path: &str) -> O
             mask = &mask[field];
         }
     }
+    Some((value, mask))
+}
+
+pub(super) fn value<'a>(value: &'a Value, mask: &Value, path: &str) -> Option<&'a Value> {
+    let (value, mask) = at(value, mask, path)?;
     known_leaf(value, mask).then_some(value)
+}
+
+pub(super) fn singleton(value: &Value, mask: &Value, path: &str) -> bool {
+    let Some((value, mask)) = at(value, mask, path) else {
+        return false;
+    };
+    value
+        .as_array()
+        .is_some_and(|a| a.len() == 1 && a[0].is_object())
+        && (matches!(mask, Value::Null | Value::Bool(false))
+            || mask.as_array().is_some_and(|a| {
+                a.len() == 1 && matches!(a[0], Value::Null | Value::Bool(false) | Value::Object(_))
+            }))
 }
 
 fn known_leaf(value: &Value, mask: &Value) -> bool {

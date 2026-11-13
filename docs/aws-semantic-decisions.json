@@ -30109,10 +30109,10 @@
       }
     },
     "aws_agentregistry_registry": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Registry KMS and JWT private-endpoint VPC/Lattice references; ORGANIZATION discovery scope does not make this registry global. Separate factory and discovery_configuration contract from deprecated AgentCore registry. #875. JWT discovery private endpoint is connectivity context, not registry containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent regional Logical registry distinct from deprecated AgentCore registry. KMS ARN and CUSTOM_JWT per-row private endpoint VPC/subnet/optional-SG or Lattice references; ORGANIZATION does not mean global. Discovery connectivity never implies registry containment. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31708,10 +31708,10 @@
       }
     },
     "aws_bedrockagentcore_api_key_credential_provider": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: EXTERNAL secret ID reference only; computed MANAGED secret ARN is not proof of Terraform secret ownership. API key/write-only values excluded. #875. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Logical credential provider with known EXTERNAL secret config selecting Secrets Manager id/arn. Computed managed-secret ARN and inline/write-only API keys never establish managed ownership or display values. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32086,10 +32086,10 @@
       }
     },
     "aws_bedrockagentcore_gateway": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Gateway role/KMS/interceptor Lambda/policy-engine links; JWT hosting-environment ARN needs endpoint type check. #875. JWT private endpoint VPC/Lattice is discovery connectivity, not gateway containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Spatial gateway with typed IAM role/KMS/interceptor Lambda/policy-engine links and CUSTOM_JWT Gateway hosting/private endpoint references. Complete per-row VPC/subnet/optional-SG or Lattice proof is connectivity only, never gateway containment. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32161,10 +32161,10 @@
       }
     },
     "aws_bedrockagentcore_gateway_rule": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Gateway owner and target name must agree within same gateway; weighted routes require complete splits. Wildcard IAM principals and rule conditions do not prove links or reachability. #875. Gateway rule is helper; target stays independent. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Logical helper owned by explicit Gateway ID. Static/complete weighted routes select Target.name only under that same explicit Gateway; action list1..2 and nested exclusive unions, exactly two unique weighted splits totaling100. No rule/principal/wildcard permission or reachability inference. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32220,10 +32220,10 @@
       }
     },
     "aws_bedrockagentcore_gateway_target": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Typed runtime/Lambda/API Gateway and credential-provider links; API stage needs REST API parent identity. Connector IDs, model globs and schema/tool names remain external/internal selectors. #875. Gateway target helper ownership after gateway identifier proof. Private endpoint VPC/SG/subnets and Lattice resource configuration describe target connectivity only. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Logical helper owned by explicit Gateway ID. Selected protocol-gated Runtime ARN, Lambda, REST API ID and REST-API-qualified stage_name, typed API-key/OAuth provider links. Complete private endpoint VPC/subnet/optional-SG or Lattice proof is connectivity only; endpoint ARN, URLs, connector IDs and schema payloads are not target identity. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32560,10 +32560,10 @@
       }
     },
     "aws_bedrockagentcore_oauth2_credential_provider": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Vendor-specific EXTERNAL secret references and private-key JWT KMS signing key; computed managed secrets not ownership. Client IDs/secrets/tokens/write-only fields excluded. #875. Custom OAuth private endpoint VPC/Lattice is authentication connectivity, not provider containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Logical credential provider with exact pinned vendor union and EXTERNAL secret id/arn, Custom OAuth KMS JWT signing key and private VPC/Lattice connectivity. Singular override requires base private endpoint. No generated-secret ownership, credentials, claims or client IDs. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32798,10 +32798,10 @@
       }
     },
     "aws_bedrockagentcore_registry": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Deprecated legacy registry has a distinct service factory/schema from agentregistry_registry; no alias canonicalization. JWT hosting-environment references require exact type. #875. Legacy JWT VPC/Lattice private endpoints only; no registry containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Logical legacy registry with exact CUSTOM_JWT Gateway hosting environment and private VPC/Lattice connectivity references; no alias to agentregistry_registry, no physical registry containment. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",

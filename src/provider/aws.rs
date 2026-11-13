@@ -1,3 +1,4 @@
+pub(crate) mod agentcore_gateway;
 pub(crate) mod agentcore_runtime;
 mod aliases;
 mod api_gateway;
@@ -245,6 +246,7 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         | "aws_bedrockagentcore_browser"
         | "aws_bedrockagentcore_code_interpreter"
         | "aws_bedrockagentcore_harness" => crate::model::Placement::Spatial,
+        "aws_bedrockagentcore_gateway" => crate::model::Placement::Spatial,
         "aws_datazone_domain" | "aws_datazone_environment" => crate::model::Placement::Spatial,
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
