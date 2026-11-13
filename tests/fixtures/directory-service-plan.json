@@ -1,0 +1,747 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.primary",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-primary"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-primary"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-primary"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.replica",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-replica"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.west_a",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-west-a",
+          "vpc_id": "vpc-replica"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.west_b",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-west-b",
+          "vpc_id": "vpc-replica"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_directory.primary",
+      "type": "aws_directory_service_directory",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "d-primary",
+          "type": "MicrosoftAD",
+          "vpc_settings": [
+            {
+              "vpc_id": "vpc-primary",
+              "subnet_ids": [
+                "subnet-a",
+                "subnet-b"
+              ]
+            }
+          ],
+          "security_group_id": "sg-computed",
+          "password": "PRIVATE_PASSWORD"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_directory.connector",
+      "type": "aws_directory_service_directory",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "d-connector",
+          "type": "ADConnector",
+          "connect_settings": [
+            {
+              "vpc_id": "vpc-primary",
+              "subnet_ids": [
+                "subnet-a",
+                "subnet-b"
+              ],
+              "customer_dns_ips": [
+                "192.0.2.10"
+              ],
+              "customer_username": "PRIVATE_USERNAME"
+            }
+          ],
+          "password": "PRIVATE_PASSWORD"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.main",
+      "type": "aws_cloudwatch_log_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/directory/main"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.recipient",
+      "type": "aws_organizations_account",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "999999999999",
+          "name": "recipient",
+          "email": "PRIVATE_EMAIL"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_conditional_forwarder.main",
+      "type": "aws_directory_service_conditional_forwarder",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "dns_ips": [
+            "192.0.2.10"
+          ],
+          "remote_domain_name": "PRIVATE_DOMAIN"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_directory_setting.main",
+      "type": "aws_directory_service_directory_setting",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "name": "LDAP",
+          "type": "LDAP",
+          "value": "PRIVATE_SETTING"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_ip_route.main",
+      "type": "aws_directory_service_ip_route",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "cidr_ip": "192.0.2.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_ip_routes_exclusive.main",
+      "type": "aws_directory_service_ip_routes_exclusive",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "ip_route": [
+            {
+              "cidr_ip": "198.51.100.0/24"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_radius_settings.main",
+      "type": "aws_directory_service_radius_settings",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "radius_servers": [
+            "192.0.2.10"
+          ],
+          "shared_secret": "PRIVATE_SECRET",
+          "authentication_protocol": "PAP"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_trust.main",
+      "type": "aws_directory_service_trust",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "remote_domain_name": "PRIVATE_DOMAIN",
+          "trust_password": "PRIVATE_SECRET",
+          "trust_direction": "Two-Way",
+          "trust_type": "Forest"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_log_subscription.main",
+      "type": "aws_directory_service_log_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "log_group_name": "/directory/main"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_region.west",
+      "type": "aws_directory_service_region",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "region_name": "us-west-2",
+          "vpc_settings": [
+            {
+              "vpc_id": "vpc-replica",
+              "subnet_ids": [
+                "subnet-west-a",
+                "subnet-west-b"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_shared_directory.main",
+      "type": "aws_directory_service_shared_directory",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "shared_directory_id": "d-recipient",
+          "method": "HANDSHAKE",
+          "target": [
+            {
+              "type": "ACCOUNT",
+              "id": "999999999999"
+            }
+          ],
+          "notes": "PRIVATE_NOTES"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_shared_directory_accepter.main",
+      "type": "aws_directory_service_shared_directory_accepter",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "d-recipient",
+          "shared_directory_id": "d-recipient",
+          "owner_directory_id": "d-primary",
+          "owner_account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_directoryservicedata_group.main",
+      "type": "aws_directoryservicedata_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "sam_account_name": "PRIVATE_GROUP",
+          "sid": "PRIVATE_SID",
+          "other_attributes": "PRIVATE_ATTRIBUTES"
+        }
+      }
+    },
+    {
+      "address": "aws_directoryservicedata_user.main",
+      "type": "aws_directoryservicedata_user",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-primary",
+          "sam_account_name": "PRIVATE_USER",
+          "sid": "PRIVATE_SID",
+          "email_address": "PRIVATE_EMAIL",
+          "given_name": "PRIVATE_PERSON"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.computed_lookalike",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-computed",
+          "vpc_id": "vpc-primary"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "west",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      },
+      "aws.recipient": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "recipient",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::999999999999:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.primary",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.replica",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.west_a",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.replica.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.west_b",
+          "provider_config_key": "aws.west",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.replica.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_directory.primary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_settings": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.primary.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_directory_service_directory.connector",
+          "provider_config_key": "aws",
+          "expressions": {
+            "connect_settings": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.primary.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.a.id",
+                    "aws_subnet.b.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_group.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.recipient",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_directory_service_conditional_forwarder.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_directory_setting.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_ip_route.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_ip_routes_exclusive.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_radius_settings.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_trust.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_log_subscription.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            },
+            "log_group_name": {
+              "references": [
+                "aws_cloudwatch_log_group.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directory_service_region.west",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            },
+            "vpc_settings": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.replica.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.west_a.id",
+                    "aws_subnet.west_b.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_directory_service_shared_directory.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            },
+            "target": [
+              {
+                "id": {
+                  "references": [
+                    "aws_organizations_account.recipient.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_directory_service_shared_directory_accepter.main",
+          "provider_config_key": "aws.recipient",
+          "expressions": {
+            "shared_directory_id": {
+              "references": [
+                "aws_directory_service_shared_directory.main.shared_directory_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directoryservicedata_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_directoryservicedata_user.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.computed_lookalike",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.primary.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

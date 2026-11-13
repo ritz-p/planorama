@@ -1,3 +1,6 @@
+pub(crate) mod agentcore_gateway;
+pub(crate) mod agentcore_runtime;
+pub(crate) mod agentcore_services;
 mod aliases;
 mod api_gateway;
 mod api_usage;
@@ -34,6 +37,7 @@ pub(crate) mod cloudwatch_alarms;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;
 pub(crate) mod cloudwatch_metrics;
+pub(crate) mod cognito;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
@@ -44,10 +48,14 @@ mod database_events;
 mod database_snapshots;
 mod databases;
 mod datasync;
+pub(crate) mod datazone;
+pub(crate) mod datazone_access;
+pub(crate) mod datazone_environments;
 mod dax;
 mod default_network;
 pub(super) mod diagnostics;
 pub(crate) mod direct_connect;
+pub(crate) mod directory_service;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
@@ -76,6 +84,8 @@ mod icons;
 pub(crate) mod identity_center;
 mod identity_center_instance;
 pub(crate) mod identitystore;
+pub(crate) mod imagebuilder;
+pub(crate) mod imagebuilder_distribution;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
 pub(crate) mod kms;
@@ -95,7 +105,9 @@ mod monitoring;
 mod nested_references;
 mod network;
 mod network_acl;
+pub(crate) mod network_monitors;
 pub(crate) mod networkfirewall;
+pub(crate) mod networkfirewall_extended;
 pub(crate) mod networkmanager;
 pub(crate) mod oam;
 mod observability;
@@ -231,6 +243,12 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
             crate::model::Placement::Spatial
         }
+        "aws_bedrockagentcore_agent_runtime"
+        | "aws_bedrockagentcore_browser"
+        | "aws_bedrockagentcore_code_interpreter"
+        | "aws_bedrockagentcore_harness" => crate::model::Placement::Spatial,
+        "aws_bedrockagentcore_gateway" => crate::model::Placement::Spatial,
+        "aws_datazone_domain" | "aws_datazone_environment" => crate::model::Placement::Spatial,
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
@@ -356,6 +374,12 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     fsx::present(&raw, &mut graph);
     datasync::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
+    networkfirewall_extended::present(&raw, &mut graph);
+    network_monitors::present(&raw, &mut graph);
+    directory_service::present(&raw, &mut graph);
+    cognito::present(&raw, &mut graph);
+    agentcore_runtime::present(&raw, &mut graph);
+    datazone_environments::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
@@ -366,6 +390,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     vpclattice::present(&raw, &mut graph);
     transfer_server::present(&raw, &mut graph);
     transfer_webapp::present(&raw, &mut graph);
+    imagebuilder::present(&raw, &mut graph);
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);

@@ -7831,7 +7831,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
+      "gap": "#716 reviewed; #792 implemented: TGW ID with complete AZ mappings and owner-qualified account proof; preserve existing VPC/policy contracts without synthetic endpoints. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -7883,7 +7883,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
+      "gap": "#716 reviewed; #792 implemented: TLS inspection configuration ARN in singleton firewall-policy list; retain existing rule-group contracts. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -7930,7 +7930,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 693,
-      "gap": "Implemented #693: independent Firewall card with complete VPC/subnet proof, typed policy/rule-group ARN navigation and verified logging owner/destination map-key references. Shared policies/groups remain logical. See aws.md#network-firewall-693. #716 review preserves the historical baseline; TGW, endpoint, TLS and auxiliary contracts remain #792; KMS summaries deferred pending separate allowlist.",
+      "gap": "#716 reviewed; #792 implemented: complete stateful prefix-list/resource-group or container-association IP-set references; reject mixed families and preserve existing policy references. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14746,7 +14746,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: type ECS/EKS discriminates cluster_arn endpoints; same account and region required. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: complete ECS/EKS-discriminated cluster ARN list within verified account/region; no inferred cluster containment. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14781,7 +14781,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: Explicit firewall computed-attachment provenance required; no synthetic EC2 attachment endpoint. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: exact explicit firewall computed-attachment provenance with verified TGW-owner account; no invented EC2 attachment. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14807,7 +14807,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: resource_arn accepts rule group or firewall policy; verify exact type and ARN, never policy JSON. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: typed firewall policy/rule-group ARN navigation; policy content remains opaque. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14833,7 +14833,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: Outbound CA certificate and inbound certificate ARNs reference ACM certificates, not ACM PCA authorities. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: ACM certificate ARNs for CA and complete server certificate list; never confuse ACM PCA authority. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14872,7 +14872,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 792,
-      "gap": "#716 reviewed: Explicit firewall/VPC/subnet inputs; computed endpoint_id cannot synthesize a resource. Current basic Logical display has no dedicated relationships. Follow-up #792; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #792 implemented: explicit firewall ARN, VPC ID and singleton subnet ID with independent common-VPC context; retain Logical identity. Retain independent identity; KMS key/alias and policy/rule effects remain deferred.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14911,7 +14911,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: scope_arn -> scope output; typed VPC/subnet/EKS selectors require exact endpoint contracts; AZ/Region selectors are not resources. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: exact scope_arn and complete type-discriminated local/remote resource ARN collections. EKS is local-only in pinned SDK; AZ/Region/service selectors remain opaque and do not create endpoints. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -14961,7 +14961,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: No direct managed endpoint from account ID; scope_arn is incoming monitor endpoint. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: retain Logical independent control scope and typed incoming scope_arn identity. Target account/region selectors do not establish Organizations relationships, ownership or health. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15765,7 +15765,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: No outgoing endpoint; incoming probe monitor_name requires explicit reference to monitor_name output. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: retain Logical independent identity and monitor_name output for explicit probe references; monitored subnets never place the monitor. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -15799,7 +15799,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 793,
-      "gap": "#716 reviewed: Explicit monitor_name and subnet source_arn; destination IP cannot reconstruct an endpoint. Current basic Logical display has no dedicated relationships. Follow-up #793; see six dimensions and pinned contracts in review.",
+      "gap": "#716 reviewed; #793 implemented: explicit monitor_name owner navigation and source subnet ARN proof with separate common-VPC context. Preserve independent lifecycle; destination IP never identifies a managed endpoint. Runtime reachability, packet metrics and arbitrary selector summaries remain unsupported.",
       "review": {
         "issue": 716,
         "implementationCommit": "d906716ae153a3d5bd320e64a6205f835850489b",
@@ -19962,7 +19962,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct. See per-dimension review; Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -19992,7 +19992,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 component ARNs, KMS and service-qualified target repository. Parent image may be Docker image, Image Builder image or AMI; never infer ECR from arbitrary image strings. See per-dimension review; Intentionally unsupported: Dockerfile template, URI and parameters remain opaque.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20041,7 +20041,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 814,
-      "gap": "#712 reviewed: Missing: #814 per-destination KMS/repository/template/S3/role/SSM references; region/account qualified, not literal name equality. See per-dimension review; Intentionally unsupported: AMI naming templates/launch permissions do not create artifacts or prove access.",
+      "gap": "#712 reviewed; #814 implemented: complete per-destination KMS ARN, ECR name, launch-template ID, S3 bucket, IAM role name and SSM parameter references with verified region/account qualifiers. Retain independent Logical control-region scope; no generated artifacts or opaque organization/OU/license/fast-launch/permission interpretation.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20118,7 +20118,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required. See per-dimension review; Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20169,7 +20169,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exclusive image/container recipe, infrastructure, distribution, workflow and execution-role references; exact ARN versions required. See per-dimension review; Intentionally unsupported: output artifacts/build status do not synthesize AMIs, containers or runtime hosts.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20220,7 +20220,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 versioned components, exact parent AMI/Image Builder identity and EBS KMS/snapshot references. Wildcards/public catalog IDs cannot match local resources. See per-dimension review; Intentionally unsupported: user data and component parameters are payloads, not summaries.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20267,7 +20267,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 profile name, SNS, S3 logging and exclusive host/resource-group targets. Missing: #813 verified subnet/SG build context; retain Logical infrastructure configuration, not a synthetic build instance. See per-dimension review; Intentionally unsupported: instance types/log prefixes do not establish produced workloads.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20328,7 +20328,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 814,
-      "gap": "#712 reviewed: Missing: #814 execution role and exact recipe name/version/type; tags and wildcard versions cannot prove members. See per-dimension review; Intentionally unsupported: lifecycle policy filters/actions do not establish actual retention/deletion.",
+      "gap": "#712 reviewed; #814 implemented: IAM execution-role ARN and complete exact recipe name/version references qualified by resource_type. Retain independent Logical scope; tag selectors, wildcard versions and lifecycle policy actions do not prove members or retention/deletion.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20374,7 +20374,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 813,
-      "gap": "#712 reviewed: Missing: #813 exact KMS key ARN; component/workflow version identity must remain distinct. See per-dimension review; Intentionally unsupported: data/uri YAML and parameters cannot supply inferred topology.",
+      "gap": "#712 reviewed: #813 adds exact configured Image Builder recipe/component/workflow, infrastructure/distribution, role/profile, KMS, EBS snapshot and logging references. Complete subnet/SG proof places only build infrastructure; reusable inputs and produced images remain independent. Version wildcards, computed resources, payloads and incomplete/foreign evidence retain fallback.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -28978,10 +28978,10 @@
       }
     },
     "aws_datazone_domain": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: execution role, V2 service role and KMS ARN; root_domain_unit_id is computed service identity, not configured child. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29032,10 +29032,10 @@
       }
     },
     "aws_datazone_project": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain ID owner and complete domain-qualified glossary term IDs; created_by is not a configured principal. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29074,10 +29074,10 @@
       }
     },
     "aws_datazone_environment": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 861,
-      "gap": "#723 reviewed: Missing: domain/project/profile IDs and glossary terms with consistent domain. Blueprint identifiers are lookup contracts, not managed blueprint resources. Provisioned resources are computed and cannot synthesize Terraform children. Follow-up #861.",
+      "gap": "#723 audit: Verified domain/project/profile IDs and complete glossary-term lists with current managed same-domain identities; independent Spatial environment, control account/region retained, separately configured known deployment account/region; blueprint lookup and computed provisioned resources do not establish managed ownership.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29141,10 +29141,10 @@
       }
     },
     "aws_datazone_environment_profile": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 861,
-      "gap": "#723 reviewed: Missing: domain/project references; blueprint is service lookup, not managed configuration identity. aws_account_id is optional/computed in schema despite required docs. Follow-up #861.",
+      "gap": "#723 audit: Verified domain/project IDs within the same explicit domain; independent Logical profile and control scope retained; configured known aws_account_id/aws_account_region recorded as a separate intended target, never inherited into environments; blueprint lookup remains external.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29195,10 +29195,10 @@
       }
     },
     "aws_datazone_environment_blueprint_configuration": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 861,
-      "gap": "#723 reviewed: Missing: domain ID and IAM role ARNs; environment_blueprint_id is not configuration Terraform ID. enabled_regions configure availability, not multi-region resource ownership; arbitrary parameters opaque. Follow-up #861.",
+      "gap": "#723 audit: Verified domain_id owner and typed IAM role ARNs with independent provider/account/control-region proof; Logical domain-qualified configuration. environment_blueprint_id is a lookup value, enabled_regions is availability, and arbitrary parameters remain opaque.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29247,10 +29247,10 @@
       }
     },
     "aws_datazone_asset_type": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain/project and revision-qualified form type references; forms_input map_block_key is local alias, not form identity. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29313,10 +29313,10 @@
       }
     },
     "aws_datazone_form_type": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain/project owner; Smithy model and computed imports do not establish Terraform dependencies. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29357,10 +29357,10 @@
       }
     },
     "aws_datazone_glossary": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: domain/project owner; display names are not unique qualified IDs. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29396,10 +29396,10 @@
       }
     },
     "aws_datazone_glossary_term": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 860,
-      "gap": "#723 reviewed: Missing: glossary owner and domain-qualified term IDs; classifies/is_a are semantic taxonomy links, not resource containment. domain_identifier is optional in schema despite required docs. Follow-up #860.",
+      "gap": "#723 audit: reviewed; #860 implemented: independent DataZone domain architecture cards, exact execution/V2 service-role and KMS ARN references, qualified domain/project/glossary ownership, complete same-domain glossary/taxonomy collections, and revision-qualified form references. Metadata helpers retain Logical identities and independent coverage. Optional term domain follows verified glossary qualification; unknown, stale, literal-only, foreign and historical evidence retains fallback. Models, computed children and payloads remain opaque. See docs/aws.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29459,10 +29459,10 @@
       }
     },
     "aws_datazone_policy_grant": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 862,
-      "gap": "#723 reviewed: Missing: entity-type-gated domain-qualified asset/profile/blueprint configuration and typed principal links. Domain-unit/group endpoints absent from managed denominator stay deferred until typed resources exist. Policy/wildcard effects not interpreted. Follow-up #862.",
+      "gap": "#723 audit: Independent Logical grant with exact entity_type-gated asset name, environment profile ID or blueprint configuration environment_blueprint_id in the same verified domain. Singleton principal unions select domain-qualified project IDs or user-profile IDs; user all-users alternatives and unknown/ambiguous choices retain fallback. Group/domain-unit endpoints remain deferred; policy/detail/wildcard effects are not interpreted.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29524,10 +29524,10 @@
       }
     },
     "aws_datazone_user_profile": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 862,
-      "gap": "#723 reviewed: Missing: domain owner and IAM/SSO-type-gated configured user identity. Computed details contain personal data; no display or name matching. Defer SSO GUID mapping until Identity Store proof is explicit. Follow-up #862.",
+      "gap": "#723 audit: Logical profile with verified domain owner and user_type-gated IAM user/role ARN identity; independently qualified provider/account/control-region, global IAM region compatibility, and current managed endpoints. SSO GUID and role-session mapping remain deferred without explicit typed proof; computed details and names never identify or display users.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -30109,10 +30109,10 @@
       }
     },
     "aws_agentregistry_registry": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Registry KMS and JWT private-endpoint VPC/Lattice references; ORGANIZATION discovery scope does not make this registry global. Separate factory and discovery_configuration contract from deprecated AgentCore registry. #875. JWT discovery private endpoint is connectivity context, not registry containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent regional Logical registry distinct from deprecated AgentCore registry. KMS ARN and CUSTOM_JWT per-row private endpoint VPC/subnet/optional-SG or Lattice references; ORGANIZATION does not mean global. Discovery connectivity never implies registry containment. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31558,10 +31558,10 @@
       }
     },
     "aws_bedrockagentcore_agent_runtime": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Runtime role, filesystem access-point and source S3 references; image URI alone is not an ECR endpoint. Authorizer private endpoints are separate from runtime networking. #874. VPC mode plus complete subnet/SG collections required; PUBLIC must not inherit VPC placement. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial runtime with exact role ARN, exclusive filesystem EFS/S3 Files ARN and code source bucket references. VPC mode requires complete subnet/SG ID sets and common explicit VPC parents; PUBLIC stays outside. Container URI, object selectors and authorizer connectivity do not imply ownership. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31647,10 +31647,10 @@
       }
     },
     "aws_bedrockagentcore_agent_runtime_endpoint": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Endpoint runtime ID and version, not endpoint URL, identify owner. #874. Version-aware runtime ownership; endpoint ARN distinct from runtime ARN. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Logical endpoint with explicit Runtime agent_runtime_id and known matching agent_runtime_version ownership. Explicit version references must select the same Runtime; unknown/latest guesses and runtime/endpoint ARN aliases are rejected. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31708,10 +31708,10 @@
       }
     },
     "aws_bedrockagentcore_api_key_credential_provider": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: EXTERNAL secret ID reference only; computed MANAGED secret ARN is not proof of Terraform secret ownership. API key/write-only values excluded. #875. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Logical credential provider with known EXTERNAL secret config selecting Secrets Manager id/arn. Computed managed-secret ARN and inline/write-only API keys never establish managed ownership or display values. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31778,10 +31778,10 @@
       }
     },
     "aws_bedrockagentcore_browser": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Role/certificate-secret and recording/enterprise-policy S3 bucket links; browser profile is a separate resource, not ownership inferred from browser name. #874. VPC-mode subnet/SG context; PUBLIC excluded. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial browser with execution role, repeated certificate secret ARNs, enabled recording and enterprise-policy S3 bucket references. Complete VPC-mode subnet/SG sets and common explicit VPC parent required for containment; no profile ownership by name. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31923,10 +31923,10 @@
       }
     },
     "aws_bedrockagentcore_code_interpreter": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Role and certificate-secret references; interpreter execution payload excluded. #874. VPC mode only; SANDBOX and PUBLIC do not supply subnet containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial interpreter with execution role and repeated certificate secret ARN references. Complete VPC-mode subnet/SG sets and common explicit VPC parent required for containment; PUBLIC/SANDBOX and execution payloads excluded. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32013,10 +32013,10 @@
       }
     },
     "aws_bedrockagentcore_evaluator": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Lambda versus LLM judge discriminator and KMS references; model ID may be service-owned. Evaluation instructions and scores excluded. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Typed KMS and selected Lambda references; foundation model selectors remain unverified. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32086,10 +32086,10 @@
       }
     },
     "aws_bedrockagentcore_gateway": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Gateway role/KMS/interceptor Lambda/policy-engine links; JWT hosting-environment ARN needs endpoint type check. #875. JWT private endpoint VPC/Lattice is discovery connectivity, not gateway containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Spatial gateway with typed IAM role/KMS/interceptor Lambda/policy-engine links and CUSTOM_JWT Gateway hosting/private endpoint references. Complete per-row VPC/subnet/optional-SG or Lattice proof is connectivity only, never gateway containment. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32161,10 +32161,10 @@
       }
     },
     "aws_bedrockagentcore_gateway_rule": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Gateway owner and target name must agree within same gateway; weighted routes require complete splits. Wildcard IAM principals and rule conditions do not prove links or reachability. #875. Gateway rule is helper; target stays independent. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Logical helper owned by explicit Gateway ID. Static/complete weighted routes select Target.name only under that same explicit Gateway; action list1..2 and nested exclusive unions, exactly two unique weighted splits totaling100. No rule/principal/wildcard permission or reachability inference. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32220,10 +32220,10 @@
       }
     },
     "aws_bedrockagentcore_gateway_target": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Typed runtime/Lambda/API Gateway and credential-provider links; API stage needs REST API parent identity. Connector IDs, model globs and schema/tool names remain external/internal selectors. #875. Gateway target helper ownership after gateway identifier proof. Private endpoint VPC/SG/subnets and Lattice resource configuration describe target connectivity only. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Logical helper owned by explicit Gateway ID. Selected protocol-gated Runtime ARN, Lambda, REST API ID and REST-API-qualified stage_name, typed API-key/OAuth provider links. Complete private endpoint VPC/subnet/optional-SG or Lattice proof is connectivity only; endpoint ARN, URLs, connector IDs and schema payloads are not target identity. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32326,10 +32326,10 @@
       }
     },
     "aws_bedrockagentcore_harness": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 874,
-      "gap": "Reviewed #725: Explicit tool browser/interpreter/gateway, existing memory, secret and role references; computed managed runtime/memory outputs do not create Terraform ownership. #874. Generated runtime VPC context distinct from harness JWT private endpoints. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #874. Independent Spatial harness with selected typed browser/interpreter/gateway tools, existing Memory ARN, model secret ARN, role and generated-runtime filesystem/network context. No physical Harness VPC containment or managed resources from computed runtime/memory outputs. JWT connectivity is separate. Exact shapes and exclusions: aws.md#agentcore-runtime-tools-and-harnesses-874.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32419,10 +32419,10 @@
       }
     },
     "aws_bedrockagentcore_memory": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Memory role/KMS/stream references; records and stream payloads excluded. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Typed role, KMS and singleton Kinesis delivery references; independent Logical memory. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32488,10 +32488,10 @@
       }
     },
     "aws_bedrockagentcore_memory_strategy": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: SELF_MANAGED SNS/S3 links; deprecated memory_execution_role_arn and namespaces not interchangeable with memory role and namespace_templates. Builtin model IDs are not managed nodes. #876. Memory ID owner; strategy ID scoped to memory. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Explicit Memory ID owner; separate deprecated role and CUSTOM/SELF_MANAGED SNS/S3 references. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32560,10 +32560,10 @@
       }
     },
     "aws_bedrockagentcore_oauth2_credential_provider": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Vendor-specific EXTERNAL secret references and private-key JWT KMS signing key; computed managed secrets not ownership. Client IDs/secrets/tokens/write-only fields excluded. #875. Custom OAuth private endpoint VPC/Lattice is authentication connectivity, not provider containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Logical credential provider with exact pinned vendor union and EXTERNAL secret id/arn, Custom OAuth KMS JWT signing key and private VPC/Lattice connectivity. Singular override requires base private endpoint. No generated-secret ownership, credentials, claims or client IDs. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32629,10 +32629,10 @@
       }
     },
     "aws_bedrockagentcore_online_evaluation_config": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Execution role, custom evaluator IDs and CloudWatch log-group sources; Builtin.* evaluator IDs never manufacture managed nodes. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Typed role and complete log-group names; dedicated complete mixed Builtin/custom evaluator object-Set proof without fabricated Builtin nodes. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32686,10 +32686,10 @@
       }
     },
     "aws_bedrockagentcore_policy": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Policy-engine ID relation only; Cedar statement and generated-policy prompts must not be interpreted. #876. Policy engine owner candidate; policy retains lifecycle coverage. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Explicit policy-engine ID owner; policy content is opaque. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32742,10 +32742,10 @@
       }
     },
     "aws_bedrockagentcore_policy_engine": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: KMS key reference; policy engine is shared by gateways, not their embedded child. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Independent shared Logical engine with typed KMS reference. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32798,10 +32798,10 @@
       }
     },
     "aws_bedrockagentcore_registry": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 875,
-      "gap": "Reviewed #725: Deprecated legacy registry has a distinct service factory/schema from agentregistry_registry; no alias canonicalization. JWT hosting-environment references require exact type. #875. Legacy JWT VPC/Lattice private endpoints only; no registry containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #875. Independent Logical legacy registry with exact CUSTOM_JWT Gateway hosting environment and private VPC/Lattice connectivity references; no alias to agentregistry_registry, no physical registry containment. Exact schemas and exclusions: aws.md#agentcore-gateways-registries-and-credentials-875.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32854,10 +32854,10 @@
       }
     },
     "aws_bedrockagentcore_resource_policy": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Target resource ARN must resolve to explicitly allowlisted AgentCore type; policy JSON contains no inferred relationships. #876. Verified resource target may own helper; never embed target into policy. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Explicit Runtime/Gateway ARN owner only; endpoint-derived Runtime outputs are not Runtime identity. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32900,10 +32900,10 @@
       }
     },
     "aws_bedrockagentcore_token_vault_cmk": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: CustomerManagedKey selects KMS ARN; ServiceManagedKey has no managed-key target. Default vault is service-owned, not a fabricated node. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. CustomerManagedKey selects KMS ARN; ServiceManagedKey and default vault do not fabricate nodes. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -58809,10 +58809,10 @@
       }
     },
     "aws_cognito_identity_pool": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Partial: #500 client_id -> client.id and provider_name -> user_pool.endpoint; missing complete OIDC/SAML provider ARN navigation. Not applicable: identity pool is independent from user pool, not an embedded child. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58890,10 +58890,10 @@
       }
     },
     "aws_cognito_identity_pool_provider_principal_tag": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: identity_pool_id -> identity_pool.id; identity_provider_name must use a provider-type-specific contract, not URL matching. Missing: pool-owned principal-tag helper; tag mappings excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58940,10 +58940,10 @@
       }
     },
     "aws_cognito_identity_pool_roles_attachment": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and roles map -> IAM role.arn; role_mapping needs independently verified provider discriminator. Missing: pool-owned role attachment; roles remain shared identities. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58993,10 +58993,10 @@
       }
     },
     "aws_cognito_identity_provider": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: user_pool_id -> pool.id; provider_details is provider-dependent and contains secrets, never dumped. Missing: user-pool-owned provider with independent metadata. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59043,10 +59043,10 @@
       }
     },
     "aws_cognito_log_delivery_configuration": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and type-gated log destination ARNs (CloudWatch Logs/S3/Firehose). Missing: user-pool-owned delivery helper; configured delivery is not runtime health. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59088,10 +59088,10 @@
       }
     },
     "aws_cognito_managed_login_branding": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and client.id pair with client pool consistency. Missing: client-owned branding helper; assets/settings are payloads, excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59143,10 +59143,10 @@
       }
     },
     "aws_cognito_managed_user_pool_client": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id navigation; managed lookup/update client is not an alias of aws_cognito_user_pool_client. Not applicable: lookup-selected client retains independent identity; pattern selection is not explicit Terraform ownership. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59203,10 +59203,10 @@
       }
     },
     "aws_cognito_resource_server": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: user_pool_id -> pool.id; scope strings are authorization configuration, not resource endpoints. Missing: user-pool-owned resource-server helper with independent coverage. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59256,10 +59256,10 @@
       }
     },
     "aws_cognito_risk_configuration": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and optional client.id; omitted client means pool-level risk, not an invented client. Missing: pool/client risk helper with independent lifecycle; notify source identities need exact ARN proof. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59307,10 +59307,10 @@
       }
     },
     "aws_cognito_user": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id ownership; username/sub are scoped identity selectors, not arbitrary global IDs. Missing: pool-owned user identity; no credentials, attributes, metadata or personal data summaries. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59357,10 +59357,10 @@
       }
     },
     "aws_cognito_user_group": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and optional role_arn -> IAM role.arn. Missing: pool-owned group; role association is not group containment. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59420,10 +59420,10 @@
       }
     },
     "aws_cognito_user_in_group": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: group.name and user.username scoped to independently verified same user_pool_id. Not applicable: association between independent user/group identities; preserve exactly-once change coverage. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59470,10 +59470,10 @@
       }
     },
     "aws_cognito_user_pool": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: allowlisted Lambda triggers/custom sender KMS and SMS role/email source ARN references; no callback URL inference. Not applicable: independent user-pool card #500; computed domain never synthesizes a domain or distribution. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59544,10 +59544,10 @@
       }
     },
     "aws_cognito_user_pool_client": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Partial: #500 user_pool_id -> pool.id; missing enabled Pinpoint analytics application and type-gated provider references. Not applicable: independent client card; callback/logout URLs are not network containment. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59619,10 +59619,10 @@
       }
     },
     "aws_cognito_user_pool_domain": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and configured ACM certificate.arn with explicit cross-region certificate policy; computed distribution ARN is not a configured endpoint. Missing: pool-owned domain helper; custom domain is not a customer-managed CloudFront distribution. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59674,10 +59674,10 @@
       }
     },
     "aws_cognito_user_pool_ui_customization": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and optional client.id; ALL sentinel is pool-level, not a resource identifier. Missing: pool/client-owned customization helper; CSS/image payloads excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60751,10 +60751,10 @@
       }
     },
     "aws_directory_service_directory": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: type-gated complete vpc_settings/connect_settings VPC and subnet references; computed SG output does not synthesize an SG. Not applicable: independent directory, not an IAM identity or a DC instance. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60854,10 +60854,10 @@
       }
     },
     "aws_directory_service_conditional_forwarder": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. DNS/IP strings do not identify a remote directory. Missing: directory-owned conditional_forwarder helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60910,10 +60910,10 @@
       }
     },
     "aws_directory_service_directory_setting": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. Setting value is arbitrary configuration, not a resource ID. Missing: directory-owned directory_setting helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60968,10 +60968,10 @@
       }
     },
     "aws_directory_service_ip_route": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. CIDR route content is not a destination resource identity. Missing: directory-owned ip_route helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61021,10 +61021,10 @@
       }
     },
     "aws_directory_service_ip_routes_exclusive": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. Complete exclusive route set is not remote network ownership. Missing: directory-owned ip_routes_exclusive helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61069,10 +61069,10 @@
       }
     },
     "aws_directory_service_radius_settings": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. RADIUS server strings and shared secret do not identify managed compute. Missing: directory-owned radius_settings helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61125,10 +61125,10 @@
       }
     },
     "aws_directory_service_trust": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id. Remote domain and trust state are not verified remote directory identity; trust password excluded. Missing: directory-owned trust helper with independent action coverage. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61183,10 +61183,10 @@
       }
     },
     "aws_directory_service_log_subscription": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory.id owner and log_group_name -> CloudWatch log group.name with exact output equality. Missing: directory-owned log subscription; configured delivery is not health. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61231,10 +61231,10 @@
       }
     },
     "aws_directory_service_region": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: primary directory.id and target region VPC/subnets; region_name is deployment region, distinct from API control region. Missing: directory-owned additional-region helper; preserve independent region lifecycle. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61294,10 +61294,10 @@
       }
     },
     "aws_directory_service_shared_directory": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: owner directory.id and target.id -> Organizations account.id only with ACCOUNT discriminator; shared_directory_id belongs to recipient account. Not applicable: sharing association between independent accounts; no recipient directory synthesis. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61359,10 +61359,10 @@
       }
     },
     "aws_directory_service_shared_directory_accepter": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: recipient shared_directory_id -> explicit sharing resource.shared_directory_id with independent owner/recipient account proof; owner_directory_id output is not configured ownership. Not applicable: acceptance has recipient identity and lifecycle; no same-account shortcut. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61412,10 +61412,10 @@
       }
     },
     "aws_directoryservicedata_group": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id; sam_account_name is directory-scoped and SID is not an Identity Store ID. Missing: directory-owned group identity; personal attributes/credentials excluded. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61465,10 +61465,10 @@
       }
     },
     "aws_directoryservicedata_user": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1140,
-      "gap": "#726 audit: Missing: directory_id -> directory.id; sam_account_name is directory-scoped and SID is not an Identity Store ID. Missing: directory-owned user identity; personal attributes/credentials excluded. Implementation follow-up #1140. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: reviewed; #1140 implemented: exact current managed Directory Service references, type-gated complete network blocks, independent directory helper ownership and target-region context, and distinct owner/recipient account proof for sharing. Logical presentation and independent coverage are preserved. Literal, unknown/sensitive, ambiguous, foreign, historical and filtered evidence retains fallback; computed outputs, credentials, personal attributes and IP/DNS selectors do not synthesize resources. See docs/aws.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",

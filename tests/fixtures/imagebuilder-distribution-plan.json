@@ -1,0 +1,516 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.west",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/west"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.east",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/east"
+        }
+      }
+    },
+    {
+      "address": "aws_ecr_repository.west",
+      "type": "aws_ecr_repository",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "images"
+        }
+      }
+    },
+    {
+      "address": "aws_launch_template.west",
+      "type": "aws_launch_template",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "lt-west"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.west",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "export-bucket",
+          "bucket": "export-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.export",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "export-role",
+          "arn": "arn:aws:iam::123456789012:role/export-role"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_parameter.west",
+      "type": "aws_ssm_parameter",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/images/latest",
+          "value": "PRIVATE_PARAMETER"
+        }
+      }
+    },
+    {
+      "address": "aws_imagebuilder_image_recipe.a",
+      "type": "aws_imagebuilder_image_recipe",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "recipe-a",
+          "version": "1.0.0"
+        }
+      }
+    },
+    {
+      "address": "aws_imagebuilder_container_recipe.a",
+      "type": "aws_imagebuilder_container_recipe",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "container-a",
+          "version": "2.0.0"
+        }
+      }
+    },
+    {
+      "address": "aws_imagebuilder_distribution_configuration.build",
+      "type": "aws_imagebuilder_distribution_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "build",
+          "distribution": [
+            {
+              "region": "us-west-2",
+              "ami_distribution_configuration": [
+                {
+                  "kms_key_id": "arn:aws:kms:us-west-2:123456789012:key/west",
+                  "target_account_ids": [
+                    "123456789012"
+                  ]
+                }
+              ],
+              "container_distribution_configuration": [
+                {
+                  "target_repository": [
+                    {
+                      "service": "ECR",
+                      "repository_name": "images"
+                    }
+                  ]
+                }
+              ],
+              "launch_template_configuration": [
+                {
+                  "launch_template_id": "lt-west",
+                  "account_id": "123456789012"
+                }
+              ],
+              "s3_export_configuration": [
+                {
+                  "disk_image_format": "RAW",
+                  "role_name": "export-role",
+                  "s3_bucket": "export-bucket",
+                  "s3_prefix": "PRIVATE_PREFIX"
+                }
+              ],
+              "ssm_parameter_configuration": [
+                {
+                  "parameter_name": "/images/latest",
+                  "ami_account_id": "123456789012"
+                }
+              ]
+            },
+            {
+              "region": "us-east-1",
+              "ami_distribution_configuration": [
+                {
+                  "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/east"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_imagebuilder_lifecycle_policy.ami",
+      "type": "aws_imagebuilder_lifecycle_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_type": "AMI_IMAGE",
+          "execution_role": "arn:aws:iam::123456789012:role/export-role",
+          "resource_selection": [
+            {
+              "recipe": [
+                {
+                  "name": "recipe-a",
+                  "semantic_version": "1.0.0"
+                },
+                {
+                  "name": "recipe-b",
+                  "semantic_version": "2.0.0"
+                }
+              ]
+            }
+          ],
+          "policy_detail": [
+            {
+              "action": [
+                {
+                  "type": "PRIVATE_POLICY"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_imagebuilder_lifecycle_policy.container",
+      "type": "aws_imagebuilder_lifecycle_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_type": "CONTAINER_IMAGE",
+          "execution_role": "arn:aws:iam::123456789012:role/export-role",
+          "resource_selection": [
+            {
+              "recipe": [
+                {
+                  "name": "container-a",
+                  "semantic_version": "2.0.0"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_imagebuilder_image_recipe.b",
+      "type": "aws_imagebuilder_image_recipe",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "recipe-b",
+          "version": "2.0.0"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "6.70.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "west",
+        "version_constraint": "6.70.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.east",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecr_repository.west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_launch_template.west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.export",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_parameter.west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_imagebuilder_image_recipe.a",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_imagebuilder_container_recipe.a",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_imagebuilder_distribution_configuration.build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "distribution": [
+              {
+                "ami_distribution_configuration": [
+                  {
+                    "kms_key_id": {
+                      "references": [
+                        "aws_kms_key.west.arn"
+                      ]
+                    }
+                  }
+                ],
+                "container_distribution_configuration": [
+                  {
+                    "target_repository": [
+                      {
+                        "repository_name": {
+                          "references": [
+                            "aws_ecr_repository.west.name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "launch_template_configuration": [
+                  {
+                    "launch_template_id": {
+                      "references": [
+                        "aws_launch_template.west.id"
+                      ]
+                    }
+                  }
+                ],
+                "s3_export_configuration": [
+                  {
+                    "role_name": {
+                      "references": [
+                        "aws_iam_role.export.name"
+                      ]
+                    },
+                    "s3_bucket": {
+                      "references": [
+                        "aws_s3_bucket.west.bucket"
+                      ]
+                    }
+                  }
+                ],
+                "ssm_parameter_configuration": [
+                  {
+                    "parameter_name": {
+                      "references": [
+                        "aws_ssm_parameter.west.name"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "ami_distribution_configuration": [
+                  {
+                    "kms_key_id": {
+                      "references": [
+                        "aws_kms_key.east.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_imagebuilder_lifecycle_policy.ami",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role": {
+              "references": [
+                "aws_iam_role.export.arn"
+              ]
+            },
+            "resource_selection": [
+              {
+                "recipe": [
+                  {
+                    "name": {
+                      "references": [
+                        "aws_imagebuilder_image_recipe.a.name"
+                      ]
+                    },
+                    "semantic_version": {
+                      "references": [
+                        "aws_imagebuilder_image_recipe.a.version"
+                      ]
+                    }
+                  },
+                  {
+                    "name": {
+                      "references": [
+                        "aws_imagebuilder_image_recipe.b.name"
+                      ]
+                    },
+                    "semantic_version": {
+                      "references": [
+                        "aws_imagebuilder_image_recipe.b.version"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_imagebuilder_lifecycle_policy.container",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role": {
+              "references": [
+                "aws_iam_role.export.arn"
+              ]
+            },
+            "resource_selection": [
+              {
+                "recipe": [
+                  {
+                    "name": {
+                      "references": [
+                        "aws_imagebuilder_container_recipe.a.name"
+                      ]
+                    },
+                    "semantic_version": {
+                      "references": [
+                        "aws_imagebuilder_container_recipe.a.version"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_imagebuilder_image_recipe.b",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

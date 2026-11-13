@@ -10,6 +10,42 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::agentcore_services::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::agentcore_gateway::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::agentcore_runtime::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::datazone_access::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::datazone_environments::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::datazone::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cognito::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::directory_service::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::network_monitors::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::networkfirewall_extended::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::imagebuilder_distribution::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::imagebuilder::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::redshift_endpoints::label(resource, attribute) {
         return Some(label);
     }
@@ -855,6 +891,18 @@ pub(crate) fn annotate(
     super::transfer_identity::annotate(nodes, references, evidence);
     super::transfer_as2::annotate(nodes, references, evidence);
     super::transfer_webapp::annotate(nodes, references, evidence);
+    super::imagebuilder::annotate(nodes, references, evidence);
+    super::imagebuilder_distribution::annotate(nodes, references, evidence);
+    super::networkfirewall_extended::annotate(nodes, references, evidence);
+    super::network_monitors::annotate(nodes, references, evidence);
+    super::directory_service::annotate(nodes, references, evidence);
+    super::cognito::annotate(nodes, references, evidence);
+    super::datazone::annotate(nodes, references, evidence);
+    super::datazone_environments::annotate(nodes, references, evidence);
+    super::datazone_access::annotate(nodes, references, evidence);
+    super::agentcore_runtime::annotate(nodes, references, evidence);
+    super::agentcore_services::annotate(nodes, references, evidence);
+    super::agentcore_gateway::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -902,6 +950,18 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::transfer_identity::bindings(raw, reference)
         && super::transfer_as2::bindings(raw, reference)
         && super::transfer_webapp::bindings(raw, reference)
+        && super::imagebuilder::bindings(raw, reference)
+        && super::imagebuilder_distribution::bindings(raw, reference)
+        && super::networkfirewall_extended::bindings(raw, reference)
+        && super::network_monitors::bindings(raw, reference)
+        && super::directory_service::bindings(raw, reference)
+        && super::cognito::bindings(raw, reference)
+        && super::datazone::bindings(raw, reference)
+        && super::datazone_environments::bindings(raw, reference)
+        && super::datazone_access::bindings(raw, reference)
+        && super::agentcore_runtime::bindings(raw, reference)
+        && super::agentcore_services::bindings(raw, reference)
+        && super::agentcore_gateway::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1521,7 +1581,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::s3vectors::indexed(&node.resource_type, &reference.attribute)
+        if super::agentcore_services::indexed(&node.resource_type, &reference.attribute)
+            || super::agentcore_gateway::indexed(&node.resource_type, &reference.attribute)
+            || super::agentcore_runtime::indexed(&node.resource_type, &reference.attribute)
+            || super::datazone::indexed(&node.resource_type, &reference.attribute)
+            || super::cognito::indexed(&node.resource_type, &reference.attribute)
+            || super::directory_service::indexed(&node.resource_type, &reference.attribute)
+            || super::network_monitors::indexed(&node.resource_type, &reference.attribute)
+            || super::networkfirewall_extended::indexed(&node.resource_type, &reference.attribute)
+            || super::imagebuilder_distribution::indexed(&node.resource_type, &reference.attribute)
+            || super::imagebuilder::indexed(&node.resource_type, &reference.attribute)
+            || super::s3vectors::indexed(&node.resource_type, &reference.attribute)
             || super::vpclattice::indexed(&node.resource_type, &reference.attribute)
             || super::networkmanager::indexed(&node.resource_type, &reference.attribute)
             || super::transfer_server::indexed(&node.resource_type, &reference.attribute)

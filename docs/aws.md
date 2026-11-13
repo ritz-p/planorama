@@ -844,3 +844,511 @@ account-wide authorization scope, not links to every managed VPC. Qualifiers do 
 relocate either resource, and authorization never implies network containment or
 runtime reachability. All paths require current managed identities, unique explicit
 provenance, matching known values and compatible provider/region/state boundaries.
+
+## Image Builder recipes and build infrastructure (#813)
+
+Components and workflows verify configured `kms_key_id` against a managed KMS
+key ARN. Image/container recipes verify complete `component.component_arn` lists
+against exact managed component ARN/ID outputs. `parent_image` accepts an exact
+managed Image Builder image build ARN, or an AMI `id` for image recipes. Public
+catalog images, wildcard versions, SSM selectors and container URIs remain opaque.
+Container recipes require `container_type = DOCKER`; their singleton
+`target_repository.repository_name` requires `service = ECR` and a repository name.
+
+Images and pipelines verify `infrastructure_configuration_arn`,
+`distribution_configuration_arn`, exclusive `image_recipe_arn` /
+`container_recipe_arn`, complete `workflow.workflow_arn` lists and IAM
+`execution_role` ARNs. Component, workflow and image references require exact
+numeric semantic/build versions; recipes require exact numeric semantic versions.
+Optional/computed defaults do not manufacture configured references.
+
+Infrastructure verifies scalar `subnet_id`, complete `security_group_ids`, IAM
+`instance_profile_name`, `sns_topic_arn` and
+`logging.s3_logs.s3_bucket_name` (bucket/id). Complete subnet/SG evidence with one
+common verified VPC records build-network context on the infrastructure
+configuration while retaining its Logical default. Missing or filtered network
+proof removes this context.
+Recipes, components, workflows, pipelines and images remain Logical and never
+inherit this VPC.
+
+Bounded volume references cover image-recipe `block_device_mapping.ebs` and
+container-recipe `instance_configuration.block_device_mapping.ebs`: `snapshot_id`
+uses managed EBS snapshot `id`; `kms_key_id` uses key ARN only with the pinned
+nullable-bool string `encrypted = "true"`. Removed mappings do not supply either
+reference. Container recipe `kms_key_id` is restricted to an exact managed key ARN.
+
+Provider 6.70.0 uses ordered component/workflow lists, block-device mapping sets,
+singleton `ebs`, `instance_configuration`, `target_repository`, `logging` and
+`s3_logs` lists, and SG ID sets. Collection expansion is enabled only for these
+verified paths; other resource contracts keep their existing shape checks. All
+references require unique explicit current managed endpoints, matching known
+values and compatible provider/account/region/state evidence. Sensitive and
+unknown values retain fallback. Dockerfiles, YAML, parameters, user data, policies
+and generated instance/image outputs are neither interpreted nor displayed.
+
+## Image Builder distribution and lifecycle references (#814)
+
+Distribution configurations verify complete per-entry references to KMS key ARNs,
+ECR repository names (`service = ECR`), launch-template IDs, S3 bucket names/IDs,
+IAM export role names and SSM parameter names. Provider 6.70.0 uses a distribution
+set, launch-template and SSM configuration sets, and singleton AMI/container,
+target-repository and S3-export lists. Each entry requires a known destination
+region and compatible endpoint account evidence. KMS ARNs qualify key accounts;
+launch-template `account_id` qualifies templates; SSM `ami_account_id` qualifies
+parameters and must occur in the complete known AMI `target_account_ids` set.
+Absent account qualifiers use the configuration account. Cross-alias matches
+require independently verified account evidence; names alone are insufficient.
+IAM role endpoints remain global within their verified account.
+
+Lifecycle policies verify `execution_role` against a managed IAM role ARN and
+`resource_selection.recipe.name` / `semantic_version` against managed recipe
+`name` / `version` outputs. The singleton selection list and complete recipe set
+require exact name, numeric semantic version and `resource_type` agreement
+(`AMI_IMAGE` or `CONTAINER_IMAGE`). Tag selectors, wildcard versions and policy
+filters/actions never establish membership or actual retention/deletion.
+
+Both configurations remain independent Logical resources in their control region.
+Destination selectors never relocate configurations or synthesize images, AMIs or
+other children. Organization/OU, license, fast-launch and launch-permission
+selectors remain opaque. Unknown, sensitive, partial, ambiguous, incompatible,
+filtered, data, deleted and deposed evidence preserves fallback navigation.
+
+## Network Firewall endpoint, transit and inspection references (#792)
+
+VPC endpoint associations verify `firewall_arn` against a managed firewall ARN,
+`vpc_id` against VPC ID and the singleton `subnet_mapping.subnet_id` against subnet
+ID. Network context requires that subnet's explicit VPC proof to agree with the
+association VPC. It is independent of the referenced firewall's VPC and is removed
+when required evidence is unknown, incomplete, incompatible or filtered. The
+association retains its Logical independent identity.
+
+Transit-gateway firewalls verify `transit_gateway_id` against a managed TGW ID only
+with absent VPC/subnet configuration and a complete known, distinct
+`availability_zone_mapping` set. Zones do not manufacture endpoints. Known
+`transit_gateway_owner_account_id` qualifies the TGW owner; it never relocates the
+firewall. Attachment accepters require explicit firewall output provenance via
+`firewall_status[0].transit_gateway_attachment_sync_states[0].attachment_id`, exact
+known value agreement and singleton computed lists. Provider 6.70.0's source uses
+plural `sync_states`, despite the singular name in its example. Verified owner
+account evidence permits the TGW account to accept the firewall attachment;
+raw JSON aliases or invented EC2 attachment identities are insufficient.
+
+Firewall policies verify singleton `firewall_policy.tls_inspection_configuration_arn`
+against inspection configuration ARN. Inspection configurations verify singleton
+`tls_inspection_configuration.server_certificate_configuration.certificate_authority_arn`
+and complete nested `server_certificate.resource_arn` lists against managed ACM
+certificate ARNs. The CA input identifies an ACM certificate, not an ACM PCA
+certificate authority. Resource policies verify `resource_arn` only against managed
+firewall policy or rule-group ARNs; their policy contents remain opaque.
+
+Container associations verify the complete `container_monitoring_configuration`
+list against ECS/EKS cluster ARNs selected by `type`, within the same account and
+region. No cluster subnet context is inherited. Stateful rule groups verify
+`rule_group.reference_sets.ip_set_references.ip_set_reference.reference_arn`
+against managed prefix-list/resource-group ARNs, or container association
+`container_association_arn` outputs. Container and regular IP-set families cannot
+be mixed. Provider shapes are singleton rule-group/reference-set lists, an IP-set
+reference set and nested IP-set-reference lists. Rules, CIDRs, filters, TLS material
+and KMS key/alias settings are not interpreted. Existing VPC firewall, rule-group
+policy and logging contracts remain separate.
+
+## Network Flow Monitor and Network Monitor (#793)
+
+`aws_networkflowmonitor_monitor.scope_arn` verifies the exact managed
+`aws_networkflowmonitor_scope.scope_arn` output. Complete `local_resource` and
+`remote_resource` sets verify `identifier` against managed VPC/subnet ARNs, selected
+by `type = AWS::EC2::VPC` / `AWS::EC2::Subnet`. Local sets additionally accept
+`AWS::EKS::Cluster` with a managed EKS cluster ARN. Provider 6.70.0 pins SDK
+Network Flow Monitor 1.19.4: its remote-resource enum excludes EKS, despite the
+provider documentation's combined local/remote description.
+
+Availability Zone, Region and AWS-service selectors are non-resource scope. A
+collection containing these selectors, unsupported types, unknown/sensitive rows
+or unresolved endpoints retains conservative fallback as a whole. Identifiers
+alone never identify resources; each resource row requires unique explicit
+provenance, the correct output, matching known value and compatible provider,
+account, region and current managed identity. Monitors remain independent Logical
+resources and do not inherit monitored VPC placement.
+
+Scope `target.target_identifier.target_id.account_id` selects monitoring accounts.
+It does not establish Organizations ownership or relocate the scope. The pinned
+shape is a target set with singleton target-identifier and target-ID lists; no
+resources are reconstructed from these account/region selectors.
+
+`aws_networkmonitor_probe.monitor_name` verifies the exact managed monitor's
+`monitor_name` output and records owner navigation while retaining the probe's
+independent lifecycle and coverage. `source_arn` requires an explicit managed
+subnet ARN. That subnet's complete explicit VPC proof supplies separate probe
+network context, removed when its evidence is missing, incompatible or filtered.
+The monitor receives no subnet containment. Both monitor and probe retain Logical
+presentation. Destination IP addresses, agent status, packet settings, measured
+health and reachability never supply inferred endpoints or summaries.
+
+## Directory Service and Directory Service Data (#1140)
+
+Directory Service resources retain Logical presentation and independent action
+coverage. Directory `type` selects singleton `vpc_settings` for SimpleAD/MicrosoftAD
+or `connect_settings` for ADConnector. Exact VPC IDs and complete subnet-ID sets
+require explicit current managed outputs, compatible bindings and a common VPC
+proven by every subnet. Unknown, ambiguous or mismatched blocks retain fallback.
+Computed `security_group_id`, DNS/IP matches and credentials never create resources.
+
+Conditional forwarders, directory settings, routes/exclusive route sets, RADIUS,
+trusts, log subscriptions, additional regions and Directory Service Data users/groups
+verify `directory_id` against the directory's `id` for owner navigation. Log
+subscriptions separately verify `log_group_name` against the log group's `name`.
+Users/groups are directory identities; SID and account names do not identify IAM
+or Identity Store resources. Personal attributes, passwords, secrets, DNS settings,
+route contents and remote domains are excluded from relationship inference.
+
+Additional-region helpers require a MicrosoftAD primary directory. `region_name`
+qualifies their complete `vpc_settings` destination network while the helper keeps
+its API control region and independent lifecycle. The primary directory's VPC is
+never inherited. Network context requires independently compatible account and
+region evidence and disappears when supporting resources are filtered.
+
+Shared directories verify the MicrosoftAD owner directory and singleton
+`target.id` against an Organizations account ID only with `target.type = ACCOUNT`.
+They remain independent sharing associations. Accepters verify the sharing
+resource's `shared_directory_id` output, not its `id` or computed owner outputs.
+The sharing resource's provider account and the accepter's provider account must
+be independently known, distinct, in the same control region, and match the
+configured recipient. No recipient directory or owner relationship is synthesized.
+Literal-only, unknown/sensitive, ambiguous, data-only, deleted/deposed, incompatible
+or cross-state endpoints retain conservative fallback.
+
+## Cognito configuration and identities (#1133)
+
+The existing user-pool/client/identity-pool cards and #500 relationships remain
+unchanged. Identity pools additionally verify complete OIDC and SAML ARN
+collections against the corresponding managed IAM provider types. Principal-tag
+helpers verify their identity-pool owner and an explicitly configured provider:
+Cognito user-pool `endpoint`, IAM OIDC `arn`, or IAM SAML `arn`. URLs and provider
+names alone never identify a resource; tag mappings remain opaque.
+
+Role attachments verify the identity-pool owner and the complete `roles` map.
+Only `authenticated` and `unauthenticated` keys are accepted; both can explicitly
+reference the same IAM role ARN. Role-mapping sets require `Rules`/`Token` and an
+independently verified provider configured in the identity pool. IAM providers
+use exact ARNs; Cognito mappings require both explicit pool `endpoint` and client
+`id` outputs, their exact `endpoint:client_id` combination and matching user pool.
+Rule-role lists require `Rules`. Claims and policy effects are not interpreted.
+
+Providers, resource servers, users, groups, domains and log-delivery helpers verify
+`user_pool_id` against the exact managed pool ID. Memberships independently verify
+`group_name` against group `name` and `username` against user `username`, qualified
+by the same explicit pool. They retain their own association identity. Groups can
+reference IAM role ARNs; users' credentials, attributes, sub and metadata are not
+summarized. Managed lookup/update clients retain their own identity and only
+navigate to the configured pool; patterns never alias a normal managed client.
+
+Branding verifies a pool/client pair and is owned by that client. Risk and UI
+customization helpers prefer a verified matching client owner, with pool navigation
+otherwise; omitted clients and the UI `ALL` sentinel never manufacture a client.
+Domains verify configured ACM certificate ARNs in us-east-1, in the same account,
+under an explicit cross-region exception. Computed CloudFront outputs never
+create distributions. All these helpers retain Logical presentation and independent
+lifecycle coverage; shared endpoints remain independent.
+
+User pools verify allowlisted `lambda_config` trigger ARNs, custom-sender KMS key
+ARNs, SMS IAM role ARNs and SES identity ARNs. Sender versions must be `V1_0`;
+pre-token-generation configuration allows `V1_0`, `V2_0` or `V3_0`. Legacy/new token
+trigger values must agree when both are configured. Email identities require a
+known `DEVELOPER` or `COGNITO_DEFAULT` mode; risk notification identity ARNs are
+verified separately. Ordinary regional references remain in the same region.
+
+Clients verify configured Pinpoint application ARN or application ID with the
+matching IAM role and external-ID contract. `user_data_shared` controls data sharing,
+not whether analytics is configured. `supported_identity_providers` is a complete
+set of exact managed provider names, with matching pool and known provider type;
+`COGNITO` is a built-in sentinel, not a managed endpoint. Mixed unresolved provider
+sets fall back as a whole. These set and role-map contracts use dedicated proof.
+
+Log delivery uses a list of configurations with singleton destination blocks.
+`userNotification`/`ERROR` selects CloudWatch Logs; `userAuthEvents`/`INFO` allows
+CloudWatch Logs, S3 or Firehose. Destination ARNs require their exact managed types.
+Configured delivery does not establish runtime health. All paths reject unknown,
+sensitive, literal-only, ambiguous, incompatible, deleted/deposed or data-only
+endpoints. Named states, filtering and exactly-once coverage remain independent.
+
+## DataZone domains and catalog metadata (#860)
+
+Managed DataZone domains are independent architecture cards. Projects, asset/form
+types, glossaries and glossary terms retain Logical presentation and independent
+lifecycle coverage. Their ownership navigation is domain → project → catalog
+metadata, or glossary → term; none of these relationships is network containment.
+Data-source placement and identity remain separate.
+
+Domains verify `domain_execution_role` against an IAM role ARN, `service_role`
+against an IAM role ARN only with known `domain_version = V2`, and
+`kms_key_identifier` against a KMS key ARN. Computed root-domain-unit IDs, creator
+identities and portal URLs never synthesize managed resources.
+
+Projects verify `domain_identifier` against a domain ID and complete
+`glossary_terms` lists against managed term IDs in that same explicitly verified
+domain. Asset/form types and glossaries verify their owning project ID with an
+independently matching domain. Glossary terms verify their glossary ID; their
+`domain_identifier` is optional in the pinned schema. A known omission derives
+only domain qualification from the explicit glossary owner. A configured value
+must agree; unknown values or conflicting references retain fallback. No omitted
+domain relationship is fabricated.
+
+Asset `forms_input` is a set of entries with local, unique `map_block_key` aliases.
+`type_identifier` references form `name`, and `type_revision` references form
+`revision`. Each selected form needs a matching known name/revision pair and domain;
+when both fields contain references, they must select the same managed instance.
+A known literal revision can qualify an explicit form-name reference. Names alone,
+stale revisions and source values from another domain are insufficient. Smithy
+models and computed form imports are opaque.
+
+Term `term_relations` is a singleton list whose `classifies` and `is_a` members are
+complete term-ID sets. They verify same-domain taxonomy associations, including
+terms in different glossaries, without changing ownership. Every resource path
+requires unique explicit provenance, correct known outputs, current managed identity
+and compatible provider/account/region. Domain and glossary qualification also
+checks those boundaries; matching literal IDs cannot substitute for domain identity.
+Unknown/sensitive, ambiguous, incomplete, data-only, deleted/deposed, filtered and
+cross-state evidence retains conservative fallback.
+
+## DataZone environments and deployment targets (#861)
+
+Managed environments are independent architecture cards; environment profiles stay
+Logical and independent. Blueprint configurations are Logical helpers with
+verified `domain_id` owner navigation. All three keep their effective provider
+account and control-plane region. These relationships do not establish network
+containment.
+
+`domain_identifier`/`domain_id` require explicit managed domain `id` references.
+Environment/profile `project_identifier`, environment `profile_identifier`, and
+complete environment `glossary_terms` lists require known exact `id` values in the
+same explicitly verified domain. Profiles and environments may refer to different
+projects within that domain. Blueprint configuration `manage_access_role_arn` and
+`provisioning_role_arn` select IAM role `arn`, independently qualified by account.
+
+Environment `account_identifier`/`account_region` and profile
+`aws_account_id`/`aws_account_region` describe intended deployment targets. Only a
+configured, known, nonsensitive pair with a 12-digit account and DataZone's bounded
+region syntax is displayed as a separate **Configured deployment target**. The
+control-plane scope remains unchanged. Optional/computed fields that appear only
+in state do not establish configured targets; profiles never supply an inferred
+environment target. Unknown, partial, deleted, deposed or data-only evidence does
+not produce a target annotation.
+
+Pinned AWS Provider 6.70.0 schemas use scalar strings and a glossary-term list.
+Environment target fields and profile account are optional/computed; profile
+region is required. `blueprint_identifier`, `environment_blueprint_identifier`
+and configuration `environment_blueprint_id` are service lookup values, not a
+managed blueprint or interchangeable configuration Terraform ID. `enabled_regions`
+creates no regional copies. Computed provisioned resources, creators, deployment
+payloads and arbitrary parameters create no children or inferred relationships.
+
+## DataZone users and policy grants (#862)
+
+User profiles are Logical helpers owned by an explicitly verified DataZone domain.
+Their external IAM identities remain independent: `user_type = IAM_USER` selects
+IAM user `arn`, and `IAM_ROLE` selects IAM role `arn`. The required configured
+`user_identifier` must explicitly reference that exact current managed output.
+The computed profile `type` is a different enum and cannot replace `user_type`.
+SSO GUID mapping needs Identity Store/domain proof; `SSO_USER` and
+`IAM_ROLE_SESSION` therefore retain fallback. Computed personal details and names
+are never used for identity matching or displayed.
+
+Policy grants remain independent Logical resources. `entity_identifier` selects
+asset type `name` for `ASSET_TYPE`, environment profile `id` for
+`ENVIRONMENT_PROFILE`, or configuration `environment_blueprint_id` for
+`ENVIRONMENT_BLUEPRINT_CONFIGURATION`. Asset revision and a fabricated
+configuration `id` are not interchangeable with these identities. Both endpoints
+must refer to the same verified domain, with compatible provider, account and
+control-plane region. IAM identity references retain their actual global scope.
+
+The pinned Provider uses singleton `principal` lists and singleton variant lists.
+Exactly one known variant may be active. Project principals select DataZone
+project `id` with a known `OWNER`, `CONTRIBUTOR` or `PROJECT_CATALOG_STEWARD`
+designation. An optional domain-unit filter does not replace the project identity.
+User principals select DataZone user-profile `id`; an active or unknown
+`all_users_grant_filter` cannot prove an individual user. Group and domain-unit
+endpoints have no selected managed resource contract and remain external, including
+computed domain root-unit IDs. Policy types, details and wildcard effects do not
+establish additional resources, permissions or reachability.
+
+## AgentCore runtime, tools and harnesses (#874)
+
+Runtime, Browser, Code Interpreter and Harness are independent Spatial resources;
+Runtime Endpoint is Logical and navigates to its Runtime only after an explicit
+`agent_runtime_id` → `agent_runtime_id` match and known equal
+`agent_runtime_version` values. Unknown versions do not mean latest. An explicit
+version reference must select that same Runtime. Runtime and endpoint ARNs are
+different identifiers; URLs never identify owners.
+
+The contracts use AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, its respective resource docs and schemas:
+
+- Runtime `role_arn`, and Browser/Interpreter/Harness `execution_role_arn`, select
+  IAM role `arn`. IAM is global but account evidence remains independent.
+- Runtime `network_configuration.network_mode_config.{subnets,security_groups}`
+  and Browser/Interpreter `network_configuration.vpc_config.{subnets,security_groups}`
+  use singleton list blocks and complete string sets of subnet/SG `id` references.
+  Only known `VPC` mode and a common explicitly proven VPC permit containment.
+  `PUBLIC`, `SANDBOX`, partial sets and mismatched VPC parents do not.
+- Harness uses the Runtime network schema below
+  `environment.agentcore_runtime_environment`. These references describe its
+  generated runtime context, not physical Harness containment or a synthesized
+  managed Runtime. JWT private endpoints are a separate connectivity contract.
+- Runtime and Harness runtime-environment `filesystem_configuration` is a list
+  of up to five exclusive EFS/S3 Files/session-storage choices. The two configured
+  `access_point_arn` inputs select the corresponding access-point `arn`.
+- Runtime `agent_runtime_artifact.code_configuration.code.s3.bucket` selects S3
+  `bucket` only for the code artifact choice. Image URLs, object prefixes and
+  version strings do not identify managed repositories or objects.
+- Browser and Interpreter `certificate.location.secrets_manager.secret_arn`
+  select Secrets Manager `arn`. Certificate is a list of 1–200 entries; location
+  and secrets-manager blocks are singleton lists. Browser
+  `enterprise_policy.location.s3.bucket` is a list of up to 100 policies with
+  singleton location/S3 blocks. `recording.s3_location.bucket` requires known
+  `recording.enabled = true`. Both bucket inputs select S3 `bucket`.
+- Harness `memory.agentcore_memory_configuration.arn` selects existing Memory
+  `arn`, with managed-memory and disabled alternatives inactive. Its repeatable
+  `tool` list requires matching `type` and a single selected `config` variant:
+  browser `browser_arn`, interpreter `code_interpreter_arn` or gateway `gateway_arn`
+  select those exact resource outputs. Model Gemini/LiteLLM/OpenAI `api_key_arn`
+  selects Secrets Manager `arn` only for that selected singleton model variant.
+
+Every path requires exact configured provenance, complete indexed collections,
+known non-sensitive matching values, current managed endpoints and compatible
+provider/account/region evidence. Shared endpoints stay independent. Computed
+Harness runtime/memory outputs, inline tools, prompts, execution payloads,
+credentials, arbitrary URLs and model selectors do not establish managed
+ownership, network reachability or permission effects.
+
+## AgentCore gateways, registries and credentials (#875)
+
+Gateway is an independent Spatial resource. Both Registry types and API-key/OAuth
+credential providers remain independent Logical resources. Gateway Rule and
+Gateway Target are Logical helpers owned only through an explicit
+`gateway_identifier` → Gateway `gateway_id` reference. The new
+`aws_agentregistry_registry` and deprecated `aws_bedrockagentcore_registry` use
+distinct factories and schemas; neither aliases the other. ORGANIZATION discovery
+does not change the new registry's regional scope.
+
+Contracts follow AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` and its resource docs/schemas; OAuth
+vendor values follow its Bedrock AgentCore Control SDK v1.74.0.
+
+| Configured input | Verified managed output |
+| --- | --- |
+| New Registry `encryption_configuration.kms_key_arn`; Gateway `kms_key_arn` | KMS key `arn` |
+| Gateway `role_arn` | IAM role `arn`, with independent account proof |
+| Gateway `interceptor_configuration.interceptor.lambda.arn` | Lambda function `arn` or `qualified_arn` |
+| Gateway `policy_engine_configuration.arn` | Policy Engine `policy_engine_arn` |
+| Gateway/legacy Registry JWT `allowed_workload_configuration.hosting_environment.arn` | Gateway `gateway_arn` only |
+| API-key provider `api_key_secret_config.secret_id` | Secrets Manager `id` or `arn`, only for known EXTERNAL source |
+| OAuth selected provider config `client_secret_config.secret_id` | Secrets Manager `id` or `arn`, only for known EXTERNAL source |
+| Custom OAuth `private_key_jwt_config.private_key_source.kms_key_source.kms_key_arn` | KMS key `arn` |
+| Target `target_configuration.http.agentcore_runtime.arn` | Runtime `agent_runtime_arn`; endpoint resources and their derived outputs are distinct |
+| Target `target_configuration.mcp.lambda.lambda_arn` | Lambda function `arn` or `qualified_arn` |
+| Target `target_configuration.mcp.api_gateway.rest_api_id` | REST API `id` |
+| Target `target_configuration.mcp.api_gateway.stage` | Stage `stage_name`, whose explicit `rest_api_id` selects the same REST API |
+| Target `credential_provider_configuration.{api_key,oauth}.provider_arn` | The corresponding credential provider `credential_provider_arn` |
+| Rule `action.route_to_target.static_route.target_name` or `action.route_to_target.weighted_route.traffic_split.target_name` | Target `name`, whose explicit owner selects the same Gateway |
+
+Nested blocks are singleton lists except interceptor configurations (1–2), JWT
+hosting environments (1–10), Rule actions (1–2), weighted traffic splits (exactly
+2), and private endpoint overrides (up to 5). Every action selects one of
+configuration bundle/route; route selects static/weighted. Weighted target links
+require two distinct variant names and target names, known weights 1–99 summing
+to 100, and complete typed references. Target configuration selects HTTP/inference/
+MCP and its actual nested union. HTTP requires a Gateway with known absent
+`protocol_type`; MCP requires `MCP`. Credential configuration selects one of
+API key, caller IAM, gateway IAM, JWT passthrough or OAuth.
+
+OAuth requires exactly one configured vendor block matching its known vendor.
+The eight dedicated vendor blocks and the included-provider block use their
+pinned SDK vendor allowlist. Selected singleton-block shape is checked separately
+from opaque sensitive child values, so a sensitive client ID does not invalidate
+a known Secret ID. Unknown blocks, selectors and endpoint values still fail proof. Unknown vendors, multiple alternatives and computed
+managed secret ARNs do not establish external-secret ownership. Secret values,
+client IDs, write-only inputs and claims are never displayed or interpreted.
+
+Private endpoints describe connectivity, never physical Gateway/Registry/Target/
+credential-provider containment. Supported roots are:
+
+- New Registry: `discovery_configuration.authorizer_configuration.custom_jwt_authorizer`.
+- Gateway and legacy Registry: `authorizer_configuration.custom_jwt_authorizer`.
+- Custom OAuth: `oauth2_provider_config.custom_oauth2_provider_config`.
+- Gateway Target: root `private_endpoint`.
+
+JWT roots require known `CUSTOM_JWT`. New Registry and OAuth use singular
+`private_endpoint_override`; Gateway/legacy Registry use plural
+`private_endpoint_overrides`. Each override contains its own singleton
+`private_endpoint`. OAuth overrides additionally require the base private
+endpoint. Other factories do not impose that requirement.
+
+Each endpoint selects `managed_vpc_resource` or `self_managed_lattice_resource`.
+Managed VPC inputs require explicit VPC `vpc_identifier` → `id`, a complete subnet
+`subnet_ids` set, known IPV4/IPV6 and optional complete SG `security_group_ids`
+(up to 5). Every subnet/SG must independently prove that row's VPC parent.
+Different override rows may use different VPCs. Lattice
+`resource_configuration_identifier` selects Resource Configuration `id` or `arn`.
+This optional-SG connectivity contract does not reuse Runtime's required paired
+subnet/SG physical placement contract.
+
+All references require matching known non-sensitive values, current managed
+resources, complete indexed provenance and independently compatible provider,
+account, region and parent identities. Rule conditions, wildcard principals,
+configuration bundles, external connector/model selectors, schema payloads,
+URLs and runtime qualifiers do not establish permissions, reachability or
+additional managed ownership.
+
+## AgentCore evaluators, memory and policies (#876)
+
+These eight managed types remain Logical and retain their independently known
+account/Region. Memory Strategy uses explicit `memory_id -> memory.id`; Policy
+uses `policy_engine_id -> policy_engine.policy_engine_id`. Resource Policy accepts
+only Runtime `agent_runtime_arn` or Gateway `gateway_arn`, as supported by
+[PutResourcePolicy](https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_PutResourcePolicy.html).
+The endpoint resource's derived Runtime ARN does not identify a Runtime resource.
+Verified helpers navigate to their owners; targets remain independent, without
+network containment. Strategy references additionally require the same explicit
+Memory owner and independently compatible bindings.
+
+Contracts follow AWS Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/bedrockagentcore/{evaluator,memory,memory_strategy,online_evaluation_config,policy,policy_engine,resource_policy,token_vault_cmk}.go`
+and their resource documentation. Nested paths below are singleton Lists except
+Online Evaluation's `evaluator` Set (1–10 objects) and its `log_group_names` List:
+
+- Evaluator `kms_key_arn -> kms_key.arn`; selected
+  `evaluator_config.code_based.lambda_config.lambda_arn -> lambda_function.arn/qualified_arn`.
+  `code_based` and `llm_as_a_judge` are exclusive. The latter's
+  `model_config.bedrock_evaluator_model_config.model_id` is a
+  [foundation-model selector](https://docs.aws.amazon.com/bedrock-agentcore-control/latest/APIReference/API_BedrockEvaluatorModelConfig.html),
+  without fabricated managed model identity.
+- Memory `memory_execution_role_arn -> iam_role.arn`,
+  `encryption_key_arn -> kms_key.arn`, and
+  `stream_delivery_resources.resource.kinesis.data_stream_arn -> kinesis_stream.arn`.
+  All three stream nesting levels contain exactly one object.
+- Strategy's deprecated `memory_execution_role_arn -> iam_role.arn` stays distinct
+  from Memory's role. Root `type=CUSTOM` and `configuration.type=SELF_MANAGED`
+  select `configuration.self_managed_configuration.invocation_configuration`:
+  `topic_arn -> sns_topic.arn`, `payload_delivery_bucket_name -> s3_bucket.bucket/id`.
+  Consolidation, extraction and reflection alternatives must be known inactive.
+  Namespace fields are not interchangeable identities.
+- Online Evaluation `evaluation_execution_role_arn -> iam_role.arn`, and complete
+  `data_source_config.cloudwatch_logs.log_group_names -> cloudwatch_log_group.name`.
+  The object Set `evaluator.evaluator_id` uses a dedicated order-independent proof:
+  every custom ID must match one unique explicit current Evaluator `evaluator_id`,
+  with complete indexed configuration evidence. Known `Builtin.*` literal rows
+  may coexist but never create managed nodes. Unknown rows, duplicate IDs, partial
+  custom collections or unreferenced custom literals invalidate the whole proof.
+- Policy Engine `encryption_key_arn -> kms_key.arn`; engines shared by Gateways
+  remain independent. Policy contents do not establish additional relationships.
+- Token Vault CMK `kms_configuration.key_type=CustomerManagedKey` selects
+  `kms_configuration.kms_key_arn -> kms_key.arn`. `ServiceManagedKey` provides no
+  managed-key identity; the default vault is service-owned.
+
+Every endpoint requires explicit, unique, exact known output evidence and compatible
+provider/account/Region, current managed state and complete collections. IAM roles
+are global within the account. Nested shape checks do not inspect opaque payloads;
+unknown/sensitive identity or discriminator values still fail. Unverified selectors
+retain normal reference/dependency fallback. No records, prompts, scores, policies,
+credentials, namespace contents or runtime reachability are summarized.

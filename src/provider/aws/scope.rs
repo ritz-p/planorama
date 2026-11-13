@@ -44,6 +44,16 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             resource,
             "aws_redshift_endpoint_access" | "aws_redshift_endpoint_authorization"
         )
+        && !super::agentcore_services::resource(resource)
+        && !super::agentcore_gateway::resource(resource)
+        && !super::agentcore_runtime::resource(resource)
+        && !super::datazone::resource(resource)
+        && !super::cognito::resource(resource)
+        && !super::directory_service::resource(resource)
+        && !super::network_monitors::resource(resource)
+        && !super::networkfirewall_extended::resource(resource)
+        && !super::imagebuilder_distribution::resource(resource)
+        && !super::imagebuilder::resource(resource)
         && !super::redshift_snapshots::resource(resource)
         && !super::kms::resource(resource)
         && !super::s3vectors::resource(resource)

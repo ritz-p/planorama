@@ -92,3 +92,11 @@ pub(crate) fn label(scope: Option<&DeploymentScope>, provider: &ProviderIdentity
         None => region_label,
     }
 }
+
+pub(crate) fn target(node: &crate::model::Node) -> Option<String> {
+    let scope = node.entity.deployment_target.as_ref()?;
+    Some(format!(
+        "Configured deployment target: {}",
+        label(Some(scope), &node.provider)
+    ))
+}

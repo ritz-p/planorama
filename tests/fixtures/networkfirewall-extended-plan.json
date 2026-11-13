@@ -1,0 +1,859 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.endpoint",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-endpoint"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.endpoint",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-endpoint",
+          "vpc_id": "vpc-endpoint"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.firewall",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-firewall"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.firewall",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-firewall",
+          "vpc_id": "vpc-firewall"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.main",
+      "type": "aws_ec2_transit_gateway",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-main",
+          "owner_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.ca",
+      "type": "aws_acm_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/ca"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.server",
+      "type": "aws_acm_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/server"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_cluster.a",
+      "type": "aws_ecs_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ecs:us-east-1:123456789012:cluster/a"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_cluster.b",
+      "type": "aws_ecs_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ecs:us-east-1:123456789012:cluster/b"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_cluster.a",
+      "type": "aws_eks_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:eks:us-east-1:123456789012:cluster/a"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_managed_prefix_list.main",
+      "type": "aws_ec2_managed_prefix_list",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:prefix-list/pl-main",
+          "id": "pl-main"
+        }
+      }
+    },
+    {
+      "address": "aws_resourcegroups_group.main",
+      "type": "aws_resourcegroups_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:resource-groups:us-east-1:123456789012:group/main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_tls_inspection_configuration.main",
+      "type": "aws_networkfirewall_tls_inspection_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:network-firewall:us-east-1:123456789012:tls-configuration/main",
+          "tls_inspection_configuration": [
+            {
+              "server_certificate_configuration": [
+                {
+                  "certificate_authority_arn": "arn:aws:acm:us-east-1:123456789012:certificate/ca",
+                  "server_certificate": [
+                    {
+                      "resource_arn": "arn:aws:acm:us-east-1:123456789012:certificate/server"
+                    },
+                    {
+                      "resource_arn": "arn:aws:acm:us-east-1:123456789012:certificate/ca"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_rule_group.main",
+      "type": "aws_networkfirewall_rule_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:network-firewall:us-east-1:123456789012:stateful-rulegroup/main",
+          "type": "STATEFUL",
+          "rule_group": [
+            {
+              "reference_sets": [
+                {
+                  "ip_set_references": [
+                    {
+                      "key": "set0",
+                      "ip_set_reference": [
+                        {
+                          "reference_arn": "arn:aws:ec2:us-east-1:123456789012:prefix-list/pl-main"
+                        }
+                      ]
+                    },
+                    {
+                      "key": "set1",
+                      "ip_set_reference": [
+                        {
+                          "reference_arn": "arn:aws:resource-groups:us-east-1:123456789012:group/main"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "rules": "PRIVATE_RULES"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_firewall_policy.main",
+      "type": "aws_networkfirewall_firewall_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall-policy/main",
+          "firewall_policy": [
+            {
+              "tls_inspection_configuration_arn": "arn:aws:network-firewall:us-east-1:123456789012:tls-configuration/main",
+              "stateful_rule_group_reference": [
+                {
+                  "resource_arn": "arn:aws:network-firewall:us-east-1:123456789012:stateful-rulegroup/main"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_firewall.vpc",
+      "type": "aws_networkfirewall_firewall",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall/vpc",
+          "vpc_id": "vpc-firewall",
+          "subnet_mapping": [
+            {
+              "subnet_id": "subnet-firewall"
+            }
+          ],
+          "firewall_policy_arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall-policy/main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_firewall.tgw",
+      "type": "aws_networkfirewall_firewall",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall/tgw",
+          "transit_gateway_id": "tgw-main",
+          "transit_gateway_owner_account_id": "123456789012",
+          "availability_zone_mapping": [
+            {
+              "availability_zone_id": "use1-az1"
+            },
+            {
+              "availability_zone_id": "use1-az2"
+            }
+          ],
+          "firewall_status": [
+            {
+              "transit_gateway_attachment_sync_states": [
+                {
+                  "attachment_id": "tgw-attach-main"
+                }
+              ]
+            }
+          ],
+          "firewall_policy_arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall-policy/main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_vpc_endpoint_association.main",
+      "type": "aws_networkfirewall_vpc_endpoint_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "firewall_arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall/vpc",
+          "vpc_id": "vpc-endpoint",
+          "subnet_mapping": [
+            {
+              "subnet_id": "subnet-endpoint"
+            }
+          ],
+          "vpc_endpoint_association_status": [
+            {
+              "endpoint_id": "PRIVATE_COMPUTED_ENDPOINT"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_firewall_transit_gateway_attachment_accepter.main",
+      "type": "aws_networkfirewall_firewall_transit_gateway_attachment_accepter",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "transit_gateway_attachment_id": "tgw-attach-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_container_association.ecs",
+      "type": "aws_networkfirewall_container_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "ECS",
+          "container_association_arn": "arn:aws:network-firewall:us-east-1:123456789012:container-association/ecs",
+          "container_monitoring_configuration": [
+            {
+              "cluster_arn": "arn:aws:ecs:us-east-1:123456789012:cluster/a",
+              "attribute_filter": [
+                {
+                  "key": "private",
+                  "value": "PRIVATE_FILTER"
+                }
+              ]
+            },
+            {
+              "cluster_arn": "arn:aws:ecs:us-east-1:123456789012:cluster/b"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_container_association.eks",
+      "type": "aws_networkfirewall_container_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "EKS",
+          "container_association_arn": "arn:aws:network-firewall:us-east-1:123456789012:container-association/eks",
+          "container_monitoring_configuration": [
+            {
+              "cluster_arn": "arn:aws:eks:us-east-1:123456789012:cluster/a"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_resource_policy.policy",
+      "type": "aws_networkfirewall_resource_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:network-firewall:us-east-1:123456789012:firewall-policy/main",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_resource_policy.group",
+      "type": "aws_networkfirewall_resource_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:network-firewall:us-east-1:123456789012:stateful-rulegroup/main",
+          "policy": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_networkfirewall_rule_group.containers",
+      "type": "aws_networkfirewall_rule_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:network-firewall:us-east-1:123456789012:stateful-rulegroup/containers",
+          "type": "STATEFUL",
+          "rule_group": [
+            {
+              "reference_sets": [
+                {
+                  "ip_set_references": [
+                    {
+                      "key": "set0",
+                      "ip_set_reference": [
+                        {
+                          "reference_arn": "arn:aws:network-firewall:us-east-1:123456789012:container-association/ecs"
+                        }
+                      ]
+                    },
+                    {
+                      "key": "set1",
+                      "ip_set_reference": [
+                        {
+                          "reference_arn": "arn:aws:network-firewall:us-east-1:123456789012:container-association/eks"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.endpoint",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.endpoint",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.endpoint.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.firewall",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.firewall",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.firewall.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.ca",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.server",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_cluster.a",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_cluster.b",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_eks_cluster.a",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_managed_prefix_list.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_resourcegroups_group.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkfirewall_tls_inspection_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "tls_inspection_configuration": [
+              {
+                "server_certificate_configuration": [
+                  {
+                    "certificate_authority_arn": {
+                      "references": [
+                        "aws_acm_certificate.ca.arn"
+                      ]
+                    },
+                    "server_certificate": [
+                      {
+                        "resource_arn": {
+                          "references": [
+                            "aws_acm_certificate.server.arn"
+                          ]
+                        }
+                      },
+                      {
+                        "resource_arn": {
+                          "references": [
+                            "aws_acm_certificate.ca.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkfirewall_rule_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule_group": [
+              {
+                "reference_sets": [
+                  {
+                    "ip_set_references": [
+                      {
+                        "key": "set0",
+                        "ip_set_reference": [
+                          {
+                            "reference_arn": {
+                              "references": [
+                                "aws_ec2_managed_prefix_list.main.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "key": "set1",
+                        "ip_set_reference": [
+                          {
+                            "reference_arn": {
+                              "references": [
+                                "aws_resourcegroups_group.main.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkfirewall_firewall_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "firewall_policy": [
+              {
+                "tls_inspection_configuration_arn": {
+                  "references": [
+                    "aws_networkfirewall_tls_inspection_configuration.main.arn"
+                  ]
+                },
+                "stateful_rule_group_reference": [
+                  {
+                    "resource_arn": {
+                      "references": [
+                        "aws_networkfirewall_rule_group.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkfirewall_firewall.vpc",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.firewall.id"
+              ]
+            },
+            "subnet_mapping": [
+              {
+                "subnet_id": {
+                  "references": [
+                    "aws_subnet.firewall.id"
+                  ]
+                }
+              }
+            ],
+            "firewall_policy_arn": {
+              "references": [
+                "aws_networkfirewall_firewall_policy.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkfirewall_firewall.tgw",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.main.id"
+              ]
+            },
+            "firewall_policy_arn": {
+              "references": [
+                "aws_networkfirewall_firewall_policy.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkfirewall_vpc_endpoint_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "firewall_arn": {
+              "references": [
+                "aws_networkfirewall_firewall.vpc.arn"
+              ]
+            },
+            "vpc_id": {
+              "references": [
+                "aws_vpc.endpoint.id"
+              ]
+            },
+            "subnet_mapping": [
+              {
+                "subnet_id": {
+                  "references": [
+                    "aws_subnet.endpoint.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkfirewall_firewall_transit_gateway_attachment_accepter.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_attachment_id": {
+              "references": [
+                "aws_networkfirewall_firewall.tgw.firewall_status[0].transit_gateway_attachment_sync_states[0].attachment_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkfirewall_container_association.ecs",
+          "provider_config_key": "aws",
+          "expressions": {
+            "container_monitoring_configuration": [
+              {
+                "cluster_arn": {
+                  "references": [
+                    "aws_ecs_cluster.a.arn"
+                  ]
+                }
+              },
+              {
+                "cluster_arn": {
+                  "references": [
+                    "aws_ecs_cluster.b.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkfirewall_container_association.eks",
+          "provider_config_key": "aws",
+          "expressions": {
+            "container_monitoring_configuration": [
+              {
+                "cluster_arn": {
+                  "references": [
+                    "aws_eks_cluster.a.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkfirewall_resource_policy.policy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_networkfirewall_firewall_policy.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkfirewall_resource_policy.group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_networkfirewall_rule_group.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkfirewall_rule_group.containers",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule_group": [
+              {
+                "reference_sets": [
+                  {
+                    "ip_set_references": [
+                      {
+                        "key": "set0",
+                        "ip_set_reference": [
+                          {
+                            "reference_arn": {
+                              "references": [
+                                "aws_networkfirewall_container_association.ecs.container_association_arn"
+                              ]
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "key": "set1",
+                        "ip_set_reference": [
+                          {
+                            "reference_arn": {
+                              "references": [
+                                "aws_networkfirewall_container_association.eks.container_association_arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

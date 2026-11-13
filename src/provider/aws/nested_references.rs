@@ -17,6 +17,7 @@ fn rows<'a>(
     prefix: String,
     lengths: Vec<usize>,
     result: &mut Vec<Row<'a>>,
+    collections: &[&str],
 ) -> Option<()> {
     if let Some(values) = value.as_array().filter(|_| !path.is_empty()) {
         if !matches!(
@@ -47,6 +48,13 @@ fn rows<'a>(
                     | "actions"
                     | "conditions"
             )
+        ) && !collections.contains(
+            &prefix
+                .split('.')
+                .filter(|s| s.parse::<usize>().is_err())
+                .collect::<Vec<_>>()
+                .join(".")
+                .as_str(),
         ) && values.len() != 1
         {
             return None;
@@ -66,6 +74,7 @@ fn rows<'a>(
                 format!("{prefix}.{i}"),
                 lengths,
                 result,
+                collections,
             )?;
         }
     } else if let Some((field, rest)) = path.split_first() {
@@ -80,7 +89,15 @@ fn rows<'a>(
         } else {
             format!("{prefix}.{field}")
         };
-        rows(&value[*field], &mask[*field], rest, prefix, lengths, result)?;
+        rows(
+            &value[*field],
+            &mask[*field],
+            rest,
+            prefix,
+            lengths,
+            result,
+            collections,
+        )?;
     } else {
         if !known_leaf(value, mask) {
             return None;
@@ -97,6 +114,18 @@ pub(super) fn verify(
     r: &AttributeReference,
     fields: fn(&str, &str, &str) -> &'static [&'static str],
     valid: impl Fn(usize, &str) -> bool,
+) -> Option<()> {
+    verify_collections(nodes, refs, evidence, r, fields, valid, &[])
+}
+
+pub(super) fn verify_collections(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+    fields: fn(&str, &str, &str) -> &'static [&'static str],
+    valid: impl Fn(usize, &str) -> bool,
+    collections: &[&str],
 ) -> Option<()> {
     let node = &nodes[r.target];
     if !current(node) || !r.issues.is_empty() || !r.instances_explicit {
@@ -119,6 +148,7 @@ pub(super) fn verify(
         String::new(),
         Vec::new(),
         &mut leaves,
+        collections,
     )?;
     if leaves.is_empty() {
         return None;
@@ -184,7 +214,11 @@ pub(super) fn verify(
     (sources == r.sources.iter().copied().collect()).then_some(())
 }
 
-pub(super) fn value<'a>(mut value: &'a Value, mut mask: &Value, path: &str) -> Option<&'a Value> {
+fn at<'a, 'b>(
+    mut value: &'a Value,
+    mut mask: &'b Value,
+    path: &str,
+) -> Option<(&'a Value, &'b Value)> {
     for field in path.split('.') {
         if let Ok(index) = field.parse::<usize>() {
             let values = value.as_array()?;
@@ -205,7 +239,25 @@ pub(super) fn value<'a>(mut value: &'a Value, mut mask: &Value, path: &str) -> O
             mask = &mask[field];
         }
     }
+    Some((value, mask))
+}
+
+pub(super) fn value<'a>(value: &'a Value, mask: &Value, path: &str) -> Option<&'a Value> {
+    let (value, mask) = at(value, mask, path)?;
     known_leaf(value, mask).then_some(value)
+}
+
+pub(super) fn singleton(value: &Value, mask: &Value, path: &str) -> bool {
+    let Some((value, mask)) = at(value, mask, path) else {
+        return false;
+    };
+    value
+        .as_array()
+        .is_some_and(|a| a.len() == 1 && a[0].is_object())
+        && (matches!(mask, Value::Null | Value::Bool(false))
+            || mask.as_array().is_some_and(|a| {
+                a.len() == 1 && matches!(a[0], Value::Null | Value::Bool(false) | Value::Object(_))
+            }))
 }
 
 fn known_leaf(value: &Value, mask: &Value) -> bool {

@@ -15,6 +15,19 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::agentcore_services::owner(kind).is_some() => {
+                super::agentcore_services::owner(kind).unwrap()
+            }
+            kind if super::agentcore_gateway::owner(kind).is_some() => {
+                super::agentcore_gateway::owner(kind).unwrap()
+            }
+            kind if super::agentcore_runtime::owner(kind).is_some() => {
+                super::agentcore_runtime::owner(kind).unwrap()
+            }
+            kind if super::datazone::owner(kind).is_some() => super::datazone::owner(kind).unwrap(),
+            kind if super::directory_service::owner(kind).is_some() => {
+                super::directory_service::owner(kind).unwrap()
+            }
             kind if super::transfer_identity::owner(kind).is_some() => {
                 super::transfer_identity::owner(kind).unwrap()
             }
@@ -308,6 +321,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Resolver configuration",
             ),
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
+            "aws_networkmonitor_probe" => ("monitor_name", "Probe monitor", "Probes"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")
             }
