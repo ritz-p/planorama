@@ -6,7 +6,8 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::imagebuilder::resource(resource)
+        && (aws::imagebuilder_distribution::resource(resource)
+            || aws::imagebuilder::resource(resource)
             || aws::transfer_webapp::resource(resource)
             || aws::transfer_as2::resource(resource)
             || aws::rolesanywhere::resource(resource)
@@ -44,7 +45,8 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::imagebuilder::indexed(resource, attribute)
+        && (aws::imagebuilder_distribution::indexed(resource, attribute)
+            || aws::imagebuilder::indexed(resource, attribute)
             || aws::transfer_webapp::indexed(resource, attribute)
             || aws::transfer_as2::indexed(resource, attribute)
             || aws::rolesanywhere::indexed(resource, attribute)

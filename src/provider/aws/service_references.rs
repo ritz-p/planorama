@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::imagebuilder_distribution::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::imagebuilder::label(resource, attribute) {
         return Some(label);
     }
@@ -859,6 +862,7 @@ pub(crate) fn annotate(
     super::transfer_as2::annotate(nodes, references, evidence);
     super::transfer_webapp::annotate(nodes, references, evidence);
     super::imagebuilder::annotate(nodes, references, evidence);
+    super::imagebuilder_distribution::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
     super::ecs_workloads::annotate(nodes, references, evidence);
@@ -907,6 +911,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::transfer_as2::bindings(raw, reference)
         && super::transfer_webapp::bindings(raw, reference)
         && super::imagebuilder::bindings(raw, reference)
+        && super::imagebuilder_distribution::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
             &reference.attribute,
@@ -1526,7 +1531,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::imagebuilder::indexed(&node.resource_type, &reference.attribute)
+        if super::imagebuilder_distribution::indexed(&node.resource_type, &reference.attribute)
+            || super::imagebuilder::indexed(&node.resource_type, &reference.attribute)
             || super::s3vectors::indexed(&node.resource_type, &reference.attribute)
             || super::vpclattice::indexed(&node.resource_type, &reference.attribute)
             || super::networkmanager::indexed(&node.resource_type, &reference.attribute)

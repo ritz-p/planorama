@@ -885,3 +885,30 @@ references require unique explicit current managed endpoints, matching known
 values and compatible provider/account/region/state evidence. Sensitive and
 unknown values retain fallback. Dockerfiles, YAML, parameters, user data, policies
 and generated instance/image outputs are neither interpreted nor displayed.
+
+## Image Builder distribution and lifecycle references (#814)
+
+Distribution configurations verify complete per-entry references to KMS key ARNs,
+ECR repository names (`service = ECR`), launch-template IDs, S3 bucket names/IDs,
+IAM export role names and SSM parameter names. Provider 6.70.0 uses a distribution
+set, launch-template and SSM configuration sets, and singleton AMI/container,
+target-repository and S3-export lists. Each entry requires a known destination
+region and compatible endpoint account evidence. KMS ARNs qualify key accounts;
+launch-template `account_id` qualifies templates; SSM `ami_account_id` qualifies
+parameters and must occur in the complete known AMI `target_account_ids` set.
+Absent account qualifiers use the configuration account. Cross-alias matches
+require independently verified account evidence; names alone are insufficient.
+IAM role endpoints remain global within their verified account.
+
+Lifecycle policies verify `execution_role` against a managed IAM role ARN and
+`resource_selection.recipe.name` / `semantic_version` against managed recipe
+`name` / `version` outputs. The singleton selection list and complete recipe set
+require exact name, numeric semantic version and `resource_type` agreement
+(`AMI_IMAGE` or `CONTAINER_IMAGE`). Tag selectors, wildcard versions and policy
+filters/actions never establish membership or actual retention/deletion.
+
+Both configurations remain independent Logical resources in their control region.
+Destination selectors never relocate configurations or synthesize images, AMIs or
+other children. Organization/OU, license, fast-launch and launch-permission
+selectors remain opaque. Unknown, sensitive, partial, ambiguous, incompatible,
+filtered, data, deleted and deposed evidence preserves fallback navigation.
