@@ -308,6 +308,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Resolver configuration",
             ),
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
+            "aws_networkmonitor_probe" => ("monitor_name", "Probe monitor", "Probes"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")
             }

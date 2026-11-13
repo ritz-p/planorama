@@ -44,6 +44,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             resource,
             "aws_redshift_endpoint_access" | "aws_redshift_endpoint_authorization"
         )
+        && !super::network_monitors::resource(resource)
         && !super::networkfirewall_extended::resource(resource)
         && !super::imagebuilder_distribution::resource(resource)
         && !super::imagebuilder::resource(resource)

@@ -97,6 +97,7 @@ mod monitoring;
 mod nested_references;
 mod network;
 mod network_acl;
+pub(crate) mod network_monitors;
 pub(crate) mod networkfirewall;
 pub(crate) mod networkfirewall_extended;
 pub(crate) mod networkmanager;
@@ -360,6 +361,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     datasync::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
     networkfirewall_extended::present(&raw, &mut graph);
+    network_monitors::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
