@@ -912,3 +912,42 @@ Destination selectors never relocate configurations or synthesize images, AMIs o
 other children. Organization/OU, license, fast-launch and launch-permission
 selectors remain opaque. Unknown, sensitive, partial, ambiguous, incompatible,
 filtered, data, deleted and deposed evidence preserves fallback navigation.
+
+## Network Firewall endpoint, transit and inspection references (#792)
+
+VPC endpoint associations verify `firewall_arn` against a managed firewall ARN,
+`vpc_id` against VPC ID and the singleton `subnet_mapping.subnet_id` against subnet
+ID. Network context requires that subnet's explicit VPC proof to agree with the
+association VPC. It is independent of the referenced firewall's VPC and is removed
+when required evidence is unknown, incomplete, incompatible or filtered. The
+association retains its Logical independent identity.
+
+Transit-gateway firewalls verify `transit_gateway_id` against a managed TGW ID only
+with absent VPC/subnet configuration and a complete known, distinct
+`availability_zone_mapping` set. Zones do not manufacture endpoints. Known
+`transit_gateway_owner_account_id` qualifies the TGW owner; it never relocates the
+firewall. Attachment accepters require explicit firewall output provenance via
+`firewall_status[0].transit_gateway_attachment_sync_states[0].attachment_id`, exact
+known value agreement and singleton computed lists. Provider 6.70.0's source uses
+plural `sync_states`, despite the singular name in its example. Verified owner
+account evidence permits the TGW account to accept the firewall attachment;
+raw JSON aliases or invented EC2 attachment identities are insufficient.
+
+Firewall policies verify singleton `firewall_policy.tls_inspection_configuration_arn`
+against inspection configuration ARN. Inspection configurations verify singleton
+`tls_inspection_configuration.server_certificate_configuration.certificate_authority_arn`
+and complete nested `server_certificate.resource_arn` lists against managed ACM
+certificate ARNs. The CA input identifies an ACM certificate, not an ACM PCA
+certificate authority. Resource policies verify `resource_arn` only against managed
+firewall policy or rule-group ARNs; their policy contents remain opaque.
+
+Container associations verify the complete `container_monitoring_configuration`
+list against ECS/EKS cluster ARNs selected by `type`, within the same account and
+region. No cluster subnet context is inherited. Stateful rule groups verify
+`rule_group.reference_sets.ip_set_references.ip_set_reference.reference_arn`
+against managed prefix-list/resource-group ARNs, or container association
+`container_association_arn` outputs. Container and regular IP-set families cannot
+be mixed. Provider shapes are singleton rule-group/reference-set lists, an IP-set
+reference set and nested IP-set-reference lists. Rules, CIDRs, filters, TLS material
+and KMS key/alias settings are not interpreted. Existing VPC firewall, rule-group
+policy and logging contracts remain separate.
