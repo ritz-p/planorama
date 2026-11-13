@@ -1,5 +1,6 @@
 pub(crate) mod agentcore_gateway;
 pub(crate) mod agentcore_runtime;
+pub(crate) mod agentcore_services;
 mod aliases;
 mod api_gateway;
 mod api_usage;

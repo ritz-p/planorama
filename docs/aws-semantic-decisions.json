@@ -32013,10 +32013,10 @@
       }
     },
     "aws_bedrockagentcore_evaluator": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Lambda versus LLM judge discriminator and KMS references; model ID may be service-owned. Evaluation instructions and scores excluded. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Typed KMS and selected Lambda references; foundation model selectors remain unverified. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32419,10 +32419,10 @@
       }
     },
     "aws_bedrockagentcore_memory": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Memory role/KMS/stream references; records and stream payloads excluded. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Typed role, KMS and singleton Kinesis delivery references; independent Logical memory. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32488,10 +32488,10 @@
       }
     },
     "aws_bedrockagentcore_memory_strategy": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: SELF_MANAGED SNS/S3 links; deprecated memory_execution_role_arn and namespaces not interchangeable with memory role and namespace_templates. Builtin model IDs are not managed nodes. #876. Memory ID owner; strategy ID scoped to memory. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Explicit Memory ID owner; separate deprecated role and CUSTOM/SELF_MANAGED SNS/S3 references. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32629,10 +32629,10 @@
       }
     },
     "aws_bedrockagentcore_online_evaluation_config": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Execution role, custom evaluator IDs and CloudWatch log-group sources; Builtin.* evaluator IDs never manufacture managed nodes. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Typed role and complete log-group names; dedicated complete mixed Builtin/custom evaluator object-Set proof without fabricated Builtin nodes. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32686,10 +32686,10 @@
       }
     },
     "aws_bedrockagentcore_policy": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Policy-engine ID relation only; Cedar statement and generated-policy prompts must not be interpreted. #876. Policy engine owner candidate; policy retains lifecycle coverage. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Explicit policy-engine ID owner; policy content is opaque. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32742,10 +32742,10 @@
       }
     },
     "aws_bedrockagentcore_policy_engine": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: KMS key reference; policy engine is shared by gateways, not their embedded child. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Independent shared Logical engine with typed KMS reference. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32854,10 +32854,10 @@
       }
     },
     "aws_bedrockagentcore_resource_policy": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: Target resource ARN must resolve to explicitly allowlisted AgentCore type; policy JSON contains no inferred relationships. #876. Verified resource target may own helper; never embed target into policy. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. Explicit Runtime/Gateway ARN owner only; endpoint-derived Runtime outputs are not Runtime identity. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -32900,10 +32900,10 @@
       }
     },
     "aws_bedrockagentcore_token_vault_cmk": {
-      "status": "Basic-only",
+      "status": "Supported",
       "priority": "P2",
       "issue": 876,
-      "gap": "Reviewed #725: CustomerManagedKey selects KMS ARN; ServiceManagedKey has no managed-key target. Default vault is service-owned, not a fabricated node. #876. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #876. CustomerManagedKey selects KMS ARN; ServiceManagedKey and default vault do not fabricate nodes. Exact schemas and exclusions: aws.md#agentcore-evaluators-memory-and-policies-876.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",

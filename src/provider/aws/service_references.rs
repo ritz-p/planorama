@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::agentcore_services::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::agentcore_gateway::label(resource, attribute) {
         return Some(label);
     }
@@ -898,6 +901,7 @@ pub(crate) fn annotate(
     super::datazone_environments::annotate(nodes, references, evidence);
     super::datazone_access::annotate(nodes, references, evidence);
     super::agentcore_runtime::annotate(nodes, references, evidence);
+    super::agentcore_services::annotate(nodes, references, evidence);
     super::agentcore_gateway::annotate(nodes, references, evidence);
     super::batch::annotate(nodes, references, evidence);
     super::ecs_capacity::annotate(nodes, references, evidence);
@@ -956,6 +960,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::datazone_environments::bindings(raw, reference)
         && super::datazone_access::bindings(raw, reference)
         && super::agentcore_runtime::bindings(raw, reference)
+        && super::agentcore_services::bindings(raw, reference)
         && super::agentcore_gateway::bindings(raw, reference)
         && (super::osis::label(
             &raw.nodes[reference.target].resource_type,
@@ -1576,7 +1581,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::agentcore_gateway::indexed(&node.resource_type, &reference.attribute)
+        if super::agentcore_services::indexed(&node.resource_type, &reference.attribute)
+            || super::agentcore_gateway::indexed(&node.resource_type, &reference.attribute)
             || super::agentcore_runtime::indexed(&node.resource_type, &reference.attribute)
             || super::datazone::indexed(&node.resource_type, &reference.attribute)
             || super::cognito::indexed(&node.resource_type, &reference.attribute)
