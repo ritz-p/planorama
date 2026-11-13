@@ -6,7 +6,8 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::directory_service::resource(resource)
+        && (aws::cognito::resource(resource)
+            || aws::directory_service::resource(resource)
             || aws::network_monitors::resource(resource)
             || aws::networkfirewall_extended::resource(resource)
             || aws::imagebuilder_distribution::resource(resource)
@@ -48,7 +49,8 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::directory_service::indexed(resource, attribute)
+        && (aws::cognito::indexed(resource, attribute)
+            || aws::directory_service::indexed(resource, attribute)
             || aws::network_monitors::indexed(resource, attribute)
             || aws::networkfirewall_extended::indexed(resource, attribute)
             || aws::imagebuilder_distribution::indexed(resource, attribute)

@@ -34,6 +34,7 @@ pub(crate) mod cloudwatch_alarms;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;
 pub(crate) mod cloudwatch_metrics;
+pub(crate) mod cognito;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
@@ -364,6 +365,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     networkfirewall_extended::present(&raw, &mut graph);
     network_monitors::present(&raw, &mut graph);
     directory_service::present(&raw, &mut graph);
+    cognito::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);

@@ -1016,3 +1016,57 @@ be independently known, distinct, in the same control region, and match the
 configured recipient. No recipient directory or owner relationship is synthesized.
 Literal-only, unknown/sensitive, ambiguous, data-only, deleted/deposed, incompatible
 or cross-state endpoints retain conservative fallback.
+
+## Cognito configuration and identities (#1133)
+
+The existing user-pool/client/identity-pool cards and #500 relationships remain
+unchanged. Identity pools additionally verify complete OIDC and SAML ARN
+collections against the corresponding managed IAM provider types. Principal-tag
+helpers verify their identity-pool owner and an explicitly configured provider:
+Cognito user-pool `endpoint`, IAM OIDC `arn`, or IAM SAML `arn`. URLs and provider
+names alone never identify a resource; tag mappings remain opaque.
+
+Role attachments verify the identity-pool owner and the complete `roles` map.
+Only `authenticated` and `unauthenticated` keys are accepted; both can explicitly
+reference the same IAM role ARN. Role-mapping sets require `Rules`/`Token` and an
+independently verified provider configured in the identity pool. IAM providers
+use exact ARNs; Cognito mappings require both explicit pool `endpoint` and client
+`id` outputs, their exact `endpoint:client_id` combination and matching user pool.
+Rule-role lists require `Rules`. Claims and policy effects are not interpreted.
+
+Providers, resource servers, users, groups, domains and log-delivery helpers verify
+`user_pool_id` against the exact managed pool ID. Memberships independently verify
+`group_name` against group `name` and `username` against user `username`, qualified
+by the same explicit pool. They retain their own association identity. Groups can
+reference IAM role ARNs; users' credentials, attributes, sub and metadata are not
+summarized. Managed lookup/update clients retain their own identity and only
+navigate to the configured pool; patterns never alias a normal managed client.
+
+Branding verifies a pool/client pair and is owned by that client. Risk and UI
+customization helpers prefer a verified matching client owner, with pool navigation
+otherwise; omitted clients and the UI `ALL` sentinel never manufacture a client.
+Domains verify configured ACM certificate ARNs in us-east-1, in the same account,
+under an explicit cross-region exception. Computed CloudFront outputs never
+create distributions. All these helpers retain Logical presentation and independent
+lifecycle coverage; shared endpoints remain independent.
+
+User pools verify allowlisted `lambda_config` trigger ARNs, custom-sender KMS key
+ARNs, SMS IAM role ARNs and SES identity ARNs. Sender versions must be `V1_0`;
+pre-token-generation configuration allows `V1_0`, `V2_0` or `V3_0`. Legacy/new token
+trigger values must agree when both are configured. Email identities require a
+known `DEVELOPER` or `COGNITO_DEFAULT` mode; risk notification identity ARNs are
+verified separately. Ordinary regional references remain in the same region.
+
+Clients verify configured Pinpoint application ARN or application ID with the
+matching IAM role and external-ID contract. `user_data_shared` controls data sharing,
+not whether analytics is configured. `supported_identity_providers` is a complete
+set of exact managed provider names, with matching pool and known provider type;
+`COGNITO` is a built-in sentinel, not a managed endpoint. Mixed unresolved provider
+sets fall back as a whole. These set and role-map contracts use dedicated proof.
+
+Log delivery uses a list of configurations with singleton destination blocks.
+`userNotification`/`ERROR` selects CloudWatch Logs; `userAuthEvents`/`INFO` allows
+CloudWatch Logs, S3 or Firehose. Destination ARNs require their exact managed types.
+Configured delivery does not establish runtime health. All paths reject unknown,
+sensitive, literal-only, ambiguous, incompatible, deleted/deposed or data-only
+endpoints. Named states, filtering and exactly-once coverage remain independent.

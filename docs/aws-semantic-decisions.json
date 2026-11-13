@@ -58809,10 +58809,10 @@
       }
     },
     "aws_cognito_identity_pool": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Partial: #500 client_id -> client.id and provider_name -> user_pool.endpoint; missing complete OIDC/SAML provider ARN navigation. Not applicable: identity pool is independent from user pool, not an embedded child. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58890,10 +58890,10 @@
       }
     },
     "aws_cognito_identity_pool_provider_principal_tag": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: identity_pool_id -> identity_pool.id; identity_provider_name must use a provider-type-specific contract, not URL matching. Missing: pool-owned principal-tag helper; tag mappings excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58940,10 +58940,10 @@
       }
     },
     "aws_cognito_identity_pool_roles_attachment": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and roles map -> IAM role.arn; role_mapping needs independently verified provider discriminator. Missing: pool-owned role attachment; roles remain shared identities. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -58993,10 +58993,10 @@
       }
     },
     "aws_cognito_identity_provider": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: user_pool_id -> pool.id; provider_details is provider-dependent and contains secrets, never dumped. Missing: user-pool-owned provider with independent metadata. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59043,10 +59043,10 @@
       }
     },
     "aws_cognito_log_delivery_configuration": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and type-gated log destination ARNs (CloudWatch Logs/S3/Firehose). Missing: user-pool-owned delivery helper; configured delivery is not runtime health. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59088,10 +59088,10 @@
       }
     },
     "aws_cognito_managed_login_branding": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and client.id pair with client pool consistency. Missing: client-owned branding helper; assets/settings are payloads, excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59143,10 +59143,10 @@
       }
     },
     "aws_cognito_managed_user_pool_client": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id navigation; managed lookup/update client is not an alias of aws_cognito_user_pool_client. Not applicable: lookup-selected client retains independent identity; pattern selection is not explicit Terraform ownership. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59203,10 +59203,10 @@
       }
     },
     "aws_cognito_resource_server": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: user_pool_id -> pool.id; scope strings are authorization configuration, not resource endpoints. Missing: user-pool-owned resource-server helper with independent coverage. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59256,10 +59256,10 @@
       }
     },
     "aws_cognito_risk_configuration": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and optional client.id; omitted client means pool-level risk, not an invented client. Missing: pool/client risk helper with independent lifecycle; notify source identities need exact ARN proof. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59307,10 +59307,10 @@
       }
     },
     "aws_cognito_user": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id ownership; username/sub are scoped identity selectors, not arbitrary global IDs. Missing: pool-owned user identity; no credentials, attributes, metadata or personal data summaries. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59357,10 +59357,10 @@
       }
     },
     "aws_cognito_user_group": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and optional role_arn -> IAM role.arn. Missing: pool-owned group; role association is not group containment. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59420,10 +59420,10 @@
       }
     },
     "aws_cognito_user_in_group": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: group.name and user.username scoped to independently verified same user_pool_id. Not applicable: association between independent user/group identities; preserve exactly-once change coverage. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59470,10 +59470,10 @@
       }
     },
     "aws_cognito_user_pool": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: allowlisted Lambda triggers/custom sender KMS and SMS role/email source ARN references; no callback URL inference. Not applicable: independent user-pool card #500; computed domain never synthesizes a domain or distribution. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59544,10 +59544,10 @@
       }
     },
     "aws_cognito_user_pool_client": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Partial: #500 user_pool_id -> pool.id; missing enabled Pinpoint analytics application and type-gated provider references. Not applicable: independent client card; callback/logout URLs are not network containment. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59619,10 +59619,10 @@
       }
     },
     "aws_cognito_user_pool_domain": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and configured ACM certificate.arn with explicit cross-region certificate policy; computed distribution ARN is not a configured endpoint. Missing: pool-owned domain helper; custom domain is not a customer-managed CloudFront distribution. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59674,10 +59674,10 @@
       }
     },
     "aws_cognito_user_pool_ui_customization": {
-      "status": "Partial",
+      "status": "Supported",
       "priority": "P2",
       "issue": 1133,
-      "gap": "#727 audit: Missing: pool.id and optional client.id; ALL sentinel is pool-level, not a resource identifier. Missing: pool/client-owned customization helper; CSS/image payloads excluded. Implementation follow-up #1133. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: reviewed; #1133 implemented: typed complete Cognito provider, role-map, trigger, delivery and analytics references; qualified pool/client/user/group ownership and independent helper identities. Existing #500 cards and contracts remain unchanged. Built-in sentinels, computed outputs, credentials, personal attributes, policy payloads and URLs do not synthesize managed endpoints. Unknown, literal, ambiguous, foreign and historical evidence retains fallback. See docs/aws.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
