@@ -1,0 +1,407 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "cloudflare_account.team",
+      "mode": "managed",
+      "type": "cloudflare_account",
+      "name": "team",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Example team",
+          "standalone": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.example",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "example.invalid",
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "type": "full"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_access_identity_provider.corporate",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_access_identity_provider",
+      "name": "corporate",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "10000000-0000-4000-8000-000000000001",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Corporate login",
+          "type": "oidc",
+          "config": {
+            "client_id": "PRIVATE_CLIENT_ID",
+            "client_secret": "PRIVATE_IDENTITY_SECRET",
+            "auth_url": "https://login.example.invalid/auth",
+            "token_url": "https://login.example.invalid/token",
+            "certs_url": "https://login.example.invalid/certs"
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_access_policy.staff",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_access_policy",
+      "name": "staff",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "20000000-0000-4000-8000-000000000002",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Staff access",
+          "decision": "allow",
+          "include": [
+            {
+              "email": {
+                "email": "PRIVATE_POLICY_EMAIL"
+              }
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_access_application.portal",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_access_application",
+      "name": "portal",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "30000000-0000-4000-8000-000000000003",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "Portal",
+          "type": "self_hosted",
+          "domain": "portal.example.invalid",
+          "allowed_idps": [
+            "10000000-0000-4000-8000-000000000001"
+          ],
+          "policies": [
+            {
+              "id": "20000000-0000-4000-8000-000000000002",
+              "precedence": 1
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_tunnel_cloudflared.office",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_tunnel_cloudflared",
+      "name": "office",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "40000000-0000-4000-8000-000000000004",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Office",
+          "config_src": "cloudflare",
+          "tunnel_secret": "PRIVATE_TUNNEL_SECRET"
+        },
+        "after_unknown": {},
+        "after_sensitive": {
+          "tunnel_secret": true
+        }
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_tunnel_cloudflared_config.office",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_tunnel_cloudflared_config",
+      "name": "office",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "40000000-0000-4000-8000-000000000004",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "tunnel_id": "40000000-0000-4000-8000-000000000004",
+          "config": {
+            "ingress": [
+              {
+                "hostname": "portal.example.invalid",
+                "service": "http://192.0.2.10:8080"
+              },
+              {
+                "service": "http_status:404"
+              }
+            ]
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_tunnel_cloudflared_virtual_network.office",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_tunnel_cloudflared_virtual_network",
+      "name": "office",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "50000000-0000-4000-8000-000000000005",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Office routing"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_tunnel_cloudflared_route.office",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_tunnel_cloudflared_route",
+      "name": "office",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "60000000-0000-4000-8000-000000000006",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "tunnel_id": "40000000-0000-4000-8000-000000000004",
+          "network": "192.0.2.0/24",
+          "virtual_network_id": "50000000-0000-4000-8000-000000000005"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "cloudflare": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare"
+      },
+      "cloudflare.other": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "alias": "other"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_account.team",
+          "type": "cloudflare_account",
+          "name": "team",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zone.example",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account": {
+              "references": [
+                "cloudflare_account.team.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_access_identity_provider.corporate",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_access_identity_provider",
+          "name": "corporate",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_access_policy.staff",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_access_policy",
+          "name": "staff",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_access_application.portal",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_access_application",
+          "name": "portal",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "allowed_idps": {
+              "references": [
+                "cloudflare_zero_trust_access_identity_provider.corporate.id",
+                "cloudflare_zero_trust_access_identity_provider.corporate"
+              ]
+            },
+            "policies": {
+              "references": [
+                "cloudflare_zero_trust_access_policy.staff.id",
+                "cloudflare_zero_trust_access_policy.staff"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_tunnel_cloudflared.office",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_tunnel_cloudflared",
+          "name": "office",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_tunnel_cloudflared_config.office",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_tunnel_cloudflared_config",
+          "name": "office",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "tunnel_id": {
+              "references": [
+                "cloudflare_zero_trust_tunnel_cloudflared.office.id",
+                "cloudflare_zero_trust_tunnel_cloudflared.office"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_tunnel_cloudflared_virtual_network.office",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_tunnel_cloudflared_virtual_network",
+          "name": "office",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zero_trust_tunnel_cloudflared_route.office",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_tunnel_cloudflared_route",
+          "name": "office",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "tunnel_id": {
+              "references": [
+                "cloudflare_zero_trust_tunnel_cloudflared.office.id",
+                "cloudflare_zero_trust_tunnel_cloudflared.office"
+              ]
+            },
+            "virtual_network_id": {
+              "references": [
+                "cloudflare_zero_trust_tunnel_cloudflared_virtual_network.office.id",
+                "cloudflare_zero_trust_tunnel_cloudflared_virtual_network.office"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

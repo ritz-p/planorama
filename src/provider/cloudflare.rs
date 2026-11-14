@@ -7,6 +7,7 @@ mod applications;
 mod edge;
 mod proof;
 mod types;
+mod zero_trust;
 
 pub(crate) fn known(resource: &str, mode: EntityMode) -> bool {
     types::TYPES
@@ -17,7 +18,12 @@ pub(crate) fn known(resource: &str, mode: EntityMode) -> bool {
 pub(crate) fn classify(resource: &str, mode: EntityMode) -> ResourceRole {
     if known(resource, mode) {
         if mode == EntityMode::Managed
-            && matches!(resource, "cloudflare_ruleset" | "cloudflare_page_rule")
+            && matches!(
+                resource,
+                "cloudflare_ruleset"
+                    | "cloudflare_page_rule"
+                    | "cloudflare_zero_trust_access_policy"
+            )
         {
             return ResourceRole::Policy;
         }
@@ -74,6 +80,13 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_r2_bucket" => "Cloudflare R2",
         "cloudflare_workers_kv_namespace" => "Cloudflare KV",
         "cloudflare_d1_database" => "Cloudflare D1",
+        "cloudflare_zero_trust_access_application"
+        | "cloudflare_zero_trust_access_policy"
+        | "cloudflare_zero_trust_access_identity_provider" => "Cloudflare Access",
+        "cloudflare_zero_trust_tunnel_cloudflared"
+        | "cloudflare_zero_trust_tunnel_cloudflared_config"
+        | "cloudflare_zero_trust_tunnel_cloudflared_route"
+        | "cloudflare_zero_trust_tunnel_cloudflared_virtual_network" => "Cloudflare Tunnel",
         _ => "Cloudflare",
     })
 }
@@ -123,6 +136,7 @@ pub(crate) fn annotate(
     administration::annotate(nodes, references, evidence);
     edge::annotate(nodes, references, evidence);
     applications::annotate(nodes, references, evidence);
+    zero_trust::annotate(nodes, references, evidence);
 }
 
 #[cfg(test)]
@@ -138,6 +152,7 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
         let Some(label) = administration::label(&node.resource_type, &r.attribute)
             .or_else(|| edge::label(&node.resource_type, &r.attribute))
             .or_else(|| applications::label(&node.resource_type, &r.attribute))
+            .or_else(|| zero_trust::label(&node.resource_type, &r.attribute))
         else {
             continue;
         };

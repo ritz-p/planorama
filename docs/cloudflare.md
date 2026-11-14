@@ -135,3 +135,30 @@ is rejected. A computed unknown `database_id` on Worker versions does not
 replace that explicit identity. Legacy script version ownership cannot be
 inferred from a matching name alone. Verified references describe configured
 relationships, not successful deployment or runtime requests.
+
+## Access and Tunnel
+
+[Zero Trust sample](../examples/cloudflare-zero-trust.svg) shows an Access
+application, identity provider, reusable policy, tunnel, configuration and
+routing helpers. These remain independently managed resources. Access policies
+are logical policy rows; a Tunnel virtual network is not an AWS VPC or a
+physical container.
+
+Applications and identity providers must have exactly one known administration
+scope, account or zone. Ambiguous, unknown or sensitive ownership fails closed.
+An application can reference an account identity provider in its known account;
+a zone identity provider requires the same known zone. Reusable policy references
+require a matching account, including account context obtained through a proven
+Zone. The supported application fields are `allowed_idps` and `policies[].id`.
+Identity-provider sets require complete known membership. Mixed inline/reusable
+policy collections are not interpreted as verified policy associations.
+
+Tunnel configurations and routes verify `tunnel_id`; routes also verify
+`virtual_network_id`. These require a unique current endpoint, matching known
+account, exact `id` output and complete explicit Terraform provenance. Literal
+UUID matches alone are insufficient. Access/application and Tunnel references
+are configured administrative associations, not proof of authentication,
+authorization decisions, ingress reachability or successful network traffic.
+Hostnames, DNS names, URLs, IP addresses, CIDRs, identity configuration, secrets,
+tokens and policy payloads do not create additional relationships and are not
+retained for presentation. Other Zero Trust resource types retain basic support.
