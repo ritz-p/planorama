@@ -11,7 +11,8 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_zone_dnssec"
             | "cloudflare_load_balancer"
             | "cloudflare_ruleset"
-            | "cloudflare_page_rule",
+            | "cloudflare_page_rule"
+            | "cloudflare_workers_route",
             "zone_id",
         ) => Some((&["zone_id"], "cloudflare_zone")),
         (
@@ -19,7 +20,17 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_load_balancer_monitor"
             | "cloudflare_load_balancer_monitor_group"
             | "cloudflare_ruleset"
-            | "cloudflare_list",
+            | "cloudflare_list"
+            | "cloudflare_worker"
+            | "cloudflare_worker_version"
+            | "cloudflare_workers_script"
+            | "cloudflare_workers_deployment"
+            | "cloudflare_workers_custom_domain"
+            | "cloudflare_pages_project"
+            | "cloudflare_pages_domain"
+            | "cloudflare_r2_bucket"
+            | "cloudflare_workers_kv_namespace"
+            | "cloudflare_d1_database",
             "account_id",
         ) => Some((&["account_id"], "cloudflare_account")),
         _ => None,

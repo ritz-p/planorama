@@ -99,17 +99,7 @@ pub(super) fn verify(
     compatible: impl Fn(&TerraformEntity, &TerraformEntity) -> bool,
 ) -> bool {
     let consumer = &nodes[r.target];
-    if !current(consumer)
-        || !r.complete
-        || !r.instances_explicit
-        || !r.issues.is_empty()
-        || targets.is_empty()
-        || refs
-            .iter()
-            .filter(|other| other.target == r.target && other.attribute == r.attribute)
-            .count()
-            != 1
-    {
+    if !explicit(nodes, refs, r) || targets.is_empty() {
         return false;
     }
     let mut sources = BTreeSet::new();
@@ -136,4 +126,20 @@ pub(super) fn verify(
         sources.insert(source);
     }
     sources == r.sources.iter().copied().collect()
+}
+
+pub(super) fn explicit(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    r: &AttributeReference,
+) -> bool {
+    current(&nodes[r.target])
+        && r.complete
+        && r.instances_explicit
+        && r.issues.is_empty()
+        && refs
+            .iter()
+            .filter(|other| other.target == r.target && other.attribute == r.attribute)
+            .count()
+            == 1
 }
