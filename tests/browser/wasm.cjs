@@ -3,7 +3,6 @@ const {full} = require('./wasm-suite.cjs');
 const {fork} = require('node:child_process');
 const {readFileSync, mkdtempSync, rmSync, existsSync, appendFileSync} = require('node:fs');
 const {join, resolve} = require('node:path');
-const {tmpdir} = require('node:os');
 const {Driver, By, wait} = require('./webdriver.cjs');
 
 const root = resolve(__dirname, '../..');
@@ -11,7 +10,7 @@ const binary = join(process.env.CARGO_TARGET_DIR || join(root, 'target'), 'relea
 const nativeReference = require('../support/native-reference.cjs')(binary);
 const small = readFileSync(join(root, 'tests/fixtures/viewer-plan.json'), 'utf8');
 const server = fork(join(root, 'scripts/serve-browser.cjs'), [], {env: {...process.env, PORT: '0'}, stdio: ['ignore', 'inherit', 'inherit', 'ipc']});
-const temp = mkdtempSync(join(tmpdir(), 'planorama-wasm-'));
+const temp = mkdtempSync(join(root, 'output/planorama-wasm-'));
 let phaseStart = performance.now();
 const checkpoint = phase => {
   const now = performance.now();
@@ -76,6 +75,8 @@ async function main() {
       native: nativeReference,
     });
     checkpoint('options');
+    require('./wasm-settings.cjs')({driver, small, submit, status});
+    checkpoint('settings-files');
     for (const [options, args] of [
       [{}, []],
       [{format: 'html'}, ['--format', 'html']],

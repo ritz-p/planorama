@@ -80,13 +80,18 @@ input[type="text"] { width: min(95%, 40rem) }
     </fieldset>
   </fieldset>
   <button id="reset-settings" type="button">Reset settings</button>
+  <button id="export-settings" type="button" aria-describedby="settings-file-help">Export settings</button>
+  <button id="import-settings" type="button" aria-describedby="settings-file-help">Import settings</button>
   <button id="generate" disabled>Generate</button>
   <button id="cancel" type="button" disabled>Cancel</button>
 </form>
+<input id="settings-file" type="file" accept=".json,application/json" aria-label="Browser settings file" hidden>
+<p id="settings-file-help">Choose plan files first, then import settings. Only generation settings are saved; module and focus selectors may contain identifiers. Files, diagrams and inventories are excluded. Version 1 browser JSON is separate from CLI TOML presets. Maximum 64 KiB.</p>
 <p id="settings-error" role="alert"></p>
 <p id="status" role="status">Loading local generator…</p>
 <p id="elapsed" aria-live="off" hidden></p>
 <a id="download" hidden>Download</a>
 <iframe id="preview" title="Generated diagram" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+<script src="settings.js" defer></script>
 <script src="app.js" defer></script>
 </html>
