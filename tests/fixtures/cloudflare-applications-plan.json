@@ -1,0 +1,629 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "cloudflare_account.team",
+      "mode": "managed",
+      "type": "cloudflare_account",
+      "name": "team",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Example team",
+          "standalone": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.example",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "example.invalid",
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "type": "full"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_r2_bucket.assets",
+      "mode": "managed",
+      "type": "cloudflare_r2_bucket",
+      "name": "assets",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "assets",
+          "name": "assets",
+          "jurisdiction": "eu"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_kv_namespace.cache",
+      "mode": "managed",
+      "type": "cloudflare_workers_kv_namespace",
+      "name": "cache",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "44444444444444444444444444444444",
+          "title": "cache"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_d1_database.content",
+      "mode": "managed",
+      "type": "cloudflare_d1_database",
+      "name": "content",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "30000000-0000-4000-8000-000000000003",
+          "uuid": "30000000-0000-4000-8000-000000000003",
+          "name": "content"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker.api",
+      "mode": "managed",
+      "type": "cloudflare_worker",
+      "name": "api",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "10000000-0000-4000-8000-000000000001",
+          "name": "api"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker_version.api",
+      "mode": "managed",
+      "type": "cloudflare_worker_version",
+      "name": "api",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "20000000-0000-4000-8000-000000000002",
+          "worker_id": "10000000-0000-4000-8000-000000000001",
+          "bindings": [
+            {
+              "type": "r2_bucket",
+              "name": "ASSETS",
+              "bucket_name": "assets",
+              "jurisdiction": "eu"
+            },
+            {
+              "type": "kv_namespace",
+              "name": "CACHE",
+              "namespace_id": "44444444444444444444444444444444"
+            },
+            {
+              "type": "d1",
+              "name": "DB",
+              "id": "30000000-0000-4000-8000-000000000003"
+            },
+            {
+              "type": "secret_text",
+              "name": "TOKEN",
+              "text": "PRIVATE_BINDING_SECRET"
+            }
+          ],
+          "modules": [
+            {
+              "name": "main.js",
+              "content_type": "application/javascript+module",
+              "content_base64": "PRIVATE_WORKER_CODE"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_deployment.api",
+      "mode": "managed",
+      "type": "cloudflare_workers_deployment",
+      "name": "api",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "deployment",
+          "script_name": "api",
+          "strategy": "percentage",
+          "versions": [
+            {
+              "version_id": "20000000-0000-4000-8000-000000000002",
+              "percentage": 100
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_script.legacy",
+      "mode": "managed",
+      "type": "cloudflare_workers_script",
+      "name": "legacy",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "legacy",
+          "script_name": "legacy",
+          "content": "PRIVATE_WORKER_CODE",
+          "bindings": [
+            {
+              "type": "r2_bucket",
+              "name": "ASSETS",
+              "bucket_name": "assets",
+              "jurisdiction": "eu"
+            },
+            {
+              "type": "kv_namespace",
+              "name": "CACHE",
+              "namespace_id": "44444444444444444444444444444444"
+            },
+            {
+              "type": "d1",
+              "name": "DB",
+              "id": "30000000-0000-4000-8000-000000000003"
+            },
+            {
+              "type": "secret_text",
+              "name": "TOKEN",
+              "text": "PRIVATE_BINDING_SECRET"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_route.api",
+      "mode": "managed",
+      "type": "cloudflare_workers_route",
+      "name": "api",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "55555555555555555555555555555555",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "pattern": "api.example.invalid/*",
+          "script": "api"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_custom_domain.legacy",
+      "mode": "managed",
+      "type": "cloudflare_workers_custom_domain",
+      "name": "legacy",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "66666666666666666666666666666666",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "hostname": "legacy.example.invalid",
+          "service": "legacy",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_pages_project.site",
+      "mode": "managed",
+      "type": "cloudflare_pages_project",
+      "name": "site",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "site",
+          "name": "site",
+          "production_branch": "main",
+          "deployment_configs": {
+            "preview": {
+              "kv_namespaces": {
+                "CACHE": {
+                  "namespace_id": "44444444444444444444444444444444"
+                }
+              }
+            },
+            "production": {
+              "d1_databases": {
+                "DB": {
+                  "id": "30000000-0000-4000-8000-000000000003"
+                }
+              },
+              "r2_buckets": {
+                "ASSETS": {
+                  "name": "assets",
+                  "jurisdiction": "eu"
+                }
+              }
+            }
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_pages_domain.site",
+      "mode": "managed",
+      "type": "cloudflare_pages_domain",
+      "name": "site",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "www.example.invalid",
+          "name": "www.example.invalid",
+          "project_name": "site"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "cloudflare": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare"
+      },
+      "cloudflare.other": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "alias": "other"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_account.team",
+          "type": "cloudflare_account",
+          "name": "team",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zone.example",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account": {
+              "references": [
+                "cloudflare_account.team.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_r2_bucket.assets",
+          "mode": "managed",
+          "type": "cloudflare_r2_bucket",
+          "name": "assets",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_kv_namespace.cache",
+          "mode": "managed",
+          "type": "cloudflare_workers_kv_namespace",
+          "name": "cache",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_d1_database.content",
+          "mode": "managed",
+          "type": "cloudflare_d1_database",
+          "name": "content",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_worker.api",
+          "mode": "managed",
+          "type": "cloudflare_worker",
+          "name": "api",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_worker_version.api",
+          "mode": "managed",
+          "type": "cloudflare_worker_version",
+          "name": "api",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "worker_id": {
+              "references": [
+                "cloudflare_worker.api.id",
+                "cloudflare_worker.api"
+              ]
+            },
+            "bindings": {
+              "references": [
+                "cloudflare_r2_bucket.assets.name",
+                "cloudflare_r2_bucket.assets",
+                "cloudflare_workers_kv_namespace.cache.id",
+                "cloudflare_workers_kv_namespace.cache",
+                "cloudflare_d1_database.content.id",
+                "cloudflare_d1_database.content"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_deployment.api",
+          "mode": "managed",
+          "type": "cloudflare_workers_deployment",
+          "name": "api",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "script_name": {
+              "references": [
+                "cloudflare_worker.api.name",
+                "cloudflare_worker.api"
+              ]
+            },
+            "versions": {
+              "references": [
+                "cloudflare_worker_version.api.id",
+                "cloudflare_worker_version.api"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_script.legacy",
+          "mode": "managed",
+          "type": "cloudflare_workers_script",
+          "name": "legacy",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "bindings": {
+              "references": [
+                "cloudflare_r2_bucket.assets.name",
+                "cloudflare_r2_bucket.assets",
+                "cloudflare_workers_kv_namespace.cache.id",
+                "cloudflare_workers_kv_namespace.cache",
+                "cloudflare_d1_database.content.id",
+                "cloudflare_d1_database.content"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_route.api",
+          "mode": "managed",
+          "type": "cloudflare_workers_route",
+          "name": "api",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "script": {
+              "references": [
+                "cloudflare_worker.api.name",
+                "cloudflare_worker.api"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_custom_domain.legacy",
+          "mode": "managed",
+          "type": "cloudflare_workers_custom_domain",
+          "name": "legacy",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "service": {
+              "references": [
+                "cloudflare_workers_script.legacy.id",
+                "cloudflare_workers_script.legacy"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_pages_project.site",
+          "mode": "managed",
+          "type": "cloudflare_pages_project",
+          "name": "site",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "deployment_configs": {
+              "references": [
+                "cloudflare_r2_bucket.assets.name",
+                "cloudflare_r2_bucket.assets",
+                "cloudflare_workers_kv_namespace.cache.id",
+                "cloudflare_workers_kv_namespace.cache",
+                "cloudflare_d1_database.content.id",
+                "cloudflare_d1_database.content"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_pages_domain.site",
+          "mode": "managed",
+          "type": "cloudflare_pages_domain",
+          "name": "site",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "project_name": {
+              "references": [
+                "cloudflare_pages_project.site.name",
+                "cloudflare_pages_project.site"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

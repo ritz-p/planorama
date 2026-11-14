@@ -91,3 +91,37 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed']) {
+  const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-unknown') plan.resource_changes[6].change.after_unknown = {bindings: true};
+  if (scenario === 'applications-jurisdiction') plan.resource_changes[2].change.after.jurisdiction = 'default';
+  if (scenario === 'applications-lifecycle') {
+    plan.resource_changes[6].change.actions = ['delete', 'create'];
+    const old = structuredClone(plan.resource_changes[2]);
+    old.deposed = 'old'; old.change.actions = ['delete']; old.change.before = old.change.after; old.change.after = null;
+    plan.resource_changes.push(old);
+  }
+  if (scenario === 'applications-mixed') {
+    const aws = JSON.parse(readFileSync('tests/fixtures/cloudflare-foundation-plan.json', 'utf8')).resource_changes.filter(r => r.provider_name === 'registry.terraform.io/hashicorp/aws');
+    assert.ok(aws.length > 0); plan.resource_changes.push(...aws);
+  }
+  const input = JSON.stringify(plan);
+  for (const format of ['svg', 'html']) {
+    const options = {format, icon_mode: 'service-name'};
+    const args = ['--format', format, '--icon-mode', 'service-name'];
+    if (scenario === 'applications-filtered') {
+      options.focus = 'cloudflare_worker.api'; options.focus_depth = 0;
+      args.push('--focus', options.focus, '--focus-depth', '0');
+    }
+    const result = JSON.parse(binding.generate(input, JSON.stringify(options)));
+    assert.equal(result.content, native(input, args), `${scenario}/${format}`);
+    assert.ok(!result.content.includes('PRIVATE_'));
+  }
+}
+const applications = readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8');
+for (const format of ['svg', 'html']) {
+  const result = JSON.parse(binding.generate_named(JSON.stringify(['first', 'second'].map(state => ({state, json: applications}))), JSON.stringify({format, icon_mode: 'service-name'})));
+  const expected = require('node:child_process').execFileSync(resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama'), ['--state', 'first=tests/fixtures/cloudflare-applications-plan.json', '--state', 'second=tests/fixtures/cloudflare-applications-plan.json', '--format', format, '--icon-mode', 'service-name', '-o', '-'], {encoding: 'utf8', maxBuffer: 32 * 1024 * 1024});
+  assert.equal(result.content, expected, `applications-named/${format}`);
+}
+console.log('Cloudflare applications native/Wasm SVG, HTML and named-state parity passed');

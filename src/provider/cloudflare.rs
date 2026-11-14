@@ -3,6 +3,7 @@ use crate::model::{
 };
 use serde_json::Value;
 mod administration;
+mod applications;
 mod edge;
 mod proof;
 mod types;
@@ -35,6 +36,7 @@ pub(crate) fn placement(resource: &str, mode: EntityMode) -> Placement {
             "cloudflare_account"
                 | "cloudflare_zone"
                 | "cloudflare_load_balancer"
+                | "cloudflare_worker"
                 | "cloudflare_workers_script"
                 | "cloudflare_pages_project"
                 | "cloudflare_r2_bucket"
@@ -62,6 +64,16 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_ruleset" => "Cloudflare Rulesets",
         "cloudflare_page_rule" => "Cloudflare Page Rules",
         "cloudflare_list" => "Cloudflare Lists",
+        "cloudflare_worker"
+        | "cloudflare_worker_version"
+        | "cloudflare_workers_script"
+        | "cloudflare_workers_deployment"
+        | "cloudflare_workers_route"
+        | "cloudflare_workers_custom_domain" => "Cloudflare Workers",
+        "cloudflare_pages_project" | "cloudflare_pages_domain" => "Cloudflare Pages",
+        "cloudflare_r2_bucket" => "Cloudflare R2",
+        "cloudflare_workers_kv_namespace" => "Cloudflare KV",
+        "cloudflare_d1_database" => "Cloudflare D1",
         _ => "Cloudflare",
     })
 }
@@ -110,6 +122,7 @@ pub(crate) fn annotate(
     }
     administration::annotate(nodes, references, evidence);
     edge::annotate(nodes, references, evidence);
+    applications::annotate(nodes, references, evidence);
 }
 
 #[cfg(test)]
@@ -124,6 +137,7 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
         }
         let Some(label) = administration::label(&node.resource_type, &r.attribute)
             .or_else(|| edge::label(&node.resource_type, &r.attribute))
+            .or_else(|| applications::label(&node.resource_type, &r.attribute))
         else {
             continue;
         };

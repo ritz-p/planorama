@@ -186,3 +186,4 @@ examples/oam.svg
 examples/transfer-server.svg
 examples/cloudflare-dns.svg
 examples/cloudflare-edge.svg
+examples/cloudflare-applications.svg
