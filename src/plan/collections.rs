@@ -197,12 +197,25 @@ pub(super) fn annotate(
         &before_evidence,
     );
     let mut sensitive = BTreeMap::new();
+    let mut prior_sensitive = BTreeMap::new();
     sensitivities(&plan["planned_values"]["root_module"], &mut sensitive);
+    sensitivities(
+        &plan["prior_state"]["values"]["root_module"],
+        &mut prior_sensitive,
+    );
     let masks: Vec<_> = nodes
         .iter()
         .zip(&evidence)
         .map(|(node, (_, unknown))| {
             let change = changes.get(&(node.address.as_str(), node.deposed_key.as_deref()));
+            let source_sensitive = if node.mode == crate::model::EntityMode::Data
+                && !values.contains_key(node.address.as_str())
+                && change.and_then(|c| c["change"].get("after")).is_none()
+            {
+                &prior_sensitive
+            } else {
+                &sensitive
+            };
             let mask = merge_masks(
                 unknown,
                 change
@@ -211,7 +224,7 @@ pub(super) fn annotate(
             );
             merge_masks(
                 &mask,
-                sensitive
+                source_sensitive
                     .get(node.address.as_str())
                     .copied()
                     .unwrap_or(&Value::Null),
@@ -223,6 +236,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::cloudflare::annotate(nodes, &elbv2_evidence);
     crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);

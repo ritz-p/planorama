@@ -1,0 +1,223 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "cloudflare_zone.example",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "name": "example.invalid",
+          "api_token": "PRIVATE_TOKEN",
+          "script": "PRIVATE_BODY"
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.www",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "www",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "cccccccccccccccccccccccccccccccc",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "www",
+          "type": "A",
+          "content": "192.0.2.1",
+          "ttl": 60
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.foreign",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "foreign",
+      "provider_name": "registry.terraform.io/example/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "dddddddddddddddddddddddddddddddd"
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.inferred",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "inferred",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_future.unknown",
+      "mode": "managed",
+      "type": "cloudflare_future",
+      "name": "unknown",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "aws_s3_bucket.example",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "example",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {},
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "data.cloudflare_zones.list",
+      "mode": "data",
+      "type": "cloudflare_zones",
+      "name": "list",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "before": null,
+        "after": {
+          "result": []
+        },
+        "after_unknown": {},
+        "before_sensitive": false,
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "cloudflare.edge": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "alias": "edge"
+      },
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_zone.example",
+          "mode": "managed",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "provider_config_key": "cloudflare.edge",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_dns_record.www",
+          "mode": "managed",
+          "type": "cloudflare_dns_record",
+          "name": "www",
+          "provider_config_key": "cloudflare.edge",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zone.foreign",
+          "mode": "managed",
+          "type": "cloudflare_zone",
+          "name": "foreign",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zone.inferred",
+          "mode": "managed",
+          "type": "cloudflare_zone",
+          "name": "inferred",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_future.unknown",
+          "mode": "managed",
+          "type": "cloudflare_future",
+          "name": "unknown",
+          "provider_config_key": "cloudflare.edge",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.example",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "example",
+          "expressions": {},
+          "provider_config_key": "aws"
+        },
+        {
+          "address": "data.cloudflare_zones.list",
+          "mode": "data",
+          "type": "cloudflare_zones",
+          "name": "list",
+          "provider_config_key": "cloudflare.edge",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
