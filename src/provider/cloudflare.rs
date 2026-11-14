@@ -2,6 +2,7 @@ use crate::model::{
     EntityMode, Placement, ResourceRole, TerraformEntity, architecture::CloudflareScope,
 };
 use serde_json::Value;
+mod dns;
 mod types;
 
 pub(crate) fn known(resource: &str, mode: EntityMode) -> bool {
@@ -43,7 +44,12 @@ pub(crate) fn placement(resource: &str, mode: EntityMode) -> Placement {
 }
 
 pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static str> {
-    known(resource, mode).then_some("Cloudflare")
+    known(resource, mode).then_some(match resource {
+        "cloudflare_zone" => "Cloudflare Zone",
+        "cloudflare_dns_record" => "Cloudflare DNS",
+        "cloudflare_zone_dnssec" => "Cloudflare DNSSEC",
+        _ => "Cloudflare",
+    })
 }
 
 fn known_id(value: &Value, mask: &Value, path: &[&str]) -> Option<String> {
@@ -62,10 +68,14 @@ fn known_id(value: &Value, mask: &Value, path: &[&str]) -> Option<String> {
     value
         .as_str()
         .filter(|v| v.len() == 32 && v.bytes().all(|b| b.is_ascii_hexdigit()))
-        .map(str::to_ascii_lowercase)
+        .map(str::to_owned)
 }
 
-pub(crate) fn annotate(nodes: &mut [TerraformEntity], evidence: &[(&Value, &Value)]) {
+pub(crate) fn annotate(
+    nodes: &mut [TerraformEntity],
+    references: &mut [crate::model::AttributeReference],
+    evidence: &[(&Value, &Value)],
+) {
     for (node, &(value, mask)) in nodes.iter_mut().zip(evidence) {
         if !node.provider.is_cloudflare() || !known(&node.resource_type, node.mode) {
             continue;
@@ -84,8 +94,34 @@ pub(crate) fn annotate(nodes: &mut [TerraformEntity], evidence: &[(&Value, &Valu
             zone: known_id(value, mask, zone_path),
         });
     }
+    dns::annotate(nodes, references, evidence);
 }
 
 #[cfg(test)]
 #[path = "../../tests/unit/cloudflare.rs"]
 mod tests;
+
+pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model::Graph) {
+    for r in &plan.attributes {
+        let node = &mut graph.nodes[r.target];
+        if !node.provider.is_cloudflare() || !r.has_references {
+            continue;
+        }
+        let Some(label) = dns::label(&node.resource_type, &r.attribute) else {
+            continue;
+        };
+        for reference in node
+            .references
+            .iter_mut()
+            .filter(|reference| !reference.dependency && reference.attribute == r.attribute)
+        {
+            reference.label = label;
+            reference.kind = crate::model::ReferenceKind::Membership;
+            reference.show_spatial = true;
+            reference.complete = r.service_reference_verified;
+            if !reference.complete {
+                reference.targets.clear();
+            }
+        }
+    }
+}

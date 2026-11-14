@@ -236,7 +236,6 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
-    crate::provider::cloudflare::annotate(nodes, &elbv2_evidence);
     crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);
@@ -296,6 +295,7 @@ pub(super) fn annotate(
     crate::provider::aws::cloudwatch_delivery::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::flow_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_events::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::cloudflare::annotate(nodes, references, &elbv2_evidence);
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()
