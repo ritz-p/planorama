@@ -1,0 +1,653 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "cloudflare_account.team",
+      "mode": "managed",
+      "type": "cloudflare_account",
+      "name": "team",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Example team",
+          "standalone": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.example",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "example.invalid",
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "type": "full"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.www",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "www",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "cccccccccccccccccccccccccccccccc",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "www.example.invalid",
+          "type": "CNAME",
+          "content": "origin.example.invalid",
+          "ttl": 1,
+          "proxied": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone_dnssec.example",
+      "mode": "managed",
+      "type": "cloudflare_zone_dnssec",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "status": "active",
+          "key_tag": 12345,
+          "public_key": "PRIVATE_DNSSEC_PAYLOAD"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_load_balancer_monitor.https",
+      "mode": "managed",
+      "type": "cloudflare_load_balancer_monitor",
+      "name": "https",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "11111111111111111111111111111111",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "type": "https",
+          "path": "/health",
+          "expected_codes": "200",
+          "header": {
+            "Authorization": [
+              "PRIVATE_MONITOR_HEADER"
+            ]
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_load_balancer_pool.primary",
+      "mode": "managed",
+      "type": "cloudflare_load_balancer_pool",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "22222222222222222222222222222222",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "primary",
+          "monitor": "11111111111111111111111111111111",
+          "origins": [
+            {
+              "name": "app",
+              "address": "origin.example.invalid",
+              "enabled": true
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_load_balancer_pool.backup",
+      "mode": "managed",
+      "type": "cloudflare_load_balancer_pool",
+      "name": "backup",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "33333333333333333333333333333333",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "backup",
+          "monitor_group": "00000000000000000000000000000000",
+          "origins": [
+            {
+              "name": "app",
+              "address": "192.0.2.1",
+              "enabled": true
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_load_balancer.public",
+      "mode": "managed",
+      "type": "cloudflare_load_balancer",
+      "name": "public",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "44444444444444444444444444444444",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "app.example.invalid",
+          "default_pools": [
+            "22222222222222222222222222222222",
+            "33333333333333333333333333333333"
+          ],
+          "fallback_pool": "33333333333333333333333333333333",
+          "region_pools": {
+            "WNAM": [
+              "22222222222222222222222222222222"
+            ]
+          },
+          "proxied": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_ruleset.waf",
+      "mode": "managed",
+      "type": "cloudflare_ruleset",
+      "name": "waf",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "55555555555555555555555555555555",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "Custom WAF rules",
+          "kind": "custom",
+          "phase": "http_request_firewall_custom",
+          "rules": [
+            {
+              "action": "block",
+              "expression": "PRIVATE_RULE_EXPRESSION"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_list.redirects",
+      "mode": "managed",
+      "type": "cloudflare_list",
+      "name": "redirects",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "77777777777777777777777777777777",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "redirects",
+          "kind": "redirect",
+          "items": [
+            {
+              "redirect": {
+                "source_url": "https://example.invalid/old",
+                "target_url": "https://example.invalid/new",
+                "status_code": 301
+              }
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_ruleset.redirects",
+      "mode": "managed",
+      "type": "cloudflare_ruleset",
+      "name": "redirects",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "66666666666666666666666666666666",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Bulk redirects",
+          "kind": "root",
+          "phase": "http_request_redirect",
+          "rules": [
+            {
+              "action": "redirect",
+              "expression": "true",
+              "action_parameters": {
+                "from_list": {
+                  "name": "redirects",
+                  "key": "http.request.full_uri"
+                }
+              }
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_page_rule.legacy_redirect",
+      "mode": "managed",
+      "type": "cloudflare_page_rule",
+      "name": "legacy_redirect",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "88888888888888888888888888888888",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "target": "example.invalid/old/*",
+          "actions": {
+            "forwarding_url": {
+              "url": "https://example.invalid/new",
+              "status_code": 301
+            }
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_ruleset.entrypoint",
+      "mode": "managed",
+      "type": "cloudflare_ruleset",
+      "name": "entrypoint",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "99999999999999999999999999999999",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "Zone WAF entrypoint",
+          "kind": "zone",
+          "phase": "http_request_firewall_custom",
+          "rules": [
+            {
+              "action": "execute",
+              "expression": "true",
+              "action_parameters": {
+                "id": "55555555555555555555555555555555"
+              }
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_load_balancer_monitor_group.health",
+      "mode": "managed",
+      "type": "cloudflare_load_balancer_monitor_group",
+      "name": "health",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "00000000000000000000000000000000",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "description": "Shared health monitors",
+          "members": [
+            {
+              "monitor_id": "11111111111111111111111111111111",
+              "enabled": true,
+              "monitoring_only": false,
+              "must_be_healthy": true
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "cloudflare": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare"
+      },
+      "cloudflare.other": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "alias": "other"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_account.team",
+          "type": "cloudflare_account",
+          "name": "team",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zone.example",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account": {
+              "references": [
+                "cloudflare_account.team.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_dns_record.www",
+          "type": "cloudflare_dns_record",
+          "name": "www",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zone_dnssec.example",
+          "type": "cloudflare_zone_dnssec",
+          "name": "example",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_load_balancer_monitor.https",
+          "mode": "managed",
+          "type": "cloudflare_load_balancer_monitor",
+          "name": "https",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_load_balancer_pool.primary",
+          "mode": "managed",
+          "type": "cloudflare_load_balancer_pool",
+          "name": "primary",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "monitor": {
+              "references": [
+                "cloudflare_load_balancer_monitor.https.id",
+                "cloudflare_load_balancer_monitor.https"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_load_balancer_pool.backup",
+          "mode": "managed",
+          "type": "cloudflare_load_balancer_pool",
+          "name": "backup",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "monitor_group": {
+              "references": [
+                "cloudflare_load_balancer_monitor_group.health.id",
+                "cloudflare_load_balancer_monitor_group.health"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_load_balancer.public",
+          "mode": "managed",
+          "type": "cloudflare_load_balancer",
+          "name": "public",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "default_pools": {
+              "references": [
+                "cloudflare_load_balancer_pool.primary.id",
+                "cloudflare_load_balancer_pool.primary",
+                "cloudflare_load_balancer_pool.backup.id",
+                "cloudflare_load_balancer_pool.backup"
+              ]
+            },
+            "fallback_pool": {
+              "references": [
+                "cloudflare_load_balancer_pool.backup.id",
+                "cloudflare_load_balancer_pool.backup"
+              ]
+            },
+            "region_pools": {
+              "references": [
+                "cloudflare_load_balancer_pool.primary.id",
+                "cloudflare_load_balancer_pool.primary"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_ruleset.waf",
+          "mode": "managed",
+          "type": "cloudflare_ruleset",
+          "name": "waf",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_list.redirects",
+          "mode": "managed",
+          "type": "cloudflare_list",
+          "name": "redirects",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_ruleset.redirects",
+          "mode": "managed",
+          "type": "cloudflare_ruleset",
+          "name": "redirects",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "rules": {
+              "references": [
+                "cloudflare_list.redirects.name",
+                "cloudflare_list.redirects"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_page_rule.legacy_redirect",
+          "mode": "managed",
+          "type": "cloudflare_page_rule",
+          "name": "legacy_redirect",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_ruleset.entrypoint",
+          "mode": "managed",
+          "type": "cloudflare_ruleset",
+          "name": "entrypoint",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "rules": {
+              "references": [
+                "cloudflare_ruleset.waf.id",
+                "cloudflare_ruleset.waf"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_load_balancer_monitor_group.health",
+          "mode": "managed",
+          "type": "cloudflare_load_balancer_monitor_group",
+          "name": "health",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "members": {
+              "references": [
+                "cloudflare_load_balancer_monitor.https.id",
+                "cloudflare_load_balancer_monitor.https"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

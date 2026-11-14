@@ -1,14 +1,60 @@
 use crate::model::{Action, AttributeReference, TerraformEntity};
 use serde_json::Value;
 
-pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
+fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static str)> {
     match (kind, path) {
-        ("cloudflare_dns_record" | "cloudflare_zone_dnssec", "zone_id") => {
-            Some("Zone administration")
+        ("cloudflare_zone", "account" | "account.id") => {
+            Some((&["account", "id"], "cloudflare_account"))
         }
-        ("cloudflare_zone", "account" | "account.id") => Some("Account administration"),
+        (
+            "cloudflare_dns_record"
+            | "cloudflare_zone_dnssec"
+            | "cloudflare_load_balancer"
+            | "cloudflare_ruleset"
+            | "cloudflare_page_rule",
+            "zone_id",
+        ) => Some((&["zone_id"], "cloudflare_zone")),
+        (
+            "cloudflare_load_balancer_pool"
+            | "cloudflare_load_balancer_monitor"
+            | "cloudflare_load_balancer_monitor_group"
+            | "cloudflare_ruleset"
+            | "cloudflare_list",
+            "account_id",
+        ) => Some((&["account_id"], "cloudflare_account")),
         _ => None,
     }
+}
+
+pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
+    contract(kind, path).map(|(_, kind)| {
+        if kind == "cloudflare_zone" {
+            "Zone administration"
+        } else {
+            "Account administration"
+        }
+    })
+}
+
+fn scope_valid(node: &TerraformEntity, evidence: (&Value, &Value)) -> bool {
+    if node.resource_type != "cloudflare_ruleset" {
+        return true;
+    }
+    let (value, mask) = evidence;
+    let presence = |field| {
+        let (v, m) = super::proof::at(value, mask, field)?;
+        if !matches!(m, Value::Null | Value::Bool(false)) {
+            return None;
+        }
+        if v.is_null() {
+            Some(false)
+        } else {
+            super::known_id(value, mask, &[field]).map(|_| true)
+        }
+    };
+    presence("account_id")
+        .zip(presence("zone_id"))
+        .is_some_and(|(a, z)| a != z)
 }
 
 fn current(node: &TerraformEntity) -> bool {
@@ -26,6 +72,9 @@ fn verify(
 ) -> Option<usize> {
     let consumer = &nodes[r.target];
     if !current(consumer)
+        || !scope_valid(consumer, evidence[r.target])
+        || (consumer.resource_type == "cloudflare_zone"
+            && consumer.mode != crate::model::EntityMode::Managed)
         || !r.complete
         || !r.instances_explicit
         || !r.issues.is_empty()
@@ -41,11 +90,7 @@ fn verify(
         return None;
     };
     let endpoint = &nodes[*source];
-    let (path, kind) = if consumer.resource_type == "cloudflare_zone" {
-        (&["account", "id"][..], "cloudflare_account")
-    } else {
-        (&["zone_id"][..], "cloudflare_zone")
-    };
+    let (path, kind) = contract(&consumer.resource_type, &r.attribute)?;
     if !current(endpoint) || endpoint.resource_type != kind || *source == r.target {
         return None;
     }
@@ -90,6 +135,11 @@ pub(super) fn annotate(
     refs: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
 ) {
+    for (node, &values) in nodes.iter_mut().zip(evidence) {
+        if node.provider.is_cloudflare() && !scope_valid(node, values) {
+            node.cloudflare_scope = None;
+        }
+    }
     for index in 0..refs.len() {
         let r = &refs[index];
         if !nodes[r.target].provider.is_cloudflare()

@@ -2,7 +2,9 @@ use crate::model::{
     EntityMode, Placement, ResourceRole, TerraformEntity, architecture::CloudflareScope,
 };
 use serde_json::Value;
-mod dns;
+mod administration;
+mod edge;
+mod proof;
 mod types;
 
 pub(crate) fn known(resource: &str, mode: EntityMode) -> bool {
@@ -13,6 +15,11 @@ pub(crate) fn known(resource: &str, mode: EntityMode) -> bool {
 
 pub(crate) fn classify(resource: &str, mode: EntityMode) -> ResourceRole {
     if known(resource, mode) {
+        if mode == EntityMode::Managed
+            && matches!(resource, "cloudflare_ruleset" | "cloudflare_page_rule")
+        {
+            return ResourceRole::Policy;
+        }
         ResourceRole::Node
     } else {
         ResourceRole::Unknown
@@ -48,6 +55,13 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_zone" => "Cloudflare Zone",
         "cloudflare_dns_record" => "Cloudflare DNS",
         "cloudflare_zone_dnssec" => "Cloudflare DNSSEC",
+        "cloudflare_load_balancer"
+        | "cloudflare_load_balancer_pool"
+        | "cloudflare_load_balancer_monitor"
+        | "cloudflare_load_balancer_monitor_group" => "Cloudflare Load Balancing",
+        "cloudflare_ruleset" => "Cloudflare Rulesets",
+        "cloudflare_page_rule" => "Cloudflare Page Rules",
+        "cloudflare_list" => "Cloudflare Lists",
         _ => "Cloudflare",
     })
 }
@@ -94,7 +108,8 @@ pub(crate) fn annotate(
             zone: known_id(value, mask, zone_path),
         });
     }
-    dns::annotate(nodes, references, evidence);
+    administration::annotate(nodes, references, evidence);
+    edge::annotate(nodes, references, evidence);
 }
 
 #[cfg(test)]
@@ -107,7 +122,9 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
         if !node.provider.is_cloudflare() || !r.has_references {
             continue;
         }
-        let Some(label) = dns::label(&node.resource_type, &r.attribute) else {
+        let Some(label) = administration::label(&node.resource_type, &r.attribute)
+            .or_else(|| edge::label(&node.resource_type, &r.attribute))
+        else {
             continue;
         };
         for reference in node
@@ -116,7 +133,11 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
             .filter(|reference| !reference.dependency && reference.attribute == r.attribute)
         {
             reference.label = label;
-            reference.kind = crate::model::ReferenceKind::Membership;
+            reference.kind = if administration::label(&node.resource_type, &r.attribute).is_some() {
+                crate::model::ReferenceKind::Membership
+            } else {
+                crate::model::ReferenceKind::Configured
+            };
             reference.show_spatial = true;
             reference.complete = r.service_reference_verified;
             if !reference.complete {
