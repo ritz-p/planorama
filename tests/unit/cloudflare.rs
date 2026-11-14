@@ -161,3 +161,57 @@ fn malformed_scope_masks_fail_closed() {
         assert_eq!(scope, &Some(CloudflareScope::default()));
     }
 }
+
+#[test]
+fn restored_data_scope_uses_the_sensitivity_of_its_value_source() {
+    let secret = "0123456789abcdef0123456789abcdef";
+    let resource = json!({"address":"data.cloudflare_dns_record.cached","mode":"data","type":"cloudflare_dns_record","name":"cached","provider_name":"registry.terraform.io/cloudflare/cloudflare","values":{"zone_id":secret},"sensitive_values":{"zone_id":true}});
+    let base = json!({"format_version":"1.2","resource_changes":[],"prior_state":{"values":{"root_module":{"resources":[resource.clone()]}}},"configuration":{"root_module":{"resources":[{"address":"data.cloudflare_dns_record.cached","mode":"data","type":"cloudflare_dns_record","name":"cached"}]}}});
+    for nested in [false, true] {
+        let mut input = base.clone();
+        if nested {
+            let mut resource = resource.clone();
+            resource["address"] = json!("module.cached.data.cloudflare_dns_record.cached");
+            input["prior_state"]["values"]["root_module"] =
+                json!({"child_modules":[{"address":"module.cached","resources":[resource]}]});
+            input["configuration"]["root_module"] = json!({"module_calls":{"cached":{"source":"./cached","module":base["configuration"]["root_module"].clone()}}});
+        }
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        assert_eq!(parsed.nodes.len(), 1);
+        assert_eq!(
+            parsed.nodes[0].cloudflare_scope,
+            Some(CloudflareScope::default())
+        );
+        assert!(!format!("{parsed:?}").contains(secret));
+        for format in [crate::OutputFormat::Svg, crate::OutputFormat::Html] {
+            let output = crate::generate(
+                &input.to_string(),
+                &crate::Options {
+                    format,
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+            assert!(!output.content.contains(secret));
+        }
+    }
+    for source in ["planned", "change", "null"] {
+        let mut input = base.clone();
+        if source == "planned" {
+            let mut current = resource.clone();
+            current["sensitive_values"] = json!({});
+            input["planned_values"] = json!({"root_module":{"resources":[current]}});
+        } else {
+            input["resource_changes"] = json!([{"address":"data.cloudflare_dns_record.cached","mode":"data","type":"cloudflare_dns_record","provider_name":"registry.terraform.io/cloudflare/cloudflare","change":{"actions":["read"],"after":if source=="null" {Value::Null}else{json!({"zone_id":secret})},"after_sensitive":{}}}]);
+        }
+        let parsed = plan::parse(&input.to_string()).unwrap();
+        assert_eq!(
+            parsed.nodes[0]
+                .cloudflare_scope
+                .as_ref()
+                .and_then(|s| s.zone.as_deref()),
+            if source == "null" { None } else { Some(secret) },
+            "{source}"
+        );
+    }
+}
