@@ -2,6 +2,7 @@ use crate::model::{
     DiagnosticReason, EntityMode, Graph, RelationshipProvenance, TerraformEntityId, TerraformPlan,
 };
 use std::collections::{BTreeMap, BTreeSet};
+pub(crate) mod json_report;
 pub(crate) mod report;
 
 #[derive(Clone, Debug, Default, PartialEq, Eq)]
@@ -18,7 +19,7 @@ impl Selection {
     }
 }
 
-#[derive(Clone, Debug, Default, PartialEq, Eq)]
+#[derive(Clone, Debug, Default, PartialEq, Eq, serde::Serialize)]
 pub struct Counts {
     pub resources: usize,
     pub account_applicable: usize,

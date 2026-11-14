@@ -1,5 +1,6 @@
 mod athena;
 mod configuration;
+mod coverage_json;
 mod coverage_report;
 mod filtering;
 mod firehose;
