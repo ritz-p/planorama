@@ -212,3 +212,65 @@ SVG/HTML parity. Regression cases cover mixed providers, provider aliases, named
 states, current/deposed instances, managed/data boundaries, unknown/sensitive
 values and filtering. Layout quality and normal Tests remain independent checks.
 No Cloudflare plan/state or live credentials are needed for these checks.
+
+## Provider-generated plan captures
+
+[`cloudflare-captured`](../tests/fixtures/cloudflare-captured) supplements the
+synthetic samples with actual Terraform **1.9.8** / official Provider **5.28.1**
+`plan` and `show -json` output from dedicated artificial HCL:
+
+| Case | Inputs and evidence | Presentation contract |
+| --- | --- | --- |
+| `create` | Empty state; Zone/DNS, Worker/version, KV/R2/D1 | Computed IDs remain unknown; Terraform provenance survives, while unverified membership/binding targets are withheld |
+| `update` | Generated artificial local state; DNS TTL and KV title changes | Known Zone membership, Worker ownership and the complete storage binding collection are verified |
+| `replace` | Same artificial state; explicit `-replace=cloudflare_workers_kv_namespace.cache` | Replacement keeps its action; the new unknown KV ID must not reuse the old ID for binding verification |
+| `data` | Empty state; singleton Zone read from a loopback HTTP fixture and a deferred Zone lookup | The known lookup exists only in `prior_state` and is restored for references; the deferred lookup remains `read` with unknown identity |
+
+[Create SVG](../examples/cloudflare-captured-create.svg) and
+[update SVG](../examples/cloudflare-captured-update.svg) illustrate the different
+evidence available before and after identities are known. These are **not live
+Cloudflare deployments**. The seed state is generated from the create plan with
+explicit artificial identities; it is not produced by `apply`. Replacement is
+requested by Terraform CLI, not evidence of a Provider replacement modifier.
+The HTTP fixture serves exactly one Zone response; it does not verify real API
+behavior or authentication. No refresh, apply or remote cleanup is performed.
+
+In prepared Docker or WSL on Linux x86_64, from the repository root:
+
+```sh
+node scripts/cloudflare-capture.cjs prepare
+node scripts/cloudflare-capture.cjs capture
+node scripts/cloudflare-capture.cjs check
+node --test tests/support/cloudflare-capture.test.cjs
+cargo test --locked --lib provider::cloudflare::captured
+sh scripts/update-examples.sh
+```
+
+`prepare` downloads a checksum-pinned Core archive and initializes the official
+Provider against the committed read-only lock. It recreates only the four case
+directories under ignored `output/cloudflare-captured`; rerun it before recapture.
+`capture` clears inherited Terraform/Cloudflare overrides, supplies a public dummy
+token and points the Provider at a temporary loopback server. Managed planning
+must make zero HTTP requests, and the data case must make exactly one expected GET.
+For an external-network-isolated capture, after preparation use either:
+
+```sh
+unshare -Urn sh -c 'ip link set lo up && node scripts/cloudflare-capture.cjs capture'
+# Or with the prepared development Docker image:
+docker run --rm --network none --mount type=bind,source="$PWD",target=/workspace planorama-dev node scripts/cloudflare-capture.cjs capture
+```
+
+`capture.json` binds HCL, provider lock, generator, artificial state, selected
+schema contracts and all four JSON plans with SHA-256. The top-level timestamp
+is removed, and the unordered `relevant_attributes` collection is sorted without
+dropping entries; other plan values and array orders are preserved. Schema
+descriptions are omitted from the selected schema excerpt. The committed data
+is from the dedicated artificial inputs, not a sanitizer for arbitrary user
+plans. Binary plans and initialized
+providers stay in `output/cloudflare-captured`; remove that directory to clean up.
+
+Normal tests validate the committed captures without Terraform or API access.
+The **Terraform compatibility** manual workflow recaptures with external
+networking disabled. **Resource support** checks provenance and semantic tests;
+**Browser Wasm** compares native/Wasm SVG/HTML, including changed-only rendering.
+Use the same commands with recapture when changing HCL, the generator or pins.

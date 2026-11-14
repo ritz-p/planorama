@@ -1,0 +1,150 @@
+{
+  "version": 4,
+  "terraform_version": "1.9.8",
+  "serial": 1,
+  "lineage": "33333333-3333-4333-8333-333333333333",
+  "outputs": {},
+  "resources": [
+    {
+      "mode": "managed",
+      "type": "cloudflare_d1_database",
+      "name": "content",
+      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
+      "instances": [
+        {
+          "schema_version": 500,
+          "attributes": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "fields": null,
+            "jurisdiction": null,
+            "name": "fixture-content",
+            "primary_location_hint": null,
+            "id": "22222222-2222-4222-8222-222222222222",
+            "uuid": "22222222-2222-4222-8222-222222222222"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "www",
+      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
+      "instances": [
+        {
+          "schema_version": 500,
+          "attributes": {
+            "comment": null,
+            "comment_modified_on": null,
+            "content": "192.0.2.1",
+            "data": null,
+            "include_shadow_metadata": false,
+            "name": "www.example.invalid",
+            "priority": null,
+            "private_routing": null,
+            "proxied": false,
+            "ttl": 300,
+            "type": "A",
+            "id": "dddddddddddddddddddddddddddddddd",
+            "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "cloudflare_r2_bucket",
+      "name": "assets",
+      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
+      "instances": [
+        {
+          "schema_version": 500,
+          "attributes": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "jurisdiction": "eu",
+            "name": "fixture-assets",
+            "storage_class": "Standard",
+            "id": "fixture-assets"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "cloudflare_worker",
+      "name": "api",
+      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
+      "instances": [
+        {
+          "schema_version": 500,
+          "attributes": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "force": null,
+            "logpush": false,
+            "name": "fixture-api",
+            "observability": {
+              "enabled": false,
+              "head_sampling_rate": 1,
+              "traces": {
+                "enabled": false,
+                "head_sampling_rate": 1,
+                "persist": true
+              }
+            },
+            "subdomain": {
+              "enabled": false,
+              "previews_enabled": false
+            },
+            "tags": [],
+            "tail_consumers": [],
+            "id": "11111111-1111-4111-8111-111111111111"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "cloudflare_workers_kv_namespace",
+      "name": "cache",
+      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
+      "instances": [
+        {
+          "schema_version": 500,
+          "attributes": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "jurisdiction": null,
+            "mode": null,
+            "title": "fixture-cache-initial",
+            "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    },
+    {
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider": "provider[\"registry.terraform.io/cloudflare/cloudflare\"]",
+      "instances": [
+        {
+          "schema_version": 500,
+          "attributes": {
+            "account": {
+              "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "name": "example.invalid",
+            "paused": false,
+            "type": "full",
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "sensitive_attributes": []
+        }
+      ]
+    }
+  ]
+}

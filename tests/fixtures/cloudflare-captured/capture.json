@@ -1,0 +1,28 @@
+{
+  "kind": "provider-generated-plan-with-artificial-state-and-loopback-data",
+  "terraformVersion": "1.9.8",
+  "terraformArchiveSha256": "186e0145f5e5f2eb97cbd785bc78f21bae4ef15119349f6ad4fa535b83b10df8",
+  "provider": "registry.terraform.io/cloudflare/cloudflare",
+  "providerVersion": "5.28.1",
+  "inputs": {
+    "main.tf": "e6ce0832f2ccce8be876964a5b85382d71bf99297d840e047308a692a6305b13",
+    "data.tf": "82156983b5c1f8736f29c7a806122e2ababc98e33630de9fb316b25adf69e0d5",
+    ".terraform.lock.hcl": "c3d4f6ac59f21ea2159e74c4f8ec8624c684b276fa7a0c1e0eb42f84ca3030fb"
+  },
+  "generatorSha256": "fc5775a4ac771c52c72114325e42fdb53581718600c3ae97e03bbfab3dfd558a",
+  "plans": {
+    "create": "27333dcbb66667431ff9d56b9826f3a63f48fbb92043a207a9ff4ccdfd93c9f7",
+    "update": "5ca4841b82dc9a57734fc23bba0ae2ed0586ebb4c696e37211c65303d3d2908c",
+    "replace": "b678cb462a970842eb5f60dfe04d2bf997cd080da65f5cb6df720f539abbb57f",
+    "data": "0e67cbda19f9ca8c9e22858d71fbaae84238939b8fda0cf85dfc24fdf56e01df"
+  },
+  "seedSha256": "76fec5217b471a7698fd11db0444b227dc1dac561512e4f1ad36dbd0bc7a0a29",
+  "schemaSha256": "bfc46f2fc36bc08156807f7dbdf822f12f07c1bf779dfd78515d0aecf56af0f3",
+  "limits": [
+    "Actual Terraform/Core and official Provider plan/show output; timestamp removed and unordered relevant_attributes sorted, without dropping entries.",
+    "Update/replacement use generated artificial local state, not state from apply or a deployed Cloudflare account.",
+    "Replacement is requested with -replace=cloudflare_workers_kv_namespace.cache, not caused by a schema ForceNew change.",
+    "Data source reads use a loopback HTTP fixture; deferred reads are not executed.",
+    "No live Cloudflare API, authentication, apply, refresh, deployment or runtime behavior is verified."
+  ]
+}

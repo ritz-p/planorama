@@ -150,3 +150,18 @@ for (const scenario of ['zero-trust', 'zero-trust-unknown', 'zero-trust-account'
   }
 }
 console.log('Cloudflare Zero Trust native/Wasm SVG and HTML parity passed');
+for (const scenario of require('../../scripts/cloudflare-capture.cjs').cases) {
+  const input = readFileSync(`tests/fixtures/cloudflare-captured/${scenario}.json`, 'utf8');
+  for (const format of ['svg', 'html']) {
+    for (const changed of [false, true]) {
+      const options = {format, icon_mode: 'service-name', changed_only: changed};
+      const args = ['--format', format, '--icon-mode', 'service-name', ...(changed ? ['--changed-only'] : [])];
+      const result = JSON.parse(binding.generate(input, JSON.stringify(options)));
+      assert.equal(result.content, native(input, args), `captured-${scenario}/${format}/changed=${changed}`);
+      for (const payload of ['192.0.2.', 'fixture-only-not-a-real-token', 'export default', 'ZXhwb3J0IGRlZmF1bHQ']) {
+        assert.ok(!result.content.includes(payload), payload);
+      }
+    }
+  }
+}
+console.log('Cloudflare Provider-generated create/update/replacement/data native/Wasm parity passed');

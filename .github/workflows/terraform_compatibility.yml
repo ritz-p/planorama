@@ -22,6 +22,9 @@ on:
       - tests/support/provider_plan.cjs
       - tests/support/verify_provider_plan.sh
       - tests/support/sts_fixture.cjs
+      - tests/fixtures/cloudflare-captured/**
+      - scripts/cloudflare-capture.cjs
+      - tests/support/cloudflare-capture.test.cjs
   workflow_dispatch:
 
 permissions:
@@ -38,6 +41,8 @@ jobs:
       - run: node scripts/terraform-compatibility.cjs check
       - run: node --test tests/ci/terraform-compatibility.test.cjs
       - run: node --test tests/ci/compatibility-provider.test.cjs
+      - run: node scripts/cloudflare-capture.cjs check
+      - run: node --test tests/support/cloudflare-capture.test.cjs
   capture:
     if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
@@ -55,6 +60,16 @@ jobs:
       - run: docker compose exec -T dev node scripts/terraform-compatibility.cjs check
       - run: docker compose exec -T dev cargo test --locked --lib compatibility_tests
       - run: docker compose exec -T dev cargo test --locked --test terraform_plan
+      - run: docker compose exec -T dev node scripts/cloudflare-capture.cjs prepare
+      - name: Capture Cloudflare plans with artificial state and loopback data
+        run: >-
+          docker run --rm --network none
+          --mount type=bind,source="$PWD",target=/workspace
+          planorama-dev node scripts/cloudflare-capture.cjs capture
+      - run: docker compose exec -T dev node scripts/cloudflare-capture.cjs check
+      - run: docker compose exec -T dev node --test tests/support/cloudflare-capture.test.cjs
+      - run: git diff --exit-code -- tests/fixtures/cloudflare-captured
+      - run: docker compose exec -T dev cargo test --locked --lib provider::cloudflare::captured
       - run: docker compose exec -T dev node tests/support/provider_plan.cjs prepare
       - run: docker compose exec -T dev cargo build --locked --bin planorama
       - name: Capture public saved-plan evidence without external network
@@ -68,4 +83,5 @@ jobs:
           path: |
             tests/fixtures/compatibility
             tests/fixtures/provider-plan/captured
+            tests/fixtures/cloudflare-captured
           include-hidden-files: true
