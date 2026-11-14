@@ -167,6 +167,29 @@ pub(crate) fn run() -> Result<(), String> {
                     return Err("--coverage-selection-details limit must be 0-1000".into());
                 }
             }
+            "--coverage-report-json" => {
+                if coverage_report
+                    .json
+                    .replace(
+                        args.next()
+                            .ok_or("--coverage-report-json requires PATH")?
+                            .into(),
+                    )
+                    .is_some()
+                {
+                    return Err("duplicate --coverage-report-json".into());
+                }
+            }
+            "--coverage-json-details" => {
+                coverage_report.details = args
+                    .next()
+                    .ok_or("--coverage-json-details requires a limit (0-1000)")?
+                    .parse()
+                    .map_err(|_| "--coverage-json-details requires a limit (0-1000)")?;
+                if coverage_report.details > 1000 {
+                    return Err("--coverage-json-details limit must be 0-1000".into());
+                }
+            }
             "--layout-diagnostics-json" => {
                 layout_diagnostics.json = Some(
                     args.next()
@@ -176,7 +199,8 @@ pub(crate) fn run() -> Result<(), String> {
             }
             "-h" | "--help" => {
                 let modes = "service-name (default; icon unavailable in this build)";
-                let help = HELP.replace("{icon_modes}", modes);
+                let help = HELP.replace("{icon_modes}", modes)
+                    + "  --coverage-report-json PATH  Write versioned coverage and state-local diagnostics JSON\n  --coverage-json-details N  Include selected resource/finding records (0-1000 each; default: 0)\n";
                 print!(
                     "{help}\nMultiple plans: planorama --state ID=PATH [--state ID=PATH ...] [-o diagram.svg]\nState IDs are explicit and unique (1-64 ASCII letters, digits, '.', '_' or '-').\nOne named input may use '-' for stdin; do not mix --state with a positional input.\n"
                 );
@@ -263,13 +287,18 @@ pub(crate) fn run() -> Result<(), String> {
         layout_diagnostics.text = value;
     }
     let timing = crate::timing::Session::start(timings);
-    filter.explain_selection = coverage_report.path.is_some();
+    filter.explain_selection = coverage_report.path.is_some() || coverage_report.json.is_some();
     if specified
         .iter()
         .any(|arg| arg == "--coverage-selection-details")
-        && !filter.explain_selection
+        && coverage_report.path.is_none()
     {
         return Err("--coverage-selection-details requires --coverage-report".into());
+    }
+    if specified.iter().any(|arg| arg == "--coverage-json-details")
+        && coverage_report.json.is_none()
+    {
+        return Err("--coverage-json-details requires --coverage-report-json".into());
     }
     if list_modules {
         for option in &specified {
@@ -295,6 +324,7 @@ pub(crate) fn run() -> Result<(), String> {
         for destination in std::iter::once(output.as_path())
             .chain(layout_diagnostics.json.as_deref())
             .chain(coverage_report.path.as_deref())
+            .chain(coverage_report.json.as_deref())
             .filter(|path| *path != Path::new("-"))
         {
             files::reject_same_file(Path::new(config), destination)?;
@@ -314,7 +344,11 @@ pub(crate) fn run() -> Result<(), String> {
         &output,
         layout_diagnostics.json.as_deref(),
     )?;
-    if let Some(path) = &coverage_report.path {
+    for path in coverage_report
+        .path
+        .iter()
+        .chain(coverage_report.json.iter())
+    {
         provider_plan.validate(&state_inputs, &output, Some(path))?;
     }
     if !state_inputs.is_empty() {

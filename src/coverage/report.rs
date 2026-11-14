@@ -12,18 +12,13 @@ fn escape(text: &str) -> String {
         .collect()
 }
 
-pub(crate) fn render<'a>(
-    states: impl Iterator<Item = (&'a str, &'a Coverage)>,
-    options: &crate::view::Options,
-) -> String {
-    let mut states: Vec<_> = states.collect();
-    states.sort_by_key(|(id, _)| *id);
+pub(super) fn aggregate<'a>(coverages: impl Iterator<Item = &'a Coverage>) -> Coverage {
     let mut total = Coverage {
         collected: true,
         input_complete: Some(true),
         ..Default::default()
     };
-    for (_, coverage) in &states {
+    for coverage in coverages {
         total.collected &= coverage.collected;
         total.input_complete = match (total.input_complete, coverage.input_complete) {
             (Some(false), _) | (_, Some(false)) => Some(false),
@@ -50,6 +45,16 @@ pub(crate) fn render<'a>(
         }
         total.unassociated_findings += coverage.unassociated_findings;
     }
+    total
+}
+
+pub(crate) fn render<'a>(
+    states: impl Iterator<Item = (&'a str, &'a Coverage)>,
+    options: &crate::view::Options,
+) -> String {
+    let mut states: Vec<_> = states.collect();
+    states.sort_by_key(|(id, _)| *id);
+    let total = aggregate(states.iter().map(|(_, coverage)| *coverage));
     let mut text = String::from("# Terraform coverage report\n\n");
     let selection = match (options.focus.is_some(), options.changed_only) {
         (true, true) => "focus + changed-only + required context",
