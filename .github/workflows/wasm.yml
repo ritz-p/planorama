@@ -79,7 +79,10 @@ jobs:
           docker compose up -d --no-build dev
           docker compose exec -T dev sccache --zero-stats
       - name: Verify build orchestration and native reference cache
-        run: docker compose exec -T dev node --test tests/ci/wasm-ci.test.cjs tests/support/native-reference.test.cjs
+        run: |
+          docker compose exec -T dev node --test tests/ci/wasm-ci.test.cjs tests/support/native-reference.test.cjs tests/support/cloudflare-fixtures.test.cjs
+          docker compose exec -T dev node scripts/cloudflare-fixtures.cjs --check
+          docker compose exec -T dev sh scripts/check-cloudflare-core-shapes.sh
       - name: Build and verify both distributions
         env:
           WASM_CI_SUITE: ${{ inputs.suite || 'pr' }}

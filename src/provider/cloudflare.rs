@@ -175,3 +175,7 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
         }
     }
 }
+
+#[cfg(test)]
+#[path = "../../tests/unit/cloudflare_support.rs"]
+pub(crate) mod resource_support;

@@ -248,6 +248,9 @@ fn matrix() -> String {
             .unwrap();
         }
     }
+    output.push_str(&crate::provider::cloudflare::resource_support::matrix(
+        &filter,
+    ));
     output
 }
 

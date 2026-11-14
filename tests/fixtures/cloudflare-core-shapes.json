@@ -1,0 +1,12 @@
+{
+  "kind": "terraform-core-expression-shape",
+  "terraformVersion": "1.9.8",
+  "source": "tests/fixtures/cloudflare-core-shapes/main.tf",
+  "sourceSha256": "f7fe4748838470b46006f73d6ed399e99942367ec2f33d8e17c9b248a409c099",
+  "attribute": "input",
+  "references": [
+    "terraform_data.endpoint",
+    "terraform_data.endpoint.id"
+  ],
+  "limits": "Builtin terraform_data verifies object/list attribute expression shape, not Cloudflare API behavior or a captured Cloudflare deployment."
+}
