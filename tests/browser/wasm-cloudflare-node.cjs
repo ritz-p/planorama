@@ -71,3 +71,23 @@ for (const format of ['svg', 'html']) {
   assert.equal(result.content, expected, `dns-named/${format}`);
 }
 console.log('Cloudflare DNS native/Wasm lifecycle, filtering and named-state parity passed');
+for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered', 'edge-data']) {
+  const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-edge-plan.json', 'utf8'));
+  if (scenario === 'edge-unknown') plan.resource_changes[7].change.after_unknown = {default_pools: [false, true]};
+  if (scenario === 'edge-account') plan.resource_changes[5].change.after.account_id = 'e'.repeat(32);
+  if (scenario === 'edge-data') plan.resource_changes[5].mode = 'data';
+  const input = JSON.stringify(plan);
+  for (const format of ['svg', 'html']) {
+    const options = {format, icon_mode: 'service-name'};
+    const args = ['--format', format, '--icon-mode', 'service-name'];
+    if (scenario === 'edge-filtered') {
+      options.focus = 'cloudflare_load_balancer.public'; options.focus_depth = 0;
+      args.push('--focus', options.focus, '--focus-depth', '0');
+    }
+    const result = JSON.parse(binding.generate(input, JSON.stringify(options)));
+    assert.equal(result.content, native(input, args), `${scenario}/${format}`);
+    assert.ok(!result.content.includes('PRIVATE_'));
+    assert.ok(result.content.includes('Default pools'));
+  }
+}
+console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');

@@ -69,3 +69,31 @@ CNAMEs and proxy settings do not identify an origin or prove traffic. Verified
 Zone membership can carry its known account label to the DNS helper without
 creating AWS scope or a physical containment edge. Provider aliases alone do not
 prove or disprove account membership; the resource IDs establish correspondence.
+
+## Edge configuration
+
+[Edge sample](../examples/cloudflare-edge.svg) combines DNS, custom WAF rules,
+bulk and page-rule redirects, and load balancing. The load balancer is spatial;
+pools, monitors, monitor groups, lists and rule configuration remain logical.
+
+Dedicated references cover `default_pools`, `fallback_pool`, `country_pools`,
+`region_pools`, `pop_pools`, pool `monitor`/`monitor_group`, and monitor-group
+`members.monitor_id`. Collection values and the explicit reference set must
+match completely, with unique current endpoints in the same known account.
+Zone-scoped load balancers acquire account context through verified Zone
+provenance. Monitor-group set masks must be entirely known; set positions are
+not identities.
+
+Rulesets have partial semantic support: their exclusive Account/Zone owner,
+`execute` rule targets in the same scope, and redirect-list names in the same
+account are verified. Redirect lists must have `kind = "redirect"`. Rule
+expressions, redirect URLs, page-rule actions and pool origin addresses remain
+opaque configuration. Dynamic rule pool overrides and other action-parameter
+references remain generic Terraform provenance. These references do not establish
+live traffic, effective protection or healthy origins.
+
+Cloudflare v5 object/list attributes use Terraform's aggregate expression
+references. Verification checks the evaluated typed fields, complete relevant
+collections, referenced output identities and scope together. It does not apply
+AWS nested-block/index rules to these attribute contracts. Managed configuration
+references and data-source lookup outputs are treated separately.
