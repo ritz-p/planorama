@@ -80,7 +80,7 @@ planorama plan.json --config planorama.toml --preset review -o review.html
 | 表示の読み方と AWS の対応範囲 | [関係線・凡例](docs/relationships.md)、[AWS の分類と包含](docs/aws.md)、[論理コンポーネント](docs/components.md)、[Route](docs/routes.md) |
 | 操作・変更・検査結果 | [import・移動・置換・drift](docs/operations.md)、[Terraform checks](docs/checks.md) |
 | 生成設定と選択 | [設定ファイル](docs/configuration.md)、[module 一覧・絞り込み](docs/filtering.md)、[複数 plan](docs/multi-plan.md)、[outputs](docs/outputs.md) |
-| Cloudflare の対応範囲 | [固定版 inventory・分類・管理 scope](docs/cloudflare.md) |
+| Cloudflare の対応範囲 | [契約・サンプル・検証と再現手順](docs/cloudflare.md) |
 | 入力の identity・account/region の根拠 | [Models](docs/models.md)、[provider evidence](docs/provider-evidence.md) |
 | HTML と診断 | [ビューアー操作](docs/viewer.md)、[coverage report](docs/coverage.md)、[layout diagnostics](docs/layout-diagnostics.md) |
 | リソース対応・サービスラベル・出典 | [型ごとの対応確認](docs/resource-support.md)、[サービスラベルと旧設定からの移行](docs/icons.md) |
