@@ -90,6 +90,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                     .collect(),
                 entity: {
                     let mut entity = crate::model::ArchitectureEntity::terraform(fact.into());
+                    entity.cloudflare_scope = fact.cloudflare_scope.clone();
                     entity.represented_account = fact.represented_account.clone();
                     entity.scope = crate::provider::scope(fact);
                     entity

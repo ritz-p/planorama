@@ -1,7 +1,9 @@
 use crate::model::ResourceRole;
 
 pub(crate) fn classify_entity(entity: &crate::model::TerraformEntity) -> ResourceRole {
-    if crate::provider::aws::organizations::unsupported_data(
+    if entity.provider.is_cloudflare() {
+        crate::provider::cloudflare::classify(&entity.resource_type, entity.mode)
+    } else if crate::provider::aws::organizations::unsupported_data(
         &entity.provider,
         &entity.resource_type,
         entity.mode,

@@ -223,6 +223,7 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::cloudflare::annotate(nodes, &elbv2_evidence);
     crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);

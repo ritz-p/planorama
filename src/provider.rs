@@ -1,4 +1,5 @@
 pub(crate) mod aws;
+pub(crate) mod cloudflare;
 pub(crate) mod terraform;
 
 pub(crate) fn has_indexed_service_references(
@@ -113,6 +114,8 @@ pub(crate) fn placement(
 ) -> crate::model::Placement {
     if provider.is_aws() {
         aws::placement(resource_type)
+    } else if provider.is_cloudflare() {
+        cloudflare::placement(resource_type, crate::model::EntityMode::Managed)
     } else {
         crate::model::Placement::Unresolved
     }
@@ -129,7 +132,9 @@ pub(crate) fn scope(
 }
 
 pub(crate) fn entity_placement(entity: &crate::model::TerraformEntity) -> crate::model::Placement {
-    if entity.provider.is_aws() && entity.mode == crate::model::EntityMode::Data {
+    if entity.provider.is_cloudflare() {
+        cloudflare::placement(&entity.resource_type, entity.mode)
+    } else if entity.provider.is_aws() && entity.mode == crate::model::EntityMode::Data {
         aws::data_placement(&entity.resource_type)
     } else {
         placement(&entity.provider, &entity.resource_type)
@@ -142,6 +147,8 @@ pub(crate) fn classify(
 ) -> crate::model::ResourceRole {
     if provider.is_aws() {
         aws::classify(resource_type)
+    } else if provider.is_cloudflare() {
+        cloudflare::classify(resource_type, crate::model::EntityMode::Managed)
     } else {
         crate::model::ResourceRole::Unknown
     }

@@ -62,6 +62,7 @@ pub enum ArchitectureEntityKind {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ArchitectureEntity {
+    pub cloudflare_scope: Option<CloudflareScope>,
     pub deployment_target: Option<DeploymentScope>,
     pub represented_account: Option<super::AwsAccountScope>,
     pub id: ArchitectureId,
@@ -78,9 +79,16 @@ pub struct DeploymentScope {
     pub global: bool,
 }
 
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct CloudflareScope {
+    pub account: Option<String>,
+    pub zone: Option<String>,
+}
+
 impl ArchitectureEntity {
     pub fn terraform(source: TerraformEntityId) -> Self {
         Self {
+            cloudflare_scope: None,
             represented_account: None,
             deployment_target: None,
             id: ArchitectureId::terraform(&source),
@@ -93,6 +101,7 @@ impl ArchitectureEntity {
         provenance.sort();
         provenance.dedup();
         Self {
+            cloudflare_scope: None,
             represented_account: None,
             deployment_target: None,
             id: ArchitectureId::synthetic(kind, key),
