@@ -184,3 +184,4 @@ examples/networkmanager.svg
 examples/cloudwan.svg
 examples/oam.svg
 examples/transfer-server.svg
+examples/cloudflare-dns.svg

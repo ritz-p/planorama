@@ -39,7 +39,7 @@ before changing classifications or reference rules.
 - **Unknown**: absent from the pinned inventory, or provider identity is unproven.
   Generic Terraform provenance remains available without Cloudflare semantics.
 
-Currently all inventoried types have basic support. Account, Zone, load balancer,
+Inventoried types have basic support unless a dedicated contract is described below. Account, Zone, load balancer,
 Workers script, Pages project, R2 bucket, KV namespace, D1 database, Access
 application and cloudflared tunnel are spatial managed resources. Other types
 and data sources are logical. No administrative scope creates physical
@@ -49,3 +49,23 @@ Only 32-digit hexadecimal administration IDs are recognized; other shapes,
 unknown values and sensitive IDs remain unavailable. Tokens, credentials,
 script bodies, DNS contents and arbitrary configuration values are not retained
 for presentation. Known type classification is not proof of a network relationship.
+
+## Zone and DNS
+
+[Sample SVG](../examples/cloudflare-dns.svg) is generated from the sanitized
+[plan fixture](../tests/fixtures/cloudflare-dns-plan.json).
+Zone is an administrative resource, not a physical network container.
+DNS records and Zone DNSSEC stay logical with independent action/lifecycle rows.
+Their `zone_id` references navigate to exactly one current Cloudflare Zone when
+explicit Terraform provenance and known, non-sensitive IDs agree. Zone account
+references similarly verify `account.id` against a Cloudflare Account's `id`.
+Singleton Zone data sources support `id` and `zone_id` outputs only when their
+known IDs agree; plural lookup results are not endpoints. Duplicate current IDs
+fail closed, while deposed instances remain visible without claiming ownership.
+
+Zone, DNS record and Zone DNSSEC have dedicated support for these administration
+contracts. Other DNS fields remain configuration: DNS names, contents, IPs,
+CNAMEs and proxy settings do not identify an origin or prove traffic. Verified
+Zone membership can carry its known account label to the DNS helper without
+creating AWS scope or a physical containment edge. Provider aliases alone do not
+prove or disprove account membership; the resource IDs establish correspondence.
