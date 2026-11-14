@@ -14,7 +14,7 @@ function run(suite, fail = '') {
     for (const script of ['wasm-ci.sh', 'wasm-build-timing.sh', 'build-wasm-distributions.sh', 'build-wasm-bindings.sh', 'assemble-browser.sh']) {
       fs.copyFileSync(path.join(__dirname, '../../scripts', script), path.join(root, 'scripts', script));
     }
-    for (const file of ['index.html', 'app.js', 'worker.js']) fs.writeFileSync(path.join(root, 'browser', file), 'UI');
+    for (const file of ['index.html', 'app.js', 'settings.js', 'worker.js']) fs.writeFileSync(path.join(root, 'browser', file), 'UI');
     const stub = `#!/bin/sh
 set -eu
 name=$(basename "$0")

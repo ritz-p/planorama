@@ -5,6 +5,7 @@ let resultUrl;
 let previewUrl;
 let serial = 0;
 let elapsedTimer;
+let settingsRead = 0;
 const stages = Object.freeze({parsing: 'Parsing plan', selection: 'Interpreting and selecting resources', placement: 'Placing resources', routing: 'Routing connections', output: 'Composing output'});
 
 function startElapsed() {
@@ -168,6 +169,7 @@ function renderInventory() {
 }
 
 function settingsChanged() {
+  settingsRead++;
   stop();
   clearResult();
   element('focus-depth').disabled = element('focus').value === '';
@@ -210,7 +212,7 @@ element('resource-previous').onclick = () => { resourcePage--; renderResources()
 element('resource-next').onclick = () => { resourcePage++; renderResources(); };
 element('clear-focus').onclick = () => { element('focus').value = ''; settingsChanged(); };
 element('add-module').onclick = () => addModule();
-function addModule(value = '', focus = true) {
+function moduleRow(value) {
   const row = document.createElement('div');
   row.className = 'module-row';
   const label = document.createElement('label');
@@ -233,30 +235,77 @@ function addModule(value = '', focus = true) {
     next.focus();
   };
   row.append(label, remove);
-  element('modules').append(row);
-  settingsChanged();
-  if (focus) input.focus();
+  return row;
 }
 
-element('reset-settings').onclick = () => {
-  element('format').value = 'svg';
-  element('changed').checked = false;
-  element('address-format').value = 'qualified';
-  element('icon-mode').value = 'service-name';
-  element('hide-legend').checked = false;
-  element('omit-legend').checked = false;
-  element('html-diagnostics').checked = false;
-  element('html-semantic-diagnostics').checked = false;
-  element('focus').value = '';
-  element('focus-depth').value = '';
-  element('modules').replaceChildren();
+function addModule(value = '', focus = true) {
+  const row = moduleRow(value);
+  element('modules').append(row);
+  settingsChanged();
+  if (focus) row.querySelector('input').focus();
+}
+
+function applySettings(options) {
+  const rows = options.modules.map(moduleRow);
+  for (const [key, id] of Object.entries(PlanoramaSettings.controls)) {
+    const input = element(id);
+    if (input.type === 'checkbox') input.checked = options[key];
+    else input.value = options[key];
+  }
+  element('focus').value = options.focus ?? '';
+  element('focus-depth').value = options.focus_depth ?? '';
+  element('modules').replaceChildren(...rows);
   element('module-search').value = '';
   element('resource-search').value = '';
   resourcePage = 0;
   inventoryPage = 0;
-  element('spatial-types').querySelectorAll('input').forEach(input => { input.checked = false; });
+  element('spatial-types').querySelectorAll('input').forEach(input => { input.checked = options.spatial_types.includes(input.value); });
   settingsChanged();
+}
+
+element('reset-settings').onclick = () => {
+  applySettings(PlanoramaSettings.defaults());
   if (assets) element('status').textContent = 'Settings reset to defaults. Generate again; the selected file is retained.';
+};
+
+const spatialTypes = () => Array.from(element('spatial-types').querySelectorAll('input'), input => input.value);
+function settingsFailure(message, control) {
+  element('settings-error').textContent = message;
+  element(control).focus();
+}
+element('export-settings').onclick = () => {
+  const options = snapshotOptions();
+  if (!options) return;
+  try {
+    const text = PlanoramaSettings.stringify(options, spatialTypes());
+    const url = URL.createObjectURL(new Blob([text], {type: 'application/json'}));
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'planorama-settings.json';
+    document.body.append(link);
+    try { link.click(); } finally { link.remove(); setTimeout(() => URL.revokeObjectURL(url), 0); }
+    element('export-settings').focus();
+  } catch {
+    settingsFailure('Settings could not be exported. Check the options and the 64 KiB file limit.', 'export-settings');
+  }
+};
+element('import-settings').onclick = () => element('settings-file').click();
+element('settings-file').onchange = async () => {
+  const file = element('settings-file').files[0];
+  element('settings-file').value = '';
+  if (!file) return;
+  const request = ++settingsRead;
+  try {
+    if (file.size > PlanoramaSettings.maxBytes) throw new Error('size');
+    const text = await file.text();
+    if (request !== settingsRead) return;
+    const options = PlanoramaSettings.parse(text, spatialTypes());
+    applySettings(options);
+    if (assets) element('status').textContent = 'Settings imported. Generate again; selected plan files are retained. Selectors absent from the current lists are kept.';
+    element('import-settings').focus();
+  } catch {
+    if (request === settingsRead) settingsFailure('Could not import settings. Use a valid version 1 browser settings file up to 64 KiB. Current settings are unchanged.', 'import-settings');
+  }
 };
 
 function settingHelp(input) {
@@ -271,18 +320,12 @@ function invalidSetting(input, message) {
 }
 
 function snapshotOptions() {
-  const options = {
-    format: element('format').value,
-    changed_only: element('changed').checked,
-    address_format: element('address-format').value,
-    icon_mode: element('icon-mode').value,
-    hide_relationship_legend: element('hide-legend').checked,
-    omit_relationship_legend: element('omit-legend').checked,
-    html_diagnostics: element('html-diagnostics').checked,
-    html_semantic_diagnostics: element('html-semantic-diagnostics').checked,
-    modules: [],
-    spatial_types: Array.from(element('spatial-types').querySelectorAll('input:checked'), input => input.value),
-  };
+  const options = PlanoramaSettings.defaults();
+  for (const [key, id] of Object.entries(PlanoramaSettings.controls)) {
+    const input = element(id);
+    options[key] = input.type === 'checkbox' ? input.checked : input.value;
+  }
+  options.spatial_types = Array.from(element('spatial-types').querySelectorAll('input:checked'), input => input.value);
   if (options.format !== 'html' && (options.html_diagnostics || options.html_semantic_diagnostics)) {
     invalidSetting(element(options.html_semantic_diagnostics ? 'html-semantic-diagnostics' : 'html-diagnostics'), 'HTML diagnostics require HTML output. Choose HTML or turn off both diagnostic options.');
     return;
@@ -305,7 +348,10 @@ function snapshotOptions() {
     }
     options.modules.push(input.value);
   }
-  return options;
+  try { return PlanoramaSettings.validate(options, spatialTypes()); }
+  catch {
+    settingsFailure('Unsupported or invalid browser settings.', 'export-settings');
+  }
 }
 
 function clearResult() {
@@ -389,6 +435,7 @@ async function inspectModules() {
 }
 
 element('cancel').onclick = () => {
+  settingsRead++;
   stop();
   clearResult();
   element('status').textContent = 'Cancelled. Select a file or generate again.';
@@ -396,6 +443,7 @@ element('cancel').onclick = () => {
 
 element('generate-form').onsubmit = async event => {
   event.preventDefault();
+  settingsRead++;
   stop();
   clearResult();
   const request = serial;

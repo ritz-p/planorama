@@ -60,6 +60,8 @@ Rust の版は checkout の `rust-toolchain.toml` と揃えます。`rustup show
 
 ブラウザテストは `/usr/bin/chromedriver` を起動します。Ubuntu のパッケージは Debian の Docker イメージと異なり [Chromium snap への移行パッケージ](https://packages.ubuntu.com/resolute/chromium-chromedriver) です。
 
+Snap の `/tmp` はホスト側と分離されるため、ブラウザと Node 間で共有するダウンロード検証ファイルは checkout の `output/` 配下に置きます。検証後はテストが削除します。
+
 ```sh
 systemctl status snapd.socket
 sudo apt install -y chromium-browser chromium-chromedriver
