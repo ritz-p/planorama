@@ -125,3 +125,28 @@ for (const format of ['svg', 'html']) {
   assert.equal(result.content, expected, `applications-named/${format}`);
 }
 console.log('Cloudflare applications native/Wasm SVG, HTML and named-state parity passed');
+for (const scenario of ['zero-trust', 'zero-trust-unknown', 'zero-trust-account', 'zero-trust-filtered', 'zero-trust-data', 'zero-trust-lifecycle']) {
+  const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-zero-trust-plan.json', 'utf8'));
+  if (scenario === 'zero-trust-unknown') plan.resource_changes[4].change.after_unknown = {allowed_idps: true};
+  if (scenario === 'zero-trust-account') plan.resource_changes[5].change.after.account_id = 'e'.repeat(32);
+  if (scenario === 'zero-trust-data') plan.resource_changes[3].mode = 'data';
+  if (scenario === 'zero-trust-lifecycle') {
+    plan.resource_changes[4].change.actions = ['delete', 'create'];
+    const old = structuredClone(plan.resource_changes[2]);
+    old.deposed = 'old'; old.change.actions = ['delete']; old.change.before = old.change.after; old.change.after = null;
+    plan.resource_changes.push(old);
+  }
+  const input = JSON.stringify(plan);
+  for (const format of ['svg', 'html']) {
+    const options = {format, icon_mode: 'service-name'};
+    const args = ['--format', format, '--icon-mode', 'service-name'];
+    if (scenario === 'zero-trust-filtered') {
+      options.focus = 'cloudflare_zero_trust_access_application.portal'; options.focus_depth = 0;
+      args.push('--focus', options.focus, '--focus-depth', '0');
+    }
+    const result = JSON.parse(binding.generate(input, JSON.stringify(options)));
+    assert.equal(result.content, native(input, args), `${scenario}/${format}`);
+    for (const privateValue of ['PRIVATE_', '192.0.2.', 'portal.example.invalid']) assert.ok(!result.content.includes(privateValue));
+  }
+}
+console.log('Cloudflare Zero Trust native/Wasm SVG and HTML parity passed');

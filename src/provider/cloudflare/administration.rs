@@ -12,7 +12,9 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_load_balancer"
             | "cloudflare_ruleset"
             | "cloudflare_page_rule"
-            | "cloudflare_workers_route",
+            | "cloudflare_workers_route"
+            | "cloudflare_zero_trust_access_application"
+            | "cloudflare_zero_trust_access_identity_provider",
             "zone_id",
         ) => Some((&["zone_id"], "cloudflare_zone")),
         (
@@ -30,7 +32,14 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_pages_domain"
             | "cloudflare_r2_bucket"
             | "cloudflare_workers_kv_namespace"
-            | "cloudflare_d1_database",
+            | "cloudflare_d1_database"
+            | "cloudflare_zero_trust_access_application"
+            | "cloudflare_zero_trust_access_policy"
+            | "cloudflare_zero_trust_access_identity_provider"
+            | "cloudflare_zero_trust_tunnel_cloudflared"
+            | "cloudflare_zero_trust_tunnel_cloudflared_config"
+            | "cloudflare_zero_trust_tunnel_cloudflared_route"
+            | "cloudflare_zero_trust_tunnel_cloudflared_virtual_network",
             "account_id",
         ) => Some((&["account_id"], "cloudflare_account")),
         _ => None,
@@ -48,7 +57,12 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 }
 
 fn scope_valid(node: &TerraformEntity, evidence: (&Value, &Value)) -> bool {
-    if node.resource_type != "cloudflare_ruleset" {
+    if !matches!(
+        node.resource_type.as_str(),
+        "cloudflare_ruleset"
+            | "cloudflare_zero_trust_access_application"
+            | "cloudflare_zero_trust_access_identity_provider"
+    ) {
         return true;
     }
     let (value, mask) = evidence;
