@@ -4,6 +4,44 @@ use crate::{Options, OutputFormat, generate};
 const FIXTURE: &str = include_str!("../fixtures/viewer-plan.json");
 
 #[test]
+fn verified_account_evidence_is_removed_from_visible_and_hidden_serialization() {
+    let input = include_str!("../fixtures/accounts-plan.json");
+    let raw = crate::plan::evidence::tests::parse_fixture(input).unwrap();
+    let graph = crate::semantic::transform(&raw);
+    for anonymize in [false, true] {
+        let projected = crate::view::single(
+            &graph,
+            &crate::view::Options {
+                anonymize,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        let layout = crate::layout::Layout::new(&projected);
+        let svg = crate::svg::render(&projected, &layout);
+        let html = crate::html::render(&projected, &layout, crate::svg::Options::default());
+        for output in [svg, html] {
+            for original in ["123456789012", "210987654321"] {
+                assert_eq!(
+                    output.contains(original),
+                    !anonymize,
+                    "verified account {original}"
+                );
+                if anonymize {
+                    use std::fmt::Write;
+                    let hex = original.bytes().fold(String::new(), |mut hex, byte| {
+                        write!(&mut hex, "{byte:02x}").unwrap();
+                        hex
+                    });
+                    assert!(!output.contains(&hex));
+                }
+            }
+            assert_eq!(output.contains("account_1"), anonymize);
+        }
+    }
+}
+
+#[test]
 fn anonymous_projection_keeps_topology_and_resolves_references() {
     for fixture in [
         FIXTURE,
