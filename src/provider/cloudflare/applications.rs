@@ -11,12 +11,14 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
         ("cloudflare_worker_version", "worker_id") => Some("Worker"),
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
-            Some("Storage and service bindings")
+            Some("Storage, service and queue bindings")
         }
         ("cloudflare_workers_deployment", "script_name") => Some("Deployed Worker"),
         ("cloudflare_workers_deployment", "versions") => Some("Configured versions"),
         ("cloudflare_workers_route", "script")
         | ("cloudflare_workers_custom_domain", "service") => Some("Configured Worker"),
+        ("cloudflare_queue_consumer", "queue_id") => Some("Consumed Queue"),
+        ("cloudflare_queue_consumer", "script_name") => Some("Consumer Worker"),
         ("cloudflare_pages_domain", "project_name") => Some("Pages project"),
         ("cloudflare_pages_project", "deployment_configs") => Some("Storage bindings"),
         _ => None,
@@ -32,6 +34,8 @@ enum Kind {
     R2,
     Kv,
     D1,
+    QueueId,
+    QueueName,
 }
 struct Target<'a> {
     value: &'a str,
@@ -83,6 +87,7 @@ fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
                 }
                 Target::new(row.text("service")?, Kind::WorkerName)
             }
+            "queue" => Target::new(row.text("queue_name")?, Kind::QueueName),
             "kv_namespace" => Target::new(row.text("namespace_id")?, Kind::Kv),
             "r2_bucket" => {
                 let jurisdiction = jurisdiction(row)?;
@@ -157,6 +162,14 @@ fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
 }
 fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Vec<Target<'a>>> {
     let value = v.at(path)?;
+    if node.resource_type == "cloudflare_queue_consumer" {
+        let kind = match (v.text("type")?, path) {
+            ("worker" | "http_pull" | "notification", "queue_id") => Kind::QueueId,
+            ("worker", "script_name") => Kind::WorkerName,
+            _ => return Err(Failure::UnsupportedContract),
+        };
+        return Ok(vec![Target::new(v.text(path)?, kind)]);
+    }
     match path {
         "bindings" => bindings(value, node.resource_type == "cloudflare_worker_version"),
         "deployment_configs" => pages(value),
@@ -201,6 +214,8 @@ fn fields(target: &Target<'_>, node: &TerraformEntity) -> Result<&'static [&'sta
         (Kind::R2, "cloudflare_r2_bucket") => &["id", "name"],
         (Kind::Kv, "cloudflare_workers_kv_namespace") => &["id"],
         (Kind::D1, "cloudflare_d1_database") => &["id", "uuid"],
+        (Kind::QueueId, "cloudflare_queue") => &["id", "queue_id"],
+        (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
         _ => return Err(Failure::UnsupportedContract),
     })
 }
@@ -230,9 +245,16 @@ fn identity(
     Ok(())
 }
 fn matching(target: &Target<'_>, node: &TerraformEntity, value: Evidence<'_>) -> bool {
-    ["id", "name", "script_name", "uuid"]
-        .iter()
-        .any(|output| identity(target, node, value, output).is_ok())
+    [
+        "id",
+        "name",
+        "script_name",
+        "uuid",
+        "queue_id",
+        "queue_name",
+    ]
+    .iter()
+    .any(|output| identity(target, node, value, output).is_ok())
 }
 fn verify(
     nodes: &[TerraformEntity],
@@ -321,17 +343,21 @@ fn version_owner(refs: &[AttributeReference], deployment: usize, version: usize)
 }
 
 pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::model::Graph) {
-    let workers: BTreeSet<_> = plan
+    let roles: std::collections::BTreeMap<_, _> = plan
         .nodes
         .iter()
-        .filter(|node| {
-            node.provider.is_cloudflare()
-                && matches!(
-                    node.resource_type.as_str(),
-                    "cloudflare_worker" | "cloudflare_workers_script"
-                )
+        .filter(|node| node.provider.is_cloudflare())
+        .filter_map(|node| {
+            let label = match node.resource_type.as_str() {
+                "cloudflare_worker" | "cloudflare_workers_script" => "Service bindings",
+                "cloudflare_queue" => "Queue producer bindings",
+                "cloudflare_r2_bucket"
+                | "cloudflare_workers_kv_namespace"
+                | "cloudflare_d1_database" => "Storage bindings",
+                _ => return None,
+            };
+            Some((crate::model::TerraformEntityId::from(node), label))
         })
-        .map(crate::model::TerraformEntityId::from)
         .collect();
     for node in &mut graph.nodes {
         if !node.provider.is_cloudflare()
@@ -347,21 +373,22 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
             if reference.dependency || reference.attribute != "bindings" || !reference.complete {
                 continue;
             }
-            let (services, storage): (Vec<_>, Vec<_>) = reference
-                .targets
-                .drain(..)
-                .partition(|target| workers.contains(&target.id));
-            if storage.is_empty() {
-                reference.label = "Service bindings";
-                reference.targets = services;
-            } else {
-                reference.label = "Storage bindings";
-                reference.targets = storage;
-                if !services.is_empty() {
-                    let mut service = reference.clone();
-                    service.label = "Service bindings";
-                    service.targets = services;
-                    split.push(service);
+            let mut groups = std::collections::BTreeMap::<_, Vec<_>>::new();
+            for target in reference.targets.drain(..) {
+                groups
+                    .entry(roles.get(&target.id).copied().unwrap_or(reference.label))
+                    .or_default()
+                    .push(target);
+            }
+            let mut groups = groups.into_iter();
+            if let Some((label, targets)) = groups.next() {
+                reference.label = label;
+                reference.targets = targets;
+                for (label, targets) in groups {
+                    let mut role = reference.clone();
+                    role.label = label;
+                    role.targets = targets;
+                    split.push(role);
                 }
             }
         }
@@ -400,3 +427,7 @@ pub(super) fn annotate(
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_applications.rs"]
 mod tests;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/cloudflare_queues.rs"]
+mod queue_tests;

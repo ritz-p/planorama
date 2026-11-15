@@ -54,10 +54,10 @@ test('representative fixtures reproduce exact bytes and pinned synthetic provena
   assert.equal(provenance.terraformVersion, '1.9.8');
   assert.equal(provenance.providerCommit, inventory.commit);
   assert.equal(provenance.schemaSha256, inventory.schemaSha256);
-  assert.equal(provenance.fixtures.length, 4);
+  assert.equal(provenance.fixtures.length, 5);
   for (const {file,sha256} of provenance.fixtures) assert.equal(crypto.createHash('sha256').update(fs.readFileSync(file)).digest('hex'), sha256);
 });
-test('all four representative families match registered v5 schema shapes', () => {
+test('all representative families match registered v5 schema shapes', () => {
   for (const [name, fixture] of fixtures()) {
     assert.equal(fixture.terraform_version, '1.9.8');
     for (const resource of fixture.resource_changes) {

@@ -240,3 +240,45 @@ for (const scenario of ['services','services-only','service-environment','servic
  }
 }
 console.log('Cloudflare Service bindings native/Wasm parity passed');
+for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pull','queue-filtered']) {
+ const plan=JSON.parse(readFileSync('tests/fixtures/cloudflare-queues-plan.json','utf8'));
+ const resource=address=>plan.resource_changes.find(r=>r.address===address);
+ if(scenario==='queues-only')for(const address of ['cloudflare_workers_script.legacy','cloudflare_worker_version.backend']) {
+  resource(address).change.after.bindings=resource(address).change.after.bindings.filter(b=>b.type==='queue');
+  plan.configuration.root_module.resources.find(r=>r.address===address).expressions.bindings.references=['cloudflare_queue.jobs.queue_name','cloudflare_queue.audit.queue_name'];
+ }
+ if(scenario==='queue-sensitive')resource('cloudflare_queue.jobs').change.after_sensitive={queue_name:true,queue_id:true};
+ if(scenario==='queue-http-pull')resource('cloudflare_queue_consumer.worker').change.after.type='http_pull';
+ for(const format of ['svg','html']) {
+  const options={format,html_semantic_diagnostics:format==='html'};
+  const args=['--format',format,...(format==='html'?['--html-semantic-diagnostics']:[])];
+  if(scenario==='queue-filtered'){options.focus='cloudflare_queue_consumer.worker';options.focus_depth=0;args.push('--focus',options.focus,'--focus-depth','0');}
+  const input=JSON.stringify(plan),result=JSON.parse(binding.generate(input,JSON.stringify(options)));
+  assert.equal(result.content,native(input,args),`${scenario}/${format}`);
+  assert.ok(!result.content.includes('PRIVATE_'));
+  if(scenario==='queues')for(const label of ['Queue producer bindings','Consumed Queue','Consumer Worker','Storage bindings','Service bindings'])assert.ok(result.content.includes(label));
+  if(scenario==='queue-sensitive')assert.ok(result.content.includes('cloudflare_sensitive_value'));
+  if(scenario==='queue-http-pull')assert.ok(result.content.includes('cloudflare_unsupported_contract'));
+  const metadata=result.content.match(/<metadata id="resource-references">([\s\S]*?)<\/metadata>/)[1];
+  const rows=JSON.parse(metadata.replaceAll('&quot;','"').replaceAll('&amp;','&'));
+  if(scenario==='queues-only'){
+   const bindings=rows.filter(r=>r.attribute==='bindings'&&r.complete);
+   assert.equal(bindings.length,2);assert.ok(bindings.every(r=>r.targets.length===2));
+  }
+  if(scenario==='queue-filtered'){
+   const links=rows.filter(r=>['queue_id','script_name'].includes(r.attribute));
+   assert.equal(links.length,2);assert.ok(links.every(r=>r.complete&&r.targets.length===1));
+   assert.ok(result.content.includes('data-reference-status="unavailable"'));
+  }
+ }
+}
+console.log('Cloudflare Queues native/Wasm parity passed');
+
+const queues=readFileSync('tests/fixtures/cloudflare-queues-plan.json','utf8');
+for(const format of ['svg','html']){
+ const result=JSON.parse(binding.generate_named(JSON.stringify(['first','second'].map(state=>({state,json:queues}))),JSON.stringify({format})));
+ const expected=require('node:child_process').execFileSync(resolve(process.env.CARGO_TARGET_DIR||'target','release/planorama'),['--state','first=tests/fixtures/cloudflare-queues-plan.json','--state','second=tests/fixtures/cloudflare-queues-plan.json','--format',format,'-o','-'],{encoding:'utf8',maxBuffer:32*1024*1024});
+ assert.equal(result.content,expected,`queues-named/${format}`);
+ assert.ok(!result.content.includes('PRIVATE_'));
+}
+console.log('Cloudflare Queues named-state parity passed');
