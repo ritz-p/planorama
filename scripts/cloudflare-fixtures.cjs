@@ -65,6 +65,25 @@ add('cloudflare_workers_script','downstream',{account_id:account,id:'downstream'
 
  return v;
 }
+function queues() {
+ const {v,add}=base(1),admin={account_id:ref('cloudflare_account.team.id')};
+ const jobs='1'.repeat(32),audit='2'.repeat(32),kv='3'.repeat(32),pull='8'.repeat(32),notifications='9'.repeat(32);
+ const bindings=[{type:'kv_namespace',name:'CACHE',namespace_id:kv},{type:'service',name:'BACKEND',service:'backend'},{type:'queue',name:'JOBS',queue_name:'jobs'},{type:'queue',name:'RETRY',queue_name:'jobs'},{type:'queue',name:'AUDIT',queue_name:'audit'}];
+ const bindingRefs=ref('cloudflare_workers_kv_namespace.cache.id','cloudflare_worker.backend.name','cloudflare_queue.jobs.queue_name','cloudflare_queue.audit.queue_name');
+ add('cloudflare_worker','backend',{account_id:account,id:'10000000-0000-4000-8000-000000000001',name:'backend'},admin);
+ add('cloudflare_workers_script','legacy',{account_id:account,id:'legacy',script_name:'legacy',content:'PRIVATE_WORKER_CODE',bindings},{...admin,bindings:bindingRefs});
+ add('cloudflare_workers_kv_namespace','cache',{account_id:account,id:kv,title:'cache'},admin);
+ add('cloudflare_queue','jobs',{account_id:account,id:jobs,queue_id:jobs,queue_name:'jobs',consumers:[{script_name:'PRIVATE_COMPUTED_CONSUMER',type:'worker'}],producers:[{script:'PRIVATE_COMPUTED_PRODUCER',type:'worker'}]},admin);
+ add('cloudflare_queue','audit',{account_id:account,id:audit,queue_id:audit,queue_name:'audit'},admin);
+ add('cloudflare_worker_version','backend',{account_id:account,id:'20000000-0000-4000-8000-000000000002',worker_id:'10000000-0000-4000-8000-000000000001',bindings,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_WORKER_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.backend.id'),bindings:bindingRefs});
+ add('cloudflare_queue_consumer','worker',{account_id:account,consumer_id:'4'.repeat(32),queue_id:jobs,type:'worker',script_name:'backend'},{...admin,queue_id:ref('cloudflare_queue.jobs.queue_id'),script_name:ref('cloudflare_worker.backend.name')});
+ add('cloudflare_queue_consumer','legacy',{account_id:account,consumer_id:'5'.repeat(32),queue_id:audit,type:'worker',script_name:'legacy'},{...admin,queue_id:ref('cloudflare_queue.audit.id'),script_name:ref('cloudflare_workers_script.legacy.script_name')});
+ add('cloudflare_queue_consumer','pull',{account_id:account,consumer_id:'6'.repeat(32),queue_id:pull,type:'http_pull',settings:{visibility_timeout_ms:30000}},{...admin,queue_id:ref('cloudflare_queue.pull.id')});
+ add('cloudflare_queue_consumer','notification',{account_id:account,consumer_id:'7'.repeat(32),queue_id:notifications,type:'notification',settings:{webhooks:[{id:'PRIVATE_WEBHOOK_ID'}]}},{...admin,queue_id:ref('cloudflare_queue.notifications.queue_id')});
+ add('cloudflare_queue','pull',{account_id:account,id:pull,queue_id:pull,queue_name:'pull'},admin);
+ add('cloudflare_queue','notifications',{account_id:account,id:notifications,queue_id:notifications,queue_name:'notifications'},admin);
+ return v;
+}
 function zeroTrust() {
  const {v,add}=base(2),admin={account_id:ref('cloudflare_account.team.id')},zoneRef={zone_id:ref('cloudflare_zone.example.id')};
  const id=n=>`${n}0000000-0000-4000-8000-00000000000${n}`;
@@ -88,7 +107,7 @@ policyConfig.expressions={...policyConfig.expressions,include:ref('cloudflare_ze
  return v;
 }
 function fixtures() {
- return new Map([['dns',dns()],['edge',edge()],['applications',applications()],['zero-trust',zeroTrust()]]);
+ return new Map([['dns',dns()],['edge',edge()],['applications',applications()],['queues',queues()],['zero-trust',zeroTrust()]]);
 }
 const encode=value=>JSON.stringify(value,null,2)+'\n';
 function outputs() {

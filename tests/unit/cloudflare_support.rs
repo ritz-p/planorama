@@ -20,6 +20,9 @@ fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
         "cloudflare_pages_project" => "Known matching id/name, matching account",
         "cloudflare_r2_bucket" => "Known matching id/name, account and jurisdiction",
         "cloudflare_workers_kv_namespace" => "Account-scoped namespace ID",
+        "cloudflare_queue" => {
+            "Account-scoped queue_name or matching id/queue_id (distinct identities)"
+        }
         "cloudflare_d1_database" => "Known matching id/uuid, matching account",
         "cloudflare_zero_trust_access_group" => {
             "Account-scoped id; data id/group_id must agree; no zone scope"
@@ -139,13 +142,11 @@ fn generated_capabilities_cover_inventory_modes_without_claiming_full_api_suppor
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
-    assert!(!data.contains("Storage and service bindings"));
+    assert!(!data.contains("Storage, service and queue bindings"));
     assert!(data.contains("id/script_name"));
     assert!(
-        workers
-            .lines()
-            .any(|line| line.contains("| managed |")
-                && line.contains("Storage and service bindings"))
+        workers.lines().any(|line| line.contains("| managed |")
+            && line.contains("Storage, service and queue bindings"))
     );
     let versions = matrix("cloudflare_worker_version");
     let data = versions
@@ -153,5 +154,35 @@ fn generated_capabilities_cover_inventory_modes_without_claiming_full_api_suppor
         .find(|line| line.contains("| data |"))
         .unwrap();
     assert!(!data.contains("Version ID and explicitly proven Worker owner"));
-    assert!(!data.contains("Storage and service bindings"));
+    assert!(!data.contains("Storage, service and queue bindings"));
+}
+
+#[test]
+fn queues_keep_managed_and_data_capabilities_distinct() {
+    let output = matrix("cloudflare_queue");
+    for (kind, mode, display) in [
+        ("cloudflare_queue", "managed", "Spatial"),
+        ("cloudflare_queue", "data", "Logical"),
+        ("cloudflare_queue_consumer", "managed", "Logical"),
+    ] {
+        let row = output
+            .lines()
+            .find(|r| r.starts_with(&format!("| `{kind}` | {mode} |")))
+            .unwrap();
+        assert!(row.contains("| Partial |"));
+        assert!(row.contains(display));
+        assert!(row.contains("Cloudflare Queues"));
+        if kind == "cloudflare_queue_consumer" {
+            assert!(row.contains("Consumed Queue"));
+            assert!(row.contains("Consumer Worker"));
+        } else {
+            assert!(row.contains("matching id/queue_id"));
+        }
+    }
+    let row = output
+        .lines()
+        .find(|r| r.starts_with("| `cloudflare_queue_consumer` | data |"))
+        .unwrap();
+    assert!(!row.contains("Consumer Worker"));
+    assert!(!row.contains("Consumed Queue"));
 }

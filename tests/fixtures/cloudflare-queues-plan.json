@@ -1,0 +1,631 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "cloudflare_account.team",
+      "mode": "managed",
+      "type": "cloudflare_account",
+      "name": "team",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Example team",
+          "standalone": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker.backend",
+      "mode": "managed",
+      "type": "cloudflare_worker",
+      "name": "backend",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "10000000-0000-4000-8000-000000000001",
+          "name": "backend"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_script.legacy",
+      "mode": "managed",
+      "type": "cloudflare_workers_script",
+      "name": "legacy",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "legacy",
+          "script_name": "legacy",
+          "content": "PRIVATE_WORKER_CODE",
+          "bindings": [
+            {
+              "type": "kv_namespace",
+              "name": "CACHE",
+              "namespace_id": "33333333333333333333333333333333"
+            },
+            {
+              "type": "service",
+              "name": "BACKEND",
+              "service": "backend"
+            },
+            {
+              "type": "queue",
+              "name": "JOBS",
+              "queue_name": "jobs"
+            },
+            {
+              "type": "queue",
+              "name": "RETRY",
+              "queue_name": "jobs"
+            },
+            {
+              "type": "queue",
+              "name": "AUDIT",
+              "queue_name": "audit"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_kv_namespace.cache",
+      "mode": "managed",
+      "type": "cloudflare_workers_kv_namespace",
+      "name": "cache",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "33333333333333333333333333333333",
+          "title": "cache"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue.jobs",
+      "mode": "managed",
+      "type": "cloudflare_queue",
+      "name": "jobs",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "11111111111111111111111111111111",
+          "queue_id": "11111111111111111111111111111111",
+          "queue_name": "jobs",
+          "consumers": [
+            {
+              "script_name": "PRIVATE_COMPUTED_CONSUMER",
+              "type": "worker"
+            }
+          ],
+          "producers": [
+            {
+              "script": "PRIVATE_COMPUTED_PRODUCER",
+              "type": "worker"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue.audit",
+      "mode": "managed",
+      "type": "cloudflare_queue",
+      "name": "audit",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "22222222222222222222222222222222",
+          "queue_id": "22222222222222222222222222222222",
+          "queue_name": "audit"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker_version.backend",
+      "mode": "managed",
+      "type": "cloudflare_worker_version",
+      "name": "backend",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "20000000-0000-4000-8000-000000000002",
+          "worker_id": "10000000-0000-4000-8000-000000000001",
+          "bindings": [
+            {
+              "type": "kv_namespace",
+              "name": "CACHE",
+              "namespace_id": "33333333333333333333333333333333"
+            },
+            {
+              "type": "service",
+              "name": "BACKEND",
+              "service": "backend"
+            },
+            {
+              "type": "queue",
+              "name": "JOBS",
+              "queue_name": "jobs"
+            },
+            {
+              "type": "queue",
+              "name": "RETRY",
+              "queue_name": "jobs"
+            },
+            {
+              "type": "queue",
+              "name": "AUDIT",
+              "queue_name": "audit"
+            }
+          ],
+          "modules": [
+            {
+              "name": "main.js",
+              "content_type": "application/javascript+module",
+              "content_base64": "PRIVATE_WORKER_CODE"
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue_consumer.worker",
+      "mode": "managed",
+      "type": "cloudflare_queue_consumer",
+      "name": "worker",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "consumer_id": "44444444444444444444444444444444",
+          "queue_id": "11111111111111111111111111111111",
+          "type": "worker",
+          "script_name": "backend"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue_consumer.legacy",
+      "mode": "managed",
+      "type": "cloudflare_queue_consumer",
+      "name": "legacy",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "consumer_id": "55555555555555555555555555555555",
+          "queue_id": "22222222222222222222222222222222",
+          "type": "worker",
+          "script_name": "legacy"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue_consumer.pull",
+      "mode": "managed",
+      "type": "cloudflare_queue_consumer",
+      "name": "pull",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "consumer_id": "66666666666666666666666666666666",
+          "queue_id": "88888888888888888888888888888888",
+          "type": "http_pull",
+          "settings": {
+            "visibility_timeout_ms": 30000
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue_consumer.notification",
+      "mode": "managed",
+      "type": "cloudflare_queue_consumer",
+      "name": "notification",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "consumer_id": "77777777777777777777777777777777",
+          "queue_id": "99999999999999999999999999999999",
+          "type": "notification",
+          "settings": {
+            "webhooks": [
+              {
+                "id": "PRIVATE_WEBHOOK_ID"
+              }
+            ]
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue.pull",
+      "mode": "managed",
+      "type": "cloudflare_queue",
+      "name": "pull",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "88888888888888888888888888888888",
+          "queue_id": "88888888888888888888888888888888",
+          "queue_name": "pull"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_queue.notifications",
+      "mode": "managed",
+      "type": "cloudflare_queue",
+      "name": "notifications",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "99999999999999999999999999999999",
+          "queue_id": "99999999999999999999999999999999",
+          "queue_name": "notifications"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "cloudflare": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare"
+      },
+      "cloudflare.other": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "alias": "other"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_account.team",
+          "type": "cloudflare_account",
+          "name": "team",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_worker.backend",
+          "mode": "managed",
+          "type": "cloudflare_worker",
+          "name": "backend",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_script.legacy",
+          "mode": "managed",
+          "type": "cloudflare_workers_script",
+          "name": "legacy",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "bindings": {
+              "references": [
+                "cloudflare_workers_kv_namespace.cache.id",
+                "cloudflare_workers_kv_namespace.cache",
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend",
+                "cloudflare_queue.jobs.queue_name",
+                "cloudflare_queue.jobs",
+                "cloudflare_queue.audit.queue_name",
+                "cloudflare_queue.audit"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_kv_namespace.cache",
+          "mode": "managed",
+          "type": "cloudflare_workers_kv_namespace",
+          "name": "cache",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue.jobs",
+          "mode": "managed",
+          "type": "cloudflare_queue",
+          "name": "jobs",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue.audit",
+          "mode": "managed",
+          "type": "cloudflare_queue",
+          "name": "audit",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_worker_version.backend",
+          "mode": "managed",
+          "type": "cloudflare_worker_version",
+          "name": "backend",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "worker_id": {
+              "references": [
+                "cloudflare_worker.backend.id",
+                "cloudflare_worker.backend"
+              ]
+            },
+            "bindings": {
+              "references": [
+                "cloudflare_workers_kv_namespace.cache.id",
+                "cloudflare_workers_kv_namespace.cache",
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend",
+                "cloudflare_queue.jobs.queue_name",
+                "cloudflare_queue.jobs",
+                "cloudflare_queue.audit.queue_name",
+                "cloudflare_queue.audit"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue_consumer.worker",
+          "mode": "managed",
+          "type": "cloudflare_queue_consumer",
+          "name": "worker",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "queue_id": {
+              "references": [
+                "cloudflare_queue.jobs.queue_id",
+                "cloudflare_queue.jobs"
+              ]
+            },
+            "script_name": {
+              "references": [
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue_consumer.legacy",
+          "mode": "managed",
+          "type": "cloudflare_queue_consumer",
+          "name": "legacy",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "queue_id": {
+              "references": [
+                "cloudflare_queue.audit.id",
+                "cloudflare_queue.audit"
+              ]
+            },
+            "script_name": {
+              "references": [
+                "cloudflare_workers_script.legacy.script_name",
+                "cloudflare_workers_script.legacy"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue_consumer.pull",
+          "mode": "managed",
+          "type": "cloudflare_queue_consumer",
+          "name": "pull",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "queue_id": {
+              "references": [
+                "cloudflare_queue.pull.id",
+                "cloudflare_queue.pull"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue_consumer.notification",
+          "mode": "managed",
+          "type": "cloudflare_queue_consumer",
+          "name": "notification",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "queue_id": {
+              "references": [
+                "cloudflare_queue.notifications.queue_id",
+                "cloudflare_queue.notifications"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue.pull",
+          "mode": "managed",
+          "type": "cloudflare_queue",
+          "name": "pull",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_queue.notifications",
+          "mode": "managed",
+          "type": "cloudflare_queue",
+          "name": "notifications",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

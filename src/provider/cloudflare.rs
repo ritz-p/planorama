@@ -50,6 +50,7 @@ pub(crate) fn placement(resource: &str, mode: EntityMode) -> Placement {
                 | "cloudflare_r2_bucket"
                 | "cloudflare_workers_kv_namespace"
                 | "cloudflare_d1_database"
+                | "cloudflare_queue"
                 | "cloudflare_zero_trust_tunnel_cloudflared"
                 | "cloudflare_zero_trust_access_application"
         )
@@ -82,6 +83,10 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_r2_bucket" => "Cloudflare R2",
         "cloudflare_workers_kv_namespace" => "Cloudflare KV",
         "cloudflare_d1_database" => "Cloudflare D1",
+        "cloudflare_queue"
+        | "cloudflare_queue_consumer"
+        | "cloudflare_queues"
+        | "cloudflare_queue_consumers" => "Cloudflare Queues",
         "cloudflare_zero_trust_access_application"
         | "cloudflare_zero_trust_access_policy"
         | "cloudflare_zero_trust_access_identity_provider"
