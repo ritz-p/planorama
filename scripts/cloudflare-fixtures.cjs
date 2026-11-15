@@ -50,14 +50,19 @@ add('cloudflare_workers_kv_namespace','cache',{account_id:account,id:kv,title:'c
 add('cloudflare_d1_database','content',{account_id:account,id:database,uuid:database,name:'content'},admin);
 add('cloudflare_worker','api',{account_id:account,id:worker,name:'api'},admin);
 const bindings=[{type:'r2_bucket',name:'ASSETS',bucket_name:'assets',jurisdiction:'eu'},{type:'kv_namespace',name:'CACHE',namespace_id:kv},{type:'d1',name:'DB',id:database},{type:'secret_text',name:'TOKEN',text:'PRIVATE_BINDING_SECRET'}];
-const bindingRefs=ref('cloudflare_r2_bucket.assets.name','cloudflare_workers_kv_namespace.cache.id','cloudflare_d1_database.content.id');
+const storageRefs=ref('cloudflare_r2_bucket.assets.name','cloudflare_workers_kv_namespace.cache.id','cloudflare_d1_database.content.id');
+bindings.push({type:'service',name:'BACKEND',service:'backend'},{type:'service',name:'BACKEND_RPC',service:'backend',entrypoint:'Handler'},{type:'service',name:'DOWNSTREAM',service:'downstream'});
+const bindingRefs={references:[...storageRefs.references,...ref('cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name').references]};
 add('cloudflare_worker_version','api',{account_id:account,id:version,worker_id:worker,bindings,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_WORKER_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.api.id'),bindings:bindingRefs});
 add('cloudflare_workers_deployment','api',{account_id:account,id:'deployment',script_name:'api',strategy:'percentage',versions:[{version_id:version,percentage:100}]},{...admin,script_name:ref('cloudflare_worker.api.name'),versions:ref('cloudflare_worker_version.api.id')});
 add('cloudflare_workers_script','legacy',{account_id:account,id:'legacy',script_name:'legacy',content:'PRIVATE_WORKER_CODE',bindings},{...admin,bindings:bindingRefs});
 add('cloudflare_workers_route','api',{id:'5'.repeat(32),zone_id:zone,pattern:'api.example.invalid/*',script:'api'},{zone_id:ref('cloudflare_zone.example.id'),script:ref('cloudflare_worker.api.name')});
 add('cloudflare_workers_custom_domain','legacy',{id:'6'.repeat(32),account_id:account,hostname:'legacy.example.invalid',service:'legacy',zone_id:zone},{...admin,service:ref('cloudflare_workers_script.legacy.id')});
-add('cloudflare_pages_project','site',{account_id:account,id:'site',name:'site',production_branch:'main',deployment_configs:{preview:{kv_namespaces:{CACHE:{namespace_id:kv}}},production:{d1_databases:{DB:{id:database}},r2_buckets:{ASSETS:{name:'assets',jurisdiction:'eu'}}}}},{...admin,deployment_configs:bindingRefs});
+add('cloudflare_pages_project','site',{account_id:account,id:'site',name:'site',production_branch:'main',deployment_configs:{preview:{kv_namespaces:{CACHE:{namespace_id:kv}}},production:{d1_databases:{DB:{id:database}},r2_buckets:{ASSETS:{name:'assets',jurisdiction:'eu'}}}}},{...admin,deployment_configs:storageRefs});
 add('cloudflare_pages_domain','site',{account_id:account,id:'www.example.invalid',name:'www.example.invalid',project_name:'site'},{...admin,project_name:ref('cloudflare_pages_project.site.name')});
+add('cloudflare_worker','backend',{account_id:account,id:'90000000-0000-4000-8000-000000000009',name:'backend'},admin);
+add('cloudflare_workers_script','downstream',{account_id:account,id:'downstream',script_name:'downstream',content:'PRIVATE_DOWNSTREAM_CODE'},admin);
+
  return v;
 }
 function zeroTrust() {

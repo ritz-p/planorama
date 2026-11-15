@@ -214,3 +214,29 @@ for (const scenario of ['groups','groups-sensitive','groups-zone','groups-filter
  }
 }
 console.log('Cloudflare Policy Group native/Wasm parity passed');
+for (const scenario of ['services','services-only','service-environment','service-sensitive','service-filtered']) {
+ const plan=JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json','utf8'));
+ if(scenario==='services-only')for(const i of [6,8]){
+  plan.resource_changes[i].change.after.bindings=plan.resource_changes[i].change.after.bindings.filter(b=>b.type==='service');
+  plan.configuration.root_module.resources[i].expressions.bindings.references=['cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name'];
+ }
+ if(scenario==='service-environment')plan.resource_changes[6].change.after.bindings[4].environment='staging';
+ if(scenario==='service-sensitive')plan.resource_changes[6].change.after_sensitive={bindings:[{},{},{},{},{service:true},{},{}]};
+ for(const format of ['svg','html']) {
+  const options={format,html_semantic_diagnostics:format==='html'};
+  const args=['--format',format,...(format==='html'?['--html-semantic-diagnostics']:[])];
+  if(scenario==='service-filtered'){options.focus='cloudflare_worker_version.api';options.focus_depth=0;args.push('--focus',options.focus,'--focus-depth','0');}
+  const input=JSON.stringify(plan),result=JSON.parse(binding.generate(input,JSON.stringify(options)));
+  assert.equal(result.content,native(input,args));assert.ok(!result.content.includes('PRIVATE_'));
+  if(scenario==='services'){assert.ok(result.content.includes('Service bindings'));assert.ok(result.content.includes('Storage bindings'));}
+  if(scenario==='services-only'){
+   const metadata=result.content.match(/<metadata id="resource-references">([\s\S]*?)<\/metadata>/)[1];
+   const records=JSON.parse(metadata.replaceAll('&quot;','"').replaceAll('&amp;','&'));
+   const rows=records.filter(r=>r.attribute==='bindings'&&r.complete);
+   assert.equal(rows.length,2);assert.ok(rows.every(r=>r.targets.length===2));
+  }
+  if(scenario==='service-environment')assert.ok(result.content.includes('cloudflare_unsupported_contract'));
+  if(scenario==='service-sensitive')assert.ok(result.content.includes('cloudflare_sensitive_value'));
+ }
+}
+console.log('Cloudflare Service bindings native/Wasm parity passed');

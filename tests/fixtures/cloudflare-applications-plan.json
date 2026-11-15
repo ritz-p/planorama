@@ -163,6 +163,22 @@
               "type": "secret_text",
               "name": "TOKEN",
               "text": "PRIVATE_BINDING_SECRET"
+            },
+            {
+              "type": "service",
+              "name": "BACKEND",
+              "service": "backend"
+            },
+            {
+              "type": "service",
+              "name": "BACKEND_RPC",
+              "service": "backend",
+              "entrypoint": "Handler"
+            },
+            {
+              "type": "service",
+              "name": "DOWNSTREAM",
+              "service": "downstream"
             }
           ],
           "modules": [
@@ -241,6 +257,22 @@
               "type": "secret_text",
               "name": "TOKEN",
               "text": "PRIVATE_BINDING_SECRET"
+            },
+            {
+              "type": "service",
+              "name": "BACKEND",
+              "service": "backend"
+            },
+            {
+              "type": "service",
+              "name": "BACKEND_RPC",
+              "service": "backend",
+              "entrypoint": "Handler"
+            },
+            {
+              "type": "service",
+              "name": "DOWNSTREAM",
+              "service": "downstream"
             }
           ]
         },
@@ -350,6 +382,47 @@
           "id": "www.example.invalid",
           "name": "www.example.invalid",
           "project_name": "site"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker.backend",
+      "mode": "managed",
+      "type": "cloudflare_worker",
+      "name": "backend",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "90000000-0000-4000-8000-000000000009",
+          "name": "backend"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_workers_script.downstream",
+      "mode": "managed",
+      "type": "cloudflare_workers_script",
+      "name": "downstream",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "downstream",
+          "script_name": "downstream",
+          "content": "PRIVATE_DOWNSTREAM_CODE"
         },
         "after_unknown": {},
         "after_sensitive": {}
@@ -478,7 +551,11 @@
                 "cloudflare_workers_kv_namespace.cache.id",
                 "cloudflare_workers_kv_namespace.cache",
                 "cloudflare_d1_database.content.id",
-                "cloudflare_d1_database.content"
+                "cloudflare_d1_database.content",
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend",
+                "cloudflare_workers_script.downstream.script_name",
+                "cloudflare_workers_script.downstream"
               ]
             }
           }
@@ -530,7 +607,11 @@
                 "cloudflare_workers_kv_namespace.cache.id",
                 "cloudflare_workers_kv_namespace.cache",
                 "cloudflare_d1_database.content.id",
-                "cloudflare_d1_database.content"
+                "cloudflare_d1_database.content",
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend",
+                "cloudflare_workers_script.downstream.script_name",
+                "cloudflare_workers_script.downstream"
               ]
             }
           }
@@ -619,6 +700,36 @@
               "references": [
                 "cloudflare_pages_project.site.name",
                 "cloudflare_pages_project.site"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_worker.backend",
+          "mode": "managed",
+          "type": "cloudflare_worker",
+          "name": "backend",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_workers_script.downstream",
+          "mode": "managed",
+          "type": "cloudflare_workers_script",
+          "name": "downstream",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
               ]
             }
           }
