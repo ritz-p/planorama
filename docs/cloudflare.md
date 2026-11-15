@@ -51,6 +51,25 @@ unknown values and sensitive IDs remain unavailable. Tokens, credentials,
 script bodies, DNS contents and arbitrary configuration values are not retained
 for presentation. Known type classification is not proof of a network relationship.
 
+## Account and Zone grouping
+
+Cloudflare account/zone context is displayed as administrative labels and verified
+references, not nested deployment containers. No automatic account/zone frame mode
+is enabled: the current Space/Spatial/Logical containment model would otherwise
+suggest physical ownership, and account-scoped Workers/Pages may serve multiple
+Zones through independent route/domain resources. Their identities and lifecycle
+rows must not be duplicated or reparented under one arbitrarily chosen Zone.
+
+Any future visual grouping must be a presentation-only administrative index,
+separate from containment and routing ancestry. Its identity must include the
+named state and known non-sensitive account; optional Zone membership requires
+verified Zone provenance. Unknown, conflicting and ambiguous scope stays
+unassigned. Multiple proven Zones require multiple index memberships without
+duplicating the resource. Filtering must preserve the selected resource identity
+and must not infer scope from hidden resources, provider aliases or matching
+names. Until such an index exists, use scope labels, verified reference navigation
+and focus selection; equal account IDs in different named states remain separate.
+
 ## Zone and DNS
 
 [Sample SVG](../examples/cloudflare-dns.svg) is generated from the sanitized
