@@ -102,7 +102,17 @@ Rulesets have partial semantic support: their exclusive Account/Zone owner,
 `execute` rule targets in the same scope, and redirect-list names in the same
 account are verified. Redirect lists must have `kind = "redirect"`. Rule
 expressions, redirect URLs, page-rule actions and pool origin addresses remain
-opaque configuration. Dynamic rule pool overrides and other action-parameter
+opaque configuration. In pinned v5.28.1 `action_parameters.overrides` contains
+action/enabled/sensitivity settings and rule/category overrides, not Pool or
+Worker endpoint identities. `origin` contains only host/port, while `host_header`,
+SNI, URI and redirect targets contain strings/expressions rather than typed
+origin identities. Load-balancer pool contracts are separate from Rulesets.
+
+`execute` and redirect-list references retain their documented verification.
+Origin routing, URL rewrites, redirects, cache/header settings and security
+overrides do not gain Pool/Worker/origin edges. `ruleset`, `rulesets`, `rules` and
+`phases` in skip configuration describe exclusions, not forwarding or protection;
+they are not promoted to execute relationships. Other action-parameter
 references remain generic Terraform provenance. These references do not establish
 live traffic, effective protection or healthy origins.
 
