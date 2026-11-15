@@ -1,6 +1,9 @@
-use super::proof::{self, Target};
-use crate::model::{AttributeReference, TerraformEntity};
-use serde_json::Value;
+use super::{
+    Evidence,
+    evidence::{Result, collect},
+    proof::{self, Target},
+};
+use crate::model::{AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
@@ -17,136 +20,154 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     }
 }
 
-fn targets<'a>(
-    node: &TerraformEntity,
-    path: &str,
-    value: &'a Value,
-    mask: &Value,
-) -> Option<Vec<Target<'a>>> {
-    let (v, m) = proof::at(value, mask, path)?;
-    let mut result = Vec::new();
+fn targets<'a>(node: &TerraformEntity, path: &str, value: Evidence<'a>) -> Result<Vec<Target<'a>>> {
+    let field = value.at(path)?;
     let target = |value, kind, output| Target {
         value,
         kind,
         output,
     };
+    let pool = |id| target(id, "cloudflare_load_balancer_pool", "id");
     match (node.resource_type.as_str(), path) {
         ("cloudflare_load_balancer", "default_pools") => {
-            for id in proof::list(v, m)? {
-                result.push(target(id, "cloudflare_load_balancer_pool", "id"));
-            }
+            Ok(field.list()?.into_iter().map(pool).collect())
         }
-        ("cloudflare_load_balancer", "country_pools" | "region_pools" | "pop_pools") => {
-            if !matches!(m, Value::Null | Value::Bool(false) | Value::Object(_)) {
-                return None;
-            }
-            if m.as_object()
-                .is_some_and(|fields| fields.keys().any(|key| v.get(key).is_none()))
-            {
-                return None;
-            }
-            for (key, values) in v.as_object()? {
-                for id in proof::list(values, &m[key])? {
-                    result.push(target(id, "cloudflare_load_balancer_pool", "id"));
-                }
-            }
-        }
-        ("cloudflare_load_balancer", "fallback_pool") => result.push(target(
-            proof::text(value, mask, path)?,
-            "cloudflare_load_balancer_pool",
-            "id",
-        )),
-        ("cloudflare_load_balancer_pool", "monitor") => result.push(target(
-            proof::text(value, mask, path)?,
+        ("cloudflare_load_balancer", "country_pools" | "region_pools" | "pop_pools") => Ok(
+            collect(field.map()?.into_iter().map(|(_, value)| value.list()))?
+                .into_iter()
+                .flatten()
+                .map(pool)
+                .collect(),
+        ),
+        ("cloudflare_load_balancer", "fallback_pool") => Ok(vec![pool(value.text(path)?)]),
+        ("cloudflare_load_balancer_pool", "monitor") => Ok(vec![target(
+            value.text(path)?,
             "cloudflare_load_balancer_monitor",
             "id",
-        )),
-        ("cloudflare_load_balancer_pool", "monitor_group") => result.push(target(
-            proof::text(value, mask, path)?,
+        )]),
+        ("cloudflare_load_balancer_pool", "monitor_group") => Ok(vec![target(
+            value.text(path)?,
             "cloudflare_load_balancer_monitor_group",
             "id",
-        )),
+        )]),
         ("cloudflare_load_balancer_monitor_group", "members") => {
-            if !proof::unmasked(m) {
-                return None;
+            field.clear()?;
+            let ids = collect(field.rows()?.into_iter().map(|row| row.text("monitor_id")))?;
+            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
+                return Err(Failure::IncompleteCollection);
             }
-            let mut seen = std::collections::BTreeSet::new();
-            for (row, mask) in proof::rows(v, m)? {
-                let id = proof::text(row, mask, "monitor_id")?;
-                if !seen.insert(id) {
-                    return None;
-                }
-                result.push(target(id, "cloudflare_load_balancer_monitor", "id"));
-            }
+            Ok(ids
+                .into_iter()
+                .map(|id| target(id, "cloudflare_load_balancer_monitor", "id"))
+                .collect())
         }
-        ("cloudflare_ruleset", "rules") => {
-            for (row, mask) in proof::rows(v, m)? {
-                match proof::text(row, mask, "action")? {
-                    "execute" => result.push(target(
-                        proof::text(row, mask, "action_parameters.id")?,
-                        "cloudflare_ruleset",
-                        "id",
-                    )),
-                    "redirect" => {
-                        let (list, list_mask) =
-                            proof::at(row, mask, "action_parameters.from_list")?;
-                        if !list.is_null() || !proof::unmasked(list_mask) {
-                            result.push(target(
-                                proof::text(row, mask, "action_parameters.from_list.name")?,
-                                "cloudflare_list",
-                                "name",
-                            ));
-                        }
+        ("cloudflare_ruleset", "rules") => Ok(collect(field.rows()?.into_iter().map(|row| {
+            Ok(match row.text("action")? {
+                "execute" => Some(target(
+                    row.text("action_parameters.id")?,
+                    "cloudflare_ruleset",
+                    "id",
+                )),
+                "redirect" => {
+                    let list = row.at("action_parameters.from_list")?;
+                    if !list.value.is_null() || !proof::unmasked(list.mask) {
+                        Some(target(
+                            row.text("action_parameters.from_list.name")?,
+                            "cloudflare_list",
+                            "name",
+                        ))
+                    } else {
+                        None
                     }
-                    _ => {}
                 }
-            }
-        }
-        _ => return None,
+                _ => None,
+            })
+        }))?
+        .into_iter()
+        .flatten()
+        .collect()),
+        _ => Err(Failure::UnsupportedContract),
     }
-    Some(result)
+}
+
+fn verify(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    r: &AttributeReference,
+    evidence: &[Evidence<'_>],
+) -> Result<()> {
+    proof::explicit(nodes, refs, r)?;
+    let targets = targets(&nodes[r.target], &r.attribute, evidence[r.target])?;
+    proof::verify(nodes, refs, r, evidence, &targets, |a, b| {
+        proof::account(&nodes[a], &nodes[b], evidence[a], evidence[b])?;
+        if nodes[b].resource_type == "cloudflare_ruleset"
+            && nodes[a]
+                .cloudflare_scope
+                .as_ref()
+                .and_then(|s| s.zone.as_ref())
+                != nodes[b]
+                    .cloudflare_scope
+                    .as_ref()
+                    .and_then(|s| s.zone.as_ref())
+        {
+            return Err(Failure::ScopeMismatch);
+        }
+        Ok(())
+    })?;
+    collect(
+        targets
+            .iter()
+            .filter(|target| target.kind == "cloudflare_list")
+            .map(|target| {
+                let results: Vec<_> = r
+                    .sources
+                    .iter()
+                    .filter(|&&index| {
+                        nodes[index].resource_type == "cloudflare_list"
+                            && evidence[index].text("name").ok() == Some(target.value)
+                    })
+                    .map(|&index| {
+                        (evidence[index].text("kind")? == "redirect")
+                            .then_some(())
+                            .ok_or(Failure::UnsupportedContract)
+                    })
+                    .collect();
+                if results.iter().any(Result::is_ok) {
+                    Ok(())
+                } else {
+                    Err(results
+                        .into_iter()
+                        .filter_map(Result::err)
+                        .min()
+                        .unwrap_or(Failure::UnsupportedContract))
+                }
+            }),
+    )
+    .map(|_| ())
 }
 
 pub(super) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
-    evidence: &[(&Value, &Value)],
+    evidence: &[Evidence<'_>],
 ) {
     let results: Vec<_> = refs
         .iter()
         .map(|r| {
             let node = &nodes[r.target];
-            if !node.provider.is_cloudflare()
-                || node.mode != crate::model::EntityMode::Managed
-                || label(&node.resource_type, &r.attribute).is_none()
-            {
-                return None;
-            }
-            let (value, mask) = evidence[r.target];
-            let valid = targets(node, &r.attribute, value, mask).is_some_and(|targets| {
-                proof::verify(nodes, refs, r, evidence, &targets, |a, b| {
-                    proof::same_account(a, b)
-                        && (b.resource_type != "cloudflare_ruleset"
-                            || a.cloudflare_scope.as_ref().and_then(|s| s.zone.as_ref())
-                                == b.cloudflare_scope.as_ref().and_then(|s| s.zone.as_ref()))
-                }) && targets.iter().all(|target| {
-                    if target.kind != "cloudflare_list" {
-                        return true;
+            (node.provider.is_cloudflare() && label(&node.resource_type, &r.attribute).is_some())
+                .then(|| {
+                    if node.mode != crate::model::EntityMode::Managed {
+                        Err(Failure::UnsupportedContract)
+                    } else {
+                        verify(nodes, refs, r, evidence)
                     }
-                    r.sources.iter().any(|&index| {
-                        let (v, m) = evidence[index];
-                        nodes[index].resource_type == "cloudflare_list"
-                            && proof::text(v, m, "name") == Some(target.value)
-                            && proof::text(v, m, "kind") == Some("redirect")
-                    })
                 })
-            });
-            Some(valid)
         })
         .collect();
-    for (r, valid) in refs.iter_mut().zip(results) {
-        if let Some(valid) = valid {
-            r.service_reference_verified = valid;
+    for (r, result) in refs.iter_mut().zip(results) {
+        if let Some(result) = result {
+            proof::record(r, result);
         }
     }
 }

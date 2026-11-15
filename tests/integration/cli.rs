@@ -1,4 +1,5 @@
 mod athena;
+mod cloudflare;
 mod configuration;
 mod coverage_json;
 mod coverage_report;

@@ -1,6 +1,9 @@
-use super::proof::{self, Target};
-use crate::model::{AttributeReference, EntityMode, TerraformEntity};
-use serde_json::Value;
+use super::{
+    Evidence,
+    evidence::{Result, collect},
+    proof::{self, Target},
+};
+use crate::model::{AttributeReference, CloudflareFailure as Failure, EntityMode, TerraformEntity};
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
@@ -21,8 +24,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         _ => None,
     }
 }
-fn targets<'a>(path: &str, value: &'a Value, mask: &Value) -> Option<Vec<Target<'a>>> {
-    let (v, m) = proof::at(value, mask, path)?;
+
+fn targets<'a>(path: &str, value: Evidence<'a>) -> Result<Vec<Target<'a>>> {
+    let field = value.at(path)?;
     let target = |value, kind| Target {
         value,
         kind,
@@ -30,74 +34,96 @@ fn targets<'a>(path: &str, value: &'a Value, mask: &Value) -> Option<Vec<Target<
     };
     match path {
         "allowed_idps" => {
-            if !proof::unmasked(m) {
-                return None;
-            }
-            Some(
-                proof::list(v, m)?
-                    .into_iter()
-                    .map(|id| target(id, "cloudflare_zero_trust_access_identity_provider"))
-                    .collect(),
-            )
+            field.clear()?;
+            Ok(field
+                .list()?
+                .into_iter()
+                .map(|id| target(id, "cloudflare_zero_trust_access_identity_provider"))
+                .collect())
         }
         "policies" => {
-            let mut targets = Vec::new();
-            let mut seen = std::collections::BTreeSet::new();
-            for (row, mask) in proof::rows(v, m)? {
-                let id = proof::text(row, mask, "id")?;
-                if !seen.insert(id) {
-                    return None;
-                }
-                targets.push(target(id, "cloudflare_zero_trust_access_policy"));
+            let ids = collect(field.rows()?.into_iter().map(|row| row.text("id")))?;
+            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
+                return Err(Failure::IncompleteCollection);
             }
-            Some(targets)
+            Ok(ids
+                .into_iter()
+                .map(|id| target(id, "cloudflare_zero_trust_access_policy"))
+                .collect())
         }
-        "tunnel_id" => Some(vec![target(
-            proof::text(value, mask, path)?,
+        "tunnel_id" => Ok(vec![target(
+            value.text(path)?,
             "cloudflare_zero_trust_tunnel_cloudflared",
         )]),
-        "virtual_network_id" => Some(vec![target(
-            proof::text(value, mask, path)?,
+        "virtual_network_id" => Ok(vec![target(
+            value.text(path)?,
             "cloudflare_zero_trust_tunnel_cloudflared_virtual_network",
         )]),
-        _ => None,
+        _ => Err(Failure::UnsupportedContract),
     }
 }
-fn compatible(a: &TerraformEntity, b: &TerraformEntity) -> bool {
-    if b.resource_type == "cloudflare_zero_trust_access_identity_provider" {
-        if let Some(zone) = b.cloudflare_scope.as_ref().and_then(|s| s.zone.as_ref()) {
-            return a.cloudflare_scope.as_ref().and_then(|s| s.zone.as_ref()) == Some(zone);
-        }
-    }
-    proof::same_account(a, b)
+
+fn verify(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    r: &AttributeReference,
+    evidence: &[Evidence<'_>],
+) -> Result<()> {
+    proof::explicit(nodes, refs, r)?;
+    proof::verify(
+        nodes,
+        refs,
+        r,
+        evidence,
+        &targets(&r.attribute, evidence[r.target])?,
+        |a, b| {
+            if nodes[b].resource_type == "cloudflare_zero_trust_access_identity_provider" {
+                if let Some(zone) = nodes[b]
+                    .cloudflare_scope
+                    .as_ref()
+                    .and_then(|s| s.zone.as_ref())
+                {
+                    let consumer = nodes[a]
+                        .cloudflare_scope
+                        .as_ref()
+                        .and_then(|s| s.zone.as_ref())
+                        .ok_or_else(|| proof::scope_failure(&nodes[a], evidence[a]))?;
+                    return (consumer == zone)
+                        .then_some(())
+                        .ok_or(Failure::ScopeMismatch);
+                }
+            }
+            proof::account(&nodes[a], &nodes[b], evidence[a], evidence[b])
+        },
+    )
 }
+
 pub(super) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
-    evidence: &[(&Value, &Value)],
+    evidence: &[Evidence<'_>],
 ) {
     let results: Vec<_> = refs
         .iter()
         .map(|r| {
             let node = &nodes[r.target];
-            if !node.provider.is_cloudflare()
-                || node.mode != EntityMode::Managed
-                || label(&node.resource_type, &r.attribute).is_none()
-            {
-                return None;
-            }
-            let (v, m) = evidence[r.target];
-            Some(targets(&r.attribute, v, m).is_some_and(|targets| {
-                proof::verify(nodes, refs, r, evidence, &targets, compatible)
-            }))
+            (node.provider.is_cloudflare() && label(&node.resource_type, &r.attribute).is_some())
+                .then(|| {
+                    if node.mode != EntityMode::Managed {
+                        Err(Failure::UnsupportedContract)
+                    } else {
+                        verify(nodes, refs, r, evidence)
+                    }
+                })
         })
         .collect();
-    for (r, valid) in refs.iter_mut().zip(results) {
-        if let Some(valid) = valid {
-            r.service_reference_verified = valid;
+    for (r, result) in refs.iter_mut().zip(results) {
+        if let Some(result) = result {
+            proof::record(r, result);
         }
     }
 }
+
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_zero_trust.rs"]
 mod tests;

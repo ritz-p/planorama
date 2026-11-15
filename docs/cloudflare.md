@@ -213,6 +213,47 @@ states, current/deposed instances, managed/data boundaries, unknown/sensitive
 values and filtering. Layout quality and normal Tests remain independent checks.
 No Cloudflare plan/state or live credentials are needed for these checks.
 
+## Reference diagnostics
+
+`--diagnostics` reports Cloudflare verification failures with resource address,
+attribute and a value-free explanation. `--format html --html-semantic-diagnostics`
+exposes the same findings in the existing searchable diagnostics panel. SVG/HTML
+reference tooltips and SVG reference metadata carry the failure code; rejected
+targets remain unlinked. HTML diagnostics retain the selected view and named-state,
+managed/data and current/deposed identities.
+
+| Code | Meaning |
+| --- | --- |
+| `cloudflare_sensitive_value` | A required identity, scope or collection value is sensitive |
+| `cloudflare_unknown_value` | A required value is unknown until apply |
+| `cloudflare_invalid_value` | A required typed value is absent/invalid, or its mask is malformed |
+| `cloudflare_incomplete_collection` | Collection shape, unique membership or deployment percentages are invalid |
+| `cloudflare_incomplete_provenance` | Complete, explicit Terraform endpoint provenance is unavailable |
+| `cloudflare_inactive_endpoint` | A consumer/endpoint is deleted, removed or deposed |
+| `cloudflare_unsupported_contract` | The type, mode, output target family or configuration contract is unsupported |
+| `cloudflare_scope_unavailable` | Required administration scope is unavailable or ambiguous |
+| `cloudflare_scope_mismatch` | Known endpoint administration scopes disagree |
+| `cloudflare_ambiguous_endpoint` | More than one current endpoint matches the typed identity and scope |
+| `cloudflare_output_mismatch` | A reference selects an unsupported endpoint output |
+| `cloudflare_identity_mismatch` | Evaluated identities, aliases or R2 jurisdiction disagree |
+| `cloudflare_owner_mismatch` | A deployment version lacks the same proven Worker as the deployment |
+
+These describe failed supported contracts, not a complete audit of all Cloudflare
+fields. Constants without Terraform references and unrecognized attributes do
+not acquire dedicated findings. Existing generic reference-resolution failures
+are retained instead of adding a redundant Cloudflare failure for that attribute.
+One primary failure is retained per attempted contract: provenance is checked
+before typed values, endpoint selection and ownership. When independent entries
+fail within a collection or candidate stage, the table order breaks ties, making
+the result independent of resource and collection enumeration order.
+
+Unknown and sensitive masks retain their separate origins, including data restored
+from prior state. Only fields read by the contract affect their diagnostics;
+unrelated secret payloads and ignored computed aliases do not invalidate otherwise
+verified references. No values, payloads or candidate identity strings are stored
+in a failure. Diagnostics do not relax identity/scope/provenance requirements or
+turn configuration references into runtime traffic.
+
 ## Provider-generated plan captures
 
 [`cloudflare-captured`](../tests/fixtures/cloudflare-captured) supplements the

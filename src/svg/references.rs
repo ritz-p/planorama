@@ -35,7 +35,7 @@ fn description(row: &Row<'_>, qualified: bool) -> String {
             label
         },
     );
-    format!(
+    let mut description = format!(
         "{}: {target} [{}; {}]",
         reference.label,
         reference.attribute,
@@ -52,7 +52,13 @@ fn description(row: &Row<'_>, qualified: bool) -> String {
         } else {
             "direct attribute reference"
         }
-    )
+    );
+    for reason in &reference.issues {
+        if let crate::model::DiagnosticReason::Cloudflare(_) = reason {
+            description.push_str(&format!("; {}: {}", reason.code(), reason.description()));
+        }
+    }
+    description
 }
 
 pub(super) fn render(

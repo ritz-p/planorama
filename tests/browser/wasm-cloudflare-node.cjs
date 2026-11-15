@@ -165,3 +165,36 @@ for (const scenario of require('../../scripts/cloudflare-capture.cjs').cases) {
   }
 }
 console.log('Cloudflare Provider-generated create/update/replacement/data native/Wasm parity passed');
+for (const scenario of ['unknown', 'sensitive', 'scope', 'filtered', 'reordered']) {
+  const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-captured/create.json', 'utf8'));
+  const dns = plan.resource_changes.find(r => r.address === 'cloudflare_dns_record.www');
+  if (scenario === 'sensitive') {
+    dns.change.after.zone_id = 'PRIVATE_DIAGNOSTIC_VALUE';
+    dns.change.after_sensitive = {zone_id: true};
+  }
+  if (scenario === 'scope') {
+    const known = JSON.parse(readFileSync('tests/fixtures/cloudflare-captured/update.json', 'utf8'));
+    Object.assign(plan, known);
+    plan.resource_changes.find(r => r.type === 'cloudflare_workers_kv_namespace').change.after.account_id = 'e'.repeat(32);
+  }
+  if (scenario === 'reordered') {
+    plan.resource_changes.reverse();
+    plan.configuration.root_module.resources.reverse();
+  }
+  const input = JSON.stringify(plan);
+  for (const format of ['svg', 'html']) {
+    const options = {format, html_semantic_diagnostics: format === 'html'};
+    const args = ['--format', format, ...(format === 'html' ? ['--html-semantic-diagnostics'] : [])];
+    if (scenario === 'filtered') {
+      options.focus = 'cloudflare_dns_record.www'; options.focus_depth = 0;
+      args.push('--focus', options.focus, '--focus-depth', '0');
+    }
+    const result = JSON.parse(binding.generate(input, JSON.stringify(options)));
+    assert.equal(result.content, native(input, args), `diagnostics-${scenario}/${format}`);
+    assert.ok(!result.content.includes('PRIVATE_DIAGNOSTIC_VALUE'));
+    const expected = scenario === 'sensitive' ? 'cloudflare_sensitive_value'
+      : scenario === 'scope' ? 'cloudflare_scope_mismatch' : 'cloudflare_unknown_value';
+    assert.ok(result.content.includes(expected), `${scenario}/${format}`);
+  }
+}
+console.log('Cloudflare typed diagnostics native/Wasm parity passed');
