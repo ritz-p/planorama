@@ -84,7 +84,8 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_d1_database" => "Cloudflare D1",
         "cloudflare_zero_trust_access_application"
         | "cloudflare_zero_trust_access_policy"
-        | "cloudflare_zero_trust_access_identity_provider" => "Cloudflare Access",
+        | "cloudflare_zero_trust_access_identity_provider"
+        | "cloudflare_zero_trust_access_group" => "Cloudflare Access",
         "cloudflare_zero_trust_tunnel_cloudflared"
         | "cloudflare_zero_trust_tunnel_cloudflared_config"
         | "cloudflare_zero_trust_tunnel_cloudflared_route"

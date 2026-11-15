@@ -198,3 +198,19 @@ for (const scenario of ['unknown', 'sensitive', 'scope', 'filtered', 'reordered'
   }
 }
 console.log('Cloudflare typed diagnostics native/Wasm parity passed');
+
+for (const scenario of ['groups','groups-sensitive','groups-zone','groups-filtered']) {
+ const plan=JSON.parse(readFileSync('tests/fixtures/cloudflare-zero-trust-plan.json','utf8'));
+ if(scenario==='groups-sensitive') plan.resource_changes[3].change.after_sensitive={include:true};
+ if(scenario==='groups-zone') plan.resource_changes[9].change.after.zone_id='b'.repeat(32);
+ for(const format of ['svg','html']) {
+  const options={format,html_semantic_diagnostics:format==='html'};
+  const args=['--format',format,...(format==='html'?['--html-semantic-diagnostics']:[])];
+  if(scenario==='groups-filtered'){options.focus='cloudflare_zero_trust_access_policy.staff';options.focus_depth=0;args.push('--focus',options.focus,'--focus-depth','0');}
+  const input=JSON.stringify(plan);const result=JSON.parse(binding.generate(input,JSON.stringify(options)));
+  assert.equal(result.content,native(input,args));assert.ok(!result.content.includes('PRIVATE_'));
+  if(scenario==='groups-sensitive')assert.ok(result.content.includes('cloudflare_sensitive_value'));
+  if(scenario==='groups-zone')assert.ok(result.content.includes('cloudflare_scope_mismatch'));
+ }
+}
+console.log('Cloudflare Policy Group native/Wasm parity passed');

@@ -71,6 +71,15 @@ v.resource_changes.at(-1).change.after_sensitive={tunnel_secret:true};
 add('cloudflare_zero_trust_tunnel_cloudflared_config','office',{id:id(4),account_id:account,tunnel_id:id(4),config:{ingress:[{hostname:'portal.example.invalid',service:'http://192.0.2.10:8080'},{service:'http_status:404'}]}},{...admin,tunnel_id:ref('cloudflare_zero_trust_tunnel_cloudflared.office.id')});
 add('cloudflare_zero_trust_tunnel_cloudflared_virtual_network','office',{id:id(5),account_id:account,name:'Office routing'},admin);
 add('cloudflare_zero_trust_tunnel_cloudflared_route','office',{id:id(6),account_id:account,tunnel_id:id(4),network:'192.0.2.0/24',virtual_network_id:id(5)},{...admin,tunnel_id:ref('cloudflare_zero_trust_tunnel_cloudflared.office.id'),virtual_network_id:ref('cloudflare_zero_trust_tunnel_cloudflared_virtual_network.office.id')});
+add('cloudflare_zero_trust_access_group','employees',{id:id(7),account_id:account,name:'Employees',include:[{email:{email:'PRIVATE_GROUP_EMAIL'}}]},{});
+add('cloudflare_zero_trust_access_group','trusted',{id:id(8),account_id:account,name:'Trusted devices',include:[{ip:{ip:'PRIVATE_GROUP_IP'}}]},{});
+const policy=v.resource_changes.find(r=>r.type==='cloudflare_zero_trust_access_policy');
+policy.change.after.include.push({group:{id:id(7)}});
+policy.change.after.require=[{group:{id:id(8)}}];
+policy.change.after.exclude=[{group:{id:id(7)}}];
+const policyConfig=v.configuration.root_module.resources.find(r=>r.address===policy.address);
+policyConfig.expressions={...policyConfig.expressions,include:ref('cloudflare_zero_trust_access_group.employees.id'),require:ref('cloudflare_zero_trust_access_group.trusted.id'),exclude:ref('cloudflare_zero_trust_access_group.employees.id')};
+
  return v;
 }
 function fixtures() {
