@@ -87,9 +87,11 @@ async function main() {
           }
           find('#search').clear();
           scan(driver.execute_script('return document.documentElement.outerHTML'), values, 'live DOM after navigation');
+          search(query)[0].click();
           for (const kind of ['viewport', 'neighborhood']) {
-            driver.execute_script("window.auditText=null; URL.createObjectURL=blob=>{window.auditBlob=blob;return 'blob:audit';}; HTMLAnchorElement.prototype.click=function(){};");
+            driver.execute_script("window.auditText=null; window.auditBlob=null; URL.createObjectURL=blob=>{window.auditBlob=blob;return 'blob:audit';}; HTMLAnchorElement.prototype.click=function(){};");
             find('#export-' + kind).click();
+            assert.ok(driver.execute_script('return window.auditBlob instanceof Blob'), `${fixture}/${named}/${kind}: ${find('#export-status').text}`);
             driver.execute_script('window.auditBlob.text().then(text=>window.auditText=text)');
             wait(() => driver.execute_script('return !!window.auditText'), 'viewer export');
             scan(driver.execute_script('return window.auditText'), values, `${fixture}: ${kind} SVG export`);
