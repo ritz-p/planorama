@@ -12,7 +12,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         ("cloudflare_dns_record", "content") => Some("Configured Pages CNAME"),
         ("cloudflare_worker_version", "worker_id") => Some("Worker"),
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
-            Some("Storage, service and queue bindings")
+            Some("Storage, service, queue and Hyperdrive bindings")
         }
         ("cloudflare_workers_deployment", "script_name") => Some("Deployed Worker"),
         ("cloudflare_workers_deployment", "versions") => Some("Configured versions"),
@@ -38,6 +38,7 @@ enum Kind {
     D1,
     QueueId,
     QueueName,
+    Hyperdrive,
 }
 struct Target<'a> {
     value: &'a str,
@@ -90,6 +91,7 @@ fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
                 Target::new(row.text("service")?, Kind::WorkerName)
             }
             "queue" => Target::new(row.text("queue_name")?, Kind::QueueName),
+            "hyperdrive" => Target::new(row.text("id")?, Kind::Hyperdrive),
             "kv_namespace" => Target::new(row.text("namespace_id")?, Kind::Kv),
             "r2_bucket" => {
                 let jurisdiction = jurisdiction(row)?;
@@ -219,6 +221,7 @@ fn fields(target: &Target<'_>, node: &TerraformEntity) -> Result<&'static [&'sta
         (Kind::D1, "cloudflare_d1_database") => &["id", "uuid"],
         (Kind::QueueId, "cloudflare_queue") => &["id", "queue_id"],
         (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
+        (Kind::Hyperdrive, "cloudflare_hyperdrive_config") => &["id"],
         _ => return Err(Failure::UnsupportedContract),
     })
 }
@@ -367,6 +370,7 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
             let label = match node.resource_type.as_str() {
                 "cloudflare_worker" | "cloudflare_workers_script" => "Service bindings",
                 "cloudflare_queue" => "Queue producer bindings",
+                "cloudflare_hyperdrive_config" => "Hyperdrive bindings",
                 "cloudflare_r2_bucket"
                 | "cloudflare_workers_kv_namespace"
                 | "cloudflare_d1_database" => "Storage bindings",

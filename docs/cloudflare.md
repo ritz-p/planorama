@@ -169,7 +169,7 @@ unique current identities and a known matching account:
   establish ownership.
 - Worker/script binding discriminators select KV `namespace_id`, R2
   `bucket_name`, D1 `id`, Service `service` (Worker name), or Queue
-  `queue_name`. Binding names and
+  `queue_name`, or Hyperdrive `id`. Binding names and
   contents are not identities. Service endpoints accept a new Worker's `name`
   or a legacy script's matching `id`/`script_name`, never a Worker UUID.
   Service bindings currently require an absent/null `environment`: the endpoint
@@ -185,7 +185,7 @@ unique current identities and a known matching account:
   extension requires provider-backed `(account, service, environment)` identity
   and explicit output provenance; entrypoint text alone cannot supply either.
   The entire mixed storage/service/queue collection must verify before its targets
-  are split into Storage bindings, Service bindings and Queue producer bindings
+  are split into Storage bindings, Service bindings, Hyperdrive bindings and Queue producer bindings
   rows. Repeated bindings retain one endpoint per role. Partial provenance never promotes
   the otherwise valid subset. The generated support matrix lists this combined
   binding contract; the sample includes multiple bindings to the same Worker.
@@ -205,6 +205,24 @@ is rejected. A computed unknown `database_id` on Worker versions does not
 replace that explicit identity. Legacy script version ownership cannot be
 inferred from a matching name alone. Verified references describe configured
 relationships, not successful deployment or runtime requests.
+
+### External services and origins
+
+Worker version and legacy script `type = "hyperdrive"` bindings verify an
+explicit Hyperdrive configuration `id` in the same known account. Exactly one
+current managed or singleton data endpoint must match; masked IDs, conflicting
+accounts, ambiguous endpoints and incomplete mixed-binding provenance fail closed.
+The separate Hyperdrive resource remains logical and retains its own lifecycle.
+Its database name, host, user, password and Access credentials are not retained
+for presentation. This link identifies the configured Hyperdrive object only.
+
+Service Bindings similarly identify configured Workers, not arbitrary external
+APIs. Worker source code and HTTP `fetch` calls are never parsed. Hyperdrive
+`origin.host`, URL/IP values, database addresses and shared accounts do not prove
+an AWS or other provider endpoint, even when Terraform expressions mention it.
+No cross-provider or cross-state origin edge is inferred. Such an extension
+requires an explicit typed endpoint contract with compatible scope and complete
+provenance; hostname equality and named-state labels cannot substitute for it.
 
 ## Queues
 

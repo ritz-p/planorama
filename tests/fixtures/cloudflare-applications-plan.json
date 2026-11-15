@@ -179,6 +179,11 @@
               "type": "service",
               "name": "DOWNSTREAM",
               "service": "downstream"
+            },
+            {
+              "type": "hyperdrive",
+              "name": "DATABASE",
+              "id": "77777777-7777-4777-8777-777777777777"
             }
           ],
           "modules": [
@@ -273,6 +278,11 @@
               "type": "service",
               "name": "DOWNSTREAM",
               "service": "downstream"
+            },
+            {
+              "type": "hyperdrive",
+              "name": "DATABASE",
+              "id": "77777777-7777-4777-8777-777777777777"
             }
           ]
         },
@@ -452,6 +462,33 @@
         "after_unknown": {},
         "after_sensitive": {}
       }
+    },
+    {
+      "address": "cloudflare_hyperdrive_config.database",
+      "mode": "managed",
+      "type": "cloudflare_hyperdrive_config",
+      "name": "database",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "77777777-7777-4777-8777-777777777777",
+          "name": "database",
+          "origin": {
+            "database": "PRIVATE_DATABASE",
+            "host": "PRIVATE_ORIGIN.invalid",
+            "password": "PRIVATE_PASSWORD",
+            "scheme": "postgres",
+            "user": "PRIVATE_USER"
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
     }
   ],
   "configuration": {
@@ -580,7 +617,9 @@
                 "cloudflare_worker.backend.name",
                 "cloudflare_worker.backend",
                 "cloudflare_workers_script.downstream.script_name",
-                "cloudflare_workers_script.downstream"
+                "cloudflare_workers_script.downstream",
+                "cloudflare_hyperdrive_config.database.id",
+                "cloudflare_hyperdrive_config.database"
               ]
             }
           }
@@ -636,7 +675,9 @@
                 "cloudflare_worker.backend.name",
                 "cloudflare_worker.backend",
                 "cloudflare_workers_script.downstream.script_name",
-                "cloudflare_workers_script.downstream"
+                "cloudflare_workers_script.downstream",
+                "cloudflare_hyperdrive_config.database.id",
+                "cloudflare_hyperdrive_config.database"
               ]
             }
           }
@@ -782,6 +823,21 @@
               "references": [
                 "cloudflare_pages_project.site.subdomain",
                 "cloudflare_pages_project.site"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_hyperdrive_config.database",
+          "mode": "managed",
+          "type": "cloudflare_hyperdrive_config",
+          "name": "database",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
               ]
             }
           }

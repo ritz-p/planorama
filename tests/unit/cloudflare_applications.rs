@@ -41,7 +41,7 @@ fn application_storage_and_version_contracts_are_explicit() {
         assert!(verified(&v, index, path), "{index}/{path}");
     }
     let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
-    assert_eq!(graph.nodes.len(), 16);
+    assert_eq!(graph.nodes.len(), 17);
     assert!(!format!("{graph:?}").contains("PRIVATE_"));
     assert!(
         graph
@@ -123,7 +123,7 @@ fn names_are_not_worker_ids_and_versions_must_belong_to_the_deployed_worker() {
 fn unknown_collection_entries_and_duplicate_storage_are_not_skipped() {
     let mut v = fixture();
     v["resource_changes"][6]["change"]["after_unknown"] =
-        json!({"bindings":[{}, {"namespace_id":true}, {}, {}, {}, {}, {}]});
+        json!({"bindings":[{}, {"namespace_id":true}, {}, {}, {}, {}, {}, {}]});
     assert!(!verified(&v, 6, "bindings"));
     let mut v = fixture();
     v["resource_changes"][11]["change"]["after_unknown"] =
@@ -169,15 +169,16 @@ fn resource_specific_aliases_and_computed_binding_fields_are_checked() {
             "cloudflare_workers_kv_namespace.cache.id",
             "cloudflare_d1_database.content.uuid",
             "cloudflare_worker.backend.name",
-            "cloudflare_workers_script.downstream.id"
+            "cloudflare_workers_script.downstream.id",
+            "cloudflare_hyperdrive_config.database.id"
         ]);
     assert!(verified(&v, 6, "bindings"));
     v["resource_changes"][6]["change"]["after_unknown"] =
-        json!({"bindings":[{}, {}, {"database_id":true}, {}, {}, {}, {}]});
+        json!({"bindings":[{}, {}, {"database_id":true}, {}, {}, {}, {}, {}]});
     assert!(verified(&v, 6, "bindings"));
     let mut v = fixture();
     v["resource_changes"][8]["change"]["after_unknown"] =
-        json!({"bindings":[{}, {}, {"database_id":true}, {}, {}, {}, {}]});
+        json!({"bindings":[{}, {}, {"database_id":true}, {}, {}, {}, {}, {}]});
     assert!(!verified(&v, 8, "bindings"));
     let mut v = fixture();
     v["resource_changes"][2]["change"]["after"]["jurisdiction"] = Value::Null;
@@ -213,8 +214,12 @@ fn service_and_storage_roles_split_only_after_complete_collection_verification()
             .iter()
             .filter(|r| r.attribute == "bindings" && !r.dependency)
             .collect();
-        assert_eq!(refs.len(), 2);
-        for (label, count) in [("Storage bindings", 3), ("Service bindings", 2)] {
+        assert_eq!(refs.len(), 3);
+        for (label, count) in [
+            ("Storage bindings", 3),
+            ("Service bindings", 2),
+            ("Hyperdrive bindings", 1),
+        ] {
             let r = refs.iter().find(|r| r.label == label).unwrap();
             assert!(r.complete);
             assert_eq!(r.targets.len(), count);
@@ -243,7 +248,7 @@ fn service_bindings_require_known_unqualified_names_and_compatible_current_endpo
         for mask in ["after_unknown", "after_sensitive"] {
             let mut v = fixture();
             v["resource_changes"][6]["change"][mask] =
-                json!({"bindings":[{},{},{},{},{field:true},{},{}]});
+                json!({"bindings":[{},{},{},{},{field:true},{},{}, {}]});
             assert!(!verified(&v, 6, "bindings"), "{mask}/{field}");
         }
     }
@@ -275,8 +280,8 @@ fn service_bindings_require_known_unqualified_names_and_compatible_current_endpo
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 6, "bindings"));
-    v["resource_changes"][16]["deposed"] = json!("old");
-    v["resource_changes"][16]["change"]["actions"] = json!(["delete"]);
+    v["resource_changes"][17]["deposed"] = json!("old");
+    v["resource_changes"][17]["change"]["actions"] = json!(["delete"]);
     assert!(verified(&v, 6, "bindings"));
 }
 
@@ -379,7 +384,7 @@ fn dns_pages_cname_requires_typed_scoped_current_explicit_evidence() {
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 15, "content"));
-    v["resource_changes"][16]["deposed"] = json!("old");
+    v["resource_changes"][17]["deposed"] = json!("old");
     assert!(verified(&v, 15, "content"));
     let mut v = base;
     for collection in ["resource_changes", "configuration/root_module/resources"] {
@@ -390,4 +395,52 @@ fn dns_pages_cname_requires_typed_scoped_current_explicit_evidence() {
     v["configuration"]["root_module"]["resources"][15]["expressions"]["content"]["references"] =
         json!(["data.cloudflare_pages_project.site.subdomain"]);
     assert!(verified(&v, 15, "content"));
+}
+
+#[test]
+fn hyperdrive_bindings_require_current_scoped_id_and_never_publish_origin_secrets() {
+    let base = fixture();
+    for consumer in [6, 8] {
+        assert!(verified(&base, consumer, "bindings"));
+        for (section, field, value) in [
+            ("after", "id", json!("other")),
+            (
+                "after",
+                "account_id",
+                json!("ffffffffffffffffffffffffffffffff"),
+            ),
+            ("after_unknown", "id", json!(true)),
+            ("after_sensitive", "id", json!(true)),
+            ("after_sensitive", "account_id", json!(true)),
+        ] {
+            let mut v = base.clone();
+            v["resource_changes"][16]["change"][section][field] = value;
+            assert!(
+                !verified(&v, consumer, "bindings"),
+                "{consumer}/{section}/{field}"
+            );
+        }
+        let mut v = base.clone();
+        v["resource_changes"][consumer]["change"]["after_unknown"]["bindings"] =
+            json!([{}, {}, {}, {}, {}, {}, {}, {"id":true}]);
+        assert!(!verified(&v, consumer, "bindings"));
+        let mut v = base.clone();
+        v["resource_changes"][16]["change"]["actions"] = json!(["delete"]);
+        assert!(!verified(&v, consumer, "bindings"));
+        let mut v = base.clone();
+        let mut duplicate = v["resource_changes"][16].clone();
+        duplicate["address"] = json!("cloudflare_hyperdrive_config.duplicate");
+        v["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .push(duplicate);
+        assert!(!verified(&v, consumer, "bindings"));
+    }
+    let g = semantic::transform(&plan::parse(&base.to_string()).unwrap());
+    assert!(!format!("{g:?}").contains("PRIVATE_"));
+    assert!(g.nodes.iter().any(|n| {
+        n.references
+            .iter()
+            .any(|r| r.label == "Hyperdrive bindings" && r.complete)
+    }));
 }

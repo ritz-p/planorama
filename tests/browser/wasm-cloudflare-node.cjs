@@ -91,8 +91,9 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
-for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal']) {
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal', 'applications-hyperdrive-sensitive']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-hyperdrive-sensitive') plan.resource_changes[16].change.after_sensitive = {id: true};
   if (scenario === 'applications-cname-unknown') plan.resource_changes[15].change.after_unknown = {content: true};
   if (scenario === 'applications-cname-literal') plan.configuration.root_module.resources[15].expressions.content = {constant_value: 'site.pages.dev'};
   if (scenario === 'applications-domain-zone-unknown') plan.resource_changes[10].change.after_unknown = {zone_id: true};
@@ -225,7 +226,7 @@ for (const scenario of ['services','services-only','service-environment','servic
   plan.configuration.root_module.resources[i].expressions.bindings.references=['cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name'];
  }
  if(scenario==='service-environment')plan.resource_changes[6].change.after.bindings[4].environment='staging';
- if(scenario==='service-sensitive')plan.resource_changes[6].change.after_sensitive={bindings:[{},{},{},{},{service:true},{},{}]};
+ if(scenario==='service-sensitive')plan.resource_changes[6].change.after_sensitive={bindings:[{},{},{},{},{service:true},{},{}, {}]};
  for(const format of ['svg','html']) {
   const options={format,html_semantic_diagnostics:format==='html'};
   const args=['--format',format,...(format==='html'?['--html-semantic-diagnostics']:[])];
