@@ -178,6 +178,12 @@ unique current identities and a known matching account:
   it is not retained and does not prove that the target exports that handler.
   Unknown/sensitive qualifiers fail closed. Managed versions/scripts can refer
   to managed or singleton data endpoints, with the same name/account contract.
+  In pinned v5.28.1 neither managed nor data `cloudflare_worker` /
+  `cloudflare_workers_script` exposes an environment identity, and there is no
+  separately registered Worker environment resource. Consequently even a known
+  `production` qualifier cannot be equated to an unqualified Worker. A future
+  extension requires provider-backed `(account, service, environment)` identity
+  and explicit output provenance; entrypoint text alone cannot supply either.
   The entire mixed storage/service/queue collection must verify before its targets
   are split into Storage bindings, Service bindings and Queue producer bindings
   rows. Repeated bindings retain one endpoint per role. Partial provenance never promotes
