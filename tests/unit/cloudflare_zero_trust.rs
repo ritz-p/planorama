@@ -33,7 +33,7 @@ fn access_and_tunnel_references_are_configuration_not_traffic() {
         assert!(verified(&v, index, path), "{index}/{path}");
     }
     let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
-    assert_eq!(graph.nodes.len(), 11);
+    assert_eq!(graph.nodes.len(), 13);
     assert!(
         graph
             .edges
@@ -267,8 +267,8 @@ fn group_endpoints_require_exact_account_identity_and_current_instances() {
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 3, "include"));
-    v["resource_changes"][11]["deposed"] = json!("old");
-    v["resource_changes"][11]["change"]["actions"] = json!(["delete"]);
+    v["resource_changes"][13]["deposed"] = json!("old");
+    v["resource_changes"][13]["change"]["actions"] = json!(["delete"]);
     assert!(verified(&v, 3, "include"));
 }
 
@@ -329,4 +329,57 @@ fn group_data_requires_matching_alias_and_policies_remain_managed_only() {
     }
     v["resource_changes"][3]["mode"] = json!("data");
     assert!(!verified(&v, 3, "include"));
+}
+
+#[test]
+fn waf_and_access_scope_do_not_claim_hostname_based_protection() {
+    let base = fixture();
+    let g = semantic::transform(&plan::parse(&base.to_string()).unwrap());
+    for address in [
+        "cloudflare_ruleset.portal_waf",
+        "cloudflare_zero_trust_access_application.portal",
+    ] {
+        let node = g.nodes.iter().find(|n| n.address == address).unwrap();
+        assert!(
+            node.references.iter().any(|r| r.attribute == "zone_id"
+                && r.complete
+                && r.label == "Zone administration")
+        );
+        assert!(!node.references.iter().flat_map(|r| &r.targets).any(|t| {
+            t.id.address.contains("tunnel")
+                || t.id.address.contains("worker")
+                || t.id.address.contains("pages")
+        }));
+        assert!(node.member_owner.is_none());
+    }
+    for section in ["after_unknown", "after_sensitive"] {
+        let mut v = base.clone();
+        v["resource_changes"][12]["change"][section]["zone_id"] = json!(true);
+        let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
+        let waf = g
+            .nodes
+            .iter()
+            .find(|n| n.address == "cloudflare_ruleset.portal_waf")
+            .unwrap();
+        assert!(
+            !waf.references
+                .iter()
+                .any(|r| r.attribute == "zone_id" && r.complete)
+        );
+    }
+    let mut v = base;
+    v["resource_changes"][12]["change"]["after"]["account_id"] =
+        json!("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+    let g = semantic::transform(&plan::parse(&v.to_string()).unwrap());
+    let waf = g
+        .nodes
+        .iter()
+        .find(|n| n.address == "cloudflare_ruleset.portal_waf")
+        .unwrap();
+    assert!(waf.entity.cloudflare_scope.is_none());
+    assert!(
+        !waf.references
+            .iter()
+            .any(|r| r.attribute == "zone_id" && r.complete)
+    );
 }

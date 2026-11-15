@@ -1668,6 +1668,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                         .sources
                         .iter()
                         .map(|&source| ReferenceTarget {
+                            configured_percentage: None,
                             account_scope: None,
                             state: None,
                             id: raw.nodes[source].entity.provenance[0].clone(),

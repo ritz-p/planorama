@@ -5,6 +5,7 @@ use std::fmt::Write;
 fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
     match kind {
         "cloudflare_account" => "Administration ID",
+        "cloudflare_hyperdrive_config" => "Account-scoped Hyperdrive ID",
         "cloudflare_zone" if mode == EntityMode::Data => "Known matching id/zone_id",
         "cloudflare_zone" => "Zone ID",
         "cloudflare_load_balancer_pool"
@@ -17,7 +18,9 @@ fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
             "Version ID and explicitly proven Worker owner"
         }
         "cloudflare_workers_script" => "Known matching id/script_name, matching account",
-        "cloudflare_pages_project" => "Known matching id/name, matching account",
+        "cloudflare_pages_project" => {
+            "Known matching id/name or unique CNAME subdomain, matching account"
+        }
         "cloudflare_r2_bucket" => "Known matching id/name, account and jurisdiction",
         "cloudflare_workers_kv_namespace" => "Account-scoped namespace ID",
         "cloudflare_queue" => {
@@ -145,19 +148,17 @@ fn generated_capabilities_cover_inventory_modes_without_claiming_full_api_suppor
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
-    assert!(!data.contains("Storage, service and queue bindings"));
+    assert!(!data.contains("Storage, service, queue and Hyperdrive bindings"));
     assert!(data.contains("id/script_name"));
-    assert!(
-        workers.lines().any(|line| line.contains("| managed |")
-            && line.contains("Storage, service and queue bindings"))
-    );
+    assert!(workers.lines().any(|line| line.contains("| managed |")
+        && line.contains("Storage, service, queue and Hyperdrive bindings")));
     let versions = matrix("cloudflare_worker_version");
     let data = versions
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
     assert!(!data.contains("Version ID and explicitly proven Worker owner"));
-    assert!(!data.contains("Storage, service and queue bindings"));
+    assert!(!data.contains("Storage, service, queue and Hyperdrive bindings"));
 }
 
 #[test]

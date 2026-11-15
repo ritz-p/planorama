@@ -9,9 +9,10 @@ use std::collections::BTreeSet;
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
+        ("cloudflare_dns_record", "content") => Some("Configured CNAME target"),
         ("cloudflare_worker_version", "worker_id") => Some("Worker"),
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
-            Some("Storage, service and queue bindings")
+            Some("Storage, service, queue and Hyperdrive bindings")
         }
         ("cloudflare_workers_deployment", "script_name") => Some("Deployed Worker"),
         ("cloudflare_workers_deployment", "versions") => Some("Configured versions"),
@@ -19,8 +20,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         | ("cloudflare_workers_custom_domain", "service") => Some("Configured Worker"),
         ("cloudflare_queue_consumer", "queue_id") => Some("Consumed Queue"),
         ("cloudflare_queue_consumer", "script_name") => Some("Consumer Worker"),
+        ("cloudflare_queue_consumer", "dead_letter_queue") => Some("Configured dead letter Queue"),
         ("cloudflare_pages_domain", "project_name") => Some("Pages project"),
-        ("cloudflare_pages_project", "deployment_configs") => Some("Storage bindings"),
+        ("cloudflare_pages_project", "deployment_configs") => Some("Storage and service bindings"),
         _ => None,
     }
 }
@@ -36,6 +38,7 @@ enum Kind {
     D1,
     QueueId,
     QueueName,
+    Hyperdrive,
 }
 struct Target<'a> {
     value: &'a str,
@@ -74,20 +77,9 @@ fn optional<'a>(value: Evidence<'a>, path: &str) -> Result<Option<Evidence<'a>>>
 fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
-            "service" => {
-                let environment = row.at("environment")?;
-                environment.scalar()?;
-                if !environment.value.is_null() {
-                    return Err(Failure::UnsupportedContract);
-                }
-                let entrypoint = row.at("entrypoint")?;
-                entrypoint.scalar()?;
-                if !entrypoint.value.is_null() {
-                    row.text("entrypoint")?;
-                }
-                Target::new(row.text("service")?, Kind::WorkerName)
-            }
+            "service" => service(row)?,
             "queue" => Target::new(row.text("queue_name")?, Kind::QueueName),
+            "hyperdrive" => Target::new(row.text("id")?, Kind::Hyperdrive),
             "kv_namespace" => Target::new(row.text("namespace_id")?, Kind::Kv),
             "r2_bucket" => {
                 let jurisdiction = jurisdiction(row)?;
@@ -121,6 +113,19 @@ fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     .flatten()
     .collect())
 }
+fn service(row: Evidence<'_>) -> Result<Target<'_>> {
+    let environment = row.at("environment")?;
+    environment.scalar()?;
+    if !environment.value.is_null() {
+        return Err(Failure::UnsupportedContract);
+    }
+    let entrypoint = row.at("entrypoint")?;
+    entrypoint.scalar()?;
+    if !entrypoint.value.is_null() {
+        row.text("entrypoint")?;
+    }
+    Ok(Target::new(row.text("service")?, Kind::WorkerName))
+}
 fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
     Ok(
         collect(["preview", "production"].into_iter().map(|environment| {
@@ -132,6 +137,7 @@ fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
                     ("d1_databases", "id", Kind::D1),
                     ("kv_namespaces", "namespace_id", Kind::Kv),
                     ("r2_buckets", "name", Kind::R2),
+                    ("services", "service", Kind::WorkerName),
                 ]
                 .into_iter()
                 .map(|(field, identity, kind)| {
@@ -139,6 +145,9 @@ fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
                         return Ok(Vec::new());
                     };
                     collect(map.map()?.into_iter().map(|(_, row)| {
+                        if matches!(kind, Kind::WorkerName) {
+                            return service(row);
+                        }
                         Ok(Target {
                             value: row.text(identity)?,
                             kind,
@@ -166,6 +175,7 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
         let kind = match (v.text("type")?, path) {
             ("worker" | "http_pull" | "notification", "queue_id") => Kind::QueueId,
             ("worker", "script_name") => Kind::WorkerName,
+            ("worker", "dead_letter_queue") => Kind::QueueName,
             _ => return Err(Failure::UnsupportedContract),
         };
         return Ok(vec![Target::new(v.text(path)?, kind)]);
@@ -216,6 +226,7 @@ fn fields(target: &Target<'_>, node: &TerraformEntity) -> Result<&'static [&'sta
         (Kind::D1, "cloudflare_d1_database") => &["id", "uuid"],
         (Kind::QueueId, "cloudflare_queue") => &["id", "queue_id"],
         (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
+        (Kind::Hyperdrive, "cloudflare_hyperdrive_config") => &["id"],
         _ => return Err(Failure::UnsupportedContract),
     })
 }
@@ -304,6 +315,19 @@ fn verify(
         if index == r.target || !r.sources.contains(&index) {
             return Err(Failure::IncompleteProvenance);
         }
+        if r.attribute == "dead_letter_queue" {
+            let owner = refs
+                .iter()
+                .find(|owner| {
+                    owner.target == r.target
+                        && owner.attribute == "queue_id"
+                        && owner.service_reference_verified
+                })
+                .ok_or(Failure::OwnerMismatch)?;
+            if owner.sources.contains(&index) {
+                return Err(Failure::OwnerMismatch);
+            }
+        }
         let outputs = r
             .source_attributes_by_instance
             .get(&index)
@@ -351,6 +375,9 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
             let label = match node.resource_type.as_str() {
                 "cloudflare_worker" | "cloudflare_workers_script" => "Service bindings",
                 "cloudflare_queue" => "Queue producer bindings",
+                "cloudflare_hyperdrive_config" => "Hyperdrive bindings",
+                "cloudflare_pages_project" => "Configured Pages CNAME",
+                "cloudflare_zero_trust_tunnel_cloudflared" => "Configured Tunnel CNAME",
                 "cloudflare_r2_bucket"
                 | "cloudflare_workers_kv_namespace"
                 | "cloudflare_d1_database" => "Storage bindings",
@@ -360,17 +387,36 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
         })
         .collect();
     for node in &mut graph.nodes {
+        if node.provider.is_cloudflare() && node.resource_type == "cloudflare_dns_record" {
+            for reference in &mut node.references {
+                if reference.attribute == "content" && reference.complete && !reference.dependency {
+                    if let [target] = reference.targets.as_slice() {
+                        if let Some(label) = roles.get(&target.id) {
+                            reference.label = label;
+                        }
+                    }
+                }
+            }
+        }
         if !node.provider.is_cloudflare()
             || !matches!(
                 node.resource_type.as_str(),
-                "cloudflare_worker_version" | "cloudflare_workers_script"
+                "cloudflare_worker_version"
+                    | "cloudflare_workers_script"
+                    | "cloudflare_pages_project"
             )
         {
             continue;
         }
         let mut split = Vec::new();
         for reference in &mut node.references {
-            if reference.dependency || reference.attribute != "bindings" || !reference.complete {
+            if reference.dependency
+                || !matches!(
+                    reference.attribute.as_str(),
+                    "bindings" | "deployment_configs"
+                )
+                || !reference.complete
+            {
                 continue;
             }
             let mut groups = std::collections::BTreeMap::<_, Vec<_>>::new();
@@ -407,10 +453,14 @@ pub(super) fn annotate(
                 let node = &nodes[r.target];
                 (node.provider.is_cloudflare()
                     && label(&node.resource_type, &r.attribute).is_some()
-                    && (r.attribute == "versions") == versions)
+                    && matches!(r.attribute.as_str(), "versions" | "dead_letter_queue") == versions)
                     .then(|| {
                         if node.mode == EntityMode::Managed {
-                            verify(nodes, refs, r, evidence)
+                            if node.resource_type == "cloudflare_dns_record" {
+                                dns_target(nodes, refs, r, evidence)
+                            } else {
+                                verify(nodes, refs, r, evidence)
+                            }
                         } else {
                             Err(Failure::UnsupportedContract)
                         }
@@ -420,9 +470,146 @@ pub(super) fn annotate(
         for (r, valid) in refs.iter_mut().zip(results) {
             if let Some(valid) = valid {
                 proof::record(r, valid);
+                if r.service_reference_verified && r.attribute == "versions" {
+                    match percentages(r, evidence) {
+                        Ok(values) => r.cloudflare_percentages = values,
+                        Err(failure) => proof::record(r, Err(failure)),
+                    }
+                }
             }
         }
     }
+    reject_dlq_cycles(refs);
+}
+
+fn percentages(
+    r: &AttributeReference,
+    evidence: &[Evidence<'_>],
+) -> Result<std::collections::BTreeMap<usize, String>> {
+    let values: std::collections::BTreeMap<_, _> = evidence[r.target]
+        .at("versions")?
+        .rows()?
+        .into_iter()
+        .map(|row| {
+            let id = row.text("version_id")?;
+            let percentage = row.at("percentage")?;
+            percentage.scalar()?;
+            let value = percentage.value.as_f64().ok_or(Failure::InvalidValue)?;
+            Ok((
+                id,
+                if value == 0.0 {
+                    "0".into()
+                } else {
+                    value.to_string()
+                },
+            ))
+        })
+        .collect::<Result<_>>()?;
+    r.sources
+        .iter()
+        .map(|&source| {
+            let id = evidence[source].text("id")?;
+            Ok((
+                source,
+                values.get(id).cloned().ok_or(Failure::IdentityMismatch)?,
+            ))
+        })
+        .collect()
+}
+
+fn reject_dlq_cycles(refs: &mut [AttributeReference]) {
+    let edges: Vec<_> = refs
+        .iter()
+        .enumerate()
+        .filter_map(|(index, r)| {
+            if r.attribute != "dead_letter_queue" || !r.service_reference_verified {
+                return None;
+            }
+            let owner = refs.iter().find(|owner| {
+                owner.target == r.target
+                    && owner.attribute == "queue_id"
+                    && owner.service_reference_verified
+            })?;
+            Some((index, *owner.sources.first()?, *r.sources.first()?))
+        })
+        .collect();
+    for &(index, owner, target) in &edges {
+        let mut pending = vec![target];
+        let mut visited = BTreeSet::new();
+        while let Some(node) = pending.pop() {
+            if node == owner {
+                proof::record(&mut refs[index], Err(Failure::OwnerMismatch));
+                break;
+            }
+            if visited.insert(node) {
+                pending.extend(
+                    edges
+                        .iter()
+                        .filter(|(_, from, _)| *from == node)
+                        .map(|(_, _, to)| *to),
+                );
+            }
+        }
+    }
+}
+
+fn dns_target(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    r: &AttributeReference,
+    evidence: &[Evidence<'_>],
+) -> Result<()> {
+    let value = evidence[r.target];
+    if value.text("type")? != "CNAME" {
+        return Err(Failure::UnsupportedContract);
+    }
+    let proxied = value.at("proxied")?;
+    proxied.scalar()?;
+    if !proxied.value.is_boolean() {
+        return Err(Failure::InvalidValue);
+    }
+    if !refs.iter().any(|owner| {
+        owner.target == r.target && owner.attribute == "zone_id" && owner.service_reference_verified
+    }) {
+        return Err(Failure::OwnerMismatch);
+    }
+    let [source] = r.sources.as_slice() else {
+        return Err(Failure::IncompleteProvenance);
+    };
+    let content = value.text("content")?;
+    let target = match nodes[*source].resource_type.as_str() {
+        "cloudflare_pages_project" => proof::Target {
+            value: content,
+            kind: "cloudflare_pages_project",
+            output: "subdomain",
+        },
+        "cloudflare_zero_trust_tunnel_cloudflared" => {
+            let id = content
+                .strip_suffix(".cfargotunnel.com")
+                .ok_or(Failure::IdentityMismatch)?;
+            if proxied.value.as_bool() != Some(true)
+                || id.len() != 36
+                || !id.bytes().enumerate().all(|(i, b)| {
+                    if matches!(i, 8 | 13 | 18 | 23) {
+                        b == b'-'
+                    } else {
+                        b.is_ascii_hexdigit()
+                    }
+                })
+            {
+                return Err(Failure::UnsupportedContract);
+            }
+            proof::Target {
+                value: id,
+                kind: "cloudflare_zero_trust_tunnel_cloudflared",
+                output: "id",
+            }
+        }
+        _ => return Err(Failure::UnsupportedContract),
+    };
+    proof::verify(nodes, refs, r, evidence, &[target], |a, b| {
+        proof::account(&nodes[a], &nodes[b], evidence[a], evidence[b])
+    })
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_applications.rs"]
@@ -431,3 +618,7 @@ mod tests;
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_queues.rs"]
 mod queue_tests;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/cloudflare_dns_public.rs"]
+mod dns_public_tests;

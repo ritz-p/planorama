@@ -112,6 +112,7 @@ pub struct ReferenceTarget {
     pub state: Option<StateId>,
     pub id: TerraformEntityId,
     pub placement: Placement,
+    pub configured_percentage: Option<String>,
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

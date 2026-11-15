@@ -52,16 +52,20 @@ add('cloudflare_worker','api',{account_id:account,id:worker,name:'api'},admin);
 const bindings=[{type:'r2_bucket',name:'ASSETS',bucket_name:'assets',jurisdiction:'eu'},{type:'kv_namespace',name:'CACHE',namespace_id:kv},{type:'d1',name:'DB',id:database},{type:'secret_text',name:'TOKEN',text:'PRIVATE_BINDING_SECRET'}];
 const storageRefs=ref('cloudflare_r2_bucket.assets.name','cloudflare_workers_kv_namespace.cache.id','cloudflare_d1_database.content.id');
 bindings.push({type:'service',name:'BACKEND',service:'backend'},{type:'service',name:'BACKEND_RPC',service:'backend',entrypoint:'Handler'},{type:'service',name:'DOWNSTREAM',service:'downstream'});
-const bindingRefs={references:[...storageRefs.references,...ref('cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name').references]};
+bindings.push({type:'hyperdrive',name:'DATABASE',id:'77777777-7777-4777-8777-777777777777'});
+const bindingRefs={references:[...storageRefs.references,...ref('cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name','cloudflare_hyperdrive_config.database.id').references]};
 add('cloudflare_worker_version','api',{account_id:account,id:version,worker_id:worker,bindings,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_WORKER_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.api.id'),bindings:bindingRefs});
-add('cloudflare_workers_deployment','api',{account_id:account,id:'deployment',script_name:'api',strategy:'percentage',versions:[{version_id:version,percentage:100}]},{...admin,script_name:ref('cloudflare_worker.api.name'),versions:ref('cloudflare_worker_version.api.id')});
+add('cloudflare_workers_deployment','api',{account_id:account,id:'deployment',script_name:'api',strategy:'percentage',versions:[{version_id:version,percentage:75},{version_id:'88888888-8888-4888-8888-888888888888',percentage:25}]},{...admin,script_name:ref('cloudflare_worker.api.name'),versions:ref('cloudflare_worker_version.api.id','cloudflare_worker_version.canary.id')});
 add('cloudflare_workers_script','legacy',{account_id:account,id:'legacy',script_name:'legacy',content:'PRIVATE_WORKER_CODE',bindings},{...admin,bindings:bindingRefs});
 add('cloudflare_workers_route','api',{id:'5'.repeat(32),zone_id:zone,pattern:'api.example.invalid/*',script:'api'},{zone_id:ref('cloudflare_zone.example.id'),script:ref('cloudflare_worker.api.name')});
 add('cloudflare_workers_custom_domain','legacy',{id:'6'.repeat(32),account_id:account,hostname:'legacy.example.invalid',service:'legacy',zone_id:zone},{...admin,service:ref('cloudflare_workers_script.legacy.id'),zone_id:ref('cloudflare_zone.example.id')});
-add('cloudflare_pages_project','site',{account_id:account,id:'site',name:'site',production_branch:'main',deployment_configs:{preview:{kv_namespaces:{CACHE:{namespace_id:kv}}},production:{d1_databases:{DB:{id:database}},r2_buckets:{ASSETS:{name:'assets',jurisdiction:'eu'}}}}},{...admin,deployment_configs:storageRefs});
+add('cloudflare_pages_project','site',{account_id:account,id:'site',name:'site',subdomain:'site.pages.dev',production_branch:'main',deployment_configs:{preview:{kv_namespaces:{CACHE:{namespace_id:kv}}},production:{d1_databases:{DB:{id:database}},r2_buckets:{ASSETS:{name:'assets',jurisdiction:'eu'}},services:{BACKEND:{service:'backend',entrypoint:'Handler'},LEGACY:{service:'downstream'}}}}},{...admin,deployment_configs:{references:[...storageRefs.references,...ref('cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name').references]}});
 add('cloudflare_pages_domain','site',{account_id:account,id:'www.example.invalid',name:'www.example.invalid',project_name:'site'},{...admin,project_name:ref('cloudflare_pages_project.site.name')});
 add('cloudflare_worker','backend',{account_id:account,id:'90000000-0000-4000-8000-000000000009',name:'backend'},admin);
 add('cloudflare_workers_script','downstream',{account_id:account,id:'downstream',script_name:'downstream',content:'PRIVATE_DOWNSTREAM_CODE'},admin);
+add('cloudflare_dns_record','pages',{id:'7'.repeat(32),zone_id:zone,name:'www.example.invalid',type:'CNAME',content:'site.pages.dev',proxied:true,ttl:1},{zone_id:ref('cloudflare_zone.example.id'),content:ref('cloudflare_pages_project.site.subdomain')});
+add('cloudflare_hyperdrive_config','database',{account_id:account,id:'77777777-7777-4777-8777-777777777777',name:'database',origin:{database:'PRIVATE_DATABASE',host:'PRIVATE_ORIGIN.invalid',password:'PRIVATE_PASSWORD',scheme:'postgres',user:'PRIVATE_USER'}},admin);
+add('cloudflare_worker_version','canary',{account_id:account,id:'88888888-8888-4888-8888-888888888888',worker_id:worker,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_CANARY_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.api.id')});
 
  return v;
 }
@@ -76,7 +80,7 @@ function queues() {
  add('cloudflare_queue','jobs',{account_id:account,id:jobs,queue_id:jobs,queue_name:'jobs',consumers:[{script_name:'PRIVATE_COMPUTED_CONSUMER',type:'worker'}],producers:[{script:'PRIVATE_COMPUTED_PRODUCER',type:'worker'}]},admin);
  add('cloudflare_queue','audit',{account_id:account,id:audit,queue_id:audit,queue_name:'audit'},admin);
  add('cloudflare_worker_version','backend',{account_id:account,id:'20000000-0000-4000-8000-000000000002',worker_id:'10000000-0000-4000-8000-000000000001',bindings,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_WORKER_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.backend.id'),bindings:bindingRefs});
- add('cloudflare_queue_consumer','worker',{account_id:account,consumer_id:'4'.repeat(32),queue_id:jobs,type:'worker',script_name:'backend'},{...admin,queue_id:ref('cloudflare_queue.jobs.queue_id'),script_name:ref('cloudflare_worker.backend.name')});
+ add('cloudflare_queue_consumer','worker',{account_id:account,consumer_id:'4'.repeat(32),queue_id:jobs,type:'worker',script_name:'backend',dead_letter_queue:'audit'},{...admin,queue_id:ref('cloudflare_queue.jobs.queue_id'),script_name:ref('cloudflare_worker.backend.name'),dead_letter_queue:ref('cloudflare_queue.audit.queue_name')});
  add('cloudflare_queue_consumer','legacy',{account_id:account,consumer_id:'5'.repeat(32),queue_id:audit,type:'worker',script_name:'legacy'},{...admin,queue_id:ref('cloudflare_queue.audit.id'),script_name:ref('cloudflare_workers_script.legacy.script_name')});
  add('cloudflare_queue_consumer','pull',{account_id:account,consumer_id:'6'.repeat(32),queue_id:pull,type:'http_pull',settings:{visibility_timeout_ms:30000}},{...admin,queue_id:ref('cloudflare_queue.pull.id')});
  add('cloudflare_queue_consumer','notification',{account_id:account,consumer_id:'7'.repeat(32),queue_id:notifications,type:'notification',settings:{webhooks:[{id:'PRIVATE_WEBHOOK_ID'}]}},{...admin,queue_id:ref('cloudflare_queue.notifications.queue_id')});
@@ -103,6 +107,8 @@ policy.change.after.require=[{group:{id:id(8)}}];
 policy.change.after.exclude=[{group:{id:id(7)}}];
 const policyConfig=v.configuration.root_module.resources.find(r=>r.address===policy.address);
 policyConfig.expressions={...policyConfig.expressions,include:ref('cloudflare_zero_trust_access_group.employees.id'),require:ref('cloudflare_zero_trust_access_group.trusted.id'),exclude:ref('cloudflare_zero_trust_access_group.employees.id')};
+add('cloudflare_dns_record','portal',{id:'9'.repeat(32),zone_id:zone,name:'portal.example.invalid',type:'CNAME',content:`${id(4)}.cfargotunnel.com`,proxied:true,ttl:1},{...zoneRef,content:ref('cloudflare_zero_trust_tunnel_cloudflared.office.id')});
+add('cloudflare_ruleset','portal_waf',{id:id(9),zone_id:zone,name:'Portal WAF configuration',kind:'zone',phase:'http_request_firewall_custom',rules:[{action:'block',expression:'http.host eq "portal.example.invalid"',enabled:true}]},zoneRef);
 
  return v;
 }

@@ -337,7 +337,7 @@ fn custom_domain_zone_data_and_ambiguity() {
         .unwrap()
         .push(duplicate);
     assert!(!domain_zone(&v));
-    v["resource_changes"][15]["deposed"] = json!("old");
+    v["resource_changes"][18]["deposed"] = json!("old");
     assert!(domain_zone(&v));
     let mut v = domain_fixture();
     for collection in ["resource_changes", "configuration/root_module/resources"] {
@@ -352,4 +352,39 @@ fn custom_domain_zone_data_and_ambiguity() {
     assert!(domain_zone(&v));
     v["resource_changes"][1]["change"]["after"]["id"] = json!("ffffffffffffffffffffffffffffffff");
     assert!(!domain_zone(&v));
+}
+
+#[test]
+fn imported_literal_values_never_become_verified_zone_or_worker_links() {
+    let mut v = domain_fixture();
+    for (index, fields) in [
+        (9, vec!["zone_id", "script"]),
+        (10, vec!["zone_id", "service"]),
+    ] {
+        for field in fields {
+            let value = v["resource_changes"][index]["change"]["after"][field].clone();
+            v["configuration"]["root_module"]["resources"][index]["expressions"][field] =
+                json!({"constant_value": value});
+        }
+    }
+    for state in ["imported-a", "imported-b"] {
+        let plans = plan::parse_inputs(vec![crate::model::PlanInput {
+            state_id: crate::model::StateId::new(state).unwrap(),
+            plan_json: v.to_string(),
+        }])
+        .unwrap();
+        for plan in plans.states.values() {
+            let g = semantic::transform(plan);
+            for index in [9, 10] {
+                let node = g
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == v["resource_changes"][index]["address"])
+                    .unwrap();
+                assert!(!node.references.iter().any(|r| r.complete
+                    && matches!(r.attribute.as_str(), "zone_id" | "script" | "service")));
+            }
+        }
+    }
+    assert!(domain_zone(&domain_fixture()));
 }

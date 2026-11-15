@@ -212,6 +212,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 .endpoint_network_context
                 .iter()
                 .map(|&s| ReferenceTarget {
+                    configured_percentage: None,
                     account_scope: None,
                     state: None,
                     id: raw.nodes[s].entity.provenance[0].clone(),
