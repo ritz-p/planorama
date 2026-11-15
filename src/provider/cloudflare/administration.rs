@@ -1,5 +1,9 @@
-use crate::model::{Action, AttributeReference, TerraformEntity};
-use serde_json::Value;
+use super::{
+    Evidence,
+    evidence::{Result, collect},
+    proof,
+};
+use crate::model::{Action, AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 
 fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static str)> {
     match (kind, path) {
@@ -56,30 +60,28 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     })
 }
 
-fn scope_valid(node: &TerraformEntity, evidence: (&Value, &Value)) -> bool {
+fn scope_valid(node: &TerraformEntity, evidence: Evidence<'_>) -> Result<()> {
     if !matches!(
         node.resource_type.as_str(),
         "cloudflare_ruleset"
             | "cloudflare_zero_trust_access_application"
             | "cloudflare_zero_trust_access_identity_provider"
     ) {
-        return true;
+        return Ok(());
     }
-    let (value, mask) = evidence;
     let presence = |field| {
-        let (v, m) = super::proof::at(value, mask, field)?;
-        if !matches!(m, Value::Null | Value::Bool(false)) {
-            return None;
-        }
-        if v.is_null() {
-            Some(false)
+        let value = evidence.at(field)?;
+        value.scalar()?;
+        if value.value.is_null() {
+            Ok(false)
         } else {
-            super::known_id(value, mask, &[field]).map(|_| true)
+            evidence.id(field).map(|_| true)
         }
     };
-    presence("account_id")
-        .zip(presence("zone_id"))
-        .is_some_and(|(a, z)| a != z)
+    let presence = collect([presence("account_id"), presence("zone_id")])?;
+    (presence[0] != presence[1])
+        .then_some(())
+        .ok_or(Failure::ScopeUnavailable)
 }
 
 fn current(node: &TerraformEntity) -> bool {
@@ -93,75 +95,75 @@ fn verify(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     r: &AttributeReference,
-    evidence: &[(&Value, &Value)],
-) -> Option<usize> {
+    evidence: &[Evidence<'_>],
+) -> Result<usize> {
     let consumer = &nodes[r.target];
-    if !current(consumer)
-        || !scope_valid(consumer, evidence[r.target])
-        || (consumer.resource_type == "cloudflare_zone"
-            && consumer.mode != crate::model::EntityMode::Managed)
-        || !r.complete
-        || !r.instances_explicit
-        || !r.issues.is_empty()
-        || refs
-            .iter()
-            .filter(|other| other.target == r.target && other.attribute == r.attribute)
-            .count()
-            != 1
+    proof::explicit(nodes, refs, r)?;
+    scope_valid(consumer, evidence[r.target])?;
+    if consumer.resource_type == "cloudflare_zone"
+        && consumer.mode != crate::model::EntityMode::Managed
     {
-        return None;
+        return Err(Failure::UnsupportedContract);
     }
     let [source] = r.sources.as_slice() else {
-        return None;
+        return Err(Failure::IncompleteProvenance);
     };
     let endpoint = &nodes[*source];
-    let (path, kind) = contract(&consumer.resource_type, &r.attribute)?;
-    if !current(endpoint) || endpoint.resource_type != kind || *source == r.target {
-        return None;
+    let (path, kind) =
+        contract(&consumer.resource_type, &r.attribute).ok_or(Failure::UnsupportedContract)?;
+    proof::endpoint(endpoint)?;
+    if endpoint.resource_type != kind {
+        return Err(Failure::UnsupportedContract);
     }
-    let attributes = r.source_attributes_by_instance.get(source)?;
+    if *source == r.target {
+        return Err(Failure::IncompleteProvenance);
+    }
+    let attributes = r
+        .source_attributes_by_instance
+        .get(source)
+        .ok_or(Failure::IncompleteProvenance)?;
     if attributes.len() != 1 {
-        return None;
+        return Err(Failure::OutputMismatch);
     }
-    let attribute = attributes.first()?.as_str();
+    let attribute = attributes.first().ok_or(Failure::OutputMismatch)?.as_str();
     if attribute != "id"
         && !(attribute == "zone_id"
             && endpoint.mode == crate::model::EntityMode::Data
             && kind == "cloudflare_zone")
     {
-        return None;
+        return Err(Failure::OutputMismatch);
     }
-    let (value, mask) = evidence[r.target];
-    let expected = super::known_id(value, mask, path)?;
-    let (value, mask) = evidence[*source];
-    if super::known_id(value, mask, &[attribute])? != expected
-        || super::known_id(value, mask, &["id"])? != expected
+    let expected = evidence[r.target].id(&path.join("."))?;
+    let value = evidence[*source];
+    if value.id(attribute)? != expected
+        || value.id("id")? != expected
         || (kind == "cloudflare_zone"
             && endpoint.mode == crate::model::EntityMode::Data
-            && super::known_id(value, mask, &["zone_id"])? != expected)
+            && value.id("zone_id")? != expected)
     {
-        return None;
+        return Err(Failure::IdentityMismatch);
     }
     let candidates = nodes
         .iter()
         .enumerate()
         .filter(|(index, node)| {
-            let (value, mask) = evidence[*index];
             current(node)
                 && node.resource_type == kind
-                && super::known_id(value, mask, &["id"]).as_ref() == Some(&expected)
+                && evidence[*index].id("id").ok() == Some(expected)
         })
         .count();
-    (candidates == 1).then_some(*source)
+    (candidates == 1)
+        .then_some(*source)
+        .ok_or(Failure::AmbiguousEndpoint)
 }
 
 pub(super) fn annotate(
     nodes: &mut [TerraformEntity],
     refs: &mut [AttributeReference],
-    evidence: &[(&Value, &Value)],
+    evidence: &[Evidence<'_>],
 ) {
     for (node, &values) in nodes.iter_mut().zip(evidence) {
-        if node.provider.is_cloudflare() && !scope_valid(node, values) {
+        if node.provider.is_cloudflare() && scope_valid(node, values).is_err() {
             node.cloudflare_scope = None;
         }
     }
@@ -173,9 +175,9 @@ pub(super) fn annotate(
             continue;
         }
         let source = verify(nodes, refs, r, evidence);
-        refs[index].service_reference_verified = source.is_some();
+        proof::record(&mut refs[index], source.map(|_| ()));
         if refs[index].attribute == "zone_id" {
-            if let Some(source) = source {
+            if let Ok(source) = source {
                 let account = nodes[source]
                     .cloudflare_scope
                     .as_ref()

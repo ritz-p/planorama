@@ -29,6 +29,8 @@ endpoints, classification, scope and drift. Category counters count deduplicated
 records, not unique affected resources; categories can overlap on a resource.
 The existing semantic diagnostics are reused with exact current/deposed identity.
 Original input finding counts remain separate from selected finding counts.
+Cloudflare's typed verification failures use the
+[`cloudflare_*` reason codes](cloudflare.md#reference-diagnostics).
 
 Collection covers supported semantic rules only, not exhaustive Terraform
 validation. Cross-state mapping diagnostics remain on stderr and are not part of

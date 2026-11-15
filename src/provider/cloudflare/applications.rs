@@ -1,5 +1,9 @@
-use super::proof;
-use crate::model::{AttributeReference, EntityMode, TerraformEntity};
+use super::{
+    Evidence,
+    evidence::{Result, collect},
+    proof,
+};
+use crate::model::{AttributeReference, CloudflareFailure as Failure, EntityMode, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
@@ -43,151 +47,139 @@ impl<'a> Target<'a> {
         }
     }
 }
-fn jurisdiction<'a>(v: &'a Value, m: &Value) -> Option<&'a str> {
-    let (v, m) = proof::at(v, m, "jurisdiction")?;
-    if !matches!(m, Value::Null | Value::Bool(false)) {
-        return None;
-    }
-    match v.as_str() {
-        None if v.is_null() => Some("default"),
-        Some("default" | "eu" | "fedramp" | "us" | "fedramp-high") => v.as_str(),
-        _ => None,
+fn jurisdiction(value: Evidence<'_>) -> Result<&str> {
+    let field = value.at("jurisdiction")?;
+    field.scalar()?;
+    match field.value.as_str() {
+        None if field.value.is_null() => Ok("default"),
+        Some(value @ ("default" | "eu" | "fedramp" | "us" | "fedramp-high")) => Ok(value),
+        _ => Err(Failure::UnsupportedContract),
     }
 }
-fn optional<'a>(v: &'a Value, m: &Value, path: &str) -> Option<Option<&'a Value>> {
-    let (v, m) = proof::at(v, m, path)?;
-    if v.is_null() && matches!(m, Value::Null | Value::Bool(false)) {
-        Some(None)
-    } else if !v.is_null() {
-        Some(Some(v))
+fn optional<'a>(value: Evidence<'a>, path: &str) -> Result<Option<Evidence<'a>>> {
+    let field = value.at(path)?;
+    if field.value.is_null() && matches!(field.mask, Value::Null | Value::Bool(false)) {
+        Ok(None)
+    } else if !field.value.is_null() {
+        Ok(Some(field))
     } else {
-        None
+        field.scalar()?;
+        Err(Failure::InvalidValue)
     }
 }
-fn bindings<'a>(v: &'a Value, m: &Value, version: bool) -> Option<Vec<Target<'a>>> {
-    let mut targets = Vec::new();
-    for (row, mask) in proof::rows(v, m)? {
-        let target = match proof::text(row, mask, "type")? {
-            "kv_namespace" => Target::new(proof::text(row, mask, "namespace_id")?, Kind::Kv),
+fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
+    Ok(collect(value.rows()?.into_iter().map(|row| {
+        let target = match row.text("type")? {
+            "kv_namespace" => Target::new(row.text("namespace_id")?, Kind::Kv),
             "r2_bucket" => {
-                let jurisdiction = jurisdiction(row, mask)?;
+                let jurisdiction = jurisdiction(row)?;
                 if !version && jurisdiction == "us" {
-                    return None;
+                    return Err(Failure::UnsupportedContract);
                 }
                 Target {
-                    value: proof::text(row, mask, "bucket_name")?,
+                    value: row.text("bucket_name")?,
                     kind: Kind::R2,
                     jurisdiction: Some(jurisdiction),
                 }
             }
             "d1" => {
-                let id = proof::text(row, mask, "id")?;
-                let (alias, alias_mask) = proof::at(row, mask, "database_id")?;
-                if let Some(alias) = proof::text(row, mask, "database_id") {
+                let id = row.text("id")?;
+                let alias = row.at("database_id")?;
+                if let Ok(alias) = row.text("database_id") {
                     if alias != id {
-                        return None;
+                        return Err(Failure::IdentityMismatch);
                     }
-                } else if !alias.is_null() || (!version && !proof::unmasked(alias_mask)) {
-                    return None;
+                } else if !alias.value.is_null() || (!version && !proof::unmasked(alias.mask)) {
+                    alias.scalar()?;
+                    return Err(Failure::IdentityMismatch);
                 }
                 Target::new(id, Kind::D1)
             }
-            _ => continue,
+            _ => return Ok(None),
         };
-        targets.push(target);
-    }
-    Some(targets)
+        Ok(Some(target))
+    }))?
+    .into_iter()
+    .flatten()
+    .collect())
 }
-fn pages<'a>(v: &'a Value, m: &Value) -> Option<Vec<Target<'a>>> {
-    let mut targets = Vec::new();
-    for environment in ["preview", "production"] {
-        if optional(v, m, environment)?.is_none() {
-            continue;
-        }
-        let (env, mask) = proof::at(v, m, environment)?;
-        for (field, identity, kind) in [
-            ("d1_databases", "id", Kind::D1),
-            ("kv_namespaces", "namespace_id", Kind::Kv),
-            ("r2_buckets", "name", Kind::R2),
-        ] {
-            if optional(env, mask, field)?.is_none() {
-                continue;
-            }
-            let (map, masks) = proof::at(env, mask, field)?;
-            if !matches!(masks, Value::Null | Value::Bool(false) | Value::Object(_))
-                || masks
-                    .as_object()
-                    .is_some_and(|m| m.keys().any(|k| map.get(k).is_none()))
-            {
-                return None;
-            }
-            for (key, row) in map.as_object()? {
-                targets.push(Target {
-                    value: proof::text(row, &masks[key], identity)?,
-                    kind,
-                    jurisdiction: if matches!(kind, Kind::R2) {
-                        Some(jurisdiction(row, &masks[key])?)
-                    } else {
-                        None
-                    },
-                });
-            }
-        }
-    }
-    Some(targets)
+fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
+    Ok(
+        collect(["preview", "production"].into_iter().map(|environment| {
+            let Some(env) = optional(value, environment)? else {
+                return Ok(Vec::new());
+            };
+            Ok(collect(
+                [
+                    ("d1_databases", "id", Kind::D1),
+                    ("kv_namespaces", "namespace_id", Kind::Kv),
+                    ("r2_buckets", "name", Kind::R2),
+                ]
+                .into_iter()
+                .map(|(field, identity, kind)| {
+                    let Some(map) = optional(env, field)? else {
+                        return Ok(Vec::new());
+                    };
+                    collect(map.map()?.into_iter().map(|(_, row)| {
+                        Ok(Target {
+                            value: row.text(identity)?,
+                            kind,
+                            jurisdiction: if matches!(kind, Kind::R2) {
+                                Some(jurisdiction(row)?)
+                            } else {
+                                None
+                            },
+                        })
+                    }))
+                }),
+            )?
+            .into_iter()
+            .flatten()
+            .collect())
+        }))?
+        .into_iter()
+        .flatten()
+        .collect(),
+    )
 }
-fn targets<'a>(
-    node: &TerraformEntity,
-    path: &str,
-    v: &'a Value,
-    m: &Value,
-) -> Option<Vec<Target<'a>>> {
-    let (value, mask) = proof::at(v, m, path)?;
+fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Vec<Target<'a>>> {
+    let value = v.at(path)?;
     match path {
-        "bindings" => bindings(
-            value,
-            mask,
-            node.resource_type == "cloudflare_worker_version",
-        ),
-        "deployment_configs" => pages(value, mask),
+        "bindings" => bindings(value, node.resource_type == "cloudflare_worker_version"),
+        "deployment_configs" => pages(value),
         "versions" => {
             let mut targets = Vec::new();
             let mut seen = BTreeSet::new();
             let mut total = 0.0;
-            for (row, mask) in proof::rows(value, mask)? {
-                let id = proof::text(row, mask, "version_id")?;
-                let (percentage, mask) = proof::at(row, mask, "percentage")?;
-                if !matches!(mask, Value::Null | Value::Bool(false)) {
-                    return None;
-                }
-                let percentage = percentage.as_f64()?;
+            for (id, percentage) in collect(value.rows()?.into_iter().map(|row| {
+                let id = row.text("version_id")?;
+                let percentage = row.at("percentage")?;
+                percentage.scalar()?;
+                Ok((id, percentage.value.as_f64().ok_or(Failure::InvalidValue)?))
+            }))? {
                 if !(0.0..=100.0).contains(&percentage) || !seen.insert(id) {
-                    return None;
+                    return Err(Failure::IncompleteCollection);
                 }
                 total += percentage;
                 targets.push(Target::new(id, Kind::Version));
             }
-            ((total - 100.0).abs() < 0.000001).then_some(targets)
+            ((total - 100.0).abs() < 0.000001)
+                .then_some(targets)
+                .ok_or(Failure::IncompleteCollection)
         }
-        _ => Some(vec![Target::new(
-            proof::text(v, m, path)?,
+        _ => Ok(vec![Target::new(
+            v.text(path)?,
             match path {
                 "worker_id" => Kind::Worker,
                 "project_name" => Kind::Pages,
                 "script_name" | "script" | "service" => Kind::WorkerName,
-                _ => return None,
+                _ => return Err(Failure::UnsupportedContract),
             },
         )]),
     }
 }
-fn identity(
-    target: &Target<'_>,
-    node: &TerraformEntity,
-    v: &Value,
-    m: &Value,
-    output: &str,
-) -> bool {
-    let fields: &[&str] = match (target.kind, node.resource_type.as_str()) {
+fn fields(target: &Target<'_>, node: &TerraformEntity) -> Result<&'static [&'static str]> {
+    Ok(match (target.kind, node.resource_type.as_str()) {
         (Kind::Worker, "cloudflare_worker") => &["id", "name"],
         (Kind::WorkerName, "cloudflare_worker") => &["name"],
         (Kind::WorkerName, "cloudflare_workers_script") => &["id", "script_name"],
@@ -196,69 +188,107 @@ fn identity(
         (Kind::R2, "cloudflare_r2_bucket") => &["id", "name"],
         (Kind::Kv, "cloudflare_workers_kv_namespace") => &["id"],
         (Kind::D1, "cloudflare_d1_database") => &["id", "uuid"],
-        _ => return false,
-    };
-    fields.contains(&output)
-        && proof::text(v, m, output) == Some(target.value)
-        && (matches!(target.kind, Kind::Worker)
-            || fields
-                .iter()
-                .all(|field| proof::text(v, m, field) == Some(target.value)))
-        && (!matches!(target.kind, Kind::R2) || jurisdiction(v, m) == target.jurisdiction)
+        _ => return Err(Failure::UnsupportedContract),
+    })
 }
-fn matching(target: &Target<'_>, node: &TerraformEntity, v: &Value, m: &Value) -> bool {
+fn identity(
+    target: &Target<'_>,
+    node: &TerraformEntity,
+    value: Evidence<'_>,
+    output: &str,
+) -> Result<()> {
+    let fields = fields(target, node)?;
+    if !fields.contains(&output) {
+        return Err(Failure::OutputMismatch);
+    }
+    if value.text(output)? != target.value {
+        return Err(Failure::IdentityMismatch);
+    }
+    if !matches!(target.kind, Kind::Worker)
+        && collect(fields.iter().map(|field| value.text(field)))?
+            .iter()
+            .any(|id| *id != target.value)
+    {
+        return Err(Failure::IdentityMismatch);
+    }
+    if matches!(target.kind, Kind::R2) && Some(jurisdiction(value)?) != target.jurisdiction {
+        return Err(Failure::IdentityMismatch);
+    }
+    Ok(())
+}
+fn matching(target: &Target<'_>, node: &TerraformEntity, value: Evidence<'_>) -> bool {
     ["id", "name", "script_name", "uuid"]
         .iter()
-        .any(|output| identity(target, node, v, m, output))
+        .any(|output| identity(target, node, value, output).is_ok())
 }
 fn verify(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     r: &AttributeReference,
-    evidence: &[(&Value, &Value)],
-) -> bool {
-    if !proof::explicit(nodes, refs, r) {
-        return false;
-    }
+    evidence: &[Evidence<'_>],
+) -> Result<()> {
+    proof::explicit(nodes, refs, r)?;
     let node = &nodes[r.target];
-    let (v, m) = evidence[r.target];
-    let Some(targets) = targets(node, &r.attribute, v, m) else {
-        return false;
-    };
+    let targets = targets(node, &r.attribute, evidence[r.target])?;
     if targets.is_empty() {
-        return false;
+        return Err(Failure::UnsupportedContract);
     }
-    let mut sources = BTreeSet::new();
-    for target in targets {
+    let sources: BTreeSet<_> = collect(targets.into_iter().map(|target| {
+        // Rejected candidates are expected; only explicit sources explain a failed match.
         let mut candidates = nodes.iter().enumerate().filter(|(index, endpoint)| {
-            let (v, m) = evidence[*index];
             proof::current(endpoint)
-                && proof::same_account(node, endpoint)
-                && matching(&target, endpoint, v, m)
+                && proof::account(node, endpoint, evidence[r.target], evidence[*index]).is_ok()
+                && matching(&target, endpoint, evidence[*index])
         });
         let Some((index, endpoint)) = candidates.next() else {
-            return false;
+            let errors =
+                r.sources
+                    .iter()
+                    .filter(|&&index| fields(&target, &nodes[index]).is_ok())
+                    .map(|&index| -> Result<()> {
+                        proof::endpoint(&nodes[index])?;
+                        proof::account(node, &nodes[index], evidence[r.target], evidence[index])?;
+                        let outputs = r
+                            .source_attributes_by_instance
+                            .get(&index)
+                            .filter(|outputs| !outputs.is_empty())
+                            .ok_or(Failure::IncompleteProvenance)?;
+                        collect(outputs.iter().map(|output| {
+                            identity(&target, &nodes[index], evidence[index], output)
+                        }))
+                        .map(|_| ())
+                    });
+            return Err(errors
+                .filter_map(Result::err)
+                .min()
+                .unwrap_or(Failure::UnsupportedContract));
         };
-        if candidates.next().is_some() || index == r.target || !r.sources.contains(&index) {
-            return false;
+        if candidates.next().is_some() {
+            return Err(Failure::AmbiguousEndpoint);
         }
-        let Some(outputs) = r.source_attributes_by_instance.get(&index) else {
-            return false;
-        };
-        let (v, m) = evidence[index];
-        if outputs.is_empty()
-            || !outputs
+        if index == r.target || !r.sources.contains(&index) {
+            return Err(Failure::IncompleteProvenance);
+        }
+        let outputs = r
+            .source_attributes_by_instance
+            .get(&index)
+            .filter(|outputs| !outputs.is_empty())
+            .ok_or(Failure::IncompleteProvenance)?;
+        collect(
+            outputs
                 .iter()
-                .all(|output| identity(&target, endpoint, v, m, output))
-        {
-            return false;
-        }
+                .map(|output| identity(&target, endpoint, evidence[index], output)),
+        )?;
         if matches!(target.kind, Kind::Version) && !version_owner(refs, r.target, index) {
-            return false;
+            return Err(Failure::OwnerMismatch);
         }
-        sources.insert(index);
-    }
-    sources == r.sources.iter().copied().collect()
+        Ok(index)
+    }))?
+    .into_iter()
+    .collect();
+    (sources == r.sources.iter().copied().collect())
+        .then_some(())
+        .ok_or(Failure::IncompleteProvenance)
 }
 fn version_owner(refs: &[AttributeReference], deployment: usize, version: usize) -> bool {
     let owner = |target, path: &str| {
@@ -279,7 +309,7 @@ fn version_owner(refs: &[AttributeReference], deployment: usize, version: usize)
 pub(super) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
-    evidence: &[(&Value, &Value)],
+    evidence: &[Evidence<'_>],
 ) {
     for versions in [false, true] {
         let results: Vec<_> = refs
@@ -287,15 +317,20 @@ pub(super) fn annotate(
             .map(|r| {
                 let node = &nodes[r.target];
                 (node.provider.is_cloudflare()
-                    && node.mode == EntityMode::Managed
                     && label(&node.resource_type, &r.attribute).is_some()
                     && (r.attribute == "versions") == versions)
-                    .then(|| verify(nodes, refs, r, evidence))
+                    .then(|| {
+                        if node.mode == EntityMode::Managed {
+                            verify(nodes, refs, r, evidence)
+                        } else {
+                            Err(Failure::UnsupportedContract)
+                        }
+                    })
             })
             .collect();
         for (r, valid) in refs.iter_mut().zip(results) {
             if let Some(valid) = valid {
-                r.service_reference_verified = valid;
+                proof::record(r, valid);
             }
         }
     }

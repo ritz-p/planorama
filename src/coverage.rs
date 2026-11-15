@@ -217,6 +217,7 @@ impl Coverage {
 impl DiagnosticReason {
     pub fn code(self) -> &'static str {
         match self {
+            Self::Cloudflare(reason) => reason.code(),
             Self::UnresolvedReference => "unresolved_reference",
             Self::UnverifiedMonitoring => "unverified_monitoring",
             Self::MultipleMatchingInstances => "multiple_matching_instances",
@@ -243,6 +244,12 @@ impl DiagnosticReason {
 
     pub fn category(self) -> &'static str {
         match self {
+            Self::Cloudflare(crate::model::CloudflareFailure::AmbiguousEndpoint) => "ambiguous",
+            Self::Cloudflare(crate::model::CloudflareFailure::IncompleteProvenance) => "unresolved",
+            Self::Cloudflare(
+                crate::model::CloudflareFailure::ScopeMismatch
+                | crate::model::CloudflareFailure::ScopeUnavailable,
+            ) => "scope",
             Self::UnresolvedReference
             | Self::AliasCycle
             | Self::NoResourceReference

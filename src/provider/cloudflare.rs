@@ -5,6 +5,8 @@ use serde_json::Value;
 mod administration;
 mod applications;
 mod edge;
+mod evidence;
+pub(crate) use evidence::Evidence;
 mod proof;
 mod types;
 mod zero_trust;
@@ -113,9 +115,10 @@ fn known_id(value: &Value, mask: &Value, path: &[&str]) -> Option<String> {
 pub(crate) fn annotate(
     nodes: &mut [TerraformEntity],
     references: &mut [crate::model::AttributeReference],
-    evidence: &[(&Value, &Value)],
+    evidence: &[Evidence<'_>],
 ) {
-    for (node, &(value, mask)) in nodes.iter_mut().zip(evidence) {
+    for (node, evidence) in nodes.iter_mut().zip(evidence) {
+        let (value, mask) = (evidence.value, evidence.mask);
         if !node.provider.is_cloudflare() || !known(&node.resource_type, node.mode) {
             continue;
         }
@@ -171,9 +174,31 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
             reference.complete = r.service_reference_verified;
             if !reference.complete {
                 reference.targets.clear();
+                if reference.issues.is_empty() && r.issues.is_empty() {
+                    if let Some(reason) = r.cloudflare_failure {
+                        reference
+                            .issues
+                            .insert(crate::model::DiagnosticReason::Cloudflare(reason));
+                    }
+                }
             }
         }
     }
+}
+
+pub(crate) fn diagnostics(plan: &crate::model::TerraformPlan) -> Vec<crate::model::Diagnostic> {
+    plan.attributes
+        .iter()
+        .filter(|r| r.has_references && r.issues.is_empty())
+        .filter_map(|r| {
+            r.cloudflare_failure.map(|reason| crate::model::Diagnostic {
+                address: plan.nodes[r.target].address.clone(),
+                deposed_key: plan.nodes[r.target].deposed_key.clone(),
+                attribute: r.attribute.clone(),
+                reason: crate::model::DiagnosticReason::Cloudflare(reason),
+            })
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -183,3 +208,7 @@ pub(crate) mod resource_support;
 #[cfg(test)]
 #[path = "../../tests/unit/cloudflare_captured.rs"]
 mod captured;
+
+#[cfg(test)]
+#[path = "../../tests/unit/cloudflare_diagnostics.rs"]
+mod diagnostics_tests;

@@ -170,7 +170,7 @@ mod provider;
 mod states;
 mod terraform;
 pub(crate) use diagnostics::Resolution;
-pub use diagnostics::{Diagnostic, DiagnosticReason};
+pub use diagnostics::{CloudflareFailure, Diagnostic, DiagnosticReason};
 pub use graphs::{
     ArchitectureGraph, AttributeReference, DirectConnectProof, PeeringProof, StateOutput,
 };

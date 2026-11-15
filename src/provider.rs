@@ -157,5 +157,7 @@ pub(crate) fn transform(input: crate::semantic::Input) -> crate::model::Graph {
     aws::transform(input)
 }
 pub(crate) fn diagnostics(plan: &crate::model::TerraformPlan) -> Vec<crate::model::Diagnostic> {
-    aws::diagnostics::collect(plan)
+    let mut diagnostics = aws::diagnostics::collect(plan);
+    diagnostics.extend(cloudflare::diagnostics(plan));
+    diagnostics
 }

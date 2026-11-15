@@ -1,4 +1,5 @@
-use crate::model::{Action, AttributeReference, TerraformEntity};
+use super::evidence::{Evidence, Result, collect};
+use crate::model::{Action, AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
@@ -10,48 +11,14 @@ pub(super) fn current(node: &TerraformEntity) -> bool {
         && node.metadata.state_removal.is_none()
 }
 
-pub(super) fn at<'a, 'b>(
-    mut value: &'a Value,
-    mut mask: &'b Value,
-    path: &str,
-) -> Option<(&'a Value, &'b Value)> {
-    for field in path.split('.') {
-        if !value.is_object()
-            || !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_))
-        {
-            return None;
-        }
-        value = &value[field];
-        mask = &mask[field];
+pub(super) fn endpoint(node: &TerraformEntity) -> Result<()> {
+    if !node.provider.is_cloudflare() || !super::known(&node.resource_type, node.mode) {
+        Err(Failure::UnsupportedContract)
+    } else if !current(node) {
+        Err(Failure::InactiveEndpoint)
+    } else {
+        Ok(())
     }
-    Some((value, mask))
-}
-
-pub(super) fn text<'a>(value: &'a Value, mask: &Value, path: &str) -> Option<&'a str> {
-    let (value, mask) = at(value, mask, path)?;
-    if !matches!(mask, Value::Null | Value::Bool(false)) {
-        return None;
-    }
-    value.as_str().filter(|s| !s.is_empty())
-}
-
-pub(super) fn rows<'a, 'b>(
-    value: &'a Value,
-    mask: &'b Value,
-) -> Option<Vec<(&'a Value, &'b Value)>> {
-    let values = value.as_array()?;
-    if !matches!(mask, Value::Null | Value::Bool(false) | Value::Array(_))
-        || mask.as_array().is_some_and(|m| m.len() != values.len())
-    {
-        return None;
-    }
-    Some(
-        values
-            .iter()
-            .enumerate()
-            .map(|(i, v)| (v, &mask[i]))
-            .collect(),
-    )
 }
 
 pub(super) fn unmasked(mask: &Value) -> bool {
@@ -63,25 +30,42 @@ pub(super) fn unmasked(mask: &Value) -> bool {
     }
 }
 
-pub(super) fn list<'a>(value: &'a Value, mask: &Value) -> Option<Vec<&'a str>> {
-    let result: Vec<_> = rows(value, mask)?
+pub(super) fn scope_failure(node: &TerraformEntity, evidence: Evidence<'_>) -> Failure {
+    let Some((_, _, account, zone)) = super::types::TYPES
+        .iter()
+        .find(|&&(name, mode, _, _)| name == node.resource_type && mode == node.mode)
+    else {
+        return Failure::UnsupportedContract;
+    };
+    let failures = [account, zone]
         .into_iter()
-        .map(|(v, m)| {
-            matches!(m, Value::Null | Value::Bool(false))
-                .then(|| v.as_str().filter(|s| !s.is_empty()))
-                .flatten()
-        })
-        .collect::<Option<_>>()?;
-    (result.iter().copied().collect::<BTreeSet<_>>().len() == result.len()).then_some(result)
+        .filter(|path| !path.is_empty())
+        .filter_map(|path| evidence.id(&path.join(".")).err())
+        .filter(|failure| matches!(failure, Failure::UnknownValue | Failure::SensitiveValue));
+    failures.min().unwrap_or(Failure::ScopeUnavailable)
 }
 
-pub(super) fn same_account(a: &TerraformEntity, b: &TerraformEntity) -> bool {
-    a.cloudflare_scope
+pub(super) fn account(
+    a: &TerraformEntity,
+    b: &TerraformEntity,
+    av: Evidence<'_>,
+    bv: Evidence<'_>,
+) -> Result<()> {
+    let first = a
+        .cloudflare_scope
         .as_ref()
         .and_then(|s| s.account.as_ref())
-        .is_some_and(|account| {
-            b.cloudflare_scope.as_ref().and_then(|s| s.account.as_ref()) == Some(account)
-        })
+        .ok_or_else(|| scope_failure(a, av));
+    let second = b
+        .cloudflare_scope
+        .as_ref()
+        .and_then(|s| s.account.as_ref())
+        .ok_or_else(|| scope_failure(b, bv));
+    match (first, second) {
+        (Ok(a), Ok(b)) => (a == b).then_some(()).ok_or(Failure::ScopeMismatch),
+        (Err(a), Err(b)) => Err(a.min(b)),
+        (Err(reason), _) | (_, Err(reason)) => Err(reason),
+    }
 }
 
 pub(super) struct Target<'a> {
@@ -94,52 +78,87 @@ pub(super) fn verify(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     r: &AttributeReference,
-    evidence: &[(&Value, &Value)],
+    evidence: &[Evidence<'_>],
     targets: &[Target<'_>],
-    compatible: impl Fn(&TerraformEntity, &TerraformEntity) -> bool,
-) -> bool {
-    let consumer = &nodes[r.target];
-    if !explicit(nodes, refs, r) || targets.is_empty() {
-        return false;
+    compatible: impl Fn(usize, usize) -> Result<()>,
+) -> Result<()> {
+    explicit(nodes, refs, r)?;
+    if targets.is_empty() {
+        return Err(Failure::UnsupportedContract);
     }
-    let mut sources = BTreeSet::new();
-    for target in targets {
-        let mut candidates = nodes.iter().enumerate().filter(|(index, node)| {
-            let (v, m) = evidence[*index];
-            current(node)
-                && node.resource_type == target.kind
-                && compatible(consumer, node)
-                && text(v, m, target.output) == Some(target.value)
-        });
-        let Some((source, _)) = candidates.next() else {
-            return false;
+    let sources: BTreeSet<_> = collect(targets.iter().map(|target| {
+        let matches = |index: usize| -> Result<()> {
+            let node = &nodes[index];
+            endpoint(node)?;
+            if node.resource_type != target.kind {
+                return Err(Failure::UnsupportedContract);
+            }
+            compatible(r.target, index)?;
+            (evidence[index].text(target.output)? == target.value)
+                .then_some(())
+                .ok_or(Failure::IdentityMismatch)
         };
-        if candidates.next().is_some() || source == r.target || !r.sources.contains(&source) {
-            return false;
+        // Rejected candidates are expected; only explicit sources explain a failed match.
+        let mut candidates = (0..nodes.len()).filter(|&index| matches(index).is_ok());
+        let Some(source) = candidates.next() else {
+            return Err(r
+                .sources
+                .iter()
+                .filter(|&&index| nodes[index].resource_type == target.kind)
+                .filter_map(|&index| {
+                    if r.source_attributes_by_instance
+                        .get(&index)
+                        .is_some_and(|attrs| attrs.len() != 1 || !attrs.contains(target.output))
+                    {
+                        Some(Failure::OutputMismatch)
+                    } else {
+                        matches(index).err()
+                    }
+                })
+                .min()
+                .unwrap_or(Failure::UnsupportedContract));
+        };
+        if candidates.next().is_some() {
+            return Err(Failure::AmbiguousEndpoint);
         }
-        let Some(attributes) = r.source_attributes_by_instance.get(&source) else {
-            return false;
-        };
+        if source == r.target || !r.sources.contains(&source) {
+            return Err(Failure::IncompleteProvenance);
+        }
+        let attributes = r
+            .source_attributes_by_instance
+            .get(&source)
+            .ok_or(Failure::IncompleteProvenance)?;
         if attributes.len() != 1 || !attributes.contains(target.output) {
-            return false;
+            return Err(Failure::OutputMismatch);
         }
-        sources.insert(source);
-    }
-    sources == r.sources.iter().copied().collect()
+        Ok(source)
+    }))?
+    .into_iter()
+    .collect();
+    (sources == r.sources.iter().copied().collect())
+        .then_some(())
+        .ok_or(Failure::IncompleteProvenance)
 }
 
 pub(super) fn explicit(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     r: &AttributeReference,
-) -> bool {
-    current(&nodes[r.target])
-        && r.complete
+) -> Result<()> {
+    endpoint(&nodes[r.target])?;
+    (r.complete
         && r.instances_explicit
         && r.issues.is_empty()
         && refs
             .iter()
             .filter(|other| other.target == r.target && other.attribute == r.attribute)
             .count()
-            == 1
+            == 1)
+        .then_some(())
+        .ok_or(Failure::IncompleteProvenance)
+}
+
+pub(super) fn record(r: &mut AttributeReference, result: Result<()>) {
+    r.service_reference_verified = result.is_ok();
+    r.cloudflare_failure = result.err();
 }
