@@ -223,6 +223,12 @@ resources with their own actions. Neither is contained in a Worker.
 - Consumer `script_name` links to a Worker only for `type = worker`, using
   the same Worker-name contract as Service bindings. HTTP pull, notification,
   unknown and unsupported types never acquire Worker associations.
+- Worker consumers additionally expose `Configured dead letter Queue` through
+  `dead_letter_queue` → Queue `queue_name`, independently of producer bindings.
+  The consumer's `queue_id` must first prove the source Queue. The logical
+  consumer row identifies both the consumed Queue and its configured DLQ;
+  self-targets and cycles among proven Queue/DLQ relations are rejected.
+  HTTP-pull and notification DLQ contracts are not promoted by this support level.
 - Every reference needs complete explicit Terraform provenance, known matching
   accounts and a unique current endpoint. Managed producers/consumers can use
   managed or singleton data Queue/Worker endpoints; data consumers do not gain
@@ -231,8 +237,8 @@ resources with their own actions. Neither is contained in a Worker.
 
 Queue names and IDs are separate account-scoped contracts. Queue jurisdiction
 does not qualify the account/Queue ID API path or establish an AWS Region.
-Dead-letter queues and notification destinations are not dedicated references
-in this support level. Settings and payloads are not retained. Associations
+Notification destinations are not dedicated references in this support level.
+Settings and payloads are not retained. Associations
 describe configured producers/consumers, not message delivery or runtime
 traffic guarantees.
 

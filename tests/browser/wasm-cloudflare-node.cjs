@@ -244,13 +244,15 @@ for (const scenario of ['services','services-only','service-environment','servic
  }
 }
 console.log('Cloudflare Service bindings native/Wasm parity passed');
-for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pull','queue-filtered']) {
+for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pull','queue-filtered','queue-dlq-sensitive','queue-dlq-literal']) {
  const plan=JSON.parse(readFileSync('tests/fixtures/cloudflare-queues-plan.json','utf8'));
  const resource=address=>plan.resource_changes.find(r=>r.address===address);
  if(scenario==='queues-only')for(const address of ['cloudflare_workers_script.legacy','cloudflare_worker_version.backend']) {
   resource(address).change.after.bindings=resource(address).change.after.bindings.filter(b=>b.type==='queue');
   plan.configuration.root_module.resources.find(r=>r.address===address).expressions.bindings.references=['cloudflare_queue.jobs.queue_name','cloudflare_queue.audit.queue_name'];
  }
+ if(scenario==='queue-dlq-sensitive')resource('cloudflare_queue_consumer.worker').change.after_sensitive={dead_letter_queue:true};
+ if(scenario==='queue-dlq-literal')plan.configuration.root_module.resources.find(r=>r.address==='cloudflare_queue_consumer.worker').expressions.dead_letter_queue={constant_value:'audit'};
  if(scenario==='queue-sensitive')resource('cloudflare_queue.jobs').change.after_sensitive={queue_name:true,queue_id:true};
  if(scenario==='queue-http-pull')resource('cloudflare_queue_consumer.worker').change.after.type='http_pull';
  for(const format of ['svg','html']) {
@@ -260,7 +262,7 @@ for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pul
   const input=JSON.stringify(plan),result=JSON.parse(binding.generate(input,JSON.stringify(options)));
   assert.equal(result.content,native(input,args),`${scenario}/${format}`);
   assert.ok(!result.content.includes('PRIVATE_'));
-  if(scenario==='queues')for(const label of ['Queue producer bindings','Consumed Queue','Consumer Worker','Storage bindings','Service bindings'])assert.ok(result.content.includes(label));
+  if(scenario==='queues')for(const label of ['Queue producer bindings','Consumed Queue','Consumer Worker','Configured dead letter Queue','Storage bindings','Service bindings'])assert.ok(result.content.includes(label));
   if(scenario==='queue-sensitive')assert.ok(result.content.includes('cloudflare_sensitive_value'));
   if(scenario==='queue-http-pull')assert.ok(result.content.includes('cloudflare_unsupported_contract'));
   const metadata=result.content.match(/<metadata id="resource-references">([\s\S]*?)<\/metadata>/)[1];

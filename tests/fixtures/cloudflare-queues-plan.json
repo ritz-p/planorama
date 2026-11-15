@@ -234,7 +234,8 @@
           "consumer_id": "44444444444444444444444444444444",
           "queue_id": "11111111111111111111111111111111",
           "type": "worker",
-          "script_name": "backend"
+          "script_name": "backend",
+          "dead_letter_queue": "audit"
         },
         "after_unknown": {},
         "after_sensitive": {}
@@ -522,6 +523,12 @@
               "references": [
                 "cloudflare_worker.backend.name",
                 "cloudflare_worker.backend"
+              ]
+            },
+            "dead_letter_queue": {
+              "references": [
+                "cloudflare_queue.audit.queue_name",
+                "cloudflare_queue.audit"
               ]
             }
           }
