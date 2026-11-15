@@ -9,6 +9,7 @@ use std::collections::BTreeSet;
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
+        ("cloudflare_dns_record", "content") => Some("Configured Pages CNAME"),
         ("cloudflare_worker_version", "worker_id") => Some("Worker"),
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
             Some("Storage, service and queue bindings")
@@ -410,7 +411,11 @@ pub(super) fn annotate(
                     && (r.attribute == "versions") == versions)
                     .then(|| {
                         if node.mode == EntityMode::Managed {
-                            verify(nodes, refs, r, evidence)
+                            if node.resource_type == "cloudflare_dns_record" {
+                                dns_pages(nodes, refs, r, evidence)
+                            } else {
+                                verify(nodes, refs, r, evidence)
+                            }
                         } else {
                             Err(Failure::UnsupportedContract)
                         }
@@ -423,6 +428,40 @@ pub(super) fn annotate(
             }
         }
     }
+}
+
+fn dns_pages(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    r: &AttributeReference,
+    evidence: &[Evidence<'_>],
+) -> Result<()> {
+    let value = evidence[r.target];
+    if value.text("type")? != "CNAME" {
+        return Err(Failure::UnsupportedContract);
+    }
+    let proxied = value.at("proxied")?;
+    proxied.scalar()?;
+    if !proxied.value.is_boolean() {
+        return Err(Failure::InvalidValue);
+    }
+    if !refs.iter().any(|owner| {
+        owner.target == r.target && owner.attribute == "zone_id" && owner.service_reference_verified
+    }) {
+        return Err(Failure::OwnerMismatch);
+    }
+    proof::verify(
+        nodes,
+        refs,
+        r,
+        evidence,
+        &[proof::Target {
+            value: value.text("content")?,
+            kind: "cloudflare_pages_project",
+            output: "subdomain",
+        }],
+        |a, b| proof::account(&nodes[a], &nodes[b], evidence[a], evidence[b]),
+    )
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_applications.rs"]

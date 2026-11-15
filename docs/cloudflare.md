@@ -66,10 +66,23 @@ fail closed, while deposed instances remain visible without claiming ownership.
 
 Zone, DNS record and Zone DNSSEC have dedicated support for these administration
 contracts. Other DNS fields remain configuration: DNS names, contents, IPs,
-CNAMEs and proxy settings do not identify an origin or prove traffic. Verified
+CNAMEs and proxy settings do not prove traffic. Verified
 Zone membership can carry its known account label to the DNS helper without
 creating AWS scope or a physical containment edge. Provider aliases alone do not
 prove or disprove account membership; the resource IDs establish correspondence.
+
+A managed DNS record with `type = "CNAME"` can show `Configured Pages CNAME`
+when its `content` explicitly references a Pages Project's `subdomain`, both
+known values agree, and the project is the unique current endpoint in the DNS
+record's verified Zone account. The record's `proxied` flag must be known and
+non-sensitive; both true and false describe configured DNS, not observed traffic.
+Masked content/subdomains, missing Zone provenance, account disagreement,
+duplicate endpoints and data-record consumers fail closed. A singleton Pages
+data endpoint is eligible only with the same known account and output evidence.
+Worker Route patterns and Custom Domain/Pages Domain hostnames are not CNAME
+target identities. Matching those names, a shared Zone, proxying, or a literal
+`pages.dev` suffix does not create a public-path relationship. This does not prove
+domain activation, TLS readiness, DNS resolution or runtime reachability.
 
 ## Edge configuration
 

@@ -17,7 +17,9 @@ fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
             "Version ID and explicitly proven Worker owner"
         }
         "cloudflare_workers_script" => "Known matching id/script_name, matching account",
-        "cloudflare_pages_project" => "Known matching id/name, matching account",
+        "cloudflare_pages_project" => {
+            "Known matching id/name or unique CNAME subdomain, matching account"
+        }
         "cloudflare_r2_bucket" => "Known matching id/name, account and jurisdiction",
         "cloudflare_workers_kv_namespace" => "Account-scoped namespace ID",
         "cloudflare_queue" => {

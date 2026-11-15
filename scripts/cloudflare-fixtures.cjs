@@ -58,10 +58,11 @@ add('cloudflare_workers_deployment','api',{account_id:account,id:'deployment',sc
 add('cloudflare_workers_script','legacy',{account_id:account,id:'legacy',script_name:'legacy',content:'PRIVATE_WORKER_CODE',bindings},{...admin,bindings:bindingRefs});
 add('cloudflare_workers_route','api',{id:'5'.repeat(32),zone_id:zone,pattern:'api.example.invalid/*',script:'api'},{zone_id:ref('cloudflare_zone.example.id'),script:ref('cloudflare_worker.api.name')});
 add('cloudflare_workers_custom_domain','legacy',{id:'6'.repeat(32),account_id:account,hostname:'legacy.example.invalid',service:'legacy',zone_id:zone},{...admin,service:ref('cloudflare_workers_script.legacy.id'),zone_id:ref('cloudflare_zone.example.id')});
-add('cloudflare_pages_project','site',{account_id:account,id:'site',name:'site',production_branch:'main',deployment_configs:{preview:{kv_namespaces:{CACHE:{namespace_id:kv}}},production:{d1_databases:{DB:{id:database}},r2_buckets:{ASSETS:{name:'assets',jurisdiction:'eu'}}}}},{...admin,deployment_configs:storageRefs});
+add('cloudflare_pages_project','site',{account_id:account,id:'site',name:'site',subdomain:'site.pages.dev',production_branch:'main',deployment_configs:{preview:{kv_namespaces:{CACHE:{namespace_id:kv}}},production:{d1_databases:{DB:{id:database}},r2_buckets:{ASSETS:{name:'assets',jurisdiction:'eu'}}}}},{...admin,deployment_configs:storageRefs});
 add('cloudflare_pages_domain','site',{account_id:account,id:'www.example.invalid',name:'www.example.invalid',project_name:'site'},{...admin,project_name:ref('cloudflare_pages_project.site.name')});
 add('cloudflare_worker','backend',{account_id:account,id:'90000000-0000-4000-8000-000000000009',name:'backend'},admin);
 add('cloudflare_workers_script','downstream',{account_id:account,id:'downstream',script_name:'downstream',content:'PRIVATE_DOWNSTREAM_CODE'},admin);
+add('cloudflare_dns_record','pages',{id:'7'.repeat(32),zone_id:zone,name:'www.example.invalid',type:'CNAME',content:'site.pages.dev',proxied:true,ttl:1},{zone_id:ref('cloudflare_zone.example.id'),content:ref('cloudflare_pages_project.site.subdomain')});
 
  return v;
 }

@@ -337,7 +337,7 @@ fn custom_domain_zone_data_and_ambiguity() {
         .unwrap()
         .push(duplicate);
     assert!(!domain_zone(&v));
-    v["resource_changes"][15]["deposed"] = json!("old");
+    v["resource_changes"][16]["deposed"] = json!("old");
     assert!(domain_zone(&v));
     let mut v = domain_fixture();
     for collection in ["resource_changes", "configuration/root_module/resources"] {

@@ -41,7 +41,7 @@ fn application_storage_and_version_contracts_are_explicit() {
         assert!(verified(&v, index, path), "{index}/{path}");
     }
     let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
-    assert_eq!(graph.nodes.len(), 15);
+    assert_eq!(graph.nodes.len(), 16);
     assert!(!format!("{graph:?}").contains("PRIVATE_"));
     assert!(
         graph
@@ -275,8 +275,8 @@ fn service_bindings_require_known_unqualified_names_and_compatible_current_endpo
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 6, "bindings"));
-    v["resource_changes"][15]["deposed"] = json!("old");
-    v["resource_changes"][15]["change"]["actions"] = json!(["delete"]);
+    v["resource_changes"][16]["deposed"] = json!("old");
+    v["resource_changes"][16]["change"]["actions"] = json!(["delete"]);
     assert!(verified(&v, 6, "bindings"));
 }
 
@@ -313,4 +313,81 @@ fn service_bindings_do_not_treat_worker_uuid_as_name_and_support_singleton_data_
     assert!(verified(&v, 6, "bindings"));
     v["resource_changes"][6]["mode"] = json!("data");
     assert!(!verified(&v, 6, "bindings"));
+}
+
+#[test]
+fn dns_pages_cname_requires_typed_scoped_current_explicit_evidence() {
+    let base = fixture();
+    assert!(verified(&base, 15, "content"));
+    for (path, value) in [
+        ("/resource_changes/15/change/after/type", json!("A")),
+        (
+            "/resource_changes/15/change/after/content",
+            json!("other.pages.dev"),
+        ),
+        (
+            "/resource_changes/15/change/after_unknown/content",
+            json!(true),
+        ),
+        (
+            "/resource_changes/15/change/after_sensitive/content",
+            json!(true),
+        ),
+        (
+            "/resource_changes/15/change/after_unknown/proxied",
+            json!(true),
+        ),
+        (
+            "/resource_changes/11/change/after/account_id",
+            json!("ffffffffffffffffffffffffffffffff"),
+        ),
+        (
+            "/resource_changes/11/change/after_unknown/subdomain",
+            json!(true),
+        ),
+        (
+            "/resource_changes/11/change/after_sensitive/subdomain",
+            json!(true),
+        ),
+        ("/resource_changes/11/change/actions", json!(["delete"])),
+        ("/resource_changes/15/mode", json!("data")),
+        (
+            "/configuration/root_module/resources/15/expressions/content/references",
+            json!([]),
+        ),
+        (
+            "/configuration/root_module/resources/15/expressions/content/references",
+            json!(["cloudflare_pages_project.site.name"]),
+        ),
+        (
+            "/configuration/root_module/resources/15/expressions/zone_id/references",
+            json!([]),
+        ),
+    ] {
+        let mut v = base.clone();
+        let (parent, key) = path.rsplit_once('/').unwrap();
+        v.pointer_mut(parent).unwrap()[key] = value;
+        assert!(!verified(&v, 15, "content"), "{path}");
+    }
+    let mut v = base.clone();
+    v["resource_changes"][15]["change"]["after"]["proxied"] = json!(false);
+    assert!(verified(&v, 15, "content"));
+    let mut duplicate = v["resource_changes"][11].clone();
+    duplicate["address"] = json!("cloudflare_pages_project.duplicate");
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(duplicate);
+    assert!(!verified(&v, 15, "content"));
+    v["resource_changes"][16]["deposed"] = json!("old");
+    assert!(verified(&v, 15, "content"));
+    let mut v = base;
+    for collection in ["resource_changes", "configuration/root_module/resources"] {
+        let row = v.pointer_mut(&format!("/{collection}/11")).unwrap();
+        row["address"] = json!("data.cloudflare_pages_project.site");
+        row["mode"] = json!("data");
+    }
+    v["configuration"]["root_module"]["resources"][15]["expressions"]["content"]["references"] =
+        json!(["data.cloudflare_pages_project.site.subdomain"]);
+    assert!(verified(&v, 15, "content"));
 }

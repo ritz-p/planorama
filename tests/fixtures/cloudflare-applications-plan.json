@@ -338,6 +338,7 @@
           "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "id": "site",
           "name": "site",
+          "subdomain": "site.pages.dev",
           "production_branch": "main",
           "deployment_configs": {
             "preview": {
@@ -423,6 +424,30 @@
           "id": "downstream",
           "script_name": "downstream",
           "content": "PRIVATE_DOWNSTREAM_CODE"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.pages",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "pages",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "77777777777777777777777777777777",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "www.example.invalid",
+          "type": "CNAME",
+          "content": "site.pages.dev",
+          "proxied": true,
+          "ttl": 1
         },
         "after_unknown": {},
         "after_sensitive": {}
@@ -736,6 +761,27 @@
               "references": [
                 "cloudflare_account.team.id",
                 "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_dns_record.pages",
+          "mode": "managed",
+          "type": "cloudflare_dns_record",
+          "name": "pages",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "content": {
+              "references": [
+                "cloudflare_pages_project.site.subdomain",
+                "cloudflare_pages_project.site"
               ]
             }
           }

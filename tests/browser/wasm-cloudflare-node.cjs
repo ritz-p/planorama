@@ -91,8 +91,10 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
-for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict']) {
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-cname-unknown') plan.resource_changes[15].change.after_unknown = {content: true};
+  if (scenario === 'applications-cname-literal') plan.configuration.root_module.resources[15].expressions.content = {constant_value: 'site.pages.dev'};
   if (scenario === 'applications-domain-zone-unknown') plan.resource_changes[10].change.after_unknown = {zone_id: true};
   if (scenario === 'applications-domain-zone-conflict') plan.resource_changes[10].change.after.account_id = 'f'.repeat(32);
   if (scenario === 'applications-unknown') plan.resource_changes[6].change.after_unknown = {bindings: true};
