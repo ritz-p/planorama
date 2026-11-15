@@ -20,7 +20,7 @@ fn verified(v: &Value, index: usize, path: &str) -> bool {
                     == Some(r.label)
                 || (r.attribute == path
                     && r.complete
-                    && path == "bindings"
+                    && matches!(path, "bindings" | "deployment_configs")
                     && matches!(r.label, "Storage bindings" | "Service bindings"))
                 || (r.attribute == path
                     && r.complete
@@ -447,4 +447,83 @@ fn hyperdrive_bindings_require_current_scoped_id_and_never_publish_origin_secret
             .iter()
             .any(|r| r.label == "Hyperdrive bindings" && r.complete)
     }));
+}
+
+#[test]
+fn pages_service_maps_preserve_complete_storage_and_worker_provenance() {
+    let base = fixture();
+    assert!(verified(&base, 11, "deployment_configs"));
+    let g = semantic::transform(&plan::parse(&base.to_string()).unwrap());
+    let pages = g
+        .nodes
+        .iter()
+        .find(|n| n.address == "cloudflare_pages_project.site")
+        .unwrap();
+    assert!(
+        pages
+            .references
+            .iter()
+            .any(|r| r.label == "Service bindings" && r.complete && r.targets.len() == 2)
+    );
+    assert!(
+        pages
+            .references
+            .iter()
+            .any(|r| r.label == "Storage bindings" && r.complete && r.targets.len() == 3)
+    );
+    for (path, value) in [
+        (
+            "/resource_changes/11/change/after/deployment_configs/production/services/BACKEND/environment",
+            json!("production"),
+        ),
+        (
+            "/resource_changes/11/change/after/deployment_configs/production/services/BACKEND/entrypoint",
+            json!(""),
+        ),
+        (
+            "/resource_changes/11/change/after_unknown/deployment_configs",
+            json!({"production":{"services":{"BACKEND":{"service":true}}}}),
+        ),
+        (
+            "/resource_changes/11/change/after_sensitive/deployment_configs",
+            json!({"production":{"services":{"BACKEND":{"environment":true}}}}),
+        ),
+        (
+            "/resource_changes/13/change/after/account_id",
+            json!("ffffffffffffffffffffffffffffffff"),
+        ),
+        ("/resource_changes/13/change/actions", json!(["delete"])),
+        ("/resource_changes/11/mode", json!("data")),
+        (
+            "/configuration/root_module/resources/11/expressions/deployment_configs/references",
+            json!(["cloudflare_worker.backend.name"]),
+        ),
+    ] {
+        let mut v = base.clone();
+        let (parent, key) = path.rsplit_once('/').unwrap();
+        v.pointer_mut(parent).unwrap()[key] = value;
+        assert!(!verified(&v, 11, "deployment_configs"), "{path}");
+    }
+    let mut v = base.clone();
+    let services = v["resource_changes"][11]["change"]["after"]["deployment_configs"]["production"]
+        .as_object_mut()
+        .unwrap()
+        .remove("services")
+        .unwrap();
+    v["resource_changes"][11]["change"]["after"]["deployment_configs"]["preview"]["services"] =
+        services;
+    assert!(verified(&v, 11, "deployment_configs"));
+    let mut duplicate = v["resource_changes"][13].clone();
+    duplicate["address"] = json!("cloudflare_worker.duplicate");
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(duplicate);
+    assert!(!verified(&v, 11, "deployment_configs"));
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .last_mut()
+        .unwrap()["deposed"] = json!("old");
+    assert!(verified(&v, 11, "deployment_configs"));
 }

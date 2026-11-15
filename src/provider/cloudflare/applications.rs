@@ -22,7 +22,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         ("cloudflare_queue_consumer", "script_name") => Some("Consumer Worker"),
         ("cloudflare_queue_consumer", "dead_letter_queue") => Some("Configured dead letter Queue"),
         ("cloudflare_pages_domain", "project_name") => Some("Pages project"),
-        ("cloudflare_pages_project", "deployment_configs") => Some("Storage bindings"),
+        ("cloudflare_pages_project", "deployment_configs") => Some("Storage and service bindings"),
         _ => None,
     }
 }
@@ -77,19 +77,7 @@ fn optional<'a>(value: Evidence<'a>, path: &str) -> Result<Option<Evidence<'a>>>
 fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
-            "service" => {
-                let environment = row.at("environment")?;
-                environment.scalar()?;
-                if !environment.value.is_null() {
-                    return Err(Failure::UnsupportedContract);
-                }
-                let entrypoint = row.at("entrypoint")?;
-                entrypoint.scalar()?;
-                if !entrypoint.value.is_null() {
-                    row.text("entrypoint")?;
-                }
-                Target::new(row.text("service")?, Kind::WorkerName)
-            }
+            "service" => service(row)?,
             "queue" => Target::new(row.text("queue_name")?, Kind::QueueName),
             "hyperdrive" => Target::new(row.text("id")?, Kind::Hyperdrive),
             "kv_namespace" => Target::new(row.text("namespace_id")?, Kind::Kv),
@@ -125,6 +113,19 @@ fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     .flatten()
     .collect())
 }
+fn service(row: Evidence<'_>) -> Result<Target<'_>> {
+    let environment = row.at("environment")?;
+    environment.scalar()?;
+    if !environment.value.is_null() {
+        return Err(Failure::UnsupportedContract);
+    }
+    let entrypoint = row.at("entrypoint")?;
+    entrypoint.scalar()?;
+    if !entrypoint.value.is_null() {
+        row.text("entrypoint")?;
+    }
+    Ok(Target::new(row.text("service")?, Kind::WorkerName))
+}
 fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
     Ok(
         collect(["preview", "production"].into_iter().map(|environment| {
@@ -136,6 +137,7 @@ fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
                     ("d1_databases", "id", Kind::D1),
                     ("kv_namespaces", "namespace_id", Kind::Kv),
                     ("r2_buckets", "name", Kind::R2),
+                    ("services", "service", Kind::WorkerName),
                 ]
                 .into_iter()
                 .map(|(field, identity, kind)| {
@@ -143,6 +145,9 @@ fn pages(value: Evidence<'_>) -> Result<Vec<Target<'_>>> {
                         return Ok(Vec::new());
                     };
                     collect(map.map()?.into_iter().map(|(_, row)| {
+                        if matches!(kind, Kind::WorkerName) {
+                            return service(row);
+                        }
                         Ok(Target {
                             value: row.text(identity)?,
                             kind,
@@ -396,14 +401,22 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
         if !node.provider.is_cloudflare()
             || !matches!(
                 node.resource_type.as_str(),
-                "cloudflare_worker_version" | "cloudflare_workers_script"
+                "cloudflare_worker_version"
+                    | "cloudflare_workers_script"
+                    | "cloudflare_pages_project"
             )
         {
             continue;
         }
         let mut split = Vec::new();
         for reference in &mut node.references {
-            if reference.dependency || reference.attribute != "bindings" || !reference.complete {
+            if reference.dependency
+                || !matches!(
+                    reference.attribute.as_str(),
+                    "bindings" | "deployment_configs"
+                )
+                || !reference.complete
+            {
                 continue;
             }
             let mut groups = std::collections::BTreeMap::<_, Vec<_>>::new();

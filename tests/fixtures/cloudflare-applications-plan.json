@@ -369,6 +369,15 @@
                   "name": "assets",
                   "jurisdiction": "eu"
                 }
+              },
+              "services": {
+                "BACKEND": {
+                  "service": "backend",
+                  "entrypoint": "Handler"
+                },
+                "LEGACY": {
+                  "service": "downstream"
+                }
               }
             }
           }
@@ -750,7 +759,11 @@
                 "cloudflare_workers_kv_namespace.cache.id",
                 "cloudflare_workers_kv_namespace.cache",
                 "cloudflare_d1_database.content.id",
-                "cloudflare_d1_database.content"
+                "cloudflare_d1_database.content",
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend",
+                "cloudflare_workers_script.downstream.script_name",
+                "cloudflare_workers_script.downstream"
               ]
             }
           }

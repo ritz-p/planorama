@@ -91,8 +91,9 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
-for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal', 'applications-hyperdrive-sensitive']) {
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal', 'applications-hyperdrive-sensitive', 'applications-pages-service-unknown']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-pages-service-unknown') plan.resource_changes[11].change.after_unknown = {deployment_configs: {production: {services: {BACKEND: {service: true}}}}};
   if (scenario === 'applications-hyperdrive-sensitive') plan.resource_changes[16].change.after_sensitive = {id: true};
   if (scenario === 'applications-cname-unknown') plan.resource_changes[15].change.after_unknown = {content: true};
   if (scenario === 'applications-cname-literal') plan.configuration.root_module.resources[15].expressions.content = {constant_value: 'site.pages.dev'};

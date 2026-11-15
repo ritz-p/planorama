@@ -201,7 +201,15 @@ unique current identities and a known matching account:
   binding contract; the sample includes multiple bindings to the same Worker.
   A legacy script binding to itself remains unsupported.
 - Pages preview/production deployment configurations identify KV, R2 and D1
-  through their respective typed maps. Pages Domains identify a project by
+  through their respective typed maps. Their `services` map additionally verifies
+  Worker `name` or legacy script `id`/`script_name` outputs under the same
+  account, current-endpoint, environment and entrypoint rules as Worker Service
+  Bindings. Both environments and all supported storage/service entries must
+  verify together before separate Storage bindings and Service bindings rows
+  appear. A missing reference or unknown map member never promotes a subset.
+  Data Pages projects do not gain managed configuration semantics.
+  This expresses Pages Functions configuration, not a Worker Route, custom
+  hostname association or observed function invocation. Pages Domains identify a project by
   its name or equivalent project `id`.
 - R2 account, bucket name and jurisdiction must match; an unknown jurisdiction
   cannot be treated as the default. D1 `id`/`uuid`, R2 `id`/`name`, Pages
