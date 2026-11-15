@@ -185,6 +185,7 @@ pub(crate) fn facts(plan: &crate::model::TerraformPlan, graph: &mut crate::model
             }
         }
     }
+    applications::present(plan, graph);
 }
 
 pub(crate) fn diagnostics(plan: &crate::model::TerraformPlan) -> Vec<crate::model::Diagnostic> {

@@ -11,7 +11,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
         ("cloudflare_worker_version", "worker_id") => Some("Worker"),
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
-            Some("Storage bindings")
+            Some("Storage and service bindings")
         }
         ("cloudflare_workers_deployment", "script_name") => Some("Deployed Worker"),
         ("cloudflare_workers_deployment", "versions") => Some("Configured versions"),
@@ -70,6 +70,19 @@ fn optional<'a>(value: Evidence<'a>, path: &str) -> Result<Option<Evidence<'a>>>
 fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
+            "service" => {
+                let environment = row.at("environment")?;
+                environment.scalar()?;
+                if !environment.value.is_null() {
+                    return Err(Failure::UnsupportedContract);
+                }
+                let entrypoint = row.at("entrypoint")?;
+                entrypoint.scalar()?;
+                if !entrypoint.value.is_null() {
+                    row.text("entrypoint")?;
+                }
+                Target::new(row.text("service")?, Kind::WorkerName)
+            }
             "kv_namespace" => Target::new(row.text("namespace_id")?, Kind::Kv),
             "r2_bucket" => {
                 let jurisdiction = jurisdiction(row)?;
@@ -305,6 +318,55 @@ fn version_owner(refs: &[AttributeReference], deployment: usize, version: usize)
     owner(deployment, "script_name")
         .zip(owner(version, "worker_id"))
         .is_some_and(|(a, b)| a == b)
+}
+
+pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::model::Graph) {
+    let workers: BTreeSet<_> = plan
+        .nodes
+        .iter()
+        .filter(|node| {
+            node.provider.is_cloudflare()
+                && matches!(
+                    node.resource_type.as_str(),
+                    "cloudflare_worker" | "cloudflare_workers_script"
+                )
+        })
+        .map(crate::model::TerraformEntityId::from)
+        .collect();
+    for node in &mut graph.nodes {
+        if !node.provider.is_cloudflare()
+            || !matches!(
+                node.resource_type.as_str(),
+                "cloudflare_worker_version" | "cloudflare_workers_script"
+            )
+        {
+            continue;
+        }
+        let mut split = Vec::new();
+        for reference in &mut node.references {
+            if reference.dependency || reference.attribute != "bindings" || !reference.complete {
+                continue;
+            }
+            let (services, storage): (Vec<_>, Vec<_>) = reference
+                .targets
+                .drain(..)
+                .partition(|target| workers.contains(&target.id));
+            if storage.is_empty() {
+                reference.label = "Service bindings";
+                reference.targets = services;
+            } else {
+                reference.label = "Storage bindings";
+                reference.targets = storage;
+                if !services.is_empty() {
+                    let mut service = reference.clone();
+                    service.label = "Service bindings";
+                    service.targets = services;
+                    split.push(service);
+                }
+            }
+        }
+        node.references.extend(split);
+    }
 }
 pub(super) fn annotate(
     nodes: &[TerraformEntity],

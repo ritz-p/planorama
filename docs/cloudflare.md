@@ -120,7 +120,21 @@ unique current identities and a known matching account:
   their account and explicit service reference. Patterns and hostnames do not
   establish ownership.
 - Worker/script binding discriminators select KV `namespace_id`, R2
-  `bucket_name`, or D1 `id`. Binding names and contents are not identities.
+  `bucket_name`, D1 `id`, or Service `service` (Worker name). Binding names and
+  contents are not identities. Service endpoints accept a new Worker's `name`
+  or a legacy script's matching `id`/`script_name`, never a Worker UUID.
+  Service bindings currently require an absent/null `environment`: the endpoint
+  resources do not identify named environments, including an explicit
+  `production` qualifier. A supplied `entrypoint` must be a known nonempty string;
+  it is not retained and does not prove that the target exports that handler.
+  Unknown/sensitive qualifiers fail closed. Managed versions/scripts can refer
+  to managed or singleton data endpoints, with the same name/account contract.
+  The entire mixed storage/service collection must verify before its targets
+  are split into Storage bindings and Service bindings rows. Repeated bindings
+  to one Worker retain one endpoint per role. Partial provenance never promotes
+  the otherwise valid subset. The generated support matrix lists this combined
+  binding contract; the sample includes multiple bindings to the same Worker.
+  A legacy script binding to itself remains unsupported.
 - Pages preview/production deployment configurations identify KV, R2 and D1
   through their respective typed maps. Pages Domains identify a project by
   its name or equivalent project `id`.
