@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 
 #[derive(Default)]
 pub(super) struct Generation {
+    pub anonymize: Option<bool>,
     pub spatial_types: Option<Vec<String>>,
     pub format: Option<OutputFormat>,
     pub icon_mode: Option<IconMode>,
@@ -33,6 +34,7 @@ impl Generation {
             };
         }
         overlay!(
+            anonymize,
             spatial_types,
             format,
             icon_mode,
@@ -54,6 +56,7 @@ impl Generation {
 
     fn parse(mut table: toml::Table) -> Result<Self, String> {
         let result = Self {
+            anonymize: take(&mut table, "anonymize")?,
             spatial_types: take(&mut table, "spatial-types")?,
             format: take(&mut table, "format")?,
             icon_mode: take(&mut table, "icon-mode")?,

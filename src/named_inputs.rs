@@ -110,6 +110,7 @@ pub(crate) async fn generate_step(
         return Err(Error::InvalidOptions);
     }
     let filter = view::Options {
+        anonymize: options.anonymize,
         spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),

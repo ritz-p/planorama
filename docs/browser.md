@@ -61,6 +61,7 @@ group by state/address and return `STATE:ADDRESS`. Pass selectors unchanged.
 | `hide_relationship_legend` | Boolean, false |
 | `omit_relationship_legend` | Boolean, false; omits the entire card, overriding `hide_relationship_legend` |
 | `html_semantic_diagnostics` | Boolean, false; requires `format: "html"` |
+| `anonymize` | Boolean, false; [full identifier anonymization](anonymization.md), incompatible with either HTML diagnostics option |
 | `html_diagnostics` | Boolean, false; requires `format: "html"` |
 | `changed_only` | Boolean, false |
 | `focus` | Resource address or null |
@@ -322,10 +323,13 @@ status uses `textContent`, and generated diagrams never enter the host DOM.
 Host CSP allows inline scripts for inherited Blob/viewer JavaScript; preview CSP
 and the opaque sandbox still restrict their capabilities.
 
-Plan JSON may contain secrets. The generated diagram still contains resource
+Plan JSON may contain secrets. By default, the generated diagram still contains resource
 identifiers, and SVG may show validated route destination constants; HTML omits
 those constants. See [route display](routes.md) and [provider evidence privacy](provider-evidence.md#privacy-and-validation).
 Keeping generation local does not make the explicit download anonymous.
+Use the shared API option `anonymize: true` for pseudonymized SVG/HTML, including
+named and resumable requests. It withholds free text and original selection settings;
+source JSON is unchanged and topology remains visible. See the [export contract](anonymization.md).
 
 ## Limits and verification
 
