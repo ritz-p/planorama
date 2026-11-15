@@ -108,6 +108,7 @@ policy.change.after.exclude=[{group:{id:id(7)}}];
 const policyConfig=v.configuration.root_module.resources.find(r=>r.address===policy.address);
 policyConfig.expressions={...policyConfig.expressions,include:ref('cloudflare_zero_trust_access_group.employees.id'),require:ref('cloudflare_zero_trust_access_group.trusted.id'),exclude:ref('cloudflare_zero_trust_access_group.employees.id')};
 add('cloudflare_dns_record','portal',{id:'9'.repeat(32),zone_id:zone,name:'portal.example.invalid',type:'CNAME',content:`${id(4)}.cfargotunnel.com`,proxied:true,ttl:1},{...zoneRef,content:ref('cloudflare_zero_trust_tunnel_cloudflared.office.id')});
+add('cloudflare_ruleset','portal_waf',{id:id(9),zone_id:zone,name:'Portal WAF configuration',kind:'zone',phase:'http_request_firewall_custom',rules:[{action:'block',expression:'http.host eq "portal.example.invalid"',enabled:true}]},zoneRef);
 
  return v;
 }

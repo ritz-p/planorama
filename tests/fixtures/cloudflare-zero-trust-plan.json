@@ -325,6 +325,35 @@
         "after_unknown": {},
         "after_sensitive": {}
       }
+    },
+    {
+      "address": "cloudflare_ruleset.portal_waf",
+      "mode": "managed",
+      "type": "cloudflare_ruleset",
+      "name": "portal_waf",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "90000000-0000-4000-8000-000000000009",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "Portal WAF configuration",
+          "kind": "zone",
+          "phase": "http_request_firewall_custom",
+          "rules": [
+            {
+              "action": "block",
+              "expression": "http.host eq \"portal.example.invalid\"",
+              "enabled": true
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
     }
   ],
   "configuration": {
@@ -549,6 +578,21 @@
               "references": [
                 "cloudflare_zero_trust_tunnel_cloudflared.office.id",
                 "cloudflare_zero_trust_tunnel_cloudflared.office"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_ruleset.portal_waf",
+          "mode": "managed",
+          "type": "cloudflare_ruleset",
+          "name": "portal_waf",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
               ]
             }
           }

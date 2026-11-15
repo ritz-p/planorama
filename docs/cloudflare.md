@@ -305,6 +305,18 @@ traffic guarantees.
 
 ## Access and Tunnel
 
+WAF Ruleset Account/Zone references identify the configured administrative owner,
+not effective enforcement. The Zero Trust sample includes a Zone-owned custom WAF
+ruleset alongside an Access application, Tunnel and public DNS record for the same
+hostname. These remain distinct resources: matching `domain`, ingress hostname or
+rule-expression text never creates an Access/WAF → Worker, Pages or Tunnel edge.
+Access application policy/identity-provider references prove configuration only;
+they do not prove authentication occurred or that all paths require Access.
+Rule phase/order, expressions, exclusions, enabled state and runtime deployment
+can affect enforcement and are not inferred from the owner link. Unknown,
+sensitive, ambiguous or conflicting owners fail closed. No "protected" status is
+derived from a hostname match or a shared account/Zone.
+
 Managed DNS CNAME records can identify a Tunnel through an explicit reference
 to its `id`, with exact `<UUID>.cfargotunnel.com` content and `proxied = true`.
 The DNS Zone must be explicitly verified and its known account must match the

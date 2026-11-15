@@ -133,8 +133,9 @@ for (const format of ['svg', 'html']) {
   assert.equal(result.content, expected, `applications-named/${format}`);
 }
 console.log('Cloudflare applications native/Wasm SVG, HTML and named-state parity passed');
-for (const scenario of ['zero-trust', 'zero-trust-unknown', 'zero-trust-account', 'zero-trust-filtered', 'zero-trust-data', 'zero-trust-lifecycle', 'zero-trust-dns-unknown', 'zero-trust-dns-literal']) {
+for (const scenario of ['zero-trust', 'zero-trust-unknown', 'zero-trust-account', 'zero-trust-filtered', 'zero-trust-data', 'zero-trust-lifecycle', 'zero-trust-dns-unknown', 'zero-trust-dns-literal', 'zero-trust-waf-sensitive']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-zero-trust-plan.json', 'utf8'));
+  if (scenario === 'zero-trust-waf-sensitive') plan.resource_changes[12].change.after_sensitive = {zone_id: true};
   if (scenario === 'zero-trust-dns-unknown') plan.resource_changes[11].change.after_unknown = {content: true};
   if (scenario === 'zero-trust-dns-literal') plan.configuration.root_module.resources[11].expressions.content = {constant_value: plan.resource_changes[11].change.after.content};
   if (scenario === 'zero-trust-unknown') plan.resource_changes[4].change.after_unknown = {allowed_idps: true};
