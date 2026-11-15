@@ -94,6 +94,25 @@
               "email": {
                 "email": "PRIVATE_POLICY_EMAIL"
               }
+            },
+            {
+              "group": {
+                "id": "70000000-0000-4000-8000-000000000007"
+              }
+            }
+          ],
+          "require": [
+            {
+              "group": {
+                "id": "80000000-0000-4000-8000-000000000008"
+              }
+            }
+          ],
+          "exclude": [
+            {
+              "group": {
+                "id": "70000000-0000-4000-8000-000000000007"
+              }
             }
           ]
         },
@@ -228,6 +247,60 @@
         "after_unknown": {},
         "after_sensitive": {}
       }
+    },
+    {
+      "address": "cloudflare_zero_trust_access_group.employees",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_access_group",
+      "name": "employees",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "70000000-0000-4000-8000-000000000007",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Employees",
+          "include": [
+            {
+              "email": {
+                "email": "PRIVATE_GROUP_EMAIL"
+              }
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zero_trust_access_group.trusted",
+      "mode": "managed",
+      "type": "cloudflare_zero_trust_access_group",
+      "name": "trusted",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "80000000-0000-4000-8000-000000000008",
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Trusted devices",
+          "include": [
+            {
+              "ip": {
+                "ip": "PRIVATE_GROUP_IP"
+              }
+            }
+          ]
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
     }
   ],
   "configuration": {
@@ -292,6 +365,24 @@
               "references": [
                 "cloudflare_account.team.id",
                 "cloudflare_account.team"
+              ]
+            },
+            "include": {
+              "references": [
+                "cloudflare_zero_trust_access_group.employees.id",
+                "cloudflare_zero_trust_access_group.employees"
+              ]
+            },
+            "require": {
+              "references": [
+                "cloudflare_zero_trust_access_group.trusted.id",
+                "cloudflare_zero_trust_access_group.trusted"
+              ]
+            },
+            "exclude": {
+              "references": [
+                "cloudflare_zero_trust_access_group.employees.id",
+                "cloudflare_zero_trust_access_group.employees"
               ]
             }
           }
@@ -400,6 +491,22 @@
               ]
             }
           }
+        },
+        {
+          "address": "cloudflare_zero_trust_access_group.employees",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_access_group",
+          "name": "employees",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zero_trust_access_group.trusted",
+          "mode": "managed",
+          "type": "cloudflare_zero_trust_access_group",
+          "name": "trusted",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
         }
       ]
     }

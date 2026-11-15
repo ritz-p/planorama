@@ -140,7 +140,7 @@ relationships, not successful deployment or runtime requests.
 ## Access and Tunnel
 
 [Zero Trust sample](../examples/cloudflare-zero-trust.svg) shows an Access
-application, identity provider, reusable policy, tunnel, configuration and
+application, identity provider, reusable policy, Access Groups, tunnel, configuration and
 routing helpers. These remain independently managed resources. Access policies
 are logical policy rows; a Tunnel virtual network is not an AWS VPC or a
 physical container.
@@ -153,6 +153,20 @@ require a matching account, including account context obtained through a proven
 Zone. The supported application fields are `allowed_idps` and `policies[].id`.
 Identity-provider sets require complete known membership. Mixed inline/reusable
 policy collections are not interpreted as verified policy associations.
+
+Reusable managed Access Policies also verify `include`, `require` and `exclude`
+Group conditions (`group.id`) with distinct labels. The pinned provider uses
+account-only reusable Policies, whereas Groups can use account or zone APIs.
+Only account-scoped Groups in the same known account are supported here; zone
+Groups and ambiguous ownership fail closed. Singleton Group data endpoints must
+have matching known `id` and `group_id`, and references must select `id`.
+Each condition set needs fully known, non-sensitive membership and complete
+explicit provenance. Literal non-Group conditions can coexist, but their payloads
+are not retained. Unknown/sensitive set masks reject the whole set because set
+positions cannot establish identity. Duplicate Group IDs also fail closed.
+Inline application policies, nested Group-to-Group conditions and authorization
+evaluation remain unsupported. The Zero Trust sample includes these three roles;
+the generated support matrix lists the Policy fields and Group endpoint contract.
 
 Tunnel configurations and routes verify `tunnel_id`; routes also verify
 `virtual_network_id`. These require a unique current endpoint, matching known

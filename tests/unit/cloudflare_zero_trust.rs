@@ -33,7 +33,7 @@ fn access_and_tunnel_references_are_configuration_not_traffic() {
         assert!(verified(&v, index, path), "{index}/{path}");
     }
     let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
-    assert_eq!(graph.nodes.len(), 9);
+    assert_eq!(graph.nodes.len(), 11);
     assert!(
         graph
             .edges
@@ -196,4 +196,137 @@ fn lifecycle_data_and_ambiguous_access_targets_preserve_boundaries() {
     old["change"]["actions"] = json!(["delete"]);
     v["resource_changes"].as_array_mut().unwrap().push(old);
     assert!(verified(&v, 4, "policies"));
+}
+
+#[test]
+fn policy_group_conditions_keep_roles_provenance_and_private_payloads_separate() {
+    let v = fixture();
+    for field in ["include", "require", "exclude"] {
+        assert!(verified(&v, 3, field));
+        let mut missing = v.clone();
+        missing["configuration"]["root_module"]["resources"][3]["expressions"][field]["references"] =
+            json!(["cloudflare_zero_trust_access_group.trusted.id"]);
+        if field != "require" {
+            assert!(!verified(&missing, 3, field));
+        }
+        let mut wrong = v.clone();
+        wrong["configuration"]["root_module"]["resources"][3]["expressions"][field]["references"] =
+            json!(["cloudflare_zero_trust_access_group.employees.name"]);
+        assert!(!verified(&wrong, 3, field));
+    }
+    let parsed = plan::parse(&v.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    assert!(!format!("{parsed:?}{graph:?}").contains("PRIVATE_"));
+    let labels: Vec<_> = graph
+        .nodes
+        .iter()
+        .find(|n| n.address == "cloudflare_zero_trust_access_policy.staff")
+        .unwrap()
+        .references
+        .iter()
+        .filter(|r| r.complete)
+        .map(|r| r.label)
+        .collect();
+    for label in [
+        "Included access groups",
+        "Required access groups",
+        "Excluded access groups",
+    ] {
+        assert!(labels.contains(&label));
+    }
+}
+
+#[test]
+fn group_endpoints_require_exact_account_identity_and_current_instances() {
+    for (field, replacement) in [
+        ("account_id", json!("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")),
+        ("account_id", Value::Null),
+        ("zone_id", json!("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb")),
+        ("id", json!("wrong")),
+    ] {
+        let mut v = fixture();
+        v["resource_changes"][9]["change"]["after"][field] = replacement;
+        assert!(!verified(&v, 3, "include"), "{field}");
+    }
+    for mask in ["after_unknown", "after_sensitive"] {
+        for field in ["account_id", "zone_id", "id"] {
+            let mut v = fixture();
+            v["resource_changes"][9]["change"][mask][field] = json!(true);
+            assert!(!verified(&v, 3, "include"), "{mask}/{field}");
+        }
+    }
+    let mut v = fixture();
+    v["resource_changes"][9]["change"]["actions"] = json!(["delete"]);
+    assert!(!verified(&v, 3, "include"));
+    let mut v = fixture();
+    let mut duplicate = v["resource_changes"][9].clone();
+    duplicate["address"] = json!("cloudflare_zero_trust_access_group.duplicate");
+    duplicate["name"] = json!("duplicate");
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(duplicate);
+    assert!(!verified(&v, 3, "include"));
+    v["resource_changes"][11]["deposed"] = json!("old");
+    v["resource_changes"][11]["change"]["actions"] = json!(["delete"]);
+    assert!(verified(&v, 3, "include"));
+}
+
+#[test]
+fn policy_condition_sets_reject_unknown_membership_and_incomplete_group_references() {
+    for field in ["include", "require", "exclude"] {
+        for mask in ["after_unknown", "after_sensitive"] {
+            for value in [json!(true), json!([{"group":{"id":true}}])] {
+                let mut v = fixture();
+                v["resource_changes"][3]["change"][mask][field] = value;
+                assert!(!verified(&v, 3, field));
+            }
+        }
+        let mut v = fixture();
+        v["resource_changes"][3]["change"]["after"][field]
+            .as_array_mut()
+            .unwrap()
+            .push(json!({"group":{"id":"unreferenced"}}));
+        assert!(!verified(&v, 3, field));
+    }
+    let mut v = fixture();
+    let row = v["resource_changes"][3]["change"]["after"]["include"][1].clone();
+    v["resource_changes"][3]["change"]["after"]["include"]
+        .as_array_mut()
+        .unwrap()
+        .push(row);
+    assert!(!verified(&v, 3, "include"));
+    let mut v = fixture();
+    v["resource_changes"][3]["change"]["after"]["include"]
+        .as_array_mut()
+        .unwrap()
+        .reverse();
+    assert!(verified(&v, 3, "include"));
+}
+
+#[test]
+fn group_data_requires_matching_alias_and_policies_remain_managed_only() {
+    let mut v = fixture();
+    for collection in [
+        "/resource_changes/9",
+        "/configuration/root_module/resources/9",
+    ] {
+        let row = v.pointer_mut(collection).unwrap();
+        row["mode"] = json!("data");
+        row["address"] = json!("data.cloudflare_zero_trust_access_group.employees");
+    }
+    let id = v["resource_changes"][9]["change"]["after"]["id"].clone();
+    v["resource_changes"][9]["change"]["after"]["group_id"] = id;
+    for field in ["include", "exclude"] {
+        v["configuration"]["root_module"]["resources"][3]["expressions"][field]["references"] =
+            json!(["data.cloudflare_zero_trust_access_group.employees.id"]);
+    }
+    assert!(verified(&v, 3, "include"));
+    for value in [Value::Null, json!("wrong")] {
+        let mut bad = v.clone();
+        bad["resource_changes"][9]["change"]["after"]["group_id"] = value;
+        assert!(!verified(&bad, 3, "include"));
+    }
+    v["resource_changes"][3]["mode"] = json!("data");
+    assert!(!verified(&v, 3, "include"));
 }

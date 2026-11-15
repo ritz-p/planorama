@@ -7,6 +7,9 @@ use crate::model::{AttributeReference, CloudflareFailure as Failure, EntityMode,
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
+        ("cloudflare_zero_trust_access_policy", "include") => Some("Included access groups"),
+        ("cloudflare_zero_trust_access_policy", "require") => Some("Required access groups"),
+        ("cloudflare_zero_trust_access_policy", "exclude") => Some("Excluded access groups"),
         ("cloudflare_zero_trust_access_application", "allowed_idps") => {
             Some("Configured identity providers")
         }
@@ -33,6 +36,25 @@ fn targets<'a>(path: &str, value: Evidence<'a>) -> Result<Vec<Target<'a>>> {
         output: "id",
     };
     match path {
+        "include" | "require" | "exclude" => {
+            field.clear()?;
+            let ids = collect(field.rows()?.into_iter().map(|row| {
+                let group = row.at("group")?;
+                if group.value.is_null() {
+                    Ok(None)
+                } else {
+                    group.text("id").map(Some)
+                }
+            }))?;
+            let ids: Vec<_> = ids.into_iter().flatten().collect();
+            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
+                return Err(Failure::IncompleteCollection);
+            }
+            Ok(ids
+                .into_iter()
+                .map(|id| target(id, "cloudflare_zero_trust_access_group"))
+                .collect())
+        }
         "allowed_idps" => {
             field.clear()?;
             Ok(field
@@ -77,6 +99,18 @@ fn verify(
         evidence,
         &targets(&r.attribute, evidence[r.target])?,
         |a, b| {
+            if nodes[b].resource_type == "cloudflare_zero_trust_access_group" {
+                let zone = evidence[b].at("zone_id")?;
+                zone.scalar()?;
+                if !zone.value.is_null() {
+                    return Err(Failure::ScopeMismatch);
+                }
+                if nodes[b].mode == EntityMode::Data
+                    && evidence[b].text("group_id")? != evidence[b].text("id")?
+                {
+                    return Err(Failure::IdentityMismatch);
+                }
+            }
             if nodes[b].resource_type == "cloudflare_zero_trust_access_identity_provider" {
                 if let Some(zone) = nodes[b]
                     .cloudflare_scope

@@ -21,6 +21,9 @@ fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
         "cloudflare_r2_bucket" => "Known matching id/name, account and jurisdiction",
         "cloudflare_workers_kv_namespace" => "Account-scoped namespace ID",
         "cloudflare_d1_database" => "Known matching id/uuid, matching account",
+        "cloudflare_zero_trust_access_group" => {
+            "Account-scoped id; data id/group_id must agree; no zone scope"
+        }
         "cloudflare_zero_trust_access_identity_provider" => "ID with compatible account/zone scope",
         "cloudflare_zero_trust_access_policy"
         | "cloudflare_zero_trust_tunnel_cloudflared"
