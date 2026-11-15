@@ -55,7 +55,7 @@ bindings.push({type:'service',name:'BACKEND',service:'backend'},{type:'service',
 bindings.push({type:'hyperdrive',name:'DATABASE',id:'77777777-7777-4777-8777-777777777777'});
 const bindingRefs={references:[...storageRefs.references,...ref('cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name','cloudflare_hyperdrive_config.database.id').references]};
 add('cloudflare_worker_version','api',{account_id:account,id:version,worker_id:worker,bindings,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_WORKER_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.api.id'),bindings:bindingRefs});
-add('cloudflare_workers_deployment','api',{account_id:account,id:'deployment',script_name:'api',strategy:'percentage',versions:[{version_id:version,percentage:100}]},{...admin,script_name:ref('cloudflare_worker.api.name'),versions:ref('cloudflare_worker_version.api.id')});
+add('cloudflare_workers_deployment','api',{account_id:account,id:'deployment',script_name:'api',strategy:'percentage',versions:[{version_id:version,percentage:75},{version_id:'88888888-8888-4888-8888-888888888888',percentage:25}]},{...admin,script_name:ref('cloudflare_worker.api.name'),versions:ref('cloudflare_worker_version.api.id','cloudflare_worker_version.canary.id')});
 add('cloudflare_workers_script','legacy',{account_id:account,id:'legacy',script_name:'legacy',content:'PRIVATE_WORKER_CODE',bindings},{...admin,bindings:bindingRefs});
 add('cloudflare_workers_route','api',{id:'5'.repeat(32),zone_id:zone,pattern:'api.example.invalid/*',script:'api'},{zone_id:ref('cloudflare_zone.example.id'),script:ref('cloudflare_worker.api.name')});
 add('cloudflare_workers_custom_domain','legacy',{id:'6'.repeat(32),account_id:account,hostname:'legacy.example.invalid',service:'legacy',zone_id:zone},{...admin,service:ref('cloudflare_workers_script.legacy.id'),zone_id:ref('cloudflare_zone.example.id')});
@@ -65,6 +65,7 @@ add('cloudflare_worker','backend',{account_id:account,id:'90000000-0000-4000-800
 add('cloudflare_workers_script','downstream',{account_id:account,id:'downstream',script_name:'downstream',content:'PRIVATE_DOWNSTREAM_CODE'},admin);
 add('cloudflare_dns_record','pages',{id:'7'.repeat(32),zone_id:zone,name:'www.example.invalid',type:'CNAME',content:'site.pages.dev',proxied:true,ttl:1},{zone_id:ref('cloudflare_zone.example.id'),content:ref('cloudflare_pages_project.site.subdomain')});
 add('cloudflare_hyperdrive_config','database',{account_id:account,id:'77777777-7777-4777-8777-777777777777',name:'database',origin:{database:'PRIVATE_DATABASE',host:'PRIVATE_ORIGIN.invalid',password:'PRIVATE_PASSWORD',scheme:'postgres',user:'PRIVATE_USER'}},admin);
+add('cloudflare_worker_version','canary',{account_id:account,id:'88888888-8888-4888-8888-888888888888',worker_id:worker,modules:[{name:'main.js',content_type:'application/javascript+module',content_base64:'PRIVATE_CANARY_CODE'}]},{...admin,worker_id:ref('cloudflare_worker.api.id')});
 
  return v;
 }

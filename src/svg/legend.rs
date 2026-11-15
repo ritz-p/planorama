@@ -110,7 +110,15 @@ impl MeasuredLegend {
         top: usize,
         hide_relationship_legend: bool,
     ) -> Self {
-        let edges: Vec<_> = graphs.into_iter().flat_map(|graph| &graph.edges).collect();
+        let graphs: Vec<_> = graphs.into_iter().collect();
+        let percentages = graphs.iter().any(|graph| {
+            graph.nodes.iter().any(|node| {
+                node.references.iter().any(|r| {
+                    r.complete && r.targets.iter().any(|t| t.configured_percentage.is_some())
+                })
+            })
+        });
+        let edges: Vec<_> = graphs.iter().flat_map(|graph| &graph.edges).collect();
         let actions: BTreeSet<Option<Action>> = edges
             .iter()
             .filter(|edge| edge.kind != EdgeKind::Containment)
@@ -177,6 +185,10 @@ impl MeasuredLegend {
             PADDING,
             false,
         );
+            if percentages {
+                content.y += 8;
+                content.text("Configured version percentages describe Terraform plan settings, not observed live traffic.", PADDING, false);
+            }
         }
         Self {
             width,

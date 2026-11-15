@@ -470,10 +470,51 @@ pub(super) fn annotate(
         for (r, valid) in refs.iter_mut().zip(results) {
             if let Some(valid) = valid {
                 proof::record(r, valid);
+                if r.service_reference_verified && r.attribute == "versions" {
+                    match percentages(r, evidence) {
+                        Ok(values) => r.cloudflare_percentages = values,
+                        Err(failure) => proof::record(r, Err(failure)),
+                    }
+                }
             }
         }
     }
     reject_dlq_cycles(refs);
+}
+
+fn percentages(
+    r: &AttributeReference,
+    evidence: &[Evidence<'_>],
+) -> Result<std::collections::BTreeMap<usize, String>> {
+    let values: std::collections::BTreeMap<_, _> = evidence[r.target]
+        .at("versions")?
+        .rows()?
+        .into_iter()
+        .map(|row| {
+            let id = row.text("version_id")?;
+            let percentage = row.at("percentage")?;
+            percentage.scalar()?;
+            let value = percentage.value.as_f64().ok_or(Failure::InvalidValue)?;
+            Ok((
+                id,
+                if value == 0.0 {
+                    "0".into()
+                } else {
+                    value.to_string()
+                },
+            ))
+        })
+        .collect::<Result<_>>()?;
+    r.sources
+        .iter()
+        .map(|&source| {
+            let id = evidence[source].text("id")?;
+            Ok((
+                source,
+                values.get(id).cloned().ok_or(Failure::IdentityMismatch)?,
+            ))
+        })
+        .collect()
 }
 
 fn reject_dlq_cycles(refs: &mut [AttributeReference]) {

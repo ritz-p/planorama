@@ -32,6 +32,9 @@ fn description(row: &Row<'_>, qualified: bool) -> String {
             if let Some(key) = &t.id.deposed_key {
                 label.push_str(&format!(" (deposed: {key})"));
             }
+            if let Some(percentage) = &t.configured_percentage {
+                label.push_str(&format!(" ({percentage}% configured)"));
+            }
             label
         },
     );

@@ -192,7 +192,13 @@ unique current identities and a known matching account:
   referenced output. A legacy Workers script's `id` is its `script_name`.
 - Deployments identify their named Worker and versions. A version's proven
   Worker must be the same endpoint as the deployment's proven Worker, and
-  known version percentages must total 100.
+  known version percentages must total 100. Only after the entire Version
+  collection and ownership proof verifies, each Version reference displays its
+  configured percentage, including 0%, and exports `configured_percentage` in
+  reference metadata. SVG/HTML use the same values and a legend distinguishes
+  plan settings from observed live traffic. Unknown/sensitive percentages,
+  invalid totals or unresolved Version ownership suppress all shares. Replacement
+  deployments use current after-values, never prior/deposed traffic estimates.
 - Routes inherit account context only from a proven Zone. Custom domains use
   their account and explicit service reference. Patterns and hostnames do not
   establish ownership.

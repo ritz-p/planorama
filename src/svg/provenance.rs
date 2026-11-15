@@ -9,6 +9,9 @@ fn reference_target(target: &crate::model::ReferenceTarget) -> serde_json::Value
     if let Some(account) = &target.account_scope {
         value["deployment_account"] = account.as_str().into();
     }
+    if let Some(percentage) = &target.configured_percentage {
+        value["configured_percentage"] = percentage.as_str().into();
+    }
     value
 }
 

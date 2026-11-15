@@ -91,8 +91,10 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
-for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal', 'applications-hyperdrive-sensitive', 'applications-pages-service-unknown']) {
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal', 'applications-hyperdrive-sensitive', 'applications-pages-service-unknown', 'applications-percentage-sensitive', 'applications-percentage-zero']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-percentage-sensitive') plan.resource_changes[7].change.after_sensitive = {versions:[{percentage:true},{}]};
+  if (scenario === 'applications-percentage-zero') {plan.resource_changes[7].change.after.versions[0].percentage=0;plan.resource_changes[7].change.after.versions[1].percentage=100;}
   if (scenario === 'applications-pages-service-unknown') plan.resource_changes[11].change.after_unknown = {deployment_configs: {production: {services: {BACKEND: {service: true}}}}};
   if (scenario === 'applications-hyperdrive-sensitive') plan.resource_changes[16].change.after_sensitive = {id: true};
   if (scenario === 'applications-cname-unknown') plan.resource_changes[15].change.after_unknown = {content: true};

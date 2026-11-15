@@ -45,7 +45,7 @@ fn application_storage_and_version_contracts_are_explicit() {
         assert!(verified(&v, index, path), "{index}/{path}");
     }
     let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
-    assert_eq!(graph.nodes.len(), 17);
+    assert_eq!(graph.nodes.len(), 18);
     assert!(!format!("{graph:?}").contains("PRIVATE_"));
     assert!(
         graph
@@ -284,8 +284,8 @@ fn service_bindings_require_known_unqualified_names_and_compatible_current_endpo
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 6, "bindings"));
-    v["resource_changes"][17]["deposed"] = json!("old");
-    v["resource_changes"][17]["change"]["actions"] = json!(["delete"]);
+    v["resource_changes"][18]["deposed"] = json!("old");
+    v["resource_changes"][18]["change"]["actions"] = json!(["delete"]);
     assert!(verified(&v, 6, "bindings"));
 }
 
@@ -388,7 +388,7 @@ fn dns_pages_cname_requires_typed_scoped_current_explicit_evidence() {
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 15, "content"));
-    v["resource_changes"][17]["deposed"] = json!("old");
+    v["resource_changes"][18]["deposed"] = json!("old");
     assert!(verified(&v, 15, "content"));
     let mut v = base;
     for collection in ["resource_changes", "configuration/root_module/resources"] {
@@ -526,4 +526,42 @@ fn pages_service_maps_preserve_complete_storage_and_worker_provenance() {
         .last_mut()
         .unwrap()["deposed"] = json!("old");
     assert!(verified(&v, 11, "deployment_configs"));
+}
+
+#[test]
+fn deployment_percentages_are_retained_only_after_complete_version_verification() {
+    let percentages = |v: &Value| {
+        let p = plan::parse(&v.to_string()).unwrap();
+        p.attributes
+            .iter()
+            .find(|r| {
+                p.nodes[r.target].address == "cloudflare_workers_deployment.api"
+                    && r.attribute == "versions"
+            })
+            .unwrap()
+            .cloudflare_percentages
+            .values()
+            .cloned()
+            .collect::<Vec<_>>()
+    };
+    let base = fixture();
+    let mut expected = percentages(&base);
+    expected.sort();
+    assert_eq!(expected, ["25", "75"]);
+    for section in ["after_unknown", "after_sensitive"] {
+        let mut v = base.clone();
+        v["resource_changes"][7]["change"][section] = json!({"versions":[{"percentage":true},{}]});
+        assert!(percentages(&v).is_empty());
+    }
+    let mut v = base.clone();
+    v["resource_changes"][7]["change"]["after"]["versions"][0]["percentage"] = json!(0);
+    v["resource_changes"][7]["change"]["after"]["versions"][1]["percentage"] = json!(100);
+    v["resource_changes"][7]["change"]["actions"] = json!(["delete", "create"]);
+    let values = percentages(&v);
+    assert!(values.contains(&"0".into()) && values.contains(&"100".into()));
+    v["resource_changes"][7]["change"]["after"]["versions"][1]["percentage"] = json!(90);
+    assert!(percentages(&v).is_empty());
+    let mut v = base;
+    v["resource_changes"][17]["change"]["after_unknown"]["worker_id"] = json!(true);
+    assert!(percentages(&v).is_empty());
 }

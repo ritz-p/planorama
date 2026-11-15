@@ -12,6 +12,7 @@ pub struct StateOutput {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AttributeReference {
+    pub cloudflare_percentages: std::collections::BTreeMap<usize, String>,
     pub cloudflare_failure: Option<super::CloudflareFailure>,
     pub indexed_block_lengths: Vec<usize>,
     pub target: usize,

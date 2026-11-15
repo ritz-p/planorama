@@ -101,6 +101,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             label: "Scaling policy",
             attribute: ATTRIBUTE.into(),
             targets: vec![ReferenceTarget {
+                configured_percentage: None,
                 account_scope: None,
                 state: None,
                 id: policy.entity.provenance[0].clone(),

@@ -136,6 +136,7 @@ pub(crate) async fn render_step(
                 label: "References",
                 attribute: format!("{remote}.outputs.{output}"),
                 targets: vec![crate::model::ReferenceTarget {
+                    configured_percentage: None,
                     account_scope: None,
                     state: Some(edge.from.state.clone()),
                     id: crate::model::TerraformEntityId {
