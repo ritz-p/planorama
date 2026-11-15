@@ -10,6 +10,7 @@ Terraform language feature or provider release.
 | Resource region override | Terraform 1.9.8 and 1.16.6 / AWS 6.0.0; Terraform 1.9.8 / AWS 6.70.0 | VPC, Subnet, CloudWatch Log Group and the [static evidence contract](aws.md#deployment-scopes) |
 | Saved-plan provider evidence | Exact pairs in the [archive and account contract](provider-evidence.md) | Independently verified archives and authentication schemas |
 | Cloudflare schema and synthetic JSON | Terraform Core 1.9.8 / Cloudflare Provider 5.28.1 | [Pinned schema, synthetic fixtures and Core attribute-shape probe](cloudflare.md#reproduction-and-evidence); not captured Cloudflare deployments or saved-plan authentication evidence |
+| Cloudflare Provider-generated plan JSON | Terraform Core 1.9.8 / Cloudflare Provider 5.28.1 | [Create, update, requested replacement and data-source captures](cloudflare.md#provider-generated-plan-captures); artificial seed state and loopback HTTP data, no live API, apply, refresh or authentication verification |
 
 Fixed Core archives and checksums are pinned in
 [`matrix.json`](../tests/fixtures/compatibility/matrix.json), which also selects

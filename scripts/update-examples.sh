@@ -32,6 +32,10 @@ while IFS= read -r output || [ -n "$output" ]; do
         examples/region-overrides.svg)
             "$binary" tests/fixtures/aws-region-overrides/plan.json -o "$output"
             ;;
+        examples/cloudflare-captured-create.svg|examples/cloudflare-captured-update.svg)
+            name=${output#examples/cloudflare-captured-}
+            "$binary" "tests/fixtures/cloudflare-captured/${name%.svg}.json" -o "$output"
+            ;;
         examples/relationship-legend-hidden.svg)
             "$binary" tests/fixtures/routes-plan.json --hide-relationship-legend -o "$output"
             ;;

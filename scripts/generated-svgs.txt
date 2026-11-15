@@ -188,3 +188,5 @@ examples/cloudflare-dns.svg
 examples/cloudflare-edge.svg
 examples/cloudflare-applications.svg
 examples/cloudflare-zero-trust.svg
+examples/cloudflare-captured-create.svg
+examples/cloudflare-captured-update.svg
