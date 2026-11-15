@@ -626,6 +626,14 @@ fn render_with_index(
             );
             svg.push_str(&annotation);
         }
+        if let Some(target) = crate::view::scope::target(node) {
+            for (line, text) in crate::view::text::wrap(&target, metrics.previous_line_limit)
+                .iter()
+                .enumerate()
+            {
+                writeln!(svg, r##"<text data-deployment-target="true" x="{}" y="{}" font-size="11" fill="#334155" xml:space="preserve">{}</text>"##, x + 12, y + metrics.target_y + line * 18, escape(text)).unwrap();
+            }
+        }
         svg.push_str(&references::render(
             graph,
             node,

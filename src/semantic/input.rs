@@ -90,6 +90,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                     .collect(),
                 entity: {
                     let mut entity = crate::model::ArchitectureEntity::terraform(fact.into());
+                    entity.cloudflare_scope = fact.cloudflare_scope.clone();
                     entity.represented_account = fact.represented_account.clone();
                     entity.scope = crate::provider::scope(fact);
                     entity
@@ -115,6 +116,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
     };
     crate::provider::aws::organization_policies::facts(plan, &mut graph);
     crate::provider::aws::encryption::facts(plan, &mut graph);
+    crate::provider::cloudflare::facts(plan, &mut graph);
     graph.relationships =
         super::relationships::collect(&graph, &super::relationships::deployments(&graph.nodes));
     graph

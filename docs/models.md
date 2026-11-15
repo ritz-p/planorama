@@ -9,6 +9,12 @@ address remain distinct. Before/after values and sensitive import identities are
 not stored as arbitrary values. Organizations policy types retain only an allowlisted
 static label for SVG/HTML; unknown values are discarded. Collection/scalar identity
 proofs are boolean facts, not raw values.
+Cloudflare retains only allowlisted Account/Zone administration identifiers in
+`CloudflareScope`, separate from AWS `DeploymentScope`. Its typed reference
+proofs check transient values against complete attribute-level provenance;
+configuration payloads and resource identity strings are not retained. These
+proofs do not create physical containment or inferred traffic. See the
+[Cloudflare contracts](cloudflare.md).
 Subscription endpoint evidence similarly retains only ARN equality and a boolean
 protocol/type compatibility proof. Event-source mappings also retain a boolean
 function-name/ARN equality proof. EventBridge targets retain a boolean Rule-name
@@ -116,6 +122,9 @@ current objects. Two-part source names receive the `registry.terraform.io/` pref
 Terraform's built-in provider is recognized only by the canonical source
 `terraform.io/builtin/terraform`. `hashicorp/terraform`, `builtin/terraform` and
 sources on other hosts do not identify that provider.
+Cloudflare similarly requires the canonical source
+`registry.terraform.io/cloudflare/cloudflare`; `cloudflare_` spelling alone never
+infers that provider or its resource semantics.
 
 Only legacy inputs with no provider source or configuration binding infer AWS
 from `aws_` types, or `InferredTerraform` from the exact types `terraform_data`

@@ -87,6 +87,33 @@ inventories, and stale results cannot replace newer ones. Unsupported input form
 include state JSON, event streams, binary plans and provider evidence; use the CLI
 for Terraform execution and configuration/preset files.
 
+### Export and import settings
+
+**Export settings** downloads `planorama-settings.json`; **Import settings**
+reads it explicitly. Choose the plan files and state names first, then import:
+changing inputs afterwards follows the existing rule of clearing module/focus
+selectors. Import retains selectors absent from completed inventories; generation
+still validates them against the selected inputs.
+
+The version 1 envelope is `{"schema_version":1,"settings":{...}}`. `settings`
+uses the sample UI option names above, excluding API-only remote-state mappings
+and memory budgets. Omitted fields use defaults. False values, empty arrays,
+duplicate module selectors, exact quoted/indexed selectors and explicit zero
+depth survive export/import. Spatial types use the shared generated allowlist.
+This browser JSON format is not a CLI TOML preset.
+
+Files are limited to 64 KiB of UTF-8 JSON. Unknown versions/keys, invalid types,
+unsupported values and incompatible options are rejected before updating any
+settings. Successful import uses the same update path as Reset: it cancels
+pending reads/Workers and clears stale output. Invalid files leave settings and
+active generation intact. Editing settings, replacing inputs, Reset, Cancel or
+starting generation supersedes an in-flight settings read.
+
+Only generation settings are saved, never plan contents, file paths, generated
+diagrams, diagnostics or inventories. Module/focus selectors can contain
+identifiers. Export/import does not use persistent browser storage or external
+communication.
+
 ## Input summaries
 
 Wasm `inspect_input_summary(jsonString)` and

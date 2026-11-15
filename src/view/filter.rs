@@ -50,7 +50,14 @@ fn placement_available(
     let node = &graph.nodes[child];
     if matches!(
         node.resource_type.as_str(),
-        "aws_docdb_cluster"
+        "aws_redshift_cluster"
+            | "aws_imagebuilder_infrastructure_configuration"
+            | "aws_networkfirewall_vpc_endpoint_association"
+            | "aws_networkmonitor_probe"
+            | "aws_directory_service_directory"
+            | "aws_directory_service_region"
+            | "aws_redshift_endpoint_access"
+            | "aws_docdb_cluster"
             | "aws_neptune_cluster"
             | "aws_dms_replication_instance"
             | "aws_memorydb_cluster"
@@ -92,6 +99,11 @@ fn placement_available(
             | "aws_redshiftserverless_endpoint_access"
             | "aws_apprunner_vpc_connector"
             | "aws_opensearchserverless_vpc_endpoint"
+            | "aws_osis_pipeline"
+            | "aws_osis_pipeline_endpoint"
+            | "aws_glue_connection"
+            | "aws_glue_dev_endpoint"
+            | "aws_transfer_web_app"
     ) {
         return true;
     }
@@ -362,17 +374,23 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                 .filter(|(i, _)| remap.contains_key(i))
                 .map(|(_, n)| {
                     let mut node = n.clone();
-                    node.service_name = match options.icon_mode {
-                        crate::icons::IconMode::Icon => (crate::icons::for_node(n).is_none()
-                            && n.provider.is_aws()
-                            && n.mode == crate::model::EntityMode::Managed)
-                            .then(|| crate::provider::aws::service_name(&n.resource_type))
-                            .flatten(),
-                        crate::icons::IconMode::ServiceName => {
-                            if n.provider.is_aws() && n.mode == crate::model::EntityMode::Managed {
-                                crate::provider::aws::service_name(&n.resource_type)
-                            } else {
-                                crate::icons::for_node(n).map(|icon| icon.service_name())
+                    node.service_name = if n.provider.is_cloudflare() {
+                        crate::provider::cloudflare::service_name(&n.resource_type, n.mode)
+                    } else {
+                        match options.icon_mode {
+                            crate::icons::IconMode::Icon => (crate::icons::for_node(n).is_none()
+                                && n.provider.is_aws()
+                                && n.mode == crate::model::EntityMode::Managed)
+                                .then(|| crate::provider::aws::service_name(&n.resource_type))
+                                .flatten(),
+                            crate::icons::IconMode::ServiceName => {
+                                if n.provider.is_aws()
+                                    && n.mode == crate::model::EntityMode::Managed
+                                {
+                                    crate::provider::aws::service_name(&n.resource_type)
+                                } else {
+                                    crate::icons::for_node(n).map(|icon| icon.service_name())
+                                }
                             }
                         }
                     };

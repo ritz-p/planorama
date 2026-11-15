@@ -65,6 +65,10 @@ impl ProviderIdentity {
         self.source() == Some("registry.terraform.io/hashicorp/aws")
     }
 
+    pub fn is_cloudflare(&self) -> bool {
+        self.source() == Some("registry.terraform.io/cloudflare/cloudflare")
+    }
+
     pub fn is_terraform(&self) -> bool {
         self.source() == Some("terraform.io/builtin/terraform")
     }

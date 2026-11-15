@@ -1,0 +1,383 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.a",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.b",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-b",
+          "vpc_id": "vpc-main",
+          "availability_zone": "us-east-1b"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.connector",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-connector",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.pipeline",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/ingestion"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.buffer",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/buffer"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.connection",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:connection-abcdef",
+          "name": "connection"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_security_configuration.encrypted",
+      "type": "aws_glue_security_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "encrypted"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_connection.shared",
+      "type": "aws_glue_connection",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "shared",
+          "catalog_id": "123456789012",
+          "connection_type": "JDBC",
+          "physical_connection_requirements": [
+            {
+              "subnet_id": "subnet-a",
+              "security_group_id_list": [
+                "sg-connector"
+              ],
+              "availability_zone": "us-east-1a"
+            }
+          ],
+          "authentication_configuration": [
+            {
+              "authentication_type": "BASIC",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/buffer",
+              "secret_arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:connection-abcdef",
+              "basic_authentication_credentials": [
+                {
+                  "username": "PRIVATE_USER",
+                  "password": "PRIVATE_PASSWORD"
+                }
+              ]
+            }
+          ],
+          "connection_properties": {
+            "JDBC_CONNECTION_URL": "PRIVATE_URL",
+            "PASSWORD": "PRIVATE_PASSWORD"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_glue_dev_endpoint.development",
+      "type": "aws_glue_dev_endpoint",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "development",
+          "role_arn": "arn:aws:iam::123456789012:role/ingestion",
+          "security_configuration": "encrypted",
+          "subnet_id": "subnet-a",
+          "security_group_ids": [
+            "sg-connector"
+          ],
+          "vpc_id": "vpc-main",
+          "private_address": "PRIVATE_IP",
+          "public_keys": [
+            "PRIVATE_KEY"
+          ],
+          "arguments": {
+            "opaque": "PRIVATE_ARGUMENT"
+          },
+          "extra_jars_s3_path": "PRIVATE_URI"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog.consumer",
+      "type": "aws_glue_catalog",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "consumer",
+          "catalog_id": "123456789012",
+          "federated_catalog": [
+            {
+              "connection_name": "shared",
+              "identifier": "PRIVATE_IDENTIFIER"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.a",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.b",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.connector",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.pipeline",
+          "type": "aws_iam_role",
+          "name": "pipeline",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.buffer",
+          "type": "aws_kms_key",
+          "name": "buffer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.connection",
+          "type": "aws_secretsmanager_secret",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_security_configuration.encrypted",
+          "type": "aws_glue_security_configuration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_connection.shared",
+          "type": "aws_glue_connection",
+          "provider_config_key": "aws",
+          "expressions": {
+            "physical_connection_requirements": [
+              {
+                "subnet_id": {
+                  "references": [
+                    "aws_subnet.a.id"
+                  ]
+                },
+                "security_group_id_list": {
+                  "references": [
+                    "aws_security_group.connector.id"
+                  ]
+                }
+              }
+            ],
+            "authentication_configuration": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.buffer.arn"
+                  ]
+                },
+                "secret_arn": {
+                  "references": [
+                    "aws_secretsmanager_secret.connection.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_dev_endpoint.development",
+          "type": "aws_glue_dev_endpoint",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.pipeline.arn"
+              ]
+            },
+            "security_configuration": {
+              "references": [
+                "aws_glue_security_configuration.encrypted.name"
+              ]
+            },
+            "subnet_id": {
+              "references": [
+                "aws_subnet.a.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.connector.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_glue_catalog.consumer",
+          "type": "aws_glue_catalog",
+          "provider_config_key": "aws",
+          "expressions": {
+            "federated_catalog": [
+              {
+                "connection_name": {
+                  "references": [
+                    "aws_glue_connection.shared.name"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

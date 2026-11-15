@@ -129,6 +129,8 @@ pub(super) fn lower(raw: &Input) -> Graph {
             super::ipam::association(raw, index)
         } else if node.resource_type == "aws_appsync_domain_name_api_association" {
             super::appsync_domains::association(raw, index)
+        } else if node.resource_type == "aws_elb_attachment" {
+            super::classic_elb::association(raw, index)
         } else if node.resource_type == "aws_opensearch_package_association" {
             super::search::association(raw, index)
         } else if super::aliases::node_type(node) == "aws_lb_target_group_attachment" {

@@ -1,0 +1,189 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.crl",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "crl-storage",
+          "bucket": "crl-storage"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate_authority.authority",
+      "type": "aws_acmpca_certificate_authority",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/12345678-1234-1234-1234-123456789012",
+          "type": "ROOT",
+          "usage_mode": "GENERAL_PURPOSE",
+          "certificate_authority_configuration": [
+            {
+              "key_algorithm": "RSA_2048",
+              "signing_algorithm": "SHA256WITHRSA",
+              "subject": [
+                {
+                  "common_name": "PRIVATE_SUBJECT"
+                }
+              ]
+            }
+          ],
+          "revocation_configuration": [
+            {
+              "crl_configuration": [
+                {
+                  "enabled": true,
+                  "s3_bucket_name": "crl-storage",
+                  "custom_cname": "PRIVATE_CNAME"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_permission.renewal",
+      "type": "aws_acmpca_permission",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_authority_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/12345678-1234-1234-1234-123456789012",
+          "principal": "acm.amazonaws.com",
+          "source_account": "999999999999",
+          "actions": [
+            "IssueCertificate",
+            "GetCertificate"
+          ],
+          "policy": "PRIVATE_COMPUTED_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_policy.sharing",
+      "type": "aws_acmpca_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/12345678-1234-1234-1234-123456789012",
+          "policy": "{\"PRIVATE_POLICY\":\"PRIVATE_PRINCIPAL\"}"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.issued",
+      "type": "aws_acm_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_authority_arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/12345678-1234-1234-1234-123456789012",
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/issued",
+          "domain_name": "PRIVATE_DOMAIN"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.crl",
+          "type": "aws_s3_bucket",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acmpca_certificate_authority.authority",
+          "type": "aws_acmpca_certificate_authority",
+          "provider_config_key": "aws",
+          "expressions": {
+            "revocation_configuration": [
+              {
+                "crl_configuration": [
+                  {
+                    "s3_bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.crl.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_acmpca_permission.renewal",
+          "type": "aws_acmpca_permission",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_authority_arn": {
+              "references": [
+                "aws_acmpca_certificate_authority.authority.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acmpca_policy.sharing",
+          "type": "aws_acmpca_policy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_acmpca_certificate_authority.authority.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acm_certificate.issued",
+          "type": "aws_acm_certificate",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_authority_arn": {
+              "references": [
+                "aws_acmpca_certificate_authority.authority.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

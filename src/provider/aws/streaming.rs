@@ -119,7 +119,7 @@ fn at<'a>(value: &'a Value, unknown: &'a Value, path: &[&str]) -> Option<(&'a Va
     at(&value[path[0]], &unknown[path[0]], &path[1..])
 }
 
-fn scalar<'a>(value: &'a Value, unknown: &'a Value, path: &str) -> Option<&'a str> {
+pub(super) fn scalar<'a>(value: &'a Value, unknown: &'a Value, path: &str) -> Option<&'a str> {
     let (value, mask) = at(value, unknown, &path.split('.').collect::<Vec<_>>())?;
     matches!(mask, Value::Null | Value::Bool(false))
         .then(|| value.as_str().filter(|s| !s.is_empty()))

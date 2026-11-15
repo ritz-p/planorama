@@ -969,3 +969,76 @@ Delegation signer records navigate to explicit registered/domain resource
 `domain_name` outputs. Registrations and KMS keys remain independent. Matching
 domain names, computed hosted-zone IDs, public keys, DNSKEY/DS records and signing
 status do not establish relationships, ownership or cryptographic validity.
+
+## Classic ELB (#906)
+
+`aws_elb` has an independent Spatial card. Complete configured subnet and security
+group ID sets establish VPC context only when every endpoint explicitly references
+the same VPC. Instance ID sets remain references. Availability zones, generated
+security groups and EC2-Classic settings do not manufacture network membership.
+`aws_elb_attachment` associates an exact Classic ELB name/id with an instance ID,
+retaining the attachment's action and identity.
+
+Listener certificate ARNs require correlated known HTTPS/SSL listeners (ACM or
+IAM server certificate). Log bucket name/id references require an explicitly
+known enabled access-log block. Optional/computed values without configuration
+references do not establish relationships.
+
+Cookie, SSL negotiation, proxy protocol and load-balancer policy helpers reference
+Classic ELB names/ids, never ELBv2 ARNs. Listener/backend port selectors must match
+known ports on that ELB; cookie policies require HTTP/HTTPS, SSL negotiation
+HTTPS/SSL and proxy protocol TCP/SSL. Complete `policy_names` sets reference
+explicit policy-name outputs whose independently verified owner is the same ELB.
+AWS predefined policy names alone remain unresolved. Only uniquely verified
+helpers receive service-owner navigation; shared certificates/buckets remain
+independent. Regions/accounts and selected current identities are rechecked.
+No cookie values, policy attributes, health or traffic interpretation is exposed.
+
+## Network Manager topology (#788)
+
+Global networks, core networks, sites, devices and links have independent Spatial
+cards in global management scope. Core/site/device/link and topology helpers
+reference exact `global_network_id` outputs. Device/link site references,
+connection device/link pairs and association device/link references require
+explicit ID references whose endpoints independently resolve the same global
+network. Equal strings alone do not establish membership.
+
+Device `aws_location.subnet_arn` requires a single known location block without
+a conflicting zone and an explicit managed subnet ARN. Customer gateway,
+transit-gateway Connect peer and transit-gateway registration helpers use their
+respective endpoint ARN outputs. Regional endpoints require independent known
+region and compatible account evidence; they keep their own scope. Named-state,
+current/deposed and selection boundaries remain intact.
+
+These relationships do not embed devices in sites or synthesize VPC containment.
+Physical address, zone labels, coordinates, BGP, policy data and computed network
+edges are not interpreted or displayed.
+
+## Cloud WAN attachments (#789)
+
+Core policy, prefix-list, routing-label, Connect, Direct Connect gateway, VPN,
+peering and VPC attachment helpers reference configured core-network IDs.
+Prefix lists, gateways and VPNs use their exact managed ARN outputs. Direct
+Connect edge locations must be a complete known nonempty list; these coordinates
+are not interpreted as containers or routes.
+
+VPC attachment VPC/subnet ARN references require a complete subnet set whose
+explicit VPC-ID references identify that same VPC. Connect transport must be a
+VPC attachment on the same core, with known GRE/NO_ENCAP protocol and configured
+edge location matching independent VPC/subnet regions. Connect peers reference
+`connect_attachment_id` via `id` or `attachment_id`; subnet ARN is accepted only
+for NO_ENCAP, with the same transport VPC and region. Provider service-region
+settings never relocate the global core.
+
+Transit-gateway route-table attachments reference a peering ID and route-table
+ARN whose explicit transit-gateway ID matches the peered gateway. Routing labels
+require the same configured core as their attachment. Accepters discriminate
+CONNECT, DIRECT_CONNECT_GATEWAY, SITE_TO_SITE_VPN, TRANSIT_GATEWAY_ROUTE_TABLE and
+VPC; Connect exports `attachment_id` and `id`, while the other supported attachment
+resources export `id`. Acceptance is not ownership. Only configured paths supply
+proof; computed core IDs, edge locations and attachment metadata are not substitutes.
+
+Compatible accounts, independently known endpoint regions, complete identities,
+unknown/sensitive masks, lifecycle and state boundaries are checked. Cross-account
+or incomplete evidence remains unresolved. Policy/segment/label contents, BGP,
+addresses and runtime routing are not interpreted or summarized.

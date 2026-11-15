@@ -1,0 +1,230 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "cloudflare_account.team",
+      "mode": "managed",
+      "type": "cloudflare_account",
+      "name": "team",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "name": "Example team",
+          "standalone": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.example",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "example.invalid",
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "type": "full"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.www",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "www",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "cccccccccccccccccccccccccccccccc",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "www.example.invalid",
+          "type": "CNAME",
+          "content": "origin.example.invalid",
+          "ttl": 1,
+          "proxied": true
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone_dnssec.example",
+      "mode": "managed",
+      "type": "cloudflare_zone_dnssec",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "status": "active",
+          "key_tag": 12345,
+          "public_key": "PRIVATE_DNSSEC_PAYLOAD"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.other",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "other",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "dddddddddddddddddddddddddddddddd",
+          "name": "example.invalid",
+          "account": {
+            "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+          },
+          "type": "full"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.other",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "other",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "ffffffffffffffffffffffffffffffff",
+          "zone_id": "dddddddddddddddddddddddddddddddd",
+          "name": "www.example.invalid",
+          "type": "A",
+          "content": "192.0.2.1",
+          "ttl": 300
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "cloudflare": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare"
+      },
+      "cloudflare.other": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "alias": "other"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_account.team",
+          "type": "cloudflare_account",
+          "name": "team",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_zone.example",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account": {
+              "references": [
+                "cloudflare_account.team.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_dns_record.www",
+          "type": "cloudflare_dns_record",
+          "name": "www",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zone_dnssec.example",
+          "type": "cloudflare_zone_dnssec",
+          "name": "example",
+          "mode": "managed",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_zone.other",
+          "type": "cloudflare_zone",
+          "name": "other",
+          "mode": "managed",
+          "provider_config_key": "cloudflare.other",
+          "expressions": {}
+        },
+        {
+          "address": "cloudflare_dns_record.other",
+          "type": "cloudflare_dns_record",
+          "name": "other",
+          "mode": "managed",
+          "provider_config_key": "cloudflare.other",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.other.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

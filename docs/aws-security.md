@@ -59,6 +59,61 @@ and [installation](https://github.com/hashicorp/terraform-provider-aws/blob/v5.1
 contracts were checked against the installed schema and a Terraform 1.9.8
 offline plan.
 
+### Private CA permissions, policies and CRL storage (#1131)
+
+The pinned Provider 6.70.0
+[authority](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/acmpca_certificate_authority.html.markdown),
+[permission](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/acmpca_permission.html.markdown)
+and [policy](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/acmpca_policy.html.markdown)
+SDK contracts add these managed references:
+
+| Consumer | Configured input | Verified output |
+| --- | --- | --- |
+| Authority | `revocation_configuration.crl_configuration.s3_bucket_name` | S3 bucket `id` / `bucket`, only when CRL `enabled` is known true |
+| Permission | `certificate_authority_arn` | Authority `arn` |
+| Policy | `resource_arn` | Authority `arn` |
+
+Both revocation and CRL blocks must be singleton lists. Inputs are scalar strings,
+with unique explicit Terraform references and exact known output equality. Every
+endpoint must be current, managed and compatible in provider/account/region/state.
+Unknown, disabled, malformed, literal-only, ambiguous, deleted or deposed evidence
+keeps unresolved fallback; filtered owners never create replacement identities.
+Cross-region inference is not supported.
+
+Permissions and policies may be presented under their verified CA while retaining
+independent actions and exactly-once coverage. The CRL bucket stays independent;
+revocation configuration never owns the bucket or makes the CA a network container.
+Existing CA, certificate issuance and installation contracts remain unchanged.
+`principal`, `source_account`, policy bodies, certificate subjects, DNS/CNAMEs and
+URLs do not identify additional resources or imply permissions or revocation health.
+Runtime support defaults use `scripts/update-resource-support.sh aws_acmpca_`.
+
+## Roles Anywhere (#1143)
+
+Provider 6.70.0 [profile](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/rolesanywhere_profile.html.markdown) and
+[trust anchor](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/rolesanywhere_trust_anchor.html.markdown)
+SDK contracts support these references:
+
+| Consumer | Configured input | Verified output |
+| --- | --- | --- |
+| Profile | `role_arns` | Complete set of managed IAM role `arn` values |
+| Profile | `managed_policy_arns` | Complete set of managed IAM policy `arn` values |
+| Trust anchor | `source.source_data.acm_pca_arn` | Managed Private CA `arn`, with known `source_type = AWS_ACM_PCA` |
+
+Profiles and trust anchors remain independent regional Logical resources, even
+though the pinned schema has no resource-level region argument. Shared IAM roles
+and policies remain global. References require unique explicit Terraform provenance,
+exact known outputs, complete nonduplicate collections, current managed endpoints
+and compatible provider/account/state. Private CA references additionally require
+the same known region; global IAM references do not relocate either endpoint.
+
+Both trust-anchor blocks must be singleton lists. Unknown types, competing PEM
+content, malformed blocks and CERTIFICATE_BUNDLE keep generic fallback. Session
+policies, PEM, subjects and certificate chains are neither interpreted nor displayed.
+Unknown, literal-only, ambiguous, foreign, deleted/deposed and filtered endpoints
+retain safe unresolved/unavailable navigation. No ownership, VPC placement or
+runtime trust is inferred. Runtime support uses `scripts/update-resource-support.sh aws_rolesanywhere_`.
+
 ## Cognito
 
 `aws_cognito_user_pool`, `aws_cognito_user_pool_client` and

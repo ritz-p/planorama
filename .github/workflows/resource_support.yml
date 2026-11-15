@@ -9,6 +9,12 @@ on:
       - 'tests/fixtures/aws-inventory/**'
       - 'tests/support/aws-inventory.test.cjs'
       - 'tests/support/aws-inventory-diff.test.cjs'
+      - 'scripts/*cloudflare*'
+      - 'tests/support/cloudflare-*.test.cjs'
+      - 'tests/fixtures/cloudflare-*'
+      - 'tests/unit/cloudflare*'
+      - 'tests/fixtures/cloudflare-inventory/**'
+      - 'tests/fixtures/cloudflare-captured/**'
       - 'scripts/aws-inventory.cjs'
       - 'scripts/aws-inventory-diff.cjs'
       - 'scripts/aws-semantic-audit.cjs'
@@ -55,3 +61,13 @@ jobs:
           node --test tests/support/aws-inventory-diff.test.cjs
           node scripts/aws-semantic-audit.cjs --check
           node --test tests/support/aws-semantic-audit.test.cjs
+      - name: Check Cloudflare inventory and generated contracts
+        run: |
+          cargo test --locked --lib provider::cloudflare
+          node --test tests/support/cloudflare-*.test.cjs
+          node scripts/cloudflare-fixtures.cjs --check
+          node scripts/cloudflare-capture.cjs check
+          sh scripts/update-resource-support.sh cloudflare_
+          node scripts/update-cloudflare-types.cjs
+          cargo fmt --all --check
+          git diff --exit-code -- src/provider/cloudflare/types.rs

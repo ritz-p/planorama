@@ -6,6 +6,7 @@ const files = new Map([
   ['/', ['index.html', 'text/html']],
   ['/index.html', ['index.html', 'text/html']],
   ['/app.js', ['app.js', 'text/javascript']],
+  ['/settings.js', ['settings.js', 'text/javascript']],
   ['/worker.js', ['worker.js', 'text/javascript']],
   ['/pkg/planorama.js', ['pkg/planorama.js', 'text/javascript']],
   ['/pkg/planorama_bg.wasm', ['pkg/planorama_bg.wasm', 'application/wasm']],

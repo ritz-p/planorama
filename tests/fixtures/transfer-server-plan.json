@@ -1,0 +1,543 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.transfer",
+      "type": "aws_vpc",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.transfer",
+      "type": "aws_subnet",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-transfer",
+          "vpc_id": "vpc-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.transfer",
+      "type": "aws_security_group",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-transfer",
+          "vpc_id": "vpc-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_eip.transfer",
+      "type": "aws_eip",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "eipalloc-transfer",
+          "allocation_id": "eipalloc-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.transfer",
+      "type": "aws_acm_certificate",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:111111111111:certificate/transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.transfer",
+      "type": "aws_iam_role",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.identity",
+      "type": "aws_lambda_function",
+      "name": "identity",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:111111111111:function:identity"
+        }
+      }
+    },
+    {
+      "address": "aws_directory_service_directory.identity",
+      "type": "aws_directory_service_directory",
+      "name": "identity",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "d-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.transfer",
+      "type": "aws_cloudwatch_log_group",
+      "name": "transfer",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:111111111111:log-group:/transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_workflow.upload",
+      "type": "aws_transfer_workflow",
+      "name": "upload",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "w-upload"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_workflow.partial",
+      "type": "aws_transfer_workflow",
+      "name": "partial",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "w-partial"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc_endpoint.legacy",
+      "type": "aws_vpc_endpoint",
+      "name": "legacy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpce-legacy",
+          "vpc_endpoint_type": "Interface",
+          "vpc_id": "vpc-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_server.vpc",
+      "type": "aws_transfer_server",
+      "name": "vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_type": "VPC",
+          "ip_address_type": "IPV4",
+          "endpoint_details": [
+            {
+              "vpc_id": "vpc-transfer",
+              "subnet_ids": [
+                "subnet-transfer"
+              ],
+              "security_group_ids": [
+                "sg-transfer"
+              ],
+              "address_allocation_ids": [
+                "eipalloc-transfer"
+              ],
+              "vpc_endpoint_id": "PRIVATE_COMPUTED_ENDPOINT"
+            }
+          ],
+          "identity_provider_type": "AWS_LAMBDA",
+          "function": "arn:aws:lambda:us-east-1:111111111111:function:identity",
+          "protocols": [
+            "FTPS",
+            "SFTP"
+          ],
+          "certificate": "arn:aws:acm:us-east-1:111111111111:certificate/transfer",
+          "logging_role": "arn:aws:iam::111111111111:role/transfer",
+          "structured_log_destinations": [
+            "arn:aws:logs:us-east-1:111111111111:log-group:/transfer:*"
+          ],
+          "workflow_details": [
+            {
+              "on_upload": [
+                {
+                  "workflow_id": "w-upload",
+                  "execution_role": "arn:aws:iam::111111111111:role/transfer"
+                }
+              ],
+              "on_partial_upload": [
+                {
+                  "workflow_id": "w-partial",
+                  "execution_role": "arn:aws:iam::111111111111:role/transfer"
+                }
+              ]
+            }
+          ],
+          "host_key": "PRIVATE_HOST_KEY",
+          "pre_authentication_login_banner": "PRIVATE_BANNER"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_server.legacy",
+      "type": "aws_transfer_server",
+      "name": "legacy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_type": "VPC_ENDPOINT",
+          "endpoint_details": [
+            {
+              "vpc_endpoint_id": "vpce-legacy"
+            }
+          ],
+          "identity_provider_type": "AWS_DIRECTORY_SERVICE",
+          "directory_id": "d-transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_server.public",
+      "type": "aws_transfer_server",
+      "name": "public",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_type": "PUBLIC",
+          "identity_provider_type": "API_GATEWAY",
+          "invocation_role": "arn:aws:iam::111111111111:role/transfer",
+          "url": "PRIVATE_URL"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.transfer",
+          "type": "aws_vpc",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.transfer",
+          "type": "aws_subnet",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.transfer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.transfer",
+          "type": "aws_security_group",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.transfer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_eip.transfer",
+          "type": "aws_eip",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.transfer",
+          "type": "aws_acm_certificate",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.transfer",
+          "type": "aws_iam_role",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.identity",
+          "type": "aws_lambda_function",
+          "name": "identity",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_directory_service_directory.identity",
+          "type": "aws_directory_service_directory",
+          "name": "identity",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.transfer",
+          "type": "aws_cloudwatch_log_group",
+          "name": "transfer",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_workflow.upload",
+          "type": "aws_transfer_workflow",
+          "name": "upload",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_workflow.partial",
+          "type": "aws_transfer_workflow",
+          "name": "partial",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc_endpoint.legacy",
+          "type": "aws_vpc_endpoint",
+          "name": "legacy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.transfer.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_server.vpc",
+          "type": "aws_transfer_server",
+          "name": "vpc",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "endpoint_details": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.transfer.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.transfer.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.transfer.id"
+                  ]
+                },
+                "address_allocation_ids": {
+                  "references": [
+                    "aws_eip.transfer.allocation_id"
+                  ]
+                }
+              }
+            ],
+            "function": {
+              "references": [
+                "aws_lambda_function.identity.arn"
+              ]
+            },
+            "certificate": {
+              "references": [
+                "aws_acm_certificate.transfer.arn"
+              ]
+            },
+            "logging_role": {
+              "references": [
+                "aws_iam_role.transfer.arn"
+              ]
+            },
+            "structured_log_destinations": {
+              "references": [
+                "aws_cloudwatch_log_group.transfer.arn"
+              ]
+            },
+            "workflow_details": [
+              {
+                "on_upload": [
+                  {
+                    "workflow_id": {
+                      "references": [
+                        "aws_transfer_workflow.upload.id"
+                      ]
+                    },
+                    "execution_role": {
+                      "references": [
+                        "aws_iam_role.transfer.arn"
+                      ]
+                    }
+                  }
+                ],
+                "on_partial_upload": [
+                  {
+                    "workflow_id": {
+                      "references": [
+                        "aws_transfer_workflow.partial.id"
+                      ]
+                    },
+                    "execution_role": {
+                      "references": [
+                        "aws_iam_role.transfer.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_transfer_server.legacy",
+          "type": "aws_transfer_server",
+          "name": "legacy",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "endpoint_details": [
+              {
+                "vpc_endpoint_id": {
+                  "references": [
+                    "aws_vpc_endpoint.legacy.id"
+                  ]
+                }
+              }
+            ],
+            "directory_id": {
+              "references": [
+                "aws_directory_service_directory.identity.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_server.public",
+          "type": "aws_transfer_server",
+          "name": "public",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "invocation_role": {
+              "references": [
+                "aws_iam_role.transfer.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

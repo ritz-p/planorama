@@ -281,7 +281,7 @@ test('#715 preserves alias, collection, identity and managed/data distinctions',
  }
  assert.deepEqual(r('alb_listener_rule').dataContracts,{});
  assert.ok(r('lb_listener_rule').dataContracts.arn);
- assert.match(r('elb').placement,/Missing:.*Logical/);
+ assert.match(r('elb').placement,/Supported:.*Spatial/);
  assert.match(r('elb').references,/not an alias/);
  assert.equal(r('load_balancer_listener_policy').contracts.policy_names,'optional');
  assert.deepEqual(r('proxy_protocol_policy').shapes.instance_ports,[['set','string']]);

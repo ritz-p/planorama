@@ -196,34 +196,49 @@ pub(super) fn annotate(
         &evidence,
         &before_evidence,
     );
-    crate::provider::aws::service_references::annotate(nodes, references, &evidence);
     let mut sensitive = BTreeMap::new();
+    let mut prior_sensitive = BTreeMap::new();
     sensitivities(&plan["planned_values"]["root_module"], &mut sensitive);
-    let masks: Vec<_> = nodes
+    sensitivities(
+        &plan["prior_state"]["values"]["root_module"],
+        &mut prior_sensitive,
+    );
+    let (masks, sensitive_masks): (Vec<_>, Vec<_>) = nodes
         .iter()
         .zip(&evidence)
         .map(|(node, (_, unknown))| {
             let change = changes.get(&(node.address.as_str(), node.deposed_key.as_deref()));
-            let mask = merge_masks(
-                unknown,
-                change
-                    .map(|c| &c["change"]["after_sensitive"])
-                    .unwrap_or(&Value::Null),
-            );
-            merge_masks(
-                &mask,
-                sensitive
-                    .get(node.address.as_str())
-                    .copied()
-                    .unwrap_or(&Value::Null),
+            let source_sensitive = if node.mode == crate::model::EntityMode::Data
+                && !values.contains_key(node.address.as_str())
+                && change.and_then(|c| c["change"].get("after")).is_none()
+            {
+                &prior_sensitive
+            } else {
+                &sensitive
+            };
+            let change_sensitive = change
+                .map(|c| &c["change"]["after_sensitive"])
+                .unwrap_or(&Value::Null);
+            let source_sensitive = source_sensitive
+                .get(node.address.as_str())
+                .copied()
+                .unwrap_or(&Value::Null);
+            (
+                merge_masks(&merge_masks(unknown, change_sensitive), source_sensitive),
+                if node.provider.is_cloudflare() {
+                    merge_masks(change_sensitive, source_sensitive)
+                } else {
+                    Value::Null
+                },
             )
         })
-        .collect();
+        .unzip();
     let elbv2_evidence: Vec<_> = evidence
         .iter()
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::iam_credentials::annotate(nodes, references, &elbv2_evidence);
@@ -252,6 +267,12 @@ pub(super) fn annotate(
     crate::provider::aws::s3files::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::vpclattice::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::direct_connect::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::rds_auxiliary::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::classic_elb::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::networkmanager::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::cloudwan::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::oam::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::transfer_server::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::xray_encryption::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::synthetics::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::rum::annotate(nodes, references, &elbv2_evidence);
@@ -276,6 +297,20 @@ pub(super) fn annotate(
     crate::provider::aws::cloudwatch_delivery::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::flow_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::lambda_events::annotate(nodes, references, &elbv2_evidence);
+    let cloudflare_evidence: Vec<_> = evidence
+        .iter()
+        .zip(&masks)
+        .zip(&sensitive_masks)
+        .map(
+            |(((value, unknown), mask), sensitive)| crate::provider::cloudflare::Evidence {
+                value,
+                unknown,
+                mask,
+                sensitive,
+            },
+        )
+        .collect();
+    crate::provider::cloudflare::annotate(nodes, references, &cloudflare_evidence);
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()

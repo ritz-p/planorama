@@ -1,4 +1,5 @@
 pub(crate) mod aws;
+pub(crate) mod cloudflare;
 pub(crate) mod terraform;
 
 pub(crate) fn has_indexed_service_references(
@@ -6,8 +7,27 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::s3vectors::resource(resource)
+        && (aws::agentcore_services::resource(resource)
+            || aws::agentcore_gateway::resource(resource)
+            || aws::agentcore_runtime::resource(resource)
+            || aws::datazone::resource(resource)
+            || aws::cognito::resource(resource)
+            || aws::directory_service::resource(resource)
+            || aws::network_monitors::resource(resource)
+            || aws::networkfirewall_extended::resource(resource)
+            || aws::imagebuilder_distribution::resource(resource)
+            || aws::imagebuilder::resource(resource)
+            || aws::transfer_webapp::resource(resource)
+            || aws::transfer_as2::resource(resource)
+            || aws::rolesanywhere::resource(resource)
+            || aws::private_ca_references::resource(resource)
+            || aws::glue_workloads::resource(resource)
+            || aws::glue_catalog::resource(resource)
+            || aws::s3vectors::resource(resource)
             || aws::vpclattice::resource(resource)
+            || aws::networkmanager::resource(resource)
+            || aws::transfer_server::resource(resource)
+            || aws::classic_elb::resource(resource)
             || aws::synthetics::resource(resource)
             || aws::rum::resource(resource)
             || aws::s3tables::resource(resource)
@@ -34,8 +54,27 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::s3vectors::indexed(resource, attribute)
+        && (aws::agentcore_services::indexed(resource, attribute)
+            || aws::agentcore_gateway::indexed(resource, attribute)
+            || aws::agentcore_runtime::indexed(resource, attribute)
+            || aws::datazone::indexed(resource, attribute)
+            || aws::cognito::indexed(resource, attribute)
+            || aws::directory_service::indexed(resource, attribute)
+            || aws::network_monitors::indexed(resource, attribute)
+            || aws::networkfirewall_extended::indexed(resource, attribute)
+            || aws::imagebuilder_distribution::indexed(resource, attribute)
+            || aws::imagebuilder::indexed(resource, attribute)
+            || aws::transfer_webapp::indexed(resource, attribute)
+            || aws::transfer_as2::indexed(resource, attribute)
+            || aws::rolesanywhere::indexed(resource, attribute)
+            || aws::private_ca_references::indexed(resource, attribute)
+            || aws::glue_workloads::indexed(resource, attribute)
+            || aws::glue_catalog::indexed(resource, attribute)
+            || aws::s3vectors::indexed(resource, attribute)
             || aws::vpclattice::indexed(resource, attribute)
+            || aws::networkmanager::indexed(resource, attribute)
+            || aws::transfer_server::indexed(resource, attribute)
+            || aws::classic_elb::indexed(resource, attribute)
             || aws::synthetics::indexed(resource, attribute)
             || aws::rum::indexed(resource, attribute)
             || aws::s3tables::indexed(resource, attribute)
@@ -75,6 +114,8 @@ pub(crate) fn placement(
 ) -> crate::model::Placement {
     if provider.is_aws() {
         aws::placement(resource_type)
+    } else if provider.is_cloudflare() {
+        cloudflare::placement(resource_type, crate::model::EntityMode::Managed)
     } else {
         crate::model::Placement::Unresolved
     }
@@ -91,7 +132,9 @@ pub(crate) fn scope(
 }
 
 pub(crate) fn entity_placement(entity: &crate::model::TerraformEntity) -> crate::model::Placement {
-    if entity.provider.is_aws() && entity.mode == crate::model::EntityMode::Data {
+    if entity.provider.is_cloudflare() {
+        cloudflare::placement(&entity.resource_type, entity.mode)
+    } else if entity.provider.is_aws() && entity.mode == crate::model::EntityMode::Data {
         aws::data_placement(&entity.resource_type)
     } else {
         placement(&entity.provider, &entity.resource_type)
@@ -104,6 +147,8 @@ pub(crate) fn classify(
 ) -> crate::model::ResourceRole {
     if provider.is_aws() {
         aws::classify(resource_type)
+    } else if provider.is_cloudflare() {
+        cloudflare::classify(resource_type, crate::model::EntityMode::Managed)
     } else {
         crate::model::ResourceRole::Unknown
     }
@@ -112,5 +157,7 @@ pub(crate) fn transform(input: crate::semantic::Input) -> crate::model::Graph {
     aws::transform(input)
 }
 pub(crate) fn diagnostics(plan: &crate::model::TerraformPlan) -> Vec<crate::model::Diagnostic> {
-    aws::diagnostics::collect(plan)
+    let mut diagnostics = aws::diagnostics::collect(plan);
+    diagnostics.extend(cloudflare::diagnostics(plan));
+    diagnostics
 }

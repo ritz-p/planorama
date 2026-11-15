@@ -50,6 +50,9 @@ fn resource_lines(node: &Node, address_format: super::AddressFormat) -> Vec<(Str
         crate::view::scope::label(node.entity.scope.as_ref(), &node.provider),
         false,
     ));
+    if let Some(target) = crate::view::scope::target(node) {
+        lines.push((target, false));
+    }
     match node.role {
         crate::model::ResourceRole::Identity => lines.push(("identity".into(), false)),
         crate::model::ResourceRole::Policy => lines.push(("policy".into(), false)),

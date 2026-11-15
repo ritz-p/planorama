@@ -40,12 +40,34 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .as_ref()
         .and_then(|c| c.account.clone());
     if basic.is_some()
+        && !matches!(
+            resource,
+            "aws_redshift_endpoint_access" | "aws_redshift_endpoint_authorization"
+        )
+        && !super::agentcore_services::resource(resource)
+        && !super::agentcore_gateway::resource(resource)
+        && !super::agentcore_runtime::resource(resource)
+        && !super::datazone::resource(resource)
+        && !super::cognito::resource(resource)
+        && !super::directory_service::resource(resource)
+        && !super::network_monitors::resource(resource)
+        && !super::networkfirewall_extended::resource(resource)
+        && !super::imagebuilder_distribution::resource(resource)
+        && !super::imagebuilder::resource(resource)
+        && !super::redshift_snapshots::resource(resource)
         && !super::kms::resource(resource)
         && !super::s3vectors::resource(resource)
         && !super::s3tables::resource(resource)
         && !super::s3files::resource(resource)
         && !super::vpclattice::resource(resource)
         && !super::direct_connect::resource(resource)
+        && !super::rds_auxiliary::resource(resource)
+        && !super::classic_elb::resource(resource)
+        && !super::networkmanager::resource(resource)
+        && !super::cloudwan::resource(resource)
+        && !super::oam::resource(resource)
+        && !super::transfer_server::resource(resource)
+        && !(entity.mode == EntityMode::Managed && super::transfer_identity::taggable(resource))
         && !super::xray_encryption::resource(resource)
         && !super::synthetics::resource(resource)
         && !super::rum::resource(resource)
@@ -276,6 +298,39 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_batch_compute_environment"
                 | "aws_batch_job_queue"
                 | "aws_batch_scheduling_policy"
+                | "aws_opensearchserverless_collection_group"
+                | "aws_opensearchserverless_security_config"
+                | "aws_glue_catalog"
+                | "aws_glue_catalog_table_optimizer"
+                | "aws_glue_data_quality_ruleset"
+                | "aws_glue_partition"
+                | "aws_glue_partition_index"
+                | "aws_glue_schema"
+                | "aws_glue_registry"
+                | "aws_glue_connection"
+                | "aws_glue_dev_endpoint"
+                | "aws_glue_security_configuration"
+                | "aws_glue_crawler"
+                | "aws_glue_job"
+                | "aws_glue_ml_transform"
+                | "aws_glue_classifier"
+                | "aws_glue_trigger"
+                | "aws_glue_workflow"
+                | "aws_redshift_cluster_iam_roles"
+                | "aws_transfer_web_app_customization"
+                | "aws_transfer_access"
+                | "aws_transfer_user"
+                | "aws_transfer_host_key"
+                | "aws_transfer_ssh_key"
+                | "aws_transfer_tag"
+                | "aws_rolesanywhere_profile"
+                | "aws_rolesanywhere_trust_anchor"
+                | "aws_acmpca_permission"
+                | "aws_acmpca_policy"
+                | "aws_glue_user_defined_function"
+                | "aws_osis_pipeline"
+                | "aws_osis_pipeline_endpoint"
+                | "aws_osis_resource_policy"
                 | "aws_opensearchserverless_collection"
                 | "aws_opensearchserverless_vpc_endpoint"
                 | "aws_docdb_cluster_instance"

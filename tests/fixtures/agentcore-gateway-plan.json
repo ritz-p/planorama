@@ -1,0 +1,2037 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.main",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-main",
+          "vpc_id": "vpc-main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.other",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-other",
+          "vpc_id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.other",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-other",
+          "vpc_id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Main",
+          "name": "Main"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/main",
+          "key_id": "main"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.main",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:main-123456",
+          "id": "arn:aws:secretsmanager:us-east-1:123456789012:secret:main-123456"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.main",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:main",
+          "qualified_arn": "arn:aws:lambda:us-east-1:123456789012:function:main:1",
+          "function_name": "main"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_configuration.main",
+      "type": "aws_vpclattice_resource_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-main",
+          "id": "rcfg-main"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api.main",
+      "type": "aws_api_gateway_rest_api",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rest-main"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_stage.main",
+      "type": "aws_api_gateway_stage",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "stage-main-id",
+          "stage_name": "prod",
+          "rest_api_id": "rest-main"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_rest_api.other",
+      "type": "aws_api_gateway_rest_api",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "rest-other"
+        }
+      }
+    },
+    {
+      "address": "aws_api_gateway_stage.other",
+      "type": "aws_api_gateway_stage",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "stage-other-id",
+          "stage_name": "prod",
+          "rest_api_id": "rest-other"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_agent_runtime.main",
+      "type": "aws_bedrockagentcore_agent_runtime",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "agent_runtime_id": "runtime-1234567890",
+          "agent_runtime_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/runtime-1234567890",
+          "agent_runtime_version": "1"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_agent_runtime_endpoint.main",
+      "type": "aws_bedrockagentcore_agent_runtime_endpoint",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "agent_runtime_id": "runtime-1234567890",
+          "agent_runtime_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/runtime-1234567890",
+          "agent_runtime_endpoint_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/runtime-1234567890/runtime-endpoint/DEFAULT",
+          "agent_runtime_version": "1"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_policy_engine.main",
+      "type": "aws_bedrockagentcore_policy_engine",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_engine_id": "engine-main",
+          "policy_engine_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:policy-engine/engine-main"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway.http",
+      "type": "aws_bedrockagentcore_gateway",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "gateway_id": "gw-http",
+          "gateway_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-http",
+          "role_arn": "arn:aws:iam::123456789012:role/Main",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/main",
+          "policy_engine_configuration": [
+            {
+              "arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:policy-engine/engine-main",
+              "mode": "ENFORCE"
+            }
+          ],
+          "interceptor_configuration": [
+            {
+              "interception_points": [
+                "REQUEST"
+              ],
+              "interceptor": [
+                {
+                  "lambda": [
+                    {
+                      "arn": "arn:aws:lambda:us-east-1:123456789012:function:main"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "interception_points": [
+                "RESPONSE"
+              ],
+              "interceptor": [
+                {
+                  "lambda": [
+                    {
+                      "arn": "arn:aws:lambda:us-east-1:123456789012:function:main:1"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway.mcp",
+      "type": "aws_bedrockagentcore_gateway",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "gateway_id": "gw-mcp",
+          "gateway_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-mcp",
+          "protocol_type": "MCP",
+          "authorizer_type": "CUSTOM_JWT",
+          "authorizer_configuration": [
+            {
+              "custom_jwt_authorizer": [
+                {
+                  "private_endpoint": [
+                    {
+                      "self_managed_lattice_resource": [
+                        {
+                          "resource_configuration_identifier": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-main"
+                        }
+                      ]
+                    }
+                  ],
+                  "private_endpoint_overrides": [
+                    {
+                      "domain": "private.example",
+                      "private_endpoint": [
+                        {
+                          "managed_vpc_resource": [
+                            {
+                              "endpoint_ip_address_type": "IPV4",
+                              "vpc_identifier": "vpc-other",
+                              "subnet_ids": [
+                                "subnet-other"
+                              ],
+                              "security_group_ids": [
+                                "sg-other"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "allowed_workload_configuration": [
+                    {
+                      "hosting_environment": [
+                        {
+                          "arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-http"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway.foreign",
+      "type": "aws_bedrockagentcore_gateway",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "gateway_id": "gw-foreign",
+          "gateway_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-foreign",
+          "protocol_type": "MCP"
+        }
+      }
+    },
+    {
+      "address": "aws_agentregistry_registry.main",
+      "type": "aws_agentregistry_registry",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "registry_id": "registry-main",
+          "registry_arn": "arn:aws:agentregistry:us-east-1:123456789012:registry/registry-main",
+          "discovery_configuration": [
+            {
+              "authorizer_type": "CUSTOM_JWT",
+              "authorizer_configuration": [
+                {
+                  "custom_jwt_authorizer": [
+                    {
+                      "private_endpoint": [
+                        {
+                          "managed_vpc_resource": [
+                            {
+                              "endpoint_ip_address_type": "IPV4",
+                              "vpc_identifier": "vpc-main",
+                              "subnet_ids": [
+                                "subnet-main"
+                              ]
+                            }
+                          ]
+                        }
+                      ],
+                      "private_endpoint_override": [
+                        {
+                          "domain": "one.example",
+                          "private_endpoint": [
+                            {
+                              "managed_vpc_resource": [
+                                {
+                                  "endpoint_ip_address_type": "IPV4",
+                                  "vpc_identifier": "vpc-main",
+                                  "subnet_ids": [
+                                    "subnet-main"
+                                  ],
+                                  "security_group_ids": [
+                                    "sg-main"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "domain": "two.example",
+                          "private_endpoint": [
+                            {
+                              "managed_vpc_resource": [
+                                {
+                                  "endpoint_ip_address_type": "IPV4",
+                                  "vpc_identifier": "vpc-other",
+                                  "subnet_ids": [
+                                    "subnet-other"
+                                  ],
+                                  "security_group_ids": [
+                                    "sg-other"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "domain": "lattice.example",
+                          "private_endpoint": [
+                            {
+                              "self_managed_lattice_resource": [
+                                {
+                                  "resource_configuration_identifier": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-main"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "encryption_configuration": [
+            {
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/main"
+            }
+          ],
+          "auto_detection_configuration": [
+            {
+              "scope": "ORGANIZATION"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_registry.legacy",
+      "type": "aws_bedrockagentcore_registry",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "registry_id": "legacy-main",
+          "registry_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:registry/legacy-main",
+          "authorizer_type": "CUSTOM_JWT",
+          "authorizer_configuration": [
+            {
+              "custom_jwt_authorizer": [
+                {
+                  "private_endpoint": [
+                    {
+                      "self_managed_lattice_resource": [
+                        {
+                          "resource_configuration_identifier": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-main"
+                        }
+                      ]
+                    }
+                  ],
+                  "private_endpoint_overrides": [
+                    {
+                      "domain": "private.example",
+                      "private_endpoint": [
+                        {
+                          "managed_vpc_resource": [
+                            {
+                              "endpoint_ip_address_type": "IPV4",
+                              "vpc_identifier": "vpc-other",
+                              "subnet_ids": [
+                                "subnet-other"
+                              ],
+                              "security_group_ids": [
+                                "sg-other"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "allowed_workload_configuration": [
+                    {
+                      "hosting_environment": [
+                        {
+                          "arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:gateway/gw-http"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_api_key_credential_provider.external",
+      "type": "aws_bedrockagentcore_api_key_credential_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "credential_provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/apikeycredentialprovider/external",
+          "api_key_secret_source": "EXTERNAL",
+          "api_key_secret_config": [
+            {
+              "secret_id": "arn:aws:secretsmanager:us-east-1:123456789012:secret:main-123456",
+              "json_key": "PRIVATE_JSON_KEY"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_oauth2_credential_provider.custom",
+      "type": "aws_bedrockagentcore_oauth2_credential_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "credential_provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/oauth2credentialprovider/custom",
+          "credential_provider_vendor": "CustomOauth2",
+          "oauth2_provider_config": [
+            {
+              "custom_oauth2_provider_config": [
+                {
+                  "client_id": "PRIVATE_CLIENT_ID",
+                  "client_secret_source": "EXTERNAL",
+                  "client_secret_config": [
+                    {
+                      "secret_id": "arn:aws:secretsmanager:us-east-1:123456789012:secret:main-123456",
+                      "json_key": "PRIVATE_JSON_KEY"
+                    }
+                  ],
+                  "private_endpoint": [
+                    {
+                      "self_managed_lattice_resource": [
+                        {
+                          "resource_configuration_identifier": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-main"
+                        }
+                      ]
+                    }
+                  ],
+                  "private_endpoint_override": [
+                    {
+                      "domain": "auth.example",
+                      "private_endpoint": [
+                        {
+                          "managed_vpc_resource": [
+                            {
+                              "endpoint_ip_address_type": "IPV4",
+                              "vpc_identifier": "vpc-main",
+                              "subnet_ids": [
+                                "subnet-main"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "private_key_jwt_config": [
+                    {
+                      "private_key_source": [
+                        {
+                          "kms_key_source": [
+                            {
+                              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/main"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_sensitive": {
+          "oauth2_provider_config": [
+            {
+              "custom_oauth2_provider_config": [
+                {
+                  "client_id": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_oauth2_credential_provider.google",
+      "type": "aws_bedrockagentcore_oauth2_credential_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "credential_provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/oauth2credentialprovider/google",
+          "credential_provider_vendor": "GoogleOauth2",
+          "oauth2_provider_config": [
+            {
+              "google_oauth2_provider_config": [
+                {
+                  "client_id": "PRIVATE_CLIENT_ID",
+                  "client_secret_source": "EXTERNAL",
+                  "client_secret_config": [
+                    {
+                      "secret_id": "arn:aws:secretsmanager:us-east-1:123456789012:secret:main-123456",
+                      "json_key": "PRIVATE_JSON_KEY"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_sensitive": {
+          "oauth2_provider_config": [
+            {
+              "google_oauth2_provider_config": [
+                {
+                  "client_id": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_oauth2_credential_provider.included",
+      "type": "aws_bedrockagentcore_oauth2_credential_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "credential_provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/oauth2credentialprovider/included",
+          "credential_provider_vendor": "CognitoOauth2",
+          "oauth2_provider_config": [
+            {
+              "included_oauth2_provider_config": [
+                {
+                  "client_id": "PRIVATE_CLIENT_ID",
+                  "client_secret_source": "EXTERNAL",
+                  "client_secret_config": [
+                    {
+                      "secret_id": "arn:aws:secretsmanager:us-east-1:123456789012:secret:main-123456",
+                      "json_key": "PRIVATE_JSON_KEY"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "after_sensitive": {
+          "oauth2_provider_config": [
+            {
+              "included_oauth2_provider_config": [
+                {
+                  "client_id": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_target.runtime",
+      "type": "aws_bedrockagentcore_gateway_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_id": "target-runtime",
+          "name": "runtime",
+          "gateway_identifier": "gw-http",
+          "target_configuration": [
+            {
+              "http": [
+                {
+                  "agentcore_runtime": [
+                    {
+                      "arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:runtime/runtime-1234567890",
+                      "qualifier": "DEFAULT"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "credential_provider_configuration": [
+            {
+              "api_key": [
+                {
+                  "provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/apikeycredentialprovider/external"
+                }
+              ]
+            }
+          ],
+          "private_endpoint": [
+            {
+              "managed_vpc_resource": [
+                {
+                  "endpoint_ip_address_type": "IPV4",
+                  "vpc_identifier": "vpc-main",
+                  "subnet_ids": [
+                    "subnet-main"
+                  ],
+                  "security_group_ids": [
+                    "sg-main"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_target.lambda",
+      "type": "aws_bedrockagentcore_gateway_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_id": "target-lambda",
+          "name": "lambda",
+          "gateway_identifier": "gw-mcp",
+          "target_configuration": [
+            {
+              "mcp": [
+                {
+                  "lambda": [
+                    {
+                      "lambda_arn": "arn:aws:lambda:us-east-1:123456789012:function:main"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "credential_provider_configuration": [
+            {
+              "oauth": [
+                {
+                  "provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/oauth2credentialprovider/custom"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_target.rest",
+      "type": "aws_bedrockagentcore_gateway_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_id": "target-rest",
+          "name": "rest",
+          "gateway_identifier": "gw-mcp",
+          "target_configuration": [
+            {
+              "mcp": [
+                {
+                  "api_gateway": [
+                    {
+                      "rest_api_id": "rest-main",
+                      "stage": "prod"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_target.foreign",
+      "type": "aws_bedrockagentcore_gateway_target",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_id": "target-foreign",
+          "name": "rest",
+          "gateway_identifier": "gw-foreign",
+          "target_configuration": [
+            {
+              "mcp": [
+                {
+                  "lambda": [
+                    {
+                      "lambda_arn": "arn:aws:lambda:us-east-1:123456789012:function:main"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_rule.static",
+      "type": "aws_bedrockagentcore_gateway_rule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule_id": "rule-static",
+          "gateway_identifier": "gw-mcp",
+          "action": [
+            {
+              "route_to_target": [
+                {
+                  "static_route": [
+                    {
+                      "target_name": "rest"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "configuration_bundle": [
+                {
+                  "static_override": [
+                    {
+                      "bundle_arn": "PRIVATE_BUNDLE",
+                      "bundle_version": "1"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "condition": [
+            {
+              "match_principals": [
+                {
+                  "any_of": [
+                    {
+                      "arn": "PRIVATE_PRINCIPAL"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_rule.weighted",
+      "type": "aws_bedrockagentcore_gateway_rule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule_id": "rule-weighted",
+          "gateway_identifier": "gw-mcp",
+          "action": [
+            {
+              "route_to_target": [
+                {
+                  "weighted_route": [
+                    {
+                      "traffic_split": [
+                        {
+                          "name": "lambda",
+                          "target_name": "lambda",
+                          "weight": 90
+                        },
+                        {
+                          "name": "rest",
+                          "target_name": "rest",
+                          "weight": 10
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_gateway_rule.foreign",
+      "type": "aws_bedrockagentcore_gateway_rule",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule_id": "rule-foreign",
+          "gateway_identifier": "gw-foreign",
+          "action": [
+            {
+              "route_to_target": [
+                {
+                  "static_route": [
+                    {
+                      "target_name": "rest"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "configuration_bundle": [
+                {
+                  "static_override": [
+                    {
+                      "bundle_arn": "PRIVATE_BUNDLE",
+                      "bundle_version": "1"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagentcore_api_key_credential_provider.managed",
+      "type": "aws_bedrockagentcore_api_key_credential_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "credential_provider_arn": "arn:aws:bedrock-agentcore:us-east-1:123456789012:token-vault/default/apikeycredentialprovider/managed",
+          "api_key_secret_source": "MANAGED",
+          "api_key": "PRIVATE_API_KEY",
+          "api_key_secret_arn": [
+            {
+              "secret_arn": "PRIVATE_MANAGED_SECRET"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.computed",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "PRIVATE_MANAGED_SECRET",
+          "id": "PRIVATE_MANAGED_SECRET"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.other",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.other.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.other",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.other.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpclattice_resource_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_rest_api.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_stage.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_api_gateway_rest_api.other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_api_gateway_stage.other",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rest_api_id": {
+              "references": [
+                "aws_api_gateway_rest_api.other.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_agent_runtime.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagentcore_agent_runtime_endpoint.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "agent_runtime_id": {
+              "references": [
+                "aws_bedrockagentcore_agent_runtime.main.agent_runtime_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_policy_engine.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway.http",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            },
+            "policy_engine_configuration": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_bedrockagentcore_policy_engine.main.policy_engine_arn"
+                  ]
+                }
+              }
+            ],
+            "interceptor_configuration": [
+              {
+                "interceptor": [
+                  {
+                    "lambda": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_lambda_function.main.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "interceptor": [
+                  {
+                    "lambda": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_lambda_function.main.qualified_arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway.mcp",
+          "provider_config_key": "aws",
+          "expressions": {
+            "authorizer_configuration": [
+              {
+                "custom_jwt_authorizer": [
+                  {
+                    "private_endpoint": [
+                      {
+                        "self_managed_lattice_resource": [
+                          {
+                            "resource_configuration_identifier": {
+                              "references": [
+                                "aws_vpclattice_resource_configuration.main.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "private_endpoint_overrides": [
+                      {
+                        "domain": "private.example",
+                        "private_endpoint": [
+                          {
+                            "managed_vpc_resource": [
+                              {
+                                "endpoint_ip_address_type": {
+                                  "constant_value": "IPV4"
+                                },
+                                "vpc_identifier": {
+                                  "references": [
+                                    "aws_vpc.other.id"
+                                  ]
+                                },
+                                "subnet_ids": {
+                                  "references": [
+                                    "aws_subnet.other.id"
+                                  ]
+                                },
+                                "security_group_ids": {
+                                  "references": [
+                                    "aws_security_group.other.id"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "allowed_workload_configuration": [
+                      {
+                        "hosting_environment": [
+                          {
+                            "arn": {
+                              "references": [
+                                "aws_bedrockagentcore_gateway.http.gateway_arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway.foreign",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_agentregistry_registry.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "discovery_configuration": [
+              {
+                "authorizer_type": {
+                  "constant_value": "CUSTOM_JWT"
+                },
+                "authorizer_configuration": [
+                  {
+                    "custom_jwt_authorizer": [
+                      {
+                        "private_endpoint": [
+                          {
+                            "managed_vpc_resource": [
+                              {
+                                "endpoint_ip_address_type": {
+                                  "constant_value": "IPV4"
+                                },
+                                "vpc_identifier": {
+                                  "references": [
+                                    "aws_vpc.main.id"
+                                  ]
+                                },
+                                "subnet_ids": {
+                                  "references": [
+                                    "aws_subnet.main.id"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "private_endpoint_override": [
+                          {
+                            "domain": "one.example",
+                            "private_endpoint": [
+                              {
+                                "managed_vpc_resource": [
+                                  {
+                                    "endpoint_ip_address_type": {
+                                      "constant_value": "IPV4"
+                                    },
+                                    "vpc_identifier": {
+                                      "references": [
+                                        "aws_vpc.main.id"
+                                      ]
+                                    },
+                                    "subnet_ids": {
+                                      "references": [
+                                        "aws_subnet.main.id"
+                                      ]
+                                    },
+                                    "security_group_ids": {
+                                      "references": [
+                                        "aws_security_group.main.id"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "domain": "two.example",
+                            "private_endpoint": [
+                              {
+                                "managed_vpc_resource": [
+                                  {
+                                    "endpoint_ip_address_type": {
+                                      "constant_value": "IPV4"
+                                    },
+                                    "vpc_identifier": {
+                                      "references": [
+                                        "aws_vpc.other.id"
+                                      ]
+                                    },
+                                    "subnet_ids": {
+                                      "references": [
+                                        "aws_subnet.other.id"
+                                      ]
+                                    },
+                                    "security_group_ids": {
+                                      "references": [
+                                        "aws_security_group.other.id"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "domain": "lattice.example",
+                            "private_endpoint": [
+                              {
+                                "self_managed_lattice_resource": [
+                                  {
+                                    "resource_configuration_identifier": {
+                                      "references": [
+                                        "aws_vpclattice_resource_configuration.main.arn"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "encryption_configuration": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_registry.legacy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "authorizer_configuration": [
+              {
+                "custom_jwt_authorizer": [
+                  {
+                    "private_endpoint": [
+                      {
+                        "self_managed_lattice_resource": [
+                          {
+                            "resource_configuration_identifier": {
+                              "references": [
+                                "aws_vpclattice_resource_configuration.main.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "private_endpoint_overrides": [
+                      {
+                        "domain": "private.example",
+                        "private_endpoint": [
+                          {
+                            "managed_vpc_resource": [
+                              {
+                                "endpoint_ip_address_type": {
+                                  "constant_value": "IPV4"
+                                },
+                                "vpc_identifier": {
+                                  "references": [
+                                    "aws_vpc.other.id"
+                                  ]
+                                },
+                                "subnet_ids": {
+                                  "references": [
+                                    "aws_subnet.other.id"
+                                  ]
+                                },
+                                "security_group_ids": {
+                                  "references": [
+                                    "aws_security_group.other.id"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "allowed_workload_configuration": [
+                      {
+                        "hosting_environment": [
+                          {
+                            "arn": {
+                              "references": [
+                                "aws_bedrockagentcore_gateway.http.gateway_arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_api_key_credential_provider.external",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_key_secret_config": [
+              {
+                "secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_oauth2_credential_provider.custom",
+          "provider_config_key": "aws",
+          "expressions": {
+            "oauth2_provider_config": [
+              {
+                "custom_oauth2_provider_config": [
+                  {
+                    "client_id": "PRIVATE_CLIENT_ID",
+                    "client_secret_source": {
+                      "constant_value": "EXTERNAL"
+                    },
+                    "client_secret_config": [
+                      {
+                        "secret_id": {
+                          "references": [
+                            "aws_secretsmanager_secret.main.arn"
+                          ]
+                        },
+                        "json_key": "PRIVATE_JSON_KEY"
+                      }
+                    ],
+                    "private_endpoint": [
+                      {
+                        "self_managed_lattice_resource": [
+                          {
+                            "resource_configuration_identifier": {
+                              "references": [
+                                "aws_vpclattice_resource_configuration.main.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "private_endpoint_override": [
+                      {
+                        "domain": "auth.example",
+                        "private_endpoint": [
+                          {
+                            "managed_vpc_resource": [
+                              {
+                                "endpoint_ip_address_type": {
+                                  "constant_value": "IPV4"
+                                },
+                                "vpc_identifier": {
+                                  "references": [
+                                    "aws_vpc.main.id"
+                                  ]
+                                },
+                                "subnet_ids": {
+                                  "references": [
+                                    "aws_subnet.main.id"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "private_key_jwt_config": [
+                      {
+                        "private_key_source": [
+                          {
+                            "kms_key_source": [
+                              {
+                                "kms_key_arn": {
+                                  "references": [
+                                    "aws_kms_key.main.arn"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_oauth2_credential_provider.google",
+          "provider_config_key": "aws",
+          "expressions": {
+            "oauth2_provider_config": [
+              {
+                "google_oauth2_provider_config": [
+                  {
+                    "client_id": "PRIVATE_CLIENT_ID",
+                    "client_secret_source": {
+                      "constant_value": "EXTERNAL"
+                    },
+                    "client_secret_config": [
+                      {
+                        "secret_id": {
+                          "references": [
+                            "aws_secretsmanager_secret.main.arn"
+                          ]
+                        },
+                        "json_key": "PRIVATE_JSON_KEY"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_oauth2_credential_provider.included",
+          "provider_config_key": "aws",
+          "expressions": {
+            "oauth2_provider_config": [
+              {
+                "included_oauth2_provider_config": [
+                  {
+                    "client_id": "PRIVATE_CLIENT_ID",
+                    "client_secret_source": {
+                      "constant_value": "EXTERNAL"
+                    },
+                    "client_secret_config": [
+                      {
+                        "secret_id": {
+                          "references": [
+                            "aws_secretsmanager_secret.main.arn"
+                          ]
+                        },
+                        "json_key": "PRIVATE_JSON_KEY"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_target.runtime",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.http.gateway_id"
+              ]
+            },
+            "target_configuration": [
+              {
+                "http": [
+                  {
+                    "agentcore_runtime": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_bedrockagentcore_agent_runtime.main.agent_runtime_arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "credential_provider_configuration": [
+              {
+                "api_key": [
+                  {
+                    "provider_arn": {
+                      "references": [
+                        "aws_bedrockagentcore_api_key_credential_provider.external.credential_provider_arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "private_endpoint": [
+              {
+                "managed_vpc_resource": [
+                  {
+                    "endpoint_ip_address_type": {
+                      "constant_value": "IPV4"
+                    },
+                    "vpc_identifier": {
+                      "references": [
+                        "aws_vpc.main.id"
+                      ]
+                    },
+                    "subnet_ids": {
+                      "references": [
+                        "aws_subnet.main.id"
+                      ]
+                    },
+                    "security_group_ids": {
+                      "references": [
+                        "aws_security_group.main.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_target.lambda",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.mcp.gateway_id"
+              ]
+            },
+            "target_configuration": [
+              {
+                "mcp": [
+                  {
+                    "lambda": [
+                      {
+                        "lambda_arn": {
+                          "references": [
+                            "aws_lambda_function.main.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "credential_provider_configuration": [
+              {
+                "oauth": [
+                  {
+                    "provider_arn": {
+                      "references": [
+                        "aws_bedrockagentcore_oauth2_credential_provider.custom.credential_provider_arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_target.rest",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.mcp.gateway_id"
+              ]
+            },
+            "target_configuration": [
+              {
+                "mcp": [
+                  {
+                    "api_gateway": [
+                      {
+                        "rest_api_id": {
+                          "references": [
+                            "aws_api_gateway_rest_api.main.id"
+                          ]
+                        },
+                        "stage": {
+                          "references": [
+                            "aws_api_gateway_stage.main.stage_name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_target.foreign",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.foreign.gateway_id"
+              ]
+            },
+            "target_configuration": [
+              {
+                "mcp": [
+                  {
+                    "lambda": [
+                      {
+                        "lambda_arn": {
+                          "references": [
+                            "aws_lambda_function.main.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_rule.static",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.mcp.gateway_id"
+              ]
+            },
+            "action": [
+              {
+                "route_to_target": [
+                  {
+                    "static_route": [
+                      {
+                        "target_name": {
+                          "references": [
+                            "aws_bedrockagentcore_gateway_target.rest.name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "configuration_bundle": [
+                  {
+                    "static_override": [
+                      {
+                        "bundle_arn": "PRIVATE_BUNDLE",
+                        "bundle_version": "1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_rule.weighted",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.mcp.gateway_id"
+              ]
+            },
+            "action": [
+              {
+                "route_to_target": [
+                  {
+                    "weighted_route": [
+                      {
+                        "traffic_split": [
+                          {
+                            "name": "lambda",
+                            "target_name": {
+                              "references": [
+                                "aws_bedrockagentcore_gateway_target.lambda.name"
+                              ]
+                            },
+                            "weight": 90
+                          },
+                          {
+                            "name": "rest",
+                            "target_name": {
+                              "references": [
+                                "aws_bedrockagentcore_gateway_target.rest.name"
+                              ]
+                            },
+                            "weight": 10
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_gateway_rule.foreign",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_identifier": {
+              "references": [
+                "aws_bedrockagentcore_gateway.foreign.gateway_id"
+              ]
+            },
+            "action": [
+              {
+                "route_to_target": [
+                  {
+                    "static_route": [
+                      {
+                        "target_name": {
+                          "references": [
+                            "aws_bedrockagentcore_gateway_target.rest.name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "configuration_bundle": [
+                  {
+                    "static_override": [
+                      {
+                        "bundle_arn": "PRIVATE_BUNDLE",
+                        "bundle_version": "1"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagentcore_api_key_credential_provider.managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "api_key_secret_arn": [
+              {
+                "secret_arn": {
+                  "references": [
+                    "aws_secretsmanager_secret.computed.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_secretsmanager_secret.computed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

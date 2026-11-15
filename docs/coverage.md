@@ -29,6 +29,8 @@ endpoints, classification, scope and drift. Category counters count deduplicated
 records, not unique affected resources; categories can overlap on a resource.
 The existing semantic diagnostics are reused with exact current/deposed identity.
 Original input finding counts remain separate from selected finding counts.
+Cloudflare's typed verification failures use the
+[`cloudflare_*` reason codes](cloudflare.md#reference-diagnostics).
 
 Collection covers supported semantic rules only, not exhaustive Terraform
 validation. Cross-state mapping diagnostics remain on stderr and are not part of
@@ -63,7 +65,8 @@ state has no completeness flag.
 The report contains aggregate findings without attribute paths. Counts are not
 truncated. Input-derived identifiers are escaped for Markdown, and content has no
 timestamps or machine-specific paths. Individual selected findings remain
-available in the optional HTML panel.
+available in the optional HTML panel or the opt-in
+[versioned JSON report](coverage-json.md) (`--coverage-report-json PATH`).
 
 Selection reasons are collected only when a coverage report is requested, during
 selection and context closure before projection. Whole-diagram and per-state

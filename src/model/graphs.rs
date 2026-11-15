@@ -12,10 +12,12 @@ pub struct StateOutput {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AttributeReference {
+    pub cloudflare_failure: Option<super::CloudflareFailure>,
     pub indexed_block_lengths: Vec<usize>,
     pub target: usize,
     pub attribute: String,
     pub has_references: bool,
+    pub root_constant_null: bool,
     pub sources: Vec<usize>,
     pub complete: bool,
     pub instances_explicit: bool,

@@ -1,0 +1,1366 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "variables": {
+    "revision": {
+      "value": "updated"
+    }
+  },
+  "planned_values": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_d1_database.content",
+          "mode": "managed",
+          "type": "cloudflare_d1_database",
+          "name": "content",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "created_at": null,
+            "fields": null,
+            "file_size": null,
+            "id": "22222222-2222-4222-8222-222222222222",
+            "jurisdiction": null,
+            "name": "fixture-content",
+            "num_tables": null,
+            "primary_location_hint": null,
+            "read_replication": null,
+            "uuid": "22222222-2222-4222-8222-222222222222",
+            "version": null
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "cloudflare_dns_record.www",
+          "mode": "managed",
+          "type": "cloudflare_dns_record",
+          "name": "www",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "comment": null,
+            "comment_modified_on": null,
+            "content": "192.0.2.1",
+            "created_on": null,
+            "data": null,
+            "id": "dddddddddddddddddddddddddddddddd",
+            "include_shadow_metadata": false,
+            "meta": null,
+            "name": "www.example.invalid",
+            "priority": null,
+            "private_routing": null,
+            "proxiable": null,
+            "proxied": false,
+            "settings": null,
+            "tags": null,
+            "tags_modified_on": null,
+            "ttl": 600,
+            "type": "A",
+            "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "cloudflare_r2_bucket.assets",
+          "mode": "managed",
+          "type": "cloudflare_r2_bucket",
+          "name": "assets",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "creation_date": null,
+            "id": "fixture-assets",
+            "jurisdiction": "eu",
+            "location": null,
+            "name": "fixture-assets",
+            "storage_class": "Standard"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "cloudflare_worker.api",
+          "mode": "managed",
+          "type": "cloudflare_worker",
+          "name": "api",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "created_on": null,
+            "deployed_on": null,
+            "force": null,
+            "id": "11111111-1111-4111-8111-111111111111",
+            "logpush": false,
+            "name": "fixture-api",
+            "observability": {
+              "enabled": false,
+              "head_sampling_rate": 1,
+              "issues": null,
+              "logs": null,
+              "traces": {
+                "destinations": null,
+                "enabled": false,
+                "head_sampling_rate": 1,
+                "persist": true,
+                "propagation_policy": null
+              }
+            },
+            "previews_base_config": null,
+            "references": null,
+            "subdomain": {
+              "enabled": false,
+              "preview_url_suffix": null,
+              "previews_enabled": false,
+              "url": null
+            },
+            "tags": [],
+            "tail_consumers": [],
+            "updated_on": null
+          },
+          "sensitive_values": {
+            "observability": {
+              "traces": {}
+            },
+            "subdomain": {},
+            "tags": [],
+            "tail_consumers": []
+          }
+        },
+        {
+          "address": "cloudflare_worker_version.api",
+          "mode": "managed",
+          "type": "cloudflare_worker_version",
+          "name": "api",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "assets": null,
+            "bindings": [
+              {
+                "algorithm": null,
+                "allowed_destination_addresses": null,
+                "allowed_sender_addresses": null,
+                "app_id": null,
+                "bucket_name": null,
+                "certificate_id": null,
+                "class_name": null,
+                "dataset": null,
+                "destination_address": null,
+                "dispatch_namespace": null,
+                "entrypoint": null,
+                "environment": null,
+                "format": null,
+                "id": null,
+                "identity": null,
+                "index_name": null,
+                "instance_name": null,
+                "json": null,
+                "jurisdiction": null,
+                "key_base64": null,
+                "key_jwk": null,
+                "name": "CACHE",
+                "namespace": null,
+                "namespace_id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+                "network_id": null,
+                "old_name": null,
+                "outbound": null,
+                "part": null,
+                "pipeline": null,
+                "queue_name": null,
+                "retry": null,
+                "script_name": null,
+                "secret_name": null,
+                "service": null,
+                "service_id": null,
+                "simple": null,
+                "store_id": null,
+                "stream": null,
+                "text": null,
+                "tunnel_id": null,
+                "type": "kv_namespace",
+                "usages": null,
+                "version_id": null,
+                "workflow_name": null
+              },
+              {
+                "algorithm": null,
+                "allowed_destination_addresses": null,
+                "allowed_sender_addresses": null,
+                "app_id": null,
+                "bucket_name": "fixture-assets",
+                "certificate_id": null,
+                "class_name": null,
+                "dataset": null,
+                "destination_address": null,
+                "dispatch_namespace": null,
+                "entrypoint": null,
+                "environment": null,
+                "format": null,
+                "id": null,
+                "identity": null,
+                "index_name": null,
+                "instance_name": null,
+                "json": null,
+                "jurisdiction": "eu",
+                "key_base64": null,
+                "key_jwk": null,
+                "name": "ASSETS",
+                "namespace": null,
+                "namespace_id": null,
+                "network_id": null,
+                "old_name": null,
+                "outbound": null,
+                "part": null,
+                "pipeline": null,
+                "queue_name": null,
+                "retry": null,
+                "script_name": null,
+                "secret_name": null,
+                "service": null,
+                "service_id": null,
+                "simple": null,
+                "store_id": null,
+                "stream": null,
+                "text": null,
+                "tunnel_id": null,
+                "type": "r2_bucket",
+                "usages": null,
+                "version_id": null,
+                "workflow_name": null
+              },
+              {
+                "algorithm": null,
+                "allowed_destination_addresses": null,
+                "allowed_sender_addresses": null,
+                "app_id": null,
+                "bucket_name": null,
+                "certificate_id": null,
+                "class_name": null,
+                "dataset": null,
+                "destination_address": null,
+                "dispatch_namespace": null,
+                "entrypoint": null,
+                "environment": null,
+                "format": null,
+                "id": "22222222-2222-4222-8222-222222222222",
+                "identity": null,
+                "index_name": null,
+                "instance_name": null,
+                "json": null,
+                "jurisdiction": null,
+                "key_base64": null,
+                "key_jwk": null,
+                "name": "DB",
+                "namespace": null,
+                "namespace_id": null,
+                "network_id": null,
+                "old_name": null,
+                "outbound": null,
+                "part": null,
+                "pipeline": null,
+                "queue_name": null,
+                "retry": null,
+                "script_name": null,
+                "secret_name": null,
+                "service": null,
+                "service_id": null,
+                "simple": null,
+                "store_id": null,
+                "stream": null,
+                "text": null,
+                "tunnel_id": null,
+                "type": "d1",
+                "usages": null,
+                "version_id": null,
+                "workflow_name": null
+              }
+            ],
+            "compatibility_date": null,
+            "containers": null,
+            "deploy": null,
+            "exports": null,
+            "include": null,
+            "main_module": "main.js",
+            "migrations": null,
+            "modules": [
+              {
+                "content_base64": "ZXhwb3J0IGRlZmF1bHQge2ZldGNoKCkge3JldHVybiBuZXcgUmVzcG9uc2UoJ2ZpeHR1cmUtb25seScpO319Ow==",
+                "content_file": null,
+                "content_sha256": "473fbbcec231072a0e9d1db13d8e8ff7e4491e4d495a815c029269a7876efd6d",
+                "content_type": "application/javascript+module",
+                "name": "main.js"
+              }
+            ],
+            "package_dependencies": null,
+            "placement": null,
+            "usage_model": "standard",
+            "worker_id": "11111111-1111-4111-8111-111111111111"
+          },
+          "sensitive_values": {
+            "annotations": {},
+            "bindings": [
+              {
+                "key_base64": true,
+                "key_jwk": true,
+                "text": true
+              },
+              {
+                "key_base64": true,
+                "key_jwk": true,
+                "text": true
+              },
+              {
+                "key_base64": true,
+                "key_jwk": true,
+                "text": true
+              }
+            ],
+            "cache_options": {},
+            "compatibility_flags": [],
+            "exports_reconciliation": {},
+            "limits": {},
+            "modules": [
+              {}
+            ],
+            "urls": []
+          }
+        },
+        {
+          "address": "cloudflare_workers_kv_namespace.cache",
+          "mode": "managed",
+          "type": "cloudflare_workers_kv_namespace",
+          "name": "cache",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+            "jurisdiction": null,
+            "mode": null,
+            "title": "fixture-cache-updated"
+          },
+          "sensitive_values": {}
+        },
+        {
+          "address": "cloudflare_zone.example",
+          "mode": "managed",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+          "schema_version": 500,
+          "values": {
+            "account": {
+              "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+            },
+            "activated_on": null,
+            "cname_suffix": null,
+            "created_on": null,
+            "development_mode": null,
+            "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+            "meta": null,
+            "modified_on": null,
+            "name": "example.invalid",
+            "name_servers": null,
+            "original_dnshost": null,
+            "original_name_servers": null,
+            "original_registrar": null,
+            "owner": null,
+            "paused": false,
+            "permissions": null,
+            "plan": null,
+            "status": null,
+            "tenant": null,
+            "tenant_unit": null,
+            "type": "full",
+            "vanity_name_servers": null,
+            "verification_key": null
+          },
+          "sensitive_values": {
+            "account": {}
+          }
+        }
+      ]
+    }
+  },
+  "resource_changes": [
+    {
+      "address": "cloudflare_d1_database.content",
+      "mode": "managed",
+      "type": "cloudflare_d1_database",
+      "name": "content",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "created_at": null,
+          "fields": null,
+          "file_size": null,
+          "id": "22222222-2222-4222-8222-222222222222",
+          "jurisdiction": null,
+          "name": "fixture-content",
+          "num_tables": null,
+          "primary_location_hint": null,
+          "read_replication": null,
+          "uuid": "22222222-2222-4222-8222-222222222222",
+          "version": null
+        },
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "created_at": null,
+          "fields": null,
+          "file_size": null,
+          "id": "22222222-2222-4222-8222-222222222222",
+          "jurisdiction": null,
+          "name": "fixture-content",
+          "num_tables": null,
+          "primary_location_hint": null,
+          "read_replication": null,
+          "uuid": "22222222-2222-4222-8222-222222222222",
+          "version": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.www",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "www",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "comment": null,
+          "comment_modified_on": null,
+          "content": "192.0.2.1",
+          "created_on": null,
+          "data": null,
+          "id": "dddddddddddddddddddddddddddddddd",
+          "include_shadow_metadata": false,
+          "meta": null,
+          "modified_on": null,
+          "name": "www.example.invalid",
+          "priority": null,
+          "private_routing": null,
+          "proxiable": null,
+          "proxied": false,
+          "settings": null,
+          "tags": null,
+          "tags_modified_on": null,
+          "ttl": 300,
+          "type": "A",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "after": {
+          "comment": null,
+          "comment_modified_on": null,
+          "content": "192.0.2.1",
+          "created_on": null,
+          "data": null,
+          "id": "dddddddddddddddddddddddddddddddd",
+          "include_shadow_metadata": false,
+          "meta": null,
+          "name": "www.example.invalid",
+          "priority": null,
+          "private_routing": null,
+          "proxiable": null,
+          "proxied": false,
+          "settings": null,
+          "tags": null,
+          "tags_modified_on": null,
+          "ttl": 600,
+          "type": "A",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+        },
+        "after_unknown": {
+          "modified_on": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_r2_bucket.assets",
+      "mode": "managed",
+      "type": "cloudflare_r2_bucket",
+      "name": "assets",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "creation_date": null,
+          "id": "fixture-assets",
+          "jurisdiction": "eu",
+          "location": null,
+          "name": "fixture-assets",
+          "storage_class": "Standard"
+        },
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "creation_date": null,
+          "id": "fixture-assets",
+          "jurisdiction": "eu",
+          "location": null,
+          "name": "fixture-assets",
+          "storage_class": "Standard"
+        },
+        "after_unknown": {},
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker.api",
+      "mode": "managed",
+      "type": "cloudflare_worker",
+      "name": "api",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "created_on": null,
+          "deployed_on": null,
+          "force": null,
+          "id": "11111111-1111-4111-8111-111111111111",
+          "logpush": false,
+          "name": "fixture-api",
+          "observability": {
+            "enabled": false,
+            "head_sampling_rate": 1,
+            "issues": null,
+            "logs": null,
+            "traces": {
+              "destinations": null,
+              "enabled": false,
+              "head_sampling_rate": 1,
+              "persist": true,
+              "propagation_policy": null
+            }
+          },
+          "previews_base_config": null,
+          "references": null,
+          "subdomain": {
+            "enabled": false,
+            "preview_url_suffix": null,
+            "previews_enabled": false,
+            "url": null
+          },
+          "tags": [],
+          "tail_consumers": [],
+          "updated_on": null
+        },
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "created_on": null,
+          "deployed_on": null,
+          "force": null,
+          "id": "11111111-1111-4111-8111-111111111111",
+          "logpush": false,
+          "name": "fixture-api",
+          "observability": {
+            "enabled": false,
+            "head_sampling_rate": 1,
+            "issues": null,
+            "logs": null,
+            "traces": {
+              "destinations": null,
+              "enabled": false,
+              "head_sampling_rate": 1,
+              "persist": true,
+              "propagation_policy": null
+            }
+          },
+          "previews_base_config": null,
+          "references": null,
+          "subdomain": {
+            "enabled": false,
+            "preview_url_suffix": null,
+            "previews_enabled": false,
+            "url": null
+          },
+          "tags": [],
+          "tail_consumers": [],
+          "updated_on": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "observability": {
+            "traces": {}
+          },
+          "subdomain": {},
+          "tags": [],
+          "tail_consumers": []
+        },
+        "after_sensitive": {
+          "observability": {
+            "traces": {}
+          },
+          "subdomain": {},
+          "tags": [],
+          "tail_consumers": []
+        }
+      }
+    },
+    {
+      "address": "cloudflare_worker_version.api",
+      "mode": "managed",
+      "type": "cloudflare_worker_version",
+      "name": "api",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "assets": null,
+          "bindings": [
+            {
+              "algorithm": null,
+              "allowed_destination_addresses": null,
+              "allowed_sender_addresses": null,
+              "app_id": null,
+              "bucket_name": null,
+              "certificate_id": null,
+              "class_name": null,
+              "dataset": null,
+              "destination_address": null,
+              "dispatch_namespace": null,
+              "entrypoint": null,
+              "environment": null,
+              "format": null,
+              "id": null,
+              "identity": null,
+              "index_name": null,
+              "instance_name": null,
+              "json": null,
+              "jurisdiction": null,
+              "key_base64": null,
+              "key_jwk": null,
+              "name": "CACHE",
+              "namespace": null,
+              "namespace_id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+              "network_id": null,
+              "old_name": null,
+              "outbound": null,
+              "part": null,
+              "pipeline": null,
+              "queue_name": null,
+              "retry": null,
+              "script_name": null,
+              "secret_name": null,
+              "service": null,
+              "service_id": null,
+              "simple": null,
+              "store_id": null,
+              "stream": null,
+              "text": null,
+              "tunnel_id": null,
+              "type": "kv_namespace",
+              "usages": null,
+              "version_id": null,
+              "workflow_name": null
+            },
+            {
+              "algorithm": null,
+              "allowed_destination_addresses": null,
+              "allowed_sender_addresses": null,
+              "app_id": null,
+              "bucket_name": "fixture-assets",
+              "certificate_id": null,
+              "class_name": null,
+              "dataset": null,
+              "destination_address": null,
+              "dispatch_namespace": null,
+              "entrypoint": null,
+              "environment": null,
+              "format": null,
+              "id": null,
+              "identity": null,
+              "index_name": null,
+              "instance_name": null,
+              "json": null,
+              "jurisdiction": "eu",
+              "key_base64": null,
+              "key_jwk": null,
+              "name": "ASSETS",
+              "namespace": null,
+              "namespace_id": null,
+              "network_id": null,
+              "old_name": null,
+              "outbound": null,
+              "part": null,
+              "pipeline": null,
+              "queue_name": null,
+              "retry": null,
+              "script_name": null,
+              "secret_name": null,
+              "service": null,
+              "service_id": null,
+              "simple": null,
+              "store_id": null,
+              "stream": null,
+              "text": null,
+              "tunnel_id": null,
+              "type": "r2_bucket",
+              "usages": null,
+              "version_id": null,
+              "workflow_name": null
+            },
+            {
+              "algorithm": null,
+              "allowed_destination_addresses": null,
+              "allowed_sender_addresses": null,
+              "app_id": null,
+              "bucket_name": null,
+              "certificate_id": null,
+              "class_name": null,
+              "dataset": null,
+              "destination_address": null,
+              "dispatch_namespace": null,
+              "entrypoint": null,
+              "environment": null,
+              "format": null,
+              "id": "22222222-2222-4222-8222-222222222222",
+              "identity": null,
+              "index_name": null,
+              "instance_name": null,
+              "json": null,
+              "jurisdiction": null,
+              "key_base64": null,
+              "key_jwk": null,
+              "name": "DB",
+              "namespace": null,
+              "namespace_id": null,
+              "network_id": null,
+              "old_name": null,
+              "outbound": null,
+              "part": null,
+              "pipeline": null,
+              "queue_name": null,
+              "retry": null,
+              "script_name": null,
+              "secret_name": null,
+              "service": null,
+              "service_id": null,
+              "simple": null,
+              "store_id": null,
+              "stream": null,
+              "text": null,
+              "tunnel_id": null,
+              "type": "d1",
+              "usages": null,
+              "version_id": null,
+              "workflow_name": null
+            }
+          ],
+          "compatibility_date": null,
+          "containers": null,
+          "deploy": null,
+          "exports": null,
+          "include": null,
+          "main_module": "main.js",
+          "migrations": null,
+          "modules": [
+            {
+              "content_base64": "ZXhwb3J0IGRlZmF1bHQge2ZldGNoKCkge3JldHVybiBuZXcgUmVzcG9uc2UoJ2ZpeHR1cmUtb25seScpO319Ow==",
+              "content_file": null,
+              "content_sha256": "473fbbcec231072a0e9d1db13d8e8ff7e4491e4d495a815c029269a7876efd6d",
+              "content_type": "application/javascript+module",
+              "name": "main.js"
+            }
+          ],
+          "package_dependencies": null,
+          "placement": null,
+          "usage_model": "standard",
+          "worker_id": "11111111-1111-4111-8111-111111111111"
+        },
+        "after_unknown": {
+          "annotations": true,
+          "author_email": true,
+          "author_id": true,
+          "bindings": [
+            {
+              "database_id": true
+            },
+            {
+              "database_id": true
+            },
+            {
+              "database_id": true
+            }
+          ],
+          "cache_options": true,
+          "compatibility_flags": true,
+          "created_on": true,
+          "exports_reconciliation": true,
+          "id": true,
+          "limits": true,
+          "main_script_base64": true,
+          "migration_tag": true,
+          "modules": [
+            {}
+          ],
+          "number": true,
+          "source": true,
+          "startup_time_ms": true,
+          "urls": true
+        },
+        "before_sensitive": false,
+        "after_sensitive": {
+          "annotations": {},
+          "bindings": [
+            {
+              "key_base64": true,
+              "key_jwk": true,
+              "text": true
+            },
+            {
+              "key_base64": true,
+              "key_jwk": true,
+              "text": true
+            },
+            {
+              "key_base64": true,
+              "key_jwk": true,
+              "text": true
+            }
+          ],
+          "cache_options": {},
+          "compatibility_flags": [],
+          "exports_reconciliation": {},
+          "limits": {},
+          "modules": [
+            {}
+          ],
+          "urls": []
+        }
+      }
+    },
+    {
+      "address": "cloudflare_workers_kv_namespace.cache",
+      "mode": "managed",
+      "type": "cloudflare_workers_kv_namespace",
+      "name": "cache",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "before": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "jurisdiction": null,
+          "mode": null,
+          "supports_url_encoding": null,
+          "title": "fixture-cache-initial"
+        },
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+          "jurisdiction": null,
+          "mode": null,
+          "title": "fixture-cache-updated"
+        },
+        "after_unknown": {
+          "supports_url_encoding": true
+        },
+        "before_sensitive": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_zone.example",
+      "mode": "managed",
+      "type": "cloudflare_zone",
+      "name": "example",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "before": {
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "activated_on": null,
+          "cname_suffix": null,
+          "created_on": null,
+          "development_mode": null,
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "meta": null,
+          "modified_on": null,
+          "name": "example.invalid",
+          "name_servers": null,
+          "original_dnshost": null,
+          "original_name_servers": null,
+          "original_registrar": null,
+          "owner": null,
+          "paused": false,
+          "permissions": null,
+          "plan": null,
+          "status": null,
+          "tenant": null,
+          "tenant_unit": null,
+          "type": "full",
+          "vanity_name_servers": null,
+          "verification_key": null
+        },
+        "after": {
+          "account": {
+            "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          },
+          "activated_on": null,
+          "cname_suffix": null,
+          "created_on": null,
+          "development_mode": null,
+          "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "meta": null,
+          "modified_on": null,
+          "name": "example.invalid",
+          "name_servers": null,
+          "original_dnshost": null,
+          "original_name_servers": null,
+          "original_registrar": null,
+          "owner": null,
+          "paused": false,
+          "permissions": null,
+          "plan": null,
+          "status": null,
+          "tenant": null,
+          "tenant_unit": null,
+          "type": "full",
+          "vanity_name_servers": null,
+          "verification_key": null
+        },
+        "after_unknown": {},
+        "before_sensitive": {
+          "account": {}
+        },
+        "after_sensitive": {
+          "account": {}
+        }
+      }
+    }
+  ],
+  "prior_state": {
+    "format_version": "1.0",
+    "terraform_version": "1.9.8",
+    "values": {
+      "root_module": {
+        "resources": [
+          {
+            "address": "cloudflare_d1_database.content",
+            "mode": "managed",
+            "type": "cloudflare_d1_database",
+            "name": "content",
+            "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+            "schema_version": 500,
+            "values": {
+              "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "created_at": null,
+              "fields": null,
+              "file_size": null,
+              "id": "22222222-2222-4222-8222-222222222222",
+              "jurisdiction": null,
+              "name": "fixture-content",
+              "num_tables": null,
+              "primary_location_hint": null,
+              "read_replication": null,
+              "uuid": "22222222-2222-4222-8222-222222222222",
+              "version": null
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "cloudflare_dns_record.www",
+            "mode": "managed",
+            "type": "cloudflare_dns_record",
+            "name": "www",
+            "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+            "schema_version": 500,
+            "values": {
+              "comment": null,
+              "comment_modified_on": null,
+              "content": "192.0.2.1",
+              "created_on": null,
+              "data": null,
+              "id": "dddddddddddddddddddddddddddddddd",
+              "include_shadow_metadata": false,
+              "meta": null,
+              "modified_on": null,
+              "name": "www.example.invalid",
+              "priority": null,
+              "private_routing": null,
+              "proxiable": null,
+              "proxied": false,
+              "settings": null,
+              "tags": null,
+              "tags_modified_on": null,
+              "ttl": 300,
+              "type": "A",
+              "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "cloudflare_r2_bucket.assets",
+            "mode": "managed",
+            "type": "cloudflare_r2_bucket",
+            "name": "assets",
+            "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+            "schema_version": 500,
+            "values": {
+              "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "creation_date": null,
+              "id": "fixture-assets",
+              "jurisdiction": "eu",
+              "location": null,
+              "name": "fixture-assets",
+              "storage_class": "Standard"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "cloudflare_worker.api",
+            "mode": "managed",
+            "type": "cloudflare_worker",
+            "name": "api",
+            "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+            "schema_version": 500,
+            "values": {
+              "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "created_on": null,
+              "deployed_on": null,
+              "force": null,
+              "id": "11111111-1111-4111-8111-111111111111",
+              "logpush": false,
+              "name": "fixture-api",
+              "observability": {
+                "enabled": false,
+                "head_sampling_rate": 1,
+                "issues": null,
+                "logs": null,
+                "traces": {
+                  "destinations": null,
+                  "enabled": false,
+                  "head_sampling_rate": 1,
+                  "persist": true,
+                  "propagation_policy": null
+                }
+              },
+              "previews_base_config": null,
+              "references": null,
+              "subdomain": {
+                "enabled": false,
+                "preview_url_suffix": null,
+                "previews_enabled": false,
+                "url": null
+              },
+              "tags": [],
+              "tail_consumers": [],
+              "updated_on": null
+            },
+            "sensitive_values": {
+              "observability": {
+                "traces": {}
+              },
+              "subdomain": {},
+              "tags": [],
+              "tail_consumers": []
+            }
+          },
+          {
+            "address": "cloudflare_workers_kv_namespace.cache",
+            "mode": "managed",
+            "type": "cloudflare_workers_kv_namespace",
+            "name": "cache",
+            "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+            "schema_version": 500,
+            "values": {
+              "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "id": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+              "jurisdiction": null,
+              "mode": null,
+              "supports_url_encoding": null,
+              "title": "fixture-cache-initial"
+            },
+            "sensitive_values": {}
+          },
+          {
+            "address": "cloudflare_zone.example",
+            "mode": "managed",
+            "type": "cloudflare_zone",
+            "name": "example",
+            "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+            "schema_version": 500,
+            "values": {
+              "account": {
+                "id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+              },
+              "activated_on": null,
+              "cname_suffix": null,
+              "created_on": null,
+              "development_mode": null,
+              "id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+              "meta": null,
+              "modified_on": null,
+              "name": "example.invalid",
+              "name_servers": null,
+              "original_dnshost": null,
+              "original_name_servers": null,
+              "original_registrar": null,
+              "owner": null,
+              "paused": false,
+              "permissions": null,
+              "plan": null,
+              "status": null,
+              "tenant": null,
+              "tenant_unit": null,
+              "type": "full",
+              "vanity_name_servers": null,
+              "verification_key": null
+            },
+            "sensitive_values": {
+              "account": {}
+            }
+          }
+        ]
+      }
+    }
+  },
+  "configuration": {
+    "provider_config": {
+      "cloudflare": {
+        "name": "cloudflare",
+        "full_name": "registry.terraform.io/cloudflare/cloudflare",
+        "version_constraint": "5.28.1"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "cloudflare_d1_database.content",
+          "mode": "managed",
+          "type": "cloudflare_d1_database",
+          "name": "content",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "local.account"
+              ]
+            },
+            "name": {
+              "constant_value": "fixture-content"
+            }
+          },
+          "schema_version": 500
+        },
+        {
+          "address": "cloudflare_dns_record.www",
+          "mode": "managed",
+          "type": "cloudflare_dns_record",
+          "name": "www",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "content": {
+              "constant_value": "192.0.2.1"
+            },
+            "name": {
+              "constant_value": "www.example.invalid"
+            },
+            "ttl": {
+              "references": [
+                "var.revision"
+              ]
+            },
+            "type": {
+              "constant_value": "A"
+            },
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            }
+          },
+          "schema_version": 500
+        },
+        {
+          "address": "cloudflare_r2_bucket.assets",
+          "mode": "managed",
+          "type": "cloudflare_r2_bucket",
+          "name": "assets",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "local.account"
+              ]
+            },
+            "jurisdiction": {
+              "constant_value": "eu"
+            },
+            "name": {
+              "constant_value": "fixture-assets"
+            }
+          },
+          "schema_version": 500
+        },
+        {
+          "address": "cloudflare_worker.api",
+          "mode": "managed",
+          "type": "cloudflare_worker",
+          "name": "api",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "local.account"
+              ]
+            },
+            "name": {
+              "constant_value": "fixture-api"
+            }
+          },
+          "schema_version": 500
+        },
+        {
+          "address": "cloudflare_worker_version.api",
+          "mode": "managed",
+          "type": "cloudflare_worker_version",
+          "name": "api",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "local.account"
+              ]
+            },
+            "bindings": {
+              "references": [
+                "cloudflare_workers_kv_namespace.cache.id",
+                "cloudflare_workers_kv_namespace.cache",
+                "cloudflare_r2_bucket.assets.name",
+                "cloudflare_r2_bucket.assets",
+                "cloudflare_d1_database.content.id",
+                "cloudflare_d1_database.content"
+              ]
+            },
+            "main_module": {
+              "constant_value": "main.js"
+            },
+            "modules": {},
+            "worker_id": {
+              "references": [
+                "cloudflare_worker.api.id",
+                "cloudflare_worker.api"
+              ]
+            }
+          },
+          "schema_version": 500
+        },
+        {
+          "address": "cloudflare_workers_kv_namespace.cache",
+          "mode": "managed",
+          "type": "cloudflare_workers_kv_namespace",
+          "name": "cache",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "local.account"
+              ]
+            },
+            "title": {
+              "references": [
+                "var.revision"
+              ]
+            }
+          },
+          "schema_version": 500
+        },
+        {
+          "address": "cloudflare_zone.example",
+          "mode": "managed",
+          "type": "cloudflare_zone",
+          "name": "example",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account": {
+              "references": [
+                "local.account"
+              ]
+            },
+            "name": {
+              "constant_value": "example.invalid"
+            },
+            "type": {
+              "constant_value": "full"
+            }
+          },
+          "schema_version": 500
+        }
+      ],
+      "variables": {
+        "revision": {
+          "default": "initial"
+        }
+      }
+    }
+  },
+  "relevant_attributes": [
+    {
+      "resource": "cloudflare_d1_database.content",
+      "attribute": [
+        "id"
+      ]
+    },
+    {
+      "resource": "cloudflare_r2_bucket.assets",
+      "attribute": [
+        "name"
+      ]
+    },
+    {
+      "resource": "cloudflare_worker.api",
+      "attribute": [
+        "id"
+      ]
+    },
+    {
+      "resource": "cloudflare_workers_kv_namespace.cache",
+      "attribute": [
+        "id"
+      ]
+    },
+    {
+      "resource": "cloudflare_zone.example",
+      "attribute": [
+        "id"
+      ]
+    }
+  ],
+  "applyable": true,
+  "complete": true,
+  "errored": false
+}

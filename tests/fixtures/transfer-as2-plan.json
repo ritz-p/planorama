@@ -1,0 +1,414 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_transfer_server.inbound",
+      "type": "aws_transfer_server",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "s-inbound",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:server/s-inbound",
+          "endpoint_type": "PUBLIC",
+          "identity_provider_type": "SERVICE_MANAGED",
+          "protocols": [
+            "AS2"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.access",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Transfer",
+          "name": "Transfer"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_certificate.signing",
+      "type": "aws_transfer_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_id": "cert-SIGNING",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:certificate/cert-SIGNING",
+          "usage": "SIGNING",
+          "certificate": "PRIVATE_CERT",
+          "private_key": "PRIVATE_KEY",
+          "certificate_chain": "PRIVATE_CHAIN"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_certificate.encryption",
+      "type": "aws_transfer_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_id": "cert-ENCRYPTION",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:certificate/cert-ENCRYPTION",
+          "usage": "ENCRYPTION",
+          "certificate": "PRIVATE_CERT",
+          "private_key": "PRIVATE_KEY",
+          "certificate_chain": "PRIVATE_CHAIN"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_profile.local",
+      "type": "aws_transfer_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "profile_id": "p-LOCAL",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:profile/p-LOCAL",
+          "profile_type": "LOCAL",
+          "as2_id": "PRIVATE_AS2_ID",
+          "certificate_ids": [
+            "cert-SIGNING",
+            "cert-ENCRYPTION"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_profile.partner",
+      "type": "aws_transfer_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "profile_id": "p-PARTNER",
+          "arn": "arn:aws:transfer:us-east-1:123456789012:profile/p-PARTNER",
+          "profile_type": "PARTNER",
+          "as2_id": "PRIVATE_AS2_ID",
+          "certificate_ids": [
+            "cert-SIGNING",
+            "cert-ENCRYPTION"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_agreement.incoming",
+      "type": "aws_transfer_agreement",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "agreement_id": "a-incoming",
+          "id": "s-inbound/a-incoming",
+          "server_id": "s-inbound",
+          "access_role": "arn:aws:iam::123456789012:role/Transfer",
+          "local_profile_id": "p-LOCAL",
+          "partner_profile_id": "p-PARTNER",
+          "base_directory": "PRIVATE_DIRECTORY"
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_connector.as2",
+      "type": "aws_transfer_connector",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connector_id": "c-as2",
+          "access_role": "arn:aws:iam::123456789012:role/Transfer",
+          "logging_role": "arn:aws:iam::123456789012:role/Transfer",
+          "url": "PRIVATE_URL",
+          "as2_config": [
+            {
+              "local_profile_id": "p-LOCAL",
+              "partner_profile_id": "p-PARTNER",
+              "compression": "DISABLED",
+              "encryption_algorithm": "AES256_CBC",
+              "signing_algorithm": "SHA256",
+              "mdn_response": "SYNC",
+              "message_subject": "PRIVATE_SUBJECT"
+            }
+          ],
+          "sftp_config": []
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.login",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:sftp-ABC123",
+          "name": "sftp-login"
+        }
+      }
+    },
+    {
+      "address": "aws_vpclattice_resource_configuration.sftp",
+      "type": "aws_vpclattice_resource_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-123",
+          "id": "rcfg-123",
+          "type": "SINGLE",
+          "resource_configuration_definition": [
+            {
+              "ip_resource": [
+                {
+                  "ip_address": "PRIVATE_IP"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_transfer_connector.sftp",
+      "type": "aws_transfer_connector",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "connector_id": "c-sftp",
+          "access_role": "arn:aws:iam::123456789012:role/Transfer",
+          "as2_config": [],
+          "sftp_config": [
+            {
+              "user_secret_id": "arn:aws:secretsmanager:us-east-1:123456789012:secret:sftp-ABC123",
+              "trusted_host_keys": [
+                "PRIVATE_HOST_KEY"
+              ]
+            }
+          ],
+          "url": null,
+          "egress_config": [
+            {
+              "vpc_lattice": [
+                {
+                  "resource_configuration_arn": "arn:aws:vpc-lattice:us-east-1:123456789012:resourceconfiguration/rcfg-123"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_transfer_server.inbound",
+          "type": "aws_transfer_server",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.access",
+          "type": "aws_iam_role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_certificate.signing",
+          "type": "aws_transfer_certificate",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_certificate.encryption",
+          "type": "aws_transfer_certificate",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_profile.local",
+          "type": "aws_transfer_profile",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_ids": {
+              "references": [
+                "aws_transfer_certificate.signing.certificate_id",
+                "aws_transfer_certificate.encryption.certificate_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_profile.partner",
+          "type": "aws_transfer_profile",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_ids": {
+              "references": [
+                "aws_transfer_certificate.signing.certificate_id",
+                "aws_transfer_certificate.encryption.certificate_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_agreement.incoming",
+          "type": "aws_transfer_agreement",
+          "provider_config_key": "aws",
+          "expressions": {
+            "server_id": {
+              "references": [
+                "aws_transfer_server.inbound.id"
+              ]
+            },
+            "access_role": {
+              "references": [
+                "aws_iam_role.access.arn"
+              ]
+            },
+            "local_profile_id": {
+              "references": [
+                "aws_transfer_profile.local.profile_id"
+              ]
+            },
+            "partner_profile_id": {
+              "references": [
+                "aws_transfer_profile.partner.profile_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_transfer_connector.as2",
+          "type": "aws_transfer_connector",
+          "provider_config_key": "aws",
+          "expressions": {
+            "access_role": {
+              "references": [
+                "aws_iam_role.access.arn"
+              ]
+            },
+            "logging_role": {
+              "references": [
+                "aws_iam_role.access.arn"
+              ]
+            },
+            "as2_config": [
+              {
+                "local_profile_id": {
+                  "references": [
+                    "aws_transfer_profile.local.profile_id"
+                  ]
+                },
+                "partner_profile_id": {
+                  "references": [
+                    "aws_transfer_profile.partner.profile_id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_secretsmanager_secret.login",
+          "type": "aws_secretsmanager_secret",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpclattice_resource_configuration.sftp",
+          "type": "aws_vpclattice_resource_configuration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_transfer_connector.sftp",
+          "type": "aws_transfer_connector",
+          "provider_config_key": "aws",
+          "expressions": {
+            "access_role": {
+              "references": [
+                "aws_iam_role.access.arn"
+              ]
+            },
+            "sftp_config": [
+              {
+                "user_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.login.arn"
+                  ]
+                }
+              }
+            ],
+            "egress_config": [
+              {
+                "vpc_lattice": [
+                  {
+                    "resource_configuration_arn": {
+                      "references": [
+                        "aws_vpclattice_resource_configuration.sftp.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

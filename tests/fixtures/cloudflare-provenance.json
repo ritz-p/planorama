@@ -1,0 +1,45 @@
+{
+  "kind": "synthetic",
+  "terraformVersion": "1.9.8",
+  "provider": "registry.terraform.io/cloudflare/cloudflare",
+  "providerVersion": "5.28.1",
+  "providerCommit": "9b51a582458f5c5d46d8547ed2604fcba91fb861",
+  "schemaSha256": "b3f5d3d1161b2c487fb057094f09c5dee05ebc7b0c7445baf30f716872afa57a",
+  "generator": "scripts/cloudflare-fixtures.cjs",
+  "coreExpressionShapeEvidence": "tests/fixtures/cloudflare-core-shapes.json",
+  "adversarialFixtures": [
+    {
+      "file": "tests/fixtures/cloudflare-foundation-plan.json",
+      "kind": "hand-authored-adversarial",
+      "sha256": "468b32ed5fc68c79b7c76bbdd22b5e1e8b14e186f5aa0d228c7de70c53f0a697"
+    }
+  ],
+  "limits": [
+    "Not captured from a Cloudflare API deployment or a provider-generated plan.",
+    "Known identifiers and create actions are synthesized to exercise reference and lifecycle presentation.",
+    "Payload markers are artificial privacy canaries, not credentials or executable Worker modules.",
+    "The separate foundation fixture intentionally contains adversarial fields and unsupported identities."
+  ],
+  "fixtures": [
+    {
+      "file": "tests/fixtures/cloudflare-dns-plan.json",
+      "sha256": "1517162b93e59f08766fb743466bc283a9380e9e49dc1912e7d0f7dd59f71cd7"
+    },
+    {
+      "file": "tests/fixtures/cloudflare-edge-plan.json",
+      "sha256": "55e383614aed28a2c1dfd5b036dc581f4b46ca69e7f6469c6497d9943a91d942"
+    },
+    {
+      "file": "tests/fixtures/cloudflare-applications-plan.json",
+      "sha256": "1fc8f0b189e87d5327a3a1260f50c1be2c5c95b236ab95ab6215bce429e08c07"
+    },
+    {
+      "file": "tests/fixtures/cloudflare-queues-plan.json",
+      "sha256": "5af887702a25b0526730c968d559bd6f024afd3c7ea30e2243c3ab45633cbc9e"
+    },
+    {
+      "file": "tests/fixtures/cloudflare-zero-trust-plan.json",
+      "sha256": "831f5a3bf27b160e4d23b696cab38fc8c4cc7fa4fd82c2eb2ba102bc3b0ffdbd"
+    }
+  ]
+}

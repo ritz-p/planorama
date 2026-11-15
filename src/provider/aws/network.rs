@@ -6,7 +6,9 @@ pub(super) fn endpoint_type(resource: &str, attribute: &str) -> Option<&'static 
         ("aws_lambda_function", "vpc_config.subnet_ids") => Some("aws_subnet"),
         ("aws_lambda_function", "vpc_config.security_group_ids") => Some("aws_security_group"),
         ("aws_redshift_subnet_group", "subnet_ids") => Some("aws_subnet"),
-        ("aws_redshift_cluster", "vpc_security_group_ids") => Some("aws_security_group"),
+        ("aws_redshift_cluster" | "aws_redshift_endpoint_access", "vpc_security_group_ids") => {
+            Some("aws_security_group")
+        }
         ("aws_elasticache_serverless_cache", "subnet_ids") => Some("aws_subnet"),
         ("aws_elasticache_serverless_cache", "security_group_ids") => Some("aws_security_group"),
         ("aws_db_proxy", "vpc_subnet_ids") => Some("aws_subnet"),
@@ -88,4 +90,52 @@ pub(super) fn verified(
     actual.sort_unstable();
     expected.sort_unstable();
     actual == expected
+}
+
+pub(super) fn annotate_subnet_group(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    e: &[(&Value, &Value)],
+    kind: &str,
+    path: &str,
+) {
+    let contexts: Vec<_> = refs
+        .iter()
+        .map(|r| {
+            if nodes[r.target].resource_type != kind || r.attribute != path {
+                return None;
+            }
+            let proof = || {
+                if !r.service_reference_verified {
+                    return None;
+                }
+                let [group] = r.sources.as_slice() else {
+                    return None;
+                };
+                let subnets = super::lambda_core::unique(refs, *group, "subnet_ids")?;
+                let groups = super::lambda_core::unique(refs, r.target, "vpc_security_group_ids")?;
+                if !super::network::verified(nodes, subnets, e)
+                    || !super::network::verified(nodes, groups, e)
+                {
+                    return None;
+                }
+                let parents = subnets
+                    .sources
+                    .iter()
+                    .chain(&groups.sources)
+                    .map(|&s| super::lambda_core::parent(nodes, refs, e, s))
+                    .collect::<Option<std::collections::BTreeSet<_>>>()?;
+                if parents.len() != 1 {
+                    return None;
+                }
+                parents.first().copied()
+            };
+            Some(proof().into_iter().collect::<Vec<_>>())
+        })
+        .collect();
+    for (r, c) in refs.iter_mut().zip(contexts) {
+        if let Some(c) = c {
+            r.endpoint_network_context = c;
+        }
+    }
 }

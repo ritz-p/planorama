@@ -1,0 +1,554 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_networkmanager_global_network.main",
+      "type": "aws_networkmanager_global_network",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "global-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_core_network.main",
+      "type": "aws_networkmanager_core_network",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "core-main",
+          "global_network_id": "global-main",
+          "base_policy_document": "PRIVATE_POLICY"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_site.main",
+      "type": "aws_networkmanager_site",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "site-main",
+          "global_network_id": "global-main",
+          "location": [
+            {
+              "address": "PRIVATE_ADDRESS",
+              "latitude": "PRIVATE_LATITUDE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.device",
+      "type": "aws_subnet",
+      "name": "device",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-device",
+          "arn": "arn:aws:ec2:us-west-2:111111111111:subnet/subnet-device"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_device.one",
+      "type": "aws_networkmanager_device",
+      "name": "one",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "device-one",
+          "global_network_id": "global-main",
+          "site_id": "site-main",
+          "aws_location": [
+            {
+              "subnet_arn": "arn:aws:ec2:us-west-2:111111111111:subnet/subnet-device"
+            }
+          ],
+          "serial_number": "PRIVATE_SERIAL"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_device.two",
+      "type": "aws_networkmanager_device",
+      "name": "two",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "device-two",
+          "global_network_id": "global-main",
+          "site_id": "site-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_link.main",
+      "type": "aws_networkmanager_link",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "link-main",
+          "global_network_id": "global-main",
+          "site_id": "site-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_connection.main",
+      "type": "aws_networkmanager_connection",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "global_network_id": "global-main",
+          "device_id": "device-one",
+          "connected_device_id": "device-two",
+          "link_id": "link-main",
+          "connected_link_id": "link-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_link_association.main",
+      "type": "aws_networkmanager_link_association",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "global_network_id": "global-main",
+          "device_id": "device-one",
+          "link_id": "link-main"
+        }
+      }
+    },
+    {
+      "address": "aws_customer_gateway.main",
+      "type": "aws_customer_gateway",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-west-2:111111111111:customer-gateway/cgw-main",
+          "id": "cgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_connect_peer.main",
+      "type": "aws_ec2_transit_gateway_connect_peer",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-west-2:111111111111:transit-gateway-connect-peer/peer-main",
+          "id": "peer-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.main",
+      "type": "aws_ec2_transit_gateway",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-west-2:111111111111:transit-gateway/tgw-main",
+          "id": "tgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_customer_gateway_association.main",
+      "type": "aws_networkmanager_customer_gateway_association",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "global_network_id": "global-main",
+          "customer_gateway_arn": "arn:aws:ec2:us-west-2:111111111111:customer-gateway/cgw-main",
+          "device_id": "device-one",
+          "link_id": "link-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_transit_gateway_connect_peer_association.main",
+      "type": "aws_networkmanager_transit_gateway_connect_peer_association",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "global_network_id": "global-main",
+          "transit_gateway_connect_peer_arn": "arn:aws:ec2:us-west-2:111111111111:transit-gateway-connect-peer/peer-main",
+          "device_id": "device-one",
+          "link_id": "link-main"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_transit_gateway_registration.main",
+      "type": "aws_networkmanager_transit_gateway_registration",
+      "name": "main",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "global_network_id": "global-main",
+          "transit_gateway_arn": "arn:aws:ec2:us-west-2:111111111111:transit-gateway/tgw-main"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_networkmanager_global_network.main",
+          "type": "aws_networkmanager_global_network",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_core_network.main",
+          "type": "aws_networkmanager_core_network",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_site.main",
+          "type": "aws_networkmanager_site",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.device",
+          "type": "aws_subnet",
+          "name": "device",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_device.one",
+          "type": "aws_networkmanager_device",
+          "name": "one",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "site_id": {
+              "references": [
+                "aws_networkmanager_site.main.id"
+              ]
+            },
+            "aws_location": [
+              {
+                "subnet_arn": {
+                  "references": [
+                    "aws_subnet.device.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_networkmanager_device.two",
+          "type": "aws_networkmanager_device",
+          "name": "two",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "site_id": {
+              "references": [
+                "aws_networkmanager_site.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_link.main",
+          "type": "aws_networkmanager_link",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "site_id": {
+              "references": [
+                "aws_networkmanager_site.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_connection.main",
+          "type": "aws_networkmanager_connection",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "device_id": {
+              "references": [
+                "aws_networkmanager_device.one.id"
+              ]
+            },
+            "connected_device_id": {
+              "references": [
+                "aws_networkmanager_device.two.id"
+              ]
+            },
+            "link_id": {
+              "references": [
+                "aws_networkmanager_link.main.id"
+              ]
+            },
+            "connected_link_id": {
+              "references": [
+                "aws_networkmanager_link.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_link_association.main",
+          "type": "aws_networkmanager_link_association",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "device_id": {
+              "references": [
+                "aws_networkmanager_device.one.id"
+              ]
+            },
+            "link_id": {
+              "references": [
+                "aws_networkmanager_link.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_customer_gateway.main",
+          "type": "aws_customer_gateway",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_transit_gateway_connect_peer.main",
+          "type": "aws_ec2_transit_gateway_connect_peer",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_transit_gateway.main",
+          "type": "aws_ec2_transit_gateway",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_networkmanager_customer_gateway_association.main",
+          "type": "aws_networkmanager_customer_gateway_association",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "customer_gateway_arn": {
+              "references": [
+                "aws_customer_gateway.main.arn"
+              ]
+            },
+            "device_id": {
+              "references": [
+                "aws_networkmanager_device.one.id"
+              ]
+            },
+            "link_id": {
+              "references": [
+                "aws_networkmanager_link.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_transit_gateway_connect_peer_association.main",
+          "type": "aws_networkmanager_transit_gateway_connect_peer_association",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "transit_gateway_connect_peer_arn": {
+              "references": [
+                "aws_ec2_transit_gateway_connect_peer.main.arn"
+              ]
+            },
+            "device_id": {
+              "references": [
+                "aws_networkmanager_device.one.id"
+              ]
+            },
+            "link_id": {
+              "references": [
+                "aws_networkmanager_link.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_transit_gateway_registration.main",
+          "type": "aws_networkmanager_transit_gateway_registration",
+          "name": "main",
+          "mode": "managed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "global_network_id": {
+              "references": [
+                "aws_networkmanager_global_network.main.id"
+              ]
+            },
+            "transit_gateway_arn": {
+              "references": [
+                "aws_ec2_transit_gateway.main.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -92,3 +92,18 @@ pub(crate) fn label(scope: Option<&DeploymentScope>, provider: &ProviderIdentity
         None => region_label,
     }
 }
+
+pub(crate) fn target(node: &crate::model::Node) -> Option<String> {
+    if let Some(scope) = &node.entity.cloudflare_scope {
+        let account = scope.account.as_deref().unwrap_or("unknown");
+        return Some(match &scope.zone {
+            Some(zone) => format!("Cloudflare administration: Account {account} · Zone {zone}"),
+            None => format!("Cloudflare administration: Account {account}"),
+        });
+    }
+    let scope = node.entity.deployment_target.as_ref()?;
+    Some(format!(
+        "Configured deployment target: {}",
+        label(Some(scope), &node.provider)
+    ))
+}

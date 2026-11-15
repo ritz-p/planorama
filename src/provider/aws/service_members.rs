@@ -15,6 +15,53 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             continue;
         }
         let (attribute, label, section) = match node.resource_type.as_str() {
+            kind if super::agentcore_services::owner(kind).is_some() => {
+                super::agentcore_services::owner(kind).unwrap()
+            }
+            kind if super::agentcore_gateway::owner(kind).is_some() => {
+                super::agentcore_gateway::owner(kind).unwrap()
+            }
+            kind if super::agentcore_runtime::owner(kind).is_some() => {
+                super::agentcore_runtime::owner(kind).unwrap()
+            }
+            kind if super::datazone::owner(kind).is_some() => super::datazone::owner(kind).unwrap(),
+            kind if super::directory_service::owner(kind).is_some() => {
+                super::directory_service::owner(kind).unwrap()
+            }
+            kind if super::transfer_identity::owner(kind).is_some() => {
+                super::transfer_identity::owner(kind).unwrap()
+            }
+            "aws_transfer_web_app_customization" => {
+                ("web_app_id", "Web app owner", "Customization")
+            }
+            kind if super::redshift_snapshots::owner(kind).is_some() => {
+                super::redshift_snapshots::owner(kind).unwrap()
+            }
+            "aws_redshift_endpoint_authorization" => (
+                "cluster_identifier",
+                "Authorized cluster",
+                "Endpoint authorizations",
+            ),
+            "aws_redshift_cluster_iam_roles" => {
+                ("cluster_identifier", "IAM roles cluster", "IAM roles")
+            }
+            "aws_transfer_agreement" => ("server_id", "Agreement server", "Agreements"),
+            "aws_acmpca_permission" => {
+                ("certificate_authority_arn", "Permission CA", "Permissions")
+            }
+            "aws_acmpca_policy" => ("resource_arn", "Policy CA", "Policies"),
+            "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
+            kind if super::glue_catalog::owner(kind).is_some() => {
+                if kind == "aws_glue_schema"
+                    && raw
+                        .attributes
+                        .iter()
+                        .any(|r| r.target != index && r.sources.contains(&index))
+                {
+                    continue;
+                }
+                super::glue_catalog::owner(kind).unwrap()
+            }
             kind if super::identity_center::owner(kind).is_some() => {
                 let (field, label) = super::identity_center::owner(kind).unwrap();
                 (field, label, "Identity Center configuration")
@@ -67,6 +114,21 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "domain_name",
                 "Registered domain owner",
                 "Delegation signers",
+            ),
+            kind if kind != "aws_elb_attachment"
+                && super::classic_elb::owner_path(kind).is_some() =>
+            {
+                (
+                    super::classic_elb::owner_path(kind).unwrap(),
+                    "Classic load balancer",
+                    "Classic ELB policies",
+                )
+            }
+            "aws_oam_sink_policy" => ("sink_identifier", "OAM policy sink", "Sink configuration"),
+            "aws_rds_shard_group" => (
+                "db_cluster_identifier",
+                "Shard group cluster",
+                "Shard groups",
             ),
             "aws_rum_metrics_destination" => (
                 "app_monitor_name",
@@ -259,6 +321,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Resolver configuration",
             ),
             "aws_eip_domain_name" => ("allocation_id", "Elastic IP allocation", "Reverse DNS"),
+            "aws_networkmonitor_probe" => ("monitor_name", "Probe monitor", "Probes"),
             "aws_networkfirewall_logging_configuration" => {
                 ("firewall_arn", "Logging firewall", "Logging")
             }

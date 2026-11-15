@@ -1,0 +1,470 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.access",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/access"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.provision",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/provision"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_domain.main",
+      "type": "aws_datazone_domain",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dzd-main",
+          "domain_version": "V1"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_project.profile",
+      "type": "aws_datazone_project",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "project-profile",
+          "domain_identifier": "dzd-main"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_project.consumer",
+      "type": "aws_datazone_project",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "project-consumer",
+          "domain_identifier": "dzd-main"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_glossary.main",
+      "type": "aws_datazone_glossary",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "glossary-main",
+          "domain_identifier": "dzd-main",
+          "owning_project_identifier": "project-profile"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_glossary_term.main",
+      "type": "aws_datazone_glossary_term",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "term-main",
+          "glossary_identifier": "glossary-main"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_environment_blueprint_configuration.main",
+      "type": "aws_datazone_environment_blueprint_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_id": "dzd-main",
+          "environment_blueprint_id": "blueprint-lookup",
+          "enabled_regions": [
+            "us-west-2",
+            "eu-west-1"
+          ],
+          "manage_access_role_arn": "arn:aws:iam::123456789012:role/access",
+          "provisioning_role_arn": "arn:aws:iam::123456789012:role/provision",
+          "global_parameters": {
+            "PRIVATE_PARAMETER": "PRIVATE_VALUE"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_environment_profile.main",
+      "type": "aws_datazone_environment_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "profile-main",
+          "domain_identifier": "dzd-main",
+          "project_identifier": "project-profile",
+          "environment_blueprint_identifier": "blueprint-lookup",
+          "aws_account_id": "234567890123",
+          "aws_account_region": "us-west-2",
+          "user_parameters": [
+            {
+              "name": "PRIVATE_PARAMETER",
+              "value": "PRIVATE_VALUE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_environment.main",
+      "type": "aws_datazone_environment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "environment-main",
+          "domain_identifier": "dzd-main",
+          "project_identifier": "project-consumer",
+          "profile_identifier": "profile-main",
+          "blueprint_identifier": "blueprint-lookup",
+          "glossary_terms": [
+            "term-main"
+          ],
+          "account_identifier": "345678901234",
+          "account_region": "eu-west-1",
+          "provisioned_resources": [
+            {
+              "name": "PRIVATE_CHILD",
+              "type": "aws_s3_bucket",
+              "value": "PRIVATE_BUCKET"
+            }
+          ],
+          "created_by": "PRIVATE_CREATOR"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_environment.computed",
+      "type": "aws_datazone_environment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "environment-computed",
+          "domain_identifier": "dzd-main",
+          "project_identifier": "project-consumer",
+          "profile_identifier": "profile-main",
+          "account_identifier": "456789012345",
+          "account_region": "ap-northeast-1"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_domain.foreign",
+      "type": "aws_datazone_domain",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "dzd-foreign",
+          "domain_version": "V1"
+        }
+      }
+    },
+    {
+      "address": "aws_datazone_environment_profile.foreign",
+      "type": "aws_datazone_environment_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "profile-foreign",
+          "domain_identifier": "dzd-foreign",
+          "project_identifier": "project-foreign",
+          "aws_account_id": "234567890123",
+          "aws_account_region": "us-west-2"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.lookalike",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "PRIVATE_BUCKET"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.access",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.provision",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_datazone_domain.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_datazone_project.profile",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_project.consumer",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_glossary.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            },
+            "owning_project_identifier": {
+              "references": [
+                "aws_datazone_project.profile.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_glossary_term.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "glossary_identifier": {
+              "references": [
+                "aws_datazone_glossary.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_environment_blueprint_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_id": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            },
+            "manage_access_role_arn": {
+              "references": [
+                "aws_iam_role.access.arn"
+              ]
+            },
+            "provisioning_role_arn": {
+              "references": [
+                "aws_iam_role.provision.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_environment_profile.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            },
+            "project_identifier": {
+              "references": [
+                "aws_datazone_project.profile.id"
+              ]
+            },
+            "environment_blueprint_identifier": {
+              "references": [
+                "aws_datazone_environment_blueprint_configuration.main.environment_blueprint_id"
+              ]
+            },
+            "aws_account_id": {
+              "constant_value": "234567890123"
+            },
+            "aws_account_region": {
+              "constant_value": "us-west-2"
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_environment.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            },
+            "project_identifier": {
+              "references": [
+                "aws_datazone_project.consumer.id"
+              ]
+            },
+            "profile_identifier": {
+              "references": [
+                "aws_datazone_environment_profile.main.id"
+              ]
+            },
+            "blueprint_identifier": {
+              "references": [
+                "aws_datazone_environment_blueprint_configuration.main.environment_blueprint_id"
+              ]
+            },
+            "glossary_terms": {
+              "references": [
+                "aws_datazone_glossary_term.main.id"
+              ]
+            },
+            "account_identifier": {
+              "constant_value": "345678901234"
+            },
+            "account_region": {
+              "constant_value": "eu-west-1"
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_environment.computed",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.main.id"
+              ]
+            },
+            "project_identifier": {
+              "references": [
+                "aws_datazone_project.consumer.id"
+              ]
+            },
+            "profile_identifier": {
+              "references": [
+                "aws_datazone_environment_profile.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datazone_domain.foreign",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_datazone_environment_profile.foreign",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_identifier": {
+              "references": [
+                "aws_datazone_domain.foreign.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.lookalike",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

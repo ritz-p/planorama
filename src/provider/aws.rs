@@ -1,3 +1,6 @@
+pub(crate) mod agentcore_gateway;
+pub(crate) mod agentcore_runtime;
+pub(crate) mod agentcore_services;
 mod aliases;
 mod api_gateway;
 mod api_usage;
@@ -17,6 +20,7 @@ mod backup_plan;
 mod backup_vaults;
 mod basic;
 mod batch;
+pub(crate) mod classic_elb;
 mod classification;
 mod cloud_map;
 pub(crate) mod cloudfront;
@@ -28,10 +32,12 @@ pub(crate) mod cloudfront_vpc_origin;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
 mod cloudtrail_tests;
+pub(crate) mod cloudwan;
 pub(crate) mod cloudwatch_alarms;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;
 pub(crate) mod cloudwatch_metrics;
+pub(crate) mod cognito;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
@@ -42,10 +48,14 @@ mod database_events;
 mod database_snapshots;
 mod databases;
 mod datasync;
+pub(crate) mod datazone;
+pub(crate) mod datazone_access;
+pub(crate) mod datazone_environments;
 mod dax;
 mod default_network;
 pub(super) mod diagnostics;
 pub(crate) mod direct_connect;
+pub(crate) mod directory_service;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
@@ -64,12 +74,18 @@ pub(crate) mod flow_logs;
 mod fsx;
 pub(crate) mod global_accelerator;
 mod glue;
+pub(crate) mod glue_catalog;
+mod glue_network;
+pub(crate) mod glue_workloads;
 mod iam;
 pub(crate) mod iam_credentials;
 pub(crate) mod iam_policies;
 mod icons;
 pub(crate) mod identity_center;
+mod identity_center_instance;
 pub(crate) mod identitystore;
+pub(crate) mod imagebuilder;
+pub(crate) mod imagebuilder_distribution;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
 pub(crate) mod kms;
@@ -89,21 +105,32 @@ mod monitoring;
 mod nested_references;
 mod network;
 mod network_acl;
+pub(crate) mod network_monitors;
 pub(crate) mod networkfirewall;
+pub(crate) mod networkfirewall_extended;
+pub(crate) mod networkmanager;
+pub(crate) mod oam;
 mod observability;
 mod opensearch_serverless;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
+mod osis;
 mod placement;
 pub(crate) mod prefix_list_entries;
+pub(crate) mod private_ca_references;
 mod privatelink;
 pub(crate) mod profiles;
 pub(crate) mod query_logs;
+pub(crate) mod rds_auxiliary;
 mod rds_proxy;
+mod redshift_cluster;
+mod redshift_endpoints;
+mod redshift_snapshots;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+pub(crate) mod rolesanywhere;
 pub(crate) mod route53_dnssec;
 pub(crate) mod route53_health;
 pub(crate) mod route_server;
@@ -120,12 +147,17 @@ pub(crate) mod search;
 pub(crate) mod search_connections;
 pub(crate) mod secondary_network;
 pub(crate) mod secrets_manager;
+mod serverless_references;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
 mod streaming;
 pub(crate) mod synthetics;
 pub(crate) mod traffic_mirror;
+pub(crate) mod transfer_as2;
+pub(crate) mod transfer_identity;
+pub(crate) mod transfer_server;
+pub(crate) mod transfer_webapp;
 pub(crate) mod vpclattice;
 pub(crate) mod xray_encryption;
 
@@ -211,6 +243,12 @@ pub(super) fn placement(resource_type: &str) -> crate::model::Placement {
         "aws_default_vpc" | "aws_default_subnet" | "aws_default_route_table" => {
             crate::model::Placement::Spatial
         }
+        "aws_bedrockagentcore_agent_runtime"
+        | "aws_bedrockagentcore_browser"
+        | "aws_bedrockagentcore_code_interpreter"
+        | "aws_bedrockagentcore_harness" => crate::model::Placement::Spatial,
+        "aws_bedrockagentcore_gateway" => crate::model::Placement::Spatial,
+        "aws_datazone_domain" | "aws_datazone_environment" => crate::model::Placement::Spatial,
         "aws_datasync_agent" => crate::model::Placement::Spatial,
         "aws_backup_logically_air_gapped_vault" => crate::model::Placement::Spatial,
         "aws_db_proxy_endpoint" => crate::model::Placement::Spatial,
@@ -328,12 +366,20 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);
+    osis::present(&raw, &mut graph);
+    glue_network::present(&raw, &mut graph);
     search::present(&raw, &mut graph);
     batch::present(&raw, &mut graph);
     autoscaling_network::present(&raw, &mut graph);
     fsx::present(&raw, &mut graph);
     datasync::present(&raw, &mut graph);
     networkfirewall::present(&raw, &mut graph);
+    networkfirewall_extended::present(&raw, &mut graph);
+    network_monitors::present(&raw, &mut graph);
+    directory_service::present(&raw, &mut graph);
+    cognito::present(&raw, &mut graph);
+    agentcore_runtime::present(&raw, &mut graph);
+    datazone_environments::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
@@ -342,6 +388,10 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     service_references::present(&raw, &mut graph);
     s3files::present(&raw, &mut graph);
     vpclattice::present(&raw, &mut graph);
+    transfer_server::present(&raw, &mut graph);
+    transfer_webapp::present(&raw, &mut graph);
+    imagebuilder::present(&raw, &mut graph);
+    classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);

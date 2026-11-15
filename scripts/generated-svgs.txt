@@ -178,3 +178,16 @@ examples/route53-dnssec.svg
 examples/rum.svg
 examples/synthetics.svg
 examples/xray-encryption.svg
+examples/rds-auxiliary.svg
+examples/classic-elb.svg
+examples/networkmanager.svg
+examples/cloudwan.svg
+examples/oam.svg
+examples/transfer-server.svg
+examples/cloudflare-dns.svg
+examples/cloudflare-edge.svg
+examples/cloudflare-applications.svg
+examples/cloudflare-queues.svg
+examples/cloudflare-zero-trust.svg
+examples/cloudflare-captured-create.svg
+examples/cloudflare-captured-update.svg

@@ -823,3 +823,201 @@ Contracts use AWS Provider 6.70.0 [domain documentation](https://github.com/hash
 | aws_appsync_domain_name_api_association.domain_name | Custom domain.domain_name in matching regional scope; id and service-created appsync_domain_name outputs are not substitutes |
 
 Domains remain independent Logical resources; certificate references do not imply certificate ownership or network containment. An association lowers only when both uniquely referenced endpoints are current, compatible and have exact known matching values. Domain and GraphQL API resources remain independently shared, while the association retains its provenance, action and exactly-once coverage. A missing/filtered endpoint, unknown or sensitive value, literal-only reference, ambiguity, wrong provider/type/output, deleted/deposed or data object keeps conservative fallback. Named states remain separate. Certificate bodies, private keys, descriptions, service URLs and runtime validation results are not parsed or rendered. See the [custom-domain example](../examples/appsync-domains.svg).
+
+## OpenSearch Serverless direct references (#799)
+
+At AWS Provider 6.70.0 (`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`),
+`collection.collection_group_name` references a managed collection group's `name`.
+The group stays independent Logical shared capacity; the collection retains its
+Spatial card. Neither relationship creates ownership or network containment.
+`collection.encryption_config` must be one list element with a known configured
+`kms_key_arn` matching managed `aws_kms_key.arn`; an AWS-owned key, unknown mask,
+multiple elements and computed top-level `kms_key_arn` cannot prove this link.
+`security_config` requires known `type = iamidentitycenter` and one
+`iam_identity_center_options` element. Its `instance_arn` can reference only
+`data.aws_ssoadmin_instances.arns` (or `[0]`) with exactly one known ARN.
+This data-source identity contract does not create a managed Identity Center instance.
+
+All links require explicit unique Terraform provenance, matching known values,
+compatible provider/account/region bindings and current selected identities.
+Literal, unknown, ambiguous, deleted or deposed evidence falls back to generic
+provenance. SAML XML, federation mappings and policy bodies remain opaque.
+Official contracts: `website/docs/r/opensearchserverless_{collection,collection_group,security_config}.html.markdown`
+and `internal/service/opensearchserverless/{collection,collection_group,security_config}.go`
+at the pinned provider revision. Runtime support defaults can be queried using
+`scripts/update-resource-support.sh aws_opensearchserverless_`.
+
+## OpenSearch Ingestion (#800)
+
+Contracts are pinned to AWS Provider 6.70.0
+(`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`), using the official
+`website/docs/r/osis_{pipeline,pipeline_endpoint,resource_policy}.html.markdown`
+and `internal/service/osis/{pipeline,pipeline_endpoint,resource_policy}.go` schemas.
+
+`aws_osis_pipeline` has an independent Spatial card. Its explicit
+`pipeline_role_arn` references managed IAM role `arn` (including compatible global
+role scope); `encryption_at_rest_options.kms_key_arn` references managed KMS key
+`arn`. The enabled log destination
+`log_publishing_options.cloudwatch_log_destination.log_group` references managed
+CloudWatch log group `name`, only when `is_logging_enabled` is known true.
+Every intermediate configuration block must be a singleton list.
+
+Both pipeline and pipeline endpoint verify complete, nonempty, duplicate-free
+`vpc_options.subnet_ids` and `vpc_options.security_group_ids` sets against explicit
+managed subnet/SG `id` references. Common-VPC context additionally requires each
+member's verified `vpc_id` reference. Pipelines use this context only for known
+`vpc_endpoint_management = SERVICE`; CUSTOMER, absent and unknown management
+retain regional placement and verified network navigation. No service ENIs or
+default security groups are synthesized. Endpoints prove their own common VPC;
+they never inherit pipeline placement. A present endpoint computed `vpc_id`
+must agree with the proven VPC, and unknown corroboration suppresses placement.
+It is never treated as a configured reference.
+
+Endpoint `pipeline_arn` and resource-policy `resource_arn` link only to managed
+pipeline `pipeline_arn`, with an exact OSIS `pipeline/` ARN. Deprecated pipeline
+`id`, other ARN kinds, wildcards and output URLs are excluded. Endpoints and
+resource policies remain independent Logical resources. YAML pipeline bodies
+and policy JSON remain opaque.
+
+References require unique explicit provenance, known matching values, compatible
+provider/account/region/state boundaries and current managed identities. Missing,
+ambiguous, deleted, deposed or filtered evidence retains conservative fallback.
+Scope/selection checks preserve individual lifecycle actions and exactly-once
+coverage. Runtime defaults can be queried with
+`scripts/update-resource-support.sh aws_osis_`.
+
+## Glue catalog metadata (#845)
+
+The pinned AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` defines the following configured
+references. `aws_glue_catalog` has an independent Spatial card; its computed
+`catalog_id` identifies the parent catalog and never establishes its own identity
+or implied ownership of databases. Existing database/table presentation is retained.
+
+| Consumer | Configured path | Verified managed output and qualification |
+| --- | --- | --- |
+| Catalog / database | `federated_catalog.connection_name` / `federated_database.connection_name` | Connection `name`, equal known `catalog_id` |
+| Catalog | `target_redshift_catalog.catalog_arn` | Glue catalog `arn`; never a Redshift cluster/namespace ARN |
+| Catalog | `catalog_properties.data_lake_access_properties.data_transfer_role`, `catalog_properties.iceberg_optimization_properties.role_arn` | IAM role `arn` with compatible global role scope |
+| Catalog | `catalog_properties.data_lake_access_properties.kms_key` | Supported managed KMS key `arn` outputs |
+| Database | `target_database.database_name` | Database `name` and equal known target `catalog_id` |
+| Table | `target_table.name` | Table `name`, target `catalog_id` and `database_name` |
+| Table | `storage_descriptor.schema_reference.schema_id.schema_arn` / `schema_name` | Schema `arn` / `schema_name`; name variant also matches `registry_name`; known positive version number must equal schema `latest_schema_version` |
+| Table | `storage_descriptor.schema_reference.schema_id.registry_name` | Registry `registry_name`, only the schema-name variant |
+| Table | `view_definition.sub_objects` | Complete list of table `arn` outputs |
+| Table | `view_definition.representations.validation_connection` | Each representation's connection `name`, qualified by the table's `catalog_id` |
+| Optimizer / partition / partition index | `table_name` | Table `name`, equal known `catalog_id` and `database_name` |
+| Optimizer | `configuration.role_arn` | IAM role `arn` only when `enabled` is known true |
+| Data quality ruleset | `target_table.table_name` | Table `name`, target `catalog_id` and `database_name` |
+| Schema | `registry_arn` | Registry `arn`; no synthetic default registry |
+| User-defined function | `database_name` | Database `name` and equal known `catalog_id` |
+
+Nested blocks are singleton lists, except `view_definition.representations`, which
+is a list verified element by element with matching configuration indices and
+cardinality. View base-table lists must be complete and duplicate-free. Schema
+ARN and registry/name variants are exclusive. The provider exposes no managed
+schema-version ID output: `schema_version_id` remains ordinary provenance and
+cannot be substituted for a schema ARN or version number. Older/unknown version
+selectors retain ordinary references. Target database/table region selectors,
+when present, must agree with the source; cross-region targets remain conservative.
+
+Optimizers require a known `compaction`, `retention` or `orphan_file_deletion`
+type. Table-owned optimizer/partition/index and database-owned function helpers
+retain their lifecycle identity. Unshared schemas may be presented under their
+verified registry; referenced schemas and existing shared tables remain independent.
+No relationship implies network containment or execution/data lineage.
+
+Every link requires explicit unique Terraform references, exact known output
+values, current managed identities and compatible provider/account/region/state
+boundaries. Missing catalog qualifiers, unknowns, invalid collection shapes,
+ambiguous references and filtered owners retain ordinary fallback. External
+federation identifiers, computed workgroup names, URI schemes, SQL/DQDL, schema
+bodies, partition data, class names and principal strings remain opaque.
+
+The source contracts are `website/docs/r/glue_*.html.markdown` and the matching
+`internal/service/glue/*.go` files for the nine consumer types above at the pinned
+revision. Runtime support defaults are generated with
+`scripts/update-resource-support.sh aws_glue_`.
+
+## Glue connections and development endpoints (#846)
+
+The pinned Provider 6.70.0
+[connection](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/glue_connection.html.markdown)
+and [development endpoint](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/glue_dev_endpoint.html.markdown)
+SDK schemas define these configured references:
+
+| Resource | Input | Managed output |
+| --- | --- | --- |
+| Connection | `physical_connection_requirements.subnet_id` | Subnet `id` (scalar) |
+| Connection | `physical_connection_requirements.security_group_id_list` | Complete Security Group `id` set |
+| Connection | `authentication_configuration.kms_key_arn` / `secret_arn` | Supported KMS key `arn` / Secrets Manager secret `arn` |
+| Development endpoint | `subnet_id` / `security_group_ids` | Subnet `id` / complete Security Group `id` set |
+| Development endpoint | `role_arn` | IAM role `arn`, with compatible global role scope |
+| Development endpoint | `security_configuration` | Glue security configuration `name` |
+
+Connection physical/authentication blocks must be singleton lists. Authentication
+references require known `BASIC`, `CUSTOM`, `IAM` or `OAUTH2` type. Connection type
+does not change the meaning of these explicit network inputs. Both network paths
+must resolve completely and independently prove the same VPC before adding VPC
+context. Optional connection availability zone only corroborates the referenced
+subnet; an unknown or mismatched zone suppresses VPC context. Development endpoint
+computed `vpc_id`, when present, must corroborate that proof and never selects a VPC.
+
+Development endpoints have independent Spatial cards; connections remain reusable
+Logical resources. Neither relationship implies ownership, and a connection's
+network never relocates its consumers. IPs, URLs, connection properties, credential
+maps, arguments, key material and script/library paths remain opaque.
+
+Typed links require unique explicit Terraform references, exact known output
+values, current managed identities and compatible provider/account/region/state
+bindings. Unknown, partial, duplicate, malformed or historical evidence retains
+conservative fallback. Filtering preserves each resource's independent action
+and coverage. Runtime defaults use `scripts/update-resource-support.sh aws_glue_`.
+
+## Glue workload references (#847)
+
+The pinned Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f` defines these additional managed
+relationships. Existing crawler/job execution-role ARN handling is retained.
+
+| Consumer | Configured path | Verified managed output |
+| --- | --- | --- |
+| Crawler | `classifiers` | Complete classifier `name` / `id` list (`id` is the classifier name) |
+| Crawler / job | `security_configuration` | Security configuration `name` |
+| Crawler | `{jdbc,mongodb,s3,catalog,delta,hudi,iceberg}_target.connection_name` | Connection `name` with catalog-account proof |
+| Job | `connections` | Complete connection `name` list with catalog-account proof |
+| Crawler | `{s3,catalog}_target.event_queue_arn` / `dlq_event_queue_arn` | SQS queue `arn` |
+| Crawler | `dynamodb_target.path` | DynamoDB table `name`; no path/ARN parsing |
+| ML transform | `role_arn` | IAM role `arn`, with compatible global role scope |
+| ML transform | `input_record_tables.database_name` / `table_name` / `connection_name` | Database / table / connection `name`, qualified by that row's known `catalog_id`; table also matches `database_name` |
+| Trigger | `workflow_name` | Workflow `name`; trigger retains its own action and identity |
+| Trigger | `actions.job_name` / `crawler_name` | Job / crawler `name` |
+| Trigger | `actions.security_configuration` | Security configuration `name`, only a job action |
+| Trigger | `predicate.conditions.job_name` / `crawler_name` | Job / crawler `name`, only a `CONDITIONAL` trigger |
+
+Crawler/job connection names require every source connection's known catalog ID
+to equal the consumer's independently verified provider account. JSON-only input
+cannot prove that account and keeps these links generic; saved-plan provider
+proof enables them. Catalog IDs never set the resource's own account. Crawler
+`database_name` and catalog-target database/table names lack a general catalog
+selector and remain ordinary references.
+
+Target, input-table, action and condition blocks are lists verified per index
+and cardinality; `predicate` is a singleton list. Scalar names, complete lists and
+optional absent fields retain their respective shapes. Trigger types must be
+known (`ON_DEMAND`, `SCHEDULED`, `CONDITIONAL`, `EVENT`), and job/crawler variants
+are exclusive. Predicates describe configuration, not observed execution order.
+Shared workflows, tables and connection endpoints preserve independent identities;
+using a connection never places a workload in its subnet or VPC.
+
+Every dedicated reference requires complete unique explicit Terraform evidence,
+matching known outputs, current managed identities and compatible provider,
+account, region and state boundaries. Unknowns, partial collections, mismatched
+catalogs, wrong outputs, ambiguous or historical targets retain fallback.
+SQL, script locations/bodies, source-control authentication, arguments, classifier
+patterns, algorithm parameters, credentials and dataset paths remain opaque.
+
+The source contracts are `website/docs/r/glue_{crawler,job,ml_transform,trigger,
+classifier,connection,security_configuration,workflow}.html.markdown` and their
+corresponding `internal/service/glue/*.go` files at the pinned revision. Runtime
+support defaults use `scripts/update-resource-support.sh aws_glue_`.

@@ -1,0 +1,1090 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.main",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/cognito"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/main"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.trigger",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-west-2:123456789012:function:trigger"
+        }
+      }
+    },
+    {
+      "address": "aws_ses_domain_identity.mail",
+      "type": "aws_ses_domain_identity",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ses:us-west-2:123456789012:identity/example.test"
+        }
+      }
+    },
+    {
+      "address": "aws_pinpoint_app.main",
+      "type": "aws_pinpoint_app",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_id": "abc123",
+          "arn": "arn:aws:mobiletargeting:us-west-2:123456789012:apps/abc123"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.domain",
+      "type": "aws_acm_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/domain"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.main",
+      "type": "aws_cloudwatch_log_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-west-2:123456789012:log-group:cognito"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.logs",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::cognito-logs"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.logs",
+      "type": "aws_kinesis_firehose_delivery_stream",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:firehose:us-west-2:123456789012:deliverystream/logs"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_openid_connect_provider.main",
+      "type": "aws_iam_openid_connect_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:oidc-provider/example.test",
+          "url": "https://example.test"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_saml_provider.main",
+      "type": "aws_iam_saml_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:saml-provider/main",
+          "saml_metadata_document": "PRIVATE_SAML"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool.main",
+      "type": "aws_cognito_user_pool",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-west-2_main",
+          "arn": "arn:aws:cognito-idp:us-west-2:123456789012:userpool/us-west-2_main",
+          "endpoint": "cognito-idp.us-west-2.amazonaws.com/us-west-2_main",
+          "lambda_config": [
+            {
+              "pre_sign_up": "arn:aws:lambda:us-west-2:123456789012:function:trigger",
+              "custom_email_sender": [
+                {
+                  "lambda_arn": "arn:aws:lambda:us-west-2:123456789012:function:trigger",
+                  "lambda_version": "V1_0"
+                }
+              ],
+              "pre_token_generation_config": [
+                {
+                  "lambda_arn": "arn:aws:lambda:us-west-2:123456789012:function:trigger",
+                  "lambda_version": "V2_0"
+                }
+              ],
+              "kms_key_id": "arn:aws:kms:us-west-2:123456789012:key/main"
+            }
+          ],
+          "email_configuration": [
+            {
+              "email_sending_account": "DEVELOPER",
+              "source_arn": "arn:aws:ses:us-west-2:123456789012:identity/example.test",
+              "from_email_address": "PRIVATE_EMAIL"
+            }
+          ],
+          "sms_configuration": [
+            {
+              "sns_caller_arn": "arn:aws:iam::123456789012:role/cognito",
+              "external_id": "PRIVATE_EXTERNAL"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool_client.main",
+      "type": "aws_cognito_user_pool_client",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "client-main",
+          "user_pool_id": "us-west-2_main",
+          "supported_identity_providers": [
+            "COGNITO",
+            "CorpSAML"
+          ],
+          "analytics_configuration": [
+            {
+              "application_id": "abc123",
+              "role_arn": "arn:aws:iam::123456789012:role/cognito",
+              "external_id": "PRIVATE_EXTERNAL",
+              "user_data_shared": false
+            }
+          ],
+          "client_secret": "PRIVATE_CLIENT_SECRET",
+          "callback_urls": [
+            "https://PRIVATE_CALLBACK.test"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_pool.main",
+      "type": "aws_cognito_identity_pool",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-west-2:identity",
+          "cognito_identity_providers": [
+            {
+              "client_id": "client-main",
+              "provider_name": "cognito-idp.us-west-2.amazonaws.com/us-west-2_main"
+            }
+          ],
+          "openid_connect_provider_arns": [
+            "arn:aws:iam::123456789012:oidc-provider/example.test"
+          ],
+          "saml_provider_arns": [
+            "arn:aws:iam::123456789012:saml-provider/main"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_pool_provider_principal_tag.oidc",
+      "type": "aws_cognito_identity_pool_provider_principal_tag",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identity_pool_id": "us-west-2:identity",
+          "identity_provider_name": "arn:aws:iam::123456789012:oidc-provider/example.test",
+          "use_defaults": true,
+          "principal_tags": {
+            "name": "PRIVATE_TAG"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_pool_roles_attachment.main",
+      "type": "aws_cognito_identity_pool_roles_attachment",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identity_pool_id": "us-west-2:identity",
+          "roles": {
+            "authenticated": "arn:aws:iam::123456789012:role/cognito",
+            "unauthenticated": "arn:aws:iam::123456789012:role/cognito"
+          },
+          "role_mapping": [
+            {
+              "identity_provider": "arn:aws:iam::123456789012:oidc-provider/example.test",
+              "type": "Rules",
+              "ambiguous_role_resolution": "Deny",
+              "mapping_rule": [
+                {
+                  "role_arn": "arn:aws:iam::123456789012:role/cognito",
+                  "claim": "PRIVATE_CLAIM",
+                  "match_type": "Equals",
+                  "value": "PRIVATE_VALUE"
+                }
+              ]
+            },
+            {
+              "identity_provider": "cognito-idp.us-west-2.amazonaws.com/us-west-2_main:client-main",
+              "type": "Token",
+              "ambiguous_role_resolution": "Deny"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_provider.main",
+      "type": "aws_cognito_identity_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "provider_name": "CorpSAML",
+          "provider_type": "SAML",
+          "provider_details": {
+            "MetadataFile": "PRIVATE_METADATA",
+            "client_secret": "PRIVATE_PROVIDER_SECRET"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_log_delivery_configuration.main",
+      "type": "aws_cognito_log_delivery_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "log_configurations": [
+            {
+              "event_source": "userNotification",
+              "log_level": "ERROR",
+              "cloud_watch_logs_configuration": [
+                {
+                  "log_group_arn": "arn:aws:logs:us-west-2:123456789012:log-group:cognito"
+                }
+              ]
+            },
+            {
+              "event_source": "userAuthEvents",
+              "log_level": "INFO",
+              "firehose_configuration": [
+                {
+                  "stream_arn": "arn:aws:firehose:us-west-2:123456789012:deliverystream/logs"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_managed_login_branding.main",
+      "type": "aws_cognito_managed_login_branding",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "client_id": "client-main",
+          "settings": "PRIVATE_SETTINGS",
+          "asset": [
+            {
+              "bytes": "PRIVATE_IMAGE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_managed_user_pool_client.lookup",
+      "type": "aws_cognito_managed_user_pool_client",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "managed-client",
+          "user_pool_id": "us-west-2_main",
+          "name_pattern": "PRIVATE_PATTERN",
+          "client_secret": "PRIVATE_SECRET"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_resource_server.main",
+      "type": "aws_cognito_resource_server",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "identifier": "https://PRIVATE_SCOPE.test",
+          "scope": [
+            {
+              "scope_name": "PRIVATE_SCOPE"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_risk_configuration.main",
+      "type": "aws_cognito_risk_configuration",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "client_id": "client-main",
+          "account_takeover_risk_configuration": [
+            {
+              "notify_configuration": [
+                {
+                  "source_arn": "arn:aws:ses:us-west-2:123456789012:identity/example.test",
+                  "from": "PRIVATE_EMAIL",
+                  "block_email": [
+                    {
+                      "html_body": "PRIVATE_BODY"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user.main",
+      "type": "aws_cognito_user",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "username": "PRIVATE_USERNAME",
+          "sub": "PRIVATE_SUB",
+          "password": "PRIVATE_PASSWORD",
+          "attributes": {
+            "email": "PRIVATE_EMAIL"
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_group.main",
+      "type": "aws_cognito_user_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "name": "group-main",
+          "role_arn": "arn:aws:iam::123456789012:role/cognito"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_in_group.main",
+      "type": "aws_cognito_user_in_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "group_name": "group-main",
+          "username": "PRIVATE_USERNAME"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool_domain.main",
+      "type": "aws_cognito_user_pool_domain",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "domain": "PRIVATE_DOMAIN",
+          "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/domain",
+          "cloudfront_distribution_arn": "PRIVATE_COMPUTED_DISTRIBUTION"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool_ui_customization.main",
+      "type": "aws_cognito_user_pool_ui_customization",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_pool_id": "us-west-2_main",
+          "client_id": "ALL",
+          "css": "PRIVATE_CSS",
+          "image_file": "PRIVATE_IMAGE"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_pool_provider_principal_tag.cognito",
+      "type": "aws_cognito_identity_pool_provider_principal_tag",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identity_pool_id": "us-west-2:identity",
+          "identity_provider_name": "cognito-idp.us-west-2.amazonaws.com/us-west-2_main"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_identity_pool_provider_principal_tag.saml",
+      "type": "aws_cognito_identity_pool_provider_principal_tag",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identity_pool_id": "us-west-2:identity",
+          "identity_provider_name": "arn:aws:iam::123456789012:saml-provider/main"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool.other",
+      "type": "aws_cognito_user_pool",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-west-2_other",
+          "endpoint": "cognito-idp.us-west-2.amazonaws.com/us-west-2_other"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      },
+      "aws.east": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "east",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.trigger",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ses_domain_identity.mail",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_pinpoint_app.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.domain",
+          "provider_config_key": "aws.east",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesis_firehose_delivery_stream.logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_openid_connect_provider.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_saml_provider.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cognito_user_pool.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lambda_config": [
+              {
+                "pre_sign_up": {
+                  "references": [
+                    "aws_lambda_function.trigger.arn"
+                  ]
+                },
+                "custom_email_sender": [
+                  {
+                    "lambda_arn": {
+                      "references": [
+                        "aws_lambda_function.trigger.arn"
+                      ]
+                    }
+                  }
+                ],
+                "pre_token_generation_config": [
+                  {
+                    "lambda_arn": {
+                      "references": [
+                        "aws_lambda_function.trigger.arn"
+                      ]
+                    }
+                  }
+                ],
+                "kms_key_id": {
+                  "references": [
+                    "aws_kms_key.main.arn"
+                  ]
+                }
+              }
+            ],
+            "email_configuration": [
+              {
+                "source_arn": {
+                  "references": [
+                    "aws_ses_domain_identity.mail.arn"
+                  ]
+                }
+              }
+            ],
+            "sms_configuration": [
+              {
+                "sns_caller_arn": {
+                  "references": [
+                    "aws_iam_role.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool_client.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "supported_identity_providers": {
+              "references": [
+                "aws_cognito_identity_provider.main.provider_name"
+              ]
+            },
+            "analytics_configuration": [
+              {
+                "application_id": {
+                  "references": [
+                    "aws_pinpoint_app.main.application_id"
+                  ]
+                },
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cognito_identity_pool.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cognito_identity_providers": [
+              {
+                "client_id": {
+                  "references": [
+                    "aws_cognito_user_pool_client.main.id"
+                  ]
+                },
+                "provider_name": {
+                  "references": [
+                    "aws_cognito_user_pool.main.endpoint"
+                  ]
+                }
+              }
+            ],
+            "openid_connect_provider_arns": {
+              "references": [
+                "aws_iam_openid_connect_provider.main.arn"
+              ]
+            },
+            "saml_provider_arns": {
+              "references": [
+                "aws_iam_saml_provider.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_identity_pool_provider_principal_tag.oidc",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_pool_id": {
+              "references": [
+                "aws_cognito_identity_pool.main.id"
+              ]
+            },
+            "identity_provider_name": {
+              "references": [
+                "aws_iam_openid_connect_provider.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_identity_pool_roles_attachment.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_pool_id": {
+              "references": [
+                "aws_cognito_identity_pool.main.id"
+              ]
+            },
+            "roles": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            },
+            "role_mapping": [
+              {
+                "identity_provider": {
+                  "references": [
+                    "aws_iam_openid_connect_provider.main.arn"
+                  ]
+                },
+                "mapping_rule": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "identity_provider": {
+                  "references": [
+                    "aws_cognito_user_pool.main.endpoint",
+                    "aws_cognito_user_pool_client.main.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cognito_identity_provider.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_log_delivery_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "log_configurations": [
+              {
+                "cloud_watch_logs_configuration": [
+                  {
+                    "log_group_arn": {
+                      "references": [
+                        "aws_cloudwatch_log_group.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "firehose_configuration": [
+                  {
+                    "stream_arn": {
+                      "references": [
+                        "aws_kinesis_firehose_delivery_stream.logs.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cognito_managed_login_branding.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "client_id": {
+              "references": [
+                "aws_cognito_user_pool_client.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_managed_user_pool_client.lookup",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_resource_server.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_risk_configuration.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "client_id": {
+              "references": [
+                "aws_cognito_user_pool_client.main.id"
+              ]
+            },
+            "account_takeover_risk_configuration": [
+              {
+                "notify_configuration": [
+                  {
+                    "source_arn": {
+                      "references": [
+                        "aws_ses_domain_identity.mail.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cognito_user.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_in_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "group_name": {
+              "references": [
+                "aws_cognito_user_group.main.name"
+              ]
+            },
+            "username": {
+              "references": [
+                "aws_cognito_user.main.username"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool_domain.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            },
+            "certificate_arn": {
+              "references": [
+                "aws_acm_certificate.domain.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool_ui_customization.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_identity_pool_provider_principal_tag.cognito",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_pool_id": {
+              "references": [
+                "aws_cognito_identity_pool.main.id"
+              ]
+            },
+            "identity_provider_name": {
+              "references": [
+                "aws_cognito_user_pool.main.endpoint"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_identity_pool_provider_principal_tag.saml",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_pool_id": {
+              "references": [
+                "aws_cognito_identity_pool.main.id"
+              ]
+            },
+            "identity_provider_name": {
+              "references": [
+                "aws_iam_saml_provider.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool.other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
