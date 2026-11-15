@@ -44,8 +44,11 @@ fn fields(entry: &Value, mode: EntityMode) -> Vec<String> {
             if shape["required"] != true && shape["optional"] != true {
                 return None;
             }
-            let administration = super::administration::label(kind, field)
-                .filter(|_| !(kind == "cloudflare_zone" && mode == EntityMode::Data));
+            let administration = super::administration::label(kind, field).filter(|_| {
+                !(mode == EntityMode::Data
+                    && (kind == "cloudflare_zone"
+                        || (kind == "cloudflare_workers_custom_domain" && field == "zone_id")))
+            });
             let label = administration.or_else(|| {
                 if mode != EntityMode::Managed {
                     return None;

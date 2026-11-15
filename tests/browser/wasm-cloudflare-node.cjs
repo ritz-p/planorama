@@ -91,8 +91,10 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
-for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed']) {
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-domain-zone-unknown') plan.resource_changes[10].change.after_unknown = {zone_id: true};
+  if (scenario === 'applications-domain-zone-conflict') plan.resource_changes[10].change.after.account_id = 'f'.repeat(32);
   if (scenario === 'applications-unknown') plan.resource_changes[6].change.after_unknown = {bindings: true};
   if (scenario === 'applications-jurisdiction') plan.resource_changes[2].change.after.jurisdiction = 'default';
   if (scenario === 'applications-lifecycle') {

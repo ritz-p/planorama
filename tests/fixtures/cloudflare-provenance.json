@@ -31,7 +31,7 @@
     },
     {
       "file": "tests/fixtures/cloudflare-applications-plan.json",
-      "sha256": "1fc8f0b189e87d5327a3a1260f50c1be2c5c95b236ab95ab6215bce429e08c07"
+      "sha256": "eb197157eecf712632bd3f21321b483b167f81eef44ec785ea3459e42ae5361c"
     },
     {
       "file": "tests/fixtures/cloudflare-queues-plan.json",

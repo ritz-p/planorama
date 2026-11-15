@@ -108,6 +108,15 @@ Workers and Pages are edge applications, with no inferred VPC membership.
 Separately managed versions, deployments, routes, custom domains and Pages
 Domains retain their own lifecycle rows. Storage stays separately managed.
 
+Managed Custom Domains additionally verify `zone_id` against a unique current
+Zone's `id` (or a singleton data Zone's matching `id`/`zone_id`). The domain and
+Zone must have the same known, non-sensitive account. This independent
+`Zone administration` relationship can coexist with `service` → Worker;
+neither hostname matching nor literal zone IDs establish it. Missing, masked,
+conflicting or ambiguous evidence fails closed without replacing the domain's
+own account scope. The contract uses the pinned v5.28.1 inventory's `zone_id`
+input; other schema shapes receive no inferred aliases or compatibility fallback.
+
 Verified application references require explicit, complete Terraform provenance,
 unique current identities and a known matching account:
 

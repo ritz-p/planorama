@@ -655,6 +655,12 @@
                 "cloudflare_workers_script.legacy.id",
                 "cloudflare_workers_script.legacy"
               ]
+            },
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
             }
           }
         },
