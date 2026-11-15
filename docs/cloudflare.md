@@ -99,6 +99,32 @@ collections, referenced output identities and scope together. It does not apply
 AWS nested-block/index rules to these attribute contracts. Managed configuration
 references and data-source lookup outputs are treated separately.
 
+## Imported resources and value-only recovery
+
+Value-only Zone/Worker recovery is disabled; there is no opt-in switch. Imported
+plans with literal `zone_id`, `script` or `service` values keep their resources
+and scope labels, but equal values alone do not create verified relationships.
+This applies to Route → Zone, Route → Worker, Custom Domain → Zone and Custom
+Domain → Worker. Restore explicit Terraform expressions to obtain the documented
+verified links. A shared hostname or account never creates a direct Zone → Worker
+relationship, and named states are independent identity domains.
+
+The pinned schema provides typed Zone IDs and Worker names, so a separately
+labelled configured-value match is technically possible with complete evidence.
+It is not equivalent to Terraform provenance: names are account scoped, Zone data
+outputs require matching `id`/`zone_id`, legacy script `id` is a name rather than
+a Worker UUID, and a plan may omit other endpoints. Unknown/sensitive identities,
+duplicate current candidates, conflicting scope, deleted/deposed targets and
+environment-qualified services must never fall back to unrestricted matching.
+
+The current semantic contract records verified references, not a separate
+value-match confidence. Enabling recovery requires a distinct provenance model
+and SVG/HTML labels, an explicit opt-in, per-state typed identity indexes, and
+native/Wasm tests covering the same ambiguity and masking boundaries as explicit
+references. Index construction should be linear in resources plus candidate
+relations; measure large imported fixtures before enabling it. No fallback scan
+or default behavior change is introduced by this decision.
+
 ## Applications and storage
 
 [Application sample](../examples/cloudflare-applications.svg) combines separately
