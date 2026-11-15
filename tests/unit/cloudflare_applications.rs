@@ -22,6 +22,10 @@ fn verified(v: &Value, index: usize, path: &str) -> bool {
                     && r.complete
                     && path == "bindings"
                     && matches!(r.label, "Storage bindings" | "Service bindings"))
+                || (r.attribute == path
+                    && r.complete
+                    && path == "content"
+                    && r.label == "Configured Pages CNAME")
         })
 }
 #[test]

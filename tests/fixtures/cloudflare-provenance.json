@@ -39,7 +39,7 @@
     },
     {
       "file": "tests/fixtures/cloudflare-zero-trust-plan.json",
-      "sha256": "831f5a3bf27b160e4d23b696cab38fc8c4cc7fa4fd82c2eb2ba102bc3b0ffdbd"
+      "sha256": "f6d16827d6e673a5b51c5f1b77caf340337e4b0db731e47083db8b200e41ee50"
     }
   ]
 }

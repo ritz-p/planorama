@@ -33,7 +33,7 @@ fn access_and_tunnel_references_are_configuration_not_traffic() {
         assert!(verified(&v, index, path), "{index}/{path}");
     }
     let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
-    assert_eq!(graph.nodes.len(), 11);
+    assert_eq!(graph.nodes.len(), 12);
     assert!(
         graph
             .edges
@@ -267,8 +267,8 @@ fn group_endpoints_require_exact_account_identity_and_current_instances() {
         .unwrap()
         .push(duplicate);
     assert!(!verified(&v, 3, "include"));
-    v["resource_changes"][11]["deposed"] = json!("old");
-    v["resource_changes"][11]["change"]["actions"] = json!(["delete"]);
+    v["resource_changes"][12]["deposed"] = json!("old");
+    v["resource_changes"][12]["change"]["actions"] = json!(["delete"]);
     assert!(verified(&v, 3, "include"));
 }
 

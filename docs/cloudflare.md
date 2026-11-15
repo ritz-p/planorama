@@ -272,6 +272,17 @@ traffic guarantees.
 
 ## Access and Tunnel
 
+Managed DNS CNAME records can identify a Tunnel through an explicit reference
+to its `id`, with exact `<UUID>.cfargotunnel.com` content and `proxied = true`.
+The DNS Zone must be explicitly verified and its known account must match the
+unique current Tunnel endpoint. Known IDs, contents and proxy settings must be
+non-sensitive. Literal CNAMEs, other suffixes (including FedRAMP variants),
+unproxied records and unknown/ambiguous endpoints are not promoted.
+`Configured Tunnel CNAME` describes DNS configuration only: ingress hostname
+similarity does not establish reachability, connector health or Access protection.
+The [Cloudflare routing contract](https://developers.cloudflare.com/tunnel/concepts/routing/)
+defines the standard Tunnel subdomain and same-account restriction.
+
 [Zero Trust sample](../examples/cloudflare-zero-trust.svg) shows an Access
 application, identity provider, reusable policy, Access Groups, tunnel, configuration and
 routing helpers. These remain independently managed resources. Access policies

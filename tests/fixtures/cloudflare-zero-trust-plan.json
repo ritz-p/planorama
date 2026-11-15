@@ -301,6 +301,30 @@
         "after_unknown": {},
         "after_sensitive": {}
       }
+    },
+    {
+      "address": "cloudflare_dns_record.portal",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "portal",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "99999999999999999999999999999999",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "portal.example.invalid",
+          "type": "CNAME",
+          "content": "40000000-0000-4000-8000-000000000004.cfargotunnel.com",
+          "proxied": true,
+          "ttl": 1
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
     }
   ],
   "configuration": {
@@ -507,6 +531,27 @@
           "name": "trusted",
           "provider_config_key": "cloudflare",
           "expressions": {}
+        },
+        {
+          "address": "cloudflare_dns_record.portal",
+          "mode": "managed",
+          "type": "cloudflare_dns_record",
+          "name": "portal",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "content": {
+              "references": [
+                "cloudflare_zero_trust_tunnel_cloudflared.office.id",
+                "cloudflare_zero_trust_tunnel_cloudflared.office"
+              ]
+            }
+          }
         }
       ]
     }

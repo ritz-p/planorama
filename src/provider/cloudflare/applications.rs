@@ -9,7 +9,7 @@ use std::collections::BTreeSet;
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
-        ("cloudflare_dns_record", "content") => Some("Configured Pages CNAME"),
+        ("cloudflare_dns_record", "content") => Some("Configured CNAME target"),
         ("cloudflare_worker_version", "worker_id") => Some("Worker"),
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
             Some("Storage, service, queue and Hyperdrive bindings")
@@ -371,6 +371,8 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
                 "cloudflare_worker" | "cloudflare_workers_script" => "Service bindings",
                 "cloudflare_queue" => "Queue producer bindings",
                 "cloudflare_hyperdrive_config" => "Hyperdrive bindings",
+                "cloudflare_pages_project" => "Configured Pages CNAME",
+                "cloudflare_zero_trust_tunnel_cloudflared" => "Configured Tunnel CNAME",
                 "cloudflare_r2_bucket"
                 | "cloudflare_workers_kv_namespace"
                 | "cloudflare_d1_database" => "Storage bindings",
@@ -380,6 +382,17 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
         })
         .collect();
     for node in &mut graph.nodes {
+        if node.provider.is_cloudflare() && node.resource_type == "cloudflare_dns_record" {
+            for reference in &mut node.references {
+                if reference.attribute == "content" && reference.complete && !reference.dependency {
+                    if let [target] = reference.targets.as_slice() {
+                        if let Some(label) = roles.get(&target.id) {
+                            reference.label = label;
+                        }
+                    }
+                }
+            }
+        }
         if !node.provider.is_cloudflare()
             || !matches!(
                 node.resource_type.as_str(),
@@ -431,7 +444,7 @@ pub(super) fn annotate(
                     .then(|| {
                         if node.mode == EntityMode::Managed {
                             if node.resource_type == "cloudflare_dns_record" {
-                                dns_pages(nodes, refs, r, evidence)
+                                dns_target(nodes, refs, r, evidence)
                             } else {
                                 verify(nodes, refs, r, evidence)
                             }
@@ -486,7 +499,7 @@ fn reject_dlq_cycles(refs: &mut [AttributeReference]) {
     }
 }
 
-fn dns_pages(
+fn dns_target(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     r: &AttributeReference,
@@ -506,18 +519,43 @@ fn dns_pages(
     }) {
         return Err(Failure::OwnerMismatch);
     }
-    proof::verify(
-        nodes,
-        refs,
-        r,
-        evidence,
-        &[proof::Target {
-            value: value.text("content")?,
+    let [source] = r.sources.as_slice() else {
+        return Err(Failure::IncompleteProvenance);
+    };
+    let content = value.text("content")?;
+    let target = match nodes[*source].resource_type.as_str() {
+        "cloudflare_pages_project" => proof::Target {
+            value: content,
             kind: "cloudflare_pages_project",
             output: "subdomain",
-        }],
-        |a, b| proof::account(&nodes[a], &nodes[b], evidence[a], evidence[b]),
-    )
+        },
+        "cloudflare_zero_trust_tunnel_cloudflared" => {
+            let id = content
+                .strip_suffix(".cfargotunnel.com")
+                .ok_or(Failure::IdentityMismatch)?;
+            if proxied.value.as_bool() != Some(true)
+                || id.len() != 36
+                || !id.bytes().enumerate().all(|(i, b)| {
+                    if matches!(i, 8 | 13 | 18 | 23) {
+                        b == b'-'
+                    } else {
+                        b.is_ascii_hexdigit()
+                    }
+                })
+            {
+                return Err(Failure::UnsupportedContract);
+            }
+            proof::Target {
+                value: id,
+                kind: "cloudflare_zero_trust_tunnel_cloudflared",
+                output: "id",
+            }
+        }
+        _ => return Err(Failure::UnsupportedContract),
+    };
+    proof::verify(nodes, refs, r, evidence, &[target], |a, b| {
+        proof::account(&nodes[a], &nodes[b], evidence[a], evidence[b])
+    })
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_applications.rs"]
@@ -526,3 +564,7 @@ mod tests;
 #[cfg(test)]
 #[path = "../../../tests/unit/cloudflare_queues.rs"]
 mod queue_tests;
+
+#[cfg(test)]
+#[path = "../../../tests/unit/cloudflare_dns_public.rs"]
+mod dns_public_tests;
