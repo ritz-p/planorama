@@ -29,3 +29,20 @@ for (const cloudflare_value_matches of [null, 1, 'true']) {
   assert.throws(() => binding.generate(json, JSON.stringify({cloudflare_value_matches})));
 }
 console.log('Cloudflare configured-value native/Wasm/resumable and anonymized parity passed');
+for (const missing of ['configuration', 'provider_config_key']) {
+  const value = JSON.parse(json);
+  if (missing === 'configuration') delete value.configuration;
+  else for (const resource of value.configuration.root_module.resources) delete resource.provider_config_key;
+  const input = JSON.stringify(value);
+  const options = JSON.stringify({cloudflare_value_matches: true});
+  const result = JSON.parse(binding.generate(input, options));
+  assert.ok(!result.content.includes('data-evidence="configured-value"'));
+  assert.equal(result.content, execFileSync(binary, ['-', '--cloudflare-value-matches', '-o', '-'], {input, encoding: 'utf8'}));
+  const job = new binding.Generation(input, options);
+  try {
+    let sliced;
+    for (let index = 0; index < 10000 && !sliced; index++) sliced = job.step(4096);
+    assert.equal(JSON.parse(sliced).content, result.content);
+  } finally { job.free(); }
+}
+console.log('Missing Cloudflare provider configuration remains unrecovered in native/Wasm/resumable generation');

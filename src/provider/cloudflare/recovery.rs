@@ -65,7 +65,10 @@ pub(crate) fn recover(
         let Some([zone_source]) = zones.get(zone).map(Vec::as_slice) else {
             continue;
         };
-        if node.provider_configuration != nodes[*zone_source].provider_configuration {
+        let Some(provider) = node.provider_configuration.as_ref() else {
+            continue;
+        };
+        if Some(provider) != nodes[*zone_source].provider_configuration.as_ref() {
             continue;
         }
         let zone_value = evidence[*zone_source];
@@ -104,7 +107,7 @@ pub(crate) fn recover(
             continue;
         };
         let worker = &nodes[*source];
-        if node.provider_configuration != worker.provider_configuration {
+        if Some(provider) != worker.provider_configuration.as_ref() {
             continue;
         }
         let worker_value = evidence[*source];

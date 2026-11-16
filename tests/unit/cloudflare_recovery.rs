@@ -245,3 +245,56 @@ fn data_zones_aliases_and_domain_accounts_fail_closed() {
     domain["change"]["after"]["account_id"] = json!("dddddddddddddddddddddddddddddddd");
     assert_eq!(count(&different_account, "service"), 0);
 }
+
+#[test]
+fn recovery_requires_known_provider_configuration_at_each_endpoint() {
+    let original: Value = serde_json::from_str(FIXTURE).unwrap();
+    let mut absent = original.clone();
+    absent.as_object_mut().unwrap().remove("configuration");
+    assert!(
+        plan::parse_with_value_matches(&absent.to_string(), true)
+            .unwrap()
+            .configured_value_matches
+            .is_empty()
+    );
+    let mut missing_keys = original.clone();
+    for resource in missing_keys["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+    {
+        resource
+            .as_object_mut()
+            .unwrap()
+            .remove("provider_config_key");
+    }
+    assert!(
+        plan::parse_with_value_matches(&missing_keys.to_string(), true)
+            .unwrap()
+            .configured_value_matches
+            .is_empty()
+    );
+    for address in [
+        "cloudflare_zone.example",
+        "cloudflare_worker.api",
+        "cloudflare_workers_route.api",
+    ] {
+        let mut missing = original.clone();
+        let resource = missing["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|resource| resource["address"] == address)
+            .unwrap();
+        resource
+            .as_object_mut()
+            .unwrap()
+            .remove("provider_config_key");
+        assert_eq!(count(&missing, "script"), 0, "{address}");
+        if address == "cloudflare_zone.example" {
+            assert_eq!(count(&missing, "zone_id"), 0);
+        }
+        if address == "cloudflare_workers_route.api" {
+            assert_eq!(count(&missing, "zone_id"), 1);
+        }
+    }
+}
