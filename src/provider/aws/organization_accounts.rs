@@ -133,6 +133,7 @@ pub(crate) fn link(all: &Architecture, selected: &mut Architecture) {
                             continue;
                         }
                         targets.push(ReferenceTarget {
+                            configured_percentage: None,
                             account_scope: Some(account.clone()),
                             state: (scope_state != state).then(|| scope_state.clone()),
                             id: id.clone(),
@@ -145,6 +146,7 @@ pub(crate) fn link(all: &Architecture, selected: &mut Architecture) {
                                 ReferenceKind::DeploymentMember,
                                 "Organizations member Account",
                                 vec![ReferenceTarget {
+                                    configured_percentage: None,
                                     account_scope: None,
                                     state: (scope_state != state).then(|| state.clone()),
                                     id: node.entity.provenance[0].clone(),

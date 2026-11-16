@@ -210,11 +210,12 @@ fn identity(graph: &Graph, index: usize, state: Option<&str>) -> Value {
         .flat_map(|r| &r.provenance)
         .filter(|p| match (p, &edge.change) {
             (RelationshipProvenance::Resource { change, .. }, Some(selected)) => change == selected,
-            (RelationshipProvenance::Reference { .. }, None) => true,
+            (RelationshipProvenance::Reference { .. } | RelationshipProvenance::ConfiguredValue { .. }, None) => true,
             _ => false,
         })
         .map(|p| match p {
             RelationshipProvenance::Resource { source, .. } => json!({"resource": source.address, "deposed_key": source.deposed_key}),
+            RelationshipProvenance::ConfiguredValue { from, to, attribute } => json!({"kind":"configured-value","attribute":attribute,"from":from.address,"to":to.address}),
             RelationshipProvenance::Reference { from, to } => json!({"from": from.address, "from_deposed_key": from.deposed_key, "to": to.address, "to_deposed_key": to.deposed_key}),
         }).collect();
     provenance.sort_by_key(Value::to_string);

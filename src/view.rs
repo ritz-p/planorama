@@ -1,3 +1,4 @@
+mod anonymize;
 pub(crate) mod card;
 mod filter;
 pub(crate) mod geometry;
@@ -40,14 +41,22 @@ pub fn single(graph: &ArchitectureGraph, options: &Options) -> Result<ViewGraph,
         "selection_projection",
         &[("nodes", graph.nodes.len()), ("edges", graph.edges.len())],
     );
-    filter::single(graph, options).map(ViewGraph)
+    let mut graph = filter::single(graph, options)?;
+    if options.anonymize {
+        anonymize::single(&mut graph.0)?;
+    }
+    Ok(ViewGraph(graph))
 }
 pub fn apply(architecture: &Architecture, options: &Options) -> Result<ViewArchitecture, String> {
     let _timing = crate::timing::span(
         "selection_projection",
         &[("states", architecture.states.len())],
     );
-    filter::apply(architecture, options).map(ViewArchitecture)
+    let mut architecture = filter::apply(architecture, options)?;
+    if options.anonymize {
+        anonymize::named(&mut architecture)?;
+    }
+    Ok(ViewArchitecture(architecture))
 }
 
 #[cfg(test)]

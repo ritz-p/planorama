@@ -110,7 +110,25 @@ impl MeasuredLegend {
         top: usize,
         hide_relationship_legend: bool,
     ) -> Self {
-        let edges: Vec<_> = graphs.into_iter().flat_map(|graph| &graph.edges).collect();
+        let graphs: Vec<_> = graphs.into_iter().collect();
+        let value_matches = graphs.iter().any(|g| {
+            g.relationships.iter().any(|r| {
+                r.provenance.iter().any(|p| {
+                    matches!(
+                        p,
+                        crate::model::RelationshipProvenance::ConfiguredValue { .. }
+                    )
+                })
+            })
+        });
+        let percentages = graphs.iter().any(|graph| {
+            graph.nodes.iter().any(|node| {
+                node.references.iter().any(|r| {
+                    r.complete && r.targets.iter().any(|t| t.configured_percentage.is_some())
+                })
+            })
+        });
+        let edges: Vec<_> = graphs.iter().flat_map(|graph| &graph.edges).collect();
         let actions: BTreeSet<Option<Action>> = edges
             .iter()
             .filter(|edge| edge.kind != EdgeKind::Containment)
@@ -127,7 +145,7 @@ impl MeasuredLegend {
             items: Vec::new(),
         };
         content.text(
-            "Line color shows the relationship's own Terraform action, independently of endpoint-card actions.",
+            if value_matches { "Purple marks configured-value evidence; other line colors show the relationship's own Terraform action, independently of endpoint-card actions." } else { "Line color shows the relationship's own Terraform action, independently of endpoint-card actions." },
             PADDING,
             false,
         );
@@ -177,6 +195,14 @@ impl MeasuredLegend {
             PADDING,
             false,
         );
+            if percentages {
+                content.y += 8;
+                content.text("Configured version percentages describe Terraform plan settings, not observed live traffic.", PADDING, false);
+            }
+            if value_matches {
+                content.y += 8;
+                content.text("Purple dotted lines: opt-in typed configured-value matches, not verified Terraform expression provenance. No observed traffic, deployment success or runtime reachability is implied.", PADDING, false);
+            }
         }
         Self {
             width,

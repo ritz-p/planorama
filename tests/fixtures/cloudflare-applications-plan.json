@@ -179,6 +179,11 @@
               "type": "service",
               "name": "DOWNSTREAM",
               "service": "downstream"
+            },
+            {
+              "type": "hyperdrive",
+              "name": "DATABASE",
+              "id": "77777777-7777-4777-8777-777777777777"
             }
           ],
           "modules": [
@@ -212,7 +217,11 @@
           "versions": [
             {
               "version_id": "20000000-0000-4000-8000-000000000002",
-              "percentage": 100
+              "percentage": 75
+            },
+            {
+              "version_id": "88888888-8888-4888-8888-888888888888",
+              "percentage": 25
             }
           ]
         },
@@ -273,6 +282,11 @@
               "type": "service",
               "name": "DOWNSTREAM",
               "service": "downstream"
+            },
+            {
+              "type": "hyperdrive",
+              "name": "DATABASE",
+              "id": "77777777-7777-4777-8777-777777777777"
             }
           ]
         },
@@ -338,6 +352,7 @@
           "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           "id": "site",
           "name": "site",
+          "subdomain": "site.pages.dev",
           "production_branch": "main",
           "deployment_configs": {
             "preview": {
@@ -357,6 +372,15 @@
                 "ASSETS": {
                   "name": "assets",
                   "jurisdiction": "eu"
+                }
+              },
+              "services": {
+                "BACKEND": {
+                  "service": "backend",
+                  "entrypoint": "Handler"
+                },
+                "LEGACY": {
+                  "service": "downstream"
                 }
               }
             }
@@ -423,6 +447,84 @@
           "id": "downstream",
           "script_name": "downstream",
           "content": "PRIVATE_DOWNSTREAM_CODE"
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_dns_record.pages",
+      "mode": "managed",
+      "type": "cloudflare_dns_record",
+      "name": "pages",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "id": "77777777777777777777777777777777",
+          "zone_id": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+          "name": "www.example.invalid",
+          "type": "CNAME",
+          "content": "site.pages.dev",
+          "proxied": true,
+          "ttl": 1
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_hyperdrive_config.database",
+      "mode": "managed",
+      "type": "cloudflare_hyperdrive_config",
+      "name": "database",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "77777777-7777-4777-8777-777777777777",
+          "name": "database",
+          "origin": {
+            "database": "PRIVATE_DATABASE",
+            "host": "PRIVATE_ORIGIN.invalid",
+            "password": "PRIVATE_PASSWORD",
+            "scheme": "postgres",
+            "user": "PRIVATE_USER"
+          }
+        },
+        "after_unknown": {},
+        "after_sensitive": {}
+      }
+    },
+    {
+      "address": "cloudflare_worker_version.canary",
+      "mode": "managed",
+      "type": "cloudflare_worker_version",
+      "name": "canary",
+      "provider_name": "registry.terraform.io/cloudflare/cloudflare",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "before": null,
+        "after": {
+          "account_id": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "id": "88888888-8888-4888-8888-888888888888",
+          "worker_id": "10000000-0000-4000-8000-000000000001",
+          "modules": [
+            {
+              "name": "main.js",
+              "content_type": "application/javascript+module",
+              "content_base64": "PRIVATE_CANARY_CODE"
+            }
+          ]
         },
         "after_unknown": {},
         "after_sensitive": {}
@@ -555,7 +657,9 @@
                 "cloudflare_worker.backend.name",
                 "cloudflare_worker.backend",
                 "cloudflare_workers_script.downstream.script_name",
-                "cloudflare_workers_script.downstream"
+                "cloudflare_workers_script.downstream",
+                "cloudflare_hyperdrive_config.database.id",
+                "cloudflare_hyperdrive_config.database"
               ]
             }
           }
@@ -582,7 +686,9 @@
             "versions": {
               "references": [
                 "cloudflare_worker_version.api.id",
-                "cloudflare_worker_version.api"
+                "cloudflare_worker_version.api",
+                "cloudflare_worker_version.canary.id",
+                "cloudflare_worker_version.canary"
               ]
             }
           }
@@ -611,7 +717,9 @@
                 "cloudflare_worker.backend.name",
                 "cloudflare_worker.backend",
                 "cloudflare_workers_script.downstream.script_name",
-                "cloudflare_workers_script.downstream"
+                "cloudflare_workers_script.downstream",
+                "cloudflare_hyperdrive_config.database.id",
+                "cloudflare_hyperdrive_config.database"
               ]
             }
           }
@@ -655,6 +763,12 @@
                 "cloudflare_workers_script.legacy.id",
                 "cloudflare_workers_script.legacy"
               ]
+            },
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
             }
           }
         },
@@ -678,7 +792,11 @@
                 "cloudflare_workers_kv_namespace.cache.id",
                 "cloudflare_workers_kv_namespace.cache",
                 "cloudflare_d1_database.content.id",
-                "cloudflare_d1_database.content"
+                "cloudflare_d1_database.content",
+                "cloudflare_worker.backend.name",
+                "cloudflare_worker.backend",
+                "cloudflare_workers_script.downstream.script_name",
+                "cloudflare_workers_script.downstream"
               ]
             }
           }
@@ -730,6 +848,63 @@
               "references": [
                 "cloudflare_account.team.id",
                 "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_dns_record.pages",
+          "mode": "managed",
+          "type": "cloudflare_dns_record",
+          "name": "pages",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "zone_id": {
+              "references": [
+                "cloudflare_zone.example.id",
+                "cloudflare_zone.example"
+              ]
+            },
+            "content": {
+              "references": [
+                "cloudflare_pages_project.site.subdomain",
+                "cloudflare_pages_project.site"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_hyperdrive_config.database",
+          "mode": "managed",
+          "type": "cloudflare_hyperdrive_config",
+          "name": "database",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            }
+          }
+        },
+        {
+          "address": "cloudflare_worker_version.canary",
+          "mode": "managed",
+          "type": "cloudflare_worker_version",
+          "name": "canary",
+          "provider_config_key": "cloudflare",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "cloudflare_account.team.id",
+                "cloudflare_account.team"
+              ]
+            },
+            "worker_id": {
+              "references": [
+                "cloudflare_worker.api.id",
+                "cloudflare_worker.api"
               ]
             }
           }

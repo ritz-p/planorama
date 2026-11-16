@@ -136,6 +136,7 @@ fn resources(graph: &Graph, state: &str, prefix: &str) -> Vec<Value> {
         "changed_paths": node.metadata.changed_paths,
         "context": containment.parents[index].into_iter().chain(crate::view::routes::owner(graph, node))
             .map(|parent| format!("{prefix}{}", svg::resource_id(&graph.nodes[parent]))).collect::<Vec<_>>(),
+        "cloudflare_scope": node.entity.cloudflare_scope.as_ref().map(|scope| json!({"account": scope.account, "zone": scope.zone})),
         "scope": node.entity.scope.as_ref().map(|scope| json!({
             "provider": scope.provider,
             "account": scope.account.as_ref().map(|account| account.as_str()),

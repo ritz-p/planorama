@@ -6,6 +6,13 @@ use std::collections::BTreeMap;
 mod tests;
 
 pub fn parse_inputs(inputs: Vec<PlanInput>) -> Result<MultiPlan, String> {
+    parse_inputs_with_value_matches(inputs, false)
+}
+
+pub(crate) fn parse_inputs_with_value_matches(
+    inputs: Vec<PlanInput>,
+    recover: bool,
+) -> Result<MultiPlan, String> {
     let mut ordered = BTreeMap::new();
     for input in inputs {
         if ordered.contains_key(&input.state_id) {
@@ -19,7 +26,7 @@ pub fn parse_inputs(inputs: Vec<PlanInput>) -> Result<MultiPlan, String> {
     let states = ordered
         .into_iter()
         .map(|(id, json)| {
-            super::parse(&json)
+            super::parse_with_value_matches(&json, recover)
                 .map_err(|error| format!("state {:?}: {error}", id.as_str()))
                 .map(|graph| (id, graph))
         })

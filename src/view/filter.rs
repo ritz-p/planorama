@@ -4,6 +4,10 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub anonymize: bool,
+    pub cloudflare_value_matches: bool,
+    pub cloudflare_accounts: Vec<String>,
+    pub cloudflare_zones: Vec<String>,
     pub spatial_types: Vec<String>,
     pub explain_selection: bool,
     pub selection_details: usize,
@@ -17,8 +21,25 @@ pub struct Options {
 
 impl Options {
     pub fn validate(&self) -> Result<(), String> {
+        if self.anonymize && (self.html_semantic_diagnostics || self.explain_selection) {
+            return Err("anonymized exports cannot include diagnostic or coverage reports".into());
+        }
         if self.icon_mode == crate::icons::IconMode::Icon {
             return Err("icon mode has been removed; use service-name".into());
+        }
+        for value in self
+            .cloudflare_accounts
+            .iter()
+            .chain(&self.cloudflare_zones)
+        {
+            if value != "unknown"
+                && (value.len() != 32 || !value.bytes().all(|c| c.is_ascii_hexdigit()))
+            {
+                return Err(
+                    "Cloudflare scope selectors require a 32-character hexadecimal ID or 'unknown'"
+                        .into(),
+                );
+            }
         }
         super::purpose::validate(&self.spatial_types)?;
         if self.depth.is_some() && self.focus.is_none() {
@@ -294,6 +315,21 @@ pub fn apply(all: &Architecture, options: &Options) -> Result<Architecture, Stri
                     .provenance
                     .iter()
                     .any(|id| module_matches(&modules, state, &id.address))
+        });
+    }
+    if !options.cloudflare_accounts.is_empty() || !options.cloudflare_zones.is_empty() {
+        selected.retain(|(state, index)| {
+            let node = &all.states[state].nodes[*index];
+            let scope = node.entity.cloudflare_scope.as_ref();
+            node.provider.is_cloudflare()
+                && scope_matches(
+                    &options.cloudflare_accounts,
+                    scope.and_then(|scope| scope.account.as_deref()),
+                )
+                && scope_matches(
+                    &options.cloudflare_zones,
+                    scope.and_then(|scope| scope.zone.as_deref()),
+                )
         });
     }
     let direct = options.explain_selection.then(|| selected.clone());
@@ -599,3 +635,14 @@ mod tests;
 #[cfg(test)]
 #[path = "../../tests/unit/view/modules.rs"]
 mod module_tests;
+
+fn scope_matches(selectors: &[String], value: Option<&str>) -> bool {
+    selectors.is_empty()
+        || selectors
+            .iter()
+            .any(|selector| value.unwrap_or("unknown") == selector)
+}
+
+#[cfg(test)]
+#[path = "../../tests/unit/cloudflare_selection.rs"]
+mod cloudflare_selection_tests;

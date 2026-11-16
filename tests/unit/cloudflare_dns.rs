@@ -226,3 +226,165 @@ fn singleton_zone_data_checks_both_identity_fields_for_each_output() {
         }
     }
 }
+
+fn domain_fixture() -> Value {
+    serde_json::from_str(include_str!(
+        "../fixtures/cloudflare-applications-plan.json"
+    ))
+    .unwrap()
+}
+fn domain_zone(v: &Value) -> bool {
+    graph(v)
+        .nodes
+        .iter()
+        .find(|n| n.address == "cloudflare_workers_custom_domain.legacy")
+        .unwrap()
+        .references
+        .iter()
+        .any(|r| r.attribute == "zone_id" && r.complete)
+}
+#[test]
+fn custom_domain_zone_and_worker_are_independent() {
+    let v = domain_fixture();
+    assert!(domain_zone(&v));
+    let g = graph(&v);
+    let domain = g
+        .nodes
+        .iter()
+        .find(|n| n.address == "cloudflare_workers_custom_domain.legacy")
+        .unwrap();
+    assert_eq!(
+        domain
+            .references
+            .iter()
+            .filter(|r| r.attribute == "zone_id" && r.complete)
+            .count(),
+        1
+    );
+    assert!(
+        domain
+            .references
+            .iter()
+            .any(|r| r.attribute == "service" && r.complete)
+    );
+    assert_eq!(domain.placement, crate::model::Placement::Logical);
+    assert!(domain.member_owner.is_none());
+    for (path, value) in [
+        (
+            "/resource_changes/10/change/after/account_id",
+            json!("ffffffffffffffffffffffffffffffff"),
+        ),
+        (
+            "/resource_changes/10/change/after_unknown/account_id",
+            json!(true),
+        ),
+        (
+            "/resource_changes/10/change/after_sensitive/account_id",
+            json!(true),
+        ),
+        ("/resource_changes/10/change/after/zone_id", Value::Null),
+        (
+            "/resource_changes/10/change/after_unknown/zone_id",
+            json!(true),
+        ),
+        (
+            "/resource_changes/10/change/after_sensitive/zone_id",
+            json!(true),
+        ),
+        (
+            "/resource_changes/1/change/after_unknown/account",
+            json!(true),
+        ),
+        ("/resource_changes/1/change/after_sensitive/id", json!(true)),
+        ("/resource_changes/1/change/actions", json!(["delete"])),
+        ("/resource_changes/10/mode", json!("data")),
+        (
+            "/configuration/root_module/resources/10/expressions/zone_id/references",
+            json!([]),
+        ),
+        (
+            "/configuration/root_module/resources/10/expressions/zone_id/references",
+            json!(["cloudflare_zone.example.name"]),
+        ),
+    ] {
+        let mut v = domain_fixture();
+        let (parent, key) = path.rsplit_once('/').unwrap();
+        v.pointer_mut(parent).unwrap()[key] = value;
+        assert!(!domain_zone(&v), "{path}");
+    }
+    let mut v = domain_fixture();
+    v["configuration"]["root_module"]["resources"][10]["expressions"]["zone_id"] =
+        json!({"constant_value":"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"});
+    assert!(!domain_zone(&v));
+    assert!(
+        graph(&v)
+            .nodes
+            .iter()
+            .find(|n| n.address == "cloudflare_workers_custom_domain.legacy")
+            .unwrap()
+            .references
+            .iter()
+            .any(|r| r.attribute == "service" && r.complete)
+    );
+}
+#[test]
+fn custom_domain_zone_data_and_ambiguity() {
+    let mut v = domain_fixture();
+    let mut duplicate = v["resource_changes"][1].clone();
+    duplicate["address"] = json!("cloudflare_zone.duplicate");
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(duplicate);
+    assert!(!domain_zone(&v));
+    v["resource_changes"][18]["deposed"] = json!("old");
+    assert!(domain_zone(&v));
+    let mut v = domain_fixture();
+    for collection in ["resource_changes", "configuration/root_module/resources"] {
+        let row = v.pointer_mut(&format!("/{collection}/1")).unwrap();
+        row["address"] = json!("data.cloudflare_zone.example");
+        row["mode"] = json!("data");
+    }
+    v["resource_changes"][1]["change"]["after"]["zone_id"] =
+        json!("bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb");
+    v["configuration"]["root_module"]["resources"][10]["expressions"]["zone_id"]["references"] =
+        json!(["data.cloudflare_zone.example.zone_id"]);
+    assert!(domain_zone(&v));
+    v["resource_changes"][1]["change"]["after"]["id"] = json!("ffffffffffffffffffffffffffffffff");
+    assert!(!domain_zone(&v));
+}
+
+#[test]
+fn imported_literal_values_never_become_verified_zone_or_worker_links() {
+    let mut v = domain_fixture();
+    for (index, fields) in [
+        (9, vec!["zone_id", "script"]),
+        (10, vec!["zone_id", "service"]),
+    ] {
+        for field in fields {
+            let value = v["resource_changes"][index]["change"]["after"][field].clone();
+            v["configuration"]["root_module"]["resources"][index]["expressions"][field] =
+                json!({"constant_value": value});
+        }
+    }
+    for state in ["imported-a", "imported-b"] {
+        let plans = plan::parse_inputs(vec![crate::model::PlanInput {
+            state_id: crate::model::StateId::new(state).unwrap(),
+            plan_json: v.to_string(),
+        }])
+        .unwrap();
+        for plan in plans.states.values() {
+            let g = semantic::transform(plan);
+            for index in [9, 10] {
+                let node = g
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == v["resource_changes"][index]["address"])
+                    .unwrap();
+                assert!(!node.references.iter().any(|r| r.complete
+                    && matches!(r.attribute.as_str(), "zone_id" | "script" | "service")));
+            }
+        }
+    }
+    assert!(domain_zone(&domain_fixture()));
+}

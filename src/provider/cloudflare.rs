@@ -6,7 +6,9 @@ mod administration;
 mod applications;
 mod edge;
 mod evidence;
+mod recovery;
 pub(crate) use evidence::Evidence;
+pub(crate) use recovery::recover;
 mod proof;
 mod types;
 mod zero_trust;
@@ -83,6 +85,7 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_r2_bucket" => "Cloudflare R2",
         "cloudflare_workers_kv_namespace" => "Cloudflare KV",
         "cloudflare_d1_database" => "Cloudflare D1",
+        "cloudflare_hyperdrive_config" => "Cloudflare Hyperdrive",
         "cloudflare_queue"
         | "cloudflare_queue_consumer"
         | "cloudflare_queues"

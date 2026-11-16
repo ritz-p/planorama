@@ -31,6 +31,12 @@ input[type="text"] { width: min(95%, 40rem) }
     <button id="add-input" type="button" disabled>Add state input</button>
   </fieldset>
   <label>Output <select id="format"><option value="svg">SVG</option><option value="html">HTML</option></select></label>
+  <fieldset aria-describedby="cloudflare-scope-help"><legend>Cloudflare administration</legend>
+    <p id="cloudflare-scope-help">Enter one 32-character Account or Zone ID per line, or unknown. Empty means all. Values within a field are OR; Account and Zone are AND, combined with other selection settings. Required context may remain.</p>
+    <label>Account IDs<textarea id="cloudflare-accounts" rows="2"></textarea></label>
+    <label>Zone IDs<textarea id="cloudflare-zones" rows="2"></textarea></label>
+    <label><input id="cloudflare-groups" type="checkbox"> Show administrative membership index (not physical containment)</label>
+  </fieldset>
   <label><input id="changed" type="checkbox"> Changed only</label>
   <fieldset>
     <legend>Generation settings</legend>

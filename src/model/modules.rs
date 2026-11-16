@@ -10,6 +10,13 @@ enum Index {
 pub struct Address(Vec<(String, Option<Index>)>);
 
 impl Address {
+    pub(crate) fn anonymized(&self, mut name: impl FnMut(&str) -> String) -> String {
+        (0..self.0.len())
+            .map(|i| format!("module.{}", name(&Self(self.0[..=i].to_vec()).to_string())))
+            .collect::<Vec<_>>()
+            .join(".")
+    }
+
     pub fn parse(value: &str) -> Result<Self, String> {
         let invalid = || format!("invalid module address: {value:?}");
         let mut rest = value;

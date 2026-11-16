@@ -14,6 +14,11 @@ pub enum OutputFormat {
 #[derive(Default, serde::Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Options {
+    pub anonymize: bool,
+    pub cloudflare_groups: bool,
+    pub cloudflare_value_matches: bool,
+    pub cloudflare_accounts: Vec<String>,
+    pub cloudflare_zones: Vec<String>,
     #[serde(deserialize_with = "memory::deserialize")]
     pub memory_budget_mib: Option<u32>,
     pub spatial_types: Vec<String>,
@@ -110,6 +115,10 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         return Err(Error::InputTooLarge);
     }
     let filter = view::Options {
+        anonymize: options.anonymize,
+        cloudflare_value_matches: options.cloudflare_value_matches,
+        cloudflare_accounts: options.cloudflare_accounts.clone(),
+        cloudflare_zones: options.cloudflare_zones.clone(),
         spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),
@@ -125,7 +134,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         budget::validate(json)?;
         crate::work::checkpoint().await;
     }
-    let raw = parse_input(json)?;
+    let raw = parse_input_with_value_matches(json, options.cloudflare_value_matches)?;
     crate::work::check_limit(raw.nodes.len(), 256).await;
     crate::work::check_limit(raw.edges.len(), 1024).await;
     crate::work::checkpoint().await;
@@ -154,6 +163,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
             address_format: options.address_format,
             hide_relationship_legend: options.hide_relationship_legend,
             omit_relationship_legend: options.omit_relationship_legend,
+            cloudflare_groups: options.cloudflare_groups,
         },
         options.html_diagnostics.then_some(&mut report),
         options.html_diagnostics,
@@ -165,6 +175,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
             address_format: options.address_format,
             hide_relationship_legend: options.hide_relationship_legend,
             omit_relationship_legend: options.omit_relationship_legend,
+            cloudflare_groups: options.cloudflare_groups,
         },
         options.html_diagnostics,
         vec![],
@@ -274,7 +285,12 @@ impl Generator {
 }
 
 pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
-    if options.modules.len() > 256
+    if options.anonymize && (options.html_diagnostics || options.html_semantic_diagnostics) {
+        return Err(Error::InvalidOptions);
+    }
+    if options.cloudflare_accounts.len() > 256
+        || options.cloudflare_zones.len() > 256
+        || options.modules.len() > 256
         || options.spatial_types.len() > 256
         || options.remote_state_mappings.len() > 256
     {
@@ -285,6 +301,8 @@ pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
         .modules
         .iter()
         .chain(&options.spatial_types)
+        .chain(&options.cloudflare_accounts)
+        .chain(&options.cloudflare_zones)
         .chain(options.focus.iter())
         .chain(
             options
@@ -304,10 +322,17 @@ pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
 }
 
 pub(crate) fn parse_input(json: &str) -> Result<crate::model::TerraformPlan, Error> {
+    parse_input_with_value_matches(json, false)
+}
+
+pub(crate) fn parse_input_with_value_matches(
+    json: &str,
+    recover: bool,
+) -> Result<crate::model::TerraformPlan, Error> {
     if json.len() > MAX_INPUT_BYTES {
         return Err(Error::InputTooLarge);
     }
-    plan::parse(json).map_err(|error| {
+    plan::parse_with_value_matches(json, recover).map_err(|error| {
         if error.starts_with("invalid JSON:") {
             Error::InvalidJson
         } else {
@@ -343,7 +368,8 @@ pub(crate) fn render(
         (OutputFormat::Svg, None)
             if matches!(options.address_format, svg::AddressFormat::Qualified)
                 && !options.hide_relationship_legend
-                && !options.omit_relationship_legend =>
+                && !options.omit_relationship_legend
+                && !options.cloudflare_groups =>
         {
             svg::render(graph, layout)
         }

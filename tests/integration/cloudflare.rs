@@ -140,3 +140,29 @@ fn cloudflare_named_state_diagnostics_and_sensitive_values_keep_their_boundaries
         }
     }
 }
+
+#[test]
+fn configured_version_percentages_have_a_legend_and_do_not_leak_masked_values() {
+    let base: Value = serde_json::from_str(include_str!(
+        "../fixtures/cloudflare-applications-plan.json"
+    ))
+    .unwrap();
+    for format in ["svg", "html"] {
+        let rendered = support::run_with_args(base.to_string().as_bytes(), &["--format", format]);
+        assert!(rendered.status.success());
+        let text = String::from_utf8(rendered.stdout).unwrap();
+        assert!(text.contains("75% configured") && text.contains("25% configured"));
+        assert!(text.contains("not observed live traffic"));
+        assert!(text.contains("configured_percentage"));
+        for section in ["after_unknown", "after_sensitive"] {
+            let mut v = base.clone();
+            v["resource_changes"][7]["change"][section] =
+                json!({"versions":[{"percentage":true},{}]});
+            let rendered = support::run_with_args(v.to_string().as_bytes(), &["--format", format]);
+            assert!(rendered.status.success());
+            let text = String::from_utf8(rendered.stdout).unwrap();
+            assert!(!text.contains("% configured"));
+            assert!(!text.contains("configured_percentage"));
+        }
+    }
+}

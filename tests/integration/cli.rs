@@ -1,5 +1,7 @@
+mod anonymization;
 mod athena;
 mod cloudflare;
+mod cloudflare_recovery;
 mod configuration;
 mod coverage_json;
 mod coverage_report;

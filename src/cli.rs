@@ -12,7 +12,7 @@ mod states;
 
 pub(super) use crate::generation::OutputFormat;
 
-const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --config PATH      Load explicit TOML generation settings\n  --preset NAME      Select a named preset (requires --config)\n  --no-<BOOLEAN>     Disable a boolean generation option\n  --spatial-type TYPE  Display an allowed AWS type spatially (repeatable)\n  --no-spatial-types  Clear configured Spatial types\n  --no-modules       Clear configured module selection\n  --no-focus         Clear configured focus and inherited depth\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --omit-relationship-legend  Omit the entire relationship legend, including action colors\n  --icon-mode MODE   Service display: {icon_modes}\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --list-modules     List original module instances/counts; stdout by default; no diagram\n  --modules ADDRESS...  Select module subtrees (repeatable; STATE:ADDRESS for named states)\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --coverage-selection-details N  Include up to N selected identities/reasons (0-1000; requires report)\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nArbitrary evaluated attribute values are not displayed; allowlisted Organizations policy-type labels are shown.\nStandalone SVG may show validated, non-sensitive Route destination constants\nfrom configuration (CIDRs / prefix-list IDs); HTML omits these constants.\n";
+const HELP: &str = "planorama — Terraform plan JSON → SVG / HTML (pure Rust)\n\nUsage: planorama <plan.json | -> [--format svg|html] [-o <path | ->] [--address-format qualified|terraform] [--diagnostics]\n\n  -o, --output PATH   Output file (default: diagram.svg or diagram.html); '-' for stdout\n  --config PATH      Load explicit TOML generation settings\n  --preset NAME      Select a named preset (requires --config)\n  --no-<BOOLEAN>     Disable a boolean generation option\n  --spatial-type TYPE  Display an allowed AWS type spatially (repeatable)\n  --no-spatial-types  Clear configured Spatial types\n  --no-modules       Clear configured module selection\n  --no-focus         Clear configured focus and inherited depth\n  --cloudflare-account ID|unknown  Select Cloudflare Account scope (repeatable)\n  --cloudflare-zone ID|unknown  Select Cloudflare Zone scope (repeatable)\n  --cloudflare-groups  Show an administrative membership index\n  --no-cloudflare-accounts / --no-cloudflare-zones  Clear scope selection\n  --cloudflare-value-matches  Opt in to typed Cloudflare value matches (not verified Terraform references)\n  --anonymize        Replace identifiers with export-local pseudonyms; withhold free text and reports\n  --format FORMAT    Output format: svg (default) or self-contained html\n  --hide-relationship-legend  Omit relationship explanations; keep action colors\n  --omit-relationship-legend  Omit the entire relationship legend, including action colors\n  --icon-mode MODE   Service display: {icon_modes}\n  --address-format FORMAT  Resource labels: qualified (default) or terraform\n  --provider-plan PATH  Verify accounts against a saved Terraform 1.9.8 or 1.16.6 / AWS 5.100.0 plan\n  --state-provider-plan ID=PATH  Saved plan evidence for one named state\n  --list-modules     List original module instances/counts; stdout by default; no diagram\n  --modules ADDRESS...  Select module subtrees (repeatable; STATE:ADDRESS for named states)\n  --changed-only     Retain changes and required context\n  --focus ADDRESS    Select a resource (STATE:ADDRESS for named states)\n  --focus-depth N    Neighbor depth (default: 1; requires --focus)\n  --remote-state CONSUMER:ADDRESS=PRODUCER  Map a named remote-state data source\n  --timings          Report generation stage timings on stderr\n  --diagnostics      Explain unresolved references and semantic fallbacks on stderr\n  --html-diagnostics  Include bounded routing hotspots (requires --format html)\n  --html-semantic-diagnostics  Include bounded semantic findings (requires --format html)\n  --coverage-report PATH  Write a separate Markdown coverage report\n  --coverage-selection-details N  Include up to N selected identities/reasons (0-1000; requires report)\n  --layout-diagnostics  Report final layout quality on stderr\n  --layout-diagnostics-json PATH  Write a versioned layout report to a separate JSON file\n  -h, --help          Show help\n  -V, --version       Show version\n\nInput: terraform show -json <saved-plan> (not terraform plan -json).\nJSON-only inputs leave AWS accounts unknown. Provider evidence requires Terraform and initialized schemas.\nLines show reference or architectural relationships; containment uses nested boxes.\nArbitrary evaluated attribute values are not displayed; allowlisted Organizations policy-type labels are shown.\nStandalone SVG may show validated, non-sensitive Route destination constants\nfrom configuration (CIDRs / prefix-list IDs); HTML omits these constants.\n";
 
 pub(crate) fn run() -> Result<(), String> {
     let mut input = None;
@@ -38,6 +38,25 @@ pub(crate) fn run() -> Result<(), String> {
             specified.push(arg.clone());
         }
         match arg.as_str() {
+            "--cloudflare-account" => settings
+                .cloudflare_accounts
+                .get_or_insert_with(Vec::new)
+                .push(
+                    args.next()
+                        .ok_or("--cloudflare-account requires an ID or unknown")?,
+                ),
+            "--cloudflare-zone" => settings.cloudflare_zones.get_or_insert_with(Vec::new).push(
+                args.next()
+                    .ok_or("--cloudflare-zone requires an ID or unknown")?,
+            ),
+            "--no-cloudflare-accounts" => settings.cloudflare_accounts = Some(Vec::new()),
+            "--no-cloudflare-zones" => settings.cloudflare_zones = Some(Vec::new()),
+            "--cloudflare-groups" => settings.cloudflare_groups = Some(true),
+            "--no-cloudflare-groups" => settings.cloudflare_groups = Some(false),
+            "--cloudflare-value-matches" => settings.cloudflare_value_matches = Some(true),
+            "--no-cloudflare-value-matches" => settings.cloudflare_value_matches = Some(false),
+            "--anonymize" => settings.anonymize = Some(true),
+            "--no-anonymize" => settings.anonymize = Some(false),
             "--config" => {
                 if config
                     .replace(args.next().ok_or("--config requires PATH")?)
@@ -241,6 +260,11 @@ pub(crate) fn run() -> Result<(), String> {
         }
     }
     let settings = settings::load(config.as_deref(), preset.as_deref())?.overlay(settings);
+    filter.cloudflare_value_matches = settings.cloudflare_value_matches.unwrap_or(false);
+    filter.anonymize = settings.anonymize.unwrap_or(false);
+    filter.cloudflare_accounts = settings.cloudflare_accounts.unwrap_or_default();
+    filter.cloudflare_zones = settings.cloudflare_zones.unwrap_or_default();
+    render_options.cloudflare_groups = settings.cloudflare_groups.unwrap_or(false);
     if let Some(value) = settings.spatial_types {
         filter.spatial_types = value;
     }
@@ -287,6 +311,16 @@ pub(crate) fn run() -> Result<(), String> {
         layout_diagnostics.text = value;
     }
     let timing = crate::timing::Session::start(timings);
+    if filter.anonymize
+        && (diagnostics
+            || timings
+            || layout_diagnostics.enabled()
+            || coverage_report.path.is_some()
+            || coverage_report.json.is_some()
+            || list_modules)
+    {
+        return Err("--anonymize cannot be combined with diagnostics, timings, coverage reports or --list-modules".into());
+    }
     filter.explain_selection = coverage_report.path.is_some() || coverage_report.json.is_some();
     if specified
         .iter()
@@ -403,7 +437,7 @@ pub(crate) fn run() -> Result<(), String> {
         path => std::fs::read_to_string(path).map_err(|e| format!("cannot read {path}: {e}"))?,
     };
     drop(input_timing);
-    let mut raw = plan::parse(&json)?;
+    let mut raw = plan::parse_with_value_matches(&json, filter.cloudflare_value_matches)?;
     if let Some(evidence) = provider_plan.load(None, &json)? {
         evidence.apply(&mut raw);
     }

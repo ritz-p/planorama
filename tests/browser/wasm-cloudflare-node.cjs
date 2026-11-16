@@ -91,8 +91,16 @@ for (const scenario of ['edge', 'edge-unknown', 'edge-account', 'edge-filtered',
   }
 }
 console.log('Cloudflare edge native/Wasm SVG and HTML parity passed');
-for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed']) {
+for (const scenario of ['applications', 'applications-unknown', 'applications-jurisdiction', 'applications-filtered', 'applications-lifecycle', 'applications-mixed', 'applications-domain-zone-unknown', 'applications-domain-zone-conflict', 'applications-cname-unknown', 'applications-cname-literal', 'applications-hyperdrive-sensitive', 'applications-pages-service-unknown', 'applications-percentage-sensitive', 'applications-percentage-zero']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-applications-plan.json', 'utf8'));
+  if (scenario === 'applications-percentage-sensitive') plan.resource_changes[7].change.after_sensitive = {versions:[{percentage:true},{}]};
+  if (scenario === 'applications-percentage-zero') {plan.resource_changes[7].change.after.versions[0].percentage=0;plan.resource_changes[7].change.after.versions[1].percentage=100;}
+  if (scenario === 'applications-pages-service-unknown') plan.resource_changes[11].change.after_unknown = {deployment_configs: {production: {services: {BACKEND: {service: true}}}}};
+  if (scenario === 'applications-hyperdrive-sensitive') plan.resource_changes[16].change.after_sensitive = {id: true};
+  if (scenario === 'applications-cname-unknown') plan.resource_changes[15].change.after_unknown = {content: true};
+  if (scenario === 'applications-cname-literal') plan.configuration.root_module.resources[15].expressions.content = {constant_value: 'site.pages.dev'};
+  if (scenario === 'applications-domain-zone-unknown') plan.resource_changes[10].change.after_unknown = {zone_id: true};
+  if (scenario === 'applications-domain-zone-conflict') plan.resource_changes[10].change.after.account_id = 'f'.repeat(32);
   if (scenario === 'applications-unknown') plan.resource_changes[6].change.after_unknown = {bindings: true};
   if (scenario === 'applications-jurisdiction') plan.resource_changes[2].change.after.jurisdiction = 'default';
   if (scenario === 'applications-lifecycle') {
@@ -125,8 +133,11 @@ for (const format of ['svg', 'html']) {
   assert.equal(result.content, expected, `applications-named/${format}`);
 }
 console.log('Cloudflare applications native/Wasm SVG, HTML and named-state parity passed');
-for (const scenario of ['zero-trust', 'zero-trust-unknown', 'zero-trust-account', 'zero-trust-filtered', 'zero-trust-data', 'zero-trust-lifecycle']) {
+for (const scenario of ['zero-trust', 'zero-trust-unknown', 'zero-trust-account', 'zero-trust-filtered', 'zero-trust-data', 'zero-trust-lifecycle', 'zero-trust-dns-unknown', 'zero-trust-dns-literal', 'zero-trust-waf-sensitive']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-zero-trust-plan.json', 'utf8'));
+  if (scenario === 'zero-trust-waf-sensitive') plan.resource_changes[12].change.after_sensitive = {zone_id: true};
+  if (scenario === 'zero-trust-dns-unknown') plan.resource_changes[11].change.after_unknown = {content: true};
+  if (scenario === 'zero-trust-dns-literal') plan.configuration.root_module.resources[11].expressions.content = {constant_value: plan.resource_changes[11].change.after.content};
   if (scenario === 'zero-trust-unknown') plan.resource_changes[4].change.after_unknown = {allowed_idps: true};
   if (scenario === 'zero-trust-account') plan.resource_changes[5].change.after.account_id = 'e'.repeat(32);
   if (scenario === 'zero-trust-data') plan.resource_changes[3].mode = 'data';
@@ -221,7 +232,7 @@ for (const scenario of ['services','services-only','service-environment','servic
   plan.configuration.root_module.resources[i].expressions.bindings.references=['cloudflare_worker.backend.name','cloudflare_workers_script.downstream.script_name'];
  }
  if(scenario==='service-environment')plan.resource_changes[6].change.after.bindings[4].environment='staging';
- if(scenario==='service-sensitive')plan.resource_changes[6].change.after_sensitive={bindings:[{},{},{},{},{service:true},{},{}]};
+ if(scenario==='service-sensitive')plan.resource_changes[6].change.after_sensitive={bindings:[{},{},{},{},{service:true},{},{}, {}]};
  for(const format of ['svg','html']) {
   const options={format,html_semantic_diagnostics:format==='html'};
   const args=['--format',format,...(format==='html'?['--html-semantic-diagnostics']:[])];
@@ -240,13 +251,15 @@ for (const scenario of ['services','services-only','service-environment','servic
  }
 }
 console.log('Cloudflare Service bindings native/Wasm parity passed');
-for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pull','queue-filtered']) {
+for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pull','queue-filtered','queue-dlq-sensitive','queue-dlq-literal']) {
  const plan=JSON.parse(readFileSync('tests/fixtures/cloudflare-queues-plan.json','utf8'));
  const resource=address=>plan.resource_changes.find(r=>r.address===address);
  if(scenario==='queues-only')for(const address of ['cloudflare_workers_script.legacy','cloudflare_worker_version.backend']) {
   resource(address).change.after.bindings=resource(address).change.after.bindings.filter(b=>b.type==='queue');
   plan.configuration.root_module.resources.find(r=>r.address===address).expressions.bindings.references=['cloudflare_queue.jobs.queue_name','cloudflare_queue.audit.queue_name'];
  }
+ if(scenario==='queue-dlq-sensitive')resource('cloudflare_queue_consumer.worker').change.after_sensitive={dead_letter_queue:true};
+ if(scenario==='queue-dlq-literal')plan.configuration.root_module.resources.find(r=>r.address==='cloudflare_queue_consumer.worker').expressions.dead_letter_queue={constant_value:'audit'};
  if(scenario==='queue-sensitive')resource('cloudflare_queue.jobs').change.after_sensitive={queue_name:true,queue_id:true};
  if(scenario==='queue-http-pull')resource('cloudflare_queue_consumer.worker').change.after.type='http_pull';
  for(const format of ['svg','html']) {
@@ -256,7 +269,7 @@ for (const scenario of ['queues','queues-only','queue-sensitive','queue-http-pul
   const input=JSON.stringify(plan),result=JSON.parse(binding.generate(input,JSON.stringify(options)));
   assert.equal(result.content,native(input,args),`${scenario}/${format}`);
   assert.ok(!result.content.includes('PRIVATE_'));
-  if(scenario==='queues')for(const label of ['Queue producer bindings','Consumed Queue','Consumer Worker','Storage bindings','Service bindings'])assert.ok(result.content.includes(label));
+  if(scenario==='queues')for(const label of ['Queue producer bindings','Consumed Queue','Consumer Worker','Configured dead letter Queue','Storage bindings','Service bindings'])assert.ok(result.content.includes(label));
   if(scenario==='queue-sensitive')assert.ok(result.content.includes('cloudflare_sensitive_value'));
   if(scenario==='queue-http-pull')assert.ok(result.content.includes('cloudflare_unsupported_contract'));
   const metadata=result.content.match(/<metadata id="resource-references">([\s\S]*?)<\/metadata>/)[1];

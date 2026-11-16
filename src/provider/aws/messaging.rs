@@ -152,6 +152,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 targets: target
                     .into_iter()
                     .map(|i| crate::model::ReferenceTarget {
+                        configured_percentage: None,
                         account_scope: None,
                         state: None,
                         id: raw.nodes[i].entity.provenance[0].clone(),

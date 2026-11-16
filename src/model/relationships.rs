@@ -5,6 +5,11 @@ mod tests;
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum RelationshipProvenance {
+    ConfiguredValue {
+        from: TerraformEntityId,
+        to: TerraformEntityId,
+        attribute: &'static str,
+    },
     Resource {
         source: TerraformEntityId,
         change: EdgeChange,
@@ -58,6 +63,7 @@ impl ArchitectureRelationship {
                         && ArchitectureId::terraform(to) == self.to
                 }
                 RelationshipProvenance::Resource { .. } => false,
+                RelationshipProvenance::ConfiguredValue { .. } => false,
             })
     }
 

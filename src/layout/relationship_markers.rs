@@ -161,7 +161,8 @@ pub(crate) fn entries(graph: &Graph) -> Vec<Entry<'_>> {
                 .iter()
                 .filter_map(|p| match p {
                     RelationshipProvenance::Resource { source, .. } => Some(source),
-                    RelationshipProvenance::Reference { .. } => None,
+                    RelationshipProvenance::Reference { .. }
+                    | crate::model::RelationshipProvenance::ConfiguredValue { .. } => None,
                 })
                 .collect();
             sources.sort();

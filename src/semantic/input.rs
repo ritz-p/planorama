@@ -77,6 +77,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                             .sources
                             .iter()
                             .map(|&i| crate::model::ReferenceTarget {
+                                configured_percentage: r.cloudflare_percentages.get(&i).cloned(),
                                 account_scope: None,
                                 state: None,
                                 id: (&plan.nodes[i]).into(),

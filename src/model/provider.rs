@@ -11,6 +11,9 @@ pub struct ProviderConfiguration {
 pub struct AwsAccountScope(String);
 
 impl AwsAccountScope {
+    pub(crate) fn anonymized(sequence: usize) -> Self {
+        Self(format!("account_{sequence}"))
+    }
     pub fn new(id: &str) -> Option<Self> {
         (id.len() == 12 && id.bytes().all(|b| b.is_ascii_digit())).then(|| Self(id.to_owned()))
     }

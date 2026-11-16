@@ -252,6 +252,8 @@ function applySettings(options) {
     if (input.type === 'checkbox') input.checked = options[key];
     else input.value = options[key];
   }
+  element('cloudflare-accounts').value = options.cloudflare_accounts.join('\n');
+  element('cloudflare-zones').value = options.cloudflare_zones.join('\n');
   element('focus').value = options.focus ?? '';
   element('focus-depth').value = options.focus_depth ?? '';
   element('modules').replaceChildren(...rows);
@@ -309,7 +311,7 @@ element('settings-file').onchange = async () => {
 };
 
 function settingHelp(input) {
-  return input.id.startsWith('html-') ? 'diagnostics-help' : input.id === 'focus-depth' ? 'depth-help' : 'modules-help';
+  return input.id.startsWith('cloudflare-') ? 'cloudflare-scope-help' : input.id.startsWith('html-') ? 'diagnostics-help' : input.id === 'focus-depth' ? 'depth-help' : 'modules-help';
 }
 
 function invalidSetting(input, message) {
@@ -324,6 +326,13 @@ function snapshotOptions() {
   for (const [key, id] of Object.entries(PlanoramaSettings.controls)) {
     const input = element(id);
     options[key] = input.type === 'checkbox' ? input.checked : input.value;
+  }
+  for (const [key, id] of [['cloudflare_accounts', 'cloudflare-accounts'], ['cloudflare_zones', 'cloudflare-zones']]) {
+    options[key] = element(id).value.split(/\r?\n/).map(value => value.trim()).filter(Boolean);
+    if (options[key].length > 256 || options[key].some(value => value !== 'unknown' && !/^[0-9a-fA-F]{32}$/.test(value))) {
+      invalidSetting(element(id), 'Use at most 256 Cloudflare scope IDs (32 hexadecimal characters) or unknown, one per line.');
+      return;
+    }
   }
   options.spatial_types = Array.from(element('spatial-types').querySelectorAll('input:checked'), input => input.value);
   if (options.format !== 'html' && (options.html_diagnostics || options.html_semantic_diagnostics)) {

@@ -136,6 +136,7 @@ pub(crate) async fn render_step(
                 label: "References",
                 attribute: format!("{remote}.outputs.{output}"),
                 targets: vec![crate::model::ReferenceTarget {
+                    configured_percentage: None,
                     account_scope: None,
                     state: Some(edge.from.state.clone()),
                     id: crate::model::TerraformEntityId {
@@ -158,7 +159,7 @@ pub(crate) async fn render_step(
         crate::work::checkpoint().await;
         let layout = Layout::new_step(graph).await;
         let index = super::relationship_index::Index::with_format(graph, &layout, format);
-        let cards = super::annotation_cards(graph, &index, format);
+        let cards = super::annotation_cards(graph, &index, format, options.cloudflare_groups);
         width = width.max(super::annotations::Area::required_width(
             &cards,
             index.width,
