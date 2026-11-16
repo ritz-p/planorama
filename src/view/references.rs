@@ -35,6 +35,9 @@ impl Row<'_> {
         if let Some(key) = &target.id.deposed_key {
             address.push_str(&format!(" (deposed: {key})"));
         }
+        if let Some(percentage) = &target.configured_percentage {
+            address.push_str(&format!(" ({percentage}% configured)"));
+        }
         format!(
             "{}{}: {address}",
             if available { "" } else { "Unavailable — " },

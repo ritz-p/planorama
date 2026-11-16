@@ -51,6 +51,25 @@ unknown values and sensitive IDs remain unavailable. Tokens, credentials,
 script bodies, DNS contents and arbitrary configuration values are not retained
 for presentation. Known type classification is not proof of a network relationship.
 
+## Account and Zone grouping
+
+Cloudflare account/zone context is displayed as administrative labels and verified
+references, not nested deployment containers. No automatic account/zone frame mode
+is enabled: the current Space/Spatial/Logical containment model would otherwise
+suggest physical ownership, and account-scoped Workers/Pages may serve multiple
+Zones through independent route/domain resources. Their identities and lifecycle
+rows must not be duplicated or reparented under one arbitrarily chosen Zone.
+
+Any future visual grouping must be a presentation-only administrative index,
+separate from containment and routing ancestry. Its identity must include the
+named state and known non-sensitive account; optional Zone membership requires
+verified Zone provenance. Unknown, conflicting and ambiguous scope stays
+unassigned. Multiple proven Zones require multiple index memberships without
+duplicating the resource. Filtering must preserve the selected resource identity
+and must not infer scope from hidden resources, provider aliases or matching
+names. Until such an index exists, use scope labels, verified reference navigation
+and focus selection; equal account IDs in different named states remain separate.
+
 ## Zone and DNS
 
 [Sample SVG](../examples/cloudflare-dns.svg) is generated from the sanitized
@@ -66,10 +85,23 @@ fail closed, while deposed instances remain visible without claiming ownership.
 
 Zone, DNS record and Zone DNSSEC have dedicated support for these administration
 contracts. Other DNS fields remain configuration: DNS names, contents, IPs,
-CNAMEs and proxy settings do not identify an origin or prove traffic. Verified
+CNAMEs and proxy settings do not prove traffic. Verified
 Zone membership can carry its known account label to the DNS helper without
 creating AWS scope or a physical containment edge. Provider aliases alone do not
 prove or disprove account membership; the resource IDs establish correspondence.
+
+A managed DNS record with `type = "CNAME"` can show `Configured Pages CNAME`
+when its `content` explicitly references a Pages Project's `subdomain`, both
+known values agree, and the project is the unique current endpoint in the DNS
+record's verified Zone account. The record's `proxied` flag must be known and
+non-sensitive; both true and false describe configured DNS, not observed traffic.
+Masked content/subdomains, missing Zone provenance, account disagreement,
+duplicate endpoints and data-record consumers fail closed. A singleton Pages
+data endpoint is eligible only with the same known account and output evidence.
+Worker Route patterns and Custom Domain/Pages Domain hostnames are not CNAME
+target identities. Matching those names, a shared Zone, proxying, or a literal
+`pages.dev` suffix does not create a public-path relationship. This does not prove
+domain activation, TLS readiness, DNS resolution or runtime reachability.
 
 ## Edge configuration
 
@@ -89,7 +121,17 @@ Rulesets have partial semantic support: their exclusive Account/Zone owner,
 `execute` rule targets in the same scope, and redirect-list names in the same
 account are verified. Redirect lists must have `kind = "redirect"`. Rule
 expressions, redirect URLs, page-rule actions and pool origin addresses remain
-opaque configuration. Dynamic rule pool overrides and other action-parameter
+opaque configuration. In pinned v5.28.1 `action_parameters.overrides` contains
+action/enabled/sensitivity settings and rule/category overrides, not Pool or
+Worker endpoint identities. `origin` contains only host/port, while `host_header`,
+SNI, URI and redirect targets contain strings/expressions rather than typed
+origin identities. Load-balancer pool contracts are separate from Rulesets.
+
+`execute` and redirect-list references retain their documented verification.
+Origin routing, URL rewrites, redirects, cache/header settings and security
+overrides do not gain Pool/Worker/origin edges. `ruleset`, `rulesets`, `rules` and
+`phases` in skip configuration describe exclusions, not forwarding or protection;
+they are not promoted to execute relationships. Other action-parameter
 references remain generic Terraform provenance. These references do not establish
 live traffic, effective protection or healthy origins.
 
@@ -98,6 +140,32 @@ references. Verification checks the evaluated typed fields, complete relevant
 collections, referenced output identities and scope together. It does not apply
 AWS nested-block/index rules to these attribute contracts. Managed configuration
 references and data-source lookup outputs are treated separately.
+
+## Imported resources and value-only recovery
+
+Value-only Zone/Worker recovery is disabled; there is no opt-in switch. Imported
+plans with literal `zone_id`, `script` or `service` values keep their resources
+and scope labels, but equal values alone do not create verified relationships.
+This applies to Route → Zone, Route → Worker, Custom Domain → Zone and Custom
+Domain → Worker. Restore explicit Terraform expressions to obtain the documented
+verified links. A shared hostname or account never creates a direct Zone → Worker
+relationship, and named states are independent identity domains.
+
+The pinned schema provides typed Zone IDs and Worker names, so a separately
+labelled configured-value match is technically possible with complete evidence.
+It is not equivalent to Terraform provenance: names are account scoped, Zone data
+outputs require matching `id`/`zone_id`, legacy script `id` is a name rather than
+a Worker UUID, and a plan may omit other endpoints. Unknown/sensitive identities,
+duplicate current candidates, conflicting scope, deleted/deposed targets and
+environment-qualified services must never fall back to unrestricted matching.
+
+The current semantic contract records verified references, not a separate
+value-match confidence. Enabling recovery requires a distinct provenance model
+and SVG/HTML labels, an explicit opt-in, per-state typed identity indexes, and
+native/Wasm tests covering the same ambiguity and masking boundaries as explicit
+references. Index construction should be linear in resources plus candidate
+relations; measure large imported fixtures before enabling it. No fallback scan
+or default behavior change is introduced by this decision.
 
 ## Applications and storage
 
@@ -108,6 +176,15 @@ Workers and Pages are edge applications, with no inferred VPC membership.
 Separately managed versions, deployments, routes, custom domains and Pages
 Domains retain their own lifecycle rows. Storage stays separately managed.
 
+Managed Custom Domains additionally verify `zone_id` against a unique current
+Zone's `id` (or a singleton data Zone's matching `id`/`zone_id`). The domain and
+Zone must have the same known, non-sensitive account. This independent
+`Zone administration` relationship can coexist with `service` → Worker;
+neither hostname matching nor literal zone IDs establish it. Missing, masked,
+conflicting or ambiguous evidence fails closed without replacing the domain's
+own account scope. The contract uses the pinned v5.28.1 inventory's `zone_id`
+input; other schema shapes receive no inferred aliases or compatibility fallback.
+
 Verified application references require explicit, complete Terraform provenance,
 unique current identities and a known matching account:
 
@@ -115,13 +192,19 @@ unique current identities and a known matching account:
   referenced output. A legacy Workers script's `id` is its `script_name`.
 - Deployments identify their named Worker and versions. A version's proven
   Worker must be the same endpoint as the deployment's proven Worker, and
-  known version percentages must total 100.
+  known version percentages must total 100. Only after the entire Version
+  collection and ownership proof verifies, each Version reference displays its
+  configured percentage, including 0%, and exports `configured_percentage` in
+  reference metadata. SVG/HTML use the same values and a legend distinguishes
+  plan settings from observed live traffic. Unknown/sensitive percentages,
+  invalid totals or unresolved Version ownership suppress all shares. Replacement
+  deployments use current after-values, never prior/deposed traffic estimates.
 - Routes inherit account context only from a proven Zone. Custom domains use
   their account and explicit service reference. Patterns and hostnames do not
   establish ownership.
 - Worker/script binding discriminators select KV `namespace_id`, R2
   `bucket_name`, D1 `id`, Service `service` (Worker name), or Queue
-  `queue_name`. Binding names and
+  `queue_name`, or Hyperdrive `id`. Binding names and
   contents are not identities. Service endpoints accept a new Worker's `name`
   or a legacy script's matching `id`/`script_name`, never a Worker UUID.
   Service bindings currently require an absent/null `environment`: the endpoint
@@ -130,14 +213,28 @@ unique current identities and a known matching account:
   it is not retained and does not prove that the target exports that handler.
   Unknown/sensitive qualifiers fail closed. Managed versions/scripts can refer
   to managed or singleton data endpoints, with the same name/account contract.
+  In pinned v5.28.1 neither managed nor data `cloudflare_worker` /
+  `cloudflare_workers_script` exposes an environment identity, and there is no
+  separately registered Worker environment resource. Consequently even a known
+  `production` qualifier cannot be equated to an unqualified Worker. A future
+  extension requires provider-backed `(account, service, environment)` identity
+  and explicit output provenance; entrypoint text alone cannot supply either.
   The entire mixed storage/service/queue collection must verify before its targets
-  are split into Storage bindings, Service bindings and Queue producer bindings
+  are split into Storage bindings, Service bindings, Hyperdrive bindings and Queue producer bindings
   rows. Repeated bindings retain one endpoint per role. Partial provenance never promotes
   the otherwise valid subset. The generated support matrix lists this combined
   binding contract; the sample includes multiple bindings to the same Worker.
   A legacy script binding to itself remains unsupported.
 - Pages preview/production deployment configurations identify KV, R2 and D1
-  through their respective typed maps. Pages Domains identify a project by
+  through their respective typed maps. Their `services` map additionally verifies
+  Worker `name` or legacy script `id`/`script_name` outputs under the same
+  account, current-endpoint, environment and entrypoint rules as Worker Service
+  Bindings. Both environments and all supported storage/service entries must
+  verify together before separate Storage bindings and Service bindings rows
+  appear. A missing reference or unknown map member never promotes a subset.
+  Data Pages projects do not gain managed configuration semantics.
+  This expresses Pages Functions configuration, not a Worker Route, custom
+  hostname association or observed function invocation. Pages Domains identify a project by
   its name or equivalent project `id`.
 - R2 account, bucket name and jurisdiction must match; an unknown jurisdiction
   cannot be treated as the default. D1 `id`/`uuid`, R2 `id`/`name`, Pages
@@ -151,6 +248,24 @@ is rejected. A computed unknown `database_id` on Worker versions does not
 replace that explicit identity. Legacy script version ownership cannot be
 inferred from a matching name alone. Verified references describe configured
 relationships, not successful deployment or runtime requests.
+
+### External services and origins
+
+Worker version and legacy script `type = "hyperdrive"` bindings verify an
+explicit Hyperdrive configuration `id` in the same known account. Exactly one
+current managed or singleton data endpoint must match; masked IDs, conflicting
+accounts, ambiguous endpoints and incomplete mixed-binding provenance fail closed.
+The separate Hyperdrive resource remains logical and retains its own lifecycle.
+Its database name, host, user, password and Access credentials are not retained
+for presentation. This link identifies the configured Hyperdrive object only.
+
+Service Bindings similarly identify configured Workers, not arbitrary external
+APIs. Worker source code and HTTP `fetch` calls are never parsed. Hyperdrive
+`origin.host`, URL/IP values, database addresses and shared accounts do not prove
+an AWS or other provider endpoint, even when Terraform expressions mention it.
+No cross-provider or cross-state origin edge is inferred. Such an extension
+requires an explicit typed endpoint contract with compatible scope and complete
+provenance; hostname equality and named-state labels cannot substitute for it.
 
 ## Queues
 
@@ -169,6 +284,12 @@ resources with their own actions. Neither is contained in a Worker.
 - Consumer `script_name` links to a Worker only for `type = worker`, using
   the same Worker-name contract as Service bindings. HTTP pull, notification,
   unknown and unsupported types never acquire Worker associations.
+- Worker consumers additionally expose `Configured dead letter Queue` through
+  `dead_letter_queue` → Queue `queue_name`, independently of producer bindings.
+  The consumer's `queue_id` must first prove the source Queue. The logical
+  consumer row identifies both the consumed Queue and its configured DLQ;
+  self-targets and cycles among proven Queue/DLQ relations are rejected.
+  HTTP-pull and notification DLQ contracts are not promoted by this support level.
 - Every reference needs complete explicit Terraform provenance, known matching
   accounts and a unique current endpoint. Managed producers/consumers can use
   managed or singleton data Queue/Worker endpoints; data consumers do not gain
@@ -177,12 +298,35 @@ resources with their own actions. Neither is contained in a Worker.
 
 Queue names and IDs are separate account-scoped contracts. Queue jurisdiction
 does not qualify the account/Queue ID API path or establish an AWS Region.
-Dead-letter queues and notification destinations are not dedicated references
-in this support level. Settings and payloads are not retained. Associations
+Notification destinations are not dedicated references in this support level.
+Settings and payloads are not retained. Associations
 describe configured producers/consumers, not message delivery or runtime
 traffic guarantees.
 
 ## Access and Tunnel
+
+WAF Ruleset Account/Zone references identify the configured administrative owner,
+not effective enforcement. The Zero Trust sample includes a Zone-owned custom WAF
+ruleset alongside an Access application, Tunnel and public DNS record for the same
+hostname. These remain distinct resources: matching `domain`, ingress hostname or
+rule-expression text never creates an Access/WAF → Worker, Pages or Tunnel edge.
+Access application policy/identity-provider references prove configuration only;
+they do not prove authentication occurred or that all paths require Access.
+Rule phase/order, expressions, exclusions, enabled state and runtime deployment
+can affect enforcement and are not inferred from the owner link. Unknown,
+sensitive, ambiguous or conflicting owners fail closed. No "protected" status is
+derived from a hostname match or a shared account/Zone.
+
+Managed DNS CNAME records can identify a Tunnel through an explicit reference
+to its `id`, with exact `<UUID>.cfargotunnel.com` content and `proxied = true`.
+The DNS Zone must be explicitly verified and its known account must match the
+unique current Tunnel endpoint. Known IDs, contents and proxy settings must be
+non-sensitive. Literal CNAMEs, other suffixes (including FedRAMP variants),
+unproxied records and unknown/ambiguous endpoints are not promoted.
+`Configured Tunnel CNAME` describes DNS configuration only: ingress hostname
+similarity does not establish reachability, connector health or Access protection.
+The [Cloudflare routing contract](https://developers.cloudflare.com/tunnel/concepts/routing/)
+defines the standard Tunnel subdomain and same-account restriction.
 
 [Zero Trust sample](../examples/cloudflare-zero-trust.svg) shows an Access
 application, identity provider, reusable policy, Access Groups, tunnel, configuration and

@@ -17,6 +17,7 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_ruleset"
             | "cloudflare_page_rule"
             | "cloudflare_workers_route"
+            | "cloudflare_workers_custom_domain"
             | "cloudflare_zero_trust_access_application"
             | "cloudflare_zero_trust_access_identity_provider",
             "zone_id",
@@ -112,6 +113,12 @@ fn verify(
     let (path, kind) =
         contract(&consumer.resource_type, &r.attribute).ok_or(Failure::UnsupportedContract)?;
     proof::endpoint(endpoint)?;
+    if consumer.resource_type == "cloudflare_workers_custom_domain" && r.attribute == "zone_id" {
+        if consumer.mode != crate::model::EntityMode::Managed {
+            return Err(Failure::UnsupportedContract);
+        }
+        proof::account(consumer, endpoint, evidence[r.target], evidence[*source])?;
+    }
     if endpoint.resource_type != kind {
         return Err(Failure::UnsupportedContract);
     }

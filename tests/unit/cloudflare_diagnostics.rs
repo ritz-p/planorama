@@ -146,9 +146,9 @@ fn collection_and_resource_reordering_choose_the_same_primary_failure() {
     let mut value = fixture("apps");
     let address = "cloudflare_worker_version.api";
     resource(&mut value, address)["change"]["after_unknown"] =
-        json!({"bindings":[{}, {"namespace_id": true}, {}, {}, {}, {}, {}]});
+        json!({"bindings":[{}, {"namespace_id": true}, {}, {}, {}, {}, {}, {}]});
     resource(&mut value, address)["change"]["after_sensitive"] =
-        json!({"bindings":[{}, {}, {"id": true}, {}, {}, {}, {}]});
+        json!({"bindings":[{}, {}, {"id": true}, {}, {}, {}, {}, {}]});
     assert_eq!(
         reason(&value, address, "bindings"),
         Some(Failure::SensitiveValue)
@@ -204,7 +204,7 @@ fn masks_only_describe_fields_required_by_the_rejected_contract() {
     );
     let mut value = fixture("apps");
     resource(&mut value, "cloudflare_worker_version.api")["change"]["after_sensitive"] =
-        json!({"modules": true, "bindings":[{}, {}, {"database_id":true}, {}, {}, {}, {}]});
+        json!({"modules": true, "bindings":[{}, {}, {"database_id":true}, {}, {}, {}, {}, {}]});
     assert_eq!(
         reason(&value, "cloudflare_worker_version.api", "bindings"),
         None

@@ -31,15 +31,15 @@
     },
     {
       "file": "tests/fixtures/cloudflare-applications-plan.json",
-      "sha256": "1fc8f0b189e87d5327a3a1260f50c1be2c5c95b236ab95ab6215bce429e08c07"
+      "sha256": "16c261c7018183229fc2abe0df3f9920c351d56eb184d5c6102f4ffdb30fd936"
     },
     {
       "file": "tests/fixtures/cloudflare-queues-plan.json",
-      "sha256": "5af887702a25b0526730c968d559bd6f024afd3c7ea30e2243c3ab45633cbc9e"
+      "sha256": "4080ce7249a61a6b6c041f9edcb8099a0f28721c5c363c484a3ebd4f53756649"
     },
     {
       "file": "tests/fixtures/cloudflare-zero-trust-plan.json",
-      "sha256": "831f5a3bf27b160e4d23b696cab38fc8c4cc7fa4fd82c2eb2ba102bc3b0ffdbd"
+      "sha256": "ab729b1df936a940291e25dd84a162316b7f1dd9efe797518ab1f43db21b18f3"
     }
   ]
 }

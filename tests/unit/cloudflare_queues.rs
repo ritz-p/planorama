@@ -301,3 +301,106 @@ fn singleton_data_queues_are_endpoints_and_data_consumers_are_not_managed() {
         Err(Failure::UnsupportedContract)
     );
 }
+
+#[test]
+fn dead_letter_queue_requires_name_provenance_owner_scope_and_current_endpoint() {
+    let base = fixture();
+    assert_eq!(result(&base, CONSUMER, "dead_letter_queue"), Ok(()));
+    for (address, section, field, value) in [
+        (
+            CONSUMER,
+            "after",
+            "dead_letter_queue",
+            json!("22222222222222222222222222222222"),
+        ),
+        (CONSUMER, "after_unknown", "dead_letter_queue", json!(true)),
+        (
+            CONSUMER,
+            "after_sensitive",
+            "dead_letter_queue",
+            json!(true),
+        ),
+        (CONSUMER, "after", "type", json!("http_pull")),
+        (CONSUMER, "after_unknown", "queue_id", json!(true)),
+        (
+            "cloudflare_queue.audit",
+            "after",
+            "account_id",
+            json!("ffffffffffffffffffffffffffffffff"),
+        ),
+        (
+            "cloudflare_queue.audit",
+            "after_unknown",
+            "queue_name",
+            json!(true),
+        ),
+        (
+            "cloudflare_queue.audit",
+            "after_sensitive",
+            "queue_name",
+            json!(true),
+        ),
+    ] {
+        let mut v = base.clone();
+        change(&mut v, address)[section][field] = value;
+        assert!(
+            result(&v, CONSUMER, "dead_letter_queue").is_err(),
+            "{address}/{section}/{field}"
+        );
+    }
+    let mut v = base.clone();
+    expressions(&mut v, CONSUMER)["dead_letter_queue"] =
+        json!({"references":["cloudflare_queue.audit.id"]});
+    assert_eq!(
+        result(&v, CONSUMER, "dead_letter_queue"),
+        Err(Failure::OutputMismatch)
+    );
+    let mut v = base.clone();
+    change(&mut v, "cloudflare_queue.audit")["actions"] = json!(["delete"]);
+    assert!(result(&v, CONSUMER, "dead_letter_queue").is_err());
+    let mut v = base;
+    let mut duplicate = v["resource_changes"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|r| r["address"] == "cloudflare_queue.audit")
+        .unwrap()
+        .clone();
+    duplicate["address"] = json!("cloudflare_queue.duplicate");
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(duplicate);
+    assert_eq!(
+        result(&v, CONSUMER, "dead_letter_queue"),
+        Err(Failure::AmbiguousEndpoint)
+    );
+    v["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .last_mut()
+        .unwrap()["deposed"] = json!("old");
+    assert_eq!(result(&v, CONSUMER, "dead_letter_queue"), Ok(()));
+}
+#[test]
+fn dead_letter_cycles_are_rejected_without_losing_producer_or_consumer_links() {
+    let mut v = fixture();
+    change(&mut v, CONSUMER)["after"]["dead_letter_queue"] = json!("jobs");
+    expressions(&mut v, CONSUMER)["dead_letter_queue"] =
+        json!({"references":["cloudflare_queue.jobs.queue_name"]});
+    assert!(result(&v, CONSUMER, "dead_letter_queue").is_err());
+    let mut v = fixture();
+    let other = "cloudflare_queue_consumer.legacy";
+    change(&mut v, other)["after"]["dead_letter_queue"] = json!("jobs");
+    expressions(&mut v, other)["dead_letter_queue"] =
+        json!({"references":["cloudflare_queue.jobs.queue_name"]});
+    for consumer in [CONSUMER, other] {
+        assert_eq!(
+            result(&v, consumer, "dead_letter_queue"),
+            Err(Failure::OwnerMismatch)
+        );
+        assert_eq!(result(&v, consumer, "queue_id"), Ok(()));
+        assert_eq!(result(&v, consumer, "script_name"), Ok(()));
+    }
+    assert_eq!(result(&v, PRODUCER, "bindings"), Ok(()));
+}

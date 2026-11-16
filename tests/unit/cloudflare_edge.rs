@@ -166,3 +166,15 @@ fn an_unknown_rule_target_cannot_hide_behind_another_reference_to_the_same_list(
         json!({"rules":[{}, {"action_parameters":true}]});
     assert!(!verified(&v, 10, "rules"));
 }
+
+#[test]
+fn origin_routing_does_not_promote_pool_strings_to_typed_ruleset_targets() {
+    let mut v = fixture();
+    let id = v["resource_changes"][5]["change"]["after"]["id"].clone();
+    v["resource_changes"][10]["change"]["after"]["rules"] = json!([{
+        "action":"route", "expression":"true", "action_parameters":{"origin":{"host":id,"port":443}}
+    }]);
+    v["configuration"]["root_module"]["resources"][10]["expressions"]["rules"] = json!({"references":[format!("{}.id",v["resource_changes"][5]["address"].as_str().unwrap())]});
+    assert!(!verified(&v, 10, "rules"));
+    assert!(verified(&fixture(), 10, "rules"));
+}
