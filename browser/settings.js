@@ -1,13 +1,13 @@
 const PlanoramaSettings = (() => {
   const maxBytes = 64 * 1024;
   const controls = Object.freeze({
-    format: 'format', changed_only: 'changed', address_format: 'address-format',
+    cloudflare_groups: 'cloudflare-groups', format: 'format', changed_only: 'changed', address_format: 'address-format',
     icon_mode: 'icon-mode', hide_relationship_legend: 'hide-legend',
     omit_relationship_legend: 'omit-legend', html_diagnostics: 'html-diagnostics',
     html_semantic_diagnostics: 'html-semantic-diagnostics',
   });
   const defaults = () => ({
-    format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'service-name',
+    cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'service-name',
     hide_relationship_legend: false, omit_relationship_legend: false,
     html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: [],
   });
@@ -24,9 +24,12 @@ const PlanoramaSettings = (() => {
     for (const key of Object.keys(controls)) {
       if (Object.hasOwn(enums, key) ? !enums[key].includes(result[key]) : typeof result[key] !== 'boolean') fail();
     }
-    for (const key of ['modules', 'spatial_types']) {
+    for (const key of ['modules', 'spatial_types', 'cloudflare_accounts', 'cloudflare_zones']) {
       if (!Array.isArray(result[key]) || result[key].length > 256 || !result[key].every(item => typeof item === 'string' && item !== '')) fail();
       result[key] = [...result[key]];
+    }
+    for (const key of ['cloudflare_accounts', 'cloudflare_zones']) {
+      if (result[key].some(value => value !== 'unknown' && !/^[0-9a-fA-F]{32}$/.test(value))) fail();
     }
     if (result.spatial_types.some(type => !spatialTypes.includes(type)) || new Set(result.spatial_types).size !== result.spatial_types.length) fail();
     if (result.focus === null) delete result.focus;

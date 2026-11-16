@@ -52,6 +52,8 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 | Key | TOML value | Built-in default |
 | --- | --- | --- |
 | `cloudflare-value-matches` | boolean; typed Cloudflare value matches distinct from verified provenance | `false` |
+| `cloudflare-accounts`, `cloudflare-zones` | Arrays of Cloudflare IDs or `unknown` | `[]` |
+| `cloudflare-groups` | Boolean | `false` |
 | `anonymize` | boolean; [full identifier anonymization](anonymization.md), incompatible with reports/diagnostics | `false` |
 | `format` | `"svg"` or `"html"` | `"svg"` |
 | `icon-mode` | `"service-name"` (`"icon"` is rejected) | `"service-name"` |

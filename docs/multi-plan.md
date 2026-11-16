@@ -112,3 +112,9 @@ resolution. Verified provider-account frames can link to one unambiguous member
 Account in another input state, using explicit state-qualified navigation without
 adding a Terraform edge or ownership. Selection retains only available endpoints;
 see [Organizations deployment navigation](aws-security.md#organizations-member-account-deployment-navigation).
+
+Cloudflare Account/Zone selectors apply across loaded states; combine them with
+`--modules STATE:ADDRESS` or `--focus STATE:ADDRESS` to narrow a state. The optional
+`--cloudflare-groups` administrative index is built separately for each state and
+provider configuration. Equal scope IDs do not merge state, alias or lifecycle
+identities. See [the scope selection contract](cloudflare.md#account--zone-selection-and-administrative-index).

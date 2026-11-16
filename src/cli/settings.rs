@@ -7,6 +7,9 @@ use std::collections::BTreeMap;
 pub(super) struct Generation {
     pub anonymize: Option<bool>,
     pub cloudflare_value_matches: Option<bool>,
+    pub cloudflare_groups: Option<bool>,
+    pub cloudflare_accounts: Option<Vec<String>>,
+    pub cloudflare_zones: Option<Vec<String>>,
     pub spatial_types: Option<Vec<String>>,
     pub format: Option<OutputFormat>,
     pub icon_mode: Option<IconMode>,
@@ -37,6 +40,9 @@ impl Generation {
         overlay!(
             anonymize,
             cloudflare_value_matches,
+            cloudflare_groups,
+            cloudflare_accounts,
+            cloudflare_zones,
             spatial_types,
             format,
             icon_mode,
@@ -59,6 +65,9 @@ impl Generation {
     fn parse(mut table: toml::Table) -> Result<Self, String> {
         let result = Self {
             cloudflare_value_matches: take(&mut table, "cloudflare-value-matches")?,
+            cloudflare_groups: take(&mut table, "cloudflare-groups")?,
+            cloudflare_accounts: take(&mut table, "cloudflare-accounts")?,
+            cloudflare_zones: take(&mut table, "cloudflare-zones")?,
             anonymize: take(&mut table, "anonymize")?,
             spatial_types: take(&mut table, "spatial-types")?,
             format: take(&mut table, "format")?,

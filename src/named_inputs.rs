@@ -112,6 +112,8 @@ pub(crate) async fn generate_step(
     let filter = view::Options {
         anonymize: options.anonymize,
         cloudflare_value_matches: options.cloudflare_value_matches,
+        cloudflare_accounts: options.cloudflare_accounts.clone(),
+        cloudflare_zones: options.cloudflare_zones.clone(),
         spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),
@@ -214,6 +216,7 @@ pub(crate) async fn generate_step(
         address_format: options.address_format,
         hide_relationship_legend: options.hide_relationship_legend,
         omit_relationship_legend: options.omit_relationship_legend,
+        cloudflare_groups: options.cloudflare_groups,
     };
     let content = match options.format {
         OutputFormat::Svg => {

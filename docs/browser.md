@@ -62,6 +62,8 @@ group by state/address and return `STATE:ADDRESS`. Pass selectors unchanged.
 | `omit_relationship_legend` | Boolean, false; omits the entire card, overriding `hide_relationship_legend` |
 | `html_semantic_diagnostics` | Boolean, false; requires `format: "html"` |
 | `cloudflare_value_matches` | Boolean, false; opt-in typed Cloudflare value matches, distinct from verified Terraform provenance |
+| `cloudflare_accounts`, `cloudflare_zones` | Arrays of exact Cloudflare scope IDs or `unknown`; OR within a dimension, AND across dimensions |
+| `cloudflare_groups` | Boolean; show administrative membership index (default false) |
 | `anonymize` | Boolean, false; [full identifier anonymization](anonymization.md), incompatible with either HTML diagnostics option |
 | `html_diagnostics` | Boolean, false; requires `format: "html"` |
 | `changed_only` | Boolean, false |

@@ -15,7 +15,10 @@ pub enum OutputFormat {
 #[serde(default, deny_unknown_fields)]
 pub struct Options {
     pub anonymize: bool,
+    pub cloudflare_groups: bool,
     pub cloudflare_value_matches: bool,
+    pub cloudflare_accounts: Vec<String>,
+    pub cloudflare_zones: Vec<String>,
     #[serde(deserialize_with = "memory::deserialize")]
     pub memory_budget_mib: Option<u32>,
     pub spatial_types: Vec<String>,
@@ -114,6 +117,8 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
     let filter = view::Options {
         anonymize: options.anonymize,
         cloudflare_value_matches: options.cloudflare_value_matches,
+        cloudflare_accounts: options.cloudflare_accounts.clone(),
+        cloudflare_zones: options.cloudflare_zones.clone(),
         spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),
@@ -158,6 +163,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
             address_format: options.address_format,
             hide_relationship_legend: options.hide_relationship_legend,
             omit_relationship_legend: options.omit_relationship_legend,
+            cloudflare_groups: options.cloudflare_groups,
         },
         options.html_diagnostics.then_some(&mut report),
         options.html_diagnostics,
@@ -169,6 +175,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
             address_format: options.address_format,
             hide_relationship_legend: options.hide_relationship_legend,
             omit_relationship_legend: options.omit_relationship_legend,
+            cloudflare_groups: options.cloudflare_groups,
         },
         options.html_diagnostics,
         vec![],
@@ -281,7 +288,9 @@ pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
     if options.anonymize && (options.html_diagnostics || options.html_semantic_diagnostics) {
         return Err(Error::InvalidOptions);
     }
-    if options.modules.len() > 256
+    if options.cloudflare_accounts.len() > 256
+        || options.cloudflare_zones.len() > 256
+        || options.modules.len() > 256
         || options.spatial_types.len() > 256
         || options.remote_state_mappings.len() > 256
     {
@@ -292,6 +301,8 @@ pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
         .modules
         .iter()
         .chain(&options.spatial_types)
+        .chain(&options.cloudflare_accounts)
+        .chain(&options.cloudflare_zones)
         .chain(options.focus.iter())
         .chain(
             options
@@ -357,7 +368,8 @@ pub(crate) fn render(
         (OutputFormat::Svg, None)
             if matches!(options.address_format, svg::AddressFormat::Qualified)
                 && !options.hide_relationship_legend
-                && !options.omit_relationship_legend =>
+                && !options.omit_relationship_legend
+                && !options.cloudflare_groups =>
         {
             svg::render(graph, layout)
         }

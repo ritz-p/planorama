@@ -193,3 +193,4 @@ examples/cloudflare-captured-create.svg
 examples/cloudflare-captured-update.svg
 examples/anonymized.svg
 examples/cloudflare-imported.svg
+examples/cloudflare-administration.svg

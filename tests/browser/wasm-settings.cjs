@@ -14,7 +14,7 @@ module.exports = ({driver, small, submit, status}) => {
   const error = () => driver.find_element(By.CSS_SELECTOR, '#settings-error').text;
   click('reset-settings');
   const defaults = options();
-  const selected = {...defaults, format: 'html', changed_only: true, address_format: 'terraform',
+  const selected = {...defaults, cloudflare_accounts: ['a'.repeat(32), 'unknown'], cloudflare_zones: ['b'.repeat(32)], cloudflare_groups: true, format: 'html', changed_only: true, address_format: 'terraform',
     hide_relationship_legend: true, omit_relationship_legend: true,
     html_diagnostics: true, html_semantic_diagnostics: true,
     focus: 'state:module.app["a b,c.d\\"e"].terraform_data.x', focus_depth: 0,

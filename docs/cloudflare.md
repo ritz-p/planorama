@@ -528,3 +528,42 @@ The **Terraform compatibility** manual workflow recaptures with external
 networking disabled. **Resource support** checks provenance and semantic tests;
 **Browser Wasm** compares native/Wasm SVG/HTML, including changed-only rendering.
 Use the same commands with recapture when changing HCL, the generator or pins.
+
+### Account / Zone selection and administrative index
+
+Use repeatable `--cloudflare-account ID` and `--cloudflare-zone ID` selectors, or
+`unknown` for resources whose respective scope is unavailable. IDs must be exact
+32-character hexadecimal IDs; names, hostnames and labels are not selectors.
+Values within each dimension are OR; Account, Zone, module, focus and changed-only
+conditions are AND. Selection happens before the existing required-context closure,
+so required context may remain. A selector with no matches produces an empty view.
+Only canonical Cloudflare resources match, including the `unknown` bucket; AWS
+resources are not unknown Cloudflare resources.
+
+Selection uses `CloudflareScope`: explicit non-sensitive known IDs and account
+context from verified Zone membership. Owner Account/Zone resources need not exist.
+Configured-value recovery does not upgrade a Route's account context. Unknown and
+sensitive values remain unknown; no name or hostname matching supplies scope.
+Current and deposed instances retain their own recorded scope and identity.
+
+`--cloudflare-groups` adds an administrative membership index to SVG and HTML.
+Cards group resources by provider configuration, Account and Zone within each state.
+Unknown scope/configuration is labelled explicitly. Each member links to its original
+resource and includes its action and deposed key. Cards do not create entities,
+relationships, nested containment, AWS accounts, Regions, VPCs or network boundaries.
+The default is off. See [the representative sample](../examples/cloudflare-administration.svg).
+
+```sh
+planorama plan.json --cloudflare-zone bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb --cloudflare-groups
+planorama plan.json --cloudflare-account unknown --format html
+```
+
+`--no-cloudflare-accounts` / `--no-cloudflare-zones` clear inherited selectors;
+`--no-cloudflare-groups` disables the index. TOML uses `cloudflare-accounts`,
+`cloudflare-zones` arrays and a `cloudflare-groups` boolean. Wasm options use
+`cloudflare_accounts`, `cloudflare_zones`, `cloudflare_groups`. Browser generation
+exposes the same settings and includes them in settings import/export. HTML generation
+information records effective selectors and whether this is a selected view;
+anonymized exports withhold original selectors and pseudonymize displayed scope.
+Offline HTML search offers Account and Zone filters within the generated view;
+these narrow search results, without restoring resources omitted at generation.

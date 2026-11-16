@@ -1,3 +1,4 @@
+mod administration;
 mod annotations;
 mod checks;
 mod components;
@@ -60,6 +61,7 @@ pub enum AddressFormat {
 #[derive(Clone, Copy, Default)]
 pub struct Options {
     pub address_format: AddressFormat,
+    pub cloudflare_groups: bool,
     pub hide_relationship_legend: bool,
     pub omit_relationship_legend: bool,
 }
@@ -124,7 +126,12 @@ impl Sections {
             graph,
             layout,
             index,
-            annotation_cards(graph, index, options.address_format),
+            annotation_cards(
+                graph,
+                index,
+                options.address_format,
+                options.cloudflare_groups,
+            ),
             index.width,
             (!options.omit_relationship_legend).then_some(options.hide_relationship_legend),
         )
@@ -142,7 +149,7 @@ impl Sections {
             graph,
             layout,
             index,
-            annotation_cards(graph, index, address_format),
+            annotation_cards(graph, index, address_format, false),
             available_width,
             None,
         )
@@ -224,8 +231,9 @@ fn annotation_cards(
     graph: &Graph,
     index: &relationship_index::Index<'_>,
     address_format: AddressFormat,
+    cloudflare_groups: bool,
 ) -> Vec<(&'static str, style::SectionPalette, Vec<annotations::Card>)> {
-    vec![
+    let mut cards = vec![
         (
             "Logical Resources",
             style::LOGICAL_RESOURCES,
@@ -241,7 +249,15 @@ fn annotation_cards(
             style::RELATIONSHIP_RESOURCES,
             index.cards(),
         ),
-    ]
+    ];
+    if cloudflare_groups {
+        cards.push((
+            "Cloudflare administration groups",
+            style::LOGICAL_COMPONENTS,
+            administration::cards(graph, address_format),
+        ));
+    }
+    cards
 }
 
 pub(crate) fn render_with_format(

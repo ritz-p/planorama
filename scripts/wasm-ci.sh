@@ -28,6 +28,8 @@ for file in planorama.js planorama_bg.wasm memory-capabilities.json; do
 done
 measure cloudflare-parity node tests/browser/wasm-cloudflare-node.cjs
 measure cloudflare-recovery node tests/browser/wasm-cloudflare-recovery.cjs
+measure cloudflare-selection node tests/browser/wasm-cloudflare-selection.cjs
+measure cloudflare-selection-viewer node tests/browser/cloudflare-selection.cjs
 measure cloudflare-recovery-viewer node tests/browser/cloudflare-recovery.cjs
 measure anonymization-parity node tests/browser/wasm-anonymization.cjs
 measure anonymization-audit node tests/browser/anonymization.cjs
