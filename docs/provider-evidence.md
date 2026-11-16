@@ -102,7 +102,9 @@ Only the validated account ID and conflict status enter the model. Role ARNs,
 session names, external IDs, credentials and unrelated values are not retained in
 the model, rendered, or included in evidence error messages. Saved plans and JSON
 can themselves contain secrets; the temporary plan copy is removed on completion.
-Account IDs are intentional deployment metadata visible in SVG/HTML. Region,
+Account IDs are intentional deployment metadata visible in ordinary SVG/HTML.
+[Anonymized exports](anonymization.md) replace them with consistent account pseudonyms
+after evidence validation; they do not sanitize saved plans or JSON. Region,
 account, provider binding and Terraform state remain independent identities.
 
 The development Docker image defaults to Terraform 1.9.8. The evidence harness

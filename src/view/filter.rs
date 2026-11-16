@@ -4,6 +4,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 pub struct Options {
+    pub anonymize: bool,
     pub spatial_types: Vec<String>,
     pub explain_selection: bool,
     pub selection_details: usize,
@@ -17,6 +18,9 @@ pub struct Options {
 
 impl Options {
     pub fn validate(&self) -> Result<(), String> {
+        if self.anonymize && (self.html_semantic_diagnostics || self.explain_selection) {
+            return Err("anonymized exports cannot include diagnostic or coverage reports".into());
+        }
         if self.icon_mode == crate::icons::IconMode::Icon {
             return Err("icon mode has been removed; use service-name".into());
         }

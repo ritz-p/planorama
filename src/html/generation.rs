@@ -12,11 +12,20 @@ pub(crate) fn attach(
     if !document.starts_with("<!doctype html>") {
         return document;
     }
+    let document = if filter.anonymize {
+        document.replacen(
+            "<div id=\"generation-details\"></div>",
+            "<div id=\"generation-details\"><p>Identifiers are pseudonyms for this export. Original selection and mapping settings and free-text details are withheld. Topology and resource types remain visible; source plan JSON is not anonymized.</p></div>",
+            1,
+        )
+    } else {
+        document
+    };
     let modules: std::collections::BTreeSet<_> = filter.modules.iter().collect();
     let spatial_types: std::collections::BTreeSet<_> = filter.spatial_types.iter().collect();
     mappings.sort_by_cached_key(Value::to_string);
     mappings.dedup();
-    let settings = json!({
+    let mut settings = json!({
         "changed_only": filter.changed_only,
         "modules": modules,
         "focus": filter.focus,
@@ -34,6 +43,13 @@ pub(crate) fn attach(
         "states": states,
         "remote_state_mappings": mappings,
     });
+    if filter.anonymize {
+        settings["anonymize"] = true.into();
+        settings["modules"] = json!([]);
+        settings["focus"] = Value::Null;
+        settings["focus_depth"] = Value::Null;
+        settings["remote_state_mappings"] = json!([]);
+    }
     let metadata = json!({
         "schema_version": 1,
         "generator": { "name": "Planorama", "version": env!("CARGO_PKG_VERSION"), "revision": crate::build_revision() },

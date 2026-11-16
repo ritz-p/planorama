@@ -14,6 +14,7 @@ pub enum OutputFormat {
 #[derive(Default, serde::Deserialize)]
 #[serde(default, deny_unknown_fields)]
 pub struct Options {
+    pub anonymize: bool,
     #[serde(deserialize_with = "memory::deserialize")]
     pub memory_budget_mib: Option<u32>,
     pub spatial_types: Vec<String>,
@@ -110,6 +111,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         return Err(Error::InputTooLarge);
     }
     let filter = view::Options {
+        anonymize: options.anonymize,
         spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),
@@ -274,6 +276,9 @@ impl Generator {
 }
 
 pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
+    if options.anonymize && (options.html_diagnostics || options.html_semantic_diagnostics) {
+        return Err(Error::InvalidOptions);
+    }
     if options.modules.len() > 256
         || options.spatial_types.len() > 256
         || options.remote_state_mappings.len() > 256

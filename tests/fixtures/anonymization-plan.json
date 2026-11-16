@@ -1,0 +1,209 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_route_table.private_table_sentinel",
+      "type": "aws_route_table",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "TOP_SECRET_TABLE",
+          "arn": "arn:aws:ec2:us-east-1:739185026412:private_arn_sentinel",
+          "endpoint": "https://private-host-sentinel.example.invalid:8443/private_path_sentinel"
+        }
+      },
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "previous_address": "aws_route_table.previous_name_sentinel"
+    },
+    {
+      "address": "aws_internet_gateway.private_gateway_sentinel",
+      "type": "aws_internet_gateway",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "TOP_SECRET_TARGET",
+          "arn": "arn:aws:ec2:us-east-1:739185026412:private_arn_sentinel",
+          "endpoint": "https://private-host-sentinel.example.invalid:8443/private_path_sentinel"
+        }
+      },
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "address": "aws_route.private_route_sentinel",
+      "type": "aws_route",
+      "action_reason": "private_reason_sentinel",
+      "change": {
+        "actions": [
+          "delete",
+          "create"
+        ],
+        "importing": {},
+        "replace_paths": [
+          [
+            "tags",
+            "private_tag_sentinel"
+          ]
+        ],
+        "after": {
+          "route_table_id": "TOP_SECRET_TABLE",
+          "gateway_id": "TOP_SECRET_TARGET",
+          "arn": "arn:aws:ec2:us-east-1:739185026412:private_arn_sentinel",
+          "endpoint": "https://private-host-sentinel.example.invalid:8443/private_path_sentinel",
+          "id": "private_id_sentinel"
+        }
+      },
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "address": "aws_route.private_ipv6_sentinel",
+      "type": "aws_route",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "route_table_id": "TOP_SECRET_TABLE",
+          "gateway_id": "TOP_SECRET_TARGET",
+          "arn": "arn:aws:ec2:us-east-1:739185026412:private_arn_sentinel",
+          "endpoint": "https://private-host-sentinel.example.invalid:8443/private_path_sentinel",
+          "id": "private_id_sentinel"
+        }
+      },
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "address": "aws_route.private_literal_sentinel",
+      "type": "aws_route",
+      "change": {
+        "actions": [
+          "delete"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:739185026412:private_arn_sentinel",
+          "endpoint": "https://private-host-sentinel.example.invalid:8443/private_path_sentinel",
+          "id": "private_id_sentinel"
+        }
+      },
+      "provider_name": "registry.terraform.io/hashicorp/aws"
+    },
+    {
+      "address": "module.customer_sentinel[\"tenant_sentinel\"].module.service_sentinel.aws_s3_bucket.storage_sentinel",
+      "module_address": "module.customer_sentinel[\"tenant_sentinel\"].module.service_sentinel",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "private_bucket_sentinel",
+          "id": "private_bucket_id_sentinel"
+        }
+      }
+    },
+    {
+      "address": "private_type_sentinel.private_name_sentinel",
+      "type": "private_type_sentinel",
+      "provider_name": "private-registry-sentinel.example.invalid/company/provider",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {}
+      }
+    }
+  ],
+  "configuration": {
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_route.private_route_sentinel",
+          "expressions": {
+            "route_table_id": {
+              "references": [
+                "aws_route_table.private_table_sentinel.id"
+              ]
+            },
+            "gateway_id": {
+              "references": [
+                "aws_internet_gateway.private_gateway_sentinel.id"
+              ]
+            },
+            "destination_cidr_block": {
+              "constant_value": "198.51.100.0/24"
+            }
+          }
+        },
+        {
+          "address": "aws_route.private_ipv6_sentinel",
+          "expressions": {
+            "destination_ipv6_cidr_block": {
+              "constant_value": "2001:db8:abcd::/48"
+            },
+            "route_table_id": {
+              "references": [
+                "aws_route_table.private_table_sentinel.id"
+              ]
+            },
+            "gateway_id": {
+              "references": [
+                "aws_internet_gateway.private_gateway_sentinel.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route.private_literal_sentinel",
+          "expressions": {
+            "route_table_id": {
+              "references": [
+                "aws_route_table.private_table_sentinel.id"
+              ]
+            },
+            "gateway_id": {
+              "constant_value": "TOP_SECRET_ID"
+            }
+          }
+        }
+      ]
+    },
+    "provider_config": {
+      "aws.private_alias_sentinel": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "private_alias_sentinel",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    }
+  },
+  "checks": [
+    {
+      "address": {
+        "kind": "resource",
+        "to_display": "aws_route.private_route_sentinel"
+      },
+      "status": "private_status_sentinel",
+      "instances": [
+        {
+          "address": {
+            "to_display": "aws_route.private_route_sentinel"
+          },
+          "status": "fail",
+          "problems": [
+            {
+              "message": "private_message_sentinel"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

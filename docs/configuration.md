@@ -51,6 +51,7 @@ Both tables accept exactly these keys, using the same spelling as CLI options:
 
 | Key | TOML value | Built-in default |
 | --- | --- | --- |
+| `anonymize` | boolean; [full identifier anonymization](anonymization.md), incompatible with reports/diagnostics | `false` |
 | `format` | `"svg"` or `"html"` | `"svg"` |
 | `icon-mode` | `"service-name"` (`"icon"` is rejected) | `"service-name"` |
 | `address-format` | `"qualified"` or `"terraform"` | `"qualified"` |

@@ -1,3 +1,4 @@
+mod anonymization;
 mod athena;
 mod cloudflare;
 mod configuration;
