@@ -28,6 +28,44 @@ impl Input {
 }
 
 pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
+    let mut references = vec![Vec::new(); plan.nodes.len()];
+    for (r, dependency) in plan
+        .attributes
+        .iter()
+        .map(|r| (r, false))
+        .chain(plan.graph_references.iter().map(|r| (r, true)))
+        .filter(|(r, _)| r.has_references || !r.issues.is_empty())
+    {
+        if let Some(group) = references.get_mut(r.target) {
+            let fact = &plan.nodes[r.target];
+            group.push(crate::model::ResourceReference {
+                kind: crate::model::ReferenceKind::Configured,
+                preserve_spatial: false,
+                show_spatial: false,
+                label: crate::provider::reference_label(
+                    &fact.provider,
+                    &fact.resource_type,
+                    &r.attribute,
+                    dependency,
+                ),
+                attribute: r.attribute.clone(),
+                targets: r
+                    .sources
+                    .iter()
+                    .map(|&i| crate::model::ReferenceTarget {
+                        configured_percentage: r.cloudflare_percentages.get(&i).cloned(),
+                        account_scope: None,
+                        state: None,
+                        id: (&plan.nodes[i]).into(),
+                        placement: crate::provider::entity_placement(&plan.nodes[i]),
+                    })
+                    .collect(),
+                complete: r.complete,
+                dependency,
+                issues: r.issues.clone(),
+            });
+        }
+    }
     let mut graph = Graph {
         coverage: Default::default(),
         relationships: Vec::new(),
@@ -54,41 +92,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                 } else {
                     crate::provider::entity_placement(fact)
                 },
-                references: plan
-                    .attributes
-                    .iter()
-                    .map(|r| (r, false))
-                    .chain(plan.graph_references.iter().map(|r| (r, true)))
-                    .filter(|(r, _)| {
-                        r.target == index && (r.has_references || !r.issues.is_empty())
-                    })
-                    .map(|(r, dependency)| crate::model::ResourceReference {
-                        kind: crate::model::ReferenceKind::Configured,
-                        preserve_spatial: false,
-                        show_spatial: false,
-                        label: crate::provider::reference_label(
-                            &fact.provider,
-                            &fact.resource_type,
-                            &r.attribute,
-                            dependency,
-                        ),
-                        attribute: r.attribute.clone(),
-                        targets: r
-                            .sources
-                            .iter()
-                            .map(|&i| crate::model::ReferenceTarget {
-                                configured_percentage: r.cloudflare_percentages.get(&i).cloned(),
-                                account_scope: None,
-                                state: None,
-                                id: (&plan.nodes[i]).into(),
-                                placement: crate::provider::entity_placement(&plan.nodes[i]),
-                            })
-                            .collect(),
-                        complete: r.complete,
-                        dependency,
-                        issues: r.issues.clone(),
-                    })
-                    .collect(),
+                references: std::mem::take(&mut references[index]),
                 entity: {
                     let mut entity = crate::model::ArchitectureEntity::terraform(fact.into());
                     entity.cloudflare_scope = fact.cloudflare_scope.clone();
@@ -122,3 +126,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
         super::relationships::collect(&graph, &super::relationships::deployments(&graph.nodes));
     graph
 }
+
+#[cfg(test)]
+#[path = "../../tests/unit/semantic/input.rs"]
+mod tests;

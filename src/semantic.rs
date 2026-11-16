@@ -1,5 +1,5 @@
 use crate::model::{ArchitectureGraph, TerraformPlan};
-mod input;
+pub(crate) mod input;
 pub(crate) use input::Input;
 #[cfg(test)]
 pub(crate) use tests::base_graph;
