@@ -27,6 +27,9 @@ pub(crate) fn attach(
     mappings.dedup();
     let mut settings = json!({
         "changed_only": filter.changed_only,
+        "cloudflare_accounts": filter.cloudflare_accounts,
+        "cloudflare_zones": filter.cloudflare_zones,
+        "cloudflare_groups": rendering.cloudflare_groups,
         "modules": modules,
         "focus": filter.focus,
         "focus_depth": filter.focus.as_ref().map(|_| filter.depth.unwrap_or(1)),
@@ -46,15 +49,20 @@ pub(crate) fn attach(
     if filter.anonymize {
         settings["anonymize"] = true.into();
         settings["modules"] = json!([]);
+        settings["cloudflare_accounts"] = json!([]);
+        settings["cloudflare_zones"] = json!([]);
         settings["focus"] = Value::Null;
         settings["focus_depth"] = Value::Null;
         settings["remote_state_mappings"] = json!([]);
+    }
+    if filter.cloudflare_value_matches {
+        settings["cloudflare_value_matches"] = true.into();
     }
     let metadata = json!({
         "schema_version": 1,
         "generator": { "name": "Planorama", "version": env!("CARGO_PKG_VERSION"), "revision": crate::build_revision() },
         "setting_origins": null,
-        "selected_view": filter.changed_only || filter.focus.is_some() || !filter.modules.is_empty(),
+        "selected_view": filter.changed_only || filter.focus.is_some() || !filter.modules.is_empty() || !filter.cloudflare_accounts.is_empty() || !filter.cloudflare_zones.is_empty(),
         "settings": settings,
     });
     document.replacen(

@@ -181,7 +181,9 @@ pub use operations::{
 };
 pub use provider::{AwsAccountScope, ProviderConfiguration, ProviderIdentity, RegionScope};
 pub use states::{MultiPlan, PlanInput, StateId};
-pub use terraform::{TerraformEntity, TerraformPlan, TerraformReference, WafScope};
+pub use terraform::{
+    ConfiguredValueMatch, TerraformEntity, TerraformPlan, TerraformReference, WafScope,
+};
 
 #[allow(
     dead_code,

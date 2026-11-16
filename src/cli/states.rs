@@ -54,7 +54,11 @@ pub(super) fn run(
                 .map_err(|error| format!("state {:?}: {error}", input.state_id.as_str()))
         })
         .collect::<Result<BTreeMap<_, _>, _>>()?;
-    let mut plans = plan::parse_inputs(inputs)?;
+    let mut plans = if filter.cloudflare_value_matches {
+        plan::parse_inputs_with_value_matches(inputs, true)?
+    } else {
+        plan::parse_inputs(inputs)?
+    };
     for (id, raw) in &mut plans.states {
         if let Some(Some(evidence)) = evidence.get(id) {
             evidence.apply(raw);

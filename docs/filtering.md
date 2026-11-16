@@ -133,3 +133,11 @@ planorama plan.json --changed-only -o changes.svg
 planorama plan.json --focus module.app.aws_instance.web --focus-depth 2
 planorama --state app=app.json --state network=network.json --focus app:aws_instance.web
 ```
+
+### Cloudflare administrative scope
+
+Repeat `--cloudflare-account ID|unknown` / `--cloudflare-zone ID|unknown` to select
+known Account/Zone scope, or its unknown bucket. Values in a dimension are OR;
+Account, Zone, modules, focus and changed-only are AND, followed by required-context
+retention. Only canonical Cloudflare resources match. Account/Zone owners may be
+absent. See [scope evidence and management index](cloudflare.md#account--zone-selection-and-administrative-index).

@@ -78,6 +78,9 @@ fn generation_information_is_effective_allowlisted_and_shared() {
         [
             "address_format",
             "changed_only",
+            "cloudflare_accounts",
+            "cloudflare_groups",
+            "cloudflare_zones",
             "focus",
             "focus_depth",
             "html_diagnostics",

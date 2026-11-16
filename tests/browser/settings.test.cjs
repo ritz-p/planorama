@@ -33,3 +33,8 @@ test('invalid files are rejected without mutation or raw error contents', () => 
   }
   assert.throws(() => settings.stringify({...settings.defaults(), focus: '界'.repeat(30000)}, types));
 });
+test('Cloudflare scope settings preserve explicit IDs and unknown and reject guessed names', () => {
+  const value = {...settings.defaults(), cloudflare_accounts: ['a'.repeat(32), 'unknown'], cloudflare_zones: ['b'.repeat(32)], cloudflare_groups: true};
+  assert.deepEqual(settings.parse(settings.stringify(value, types), types), value);
+  for (const invalid of [{cloudflare_accounts: ['example.invalid']}, {cloudflare_zones: [null]}, {cloudflare_groups: 'true'}, {cloudflare_zones: Array(257).fill('unknown')}]) assert.throws(() => settings.validate(invalid, types));
+});

@@ -13,12 +13,12 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
   `, id, value);
   const reset = () => find('#reset-settings').click();
   const options = () => driver.execute_script('return snapshotOptions()');
-  const defaults = {format: 'svg', changed_only: false, address_format: 'qualified', icon_mode: 'service-name', hide_relationship_legend: false, omit_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
+  const defaults = {format: 'svg', changed_only: false, cloudflare_accounts: [], cloudflare_zones: [], cloudflare_groups: false, address_format: 'qualified', icon_mode: 'service-name', hide_relationship_legend: false, omit_relationship_legend: false, html_diagnostics: false, html_semantic_diagnostics: false, modules: [], spatial_types: []};
   assert.deepEqual(options(), defaults);
   assert.equal(find('#focus-depth').is_enabled(), false);
   assert.equal(find('#settings-error').get_attribute('role'), 'alert');
   assert.equal(find('#status').get_attribute('role'), 'status');
-  for (const id of ['format', 'changed', 'address-format', 'icon-mode', 'hide-legend', 'omit-legend', 'focus', 'focus-depth']) {
+  for (const id of ['format', 'changed', 'address-format', 'icon-mode', 'hide-legend', 'omit-legend', 'focus', 'focus-depth', 'cloudflare-accounts', 'cloudflare-zones', 'cloudflare-groups']) {
     assert.ok(find('#' + id).accessible_name, `${id} has a label`);
   }
 
@@ -61,6 +61,16 @@ module.exports = function checkOptions({driver, small, run, submit, status, nati
     assert.equal(content, native(json, args), 'UI/native exact parity');
     assert.equal(content, run(json, expected).content, 'UI/Wasm exact parity');
   };
+  const cloudflare = readFileSync(join(__dirname, '../fixtures/cloudflare-administration-plan.json'), 'utf8');
+  for (const format of ['svg', 'html']) {
+    reset();
+    set('cloudflare-accounts', 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+    set('cloudflare-zones', 'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb');
+    set('cloudflare-groups', true);
+    generate(cloudflare, {...defaults, format, cloudflare_accounts: ['a'.repeat(32)], cloudflare_zones: ['b'.repeat(32)], cloudflare_groups: true}, ['--format', format, '--cloudflare-account', 'a'.repeat(32), '--cloudflare-zone', 'b'.repeat(32), '--cloudflare-groups']);
+    assert.ok(driver.execute_script('return uiContent.includes("data-cloudflare-management-member")'));
+  }
+  reset();
   const types = ['aws_ssm_parameter', 'aws_cloudwatch_metric_alarm', 'aws_iam_role', 'aws_iam_user', 'aws_iam_group', 'aws_iam_openid_connect_provider', 'aws_iam_saml_provider'];
   const relationships = readFileSync(join(__dirname, '../fixtures/association-plan.json'), 'utf8');
   for (const format of ['svg', 'html']) {

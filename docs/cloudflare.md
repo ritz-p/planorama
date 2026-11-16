@@ -143,29 +143,39 @@ references and data-source lookup outputs are treated separately.
 
 ## Imported resources and value-only recovery
 
-Value-only Zone/Worker recovery is disabled; there is no opt-in switch. Imported
-plans with literal `zone_id`, `script` or `service` values keep their resources
-and scope labels, but equal values alone do not create verified relationships.
-This applies to Route → Zone, Route → Worker, Custom Domain → Zone and Custom
-Domain → Worker. Restore explicit Terraform expressions to obtain the documented
-verified links. A shared hostname or account never creates a direct Zone → Worker
-relationship, and named states are independent identity domains.
+Value-only recovery is off by default. Opt in with `--cloudflare-value-matches`,
+TOML `cloudflare-value-matches = true`, or Rust/Wasm
+`cloudflare_value_matches: true`. `--no-cloudflare-value-matches` overrides the
+configuration. Named and resumable generation use the same per-state contract.
 
-The pinned schema provides typed Zone IDs and Worker names, so a separately
-labelled configured-value match is technically possible with complete evidence.
-It is not equivalent to Terraform provenance: names are account scoped, Zone data
-outputs require matching `id`/`zone_id`, legacy script `id` is a name rather than
-a Worker UUID, and a plan may omit other endpoints. Unknown/sensitive identities,
-duplicate current candidates, conflicting scope, deleted/deposed targets and
-environment-qualified services must never fall back to unrestricted matching.
+The opt-in matches managed Workers Route `zone_id` to a unique current Zone ID,
+then `script` to a unique Worker `name` or legacy script's matching
+`id`/`script_name` within that Zone's known account. Custom Domains additionally
+require their own known `account_id` to agree, and match `service` the same way.
+Singleton data Zones must expose matching `id`/`zone_id` and a known account.
+Consumers and targets must have matching provider configurations. Duplicate
+current IDs/names, unknown/sensitive identity or account fields, inactive targets,
+unsupported environment qualifiers and mismatched aliases fail closed. An
+explicit expression on an eligible attribute is never replaced with a value match.
+The contract follows the pinned Cloudflare v5.28.1 schema; no hostname, DNS,
+shared-account-only or arbitrary string fallback creates Zone-to-Worker edges.
 
-The current semantic contract records verified references, not a separate
-value-match confidence. Enabling recovery requires a distinct provenance model
-and SVG/HTML labels, an explicit opt-in, per-state typed identity indexes, and
-native/Wasm tests covering the same ambiguity and masking boundaries as explicit
-references. Index construction should be linear in resources plus candidate
-relations; measure large imported fixtures before enabling it. No fallback scan
-or default behavior change is introduced by this decision.
+These links carry typed `ConfiguredValue` provenance, serialized as
+`kind: "configured-value"` / `confidence: "typed-configured-value"`, and SVG
+`data-evidence="configured-value"`. Purple dotted lines, their tooltips and the
+legend distinguish them from verified Terraform provenance. HTML retains the
+same metadata and meaning during navigation and neighborhood export. Hiding or
+omitting the legend does not remove edge metadata/tooltips. No observed traffic,
+deployment success or runtime reachability is implied. Raw matched IDs/names are
+not added to diagram metadata; anonymization projects endpoint addresses normally.
+Value matches do not upgrade a resource's verified account context.
+
+Typed identity indexes are built once per input state; ordered lookups avoid
+per-relation scans across all resources. The regression suite includes 1,000
+literal imported Routes. Run `cargo test --locked --lib cloudflare::recovery -- --nocapture`
+and `node tests/browser/wasm-cloudflare-recovery.cjs` after building native/Wasm
+outputs. The synthetic [imported sample](../examples/cloudflare-imported.svg)
+uses [this input](../tests/fixtures/cloudflare-imported-plan.json).
 
 ## Applications and storage
 
@@ -518,3 +528,42 @@ The **Terraform compatibility** manual workflow recaptures with external
 networking disabled. **Resource support** checks provenance and semantic tests;
 **Browser Wasm** compares native/Wasm SVG/HTML, including changed-only rendering.
 Use the same commands with recapture when changing HCL, the generator or pins.
+
+### Account / Zone selection and administrative index
+
+Use repeatable `--cloudflare-account ID` and `--cloudflare-zone ID` selectors, or
+`unknown` for resources whose respective scope is unavailable. IDs must be exact
+32-character hexadecimal IDs; names, hostnames and labels are not selectors.
+Values within each dimension are OR; Account, Zone, module, focus and changed-only
+conditions are AND. Selection happens before the existing required-context closure,
+so required context may remain. A selector with no matches produces an empty view.
+Only canonical Cloudflare resources match, including the `unknown` bucket; AWS
+resources are not unknown Cloudflare resources.
+
+Selection uses `CloudflareScope`: explicit non-sensitive known IDs and account
+context from verified Zone membership. Owner Account/Zone resources need not exist.
+Configured-value recovery does not upgrade a Route's account context. Unknown and
+sensitive values remain unknown; no name or hostname matching supplies scope.
+Current and deposed instances retain their own recorded scope and identity.
+
+`--cloudflare-groups` adds an administrative membership index to SVG and HTML.
+Cards group resources by provider configuration, Account and Zone within each state.
+Unknown scope/configuration is labelled explicitly. Each member links to its original
+resource and includes its action and deposed key. Cards do not create entities,
+relationships, nested containment, AWS accounts, Regions, VPCs or network boundaries.
+The default is off. See [the representative sample](../examples/cloudflare-administration.svg).
+
+```sh
+planorama plan.json --cloudflare-zone bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb --cloudflare-groups
+planorama plan.json --cloudflare-account unknown --format html
+```
+
+`--no-cloudflare-accounts` / `--no-cloudflare-zones` clear inherited selectors;
+`--no-cloudflare-groups` disables the index. TOML uses `cloudflare-accounts`,
+`cloudflare-zones` arrays and a `cloudflare-groups` boolean. Wasm options use
+`cloudflare_accounts`, `cloudflare_zones`, `cloudflare_groups`. Browser generation
+exposes the same settings and includes them in settings import/export. HTML generation
+information records effective selectors and whether this is a selected view;
+anonymized exports withhold original selectors and pseudonymize displayed scope.
+Offline HTML search offers Account and Zone filters within the generated view;
+these narrow search results, without restoring resources omitted at generation.
