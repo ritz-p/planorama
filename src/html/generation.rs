@@ -50,6 +50,9 @@ pub(crate) fn attach(
         settings["focus_depth"] = Value::Null;
         settings["remote_state_mappings"] = json!([]);
     }
+    if filter.cloudflare_value_matches {
+        settings["cloudflare_value_matches"] = true.into();
+    }
     let metadata = json!({
         "schema_version": 1,
         "generator": { "name": "Planorama", "version": env!("CARGO_PKG_VERSION"), "revision": crate::build_revision() },

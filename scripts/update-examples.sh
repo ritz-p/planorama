@@ -17,6 +17,9 @@ update_snapshot() {
 
 while IFS= read -r output || [ -n "$output" ]; do
     case "$output" in
+        examples/cloudflare-imported.svg)
+            "$binary" tests/fixtures/cloudflare-imported-plan.json --cloudflare-value-matches -o "$output"
+            ;;
         examples/anonymized.svg)
             "$binary" tests/fixtures/anonymization-plan.json --anonymize -o "$output"
             ;;

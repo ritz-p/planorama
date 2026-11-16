@@ -27,6 +27,8 @@ for file in planorama.js planorama_bg.wasm memory-capabilities.json; do
     cmp "output/browser/pkg/$file" "output/wasm-engine/$file"
 done
 measure cloudflare-parity node tests/browser/wasm-cloudflare-node.cjs
+measure cloudflare-recovery node tests/browser/wasm-cloudflare-recovery.cjs
+measure cloudflare-recovery-viewer node tests/browser/cloudflare-recovery.cjs
 measure anonymization-parity node tests/browser/wasm-anonymization.cjs
 measure anonymization-audit node tests/browser/anonymization.cjs
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg

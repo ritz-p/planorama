@@ -424,6 +424,19 @@ fn render_with_index(
     }
     svg.push_str(&scopes::render(graph, layout));
     svg.push_str(&containers::boundaries(graph, layout, address_format));
+    let value_matches: std::collections::BTreeSet<_> = graph
+        .relationships
+        .iter()
+        .filter(|r| {
+            r.provenance.iter().any(|p| {
+                matches!(
+                    p,
+                    crate::model::RelationshipProvenance::ConfiguredValue { .. }
+                )
+            })
+        })
+        .map(|r| (&r.from, &r.to, r.kind))
+        .collect();
     for (index, (edge, points)) in graph.edges.iter().zip(&layout.paths).enumerate() {
         let relation = match edge.kind {
             EdgeKind::Dependency => " data-edge-kind=\"dependency\"",
@@ -434,12 +447,20 @@ fn render_with_index(
             EdgeKind::Connection => " data-edge-kind=\"connection\"",
             EdgeKind::Containment => " data-edge-kind=\"containment\"",
         };
-        let title = relationships::title(graph, edge, semantic_edges, address_format);
-        let operation = edge
+        let value_match = value_matches.contains(&(
+            &graph.nodes[edge.from].entity.id,
+            &graph.nodes[edge.to].entity.id,
+            edge.kind,
+        ));
+        let title = relationships::title(graph, edge, semantic_edges, value_match, address_format);
+        let mut operation = edge
             .change
             .as_ref()
             .map(|change| operations::attributes(&change.metadata))
             .unwrap_or_default();
+        if value_match {
+            operation.push_str(" data-evidence=\"configured-value\"");
+        }
         let previous = edge
             .change
             .as_ref()
@@ -452,7 +473,11 @@ fn render_with_index(
             writeln!(svg, r#"<g{relation}{previous}{operation} data-source="{source}" data-target="{target}"><title>{title}</title></g>"#).unwrap();
             continue;
         }
-        let stroke = relationships::stroke(edge);
+        let stroke = if value_match {
+            "#8b5cf6"
+        } else {
+            relationships::stroke(edge)
+        };
         let path = paths::rounded(points);
         let style = relationships::style(edge.kind);
         let direction = edge.directionality().as_str();

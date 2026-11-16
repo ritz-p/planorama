@@ -137,7 +137,8 @@ impl Projection {
         for relationship in &graph.relationships {
             for proof in &relationship.provenance {
                 match proof {
-                    RelationshipProvenance::Reference { from, to } => {
+                    RelationshipProvenance::Reference { from, to }
+                    | RelationshipProvenance::ConfiguredValue { from, to, .. } => {
                         self.reserve_source(from);
                         self.reserve_source(to);
                     }
@@ -517,7 +518,8 @@ impl Projection {
             self.architecture_id(&mut relationship.to);
             for proof in &mut relationship.provenance {
                 match proof {
-                    RelationshipProvenance::Reference { from, to } => {
+                    RelationshipProvenance::Reference { from, to }
+                    | RelationshipProvenance::ConfiguredValue { from, to, .. } => {
                         self.source(from);
                         self.source(to);
                     }

@@ -16,6 +16,7 @@ mod remote;
 mod routes;
 mod states;
 pub use states::parse_inputs;
+pub(crate) use states::parse_inputs_with_value_matches;
 #[cfg(test)]
 #[path = "../tests/unit/plan.rs"]
 mod tests;
@@ -31,6 +32,10 @@ use serde_json::Value;
 use std::collections::{BTreeMap, BTreeSet};
 
 pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
+    parse_with_value_matches(json, false)
+}
+
+pub(crate) fn parse_with_value_matches(json: &str, recover: bool) -> Result<TerraformPlan, String> {
     let _timing = crate::timing::span("terraform_parse_resolve", &[("input_bytes", json.len())]);
     let plan: Value = serde_json::from_str(json.trim_start_matches('\u{feff}'))
         .map_err(|e| format!("invalid JSON: {e}"))?;
@@ -108,7 +113,8 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         &symbols,
         false,
     );
-    collections::annotate(&plan, &mut nodes, &mut attributes);
+    let configured_value_matches =
+        collections::annotate(&plan, &mut nodes, &mut attributes, recover);
     crate::provider::aws::encryption::enrich(&plan, &mut nodes, &mut attributes);
     let graph_references = attributes::collect(
         &plan["configuration"]["root_module"],
@@ -117,6 +123,7 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
         true,
     );
     Ok(TerraformPlan {
+        configured_value_matches,
         modules: crate::model::modules::Inventory::collect(&plan, &nodes)?,
         remote_references: remote::collect(&plan["configuration"]["root_module"], &nodes),
         outputs: outputs::collect(

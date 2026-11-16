@@ -192,3 +192,4 @@ examples/cloudflare-zero-trust.svg
 examples/cloudflare-captured-create.svg
 examples/cloudflare-captured-update.svg
 examples/anonymized.svg
+examples/cloudflare-imported.svg

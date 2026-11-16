@@ -49,6 +49,7 @@ impl TerraformReference {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformPlan {
+    pub configured_value_matches: Vec<ConfiguredValueMatch>,
     pub modules: super::modules::Inventory,
     pub nodes: Vec<TerraformEntity>,
     pub edges: Vec<TerraformReference>,
@@ -60,6 +61,13 @@ pub struct TerraformPlan {
     pub graph_references: Vec<super::AttributeReference>,
     pub drift: Vec<super::DriftRecord>,
     pub relevant_attributes: Vec<super::RelevantAttribute>,
+}
+
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct ConfiguredValueMatch {
+    pub consumer: usize,
+    pub source: usize,
+    pub attribute: &'static str,
 }
 
 #[cfg(test)]

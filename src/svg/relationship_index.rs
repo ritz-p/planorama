@@ -177,7 +177,7 @@ impl<'a> Index<'a> {
                     let mut sources: Vec<_> = relationship.provenance.iter().filter_map(|provenance| {
                         match provenance {
                             crate::model::RelationshipProvenance::Resource { source, .. } => Some(source),
-                            crate::model::RelationshipProvenance::Reference { .. } => None,
+                            crate::model::RelationshipProvenance::Reference { .. } | crate::model::RelationshipProvenance::ConfiguredValue { .. } => None,
                         }
                     }).collect();
                     sources.sort();

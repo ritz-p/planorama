@@ -5,6 +5,7 @@ use std::collections::{BTreeMap, BTreeSet};
 #[derive(Default)]
 pub struct Options {
     pub anonymize: bool,
+    pub cloudflare_value_matches: bool,
     pub spatial_types: Vec<String>,
     pub explain_selection: bool,
     pub selection_details: usize,

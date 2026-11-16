@@ -15,6 +15,7 @@ pub enum OutputFormat {
 #[serde(default, deny_unknown_fields)]
 pub struct Options {
     pub anonymize: bool,
+    pub cloudflare_value_matches: bool,
     #[serde(deserialize_with = "memory::deserialize")]
     pub memory_budget_mib: Option<u32>,
     pub spatial_types: Vec<String>,
@@ -112,6 +113,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
     }
     let filter = view::Options {
         anonymize: options.anonymize,
+        cloudflare_value_matches: options.cloudflare_value_matches,
         spatial_types: options.spatial_types.clone(),
         changed_only: options.changed_only,
         focus: options.focus.clone(),
@@ -127,7 +129,7 @@ async fn generate_step(json: &str, options: &Options) -> Result<Generated, Error
         budget::validate(json)?;
         crate::work::checkpoint().await;
     }
-    let raw = parse_input(json)?;
+    let raw = parse_input_with_value_matches(json, options.cloudflare_value_matches)?;
     crate::work::check_limit(raw.nodes.len(), 256).await;
     crate::work::check_limit(raw.edges.len(), 1024).await;
     crate::work::checkpoint().await;
@@ -309,10 +311,17 @@ pub(crate) fn validate_option_sizes(options: &Options) -> Result<(), Error> {
 }
 
 pub(crate) fn parse_input(json: &str) -> Result<crate::model::TerraformPlan, Error> {
+    parse_input_with_value_matches(json, false)
+}
+
+pub(crate) fn parse_input_with_value_matches(
+    json: &str,
+    recover: bool,
+) -> Result<crate::model::TerraformPlan, Error> {
     if json.len() > MAX_INPUT_BYTES {
         return Err(Error::InputTooLarge);
     }
-    plan::parse(json).map_err(|error| {
+    plan::parse_with_value_matches(json, recover).map_err(|error| {
         if error.starts_with("invalid JSON:") {
             Error::InvalidJson
         } else {

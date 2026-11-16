@@ -134,7 +134,8 @@ pub(super) fn annotate(
     plan: &Value,
     nodes: &mut [TerraformEntity],
     references: &mut [AttributeReference],
-) {
+    recover: bool,
+) -> Vec<crate::model::ConfiguredValueMatch> {
     let mut values = BTreeMap::new();
     let mut prior = BTreeMap::new();
     resources(&plan["prior_state"]["values"]["root_module"], &mut prior);
@@ -311,6 +312,11 @@ pub(super) fn annotate(
         )
         .collect();
     crate::provider::cloudflare::annotate(nodes, references, &cloudflare_evidence);
+    let recovered = if recover {
+        crate::provider::cloudflare::recover(nodes, references, &cloudflare_evidence)
+    } else {
+        Vec::new()
+    };
     for reference in references {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()
@@ -491,4 +497,5 @@ pub(super) fn annotate(
             reference.collection_ids_complete = expected == observed;
         }
     }
+    recovered
 }

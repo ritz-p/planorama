@@ -118,6 +118,7 @@ pub(super) fn title(
     graph: &Graph,
     edge: &Edge,
     semantic_edges: bool,
+    value_match: bool,
     address_format: super::AddressFormat,
 ) -> String {
     let qualified = matches!(address_format, super::AddressFormat::Qualified);
@@ -133,6 +134,11 @@ pub(super) fn title(
         },
         graph.nodes[edge.to].resource_address().formatted(qualified)
     );
+    if value_match {
+        title.push_str(
+            " (configured-value match; not verified Terraform provenance, traffic or deployment)",
+        );
+    }
     let kind = match edge.kind {
         EdgeKind::Dependency => "dependency",
         EdgeKind::Association => "association",
