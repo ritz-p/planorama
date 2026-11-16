@@ -50,11 +50,7 @@ pub(super) fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<
     .collect())
 }
 pub(super) fn service(row: Evidence<'_>) -> Result<Target<'_>> {
-    let environment = row.at("environment")?;
-    environment.scalar()?;
-    if !environment.value.is_null() {
-        return Err(Failure::UnsupportedContract);
-    }
+    row.at("environment")?.require_null()?;
     let entrypoint = row.at("entrypoint")?;
     entrypoint.scalar()?;
     if !entrypoint.value.is_null() {

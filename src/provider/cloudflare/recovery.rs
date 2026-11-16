@@ -65,10 +65,7 @@ pub(crate) fn recover(
         let Some([zone_source]) = zones.get(zone).map(Vec::as_slice) else {
             continue;
         };
-        let Some(provider) = node.provider_configuration.as_ref() else {
-            continue;
-        };
-        if Some(provider) != nodes[*zone_source].provider_configuration.as_ref() {
+        if !proof::known_configuration_matches(node, &nodes[*zone_source]) {
             continue;
         }
         let zone_value = evidence[*zone_source];
@@ -91,8 +88,10 @@ pub(crate) fn recover(
                 attribute: "zone_id",
             });
         }
-        let environment = value.at("environment");
-        if !environment.is_ok_and(|v| v.scalar().is_ok() && v.value.is_null())
+        if value
+            .at("environment")
+            .and_then(Evidence::require_null)
+            .is_err()
             || !eligible(worker_field)
         {
             continue;
@@ -107,7 +106,7 @@ pub(crate) fn recover(
             continue;
         };
         let worker = &nodes[*source];
-        if Some(provider) != worker.provider_configuration.as_ref() {
+        if !proof::known_configuration_matches(node, worker) {
             continue;
         }
         let worker_value = evidence[*source];
@@ -116,8 +115,11 @@ pub(crate) fn recover(
         {
             continue;
         }
-        let environment = worker_value.at("environment");
-        if !environment.is_ok_and(|v| v.scalar().is_ok() && v.value.is_null()) {
+        if worker_value
+            .at("environment")
+            .and_then(Evidence::require_null)
+            .is_err()
+        {
             continue;
         }
         result.push(ConfiguredValueMatch {

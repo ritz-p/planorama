@@ -47,9 +47,7 @@ fn targets<'a>(path: &str, value: Evidence<'a>) -> Result<Vec<Target<'a>>> {
                 }
             }))?;
             let ids: Vec<_> = ids.into_iter().flatten().collect();
-            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
-                return Err(Failure::IncompleteCollection);
-            }
+            proof::unique(&ids)?;
             Ok(ids
                 .into_iter()
                 .map(|id| target(id, "cloudflare_zero_trust_access_group"))
@@ -65,9 +63,7 @@ fn targets<'a>(path: &str, value: Evidence<'a>) -> Result<Vec<Target<'a>>> {
         }
         "policies" => {
             let ids = collect(field.rows()?.into_iter().map(|row| row.text("id")))?;
-            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
-                return Err(Failure::IncompleteCollection);
-            }
+            proof::unique(&ids)?;
             Ok(ids
                 .into_iter()
                 .map(|id| target(id, "cloudflare_zero_trust_access_policy"))
