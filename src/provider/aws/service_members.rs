@@ -287,6 +287,14 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_vpc_peering_connection_options" => {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
+            "aws_bedrock_guardrail_version" => {
+                ("guardrail_arn", "Version guardrail", "Guardrail versions")
+            }
+            "aws_bedrock_enforced_guardrail_configuration" => (
+                "guardrail_arn",
+                "Enforced guardrail",
+                "Enforced configurations",
+            ),
             "aws_backup_restore_testing_selection" => (
                 "restore_testing_plan_name",
                 "Restore testing plan owner",
