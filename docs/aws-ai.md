@@ -18,7 +18,7 @@ retain their independent Logical presentation, actions and exactly-once coverage
 | Batch `output_data_config.s3_output_data_config.s3_encryption_key_id` | KMS Key `arn`; two singleton list ancestors |
 | Guardrail version `guardrail_arn` | Guardrail `guardrail_arn` plus known published numerical `version` |
 | Enforced configuration `guardrail_arn` / `guardrail_version` | Matching guardrail ARN and an explicit Guardrail Version `version` with the same parent ARN; `DRAFT`, zero or unknown versions stay unresolved |
-| Inference profile `model_source.copy_from` | Compatible managed Inference Profile `arn`; singleton list |
+| Inference profile `model_source.copy_from` | System-defined inference profile ARN from an explicit managed reference with known `type = SYSTEM_DEFINED`; singleton list |
 | Batch `model_id` | Managed Inference Profile `arn` / `id` |
 | Provisioned throughput `model_arn` | Custom model `custom_model_arn` |
 | Evaluation `evaluation_config.human.human_workflow_config.flow_definition_arn` | SageMaker Flow Definition `arn`; three singleton lists |
@@ -67,7 +67,7 @@ backends remain independent. No service-generated agent version node is created.
 | Action group `api_schema.s3.s3_bucket_name` | S3 Bucket `id` / `bucket`; two singleton lists and absent/empty inline `payload` |
 | Data source `data_source_configuration.s3_configuration.bucket_arn` | S3 Bucket `arn`; two singleton lists and exclusive `S3` type |
 | Data source `data_source_configuration.{confluence,salesforce,share_point}_configuration.source_configuration.credentials_secret_arn` | Secrets Manager Secret `arn`; three singleton lists and exclusive `CONFLUENCE` / `SALESFORCE` / `SHAREPOINT` type |
-| Data source `vector_ingestion_configuration.context_enrichment_configuration.bedrock_foundation_model_configuration.model_arn` | Managed Inference Profile `arn`; three singleton lists, `BEDROCK_FOUNDATION_MODEL` enrichment type; foundation model identifiers stay external |
+| Data source `vector_ingestion_configuration.context_enrichment_configuration.bedrock_foundation_model_configuration.model_arn` | System-defined cross-Region inference profile ARN and known `type = SYSTEM_DEFINED`; three singleton lists, `BEDROCK_FOUNDATION_MODEL` enrichment type; foundation model identifiers stay external |
 | Data source `vector_ingestion_configuration.custom_transformation_configuration.transformation.transformation_function.transformation_lambda_configuration.lambda_arn` | Lambda Function `arn`; five singleton lists, known `POST_CHUNKING` step |
 | Knowledge base `storage_configuration.opensearch_serverless_configuration.collection_arn` / `opensearch_managed_cluster_configuration.domain_arn` / `rds_configuration.resource_arn` / `neptune_analytics_configuration.graph_arn` / `s3_vectors_configuration.index_arn` | OpenSearch Serverless Collection `arn` / OpenSearch Domain `arn` / RDS Cluster `arn` / Neptune Graph `arn` / S3 Vectors Index `index_arn`; two singleton lists, `VECTOR` knowledge-base type and exclusive matching storage type |
 | Knowledge base `storage_configuration.{mongo_db_atlas,pinecone,rds,redis_enterprise_cloud}_configuration.credentials_secret_arn` | Secrets Manager Secret `arn`; two singleton lists, `VECTOR` and matching exclusive storage discriminator |

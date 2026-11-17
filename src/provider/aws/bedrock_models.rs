@@ -119,6 +119,16 @@ fn known<'a>(e: &[(&'a Value, &Value)], index: usize, path: &str) -> Option<&'a 
         .and_then(Value::as_str)
         .filter(|s| !s.is_empty())
 }
+pub(super) fn system_profile(e: &[(&Value, &Value)], source: usize) -> bool {
+    if known(e, source, "type") != Some("SYSTEM_DEFINED") {
+        return false;
+    }
+    known(e,source,"arn").is_some_and(|arn| {
+        let parts: Vec<_>=arn.splitn(6,':').collect();
+        matches!(parts.as_slice(),["arn",partition,"bedrock",region,account,resource] if !partition.is_empty() && !region.is_empty() && crate::model::AwsAccountScope::new(account).is_some() && resource.strip_prefix("inference-profile/").is_some_and(|id|!id.is_empty() && id.bytes().all(|b|b.is_ascii_alphanumeric()||matches!(b,b'.'|b':'|b'-'))))
+    })
+}
+
 fn compatible(l: &TerraformEntity, r: &TerraformEntity) -> bool {
     let left = super::scope::scope(l);
     let right = super::scope::scope(r);
@@ -154,8 +164,17 @@ pub(super) fn annotate(
             label(&nodes[r.target].resource_type, &r.attribute)?;
             Some(
                 qualify(nodes, refs, e, r)
-                    && super::nested_references::verify(nodes, refs, e, r, fields, |s, _| {
-                        compatible(&nodes[r.target], &nodes[s])
+                    && super::nested_references::verify(nodes, refs, e, r, fields, |s, indexed| {
+                        let leaf =
+                            super::nested_references::value(e[r.target].0, e[r.target].1, indexed);
+                        let shape = if matches!(r.attribute.as_str(), SUBNETS | GROUPS) {
+                            leaf.is_some_and(Value::is_array)
+                        } else {
+                            leaf.is_some_and(Value::is_string)
+                        };
+                        shape
+                            && compatible(&nodes[r.target], &nodes[s])
+                            && (r.attribute != "model_source.copy_from" || system_profile(e, s))
                     })
                     .is_some(),
             )
