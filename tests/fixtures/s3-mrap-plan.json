@@ -1,0 +1,247 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.14.9",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.east",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "east-bucket",
+          "bucket": "east-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.west",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "west-bucket",
+          "bucket": "west-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_s3control_multi_region_access_point.main",
+      "type": "aws_s3control_multi_region_access_point",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "111111111111",
+          "name": "main",
+          "arn": "arn:aws:s3::111111111111:accesspoint/main.mrap",
+          "details": [
+            {
+              "name": "main",
+              "region": [
+                {
+                  "bucket": "east-bucket",
+                  "bucket_account_id": "111111111111",
+                  "region": "us-east-1"
+                },
+                {
+                  "bucket": "west-bucket",
+                  "bucket_account_id": "111111111111",
+                  "region": "us-west-2"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3control_multi_region_access_point_policy.main",
+      "type": "aws_s3control_multi_region_access_point_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "111111111111",
+          "details": [
+            {
+              "name": "main",
+              "policy": "{\"private-policy-sentinel\":true}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3control_multi_region_access_point_routes.main",
+      "type": "aws_s3control_multi_region_access_point_routes",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "111111111111",
+          "mrap": "arn:aws:s3::111111111111:accesspoint/main.mrap",
+          "route": [
+            {
+              "bucket": "east-bucket",
+              "region": "us-east-1",
+              "traffic_dial_percentage": 0
+            },
+            {
+              "bucket": "west-bucket",
+              "region": "us-west-2",
+              "traffic_dial_percentage": 100
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111111111111:role/fixture"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::111111111111:role/fixture"
+              }
+            }
+          ]
+        }
+      },
+      "aws.foreign": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::222222222222:role/fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.east",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3control_multi_region_access_point.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "details": [
+              {
+                "region": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.east.bucket"
+                      ]
+                    }
+                  },
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.west.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3control_multi_region_access_point_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "details": [
+              {
+                "name": {
+                  "references": [
+                    "aws_s3control_multi_region_access_point.main.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3control_multi_region_access_point_routes.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "mrap": {
+              "references": [
+                "aws_s3control_multi_region_access_point.main.arn"
+              ]
+            },
+            "route": [
+              {
+                "bucket": {
+                  "references": [
+                    "aws_s3_bucket.east.id"
+                  ]
+                }
+              },
+              {
+                "bucket": {
+                  "references": [
+                    "aws_s3_bucket.west.id"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
