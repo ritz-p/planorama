@@ -317,7 +317,7 @@
                 {
                   "bedrock_foundation_model_configuration": [
                     {
-                      "model_arn": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/main"
+                      "model_arn": "arn:aws:bedrock:us-east-1:111111111111:inference-profile/us.amazon.nova-micro-v1:0"
                     }
                   ],
                   "type": "BEDROCK_FOUNDATION_MODEL"
@@ -356,8 +356,9 @@
           "no-op"
         ],
         "after": {
-          "arn": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/main",
-          "id": "profile-main"
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:inference-profile/us.amazon.nova-micro-v1:0",
+          "id": "profile-main",
+          "type": "SYSTEM_DEFINED"
         }
       }
     },
@@ -376,7 +377,7 @@
           "variant": [
             {
               "name": "PRIVATE_VARIANT",
-              "model_id": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/main"
+              "model_id": "arn:aws:bedrock:us-east-1:111111111111:inference-profile/us.amazon.nova-micro-v1:0"
             }
           ],
           "customer_encryption_key_arn": "arn:aws:kms:us-east-1:111111111111:key/shared"
