@@ -56,6 +56,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::networkfirewall_extended::resource(resource)
         && !super::imagebuilder_distribution::resource(resource)
         && !super::imagebuilder::resource(resource)
+        && !super::redshift_helpers::resource(resource)
         && !super::redshift_snapshots::resource(resource)
         && !super::kms::resource(resource)
         && !super::s3vectors::resource(resource)

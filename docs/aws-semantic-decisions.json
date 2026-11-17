@@ -27825,10 +27825,10 @@
       }
     },
     "aws_redshift_event_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 853,
-      "gap": "#722 reviewed: Missing: SNS ARN and discriminator-qualified complete source IDs (cluster/parameter-group/snapshot/scheduled-action); absent sources means selector, not resource enumeration. Follow-up #853.",
+      "gap": "Implemented #853 following audit #722. SNS topic ARN and complete type-qualified source identifiers. Whole-source selectors remain independent.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27841,8 +27841,8 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_event_subscription remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_event_subscription has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: SNS ARN and discriminator-qualified complete source IDs (cluster/parameter-group/snapshot/scheduled-action); absent sources means selector, not resource enumeration.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: SNS topic ARN and complete type-qualified source identifiers. Whole-source selectors remain independent.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: sns_topic_arn/source_type identity navigation belongs to #853; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_event_subscription.html.markdown",
         "shapes": {
@@ -27863,7 +27863,13 @@
           "sns_topic_arn": "required",
           "source_type": "optional",
           "source_ids": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_hsm_client_certificate": {
@@ -28163,10 +28169,10 @@
       }
     },
     "aws_redshift_logging": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 853,
-      "gap": "#722 reviewed: Missing: cluster-owned logging helper and s3-mode bucket name; CloudWatch exports have no configurable log group endpoint. Deprecated id must not substitute for configured cluster_identifier. Follow-up #853.",
+      "gap": "Implemented #853 following audit #722. Explicit cluster identifier and S3-mode bucket name. CloudWatch exports have no configured log-group reference.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28178,10 +28184,10 @@
           "log_exports"
         ],
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
-        "ownership": "Missing: verified cluster logging ownership with fallback.",
+        "ownership": "Supported: Verified cluster owns the logging member.",
         "network": "Not applicable: aws_redshift_logging has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: cluster-owned logging helper and s3-mode bucket name; CloudWatch exports have no configurable log group endpoint. Deprecated id must not substitute for configured cluster_identifier.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Explicit cluster identifier and S3-mode bucket name. CloudWatch exports have no configured log-group reference.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: cluster_identifier/bucket_name identity navigation belongs to #853; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_logging.html.markdown",
         "shapes": {
@@ -28206,14 +28212,20 @@
           "bucket_name": "optional",
           "log_destination_type": "optional",
           "log_exports": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_partner": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 853,
-      "gap": "#722 reviewed: Missing: account-qualified cluster reference; partner/database names are external integration labels, not arbitrary AWS resources. Follow-up #853.",
+      "gap": "Implemented #853 following audit #722. Cluster identifier qualified by the explicit partner account and independent cluster provider account.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28227,8 +28239,8 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_partner remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_partner has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: account-qualified cluster reference; partner/database names are external integration labels, not arbitrary AWS resources.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Cluster identifier qualified by the explicit partner account and independent cluster provider account.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: account_id/cluster_identifier identity navigation belongs to #853; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_partner.html.markdown",
         "shapes": {
@@ -28250,7 +28262,13 @@
           "cluster_identifier": "required",
           "database_name": "required",
           "partner_name": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_resource_policy": {
@@ -28322,10 +28340,10 @@
       }
     },
     "aws_redshift_scheduled_action": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 853,
-      "gap": "#722 reviewed: Missing: IAM role and exactly one typed cluster action; schedule/actions prove configuration, not runtime execution. Follow-up #853.",
+      "gap": "Implemented #853 following audit #722. Configured IAM role ARN and cluster identifier in exactly one typed target action.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28339,8 +28357,8 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_scheduled_action remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_scheduled_action has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: IAM role and exactly one typed cluster action; schedule/actions prove configuration, not runtime execution.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Configured IAM role ARN and cluster identifier in exactly one typed target action.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: iam_role/target_action.pause_cluster.cluster_identifier identity navigation belongs to #853; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_scheduled_action.html.markdown",
         "shapes": {
@@ -28368,14 +28386,20 @@
           "target_action.pause_cluster.cluster_identifier": "required",
           "target_action.resize_cluster.cluster_identifier": "required",
           "target_action.resume_cluster.cluster_identifier": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_usage_limit": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 853,
-      "gap": "#722 reviewed: Missing: exact cluster identifier owner; amount/limit type are configured quota, not actual consumption. Follow-up #853.",
+      "gap": "Implemented #853 following audit #722. Exact configured cluster identifier. Amounts represent quota configuration.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28387,10 +28411,10 @@
           "amount"
         ],
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
-        "ownership": "Missing: verified cluster usage helper; no capacity inference.",
+        "ownership": "Supported: Verified cluster owns the usage-limit member.",
         "network": "Not applicable: aws_redshift_usage_limit has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: exact cluster identifier owner; amount/limit type are configured quota, not actual consumption.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Exact configured cluster identifier. Amounts represent quota configuration.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: cluster_identifier/feature_type identity navigation belongs to #853; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_usage_limit.html.markdown",
         "shapes": {
@@ -28412,14 +28436,20 @@
           "feature_type": "required",
           "limit_type": "required",
           "amount": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshiftdata_statement": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 853,
-      "gap": "#722 reviewed: Missing: exclusive provisioned-cluster/serverless-workgroup target and secret ARN; SQL/database/parameters are opaque, not schema or execution dataflow. Follow-up #853.",
+      "gap": "Implemented #853 following audit #722. Exclusive provisioned cluster or serverless workgroup and optional secret ARN. SQL remains opaque.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28433,8 +28463,8 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshiftdata_statement remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshiftdata_statement has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: exclusive provisioned-cluster/serverless-workgroup target and secret ARN; SQL/database/parameters are opaque, not schema or execution dataflow.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Exclusive provisioned cluster or serverless workgroup and optional secret ARN. SQL remains opaque.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: cluster_identifier/workgroup_name identity navigation belongs to #853; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshiftdata_statement.html.markdown",
         "shapes": {
@@ -28456,7 +28486,13 @@
           "workgroup_name": "optional",
           "database": "required",
           "secret_arn": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshiftserverless_custom_domain_association": {

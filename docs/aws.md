@@ -1529,3 +1529,9 @@ exactly-once coverage are preserved across filtered/named states. See
 [SVG](../examples/dms-serverless.svg), sourced from
 `tests/fixtures/dms-serverless-plan.json`. Generate current defaults with
 `sh scripts/update-resource-support.sh aws_dms_`.
+
+### Redshift workload helpers (#853)
+
+Event subscriptions resolve `sns_topic_arn` and a complete `source_ids` set qualified by `source_type`. Supported sources are cluster identifiers, parameter group names, snapshot identifiers and scheduled action names. An omitted set retains selector scope. Logging and usage-limit helpers use `cluster_identifier` for ownership. S3 logging resolves the configured bucket name in S3 mode. CloudWatch export names stay opaque.
+
+A partner's `account_id` must match the cluster's independently known provider account. Scheduled actions resolve the IAM role ARN and the cluster identifier from exactly one pause, resize or resume block. Data API statements resolve one of cluster identifier or workgroup name and an optional Secrets Manager ARN. SQL, database names, schedules and quota amounts do not establish additional relationships. Unproven helpers retain independent identity and coverage.

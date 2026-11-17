@@ -1,0 +1,687 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_redshift_cluster.warehouse",
+      "type": "aws_redshift_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "cluster_identifier": "warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_cluster.other",
+      "type": "aws_redshift_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "cluster_identifier": "other"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_workgroup.analytics",
+      "type": "aws_redshiftserverless_workgroup",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "workgroup_name": "analytics"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.logs",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "bucket": "warehouse-logs",
+          "id": "warehouse-logs"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.events",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:111111111111:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.scheduled",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/scheduled"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.database",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_parameter_group.main",
+      "type": "aws_redshift_parameter_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "name": "warehouse-parameters"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_cluster_snapshot.main",
+      "type": "aws_redshift_cluster_snapshot",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "snapshot_identifier": "warehouse-snapshot"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_scheduled_action.pause_cluster",
+      "type": "aws_redshift_scheduled_action",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "name": "pause_cluster",
+          "schedule": "cron(0 12 * * ? *)",
+          "target_action": [
+            {
+              "pause_cluster": [
+                {
+                  "cluster_identifier": "warehouse"
+                }
+              ]
+            }
+          ],
+          "iam_role": "arn:aws:iam::111111111111:role/scheduled"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_scheduled_action.resize_cluster",
+      "type": "aws_redshift_scheduled_action",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "name": "resize_cluster",
+          "schedule": "cron(0 12 * * ? *)",
+          "target_action": [
+            {
+              "resize_cluster": [
+                {
+                  "cluster_identifier": "warehouse"
+                }
+              ]
+            }
+          ],
+          "iam_role": "arn:aws:iam::111111111111:role/scheduled"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_scheduled_action.resume_cluster",
+      "type": "aws_redshift_scheduled_action",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "name": "resume_cluster",
+          "schedule": "cron(0 12 * * ? *)",
+          "target_action": [
+            {
+              "resume_cluster": [
+                {
+                  "cluster_identifier": "warehouse"
+                }
+              ]
+            }
+          ],
+          "iam_role": "arn:aws:iam::111111111111:role/scheduled"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_event_subscription.cluster",
+      "type": "aws_redshift_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "source_type": "cluster",
+          "source_ids": [
+            "warehouse",
+            "other"
+          ],
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_event_subscription.cluster_parameter_group",
+      "type": "aws_redshift_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "source_type": "cluster-parameter-group",
+          "source_ids": [
+            "warehouse-parameters"
+          ],
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_event_subscription.cluster_snapshot",
+      "type": "aws_redshift_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "source_type": "cluster-snapshot",
+          "source_ids": [
+            "warehouse-snapshot"
+          ],
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_event_subscription.scheduled_action",
+      "type": "aws_redshift_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "source_type": "scheduled-action",
+          "source_ids": [
+            "resume_cluster"
+          ],
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_event_subscription.all",
+      "type": "aws_redshift_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_logging.audit",
+      "type": "aws_redshift_logging",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "log_destination_type": "s3",
+          "bucket_name": "warehouse-logs",
+          "cluster_identifier": "warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_logging.cloudwatch",
+      "type": "aws_redshift_logging",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "log_destination_type": "cloudwatch",
+          "log_exports": [
+            "userlog"
+          ],
+          "cluster_identifier": "other"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_usage_limit.quota",
+      "type": "aws_redshift_usage_limit",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "amount": 10,
+          "feature_type": "spectrum",
+          "limit_type": "data-scanned",
+          "cluster_identifier": "warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_partner.external",
+      "type": "aws_redshift_partner",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "account_id": "111111111111",
+          "database_name": "PRIVATE_DATABASE",
+          "partner_name": "PRIVATE_PARTNER",
+          "cluster_identifier": "warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftdata_statement.cluster",
+      "type": "aws_redshiftdata_statement",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "database": "PRIVATE_DATABASE",
+          "sql": "PRIVATE_SQL",
+          "cluster_identifier": "warehouse",
+          "secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:warehouse"
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftdata_statement.serverless",
+      "type": "aws_redshiftdata_statement",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "database": "PRIVATE_DATABASE",
+          "sql": "PRIVATE_SQL",
+          "workgroup_name": "analytics",
+          "secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:warehouse"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_redshift_cluster.warehouse",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_cluster.other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshiftserverless_workgroup.analytics",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.logs",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.scheduled",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.database",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_parameter_group.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_cluster_snapshot.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_redshift_scheduled_action.pause_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_action": [
+              {
+                "pause_cluster": [
+                  {
+                    "cluster_identifier": {
+                      "references": [
+                        "aws_redshift_cluster.warehouse.cluster_identifier"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "iam_role": {
+              "references": [
+                "aws_iam_role.scheduled.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_scheduled_action.resize_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_action": [
+              {
+                "resize_cluster": [
+                  {
+                    "cluster_identifier": {
+                      "references": [
+                        "aws_redshift_cluster.warehouse.cluster_identifier"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "iam_role": {
+              "references": [
+                "aws_iam_role.scheduled.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_scheduled_action.resume_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_action": [
+              {
+                "resume_cluster": [
+                  {
+                    "cluster_identifier": {
+                      "references": [
+                        "aws_redshift_cluster.warehouse.cluster_identifier"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "iam_role": {
+              "references": [
+                "aws_iam_role.scheduled.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_event_subscription.cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_redshift_cluster.warehouse.cluster_identifier",
+                "aws_redshift_cluster.other.cluster_identifier"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_event_subscription.cluster_parameter_group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_redshift_parameter_group.main.name"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_event_subscription.cluster_snapshot",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_redshift_cluster_snapshot.main.snapshot_identifier"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_event_subscription.scheduled_action",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ids": {
+              "references": [
+                "aws_redshift_scheduled_action.resume_cluster.name"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_event_subscription.all",
+          "provider_config_key": "aws",
+          "expressions": {
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_logging.audit",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket_name": {
+              "references": [
+                "aws_s3_bucket.logs.bucket"
+              ]
+            },
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.warehouse.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_logging.cloudwatch",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.other.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_usage_limit.quota",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.warehouse.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshift_partner.external",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.warehouse.cluster_identifier"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshiftdata_statement.cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_identifier": {
+              "references": [
+                "aws_redshift_cluster.warehouse.cluster_identifier"
+              ]
+            },
+            "secret_arn": {
+              "references": [
+                "aws_secretsmanager_secret.database.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_redshiftdata_statement.serverless",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workgroup_name": {
+              "references": [
+                "aws_redshiftserverless_workgroup.analytics.workgroup_name"
+              ]
+            },
+            "secret_arn": {
+              "references": [
+                "aws_secretsmanager_secret.database.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
