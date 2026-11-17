@@ -313,18 +313,14 @@
           "no-op"
         ],
         "after": {
-          "arn": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/source",
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:inference-profile/us.amazon.nova-micro-v1:0",
           "id": "source",
-          "model_source": [
-            {
-              "copy_from": "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-micro-v1:0"
-            }
-          ],
           "models": [
             {
               "model_arn": "arn:aws:bedrock:us-west-2::foundation-model/amazon.nova-micro-v1:0"
             }
-          ]
+          ],
+          "type": "SYSTEM_DEFINED"
         }
       }
     },
@@ -342,7 +338,7 @@
           "id": "application",
           "model_source": [
             {
-              "copy_from": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/source"
+              "copy_from": "arn:aws:bedrock:us-east-1:111111111111:inference-profile/us.amazon.nova-micro-v1:0"
             }
           ]
         }

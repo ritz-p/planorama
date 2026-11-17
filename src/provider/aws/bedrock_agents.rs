@@ -177,7 +177,11 @@ fn verify(
         r,
         fields,
         |s, path| {
-            compatible(&nodes[r.target], &nodes[s])
+            super::nested_references::value(e[r.target].0, e[r.target].1, path)
+                .is_some_and(Value::is_string)
+                && compatible(&nodes[r.target], &nodes[s])
+                && (!r.attribute.contains(".context_enrichment_configuration.")
+                    || super::bedrock_models::system_profile(e, s))
                 && qualify::path(e, r.target, &nodes[r.target].resource_type, path)
         },
         &["definition.node", "variant"],
