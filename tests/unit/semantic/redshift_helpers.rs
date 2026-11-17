@@ -245,3 +245,52 @@ fn catalog_references_require_typed_namespaces_and_compatible_modes() {
     v["resource_changes"][c]["change"]["after"]["cluster_namespace_arn"] = wrong;
     assert!(!proven(&v, "aws_redshift_integration.bucket", "target_arn"));
 }
+
+const SERVERLESS: &str = include_str!("../../fixtures/redshift-serverless-helpers-plan.json");
+#[test]
+fn serverless_helpers_verify_each_role_key_and_owner() {
+    verify_fixture(SERVERLESS, 8);
+}
+#[test]
+fn serverless_role_sets_and_quota_modes_are_complete() {
+    let n = "aws_redshiftserverless_namespace.main";
+    for case in 0..4 {
+        let mut v = fixture(SERVERLESS);
+        let i = index(&v, n);
+        let roles = v["resource_changes"][i]["change"]["after"]["iam_roles"].clone();
+        match case {
+            0 => {
+                v["resource_changes"][i]["change"]["after"]["iam_roles"] =
+                    json!([roles[0], roles[0]])
+            }
+            1 => v["resource_changes"][i]["change"]["after"]["iam_roles"] = roles[0].clone(),
+            2 => {
+                v["resource_changes"][i]["change"]["after_unknown"] =
+                    json!({"iam_roles":[false,true]})
+            }
+            _ => {
+                v["configuration"]["root_module"]["resources"][i]["expressions"]["iam_roles"] =
+                    json!({"references":["aws_iam_role.default.arn"]})
+            }
+        }
+        assert!(!proven(&v, n, "iam_roles"));
+        assert!(proven(&v, n, "default_iam_role_arn"));
+    }
+    let mut v = fixture(SERVERLESS);
+    let a = "aws_redshiftserverless_usage_limit.serverless_compute";
+    let i = index(&v, a);
+    v["resource_changes"][i]["change"]["after"]["usage_type"] = json!("unrecognized");
+    assert!(!proven(&v, a, "resource_arn"));
+    let g = crate::semantic::transform(&crate::plan::parse(&v.to_string()).unwrap());
+    assert!(
+        g.nodes
+            .iter()
+            .find(|node| node.address == a)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+    let ns = g.nodes.iter().find(|node| node.address == n).unwrap();
+    assert_eq!(ns.placement, crate::model::Placement::Logical);
+    assert!(ns.member_owner.is_none());
+}
