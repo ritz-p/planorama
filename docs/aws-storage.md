@@ -453,3 +453,28 @@ never relocate the report plan or enumerate Organizations objects. Prefixes,
 report payloads, deployment status and runtime compliance are not interpreted.
 See [SVG](../examples/backup-report.svg); generate HTML from
 `tests/fixtures/backup-report-plan.json` with `--format html`.
+
+## Backup restore testing (#823)
+
+Provider 6.70.0 defines `recovery_point_selection` as a required singleton list;
+`include_vaults` is a required string set and `exclude_vaults` an optional/computed
+set. Complete explicit include references to standard or air-gapped vault `arn`
+outputs are verified only with known disjoint exclusions. Wildcard includes,
+wildcard/overlapping/unknown exclusions and incomplete collections retain
+unresolved fallback for the whole include collection; no recovery-point nodes or
+operational selection claims are inferred from algorithms or point types.
+
+Restore selection `restore_testing_plan_name` requires exact plan `name` and
+`iam_role_arn` exact global IAM Role `arn`. A verified plan owns the selection's
+presentation while preserving its identity, action, coverage and filtered fallback.
+Optional/computed `protected_resource_arns` requires complete concrete explicit
+ARNs, known `protected_resource_type` and absent conditions. The allowlist covers
+EC2 Instance, EBS Volume, EFS, RDS Instance, Aurora Cluster (known Aurora engine),
+DocumentDB Cluster, Neptune Cluster, DynamoDB Table, S3 Bucket and Lustre/Windows/
+ONTAP/OpenZFS filesystem endpoints, each only for its matching Backup resource type.
+Other types and condition selectors remain fallback. No condition or restore
+metadata map is interpreted as network placement. Shared roles/vaults/resources
+remain independent; provider/account/region, lifecycle, mode and named-state
+boundaries must all match. No payload, mount path, recovery guarantee or runtime
+health is displayed. See [SVG](../examples/backup-restore.svg); HTML uses the same
+`tests/fixtures/backup-restore-plan.json` with `--format html`.

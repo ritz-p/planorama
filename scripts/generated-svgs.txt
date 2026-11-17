@@ -197,3 +197,4 @@ examples/anonymized.svg
 examples/cloudflare-imported.svg
 examples/cloudflare-administration.svg
 examples/backup-report.svg
+examples/backup-restore.svg

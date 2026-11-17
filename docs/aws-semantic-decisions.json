@@ -21738,10 +21738,10 @@
       }
     },
     "aws_backup_restore_testing_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 823,
-      "gap": "#720 reviewed: Missing: explicit complete include_vaults ARN navigation with exclusion-aware semantics. Wildcard selection is not a concrete vault or recovery-point relationship. Follow-up #823. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "#720 reviewed: Implemented #823: explicit complete exclusion-aware vault navigation, restore plan name ownership, global IAM role and resource-type-qualified protected ARNs. Wildcards, overlapping/unknown exclusions and conditions retain conservative fallback. Metadata maps do not prove subnet containment or recovery. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21757,7 +21757,7 @@
         "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: explicit complete include_vaults ARN navigation with exclusion-aware semantics. Wildcard selection is not a concrete vault or recovery-point relationship. Follow-up #823.",
+        "references": "Supported: complete explicit recovery_point_selection.include_vaults -> standard/air-gapped vault arn, with known disjoint exclusions; wildcard/overlapping/unknown exclusions remain unproven.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_restore_testing_plan.html.markdown",
@@ -21803,14 +21803,19 @@
           "recovery_point_selection.recovery_point_types": "required"
         },
         "managedData": "No same-name registered data source in pinned schema; managed contract only.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/backup_restore.rs",
+          "tests/unit/semantic/backup_restore.rs",
+          "tests/fixtures/backup-restore-plan.json"
+        ]
       }
     },
     "aws_backup_restore_testing_selection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 823,
-      "gap": "#720 reviewed: Missing: plan name and IAM role ARN; explicit protected_resource_arns require matching resource type and no condition-based inference. Restore metadata map does not establish subnet containment. Follow-up #823. Missing: selection belongs to a verified restore-testing plan by name; preserve identity and fallback in #823. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "#720 reviewed: Implemented #823: explicit complete exclusion-aware vault navigation, restore plan name ownership, global IAM role and resource-type-qualified protected ARNs. Wildcards, overlapping/unknown exclusions and conditions retain conservative fallback. Metadata maps do not prove subnet containment or recovery. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21825,9 +21830,9 @@
           "restore_metadata_overrides"
         ],
         "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
-        "ownership": "Missing: selection belongs to a verified restore-testing plan by name; preserve identity and fallback in #823.",
+        "ownership": "Supported: selection embeds only under a unique compatible current restore-testing plan proven by its name reference; original identity/action/coverage and filtered fallback remain independent.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: plan name and IAM role ARN; explicit protected_resource_arns require matching resource type and no condition-based inference. Restore metadata map does not establish subnet containment. Follow-up #823.",
+        "references": "Supported: restore_testing_plan_name -> plan.name, iam_role_arn -> IAM Role arn, complete protected_resource_arns -> current managed type-qualified arn outputs when conditions are absent.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_restore_testing_selection.html.markdown",
@@ -21870,7 +21875,12 @@
           "restore_metadata_overrides": "optional/computed"
         },
         "managedData": "No same-name registered data source in pinned schema; managed contract only.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/backup_restore.rs",
+          "tests/unit/semantic/backup_restore.rs",
+          "tests/fixtures/backup-restore-plan.json"
+        ]
       }
     },
     "aws_efs_backup_policy": {
