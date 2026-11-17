@@ -30908,10 +30908,10 @@
       }
     },
     "aws_bedrockagent_agent": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Role/KMS/guardrail/parser Lambda references require exact IDs and parser override discriminator; foundation_model is not proof of a managed model. #873. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30924,10 +30924,10 @@
           "guardrail_configuration",
           "prompt_override_configuration"
         ],
-        "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
         "ownership": "Not applicable: bedrockagent_agent is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrockagent_agent has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Role/KMS/guardrail/parser Lambda references require exact IDs and parser override discriminator; foundation_model is not proof of a managed model. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: collaboration mode could provide a bounded summary for bedrockagent_agent; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_agent.html.markdown",
@@ -31020,15 +31020,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_agent_action_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Lambda executor and S3 schema bucket links; RETURN_CONTROL excludes Lambda inference. Composite Terraform id cannot replace action_group_id. #873. Agent + DRAFT version ownership; preserve action group identity. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31041,10 +31045,10 @@
           "action_group_executor.custom_control",
           "api_schema.s3.s3_bucket_name"
         ],
-        "placement": "Supported: retain current Logical default for bedrockagent_agent_action_group; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Agent + DRAFT version ownership; preserve action group identity. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
+        "ownership": "Supported: verified agent/knowledge-base helper ownership with independent actions and exactly-once coverage; collaborator and association require both endpoints. Shared alias/knowledge-base/backend resources stay independent.",
         "network": "Not applicable: bedrockagent_agent_action_group has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Lambda executor and S3 schema bucket links; RETURN_CONTROL excludes Lambda inference. Composite Terraform id cannot replace action_group_id. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: action group state could provide a bounded summary for bedrockagent_agent_action_group; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_agent_action_group.html.markdown",
@@ -31095,15 +31099,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_agent_alias": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Alias routes to published agent version/provisioned throughput, not a separate Terraform agent version node. #873. Agent ID establishes candidate ownership, alias ARN remains independent identity. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31114,10 +31122,10 @@
           "agent_alias_arn",
           "routing_configuration"
         ],
-        "placement": "Supported: retain current Logical default for bedrockagent_agent_alias; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Agent ID establishes candidate ownership, alias ARN remains independent identity. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
+        "ownership": "Supported: verified agent/knowledge-base helper ownership with independent actions and exactly-once coverage; collaborator and association require both endpoints. Shared alias/knowledge-base/backend resources stay independent.",
         "network": "Not applicable: bedrockagent_agent_alias has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Alias routes to published agent version/provisioned throughput, not a separate Terraform agent version node. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: routing version could provide a bounded summary for bedrockagent_agent_alias; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_agent_alias.html.markdown",
@@ -31165,15 +31173,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_agent_collaborator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Collaborator connects supervising agent and collaborator alias ARN; alias is shared and must not be swallowed. #873. Only helper owned by supervising agent after both endpoints verified. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31183,10 +31195,10 @@
           "agent_descriptor.alias_arn",
           "collaborator_id"
         ],
-        "placement": "Supported: retain current Logical default for bedrockagent_agent_collaborator; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Only helper owned by supervising agent after both endpoints verified. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
+        "ownership": "Supported: verified agent/knowledge-base helper ownership with independent actions and exactly-once coverage; collaborator and association require both endpoints. Shared alias/knowledge-base/backend resources stay independent.",
         "network": "Not applicable: bedrockagent_agent_collaborator has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Collaborator connects supervising agent and collaborator alias ARN; alias is shared and must not be swallowed. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: relay-conversation mode could provide a bounded summary for bedrockagent_agent_collaborator; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_agent_collaborator.html.markdown",
@@ -31222,15 +31234,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_agent_knowledge_base_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Association must prove agent and knowledge base IDs; DISABLED is configuration, not runtime failure. #873. Association helper can embed; shared knowledge base remains independent. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31241,10 +31257,10 @@
           "agent_version",
           "knowledge_base_state"
         ],
-        "placement": "Supported: retain current Logical default for bedrockagent_agent_knowledge_base_association; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Association helper can embed; shared knowledge base remains independent. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
+        "ownership": "Supported: verified agent/knowledge-base helper ownership with independent actions and exactly-once coverage; collaborator and association require both endpoints. Shared alias/knowledge-base/backend resources stay independent.",
         "network": "Not applicable: bedrockagent_agent_knowledge_base_association has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Association must prove agent and knowledge base IDs; DISABLED is configuration, not runtime failure. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: knowledge base state could provide a bounded summary for bedrockagent_agent_knowledge_base_association; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_agent_knowledge_base_association.html.markdown",
@@ -31283,15 +31299,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_data_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Typed S3/secret/KMS/transformation-Lambda references; connector URLs and tenant IDs cannot identify Terraform resources. Context-enrichment model_arn denotes a cross-region inference profile. #873. Knowledge-base ID is owner candidate; backend storage remains shared. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31303,10 +31323,10 @@
           "data_source_configuration.s3_configuration.bucket_arn",
           "server_side_encryption_configuration.kms_key_arn"
         ],
-        "placement": "Supported: retain current Logical default for bedrockagent_data_source; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Knowledge-base ID is owner candidate; backend storage remains shared. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
+        "ownership": "Supported: verified agent/knowledge-base helper ownership with independent actions and exactly-once coverage; collaborator and association require both endpoints. Shared alias/knowledge-base/backend resources stay independent.",
         "network": "Not applicable: bedrockagent_data_source has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Typed S3/secret/KMS/transformation-Lambda references; connector URLs and tenant IDs cannot identify Terraform resources. Context-enrichment model_arn denotes a cross-region inference profile. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: data source type could provide a bounded summary for bedrockagent_data_source; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_data_source.html.markdown",
@@ -31353,15 +31373,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_flow": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Typed node references to agent alias, KB, Lambda, Lex alias, prompt and S3 bucket; inline node/connection names are internal labels and not Terraform nodes. #873. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31376,10 +31400,10 @@
           "definition.node.configuration.lambda_function.lambda_arn",
           "definition.node.configuration.prompt.source_configuration.resource.prompt_arn"
         ],
-        "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
         "ownership": "Not applicable: bedrockagent_flow is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrockagent_flow has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Typed node references to agent alias, KB, Lambda, Lex alias, prompt and S3 bucket; inline node/connection names are internal labels and not Terraform nodes. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: node type counts could provide a bounded summary for bedrockagent_flow; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_flow.html.markdown",
@@ -31454,15 +31478,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_knowledge_base": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Typed storage and query-engine references (Kendra, Redshift, RDS, OpenSearch, Neptune, S3 Vectors) and credential-secret/KMS links; database/index names need parent context. Third-party URLs stay external. #873. Backend VPC never contains the knowledge base. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31479,10 +31507,10 @@
           "storage_configuration.neptune_analytics_configuration.graph_arn",
           "storage_configuration.s3_vectors_configuration.index_arn"
         ],
-        "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #873.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
         "ownership": "Not applicable: bedrockagent_knowledge_base is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Intentionally unsupported: Backend VPC never contains the knowledge base. #873.",
-        "references": "Missing: Typed storage and query-engine references (Kendra, Redshift, RDS, OpenSearch, Neptune, S3 Vectors) and credential-secret/KMS links; database/index names need parent context. Third-party URLs stay external. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: knowledge base/storage type could provide a bounded summary for bedrockagent_knowledge_base; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_knowledge_base.html.markdown",
@@ -31557,15 +31585,19 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },
     "aws_bedrockagent_prompt": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 873,
-      "gap": "Reviewed #725: Prompt variants select agent ARN or model/profile identifier; template text/tool schemas excluded. Default variant is an internal name. #873. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Implemented #873; reviewed #725: typed agent/alias/action-group/collaborator/association, ingestion, flow, prompt, storage and query references with discriminator, known-value and parent evidence. Shared backends stay independent. See aws-ai.md#bedrock-agents-knowledge-bases-and-flows-873. Lex V2 alias has no managed counterpart in pinned provider; URI/name-only backends and safe summaries remain deferred.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -31576,10 +31608,10 @@
           "variant.model_id",
           "variant.gen_ai_resource.agent.agent_identifier"
         ],
-        "placement": "Supported: retain current Logical default for bedrockagent_prompt; independent configuration/data objects are not automatically spatial cards.",
+        "placement": "Supported: retain independent Logical presentation for regional agent-family services and configuration helpers; service references and reusable backend VPCs do not establish customer-subnet containment.",
         "ownership": "Not applicable: bedrockagent_prompt is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrockagent_prompt has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Prompt variants select agent ARN or model/profile identifier; template text/tool schemas excluded. Default variant is an internal name. #873.",
+        "references": "Partial: #873 implements bounded typed references and complete node/variant collections documented in aws-ai.md, including root object-attribute guardrail/parser/routing contracts. Unsupported external identifiers, parentless database/index names, URI/payload inference and Lex V2 alias remain conservative fallback.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: template type could provide a bounded summary for bedrockagent_prompt; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrockagent_prompt.html.markdown",
@@ -31622,7 +31654,11 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_agents.rs",
+          "tests/unit/semantic/bedrock_agents.rs",
+          "tests/fixtures/bedrock-agents-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
         ]
       }
     },

@@ -1,0 +1,1867 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.shared",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/shared"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.bedrock",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/bedrock"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.knowledge",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "knowledge-bucket",
+          "bucket": "knowledge-bucket",
+          "arn": "arn:aws:s3:::knowledge-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.executor",
+      "type": "aws_lambda_function",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:111111111111:function:executor"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrock_guardrail.main",
+      "type": "aws_bedrock_guardrail",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "guardrail_id": "gr12345678",
+          "guardrail_arn": "arn:aws:bedrock:us-east-1:111111111111:guardrail/gr12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrock_guardrail_version.main",
+      "type": "aws_bedrock_guardrail_version",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "version": "1",
+          "guardrail_arn": "arn:aws:bedrock:us-east-1:111111111111:guardrail/gr12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_agent.main",
+      "type": "aws_bedrockagent_agent",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "agent_id": "AGENT12345",
+          "agent_arn": "arn:aws:bedrock:us-east-1:111111111111:agent/AGENT12345",
+          "instruction": "PRIVATE_AGENT_INSTRUCTION",
+          "foundation_model": "amazon.nova-pro-v1:0",
+          "guardrail_configuration": [
+            {
+              "guardrail_identifier": "gr12345678",
+              "guardrail_version": "1"
+            }
+          ],
+          "prompt_override_configuration": [
+            {
+              "override_lambda": "arn:aws:lambda:us-east-1:111111111111:function:executor",
+              "prompt_configurations": [
+                {
+                  "parser_mode": "OVERRIDDEN",
+                  "prompt_creation_mode": "DEFAULT",
+                  "prompt_state": "ENABLED",
+                  "prompt_type": "ORCHESTRATION",
+                  "base_prompt_template": "PRIVATE_PROMPT_TEMPLATE"
+                }
+              ]
+            }
+          ],
+          "agent_resource_role_arn": "arn:aws:iam::111111111111:role/bedrock",
+          "customer_encryption_key_arn": "arn:aws:kms:us-east-1:111111111111:key/shared"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrock_provisioned_model_throughput.main",
+      "type": "aws_bedrock_provisioned_model_throughput",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "provisioned_model_arn": "arn:aws:bedrock:us-east-1:111111111111:provisioned-model/main"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_agent_alias.main",
+      "type": "aws_bedrockagent_agent_alias",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "agent_alias_id": "ALIAS12345",
+          "agent_alias_arn": "arn:aws:bedrock:us-east-1:111111111111:agent-alias/AGENT12345/ALIAS12345",
+          "routing_configuration": [
+            {
+              "agent_version": "1",
+              "provisioned_throughput": "arn:aws:bedrock:us-east-1:111111111111:provisioned-model/main"
+            }
+          ],
+          "agent_id": "AGENT12345"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_agent_action_group.main",
+      "type": "aws_bedrockagent_agent_action_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "agent_version": "DRAFT",
+          "action_group_id": "ACTION1234",
+          "agent_id": "AGENT12345",
+          "action_group_executor": [
+            {
+              "lambda": "arn:aws:lambda:us-east-1:111111111111:function:executor"
+            }
+          ],
+          "api_schema": [
+            {
+              "s3": [
+                {
+                  "s3_bucket_name": "knowledge-bucket"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_opensearchserverless_collection.main",
+      "type": "aws_opensearchserverless_collection",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:aoss:us-east-1:111111111111:collection/vector"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.main",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB12345678",
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:knowledge-base/KB12345678",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR",
+              "vector_knowledge_base_configuration": [
+                {
+                  "embedding_model_arn": "arn:aws:bedrock:us-east-1::foundation-model/amazon.titan-embed-text-v2:0"
+                }
+              ]
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "OPENSEARCH_SERVERLESS",
+              "opensearch_serverless_configuration": [
+                {
+                  "collection_arn": "arn:aws:aoss:us-east-1:111111111111:collection/vector"
+                }
+              ]
+            }
+          ],
+          "role_arn": "arn:aws:iam::111111111111:role/bedrock"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_agent_knowledge_base_association.main",
+      "type": "aws_bedrockagent_agent_knowledge_base_association",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "agent_version": "DRAFT",
+          "knowledge_base_state": "DISABLED",
+          "agent_id": "AGENT12345",
+          "knowledge_base_id": "KB12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_agent_collaborator.main",
+      "type": "aws_bedrockagent_agent_collaborator",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "agent_version": "DRAFT",
+          "collaborator_id": "COLLAB1234",
+          "collaboration_instruction": "PRIVATE_COLLAB_INSTRUCTION",
+          "agent_id": "AGENT12345",
+          "agent_descriptor": [
+            {
+              "alias_arn": "arn:aws:bedrock:us-east-1:111111111111:agent-alias/AGENT12345/ALIAS12345"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_data_source.main",
+      "type": "aws_bedrockagent_data_source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "data_source_id": "SOURCE1234",
+          "data_source_configuration": [
+            {
+              "type": "S3",
+              "s3_configuration": [
+                {
+                  "bucket_arn": "arn:aws:s3:::knowledge-bucket"
+                }
+              ]
+            }
+          ],
+          "knowledge_base_id": "KB12345678",
+          "server_side_encryption_configuration": [
+            {
+              "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/shared"
+            }
+          ],
+          "vector_ingestion_configuration": [
+            {
+              "context_enrichment_configuration": [
+                {
+                  "bedrock_foundation_model_configuration": [
+                    {
+                      "model_arn": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/main"
+                    }
+                  ],
+                  "type": "BEDROCK_FOUNDATION_MODEL"
+                }
+              ],
+              "custom_transformation_configuration": [
+                {
+                  "transformation": [
+                    {
+                      "transformation_function": [
+                        {
+                          "transformation_lambda_configuration": [
+                            {
+                              "lambda_arn": "arn:aws:lambda:us-east-1:111111111111:function:executor"
+                            }
+                          ]
+                        }
+                      ],
+                      "step_to_apply": "POST_CHUNKING"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrock_inference_profile.main",
+      "type": "aws_bedrock_inference_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/main",
+          "id": "profile-main"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_prompt.main",
+      "type": "aws_bedrockagent_prompt",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:prompt/PROMPT1234",
+          "default_variant": "PRIVATE_VARIANT",
+          "variant": [
+            {
+              "name": "PRIVATE_VARIANT",
+              "model_id": "arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/main"
+            }
+          ],
+          "customer_encryption_key_arn": "arn:aws:kms:us-east-1:111111111111:key/shared"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_prompt.agent",
+      "type": "aws_bedrockagent_prompt",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:prompt/PROMPT4321",
+          "variant": [
+            {
+              "gen_ai_resource": [
+                {
+                  "agent": [
+                    {
+                      "agent_identifier": "arn:aws:bedrock:us-east-1:111111111111:agent/AGENT12345"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_flow.main",
+      "type": "aws_bedrockagent_flow",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:bedrock:us-east-1:111111111111:flow/FLOW123456",
+          "execution_role_arn": "arn:aws:iam::111111111111:role/bedrock",
+          "customer_encryption_key_arn": "arn:aws:kms:us-east-1:111111111111:key/shared",
+          "definition": [
+            {
+              "node": [
+                {
+                  "name": "internal-Agent",
+                  "type": "Agent",
+                  "configuration": [
+                    {
+                      "agent": [
+                        {
+                          "agent_alias_arn": "arn:aws:bedrock:us-east-1:111111111111:agent-alias/AGENT12345/ALIAS12345"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "internal-KnowledgeBase",
+                  "type": "KnowledgeBase",
+                  "configuration": [
+                    {
+                      "knowledge_base": [
+                        {
+                          "knowledge_base_id": "KB12345678"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "internal-LambdaFunction",
+                  "type": "LambdaFunction",
+                  "configuration": [
+                    {
+                      "lambda_function": [
+                        {
+                          "lambda_arn": "arn:aws:lambda:us-east-1:111111111111:function:executor"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "internal-Prompt",
+                  "type": "Prompt",
+                  "configuration": [
+                    {
+                      "prompt": [
+                        {
+                          "source_configuration": [
+                            {
+                              "resource": [
+                                {
+                                  "prompt_arn": "arn:aws:bedrock:us-east-1:111111111111:prompt/PROMPT1234"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "internal-Retrieval",
+                  "type": "Retrieval",
+                  "configuration": [
+                    {
+                      "retrieval": [
+                        {
+                          "service_configuration": [
+                            {
+                              "s3": [
+                                {
+                                  "bucket_name": "knowledge-bucket"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "name": "internal-Storage",
+                  "type": "Storage",
+                  "configuration": [
+                    {
+                      "storage": [
+                        {
+                          "service_configuration": [
+                            {
+                              "s3": [
+                                {
+                                  "bucket_name": "knowledge-bucket"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.credentials",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_data_source.confluence",
+      "type": "aws_bedrockagent_data_source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "data_source_id": "SOURCE-confluence",
+          "data_source_configuration": [
+            {
+              "type": "CONFLUENCE",
+              "confluence_configuration": [
+                {
+                  "source_configuration": [
+                    {
+                      "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "knowledge_base_id": "KB12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_data_source.salesforce",
+      "type": "aws_bedrockagent_data_source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "data_source_id": "SOURCE-salesforce",
+          "data_source_configuration": [
+            {
+              "type": "SALESFORCE",
+              "salesforce_configuration": [
+                {
+                  "source_configuration": [
+                    {
+                      "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "knowledge_base_id": "KB12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_data_source.share_point",
+      "type": "aws_bedrockagent_data_source",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "data_source_id": "SOURCE-share_point",
+          "data_source_configuration": [
+            {
+              "type": "SHAREPOINT",
+              "share_point_configuration": [
+                {
+                  "source_configuration": [
+                    {
+                      "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "knowledge_base_id": "KB12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_opensearch_domain.knowledge",
+      "type": "aws_opensearch_domain",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:opensearch_managed_cluster:us-east-1:111111111111:knowledge"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.opensearch_managed_cluster",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-opensearch_managed_cluster",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "OPENSEARCH_MANAGED_CLUSTER",
+              "opensearch_managed_cluster_configuration": [
+                {
+                  "domain_arn": "arn:aws:opensearch_managed_cluster:us-east-1:111111111111:knowledge"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_rds_cluster.knowledge",
+      "type": "aws_rds_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:rds:us-east-1:111111111111:knowledge"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.rds",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-rds",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "RDS",
+              "rds_configuration": [
+                {
+                  "resource_arn": "arn:aws:rds:us-east-1:111111111111:knowledge",
+                  "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_neptunegraph_graph.knowledge",
+      "type": "aws_neptunegraph_graph",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:neptune_analytics:us-east-1:111111111111:knowledge"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.neptune_analytics",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-neptune_analytics",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "NEPTUNE_ANALYTICS",
+              "neptune_analytics_configuration": [
+                {
+                  "graph_arn": "arn:aws:neptune_analytics:us-east-1:111111111111:knowledge"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3vectors_index.knowledge",
+      "type": "aws_s3vectors_index",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "index_arn": "arn:aws:s3_vectors:us-east-1:111111111111:knowledge"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.s3_vectors",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-s3_vectors",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "S3_VECTORS",
+              "s3_vectors_configuration": [
+                {
+                  "index_arn": "arn:aws:s3_vectors:us-east-1:111111111111:knowledge"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.mongo_db_atlas",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-mongo_db_atlas",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "MONGO_DB_ATLAS",
+              "mongo_db_atlas_configuration": [
+                {
+                  "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.pinecone",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-pinecone",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "PINECONE",
+              "pinecone_configuration": [
+                {
+                  "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.redis_enterprise_cloud",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-redis_enterprise_cloud",
+          "knowledge_base_configuration": [
+            {
+              "type": "VECTOR"
+            }
+          ],
+          "storage_configuration": [
+            {
+              "type": "REDIS_ENTERPRISE_CLOUD",
+              "redis_enterprise_cloud_configuration": [
+                {
+                  "credentials_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_index.main",
+      "type": "aws_kendra_index",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:kendra:us-east-1:111111111111:index/knowledge"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.kendra",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-KENDRA",
+          "knowledge_base_configuration": [
+            {
+              "type": "KENDRA",
+              "kendra_knowledge_base_configuration": [
+                {
+                  "kendra_index_arn": "arn:aws:kendra:us-east-1:111111111111:index/knowledge"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_redshift_cluster.knowledge",
+      "type": "aws_redshift_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "cluster_identifier": "knowledge-cluster"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.provisioned",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-provisioned",
+          "knowledge_base_configuration": [
+            {
+              "type": "SQL",
+              "sql_knowledge_base_configuration": [
+                {
+                  "type": "REDSHIFT",
+                  "redshift_configuration": [
+                    {
+                      "query_engine_configuration": [
+                        {
+                          "type": "PROVISIONED",
+                          "provisioned_configuration": [
+                            {
+                              "cluster_identifier": "knowledge-cluster",
+                              "auth_configuration": [
+                                {
+                                  "username_password_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef",
+                                  "type": "USERNAME_PASSWORD"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_redshiftserverless_workgroup.knowledge",
+      "type": "aws_redshiftserverless_workgroup",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:redshift-serverless:us-east-1:111111111111:workgroup/12345678-1234-1234-1234-123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_bedrockagent_knowledge_base.serverless",
+      "type": "aws_bedrockagent_knowledge_base",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "KB-serverless",
+          "knowledge_base_configuration": [
+            {
+              "type": "SQL",
+              "sql_knowledge_base_configuration": [
+                {
+                  "type": "REDSHIFT",
+                  "redshift_configuration": [
+                    {
+                      "query_engine_configuration": [
+                        {
+                          "type": "SERVERLESS",
+                          "serverless_configuration": [
+                            {
+                              "workgroup_arn": "arn:aws:redshift-serverless:us-east-1:111111111111:workgroup/12345678-1234-1234-1234-123456789012",
+                              "auth_configuration": [
+                                {
+                                  "username_password_secret_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:backend-abcdef",
+                                  "type": "USERNAME_PASSWORD"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.bedrock",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.executor",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrock_guardrail.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrock_guardrail_version.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "guardrail_arn": {
+              "references": [
+                "aws_bedrock_guardrail.main.guardrail_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_bedrockagent_agent.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "agent_resource_role_arn": {
+              "references": [
+                "aws_iam_role.bedrock.arn"
+              ]
+            },
+            "customer_encryption_key_arn": {
+              "references": [
+                "aws_kms_key.shared.arn"
+              ]
+            },
+            "guardrail_configuration": {
+              "references": [
+                "aws_bedrock_guardrail.main.guardrail_id",
+                "aws_bedrock_guardrail_version.main.version"
+              ]
+            },
+            "prompt_override_configuration": {
+              "references": [
+                "aws_lambda_function.executor.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_bedrock_provisioned_model_throughput.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_agent_alias.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "agent_id": {
+              "references": [
+                "aws_bedrockagent_agent.main.agent_id"
+              ]
+            },
+            "routing_configuration": {
+              "references": [
+                "aws_bedrock_provisioned_model_throughput.main.provisioned_model_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_bedrockagent_agent_action_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "agent_id": {
+              "references": [
+                "aws_bedrockagent_agent.main.agent_id"
+              ]
+            },
+            "action_group_executor": [
+              {
+                "lambda": {
+                  "references": [
+                    "aws_lambda_function.executor.arn"
+                  ]
+                }
+              }
+            ],
+            "api_schema": [
+              {
+                "s3": [
+                  {
+                    "s3_bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.knowledge.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_opensearchserverless_collection.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.bedrock.arn"
+              ]
+            },
+            "storage_configuration": [
+              {
+                "opensearch_serverless_configuration": [
+                  {
+                    "collection_arn": {
+                      "references": [
+                        "aws_opensearchserverless_collection.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_agent_knowledge_base_association.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "agent_id": {
+              "references": [
+                "aws_bedrockagent_agent.main.agent_id"
+              ]
+            },
+            "knowledge_base_id": {
+              "references": [
+                "aws_bedrockagent_knowledge_base.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_bedrockagent_agent_collaborator.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "agent_id": {
+              "references": [
+                "aws_bedrockagent_agent.main.agent_id"
+              ]
+            },
+            "agent_descriptor": [
+              {
+                "alias_arn": {
+                  "references": [
+                    "aws_bedrockagent_agent_alias.main.agent_alias_arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_data_source.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_id": {
+              "references": [
+                "aws_bedrockagent_knowledge_base.main.id"
+              ]
+            },
+            "data_source_configuration": [
+              {
+                "s3_configuration": [
+                  {
+                    "bucket_arn": {
+                      "references": [
+                        "aws_s3_bucket.knowledge.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "server_side_encryption_configuration": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.shared.arn"
+                  ]
+                }
+              }
+            ],
+            "vector_ingestion_configuration": [
+              {
+                "context_enrichment_configuration": [
+                  {
+                    "bedrock_foundation_model_configuration": [
+                      {
+                        "model_arn": {
+                          "references": [
+                            "aws_bedrock_inference_profile.main.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "custom_transformation_configuration": [
+                  {
+                    "transformation": [
+                      {
+                        "transformation_function": [
+                          {
+                            "transformation_lambda_configuration": [
+                              {
+                                "lambda_arn": {
+                                  "references": [
+                                    "aws_lambda_function.executor.arn"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrock_inference_profile.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_prompt.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "customer_encryption_key_arn": {
+              "references": [
+                "aws_kms_key.shared.arn"
+              ]
+            },
+            "variant": [
+              {
+                "model_id": {
+                  "references": [
+                    "aws_bedrock_inference_profile.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_prompt.agent",
+          "provider_config_key": "aws",
+          "expressions": {
+            "variant": [
+              {
+                "gen_ai_resource": [
+                  {
+                    "agent": [
+                      {
+                        "agent_identifier": {
+                          "references": [
+                            "aws_bedrockagent_agent.main.agent_arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_flow.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.bedrock.arn"
+              ]
+            },
+            "customer_encryption_key_arn": {
+              "references": [
+                "aws_kms_key.shared.arn"
+              ]
+            },
+            "definition": [
+              {
+                "node": [
+                  {
+                    "configuration": [
+                      {
+                        "agent": [
+                          {
+                            "agent_alias_arn": {
+                              "references": [
+                                "aws_bedrockagent_agent_alias.main.agent_alias_arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "configuration": [
+                      {
+                        "knowledge_base": [
+                          {
+                            "knowledge_base_id": {
+                              "references": [
+                                "aws_bedrockagent_knowledge_base.main.id"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "configuration": [
+                      {
+                        "lambda_function": [
+                          {
+                            "lambda_arn": {
+                              "references": [
+                                "aws_lambda_function.executor.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "configuration": [
+                      {
+                        "prompt": [
+                          {
+                            "source_configuration": [
+                              {
+                                "resource": [
+                                  {
+                                    "prompt_arn": {
+                                      "references": [
+                                        "aws_bedrockagent_prompt.main.arn"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "configuration": [
+                      {
+                        "retrieval": [
+                          {
+                            "service_configuration": [
+                              {
+                                "s3": [
+                                  {
+                                    "bucket_name": {
+                                      "references": [
+                                        "aws_s3_bucket.knowledge.bucket"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "configuration": [
+                      {
+                        "storage": [
+                          {
+                            "service_configuration": [
+                              {
+                                "s3": [
+                                  {
+                                    "bucket_name": {
+                                      "references": [
+                                        "aws_s3_bucket.knowledge.id"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_secretsmanager_secret.credentials",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_data_source.confluence",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_id": {
+              "references": [
+                "aws_bedrockagent_knowledge_base.main.id"
+              ]
+            },
+            "data_source_configuration": [
+              {
+                "confluence_configuration": [
+                  {
+                    "source_configuration": [
+                      {
+                        "credentials_secret_arn": {
+                          "references": [
+                            "aws_secretsmanager_secret.credentials.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_data_source.salesforce",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_id": {
+              "references": [
+                "aws_bedrockagent_knowledge_base.main.id"
+              ]
+            },
+            "data_source_configuration": [
+              {
+                "salesforce_configuration": [
+                  {
+                    "source_configuration": [
+                      {
+                        "credentials_secret_arn": {
+                          "references": [
+                            "aws_secretsmanager_secret.credentials.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_data_source.share_point",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_id": {
+              "references": [
+                "aws_bedrockagent_knowledge_base.main.id"
+              ]
+            },
+            "data_source_configuration": [
+              {
+                "share_point_configuration": [
+                  {
+                    "source_configuration": [
+                      {
+                        "credentials_secret_arn": {
+                          "references": [
+                            "aws_secretsmanager_secret.credentials.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_opensearch_domain.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.opensearch_managed_cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "opensearch_managed_cluster_configuration": [
+                  {
+                    "domain_arn": {
+                      "references": [
+                        "aws_opensearch_domain.knowledge.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_rds_cluster.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.rds",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "rds_configuration": [
+                  {
+                    "resource_arn": {
+                      "references": [
+                        "aws_rds_cluster.knowledge.arn"
+                      ]
+                    },
+                    "credentials_secret_arn": {
+                      "references": [
+                        "aws_secretsmanager_secret.credentials.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_neptunegraph_graph.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.neptune_analytics",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "neptune_analytics_configuration": [
+                  {
+                    "graph_arn": {
+                      "references": [
+                        "aws_neptunegraph_graph.knowledge.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3vectors_index.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.s3_vectors",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "s3_vectors_configuration": [
+                  {
+                    "index_arn": {
+                      "references": [
+                        "aws_s3vectors_index.knowledge.index_arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.mongo_db_atlas",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "mongo_db_atlas_configuration": [
+                  {
+                    "credentials_secret_arn": {
+                      "references": [
+                        "aws_secretsmanager_secret.credentials.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.pinecone",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "pinecone_configuration": [
+                  {
+                    "credentials_secret_arn": {
+                      "references": [
+                        "aws_secretsmanager_secret.credentials.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.redis_enterprise_cloud",
+          "provider_config_key": "aws",
+          "expressions": {
+            "storage_configuration": [
+              {
+                "redis_enterprise_cloud_configuration": [
+                  {
+                    "credentials_secret_arn": {
+                      "references": [
+                        "aws_secretsmanager_secret.credentials.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kendra_index.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.kendra",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_configuration": [
+              {
+                "kendra_knowledge_base_configuration": [
+                  {
+                    "kendra_index_arn": {
+                      "references": [
+                        "aws_kendra_index.main.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_redshift_cluster.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.provisioned",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_configuration": [
+              {
+                "sql_knowledge_base_configuration": [
+                  {
+                    "redshift_configuration": [
+                      {
+                        "query_engine_configuration": [
+                          {
+                            "provisioned_configuration": [
+                              {
+                                "cluster_identifier": {
+                                  "references": [
+                                    "aws_redshift_cluster.knowledge.cluster_identifier"
+                                  ]
+                                },
+                                "auth_configuration": [
+                                  {
+                                    "username_password_secret_arn": {
+                                      "references": [
+                                        "aws_secretsmanager_secret.credentials.arn"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_redshiftserverless_workgroup.knowledge",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_bedrockagent_knowledge_base.serverless",
+          "provider_config_key": "aws",
+          "expressions": {
+            "knowledge_base_configuration": [
+              {
+                "sql_knowledge_base_configuration": [
+                  {
+                    "redshift_configuration": [
+                      {
+                        "query_engine_configuration": [
+                          {
+                            "serverless_configuration": [
+                              {
+                                "workgroup_arn": {
+                                  "references": [
+                                    "aws_redshiftserverless_workgroup.knowledge.arn"
+                                  ]
+                                },
+                                "auth_configuration": [
+                                  {
+                                    "username_password_secret_arn": {
+                                      "references": [
+                                        "aws_secretsmanager_secret.credentials.arn"
+                                      ]
+                                    }
+                                  }
+                                ]
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
