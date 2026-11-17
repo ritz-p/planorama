@@ -63,7 +63,7 @@ fn verify(
         ),
         "iam_role_arn" => ("aws_iam_role", "arn", "iam_role_arn"),
         "grantee.grantee_identifier" => {
-            if !v["grantee"].as_array().is_some_and(|a| a.len() == 1)
+            if v["grantee"].as_array().is_none_or(|a| a.len() != 1)
                 || known(v, m, "grantee.0.grantee_type") != Some("IAM")
                 || !matches!(
                     target.resource_type.as_str(),
