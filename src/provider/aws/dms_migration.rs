@@ -165,3 +165,13 @@ pub(super) fn bindings(raw: &crate::semantic::Input, r: &AttributeReference) -> 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/dms_migration.rs"]
 mod tests;
+
+pub(super) fn network_context(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    e: &[(&Value, &Value)],
+    target: usize,
+    paths: (&str, &str),
+) -> Option<usize> {
+    network::context(nodes, refs, e, target, paths)
+}

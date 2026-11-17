@@ -63,6 +63,7 @@ pub(crate) mod directory_service;
 pub(crate) mod dms_events;
 pub(crate) mod dms_migration;
 pub(crate) mod dms_references;
+pub(crate) mod dms_serverless;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
@@ -372,6 +373,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     memorydb::present(&raw, &mut graph);
     dax::present(&raw, &mut graph);
     databases::present(&raw, &mut graph);
+    dms_serverless::present(&raw, &mut graph);
     apprunner::present(&raw, &mut graph);
     sagemaker::present(&raw, &mut graph);
     opensearch_serverless::present(&raw, &mut graph);

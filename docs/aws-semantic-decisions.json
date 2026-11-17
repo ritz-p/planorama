@@ -30096,10 +30096,10 @@
       }
     },
     "aws_dms_replication_config": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 866,
-      "gap": "#723 reviewed: Missing: independent serverless endpoint/network/KMS contract; compute_config.replication_subnet_group_id required in schema despite optional docs. Not covered by provisioned instance/task #699. Follow-up #866.",
+      "gap": "Implemented #866; historical audit #723 retained. Independent Spatial serverless workload with exact directional DMS/S3 endpoint ARNs, explicitly configured ARN-only KMS, required compute/subnet-group shape and complete same-VPC subnet/SG proof. No synthetic provisioned instance or inherited remote scope. See aws.md#dms-serverless-replication-866.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -30114,11 +30114,11 @@
           "compute_config.vpc_security_group_ids",
           "compute_config.kms_key_id"
         ],
-        "placement": "Missing: Logical serverless replication configuration is workload endpoint; review Spatial card without synthesizing replication instance.",
+        "placement": "Supported: #866 promotes only serverless replication configuration to an independent Spatial workload card. Proven complete common-VPC context supplies containment; missing network evidence leaves a regional card. No provisioned instance is synthesized.",
         "ownership": "Not applicable: aws_dms_replication_config remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
-        "network": "Missing: complete subnet-group and nested SG common-VPC proof, independent of provisioned replication instances.",
-        "references": "Missing: independent serverless endpoint/network/KMS contract; compute_config.replication_subnet_group_id required in schema despite optional docs. Not covered by provisioned instance/task #699.",
-        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "network": "Supported: #866 verifies required compute/subnet-group shape, complete explicit subnet-group membership and SG IDs, current explicit common-VPC parents and independently compatible scope. Availability zone/computed defaults never select subnets; shared endpoints stay independent.",
+        "references": "Supported: #866 verifies exact DMS/S3 endpoint ARN and direction, required subnet-group ID, complete SG set and explicitly configured KMS key ARN with known replication type. Names, key IDs, aliases, SQL and runtime status are not substituted.",
+        "scope": "Supported: independent provider/resource region and known provider account are preserved for serverless workload, endpoints and VPC parents. Explicit compatible state/provider/account/region proof is required; remote endpoints cannot manufacture scope.",
         "summaries": "Deferred: arn/replication_config_identifier identity navigation belongs to #866; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_replication_config.html.markdown",
         "shapes": {
@@ -30162,7 +30162,14 @@
           "compute_config.replication_subnet_group_id": "required",
           "compute_config.vpc_security_group_ids": "optional/computed",
           "compute_config.kms_key_id": "optional/computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_serverless.rs",
+          "src/provider/aws/dms_migration/network.rs",
+          "tests/unit/semantic/dms_serverless.rs",
+          "tests/fixtures/dms-serverless-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_agentregistry_registry": {

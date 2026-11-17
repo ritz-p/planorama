@@ -1486,3 +1486,46 @@ filtered, missing, data, foreign-provider, deleted/deposed and ambiguous evidenc
 falls back with independent actions and exactly-once coverage. See
 [SVG](../examples/dms-migration.svg), sourced from
 `tests/fixtures/dms-migration-plan.json`.
+
+## DMS serverless replication (#866)
+
+`aws_dms_replication_config` has its own Spatial workload card, distinct from
+provisioned replication instances/tasks and from reusable migration profiles.
+No provisioned instance is synthesized. Its configured source/target endpoint
+references never make those shared endpoints children of the workload.
+
+Contracts use pinned Provider 6.70.0 source
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/dms/replication_config.go` and the pinned schema:
+
+| Configured input | Shape and required managed output |
+| --- | --- |
+| `source_endpoint_arn` / `target_endpoint_arn` | Required strings → DMS Endpoint or dedicated DMS S3 Endpoint `endpoint_arn`, with known matching `source` / `target` endpoint type |
+| `compute_config.replication_subnet_group_id` | Required singleton `compute_config` list and **required** string leaf → DMS Replication Subnet Group `id`; the schema's required flag takes precedence over optional wording in Provider docs |
+| `compute_config.vpc_security_group_ids` | Same singleton list, optional/computed string set → complete Security Group `id` set |
+| `compute_config.kms_key_id` | Same singleton list, optional/computed string → KMS Key `arn` only; despite its name, the pinned source validates ARN, not key ID or alias |
+
+The required `replication_type` must be known `full-load`, `cdc` or
+`full-load-and-cdc`. Computed fields without explicit Terraform references do not
+prove configuration. Workload ARN/identifier remain its independent identity;
+no runtime replication, start status, table mappings, SQL, capacity inference,
+connection payload or policy interpretation is performed.
+
+VPC placement requires both complete explicit subnet-group and SG references,
+complete managed subnet membership inside the group, and matching explicit
+`vpc_id` references from every subnet and SG to exactly one current managed VPC.
+Each endpoint and parent retains independently compatible provider/account/region
+and named-state evidence. Own proven provider account scope is preserved; remote
+endpoint or key references cannot supply it. Parent proof is shared with #865's
+context verifier, but only the serverless workload receives containment.
+Availability zone, DNS strings and computed defaults cannot select subnets.
+
+Unknown, partial, duplicated, mixed-VPC, incompatible, absent or filtered network
+evidence retains an uncontained regional Spatial card; independently proven
+source/target/KMS references remain usable. Invalid endpoint direction or key
+proof does not invalidate independent network placement. Deleted/deposed, data,
+foreign-provider and ambiguous endpoints remain unresolved. Resource actions and
+exactly-once coverage are preserved across filtered/named states. See
+[SVG](../examples/dms-serverless.svg), sourced from
+`tests/fixtures/dms-serverless-plan.json`. Generate current defaults with
+`sh scripts/update-resource-support.sh aws_dms_`.

@@ -1,0 +1,335 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/serverless",
+          "key_id": "serverless"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-serverless"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.first",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-0",
+          "vpc_id": "vpc-serverless"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.second",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-1",
+          "vpc_id": "vpc-serverless"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.main",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "sg-serverless",
+          "vpc_id": "vpc-serverless"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_subnet_group.main",
+      "type": "aws_dms_replication_subnet_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "serverless-subnets",
+          "subnet_ids": [
+            "subnet-0",
+            "subnet-1"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.source",
+      "type": "aws_dms_endpoint",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:source",
+          "endpoint_id": "source",
+          "endpoint_type": "source",
+          "engine_name": "mysql",
+          "server_name": "PRIVATE_SERVER"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_s3_endpoint.target",
+      "type": "aws_dms_s3_endpoint",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:target",
+          "endpoint_id": "target",
+          "endpoint_type": "target",
+          "external_table_definition": "PRIVATE_TABLE_DEFINITION"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_config.main",
+      "type": "aws_dms_replication_config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:replication-config:main",
+          "replication_config_identifier": "main",
+          "replication_type": "full-load-and-cdc",
+          "replication_settings": "PRIVATE_REPLICATION_SETTINGS",
+          "table_mappings": "PRIVATE_TABLE_MAPPINGS",
+          "compute_config": [
+            {
+              "multi_az": true,
+              "availability_zone": "us-east-1a",
+              "replication_subnet_group_id": "serverless-subnets",
+              "vpc_security_group_ids": [
+                "sg-serverless"
+              ],
+              "kms_key_id": "arn:aws:kms:us-east-1:111111111111:key/serverless"
+            }
+          ],
+          "source_endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:source",
+          "target_endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:target"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_config.literal",
+      "type": "aws_dms_replication_config",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:replication-config:literal",
+          "replication_config_identifier": "literal",
+          "replication_type": "full-load-and-cdc",
+          "replication_settings": "PRIVATE_REPLICATION_SETTINGS",
+          "table_mappings": "PRIVATE_TABLE_MAPPINGS",
+          "compute_config": [
+            {
+              "multi_az": true,
+              "availability_zone": "us-east-1a",
+              "replication_subnet_group_id": "serverless-subnets",
+              "vpc_security_group_ids": [
+                "sg-serverless"
+              ],
+              "kms_key_id": "arn:aws:kms:us-east-1:111111111111:key/serverless"
+            }
+          ],
+          "source_endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:source",
+          "target_endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:target"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.first",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_replication_subnet_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.first.id",
+                "aws_subnet.second.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_endpoint.source",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_s3_endpoint.target",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_replication_config.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_endpoint_arn": {
+              "references": [
+                "aws_dms_endpoint.source.endpoint_arn"
+              ]
+            },
+            "target_endpoint_arn": {
+              "references": [
+                "aws_dms_s3_endpoint.target.endpoint_arn"
+              ]
+            },
+            "compute_config": [
+              {
+                "replication_subnet_group_id": {
+                  "references": [
+                    "aws_dms_replication_subnet_group.main.id"
+                  ]
+                },
+                "vpc_security_group_ids": {
+                  "references": [
+                    "aws_security_group.main.id"
+                  ]
+                },
+                "kms_key_id": {
+                  "references": [
+                    "aws_kms_key.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_replication_config.literal",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
