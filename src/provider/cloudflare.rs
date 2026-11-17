@@ -117,7 +117,7 @@ fn known_id(value: &Value, mask: &Value, path: &[&str]) -> Option<String> {
     }
     value
         .as_str()
-        .filter(|v| v.len() == 32 && v.bytes().all(|b| b.is_ascii_hexdigit()))
+        .and_then(evidence::scope_id)
         .map(str::to_owned)
 }
 

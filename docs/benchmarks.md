@@ -107,3 +107,15 @@ scale generator above; ordinary CI does not run its expensive measurements.
 The separate [spacing calibration](../examples/terraform-large/spacing-calibration.md)
 runs through the manual CI workflow and compares old/default/doubled refinement budgets.
 It records bounded-pass work and per-edge shape without shortest-route searches.
+
+### Semantic input reference grouping
+
+Run `cargo test --release --locked benchmarks::semantic_input -- --ignored --nocapture`
+in the prepared Docker/WSL environment to measure base-graph construction separately
+from parsing and layout. The benchmark uses the same sparse/dense generator at
+40, 1,000 and 5,000 resources and the Terraform large fixture. Set
+`PLANORAMA_BENCH_CASE=dense-1000` to select a case and
+`PLANORAMA_BENCH_REPEATS=20` to control repetitions. An untimed warmup precedes each
+case. Graph fingerprints include order, labels, completeness and provenance;
+compare with the same compiler/build options. Formatting fingerprints and dropping
+graphs happen outside the timed interval. There are no timing assertions.

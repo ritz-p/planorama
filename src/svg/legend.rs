@@ -113,12 +113,9 @@ impl MeasuredLegend {
         let graphs: Vec<_> = graphs.into_iter().collect();
         let value_matches = graphs.iter().any(|g| {
             g.relationships.iter().any(|r| {
-                r.provenance.iter().any(|p| {
-                    matches!(
-                        p,
-                        crate::model::RelationshipProvenance::ConfiguredValue { .. }
-                    )
-                })
+                r.provenance
+                    .iter()
+                    .any(|p| p.evidence() == crate::model::RelationshipEvidence::ConfiguredValue)
             })
         });
         let percentages = graphs.iter().any(|graph| {

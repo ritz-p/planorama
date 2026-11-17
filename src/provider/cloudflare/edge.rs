@@ -53,9 +53,7 @@ fn targets<'a>(node: &TerraformEntity, path: &str, value: Evidence<'a>) -> Resul
         ("cloudflare_load_balancer_monitor_group", "members") => {
             field.clear()?;
             let ids = collect(field.rows()?.into_iter().map(|row| row.text("monitor_id")))?;
-            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
-                return Err(Failure::IncompleteCollection);
-            }
+            proof::unique(&ids)?;
             Ok(ids
                 .into_iter()
                 .map(|id| target(id, "cloudflare_load_balancer_monitor", "id"))

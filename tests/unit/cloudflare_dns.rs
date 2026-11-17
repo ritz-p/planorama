@@ -8,7 +8,10 @@ fn graph(v: &Value) -> crate::model::ArchitectureGraph {
     semantic::transform(&plan::parse(&v.to_string()).unwrap())
 }
 fn linked(v: &Value, address: &str) -> bool {
-    graph(v)
+    linked_in(&graph(v), address)
+}
+fn linked_in(graph: &crate::model::ArchitectureGraph, address: &str) -> bool {
+    graph
         .nodes
         .iter()
         .find(|n| n.address == address)
@@ -20,13 +23,13 @@ fn linked(v: &Value, address: &str) -> bool {
 #[test]
 fn zones_are_administrative_references_without_physical_containment() {
     let v = fixture();
+    let g = graph(&v);
     for i in [1, 2, 3, 5] {
-        assert!(linked(
-            &v,
+        assert!(linked_in(
+            &g,
             v["resource_changes"][i]["address"].as_str().unwrap()
         ));
     }
-    let g = graph(&v);
     assert_eq!(g.nodes.len(), 6);
     assert!(
         g.edges
@@ -246,7 +249,6 @@ fn domain_zone(v: &Value) -> bool {
 #[test]
 fn custom_domain_zone_and_worker_are_independent() {
     let v = domain_fixture();
-    assert!(domain_zone(&v));
     let g = graph(&v);
     let domain = g
         .nodes

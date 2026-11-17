@@ -3,7 +3,7 @@ use super::{
     evidence::{Result, collect},
     proof,
 };
-use crate::model::{Action, AttributeReference, CloudflareFailure as Failure, TerraformEntity};
+use crate::model::{AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 
 fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static str)> {
     match (kind, path) {
@@ -85,13 +85,6 @@ fn scope_valid(node: &TerraformEntity, evidence: Evidence<'_>) -> Result<()> {
         .ok_or(Failure::ScopeUnavailable)
 }
 
-fn current(node: &TerraformEntity) -> bool {
-    node.provider.is_cloudflare()
-        && node.deposed_key.is_none()
-        && node.action != Action::Delete
-        && node.metadata.state_removal.is_none()
-}
-
 fn verify(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
@@ -154,7 +147,7 @@ fn verify(
         .iter()
         .enumerate()
         .filter(|(index, node)| {
-            current(node)
+            proof::active(node)
                 && node.resource_type == kind
                 && evidence[*index].id("id").ok() == Some(expected)
         })
