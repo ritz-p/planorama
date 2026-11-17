@@ -18,7 +18,7 @@ retain their independent Logical presentation, actions and exactly-once coverage
 | Batch `output_data_config.s3_output_data_config.s3_encryption_key_id` | KMS Key `arn`; two singleton list ancestors |
 | Guardrail version `guardrail_arn` | Guardrail `guardrail_arn` plus known published numerical `version` |
 | Enforced configuration `guardrail_arn` / `guardrail_version` | Matching guardrail ARN and an explicit Guardrail Version `version` with the same parent ARN; `DRAFT`, zero or unknown versions stay unresolved |
-| Inference profile `model_source.copy_from` | Compatible managed Inference Profile `arn`; singleton list |
+| Inference profile `model_source.copy_from` | System-defined inference profile ARN from an explicit managed reference with known `type = SYSTEM_DEFINED`; singleton list |
 | Batch `model_id` | Managed Inference Profile `arn` / `id` |
 | Provisioned throughput `model_arn` | Custom model `custom_model_arn` |
 | Evaluation `evaluation_config.human.human_workflow_config.flow_definition_arn` | SageMaker Flow Definition `arn`; three singleton lists |
