@@ -185,3 +185,63 @@ fn partner_requires_independently_proven_cluster_account() {
         );
     }
 }
+
+const CATALOG: &str = include_str!("../../fixtures/redshift-catalog-plan.json");
+#[test]
+fn catalog_references_preserve_policy_identity_and_reject_missing_evidence() {
+    verify_fixture(CATALOG, 18);
+}
+#[test]
+fn catalog_references_require_typed_namespaces_and_compatible_modes() {
+    let cases = [
+        (
+            "aws_redshift_integration.bucket",
+            "target_arn",
+            "target_arn",
+            json!("arn:aws:redshift:us-east-1:111111111111:cluster:warehouse"),
+        ),
+        (
+            "aws_redshift_namespace_registration.provisioned",
+            "provisioned_cluster_identifier",
+            "namespace_type",
+            json!("serverless"),
+        ),
+        (
+            "aws_redshift_namespace_registration.serverless_uuid",
+            "serverless_namespace_identifier",
+            "provisioned_cluster_identifier",
+            json!("warehouse"),
+        ),
+        (
+            "aws_redshift_data_share_consumer_association.cluster",
+            "consumer_arn",
+            "associate_entire_account",
+            json!(true),
+        ),
+        (
+            "aws_redshift_data_share_consumer_association.serverless",
+            "consumer_arn",
+            "consumer_region",
+            json!("us-east-1"),
+        ),
+        (
+            "aws_redshift_idc_application.main",
+            "authorized_token_issuer.trusted_token_issuer_arn",
+            "idc_instance_arn",
+            json!("arn:aws:sso:::instance/other"),
+        ),
+    ];
+    for (a, p, key, value) in cases {
+        let mut v = fixture(CATALOG);
+        let i = index(&v, a);
+        v["resource_changes"][i]["change"]["after"][key] = value;
+        assert!(!proven(&v, a, p), "{a} {p}");
+    }
+    let mut v = fixture(CATALOG);
+    let i = index(&v, "aws_redshift_integration.bucket");
+    let c = index(&v, "aws_redshift_cluster.main");
+    let wrong = v["resource_changes"][c]["change"]["after"]["arn"].clone();
+    v["resource_changes"][i]["change"]["after"]["target_arn"] = wrong.clone();
+    v["resource_changes"][c]["change"]["after"]["cluster_namespace_arn"] = wrong;
+    assert!(!proven(&v, "aws_redshift_integration.bucket", "target_arn"));
+}
