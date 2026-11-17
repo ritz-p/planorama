@@ -4,6 +4,29 @@
 
 ## S3 bucket configuration
 
+### Multi-Region Access Points (#979)
+
+MRAPs, policies and routes retain independent Logical identities, actions and
+coverage. Provider 6.70.0 (`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`)
+defines `details` as a singleton list and `details.region` / `route` as sets.
+Complete explicit bucket references to current managed `aws_s3_bucket.id` or
+`bucket` outputs require unique known matching names and compatible provider
+accounts. Set entries are matched by value, independently of evaluated ordering;
+unknown/sensitive entries or unproven owner constraints invalidate the collection.
+Optional `bucket_account_id` must match proven bucket provider account evidence.
+Computed `details.region.region` never supplies bucket placement or provider scope.
+
+Policy `details.name` requires an exact MRAP `name`, matching known `account_id`
+and proven provider account. Routes `mrap` uses exact MRAP `arn`; per-route bucket
+references additionally require the configured region to match the bucket's
+independent scope and a known traffic dial in 0–100. Zero remains a configured
+reference. Traffic dial does not establish reachability, health or active traffic.
+No policy JSON, computed endpoint, ownership or network containment is inferred.
+Missing, filtered, wrong-provider/type/mode, deleted/deposed, ambiguous or masked
+endpoints retain unresolved fallback; named states remain independent. See
+[SVG example](../examples/s3-mrap.svg). Generate HTML from the same fixture with
+`cargo run --locked -- tests/fixtures/s3-mrap-plan.json --format html -o output/s3-mrap.html`.
+
 ### Access points and Outposts (#977)
 
 Access points distinguish ordinary bucket `id`/`bucket` names from Outposts bucket

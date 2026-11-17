@@ -39,6 +39,11 @@ pub(crate) fn has_indexed_service_references(
             || resource == "aws_networkfirewall_logging_configuration"
             || matches!(resource, "aws_appsync_graphql_api" | "aws_appsync_api")
             || resource == "aws_s3control_object_lambda_access_point"
+            || matches!(
+                resource,
+                "aws_s3control_multi_region_access_point"
+                    | "aws_s3control_multi_region_access_point_routes"
+            )
             || aws::elbv2_network::resource(resource)
             || matches!(
                 resource,
@@ -83,6 +88,7 @@ pub(crate) fn indexed_service_reference(
             || aws::cloudfront_security::indexed(resource, attribute)
             || aws::appsync::indexed(resource, attribute)
             || aws::appsync_events::indexed(resource, attribute)
+            || aws::s3_mrap::indexed(resource, attribute)
             || aws::s3_access::indexed(resource, attribute)
             || aws::elbv2_cognito::indexed(resource, attribute)
             || aws::s3::indexed_attribute(resource, attribute).is_some()

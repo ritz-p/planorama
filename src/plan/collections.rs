@@ -259,6 +259,7 @@ pub(super) fn annotate(
     crate::provider::aws::resolver::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::appsync::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::s3_access::annotate(nodes, references, &elbv2_evidence);
+    crate::provider::aws::s3_mrap::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::profiles::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::query_logs::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::route53_records::annotate(nodes, references, &elbv2_evidence);

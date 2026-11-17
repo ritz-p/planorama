@@ -137,6 +137,7 @@ pub(crate) mod route_server;
 pub(crate) mod rum;
 pub(crate) mod s3_access;
 mod s3_exports;
+pub(crate) mod s3_mrap;
 pub(crate) mod s3files;
 pub(crate) mod s3tables;
 pub(crate) mod s3vectors;

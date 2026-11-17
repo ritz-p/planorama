@@ -217,6 +217,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::profiles::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::s3_mrap::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::s3_access::label(resource, attribute) {
         return Some(label);
     }
@@ -939,6 +942,7 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::s3_mrap::bindings(raw, reference)
         && super::glue_catalog::bindings(raw, reference)
         && super::glue_network::bindings(raw, reference)
         && super::glue_workloads::bindings(raw, reference)
@@ -1602,6 +1606,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::secrets_manager::indexed(&node.resource_type, &reference.attribute)
             || super::route53_records::indexed(&node.resource_type, &reference.attribute)
             || super::appsync::indexed(&node.resource_type, &reference.attribute)
+            || super::s3_mrap::indexed(&node.resource_type, &reference.attribute)
             || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)

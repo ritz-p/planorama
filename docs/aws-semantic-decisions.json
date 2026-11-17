@@ -52299,10 +52299,10 @@
       }
     },
     "aws_s3control_multi_region_access_point": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 979,
-      "gap": "#719 audit: Missing: complete region-entry bucket names and owner constraints; computed region cannot manufacture provider target scope. Follow-up #979. Deferred: retain Logical shared multi-region entry point until cross-region presentation is designed with bucket navigation. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #979: exact current managed MRAP/bucket configuration references with complete set and owner proof. Logical multi-region presentation remains deferred; no policy or traffic interpretation. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52317,7 +52317,7 @@
         "placement": "Deferred: retain Logical shared multi-region entry point until cross-region presentation is designed with bucket navigation.",
         "ownership": "Not applicable: retain independent aws_s3control_multi_region_access_point identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_s3control_multi_region_access_point has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: complete region-entry bucket names and owner constraints; computed region cannot manufacture provider target scope. Follow-up #979.",
+        "references": "Supported: complete details.region.bucket references with matching optional bucket owner accounts; computed region is not placement evidence.",
         "scope": "Partial: runtime Unknown scope is deliberate; a control-plane region does not describe the multi-region object. Revisit explicit global identity in the MRAP follow-up.",
         "summaries": "Deferred: aws_s3control_multi_region_access_point settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3control_multi_region_access_point.html.markdown",
@@ -52383,15 +52383,18 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3_mrap.rs",
+          "tests/unit/semantic/s3_mrap.rs",
+          "tests/fixtures/s3-mrap-plan.json"
         ]
       }
     },
     "aws_s3control_multi_region_access_point_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 979,
-      "gap": "#719 audit: Missing: account-qualified MRAP name; established/proposed policy JSON is not relationship evidence. Follow-up #979. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #979: exact current managed MRAP/bucket configuration references with complete set and owner proof. Logical multi-region presentation remains deferred; no policy or traffic interpretation. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52403,7 +52406,7 @@
         "placement": "Supported: retain Logical Policy default for aws_s3control_multi_region_access_point_policy; configuration/access identity remains independently selectable; no automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_s3control_multi_region_access_point_policy identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_s3control_multi_region_access_point_policy has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: account-qualified MRAP name; established/proposed policy JSON is not relationship evidence. Follow-up #979.",
+        "references": "Supported: account-qualified details.name -> exact MRAP name; policy JSON is not evidence.",
         "scope": "Partial: Unknown runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
         "summaries": "Intentionally unsupported: aws_s3control_multi_region_access_point_policy policy/grantee contents and effective authorization are not interpreted or emitted.",
         "officialDocumentation": "website/docs/r/s3control_multi_region_access_point_policy.html.markdown",
@@ -52435,15 +52438,18 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3_mrap.rs",
+          "tests/unit/semantic/s3_mrap.rs",
+          "tests/fixtures/s3-mrap-plan.json"
         ]
       }
     },
     "aws_s3control_multi_region_access_point_routes": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 979,
-      "gap": "#719 audit: Missing: MRAP ARN and per-route bucket names; traffic dial is configured preference, not reachability. Follow-up #979. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #979: exact current managed MRAP/bucket configuration references with complete set and owner proof. Logical multi-region presentation remains deferred; no policy or traffic interpretation. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52456,7 +52462,7 @@
         "placement": "Supported: retain Logical Controller default for aws_s3control_multi_region_access_point_routes; configuration/access identity remains independently selectable; no automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_s3control_multi_region_access_point_routes identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_s3control_multi_region_access_point_routes has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: MRAP ARN and per-route bucket names; traffic dial is configured preference, not reachability. Follow-up #979.",
+        "references": "Supported: mrap -> MRAP arn and complete route bucket names with independent region/known dial validation; no reachability inference.",
         "scope": "Partial: Unknown runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
         "summaries": "Deferred: aws_s3control_multi_region_access_point_routes settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/s3control_multi_region_access_point_routes.html.markdown",
@@ -52493,7 +52499,10 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3_mrap.rs",
+          "tests/unit/semantic/s3_mrap.rs",
+          "tests/fixtures/s3-mrap-plan.json"
         ]
       }
     },
