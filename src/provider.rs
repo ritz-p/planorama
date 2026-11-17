@@ -7,7 +7,8 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::dms_references::resource(resource)
+        && (aws::dms_events::resource(resource)
+            || aws::dms_references::resource(resource)
             || aws::agentcore_services::resource(resource)
             || aws::agentcore_gateway::resource(resource)
             || aws::agentcore_runtime::resource(resource)
@@ -64,7 +65,8 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::dms_references::indexed(resource, attribute)
+        && (aws::dms_events::indexed(resource, attribute)
+            || aws::dms_references::indexed(resource, attribute)
             || aws::agentcore_services::indexed(resource, attribute)
             || aws::agentcore_gateway::indexed(resource, attribute)
             || aws::agentcore_runtime::indexed(resource, attribute)
