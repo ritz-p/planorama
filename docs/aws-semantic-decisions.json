@@ -828,7 +828,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 863,
-      "gap": "Implemented #699: exact endpoint_arn and known source/target type as task endpoint; independent Logical configuration, no database reconstruction. Auxiliary references and distinct S3 endpoint remain #863. See aws.md#dms-replication-configuration-699. #723 review retains the historical baseline.",
+      "gap": "Implemented #699/#863: typed source/target task endpoints, DMS certificate and connection KMS, engine-selected secret/role, Kinesis and Redshift S3/key references. Independent Logical endpoints; no host, database or runtime reconstruction. See aws.md#dms-endpoint-references-863. #723 review retains its historical baseline.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -852,8 +852,8 @@
         "placement": "Supported: retain Logical Connector default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
         "ownership": "Not applicable: aws_dms_endpoint remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_dms_endpoint has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: #699 accepts endpoint_arn as task endpoint only. Additional engine-gated certificate/KMS/secret/role/Kinesis/S3 references belong here; URLs, broker/server names and database strings do not identify RDS/Redshift/MSK resources.",
-        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "references": "Partial: #863 verifies explicit unique typed DMS certificate/connection KMS, engine-gated secret/role and target Kinesis/Redshift storage references; S3 endpoint task identities stay distinct and storage keys require target SSE_KMS. Hosts, URIs, SQL and service-generated identities remain excluded. See aws.md#dms-endpoint-references-863.",
+        "scope": "Supported: retain independent provider/resource region and compatible account evidence for DMS endpoint contracts; configured bucket owner requires independently known matching endpoint account. References never supply scope.",
         "summaries": "Deferred: endpoint_id/endpoint_arn identity navigation belongs to #863; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_endpoint.html.markdown",
         "shapes": {
@@ -920,7 +920,13 @@
           "redshift_settings.bucket_name": "optional",
           "redshift_settings.service_access_role_arn": "optional",
           "redshift_settings.server_side_encryption_kms_key_id": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_references.rs",
+          "tests/unit/semantic/dms_references.rs",
+          "tests/fixtures/dms-endpoints-plan.json",
+          "tests/browser/wasm-dms-node.cjs"
+        ]
       }
     },
     "aws_dms_replication_task": {
@@ -29616,10 +29622,10 @@
       }
     },
     "aws_dms_s3_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 863,
-      "gap": "#723 reviewed: Missing: exact S3 endpoint task-target support separate from #699 initial aws_dms_endpoint scope; bucket name, IAM role, mode-gated KMS and DMS certificate. No runtime alias or object/column contents. Follow-up #863.",
+      "gap": "Implemented #863: exact endpoint_arn/source-target task navigation, bucket/owner constraints, IAM role, target SSE_KMS key ARN, connection key and DMS certificate. Independent Logical endpoint with provider scope; no object, payload or runtime inference. See aws.md#dms-endpoint-references-863. Historical #723 review is retained.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29639,8 +29645,8 @@
         "placement": "Supported: retain Logical Connector default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
         "ownership": "Not applicable: aws_dms_s3_endpoint remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_dms_s3_endpoint has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: exact S3 endpoint task-target support separate from #699 initial aws_dms_endpoint scope; bucket name, IAM role, mode-gated KMS and DMS certificate. No runtime alias or object/column contents.",
-        "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
+        "references": "Partial: #863 verifies explicit unique typed DMS certificate/connection KMS, engine-gated secret/role and target Kinesis/Redshift storage references; S3 endpoint task identities stay distinct and storage keys require target SSE_KMS. Hosts, URIs, SQL and service-generated identities remain excluded. See aws.md#dms-endpoint-references-863.",
+        "scope": "Supported: retain independent provider/resource region and compatible account evidence for DMS endpoint contracts; configured bucket owner requires independently known matching endpoint account. References never supply scope.",
         "summaries": "Deferred: endpoint_id/endpoint_arn identity navigation belongs to #863; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_s3_endpoint.html.markdown",
         "shapes": {
@@ -29686,7 +29692,13 @@
           "server_side_encryption_kms_key_id": "optional",
           "kms_key_arn": "optional/computed",
           "certificate_arn": "optional/computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_references.rs",
+          "tests/unit/semantic/dms_references.rs",
+          "tests/fixtures/dms-endpoints-plan.json",
+          "tests/browser/wasm-dms-node.cjs"
+        ]
       }
     },
     "aws_dms_event_subscription": {

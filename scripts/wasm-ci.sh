@@ -34,6 +34,7 @@ measure cloudflare-selection-viewer node tests/browser/cloudflare-selection.cjs
 measure cloudflare-recovery-viewer node tests/browser/cloudflare-recovery.cjs
 measure anonymization-parity node tests/browser/wasm-anonymization.cjs
 measure anonymization-audit node tests/browser/anonymization.cjs
+measure dms-parity node tests/browser/wasm-dms-node.cjs
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
 measure browser-summary node tests/browser/input-summary.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs

@@ -887,6 +887,41 @@ values and compatible provider/account/region/state evidence. Sensitive and
 unknown values retain fallback. Dockerfiles, YAML, parameters, user data, policies
 and generated instance/image outputs are neither interpreted nor displayed.
 
+## DMS endpoint references (#863)
+
+`aws_dms_endpoint` and `aws_dms_s3_endpoint` retain independent Logical identities.
+Replication tasks accept either exact managed `endpoint_arn` output with a known
+matching `source`/`target` discriminator. They do not alias the two resource types.
+Provider/account/region, current managed lifecycle, explicit unique provenance,
+matching known nonsensitive values and complete reference collections are required.
+
+Contracts are pinned to AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, `internal/service/dms/{endpoint,s3_endpoint}.go`
+and their resource schemas/docs:
+
+- `certificate_arn` selects DMS certificate `certificate_arn`, never ACM.
+  Root `kms_key_arn` selects KMS key `arn` for connection parameters, including
+  the deprecated but distinct S3 endpoint connection-key input.
+- Endpoint `secrets_manager_arn` selects Secrets Manager `arn`, `id` or `name`
+  by exact equality; partial ARN guessing is excluded. The paired access role
+  selects IAM `arn`. The source factory enables these for Aurora/MySQL/MariaDB,
+  Aurora PostgreSQL/Postgres, MongoDB, Oracle, Redshift, SQL Server/Babelfish,
+  Sybase and DB2/DB2-zOS. Other engine variants retain fallback.
+- `service_access_role` selects IAM `arn` only for a DynamoDB target.
+  Target Kinesis singleton `kinesis_settings` selects stream `arn` and role `arn`.
+- Target Redshift singleton `redshift_settings` selects S3 `bucket`/`id`,
+  IAM role `arn`, and KMS key `arn`/`key_id`/`id` only with known `SSE_KMS`.
+- S3 endpoints select bucket `bucket`/`id` and IAM role `arn`. A configured
+  `expected_bucket_owner` must match independent endpoint account evidence.
+  `server_side_encryption_kms_key_id` accepts key `arn` only for target `SSE_KMS`;
+  source encryption settings do not establish that target contract.
+
+These associations never inherit remote network containment or claim delivery.
+Unknown/sensitive, malformed, ambiguous, filtered or historical evidence retains
+fallback. Hosts, brokers, database strings, SQL, credentials, certificate material,
+table mappings and connection payloads remain opaque. The deterministic synthetic
+fixture is reproduced with `node scripts/dms-fixtures.cjs`; `--check` verifies it.
+
 ## Image Builder distribution and lifecycle references (#814)
 
 Distribution configurations verify complete per-entry references to KMS key ARNs,
