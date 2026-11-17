@@ -61,6 +61,7 @@ pub(super) mod diagnostics;
 pub(crate) mod direct_connect;
 pub(crate) mod directory_service;
 pub(crate) mod dms_events;
+pub(crate) mod dms_migration;
 pub(crate) mod dms_references;
 mod dynamodb;
 mod ecs_capacity;
