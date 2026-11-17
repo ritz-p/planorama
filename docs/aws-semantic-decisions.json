@@ -21655,10 +21655,10 @@
       }
     },
     "aws_backup_report_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 822,
-      "gap": "#720 reviewed: Missing: S3 bucket name and complete framework ARN references. Accounts/OUs/regions describe reporting scope and cannot relocate report plan. Deferred: Organizations selectors until explicit organization-wide coverage semantics are defined. Follow-up #822. Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
+      "gap": "#720 reviewed: Implemented #822: exact report delivery bucket name and complete framework ARN references with singleton collection proof and compatible independent scope. Organizations selectors remain deferred; no report-scope placement or runtime status inference. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -21675,7 +21675,7 @@
         "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: S3 bucket name and complete framework ARN references. Accounts/OUs/regions describe reporting scope and cannot relocate report plan. Deferred: Organizations selectors until explicit organization-wide coverage semantics are defined. Follow-up #822.",
+        "references": "Supported: report_delivery_channel.s3_bucket_name -> S3 Bucket id/bucket; complete report_setting.framework_arns -> Backup Framework arn. Explicit current managed references, known values and compatible provider/account/region are required.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Intentionally unsupported: schedules, retention/compliance outcomes and recovery-point counts are not recoverability evidence; no Backup-specific safe summary exists in encryption.rs.",
         "officialDocumentation": "website/docs/r/backup_report_plan.html.markdown",
@@ -21729,7 +21729,12 @@
           "report_setting.regions": "optional"
         },
         "managedData": "Separate registered managed/data schemas; this review applies only to managed mode, not lookup behavior.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/backup_reports.rs",
+          "tests/unit/semantic/backup_reports.rs",
+          "tests/fixtures/backup-report-plan.json"
+        ]
       }
     },
     "aws_backup_restore_testing_plan": {

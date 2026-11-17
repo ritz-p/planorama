@@ -157,6 +157,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::efs_evidence::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::backup_reports::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::backup_plan::label(resource, attribute) {
         return Some(label);
     }
@@ -924,6 +927,7 @@ pub(crate) fn annotate(
     super::api_usage::annotate(nodes, references, evidence);
     super::efs_evidence::annotate(nodes, references, evidence);
     super::backup_plan::annotate(nodes, references, evidence);
+    super::backup_reports::annotate(nodes, references, evidence);
     super::backup_vaults::annotate(nodes, references, evidence);
     super::vpc_controls::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
@@ -951,6 +955,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::glue_catalog::bindings(raw, reference)
         && super::glue_network::bindings(raw, reference)
         && super::glue_workloads::bindings(raw, reference)
+        && super::backup_reports::bindings(raw, reference)
         && super::private_ca_references::bindings(raw, reference)
         && super::rolesanywhere::bindings(raw, reference)
         && super::redshift_cluster::bindings(raw, reference)
@@ -1612,6 +1617,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::route53_records::indexed(&node.resource_type, &reference.attribute)
             || super::appsync::indexed(&node.resource_type, &reference.attribute)
             || super::s3_mrap::indexed(&node.resource_type, &reference.attribute)
+            || super::backup_reports::indexed(&node.resource_type, &reference.attribute)
             || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
