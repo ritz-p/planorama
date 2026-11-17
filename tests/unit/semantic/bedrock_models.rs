@@ -357,3 +357,24 @@ fn custom_model_outputs_are_distinct_and_service_generated_identities_are_not_no
         assert!(!output.contains("<metadata id=\"cross-state-relationships\">"));
     }
 }
+
+#[test]
+fn model_source_requires_system_profile_and_schema_leaf_shapes() {
+    let a = "aws_bedrock_inference_profile.application";
+    let mut v = fixture();
+    let p = index(&v, a);
+    let s = index(&v, "aws_bedrock_inference_profile.source");
+    let arn = json!("arn:aws:bedrock:us-east-1:111111111111:application-inference-profile/example");
+    v["resource_changes"][p]["change"]["after"]["model_source"][0]["copy_from"] = arn.clone();
+    v["resource_changes"][s]["change"]["after"]["arn"] = arn;
+    assert!(!proven(&v, a, "model_source.copy_from"));
+    let mut v = fixture();
+    v["resource_changes"][s]["change"]["after"]["type"] = json!("APPLICATION");
+    assert!(!proven(&v, a, "model_source.copy_from"));
+    let mut v = fixture();
+    let a = "aws_bedrock_custom_model.derived";
+    let f = index(&v, a);
+    let row = &mut v["resource_changes"][f]["change"]["after"];
+    row["role_arn"] = json!([row["role_arn"]]);
+    assert!(!proven(&v, a, "role_arn"));
+}
