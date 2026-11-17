@@ -51824,10 +51824,10 @@
       }
     },
     "aws_s3control_access_grant": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 978,
-      "gap": "#719 audit: Missing: access-grants-location ID; typed IAM grantee only with explicit role/user endpoint proof, never directory-user/group IDs as IAM IDs. Follow-up #978. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #978: exact Access Grants location ID and type-gated IAM role/user ARN references; explicit current managed endpoints and matching known non-sensitive values required. URI/policy interpretation and directory-to-IAM promotion are excluded. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -51841,7 +51841,7 @@
         "placement": "Supported: retain Logical Policy default for aws_s3control_access_grant; configuration/access identity remains independently selectable; no automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_s3control_access_grant identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_s3control_access_grant has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: access-grants-location ID; typed IAM grantee only with explicit role/user endpoint proof, never directory-user/group IDs as IAM IDs. Follow-up #978.",
+        "references": "Supported: access_grants_location_id -> location.access_grants_location_id; IAM grantee -> explicit Role/User arn only with known IAM discriminator and matching ARN resource type. Directory identities stay unproven.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
         "summaries": "Intentionally unsupported: aws_s3control_access_grant policy/grantee contents and effective authorization are not interpreted or emitted.",
         "officialDocumentation": "website/docs/r/s3control_access_grant.html.markdown",
@@ -51882,7 +51882,10 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3_grants.rs",
+          "tests/unit/semantic/s3_grants.rs",
+          "tests/fixtures/s3-grants-plan.json"
         ]
       }
     },
@@ -51993,10 +51996,10 @@
       }
     },
     "aws_s3control_access_grants_location": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 978,
-      "gap": "#719 audit: Missing: IAM role ARN; location_scope is s3:// URI or wildcard scope, not proof of a managed bucket. Follow-up #978. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: Implemented #978: exact Access Grants location ID and type-gated IAM role/user ARN references; explicit current managed endpoints and matching known non-sensitive values required. URI/policy interpretation and directory-to-IAM promotion are excluded. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -52009,7 +52012,7 @@
         "placement": "Supported: retain Logical Node default for aws_s3control_access_grants_location; configuration/access identity remains independently selectable; no automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_s3control_access_grants_location identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_s3control_access_grants_location has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: IAM role ARN; location_scope is s3:// URI or wildcard scope, not proof of a managed bucket. Follow-up #978.",
+        "references": "Supported: iam_role_arn -> exact IAM Role arn; location_scope URI/wildcard does not identify a managed bucket.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
         "summaries": "Intentionally unsupported: aws_s3control_access_grants_location policy/grantee contents and effective authorization are not interpreted or emitted.",
         "officialDocumentation": "website/docs/r/s3control_access_grants_location.html.markdown",
@@ -52044,7 +52047,10 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/s3_grants.rs",
+          "tests/unit/semantic/s3_grants.rs",
+          "tests/fixtures/s3-grants-plan.json"
         ]
       }
     },

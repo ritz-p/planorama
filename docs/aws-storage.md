@@ -4,6 +4,32 @@
 
 ## S3 bucket configuration
 
+### Access Grants (#978)
+
+`aws_s3control_access_grant.access_grants_location_id` accepts only the exact
+`aws_s3control_access_grants_location.access_grants_location_id` output, never a
+composite Terraform `id` or an `access_grant_id`. Location `iam_role_arn` accepts
+an explicit current managed IAM Role `arn`. Grant `grantee` is a singleton list:
+only known `grantee_type = IAM` enables `grantee_identifier` references to IAM Role
+or User `arn` outputs with the corresponding ARN resource type. Directory users
+and groups are never treated as IAM identities, even if an identifier happens to
+match. These contracts use Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
+Known equal non-sensitive values, explicit unique instances, current managed AWS
+types, compatible provider accounts and independent regional scope are required;
+IAM is global and does not need a regional match. Optional `account_id` qualifiers
+need proven provider account evidence; location references also require a matching
+location account. JSON provider role settings alone do not prove that account.
+Unknown, sensitive, ambiguous, filtered, deleted/deposed or incompatible endpoints
+retain unresolved fallback and independent state-qualified identity/action/coverage.
+Locations and grants remain Logical resources; neither IAM references nor location
+IDs establish ownership or containment. `location_scope` is an S3 URI/wildcard,
+not proof of a managed bucket. No URI/policy interpretation, grantee payload,
+effective permission, runtime health or additional safety summary is emitted.
+See [SVG example](../examples/s3-grants.svg); generate HTML with
+`cargo run --locked -- tests/fixtures/s3-grants-plan.json --format html -o output/s3-grants.html`.
+
 ### Multi-Region Access Points (#979)
 
 MRAPs, policies and routes retain independent Logical identities, actions and

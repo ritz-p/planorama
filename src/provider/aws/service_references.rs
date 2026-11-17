@@ -217,6 +217,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::profiles::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::s3_grants::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::s3_mrap::label(resource, attribute) {
         return Some(label);
     }
@@ -866,6 +869,7 @@ pub(crate) fn annotate(
         }
     }
     super::s3_exports::annotate(nodes, references, evidence);
+    super::s3_grants::annotate(nodes, references, evidence);
     super::observability::annotate(nodes, references, evidence);
     super::scraper::annotate(nodes, references, evidence);
     super::streaming::annotate(nodes, references, evidence);
@@ -942,6 +946,7 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::s3_grants::bindings(raw, reference)
         && super::s3_mrap::bindings(raw, reference)
         && super::glue_catalog::bindings(raw, reference)
         && super::glue_network::bindings(raw, reference)
