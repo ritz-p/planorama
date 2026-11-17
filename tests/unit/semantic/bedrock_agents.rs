@@ -386,3 +386,21 @@ fn agent_resources_filter_and_named_states_do_not_supply_missing_endpoints() {
         assert!(!output.contains("<metadata id=\"cross-state-relationships\">"));
     }
 }
+
+#[test]
+fn agent_fields_require_scalar_leaves_and_enrichment_requires_a_system_profile() {
+    let a = "aws_bedrockagent_agent.main";
+    let mut v = fixture();
+    let t = index(&v, a);
+    let role = &mut v["resource_changes"][t]["change"]["after"]["agent_resource_role_arn"];
+    *role = json!([role.clone()]);
+    assert!(!proven(&v, a, "agent_resource_role_arn"));
+    let source = "aws_bedrockagent_data_source.main";
+    let s = index(&v, "aws_bedrock_inference_profile.main");
+    v["resource_changes"][s]["change"]["after"]["type"] = json!("APPLICATION");
+    assert!(!proven(
+        &v,
+        source,
+        "vector_ingestion_configuration.context_enrichment_configuration.bedrock_foundation_model_configuration.model_arn"
+    ));
+}
