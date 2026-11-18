@@ -274,6 +274,13 @@ reference the target bucket when both account IDs and the bucket jurisdiction
 agree. R2 Data Catalog uses a bucket name in the default jurisdiction. Pipeline
 tables are computed; SQL, stream URLs and credentials do not identify endpoints.
 
+Worker mTLS bindings reference account certificates. Hostname certificate authority
+associations require proven zone ownership in the certificate account. Hostname-level
+Authenticated Origin Pulls configurations reference hostname certificates in the same
+zone; a null enable setting voids the association. API Shield operation settings use
+a zone-scoped operation ID. These relationships record configuration. Certificate
+contents, private keys and observed TLS or validation results are excluded.
+
 A managed AI Gateway dynamic route can identify its gateway through an explicit
 `gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
 Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,

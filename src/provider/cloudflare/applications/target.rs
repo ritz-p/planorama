@@ -22,6 +22,9 @@ pub(super) enum Kind<'a> {
     SearchNamespace,
     SearchToken,
     PipelineStream,
+    HostnameCertificate,
+    ShieldOperation,
+    Mtls,
 }
 pub(super) struct Target<'a> {
     pub(super) value: &'a str,
@@ -66,6 +69,21 @@ pub(super) fn fields(
         (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
         (Kind::SearchInstance(_), "cloudflare_ai_search_instance") => &["id"],
         (Kind::SearchNamespace, "cloudflare_ai_search_namespace") => &["name"],
+        (
+            Kind::HostnameCertificate,
+            "cloudflare_authenticated_origin_pulls_hostname_certificate",
+        ) if node.mode == crate::model::EntityMode::Data => &["id", "certificate_id"],
+        (
+            Kind::HostnameCertificate,
+            "cloudflare_authenticated_origin_pulls_hostname_certificate",
+        ) => &["id"],
+        (Kind::ShieldOperation, "cloudflare_api_shield_operation") => &["id", "operation_id"],
+        (Kind::Mtls, "cloudflare_mtls_certificate")
+            if node.mode == crate::model::EntityMode::Data =>
+        {
+            &["id", "mtls_certificate_id"]
+        }
+        (Kind::Mtls, "cloudflare_mtls_certificate") => &["id"],
         (Kind::PipelineStream, "cloudflare_pipeline_stream") => &["id"],
         (Kind::SearchToken, "cloudflare_ai_search_token") => &["id"],
         (Kind::AiGateway, "cloudflare_ai_gateway") => &["id"],
