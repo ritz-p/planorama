@@ -249,11 +249,7 @@ fn owner(e: &Evidence<'_>, i: usize, s: usize, p: &str) -> bool {
 pub(super) fn decode<'a>(p: &str, v: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
     if p == "parameters" {
         let values = v.as_object()?;
-        let strings = values
-            .values()
-            .map(Value::as_str)
-            .collect::<Option<std::collections::BTreeSet<_>>>()?;
-        return (strings.len() == values.len()).then_some(strings);
+        return values.values().map(Value::as_str).collect();
     }
     let uri = v.as_str()?.strip_prefix("s3://")?;
     let b = uri.split('/').next()?;

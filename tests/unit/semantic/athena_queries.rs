@@ -71,3 +71,43 @@ fn athena_queries_requires_scoped_provenance() {
         );
     }
 }
+
+#[test]
+fn lambda_catalog_accepts_one_function_in_both_roles() {
+    let mut input: Value =
+        serde_json::from_str(include_str!("../../fixtures/athena-queries-plan.json")).unwrap();
+    let arn = input["resource_changes"][5]["change"]["after"]["arn"].clone();
+    input["resource_changes"][6]["change"]["after"]["parameters"] =
+        json!({"metadata-function": arn, "record-function": arn});
+    assert!(proven(
+        &input,
+        "aws_athena_data_catalog.sample6",
+        "parameters"
+    ));
+}
+
+#[test]
+fn scoped_named_query_retains_verified_workgroup_owner() {
+    let mut input: Value =
+        serde_json::from_str(include_str!("../../fixtures/athena-queries-plan.json")).unwrap();
+    input["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/fixture"}}]);
+    let parsed = plan::evidence::tests::parse_fixture(&input.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    let query = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_athena_named_query.sample4")
+        .unwrap();
+    let workgroup = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_athena_workgroup.sample2")
+        .unwrap();
+    assert!(query.entity.scope.as_ref().unwrap().account.is_some());
+    assert_eq!(query.entity.scope, workgroup.entity.scope);
+    assert_eq!(
+        query.member_owner.as_ref().unwrap().target,
+        workgroup.entity.provenance[0]
+    );
+}

@@ -69,6 +69,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !matches!(
+            resource,
+            "aws_athena_named_query" | "aws_athena_prepared_statement"
+        )
         && !super::cognito::resource(resource)
         && !super::directory_service::resource(resource)
         && !super::network_monitors::resource(resource)
