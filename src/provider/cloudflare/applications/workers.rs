@@ -5,6 +5,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
             Some("Worker bindings")
         }
+        ("cloudflare_workflow", "script_name") => Some("Workflow script"),
         ("cloudflare_workers_route", "script")
         | ("cloudflare_workers_custom_domain", "service") => Some("Configured Worker"),
         _ => None,
@@ -13,6 +14,25 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 pub(super) fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
+            "workflow" => {
+                row.at("environment")?.require_null()?;
+                let optional = |field| {
+                    let value = row.at(field)?;
+                    value.scalar()?;
+                    if value.value.is_null() {
+                        Ok(None)
+                    } else {
+                        row.text(field).map(Some)
+                    }
+                };
+                Target::new(
+                    row.text("workflow_name")?,
+                    Kind::Workflow {
+                        class: optional("class_name")?,
+                        script: optional("script_name")?,
+                    },
+                )
+            }
             "durable_object_namespace" => {
                 row.at("environment")?.require_null()?;
                 row.at("dispatch_namespace")?.require_null()?;
