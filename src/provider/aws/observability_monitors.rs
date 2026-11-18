@@ -2,6 +2,14 @@ use super::configured_links::{self, Evidence, Rule};
 use crate::model::{AttributeReference, TerraformEntity};
 use crate::semantic::Input;
 use serde_json::Value;
+use std::collections::BTreeSet;
+
+#[derive(Clone, Copy, PartialEq, Eq)]
+enum MonitorFamily {
+    Network,
+    LoadBalancer,
+    WorkSpaces,
+}
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
     Some(match (kind, path) {
@@ -56,11 +64,12 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 ("aws_lb", &["arn"]),
                 ("aws_alb", &["arn"]),
                 ("aws_cloudfront_distribution", &["arn"]),
-                ("aws_workspaces_directory", &["arn"]),
+                ("aws_workspaces_directory", &["id", "directory_id"]),
             ],
             true,
             &[],
-        ),
+        )
+        .decoded(monitor_identifiers),
         (
             "aws_internetmonitor_monitor",
             "internet_measurements_log_delivery.s3_config.bucket_name",
@@ -115,22 +124,115 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
             )
         }),
         "resources" => {
-            let family = |kind: &str| match kind {
-                "aws_vpc" | "aws_cloudfront_distribution" => 1,
-                "aws_lb" | "aws_alb" => 2,
-                "aws_workspaces_directory" => 3,
-                _ => 0,
+            let Some(family) = monitor_family(&e.nodes[source].resource_type) else {
+                return false;
             };
-            let group = family(&e.nodes[source].resource_type);
-            group != 0
-                && r.sources
-                    .iter()
-                    .all(|&index| family(&e.nodes[index].resource_type) == group)
-                && (group != 2 || e.text(source, "load_balancer_type") == Some("network"))
+            r.sources
+                .iter()
+                .all(|&index| monitor_family(&e.nodes[index].resource_type) == Some(family))
+                && match family {
+                    MonitorFamily::Network => true,
+                    MonitorFamily::LoadBalancer => {
+                        e.text(source, "load_balancer_type") == Some("network")
+                    }
+                    MonitorFamily::WorkSpaces => workspace_scope(e, r.target, source),
+                }
         }
         _ => true,
     }
 }
+fn monitor_family(kind: &str) -> Option<MonitorFamily> {
+    match kind {
+        "aws_vpc" | "aws_cloudfront_distribution" => Some(MonitorFamily::Network),
+        "aws_lb" | "aws_alb" => Some(MonitorFamily::LoadBalancer),
+        "aws_workspaces_directory" => Some(MonitorFamily::WorkSpaces),
+        _ => None,
+    }
+}
+
+fn workspace_directory(arn: &str) -> Option<(&str, &str, &str)> {
+    let mut parts = arn.splitn(6, ':');
+    let [
+        Some("arn"),
+        Some("aws"),
+        Some("workspaces"),
+        Some(region),
+        Some(account),
+        Some(resource),
+    ] = std::array::from_fn(|_| parts.next())
+    else {
+        return None;
+    };
+    let id = resource.strip_prefix("directory/")?;
+    (id.strip_prefix("d-").is_some_and(|suffix| {
+        !suffix.is_empty() && suffix.bytes().all(|b| b.is_ascii_alphanumeric())
+    }) && crate::model::AwsAccountScope::new(account).is_some())
+    .then_some((region, account, id))
+}
+
+fn monitor_identifiers<'a>(_: &str, actual: &'a Value) -> Option<BTreeSet<&'a str>> {
+    let items = actual.as_array()?;
+    let identifiers = items
+        .iter()
+        .map(|item| {
+            let arn = item.as_str()?;
+            if let Some((_, _, directory)) = workspace_directory(arn) {
+                Some(directory)
+            } else {
+                arn.starts_with("arn:").then_some(arn)
+            }
+        })
+        .collect::<Option<BTreeSet<_>>>()?;
+    (identifiers.len() == items.len()).then_some(identifiers)
+}
+
+fn workspace_scope(e: &Evidence<'_>, monitor: usize, directory: usize) -> bool {
+    let Some(region) = super::scope::scope(&e.nodes[directory]).and_then(|scope| scope.region)
+    else {
+        return false;
+    };
+    let configured = e.nodes[directory]
+        .provider_configuration
+        .as_ref()
+        .and_then(|provider| provider.account.as_ref());
+    let observed = e.text(monitor, "arn").and_then(|arn| {
+        let mut parts = arn.splitn(6, ':');
+        let [
+            Some("arn"),
+            Some("aws"),
+            Some("internetmonitor"),
+            Some(arn_region),
+            Some(account),
+            Some(resource),
+        ] = std::array::from_fn(|_| parts.next())
+        else {
+            return None;
+        };
+        (arn_region == region.0
+            && resource
+                .strip_prefix("monitor/")
+                .is_some_and(|name| e.text(monitor, "monitor_name") == Some(name)))
+        .then_some(account)
+    });
+    let account = configured
+        .map(crate::model::AwsAccountScope::as_str)
+        .or(observed);
+    account.is_some_and(|account| {
+        observed.is_none_or(|observed| observed == account)
+            && e.value(monitor, "resources")
+                .and_then(Value::as_array)
+                .is_some_and(|items| {
+                    items.iter().all(|item| {
+                        item.as_str().and_then(workspace_directory).is_some_and(
+                            |(arn_region, arn_account, _)| {
+                                arn_region == region.0 && arn_account == account
+                            },
+                        )
+                    })
+                })
+    })
+}
+
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/observability_monitors.rs"]
 mod tests;

@@ -95,6 +95,41 @@
           ]
         }
       }
+    },
+    {
+      "address": "aws_workspaces_directory.sample6",
+      "mode": "managed",
+      "type": "aws_workspaces_directory",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "directory_id": "d-0123456789",
+          "id": "d-0123456789"
+        }
+      }
+    },
+    {
+      "address": "aws_internetmonitor_monitor.sample7",
+      "mode": "managed",
+      "type": "aws_internetmonitor_monitor",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "monitor_name": "fixture-workspaces",
+          "arn": "arn:aws:internetmonitor:us-east-1:123456789012:monitor/fixture-workspaces",
+          "resources": [
+            "arn:aws:workspaces:us-east-1:123456789012:directory/d-0123456789"
+          ]
+        }
+      }
     }
   ],
   "configuration": {
@@ -173,6 +208,28 @@
             "resources": {
               "references": [
                 "aws_vpc.sample4.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_workspaces_directory.sample6",
+          "mode": "managed",
+          "type": "aws_workspaces_directory",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_internetmonitor_monitor.sample7",
+          "mode": "managed",
+          "type": "aws_internetmonitor_monitor",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resources": {
+              "references": [
+                "aws_workspaces_directory.sample6.id"
               ]
             }
           }
