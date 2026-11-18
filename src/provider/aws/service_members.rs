@@ -34,6 +34,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_transfer_web_app_customization" => {
                 ("web_app_id", "Web app owner", "Customization")
             }
+            kind if super::redshift_helpers::owner(kind).is_some() => {
+                super::redshift_helpers::owner(kind).unwrap()
+            }
             kind if super::redshift_snapshots::owner(kind).is_some() => {
                 super::redshift_snapshots::owner(kind).unwrap()
             }

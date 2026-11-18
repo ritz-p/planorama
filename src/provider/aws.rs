@@ -134,6 +134,7 @@ pub(crate) mod rds_auxiliary;
 mod rds_proxy;
 mod redshift_cluster;
 mod redshift_endpoints;
+pub(crate) mod redshift_helpers;
 mod redshift_snapshots;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]

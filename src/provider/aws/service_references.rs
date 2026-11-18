@@ -61,6 +61,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::redshift_endpoints::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::redshift_helpers::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::redshift_snapshots::label(resource, attribute) {
         return Some(label);
     }
@@ -921,6 +924,7 @@ pub(crate) fn annotate(
     super::private_ca_references::annotate(nodes, references, evidence);
     super::rolesanywhere::annotate(nodes, references, evidence);
     super::redshift_cluster::annotate(nodes, references, evidence);
+    super::redshift_helpers::annotate(nodes, references, evidence);
     super::redshift_snapshots::annotate(nodes, references, evidence);
     super::redshift_endpoints::annotate(nodes, references, evidence);
     super::transfer_identity::annotate(nodes, references, evidence);
@@ -994,6 +998,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::private_ca_references::bindings(raw, reference)
         && super::rolesanywhere::bindings(raw, reference)
         && super::redshift_cluster::bindings(raw, reference)
+        && super::redshift_helpers::bindings(raw, reference)
         && super::redshift_snapshots::bindings(raw, reference)
         && super::redshift_endpoints::bindings(raw, reference)
         && super::transfer_identity::bindings(raw, reference)
@@ -1632,6 +1637,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         }
         if super::dms_serverless::indexed(&node.resource_type, &reference.attribute)
             || super::dms_migration::indexed(&node.resource_type, &reference.attribute)
+            || super::redshift_helpers::indexed(&node.resource_type, &reference.attribute)
             || super::dms_events::indexed(&node.resource_type, &reference.attribute)
             || super::dms_references::indexed(&node.resource_type, &reference.attribute)
             || super::agentcore_services::indexed(&node.resource_type, &reference.attribute)
