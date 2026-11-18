@@ -635,3 +635,7 @@ and [tests](../tests/unit/semantic/cloud_map.rs).
 ### EMR clusters (#841)
 
 Cluster placement uses one configured EC2 subnet form and complete security group evidence for the same VPC. Additional security groups are comma-separated IDs. Instance profiles, service and scaling roles, security configurations, log keys, S3 log buckets and custom AMIs retain their own identities. A fleet, instance group or managed scaling policy can appear under its cluster when its cluster ID is verified and the helper has no external consumer. Instance specifications do not create EC2 resources.
+
+### EMR Studio (#842)
+
+Studios resolve VPC, subnet and security group IDs, service and SSO-only user role ARNs, the encryption key and S3 backup bucket. Unshared mappings resolve the Studio and their IAM session policy. Placement requires the explicit VPC and every configured subnet, engine group and workspace group to agree. A session mapping can appear with its Studio. Identity Store user and group names alone do not establish a store-qualified identity.

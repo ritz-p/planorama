@@ -678,7 +678,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_emr_instance_group", "Amazon EMR", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emr_managed_scaling_policy", "Amazon EMR", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emr_security_configuration", "Amazon EMR", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
-    entry!("aws_emr_studio", "Amazon EMR", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
+    entry!("aws_emr_studio", "Amazon EMR", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emr_studio_session_mapping", "Amazon EMR", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emrcontainers_job_template", "Amazon EMR on EKS", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emrcontainers_virtual_cluster", "Amazon EMR on EKS", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),

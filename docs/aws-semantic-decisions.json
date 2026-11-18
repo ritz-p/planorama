@@ -25483,10 +25483,10 @@
       }
     },
     "aws_emr_studio": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 842,
-      "gap": "#722 reviewed: Missing: explicit VPC/subnets/SGs, IAM roles, KMS ARN and S3 backup location; auth_mode gates user role. URL is not endpoint identity. Follow-up #842.",
+      "gap": "Implemented #842 following audit #722. Studios resolve VPC, subnet and security group IDs, service and SSO-only user role ARNs, the encryption key and S3 backup bucket. Unshared mappings resolve the Studio and their IAM session policy.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25565,10 +25565,10 @@
       }
     },
     "aws_emr_studio_session_mapping": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 842,
-      "gap": "#722 reviewed: Missing: studio ID and IAM policy ARN; session_policy_arn is not user-role ARN. Defer Identity Store user/group until store-qualified proof exists; names/GUID alone do not identify its store. Follow-up #842.",
+      "gap": "Implemented #842 following audit #722. Studios resolve VPC, subnet and security group IDs, service and SSO-only user role ARNs, the encryption key and S3 backup bucket. Unshared mappings resolve the Studio and their IAM session policy.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

@@ -210,3 +210,4 @@ examples/redshift-serverless-helpers.svg
 examples/analytics-databases.svg
 examples/dsql.svg
 examples/emr-cluster.svg
+examples/emr-studio.svg
