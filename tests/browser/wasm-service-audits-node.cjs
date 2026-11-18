@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {fixture: 'backup-restore-plan', focus: 'aws_backup_restore_testing_selection.main', target: 3, mask: {recovery_point_selection: true}},
   {fixture: 'backup-report-plan', focus: 'aws_backup_report_plan.main', target: 3, mask: {report_setting: true}},
 ];
 for (const entry of cases) {
