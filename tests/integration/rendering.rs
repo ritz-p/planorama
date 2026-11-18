@@ -885,7 +885,9 @@ fn relationship_index_examples_use_available_width_for_complete_entry_cards() {
 
 #[test]
 fn cli_emits_containment_metadata_without_dropping_resources_or_dependencies() {
-    let svg = render(include_bytes!("../fixtures/containment-plan.json"));
+    let svg = render(include_bytes!(
+        "../../examples/aws-emulator/containment/create.json"
+    ));
     assert_eq!(
         svg,
         include_str!("../../examples/containment.svg").replace("\r\n", "\n")

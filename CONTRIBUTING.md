@@ -156,3 +156,13 @@ with `--network none` and loopback up. Prepare tools and build the CLI before
 entering an offline container. Required OS commands include iproute2, util-linux,
 curl, dpkg-deb and unzip. The generator uses a local provider mirror and the
 emulator's generated TLS CA and credentials. Keep all saved plans local.
+
+The standard containment diagram uses `examples/aws-emulator/containment/main.tf`.
+Run `sh scripts/aws-emulator/generate.sh containment`, then pass the resulting
+`create.json` to `node scripts/aws-emulator/create-snapshot.cjs` and redirect it
+to `examples/aws-emulator/containment/create.json`. The snapshot omits only the
+top-level plan timestamp. Run `sh scripts/update-examples.sh` to render it.
+The local export retains the original JSON and binary for every phase.
+The compact `tests/fixtures/containment-plan.json` supports tests that mutate
+individual actions and reference evidence. The Terraform-only module and remote
+state examples in `examples/terraform/` continue to use their offline flow.
