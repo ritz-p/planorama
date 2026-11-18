@@ -1,4 +1,5 @@
 mod content;
+mod identity;
 
 use crate::model::{AttributeReference, AwsAccountScope, Graph, TerraformEntity};
 use crate::semantic::Input;
@@ -45,12 +46,12 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         (SOURCE, "parameters.s3.manifest_file_location.bucket") => {
             ("aws_s3_bucket", &["id", "bucket"], "Manifest bucket")
         }
-        _ => return content::rule(kind, path),
+        _ => return content::rule(kind, path).or_else(|| identity::rule(kind, path)),
     })
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
-    matches!(kind, CONNECTION | SOURCE) || content::resource(kind)
+    matches!(kind, CONNECTION | SOURCE) || content::resource(kind) || identity::resource(kind)
 }
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
@@ -72,6 +73,9 @@ pub(crate) fn indexed(kind: &str, path: &str) -> bool {
 }
 
 fn fields(kind: &str, path: &str, endpoint: &str) -> &'static [&'static str] {
+    if kind == "aws_quicksight_user" && path == "iam_arn" && endpoint == "aws_iam_user" {
+        return &["arn"];
+    }
     if kind == "aws_quicksight_folder_membership" && path == "member_id" {
         return content::member_output(endpoint);
     }
@@ -192,13 +196,22 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
                 right.provider_configuration.as_ref(),
                 left.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
                 right.entity.scope.as_ref().and_then(|s| s.region.as_ref()),
-                right.resource_type == "aws_iam_role",
+                matches!(
+                    right.resource_type.as_str(),
+                    "aws_iam_role" | "aws_iam_user" | "aws_iam_policy"
+                ),
             )
         })
 }
 
 fn decode<'a>(path: &str, actual: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
-    if matches!(path, "subnet_ids" | "security_group_ids") {
+    if matches!(
+        path,
+        "subnet_ids" | "security_group_ids" | "identities.group" | "identities.user"
+    ) {
+        if !actual.is_array() {
+            return None;
+        }
         super::nested_references::leaf_values(path, actual)
     } else {
         content::decode(path, actual)
@@ -217,35 +230,61 @@ pub(super) fn annotate(
             label(&node.resource_type, &r.attribute)?;
             let (v, m) = evidence[r.target];
             let content = content::resource(&node.resource_type);
-            let verified = (content || qualified(v, m, &r.attribute))
-                && super::nested_references::verify_values(
-                    nodes,
-                    refs,
-                    evidence,
-                    r,
-                    fields,
-                    |s, path| {
-                        let endpoint = &nodes[s];
-                        let (ev, em) = evidence[s];
-                        (!content || content::qualifies(nodes, refs, evidence, r, s, path))
-                            && account(node, v, m)
-                                .zip(account(endpoint, ev, em))
-                                .is_some_and(|(a, b)| a == b)
-                            && super::eventbridge::bindings(
-                                node.provider_configuration.as_ref(),
-                                endpoint.provider_configuration.as_ref(),
-                                super::scope::scope(node)
-                                    .as_ref()
-                                    .and_then(|s| s.region.as_ref()),
-                                super::scope::scope(endpoint)
-                                    .as_ref()
-                                    .and_then(|s| s.region.as_ref()),
-                                endpoint.resource_type == "aws_iam_role",
-                            )
-                    },
-                    (content::COLLECTIONS, decode),
-                )
-                .is_some();
+            let identity = identity::resource(&node.resource_type);
+            let compatible = |s: usize| {
+                let endpoint = &nodes[s];
+                let (ev, em) = evidence[s];
+                account(node, v, m)
+                    .zip(account(endpoint, ev, em))
+                    .is_some_and(|(a, b)| a == b)
+                    && super::eventbridge::bindings(
+                        node.provider_configuration.as_ref(),
+                        endpoint.provider_configuration.as_ref(),
+                        super::scope::scope(node)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        super::scope::scope(endpoint)
+                            .as_ref()
+                            .and_then(|s| s.region.as_ref()),
+                        matches!(
+                            endpoint.resource_type.as_str(),
+                            "aws_iam_role" | "aws_iam_user" | "aws_iam_policy"
+                        ),
+                    )
+            };
+            let verified = if r.attribute == "iam_identity_center_instance_arn" {
+                super::lambda_core::unique(refs, r.target, &r.attribute).is_some()
+                    && super::service_evidence::known(evidence, r.target, "authentication_method")
+                        == Some("IAM_IDENTITY_CENTER")
+                    && super::service_evidence::known(evidence, r.target, &r.attribute).is_some_and(
+                        |v| super::identity_center_instance::verify(nodes, r, evidence, v),
+                    )
+                    && compatible(r.sources[0])
+            } else {
+                (content || identity || qualified(v, m, &r.attribute))
+                    && super::nested_references::verify_values(
+                        nodes,
+                        refs,
+                        evidence,
+                        r,
+                        fields,
+                        |s, path| {
+                            compatible(s)
+                                && (!content
+                                    || content::qualifies(nodes, refs, evidence, r, s, path))
+                                && (!identity || identity::qualifies(nodes, evidence, r, s, path))
+                        },
+                        (
+                            if identity {
+                                &["key_registration"]
+                            } else {
+                                content::COLLECTIONS
+                            },
+                            decode,
+                        ),
+                    )
+                    .is_some()
+            };
             let parents = if verified
                 && node.resource_type == CONNECTION
                 && matches!(r.attribute.as_str(), "subnet_ids" | "security_group_ids")

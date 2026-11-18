@@ -159,3 +159,47 @@ fn content_links_require_compatible_type_version_and_acyclic_folders() {
         "source_entity.source_template.data_set_references.data_set_arn"
     ));
 }
+
+#[test]
+fn membership_and_registered_keys_require_unmasked_namespace_scoped_identities() {
+    let mut value: Value =
+        serde_json::from_str(include_str!("../../fixtures/quicksight-identity-plan.json")).unwrap();
+    for (address, path) in [
+        ("aws_quicksight_group.g", "namespace"),
+        ("aws_quicksight_user.u", "namespace"),
+        ("aws_quicksight_group_membership.g", "group_name"),
+        ("aws_quicksight_group_membership.g", "member_name"),
+        (
+            "aws_quicksight_key_registration.keys",
+            "key_registration.key_arn",
+        ),
+        ("aws_quicksight_iam_policy_assignment.p", "identities.group"),
+        ("aws_quicksight_iam_policy_assignment.p", "identities.user"),
+    ] {
+        assert!(verified(&value, address, path), "{address}/{path}");
+    }
+    value["resource_changes"][1]["change"]["after"]["namespace"] = json!("other");
+    assert!(!verified(
+        &value,
+        "aws_quicksight_group_membership.g",
+        "group_name"
+    ));
+    assert!(verified(
+        &value,
+        "aws_quicksight_group_membership.g",
+        "member_name"
+    ));
+    value["resource_changes"][5]["change"]["after_unknown"] = json!({"key_registration":true});
+    assert!(!verified(
+        &value,
+        "aws_quicksight_key_registration.keys",
+        "key_registration.key_arn"
+    ));
+    value["resource_changes"][6]["change"]["after"]["identities"][0]["user"] =
+        json!(["person", "other"]);
+    assert!(!verified(
+        &value,
+        "aws_quicksight_iam_policy_assignment.p",
+        "identities.user"
+    ));
+}

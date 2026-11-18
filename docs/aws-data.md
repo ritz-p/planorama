@@ -1068,3 +1068,20 @@ Folder parent links reject cycles. Membership uses the folder's `folder_id`
 and the selected member's `analysis_id`, `dashboard_id` or `data_set_id`.
 Ingestions and refresh schedules use the dataset ID. Base themes use the theme
 ID. Literal IDs, built-in themes and composite Terraform IDs remain unresolved.
+
+### QuickSight identity and key registration
+
+Groups and users link to a managed namespace by `namespace`. Group and role
+membership and user permissions compare user/group names within the same known
+namespace, account and region. Custom permissions use `custom_permissions_name`.
+IAM policy assignments accept the policy ARN and complete `identities.group` and
+`identities.user` sets. QuickSight roles are service enums; membership and policy
+references describe configuration.
+
+An IAM user registration requires `identity_type = IAM` and an explicit IAM
+user or role ARN. A session-qualified role requires agreement between the role
+name, session name and registered user name. Key registrations verify each
+`key_registration.key_arn` against a KMS key. Account subscriptions accept the
+Directory Service ID for ACTIVE_DIRECTORY or a single explicitly referenced
+Identity Center instance ARN for IAM_IDENTITY_CENTER. Identity store enums,
+effective access and encryption of individual datasets are outside these links.
