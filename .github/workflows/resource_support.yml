@@ -17,6 +17,7 @@ on:
       - 'tests/fixtures/cloudflare-captured/**'
       - 'scripts/aws-inventory.cjs'
       - 'scripts/aws-inventory-diff.cjs'
+      - 'scripts/provider-schema-diff.cjs'
       - 'scripts/aws-semantic-audit.cjs'
       - 'scripts/dms-fixtures.cjs'
       - 'tests/fixtures/dms-*'
