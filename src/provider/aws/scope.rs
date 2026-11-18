@@ -46,6 +46,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_emr_studio_session_mapping"
                 | "aws_emrcontainers_virtual_cluster"
                 | "aws_emrcontainers_job_template"
+                | "aws_emrserverless_application"
                 | "aws_emr_cluster"
                 | "aws_emr_instance_group"
                 | "aws_emr_instance_fleet"

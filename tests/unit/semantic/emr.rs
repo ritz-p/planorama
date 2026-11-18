@@ -134,3 +134,36 @@ fn emr_containers_requires_verified_configuration() {
         None
     );
 }
+
+#[test]
+fn emr_serverless_requires_verified_configuration() {
+    let mut v: Value =
+        serde_json::from_str(include_str!("../../fixtures/emr-serverless-plan.json")).unwrap();
+    for p in [
+        super::NET_SUBNETS,
+        super::NET_GROUPS,
+        super::CW_LOG,
+        super::CW_KEY,
+        super::PERSIST_KEY,
+        super::S3_URI,
+        super::S3_KEY,
+    ] {
+        assert!(verified(&v, 7, p), "{p}");
+    }
+    assert_eq!(
+        parent(&graph(&v), "aws_emrserverless_application.main").as_deref(),
+        Some("aws_vpc.main")
+    );
+    let config = &mut v["resource_changes"][7]["change"]["after"]["monitoring_configuration"][0];
+    config["cloudwatch_logging_configuration"][0]["enabled"] = json!(false);
+    config["managed_persistence_monitoring_configuration"][0]["enabled"] = json!(false);
+    for p in [super::CW_LOG, super::CW_KEY, super::PERSIST_KEY] {
+        assert!(!verified(&v, 7, p), "{p}");
+    }
+    assert!(verified(&v, 7, super::S3_KEY));
+    v["resource_changes"][7]["change"]["after_unknown"] = json!({"network_configuration":true});
+    assert_eq!(
+        parent(&graph(&v), "aws_emrserverless_application.main"),
+        None
+    );
+}
