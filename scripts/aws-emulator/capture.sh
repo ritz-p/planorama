@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
-repo=$1 tools=$2 binary=$3 scratch=$4 artifact=$5 sample=$6
+repo=$1 tools=$2 binary=$3 scratch=$4 artifact=$5 sample=$6 mode=$7
 # A private network namespace can still see the host sysfs mount.
 [ "$(ip -o link show | cut -d: -f2 | tr -d ' ')" = lo ] || { echo 'Capture requires a loopback-only network namespace' >&2; exit 1; }
 if ! ip -o link show lo | grep -q '<[^>]*UP'; then ip link set lo up; fi
@@ -43,6 +43,7 @@ tf() { timeout 5m "$tools/terraform" -chdir=module "$@"; }
 tf init -lockfile=readonly -input=false -no-color
 phases="create refreshed destroy"
 if [ "$sample" = queue ]; then phases="create refreshed update destroy"; fi
+if [ "$mode" = --create-only ]; then phases=create; fi
 for phase in $phases; do
     set --
     case $phase in update) set -- -var=delay_seconds=5;; destroy) set -- -destroy;; esac
@@ -51,9 +52,9 @@ for phase in $phases; do
     for format in svg html; do
         "$binary" "$artifact/$phase.json" --format "$format" -o "$artifact/$phase.$format"
     done
-    if [ "$phase" = create ] || [ "$phase" = destroy ]; then
+    if [ "$mode" = full ] && { [ "$phase" = create ] || [ "$phase" = destroy ]; }; then
         tf apply -input=false -no-color "$artifact/$phase.tfplan"
     fi
 done
-node "$repo/tests/emulator/$sample.cjs" "$artifact"
+if [ "$mode" = full ]; then node "$repo/tests/emulator/$sample.cjs" "$artifact"; fi
 node "$repo/scripts/aws-emulator/check-artifacts.cjs" "$artifact" "$AWS_SHARED_CREDENTIALS_FILE"

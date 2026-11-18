@@ -1,0 +1,44 @@
+name: Terraform emulator samples
+on:
+  pull_request:
+    paths:
+      - examples/aws-emulator/**
+      - examples/terraform-large/main.tf.json
+      - examples/terraform-large/**/*.tf.json
+      - examples/terraform-large/.terraform.lock.hcl
+      - examples/terraform-large/plan.json
+      - examples/containment.svg
+      - scripts/aws-emulator/**
+      - scripts/update-examples.sh
+      - tests/emulator/**
+      - .github/workflows/emulator_samples.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  samples:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PLANORAMA_BIN: ${{ github.workspace }}/target/release/planorama
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Build native renderer
+        run: cargo build --locked --release --bin planorama
+      - name: Install pinned sample tools
+        env:
+          SUITE: ${{ github.event_name == 'workflow_dispatch' && 'large' || 'standard' }}
+        run: sh scripts/aws-emulator/prepare.sh "$SUITE"
+      - name: Verify capture in a loopback-only namespace
+        env:
+          SUITE: ${{ github.event_name == 'workflow_dispatch' && 'full' || 'pr' }}
+        run: |
+          sudo unshare --net sh -ec '
+            ip link set lo up
+            exec setpriv --reuid "$1" --regid "$2" --clear-groups --no-new-privs \
+              env PLANORAMA_BIN="$3" sh scripts/aws-emulator/check-samples.sh "$4"
+          ' sh "$(id -u)" "$(id -g)" "$PLANORAMA_BIN" "$SUITE"
