@@ -29,6 +29,33 @@ When updating the pin, update the version/revision together in the acquisition
 and inventory scripts, regenerate the inventory, and check changed contracts
 before changing classifications or reference rules.
 
+### Audit a candidate provider release
+
+From the repository root, select an exact candidate version and capture the
+report. Terraform initializes isolated directories for both versions and reads
+their schemas. The audit uses the installed provider selections and the current
+Cloudflare support matrix. It requires no account credentials or plan/state.
+
+```sh
+mkdir -p output
+sh scripts/audit-cloudflare-provider.sh 5.29.0 > output/cloudflare-5.29.0-diff.json
+```
+
+Review `counts` and `records` separately for managed resources and data sources.
+Each record contains structural JSON Pointer changes, the existing classification,
+conditional references and endpoint contract when available. The audit verifies
+the pinned schema fingerprint and requires complete matrix coverage. It compares
+schema versions, flags, types, nested attributes and nested blocks, ignoring
+description prose. Classify new types and review removals, changed scope paths,
+reference inputs and changes on endpoint types.
+
+Endpoint flags identify types that supply a reference target. Confirm ID and
+alias semantics against the candidate's provider source, official
+documentation and captured Terraform plans before changing a runtime contract.
+The audit writes the report to stdout and refreshes the disposable support matrix
+under `output/`. The pinned inventory and renderer change only through a separate
+reviewed edit.
+
 ## Capability levels
 
 - **Basic**: known type and mode, provider label, conservative Spatial/Logical
