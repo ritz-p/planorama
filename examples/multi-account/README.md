@@ -74,5 +74,4 @@ crops under `output/multi-account-review`; its account crop uses the whole state
 when account evidence is absent.
 
 The concentrated [routing stress fixture](../../tests/fixtures/routing-stress/account-high-fanin.json)
-is excluded from routine rendering because of its cost. Spacing calibration is in
-[spacing calibration](../terraform-large/spacing-calibration.md).
+is excluded from routine rendering because of its cost. See [spacing calibration](../../docs/ci.md#on-demand-spacing-calibration) for the separate budget comparison.

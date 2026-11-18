@@ -125,9 +125,20 @@ Optional `source_sha` must be a full lowercase commit SHA; checkout verifies it.
 gh workflow run spacing_calibration.yml --ref main -f source_sha="$(git rev-parse HEAD)"
 ```
 
-The `spacing-calibration-<SHA>` artifact retains JSON and nine SVGs for 14 days.
-[Local calibration](../examples/terraform-large/spacing-calibration.md) compares
-budgets without changing maintained examples. Timings are observations, not gates.
+Run the same comparison locally from the repository root:
+
+```sh
+docker compose exec -T -e PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration dev cargo test --locked --lib budget_calibration -- --ignored --nocapture
+```
+
+The test runs the current routing algorithm with the old numerical limits (2 sweeps,
+6 attempts, 64 px growth), the [current limits](routing.md), and doubled limits on
+the same initial geometry. It covers the large Terraform fixture, dense parallel
+corridors, and protected junctions. Compare attempts, accepted expansions, residual
+spacing deficits, canvas dimensions and per-edge bends, length and backtracking in
+`spacing-calibration.json`. Inspect the three SVG variants for each fixture.
+CI retains the JSON and nine SVGs in `spacing-calibration-<SHA>` for 14 days.
+Timings are observational. Recalibrate when workloads or routing policy change.
 
 ## When generation runs
 

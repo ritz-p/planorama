@@ -419,7 +419,7 @@ residual close length, visible minimum gap and both minimum/preferred deficits;
 deterministic fallback preserves valid
 routes when capacity, obstacles or budgets prevent improvement.
 
-See the [budget calibration](../examples/terraform-large/spacing-calibration.md)
+See the [budget calibration](ci.md#on-demand-spacing-calibration)
 for previous-limit and doubled-candidate comparisons and CI artifacts.
 
 SVG rendering consumes the final geometry and rounds corners without changing

@@ -4,9 +4,7 @@ For the combined multi-state/region fixture and account evidence limits, see
 [the maintained 250-input example](../multi-account/README.md). This smaller
 fixture remains its reusable source and a focused single-state reference.
 
-Current spacing budgets and their CI comparison are documented in
-[spacing calibration](spacing-calibration.md). Earlier measurements below retain
-their original revision labels.
+See the [routing budget](../../docs/routing.md) and [spacing calibration procedure](../../docs/ci.md#on-demand-spacing-calibration) to compare this fixture across budgets.
 
 The JSON-formatted Terraform source is split across `network`, `application`,
 `database`, and `shared` modules. Module membership differs from containment:
