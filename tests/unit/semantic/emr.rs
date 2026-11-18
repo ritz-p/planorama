@@ -58,6 +58,7 @@ fn cluster_configuration_and_owned_helpers_require_complete_inputs() {
         )
     }) {
         assert!(n.member_owner.is_some(), "{}", n.address);
+        assert!(crate::view::presentation::owner(&g, n).is_some());
     }
     v["resource_changes"][11]["change"]["after"]["ec2_attributes"][0]["additional_slave_security_groups"] =
         json!("sg-example,sg-unconfigured");

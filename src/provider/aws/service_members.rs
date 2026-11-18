@@ -417,6 +417,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if ((matches!(
             node.resource_type.as_str(),
             "aws_globalaccelerator_listener"
+                | "aws_emr_instance_fleet"
+                | "aws_emr_instance_group"
+                | "aws_emr_managed_scaling_policy"
                 | "aws_globalaccelerator_custom_routing_listener"
                 | "aws_vpc_route_server_peer"
                 | "aws_flow_log"
