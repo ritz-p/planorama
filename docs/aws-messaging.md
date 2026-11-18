@@ -662,3 +662,16 @@ subnet attachment. Key id contains key material; neither it, api_key_id nor key
 is parsed or displayed. Type SDL/JSON definitions create no resources or edges.
 Caching behavior and type format summaries remain outside the bounded contract.
 See [tests](../tests/unit/semantic/appsync_helpers.rs).
+
+### MSK Connect
+
+The connector belongs to a VPC only when all configured subnets and security groups agree. Configurations and plugins require their explicit revision output on the same instance. Bootstrap servers, connector settings and logs supply no cluster identity.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_mskconnect_connector` | `kafka_cluster.apache_kafka_cluster.vpc.subnets` | `aws_subnet` (`id`) |
+|  | `kafka_cluster.apache_kafka_cluster.vpc.security_groups` | `aws_security_group` (`id`) |
+|  | `service_execution_role_arn` | `aws_iam_role` (`arn`) |
+|  | `plugin.custom_plugin.arn` | `aws_mskconnect_custom_plugin` (`arn`) |
+|  | `worker_configuration.arn` | `aws_mskconnect_worker_configuration` (`arn`) |
+| `aws_mskconnect_custom_plugin` | `location.s3.bucket_arn` | `aws_s3_bucket` (`arn`) |
