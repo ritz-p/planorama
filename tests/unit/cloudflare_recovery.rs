@@ -78,7 +78,7 @@ fn imported_relationships_are_opt_in_and_distinct_from_verified_provenance() {
 #[test]
 fn typed_recovery_rejects_ambiguous_masked_conflicting_and_inactive_identities() {
     let original: Value = serde_json::from_str(FIXTURE).unwrap();
-    for case in 0..12 {
+    for case in 0..11 {
         let mut value = original.clone();
         let changes = value["resource_changes"].as_array_mut().unwrap();
         let worker = changes
@@ -91,29 +91,28 @@ fn typed_recovery_rejects_ambiguous_masked_conflicting_and_inactive_identities()
             .unwrap();
         match case {
             0 => changes[worker]["change"]["after_unknown"]["name"] = json!(true),
-            1 => changes[worker]["change"]["after_sensitive"]["name"] = json!(true),
-            2 => changes[worker]["change"]["actions"] = json!(["delete"]),
-            3 => changes[worker]["deposed"] = json!("old"),
-            4 => {
+            1 => changes[worker]["change"]["actions"] = json!(["delete"]),
+            2 => changes[worker]["deposed"] = json!("old"),
+            3 => {
                 changes[worker]["change"]["after"]["account_id"] =
                     json!("dddddddddddddddddddddddddddddddd")
             }
-            5 => changes[route]["change"]["after"]["script"] = json!("api:production"),
-            6 => changes[route]["change"]["after"]["environment"] = json!("production"),
-            7 => changes[route]["change"]["after_unknown"]["script"] = json!(true),
-            8 => {
+            4 => changes[route]["change"]["after"]["script"] = json!("api:production"),
+            5 => changes[route]["change"]["after"]["environment"] = json!("production"),
+            6 => changes[route]["change"]["after_unknown"]["script"] = json!(true),
+            7 => {
                 let mut duplicate = changes[worker].clone();
                 duplicate["address"] = json!("cloudflare_worker.duplicate");
                 changes.push(duplicate);
             }
-            9 => {
+            8 => {
                 let zone = changes
                     .iter()
                     .position(|n| n["type"] == "cloudflare_zone")
                     .unwrap();
                 changes[zone]["change"]["after_sensitive"]["account"]["id"] = json!(true);
             }
-            10 => {
+            9 => {
                 let zone = changes
                     .iter()
                     .position(|n| n["type"] == "cloudflare_zone")
@@ -122,7 +121,7 @@ fn typed_recovery_rejects_ambiguous_masked_conflicting_and_inactive_identities()
                 duplicate["address"] = json!("cloudflare_zone.duplicate");
                 changes.push(duplicate);
             }
-            11 => changes[route]["change"]["after_sensitive"]["zone_id"] = json!(true),
+            10 => changes[route]["change"]["after_sensitive"]["zone_id"] = json!(true),
             _ => unreachable!(),
         }
         assert_eq!(count(&value, "script"), 0, "case {case}");

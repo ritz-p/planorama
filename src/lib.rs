@@ -16,6 +16,9 @@ mod layout;
 mod model;
 mod plan;
 mod provider;
+#[cfg(all(test, not(target_arch = "wasm32")))]
+#[path = "../tests/unit/reference_properties.rs"]
+mod reference_properties;
 mod semantic;
 mod services;
 mod svg;
