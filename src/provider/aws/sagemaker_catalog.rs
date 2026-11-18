@@ -194,14 +194,26 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, s: usize, path: &str) -> 
                     && !a.contains("/version/")
                     && a.split('/').count() == 4
             }),
-        ("aws_sagemaker_feature_group", p) if p.ends_with(".table_name") => e.same_endpoint(
-            r.target,
-            "offline_store_config.0.data_catalog_config.0.database",
-            s,
-            "database_name",
-            "aws_glue_catalog_database",
-            "name",
-        ),
+        ("aws_sagemaker_feature_group", "offline_store_config.data_catalog_config.database") => {
+            catalog_matches(e, r.target, s)
+        }
+        ("aws_sagemaker_feature_group", "offline_store_config.data_catalog_config.table_name") => {
+            catalog_matches(e, r.target, s)
+                && super::lambda_core::unique(e.refs, s, "database_name").is_some_and(|reference| {
+                    let [database] = reference.sources.as_slice() else {
+                        return false;
+                    };
+                    catalog_matches(e, r.target, *database)
+                })
+                && e.same_endpoint(
+                    r.target,
+                    "offline_store_config.0.data_catalog_config.0.database",
+                    s,
+                    "database_name",
+                    "aws_glue_catalog_database",
+                    "name",
+                )
+        }
         ("aws_sagemaker_project", p) if p.ends_with(".provisioning_artifact_id") => e
             .same_endpoint(
                 r.target,
@@ -236,6 +248,14 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, s: usize, path: &str) -> 
         _ => true,
     }
 }
+fn catalog_matches(e: &Evidence<'_>, feature_group: usize, endpoint: usize) -> bool {
+    e.text(
+        feature_group,
+        "offline_store_config.0.data_catalog_config.0.catalog",
+    )
+    .is_some_and(|catalog| e.text(endpoint, "catalog_id") == Some(catalog))
+}
+
 fn empty(e: &Evidence<'_>, i: usize, p: &str) -> bool {
     e.value(i, p)
         .is_some_and(|v| v.is_null() || v.as_array().is_some_and(Vec::is_empty))
