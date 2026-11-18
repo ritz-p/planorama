@@ -63,15 +63,8 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _s: usize, _path: &str) -> bool {
-    match (
-        e.nodes[r.target].resource_type.as_str(),
-        r.attribute.as_str(),
-    ) {
-        (_, p) => {
-            let (v, m) = e.values[r.target];
-            super::firehose::configuration_verified(p, v, m)
-        }
-    }
+    let (values, mask) = e.values[r.target];
+    super::firehose::configuration_verified(&r.attribute, values, mask)
 }
 
 #[cfg(test)]
