@@ -1029,3 +1029,59 @@ Elastic clusters use direct subnet and security group ID sets. Neptune private g
 ### Aurora DSQL (#767)
 
 Cluster policies and peerings resolve their local cluster by `identifier`. A cluster's configured `multi_region_properties.clusters` and a peering's `clusters` resolve managed clusters by ARN across regions when the account, partition, resource identifier and effective regions agree. The witness region is configuration. Cluster encryption accepts an explicit KMS key ARN. The AWS-owned key sentinel keeps the default presentation.
+
+### QuickSight connections and data sources
+
+A VPC connection verifies `role_arn` against an IAM role ARN and the complete
+`subnet_ids` and `security_group_ids` sets against managed IDs. Both sets must
+prove the same managed VPC before the connection has VPC context. Consumers
+retain their own scope. Resolver IPs do not identify Route 53 resources.
+
+A data source accepts singleton blocks for `vpc_connection_properties.vpc_connection_arn`
+and the mutually exclusive `credentials.copy_source_arn` or `credentials.secret_arn`.
+The targets are the matching connection, data source or Secrets Manager ARN.
+Within the selected `parameters` block, ATHENA accepts `athena.work_group`
+(workgroup name) and `athena.role_arn`. RDS accepts `rds.instance_id` (DB instance
+identifier), REDSHIFT accepts `redshift.cluster_id` (cluster identifier), and S3
+accepts `s3.manifest_file_location.bucket` (bucket or ID) and `s3.role_arn`.
+AMAZON_ELASTICSEARCH accepts `amazon_elasticsearch.domain` against an Elasticsearch
+domain name. The pinned provider has no OpenSearch parameter block or managed IoT
+Analytics dataset. Missing, masked, incompatible or literal-only evidence leaves
+the typed link unverified. Credentials and connection strings remain private.
+
+### QuickSight content navigation
+
+Analysis and dashboard references use `theme_arn`, `source_entity.source_template.arn`,
+its `data_set_references.data_set_arn` substitutions, or
+`definition.data_set_identifiers_declarations.data_set_arn`. Templates select one
+source analysis or template and verify all configured source-analysis dataset
+substitutions. These fields match the target ARN. A template ARN with a version
+suffix also requires that version on the target. A template alias matches
+`template_id` and `template_version_number` against the same template.
+
+Dataset data-source ARNs are scoped to each physical table's custom SQL,
+relational or S3 source. Logical table `source.data_set_arn` and row-level
+permission dataset `arn` point to independent datasets. Local table-map keys
+and SQL text do not identify resources.
+
+Folder parent links reject cycles. Membership uses the folder's `folder_id`
+and the selected member's `analysis_id`, `dashboard_id` or `data_set_id`.
+Ingestions and refresh schedules use the dataset ID. Base themes use the theme
+ID. Literal IDs, built-in themes and composite Terraform IDs remain unresolved.
+
+### QuickSight identity and key registration
+
+Groups and users link to a managed namespace by `namespace`. Group and role
+membership and user permissions compare user/group names within the same known
+namespace, account and region. Custom permissions use `custom_permissions_name`.
+IAM policy assignments accept the policy ARN and complete `identities.group` and
+`identities.user` sets. QuickSight roles are service enums; membership and policy
+references describe configuration.
+
+An IAM user registration requires `identity_type = IAM` and an explicit IAM
+user or role ARN. A session-qualified role requires agreement between the role
+name, session name and registered user name. Key registrations verify each
+`key_registration.key_arn` against a KMS key. Account subscriptions accept the
+Directory Service ID for ACTIVE_DIRECTORY or a single explicitly referenced
+Identity Center instance ARN for IAM_IDENTITY_CENTER. Identity store enums,
+effective access and encryption of individual datasets are outside these links.

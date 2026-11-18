@@ -1,0 +1,242 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_quicksight_namespace.people",
+      "mode": "managed",
+      "type": "aws_quicksight_namespace",
+      "name": "people",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "namespace": "people"
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_group.g",
+      "mode": "managed",
+      "type": "aws_quicksight_group",
+      "name": "g",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "namespace": "people",
+          "group_name": "team"
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_user.u",
+      "mode": "managed",
+      "type": "aws_quicksight_user",
+      "name": "u",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "namespace": "people",
+          "user_name": "person",
+          "identity_type": "QUICKSIGHT"
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_group_membership.g",
+      "mode": "managed",
+      "type": "aws_quicksight_group_membership",
+      "name": "g",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "namespace": "people",
+          "group_name": "team",
+          "member_name": "person"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.k",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "k",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/one"
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_key_registration.keys",
+      "mode": "managed",
+      "type": "aws_quicksight_key_registration",
+      "name": "keys",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "key_registration": [
+            {
+              "key_arn": "arn:aws:kms:us-east-1:123456789012:key/one",
+              "default_key": true
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_iam_policy_assignment.p",
+      "mode": "managed",
+      "type": "aws_quicksight_iam_policy_assignment",
+      "name": "p",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "namespace": "people",
+          "identities": [
+            {
+              "group": [
+                "team"
+              ],
+              "user": [
+                "person"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_quicksight_namespace.people",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_quicksight_group.g",
+          "provider_config_key": "aws",
+          "expressions": {
+            "namespace": {
+              "references": [
+                "aws_quicksight_namespace.people.namespace"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_quicksight_user.u",
+          "provider_config_key": "aws",
+          "expressions": {
+            "namespace": {
+              "references": [
+                "aws_quicksight_namespace.people.namespace"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_quicksight_group_membership.g",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_name": {
+              "references": [
+                "aws_quicksight_group.g.group_name"
+              ]
+            },
+            "member_name": {
+              "references": [
+                "aws_quicksight_user.u.user_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.k",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_quicksight_key_registration.keys",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_registration": [
+              {
+                "key_arn": {
+                  "references": [
+                    "aws_kms_key.k.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_quicksight_iam_policy_assignment.p",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identities": [
+              {
+                "group": {
+                  "references": [
+                    "aws_quicksight_group.g.group_name"
+                  ]
+                },
+                "user": {
+                  "references": [
+                    "aws_quicksight_user.u.user_name"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
