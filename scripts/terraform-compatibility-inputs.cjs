@@ -28,7 +28,7 @@ function sourceInputs(source, extra, version, provider) {
       `version = "= ${provider}"`);
     files.set(name, prepared);
   }
-  if (fs.existsSync(extra)) {
+  if (extra) {
     assert(!files.has('compatibility.tf'), 'source conflicts with compatibility.tf');
     files.set('compatibility.tf', fs.readFileSync(extra, 'utf8').replaceAll('\r\n', '\n'));
   }

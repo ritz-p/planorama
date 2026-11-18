@@ -15,7 +15,8 @@
     {
       "name": "aws5",
       "source": "tests/fixtures/aws-captured",
-      "provider": "5.100.0"
+      "provider": "5.100.0",
+      "input": "aws"
     },
     {
       "name": "aws6",
@@ -24,7 +25,8 @@
       "cores": [
         "1.9.8",
         "1.16.6"
-      ]
+      ],
+      "input": "aws"
     },
     {
       "name": "overrides",
@@ -38,7 +40,8 @@
     {
       "name": "language",
       "source": "examples/terraform",
-      "provider": null
+      "provider": null,
+      "input": "language"
     },
     {
       "name": "aws670",
@@ -57,7 +60,6 @@
       "cores": [
         "1.9.8"
       ],
-      "input": "overrides",
       "compare": "overrides"
     }
   ]
