@@ -202,3 +202,4 @@ examples/bedrock-models.svg
 examples/bedrock-agents.svg
 examples/dms-endpoints.svg
 examples/dms-events.svg
+examples/dms-migration.svg

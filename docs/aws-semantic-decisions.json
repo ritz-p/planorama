@@ -29756,10 +29756,10 @@
       }
     },
     "aws_dms_instance_profile": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 865,
-      "gap": "#723 reviewed: Missing: subnet-group identifier, complete SGs and KMS ARN; instance profile is DMS migration configuration, not IAM instance profile. Follow-up #865.",
+      "gap": "Implemented #865; historical audit #723 retained. Typed DMS profile/provider/project identity, complete profile subnet-group/SG common-VPC context, all 13 engine/settings selections and explicit KMS/certificate/role/secret references. Shared objects stay independent Logical configuration; project never inherits profile VPC. See aws.md#dms-migration-configuration-references-865.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29770,10 +29770,10 @@
           "vpc_security_group_ids",
           "kms_key_arn"
         ],
-        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "placement": "Supported: independent Logical presentation for reusable DMS migration configuration; profiles are not IAM instance profiles or provisioned replication workloads, and references do not move projects into subnets.",
         "ownership": "Not applicable: aws_dms_instance_profile remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
-        "network": "Missing: configured subnet-group/SG common-VPC context; availability_zone alone cannot select subnets and does not relocate migration project.",
-        "references": "Missing: subnet-group identifier, complete SGs and KMS ARN; instance profile is DMS migration configuration, not IAM instance profile.",
+        "network": "Supported: #865 verifies complete explicit subnet-group and SG common-VPC context without containment. Unknown/partial/mixed-VPC evidence falls back; availability zone cannot select subnets and project references cannot inherit context.",
+        "references": "Supported: #865 verifies bounded exact profile/provider/project ARN/ID, KMS, DMS certificate, IAM role and secret paths with matching engine/settings, complete descriptor collections and known values; URI/server/database payloads stay external. See aws.md#dms-migration-configuration-references-865.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: arn/subnet_group_identifier identity navigation belongs to #865; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_instance_profile.html.markdown",
@@ -29799,14 +29799,20 @@
           "subnet_group_identifier": "optional/computed",
           "vpc_security_group_ids": "optional/computed",
           "kms_key_arn": "optional/computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_migration.rs",
+          "tests/unit/semantic/dms_migration.rs",
+          "tests/fixtures/dms-migration-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_dms_data_provider": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 865,
-      "gap": "#723 reviewed: Missing: engine-gated DMS certificates, S3 roles and Oracle secret references; all pinned engine variants are enumerated in fields; engine must match the settings variant. server_name/port/database are connection data, not managed database proof. Follow-up #865.",
+      "gap": "Implemented #865; historical audit #723 retained. Typed DMS profile/provider/project identity, complete profile subnet-group/SG common-VPC context, all 13 engine/settings selections and explicit KMS/certificate/role/secret references. Shared objects stay independent Logical configuration; project never inherits profile VPC. See aws.md#dms-migration-configuration-references-865.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29838,10 +29844,10 @@
           "settings.postgresql_settings.s3_access_role_arn",
           "settings.sybase_ase_settings.certificate_arn"
         ],
-        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "placement": "Supported: independent Logical presentation for reusable DMS migration configuration; profiles are not IAM instance profiles or provisioned replication workloads, and references do not move projects into subnets.",
         "ownership": "Not applicable: aws_dms_data_provider remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_dms_data_provider has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: engine-gated DMS certificates, S3 roles and Oracle secret references; all pinned engine variants are enumerated in fields; engine must match the settings variant. server_name/port/database are connection data, not managed database proof.",
+        "references": "Supported: #865 verifies bounded exact profile/provider/project ARN/ID, KMS, DMS certificate, IAM role and secret paths with matching engine/settings, complete descriptor collections and known values; URI/server/database payloads stay external. See aws.md#dms-migration-configuration-references-865.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: arn/engine identity navigation belongs to #865; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_data_provider.html.markdown",
@@ -29992,14 +29998,20 @@
           "settings.oracle_settings.s3_access_role_arn": "optional",
           "settings.postgresql_settings.s3_access_role_arn": "optional",
           "settings.sybase_ase_settings.certificate_arn": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_migration.rs",
+          "tests/unit/semantic/dms_migration.rs",
+          "tests/fixtures/dms-migration-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_dms_migration_project": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 865,
-      "gap": "#723 reviewed: Missing: DMS profile/data-provider ARNs and configured secret/role/S3 paths with known values. Descriptor names are computed; source/target remain distinct and reusable. Follow-up #865.",
+      "gap": "Implemented #865; historical audit #723 retained. Typed DMS profile/provider/project identity, complete profile subnet-group/SG common-VPC context, all 13 engine/settings selections and explicit KMS/certificate/role/secret references. Shared objects stay independent Logical configuration; project never inherits profile VPC. See aws.md#dms-migration-configuration-references-865.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -30016,10 +30028,10 @@
           "schema_conversion_application_attributes.s3_bucket_path",
           "schema_conversion_application_attributes.s3_bucket_role_arn"
         ],
-        "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
+        "placement": "Supported: independent Logical presentation for reusable DMS migration configuration; profiles are not IAM instance profiles or provisioned replication workloads, and references do not move projects into subnets.",
         "ownership": "Not applicable: aws_dms_migration_project remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: referencing a DMS instance profile does not contain project in its VPC.",
-        "references": "Missing: DMS profile/data-provider ARNs and configured secret/role/S3 paths with known values. Descriptor names are computed; source/target remain distinct and reusable.",
+        "references": "Supported: #865 verifies bounded exact profile/provider/project ARN/ID, KMS, DMS certificate, IAM role and secret paths with matching engine/settings, complete descriptor collections and known values; URI/server/database payloads stay external. See aws.md#dms-migration-configuration-references-865.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: arn/instance_profile_arn identity navigation belongs to #865; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_migration_project.html.markdown",
@@ -30074,7 +30086,13 @@
           "target_data_provider_descriptor.secrets_manager_secret_id": "optional",
           "schema_conversion_application_attributes.s3_bucket_path": "optional",
           "schema_conversion_application_attributes.s3_bucket_role_arn": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_migration.rs",
+          "tests/unit/semantic/dms_migration.rs",
+          "tests/fixtures/dms-migration-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_dms_replication_config": {

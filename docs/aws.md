@@ -1420,3 +1420,69 @@ leaves. No credentials, SQL, runtime health or network policy is interpreted.
 Independent actions and exactly-once resource coverage are retained, including
 filtered and named states. See [SVG](../examples/dms-events.svg), sourced from
 `tests/fixtures/dms-events-plan.json`.
+
+## DMS migration configuration references (#865)
+
+Provider/source pin is AWS 6.70.0,
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/dms/{instance_profile,data_provider,migration_project}.go`.
+DMS instance profiles, data providers and migration projects retain their
+independent Logical identities and actions. A DMS profile is not an IAM instance
+profile, a data provider is not a managed database, and project membership does
+not establish exclusive ownership or VPC containment.
+
+| Source input | Pinned shape and managed output |
+| --- | --- |
+| Profile `subnet_group_identifier` | Optional/computed string → DMS Replication Subnet Group `id` |
+| Profile `vpc_security_group_ids` | Optional/computed string set → complete Security Group `id` set |
+| Profile `kms_key_arn` | Optional/computed string → KMS Key `arn`, explicitly configured |
+| Project `instance_profile_arn` | Required string → DMS Instance Profile `arn` |
+| Project `source_data_provider_descriptor.data_provider_arn` / `target_data_provider_descriptor.data_provider_arn` | Required lists with at least one descriptor and required string leaf → DMS Data Provider `arn`; complete separately indexed collections |
+| Either descriptor `secrets_manager_access_role_arn` / `secrets_manager_secret_id` | Optional string leaves → IAM Role `arn` / Secrets Manager Secret `arn`, `id` or `name` by exact known value |
+| Project `schema_conversion_application_attributes.s3_bucket_role_arn` | Optional singleton list and optional string leaf → IAM Role `arn`; `s3_bucket_path` is opaque and does not identify a bucket |
+
+Profile network context requires **both** a complete subnet-group reference and
+complete explicit SG set. The group must have complete explicit managed subnet
+IDs; every subnet and SG must explicitly reference the same current managed VPC
+with matching values and independently compatible scope. Incomplete, duplicate,
+unknown, absent, mixed-VPC or incompatible evidence retains fallback for the
+profile network paths; an independently proven KMS reference is unaffected.
+This is reusable migration **context**, not profile or project subnet containment.
+`availability_zone` alone cannot select subnets. Referencing a profile ARN does
+not transfer its network context to a migration project.
+
+Data provider `engine` is required, `virtual` is optional/computed boolean, and
+`settings` is a required singleton list. Exactly one singleton settings branch
+must match the known engine. Unknown or populated alternative branches prevent
+verification; no recursive string scanning is used. All selected reference leaves
+below are optional strings. Virtual/nonvirtual providers retain the same distinct
+DMS identity; connection names, ports and database strings never prove database
+ownership or availability.
+
+| Engine | Selected `settings` branch | Verified fields |
+| --- | --- | --- |
+| `docdb` | `doc_db_settings` | `certificate_arn` |
+| `db2` | `ibm_db2_luw_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `db2-zos` | `ibm_db2_zos_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `mariadb` | `maria_db_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `sqlserver` | `microsoft_sql_server_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `mongodb` | `mongo_db_settings` | `certificate_arn` |
+| `mysql`, `aurora` | `mysql_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `oracle` | `oracle_settings` | `certificate_arn`, `s3_access_role_arn`, `secrets_manager_oracle_asm_access_role_arn`, `secrets_manager_oracle_asm_secret_id`, `secrets_manager_security_db_encryption_access_role_arn`, `secrets_manager_security_db_encryption_secret_id` |
+| `postgres`, `aurora-postgresql` | `postgresql_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `redshift` | `redshift_settings` | `s3_access_role_arn` |
+| `sybase` | `sybase_ase_settings` | `certificate_arn` |
+
+`certificate_arn` requires DMS Certificate `certificate_arn`, never ACM. Access
+roles require IAM Role `arn`. Oracle secret IDs require exact Secrets Manager
+Secret `arn` / `id` / `name`. Unlisted engine/field combinations remain unsupported.
+S3 paths, broker/server names, SQL/transformation payloads, credentials and runtime
+health remain opaque; no bucket is guessed from a URI or path.
+
+Unique complete explicit current managed AWS evidence, matching known nonsensitive
+values and independently compatible provider/account/region/named-state identity
+are required. Shared profiles/providers/keys/roles/secrets remain reusable;
+filtered, missing, data, foreign-provider, deleted/deposed and ambiguous evidence
+falls back with independent actions and exactly-once coverage. See
+[SVG](../examples/dms-migration.svg), sourced from
+`tests/fixtures/dms-migration-plan.json`.
