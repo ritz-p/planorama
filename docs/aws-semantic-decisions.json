@@ -18274,10 +18274,10 @@
       }
     },
     "aws_quicksight_analysis": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared datasets/templates remain independent; visual sheets are not managed children. Missing: template/theme and complete dataset ARN references under selected source_entity or definition; analysis_id differs from composite id. Follow-up #805. Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+      "gap": "Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18294,7 +18294,7 @@
         "placement": "Supported: retain Logical aws_quicksight_analysis basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared datasets/templates remain independent; visual sheets are not managed children.",
         "network": "Not applicable: reviewed aws_quicksight_analysis fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: template/theme and complete dataset ARN references under selected source_entity or definition; analysis_id differs from composite id.",
+        "references": "Supported: Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: visualization definitions, parameters and calculated fields.",
         "officialDocumentation": "website/docs/r/quicksight_analysis.html.markdown",
@@ -18368,10 +18368,10 @@
       }
     },
     "aws_quicksight_dashboard": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared datasets/templates remain independent; visual sheets are not managed children. Missing: template/theme and complete dataset ARN references under selected source_entity or definition; dashboard_id differs from composite id. Follow-up #805. Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+      "gap": "Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18388,7 +18388,7 @@
         "placement": "Supported: retain Logical aws_quicksight_dashboard basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared datasets/templates remain independent; visual sheets are not managed children.",
         "network": "Not applicable: reviewed aws_quicksight_dashboard fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: template/theme and complete dataset ARN references under selected source_entity or definition; dashboard_id differs from composite id.",
+        "references": "Supported: Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: visualization definitions, parameters and calculated fields.",
         "officialDocumentation": "website/docs/r/quicksight_dashboard.html.markdown",
@@ -18425,10 +18425,10 @@
       }
     },
     "aws_quicksight_data_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared datasets/data sources are not embedded children. Missing: complete typed data-source ARNs, parent dataset ARN and RLS dataset reference; table-map IDs are local keys, not Terraform resources. Follow-up #805. Intentionally unsupported: SQL, transforms and row-level policy interpretation; defer import-mode enum summary until explicit unknown handling.",
+      "gap": "Implemented #805. Physical table data-source ARNs, parent dataset ARN and row-permission dataset ARN remain independent. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18447,7 +18447,7 @@
         "placement": "Supported: retain Logical aws_quicksight_data_set basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared datasets/data sources are not embedded children.",
         "network": "Not applicable: reviewed aws_quicksight_data_set fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: complete typed data-source ARNs, parent dataset ARN and RLS dataset reference; table-map IDs are local keys, not Terraform resources.",
+        "references": "Supported: Physical table data-source ARNs, parent dataset ARN and row-permission dataset ARN remain independent.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: SQL, transforms and row-level policy interpretation; defer import-mode enum summary until explicit unknown handling.",
         "officialDocumentation": "website/docs/r/quicksight_data_set.html.markdown",
@@ -18594,10 +18594,10 @@
       }
     },
     "aws_quicksight_folder": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: organizational navigation only; folder is not a network container. Missing: parent_folder_arn -> folder.arn with cycle rejection; computed folder_path is not configured hierarchy. Follow-up #805. Intentionally unsupported: folder_path, permissions and display content are not infrastructure configuration summaries.",
+      "gap": "Implemented #805. Parent folder ARN with cycle rejection. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18612,7 +18612,7 @@
         "placement": "Supported: retain Logical aws_quicksight_folder basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: organizational navigation only; folder is not a network container.",
         "network": "Not applicable: reviewed aws_quicksight_folder fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: parent_folder_arn -> folder.arn with cycle rejection; computed folder_path is not configured hierarchy.",
+        "references": "Supported: Parent folder ARN with cycle rejection.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: folder_path, permissions and display content are not infrastructure configuration summaries.",
         "officialDocumentation": "website/docs/r/quicksight_folder.html.markdown",
@@ -18639,10 +18639,10 @@
       }
     },
     "aws_quicksight_folder_membership": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared folder association does not justify exclusive embedding. Missing: folder_id and member_type-discriminated analysis_id/dashboard_id/data_set_id; reject ambiguous same IDs across types. Follow-up #805. Deferred: member-type enum summary should accompany verified type-discriminated navigation; no folder-content dumping.",
+      "gap": "Implemented #805. Folder ID and member-type-selected analysis, dashboard or dataset ID. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18656,7 +18656,7 @@
         "placement": "Supported: retain Logical aws_quicksight_folder_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared folder association does not justify exclusive embedding.",
         "network": "Not applicable: reviewed aws_quicksight_folder_membership fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: folder_id and member_type-discriminated analysis_id/dashboard_id/data_set_id; reject ambiguous same IDs across types.",
+        "references": "Supported: Folder ID and member-type-selected analysis, dashboard or dataset ID.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Deferred: member-type enum summary should accompany verified type-discriminated navigation; no folder-content dumping.",
         "officialDocumentation": "website/docs/r/quicksight_folder_membership.html.markdown",
@@ -18807,10 +18807,10 @@
       }
     },
     "aws_quicksight_ingestion": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: dataset helper navigation. Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id. Follow-up #805. Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+      "gap": "Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18824,7 +18824,7 @@
         "placement": "Supported: retain Logical aws_quicksight_ingestion basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: dataset helper navigation.",
         "network": "Not applicable: reviewed aws_quicksight_ingestion fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id.",
+        "references": "Supported: Dataset ID must match the managed data_set_id.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
         "officialDocumentation": "website/docs/r/quicksight_ingestion.html.markdown",
@@ -18969,10 +18969,10 @@
       }
     },
     "aws_quicksight_refresh_schedule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: dataset helper navigation. Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id. Follow-up #805. Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+      "gap": "Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18986,7 +18986,7 @@
         "placement": "Supported: retain Logical aws_quicksight_refresh_schedule basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: dataset helper navigation.",
         "network": "Not applicable: reviewed aws_quicksight_refresh_schedule fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id.",
+        "references": "Supported: Dataset ID must match the managed data_set_id.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
         "officialDocumentation": "website/docs/r/quicksight_refresh_schedule.html.markdown",
@@ -19084,10 +19084,10 @@
       }
     },
     "aws_quicksight_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: exclusive source analysis/template ARN and complete dataset substitutions. Version-qualified ARN needs known revision proof; computed source_entity_arn is not configured evidence. Follow-up #805. Intentionally unsupported: template definitions and parameter payloads.",
+      "gap": "Implemented #805. Exclusive analysis or template ARN and complete source-analysis dataset substitutions. Version-qualified template navigation requires the matching revision. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19103,7 +19103,7 @@
         "placement": "Supported: retain Logical aws_quicksight_template basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_template configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_template fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: exclusive source analysis/template ARN and complete dataset substitutions. Version-qualified ARN needs known revision proof; computed source_entity_arn is not configured evidence.",
+        "references": "Supported: Exclusive analysis or template ARN and complete source-analysis dataset substitutions. Version-qualified template navigation requires the matching revision.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: template definitions and parameter payloads.",
         "officialDocumentation": "website/docs/r/quicksight_template.html.markdown",
@@ -19137,10 +19137,10 @@
       }
     },
     "aws_quicksight_template_alias": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: verified template navigation; retain alias lifecycle. Missing: template_id -> template.template_id plus matching template_version_number; alias is its own resource, not a provider type alias. Follow-up #805. Deferred: version summary requires known template revision agreement; an alias alone cannot claim current published content.",
+      "gap": "Implemented #805. Template ID navigation requires matching current template version. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19155,7 +19155,7 @@
         "placement": "Supported: retain Logical aws_quicksight_template_alias basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: verified template navigation; retain alias lifecycle.",
         "network": "Not applicable: reviewed aws_quicksight_template_alias fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: template_id -> template.template_id plus matching template_version_number; alias is its own resource, not a provider type alias.",
+        "references": "Supported: Template ID navigation requires matching current template version.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Deferred: version summary requires known template revision agreement; an alias alone cannot claim current published content.",
         "officialDocumentation": "website/docs/r/quicksight_template_alias.html.markdown",
@@ -19179,10 +19179,10 @@
       }
     },
     "aws_quicksight_theme": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: base_theme_id -> explicit managed theme.theme_id; built-in theme IDs are not managed endpoints. Follow-up #805. Intentionally unsupported: theme colors, fonts and permissions are not infrastructure summaries.",
+      "gap": "Implemented #805. Managed base theme_id navigation requires an explicit reference. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19196,7 +19196,7 @@
         "placement": "Supported: retain Logical aws_quicksight_theme basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_theme configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_theme fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: base_theme_id -> explicit managed theme.theme_id; built-in theme IDs are not managed endpoints.",
+        "references": "Supported: Managed base theme_id navigation requires an explicit reference.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: theme colors, fonts and permissions are not infrastructure summaries.",
         "officialDocumentation": "website/docs/r/quicksight_theme.html.markdown",
