@@ -86,7 +86,7 @@ async function writeback(options = {}) {
       else if (resource === 'actions/artifacts/7') data = {expired: false, workflow_run: {id: 9}};
       else if (resource === 'contents/scripts/generated-svgs.txt') {
         assert.equal(args.ref, sha);
-        data = {type: 'file', encoding: 'base64', content: Buffer.from('examples/diagram.svg\n').toString('base64')};
+        data = {type: 'file', encoding: 'base64', content: readFileSync(path.join(__dirname, '../../scripts/generated-svgs.txt')).toString('base64')};
       } else if (resource === `git/commits/${sha}`) data = {tree: {sha: 'old-tree'},
         message: options.repair ? `chore: regenerate SVG examples [skip ci]\n\nPlanorama-SVG-Source: ${generated}` : 'source change'};
       else if (resource === 'git/trees') data = {sha: options.sameTree ? 'old-tree' : 'new-tree'};

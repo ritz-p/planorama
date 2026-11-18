@@ -110,7 +110,7 @@ jobs:
             }
             const paths = decode(fs.readFileSync(path.join(root, 'scripts/generated-svgs.txt'))).split(/\r\n|\n|\r/);
             if (paths.at(-1) === '') paths.pop();
-            if (!paths.length || paths.length > 200 || new Set(paths).size !== paths.length
+            if (!paths.length || paths.length > 512 || new Set(paths).size !== paths.length
                 || paths.some(name => !/^examples\/[A-Za-z0-9_./-]+\.svg$/.test(name)
                   || name.split('/').some(part => ['', '.', '..'].includes(part)))) {
               throw new Error('Invalid generated SVG manifest');
@@ -267,7 +267,7 @@ jobs:
             function manifestPaths(text) {
               const paths = text.split(/\r\n|\n|\r/);
               if (paths.at(-1) === '') paths.pop();
-              if (!paths.length || paths.length > 200 || new Set(paths).size !== paths.length) {
+              if (!paths.length || paths.length > 512 || new Set(paths).size !== paths.length) {
                 throw new Error('Generated SVG manifest is empty, oversized or duplicated.');
               }
               for (const path of paths) {
