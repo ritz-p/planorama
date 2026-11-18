@@ -18277,7 +18277,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18371,7 +18371,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18428,7 +18428,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Physical table data-source ARNs, parent dataset ARN and row-permission dataset ARN remain independent. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Physical table data-source ARNs, parent dataset ARN and row-permission dataset ARN remain independent. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18597,7 +18597,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Parent folder ARN with cycle rejection. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Parent folder ARN with cycle rejection. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18642,7 +18642,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Folder ID and member-type-selected analysis, dashboard or dataset ID. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Folder ID and member-type-selected analysis, dashboard or dataset ID. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18810,7 +18810,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18972,7 +18972,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19087,7 +19087,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Exclusive analysis or template ARN and complete source-analysis dataset substitutions. Version-qualified template navigation requires the matching revision. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Exclusive analysis or template ARN and complete source-analysis dataset substitutions. Version-qualified template navigation requires the matching revision. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19140,7 +19140,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Template ID navigation requires matching current template version. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Template ID navigation requires matching current template version. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19182,7 +19182,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "Implemented #805. Managed base theme_id navigation requires an explicit reference. See docs/aws-data.md.",
+      "gap": "#724 reviewed: Implemented #805. Managed base theme_id navigation requires an explicit reference. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
