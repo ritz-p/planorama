@@ -30,4 +30,25 @@ module.exports = function platformContracts({plan, resource, verify, account}) {
     bindings[0].namespace = 'another';
     verify(input, [], ['AI Search instance bindings', 'AI Search namespace bindings']);
   }
+  {
+    const input = plan();
+    resource(input, 'cloudflare_ai_search_namespace', 'space', {name: 'tenant'});
+    resource(input, 'cloudflare_ai_search_instance', 'instance', {id: 'search', namespace: 'tenant'},
+      {namespace: ['cloudflare_ai_search_namespace.space.name']});
+    input.configuration.provider_config['cloudflare.search'] = {
+      name: 'cloudflare', full_name: 'registry.terraform.io/cloudflare/cloudflare', alias: 'search',
+      version_constraint: '5.29.0',
+    };
+    input.configuration.root_module.resources[1].provider_config_key = 'cloudflare.search';
+    const endpoint = 'cloudflare_ai_search_namespace.space';
+    const check = expected => rows => assert.deepEqual(target(rows, 'cloudflare_ai_search_instance.instance', 'namespace'), expected);
+    verify(input, ['Instance namespace'], [], check([endpoint]));
+    for (const constraint of ['5.28.1', '>= 5.29.0', undefined]) {
+      input.configuration.provider_config['cloudflare.search'].version_constraint = constraint;
+      verify(input, [], [], check([]));
+    }
+    input.configuration.provider_config['cloudflare.search'].version_constraint = '5.29.0';
+    input.resource_changes[1].change.after_sensitive = {namespace: true};
+    verify(input, ['cloudflare_sensitive_value'], [], check([]));
+  }
 };
