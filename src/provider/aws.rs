@@ -176,6 +176,7 @@ mod serverless_references;
 mod step_functions_tests;
 mod streaming;
 pub(crate) mod synthetics;
+pub(crate) mod timestream_influx;
 pub(crate) mod traffic_mirror;
 pub(crate) mod transfer_as2;
 pub(crate) mod transfer_identity;
@@ -423,6 +424,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     sagemaker_jobs::present(&raw, &mut graph);
     sagemaker_workforce::present(&raw, &mut graph);
     msk_connect::present(&raw, &mut graph);
+    timestream_influx::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);

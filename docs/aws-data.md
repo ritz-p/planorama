@@ -1085,3 +1085,16 @@ name, session name and registered user name. Key registrations verify each
 Directory Service ID for ACTIVE_DIRECTORY or a single explicitly referenced
 Identity Center instance ARN for IAM_IDENTITY_CENTER. Identity store enums,
 effective access and encryption of individual datasets are outside these links.
+
+### Timestream for InfluxDB
+
+Clusters and instances keep separate cards. Complete subnet and security-group references must share a VPC before placement. Only an enabled log delivery configuration can link an S3 bucket.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_timestreaminfluxdb_db_cluster` | `vpc_subnet_ids` | `aws_subnet` (`id`) |
+|  | `vpc_security_group_ids` | `aws_security_group` (`id`) |
+|  | `log_delivery_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+| `aws_timestreaminfluxdb_db_instance` | `vpc_subnet_ids` | `aws_subnet` (`id`) |
+|  | `vpc_security_group_ids` | `aws_security_group` (`id`) |
+|  | `log_delivery_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |

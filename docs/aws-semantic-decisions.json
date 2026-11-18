@@ -8722,10 +8722,10 @@
       }
     },
     "aws_timestreaminfluxdb_db_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 742,
-      "gap": "Missing: enabled log S3 reference. db_parameter_group_identifier has no managed endpoint in baseline; initial bucket is InfluxDB, not S3. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 reviewed: Implemented #742. Explicit influxdb subnets, influxdb security groups, log delivery bucket. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8740,7 +8740,7 @@
         "placement": "Spatial cluster retained.",
         "ownership": "Not applicable: no declared member-instance identity; computed auth secret is not ownership proof.",
         "network": "Missing: complete subnet/SG sets with common-VPC proof.",
-        "references": "Missing: enabled log S3 reference. db_parameter_group_identifier has no managed endpoint in baseline; initial bucket is InfluxDB, not S3.",
+        "references": "Supported: Explicit influxdb subnets, influxdb security groups, log delivery bucket.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/timestreaminfluxdb_db_cluster.html.markdown",
@@ -8774,10 +8774,10 @@
       }
     },
     "aws_timestreaminfluxdb_db_instance": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 742,
-      "gap": "Missing: enabled log S3 reference. No managed parameter-group endpoint; credentials and computed secret contents unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 reviewed: Implemented #742. Explicit influxdb subnets, influxdb security groups, log delivery bucket. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8792,7 +8792,7 @@
         "placement": "Spatial independent instance retained; do not infer cluster membership.",
         "ownership": "Not applicable: standby AZ and computed secret do not establish Terraform ownership.",
         "network": "Missing: complete subnet/SG sets with common-VPC proof.",
-        "references": "Missing: enabled log S3 reference. No managed parameter-group endpoint; credentials and computed secret contents unsupported.",
+        "references": "Supported: Explicit influxdb subnets, influxdb security groups, log delivery bucket.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/timestreaminfluxdb_db_instance.html.markdown",
