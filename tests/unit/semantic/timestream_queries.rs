@@ -55,3 +55,18 @@ fn timestream_queries_requires_scoped_provenance() {
         );
     }
 }
+
+#[test]
+fn scheduled_table_accepts_mixed_identifiers_for_the_same_database() {
+    let mut input: Value =
+        serde_json::from_str(include_str!("../../fixtures/timestream-queries-plan.json")).unwrap();
+    input["resource_changes"][1]["change"]["after"]["id"] = json!("metrics");
+    let query = &mut input["configuration"]["root_module"]["resources"][3]["expressions"];
+    query["target_configuration"][0]["timestream_configuration"][0]["database_name"] =
+        json!({"references":["aws_timestreamwrite_database.row1.id"]});
+    assert!(proven(
+        &input,
+        "aws_timestreamquery_scheduled_query.row3",
+        "target_configuration.timestream_configuration.table_name",
+    ));
+}
