@@ -251,6 +251,14 @@ unique current identities and a known matching account:
   `id`/`name`, and legacy script `id`/`script_name` must agree before aliases
   can be used.
 
+A `workflow` binding verifies a unique Workflow in the same account using
+`workflow_name`. Returned `name` and `id` must agree when used. A managed
+Workflow can supply its configured name while the computed names are unknown.
+Binding class and script qualifiers, when present, must match the Workflow.
+A managed Workflow can also explicitly reference its defining Worker's name
+through `script_name`. Its version ID and instance statistics do not identify
+a Worker version or prove execution.
+
 An external `durable_object_namespace` binding with a known class and an explicit
 Worker name reference appears under **Durable Object scripts**. Environment and
 dispatch namespace must be absent. Local classes, namespace IDs, migrations and

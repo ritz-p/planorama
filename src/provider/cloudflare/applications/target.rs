@@ -1,10 +1,14 @@
 use super::{Evidence, Failure, Result, collect};
 use crate::model::TerraformEntity;
 #[derive(Clone, Copy)]
-pub(super) enum Kind {
+pub(super) enum Kind<'a> {
     Worker,
     WorkerName,
     DurableObjectScript,
+    Workflow {
+        class: Option<&'a str>,
+        script: Option<&'a str>,
+    },
     Version,
     Pages,
     R2,
@@ -16,11 +20,11 @@ pub(super) enum Kind {
 }
 pub(super) struct Target<'a> {
     pub(super) value: &'a str,
-    pub(super) kind: Kind,
+    pub(super) kind: Kind<'a>,
     pub(super) jurisdiction: Option<&'a str>,
 }
 impl<'a> Target<'a> {
-    pub(super) fn new(value: &'a str, kind: Kind) -> Self {
+    pub(super) fn new(value: &'a str, kind: Kind<'a>) -> Self {
         Self {
             value,
             kind,
@@ -47,6 +51,7 @@ pub(super) fn fields(
         (Kind::WorkerName | Kind::DurableObjectScript, "cloudflare_workers_script") => {
             &["id", "script_name"]
         }
+        (Kind::Workflow { .. }, "cloudflare_workflow") => &["workflow_name", "name", "id"],
         (Kind::Version, "cloudflare_worker_version") => &["id"],
         (Kind::Pages, "cloudflare_pages_project") => &["id", "name"],
         (Kind::R2, "cloudflare_r2_bucket") => &["id", "name"],
@@ -71,6 +76,33 @@ pub(super) fn identity(
     if value.text(output)? != target.value {
         return Err(Failure::IdentityMismatch);
     }
+    if let Kind::Workflow { class, script } = target.kind {
+        if value.text("workflow_name")? != target.value {
+            return Err(Failure::IdentityMismatch);
+        }
+        for field in ["name", "id"] {
+            let alias = value.at(field)?;
+            if output == "workflow_name"
+                && node.mode == crate::model::EntityMode::Managed
+                && alias.value.is_null()
+                && alias.unknown == &serde_json::Value::Bool(true)
+                && super::proof::unmasked(alias.sensitive)
+            {
+                continue;
+            }
+            if value.text(field)? != target.value {
+                return Err(Failure::IdentityMismatch);
+            }
+        }
+        for (field, expected) in [("class_name", class), ("script_name", script)] {
+            if let Some(expected) = expected {
+                if value.text(field)? != expected {
+                    return Err(Failure::OwnerMismatch);
+                }
+            }
+        }
+        return Ok(());
+    }
     if !matches!(target.kind, Kind::Worker)
         && collect(fields.iter().map(|field| value.text(field)))?
             .iter()
@@ -84,14 +116,9 @@ pub(super) fn identity(
     Ok(())
 }
 pub(super) fn matching(target: &Target<'_>, node: &TerraformEntity, value: Evidence<'_>) -> bool {
-    [
-        "id",
-        "name",
-        "script_name",
-        "uuid",
-        "queue_id",
-        "queue_name",
-    ]
-    .iter()
-    .any(|output| identity(target, node, value, output).is_ok())
+    fields(target, node).is_ok_and(|fields| {
+        fields
+            .iter()
+            .any(|output| identity(target, node, value, output).is_ok())
+    })
 }

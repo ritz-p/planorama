@@ -13,6 +13,7 @@ fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
         | "cloudflare_load_balancer_monitor_group" => "Account-scoped ID",
         "cloudflare_ruleset" => "ID with matching account and zone",
         "cloudflare_list" => "Redirect list name and kind, matching account",
+        "cloudflare_workflow" => "Account-scoped Workflow name",
         "cloudflare_worker" => "Account-scoped Worker ID or name (distinct outputs)",
         "cloudflare_worker_version" if mode == EntityMode::Managed => {
             "Version ID and explicitly proven Worker owner"
