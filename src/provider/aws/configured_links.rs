@@ -57,23 +57,32 @@ impl Evidence<'_> {
         kind: &str,
         field: &str,
     ) -> bool {
-        let unique = |index, path| {
-            let r = lambda_core::unique(self.refs, index, path)?;
-            let [s] = r.sources.as_slice() else {
-                return None;
-            };
-            (service_evidence::eligible(self.nodes, r)
-                && self.nodes[*s].resource_type == kind
-                && r.source_attributes.len() == 1
-                && r.source_attributes.contains(field)
-                && self.text(index, path).is_some_and(|v| {
-                    self.text(*s, r.source_attributes.first().unwrap()) == Some(v)
-                }))
-            .then_some((*s, r.source_attributes.first().unwrap()))
+        self.configured_endpoint(a, a_path, kind, &[field])
+            .zip(self.configured_endpoint(b, b_path, kind, &[field]))
+            .is_some_and(|(left, right)| left == right)
+    }
+
+    pub fn configured_endpoint(
+        &self,
+        index: usize,
+        path: &str,
+        kind: &str,
+        fields: &[&str],
+    ) -> Option<usize> {
+        let reference = lambda_core::unique(self.refs, index, path)?;
+        let [endpoint] = reference.sources.as_slice() else {
+            return None;
         };
-        unique(a, a_path)
-            .zip(unique(b, b_path))
-            .is_some_and(|(a, b)| a == b)
+        let outputs = reference.source_attributes_by_instance.get(endpoint)?;
+        let output = outputs.first()?;
+        (outputs.len() == 1
+            && fields.contains(&output.as_str())
+            && self.nodes[*endpoint].resource_type == kind
+            && service_evidence::eligible(self.nodes, reference)
+            && self
+                .text(index, path)
+                .is_some_and(|value| self.text(*endpoint, output) == Some(value)))
+        .then_some(*endpoint)
     }
 }
 
