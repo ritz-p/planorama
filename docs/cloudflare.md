@@ -259,6 +259,11 @@ A managed Workflow can also explicitly reference its defining Worker's name
 through `script_name`. Its version ID and instance statistics do not identify
 a Worker version or prove execution.
 
+A managed AI Gateway dynamic route can identify its gateway through an explicit
+`gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
+Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,
+Worker code, route elements and deployment results do not establish gateway use.
+
 An external `durable_object_namespace` binding with a known class and an explicit
 Worker name reference appears under **Durable Object scripts**. Environment and
 dispatch namespace must be absent. Local classes, namespace IDs, migrations and
