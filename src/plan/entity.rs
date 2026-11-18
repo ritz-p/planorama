@@ -1,6 +1,6 @@
-use super::address::module_of;
-
-use crate::model::{Action, EntityMode, ProviderIdentity, TerraformEntity};
+use crate::model::{
+    Action, EntityMode, ProviderIdentity, ResourceAddress, TerraformEntity, module_of,
+};
 use serde_json::Value;
 
 #[cfg(test)]
@@ -9,13 +9,7 @@ mod tests;
 
 pub(super) fn parse(resource: &Value, address: &str, action: Action) -> TerraformEntity {
     let module = module_of(address);
-    let local_address = match module.as_str() {
-        "root" => address,
-        module => address
-            .strip_prefix(module)
-            .and_then(|s| s.strip_prefix('.'))
-            .unwrap_or(address),
-    };
+    let local_address = ResourceAddress::new(address, module).local();
     let mode = match resource["mode"].as_str() {
         Some("data") => EntityMode::Data,
         Some("managed") => EntityMode::Managed,
@@ -44,7 +38,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Terrafor
         previous_address: resource["previous_address"].as_str().map(str::to_owned),
         metadata: Default::default(),
         resource_type: resource_type.into(),
-        module,
+        module: module.to_owned(),
         action,
         mode,
 
