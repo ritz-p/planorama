@@ -3,7 +3,7 @@ set -eu
 cd "$(dirname "$0")/../.."
 repo=$PWD
 sample=${1:-queue}
-case $sample in queue|containment) ;; *) echo "Unknown sample: $sample" >&2; exit 2;; esac
+case $sample in queue|containment|large) ;; *) echo "Unknown sample: $sample" >&2; exit 2;; esac
 tools=$(realpath "${PLANORAMA_EMULATOR_TOOLS:-output/aws-emulator-tools}")
 if [ ! -x "$tools/aws-emulator" ] || [ ! -x "$tools/terraform" ]; then
     echo 'Prepare the pinned tools with sh scripts/aws-emulator/prepare.sh' >&2

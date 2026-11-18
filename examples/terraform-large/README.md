@@ -13,10 +13,12 @@ layout/debugging fixture, not a production deployment.
 
 ## Regeneration
 
-From the repository root with the development container running:
+On the isolated Linux setup in [CONTRIBUTING.md](../../CONTRIBUTING.md), prepare both pinned AWS providers and capture the full real plan:
 
 ```sh
-docker compose exec -T dev cargo run --locked --example generate_large_fixture
+sh scripts/aws-emulator/prepare.sh large
+sh scripts/aws-emulator/generate.sh large
+# Review stress.json in the printed directory before copying it to examples/terraform-large/plan.json.
 docker compose exec -T dev cargo run --locked -- examples/terraform-large/plan.json -o examples/terraform-large/diagram.svg
 docker compose exec -T dev cargo test --locked --test large_example
 ```
@@ -26,11 +28,7 @@ quality unit regressions run after merge and nightly; run them locally with
 `docker compose exec -T dev cargo test --locked --all-features --lib deferred_regression_ -- --ignored --test-threads=2 --nocapture`.
 See [coverage categories](../../docs/ci.md#deferred-routing-regressions-253).
 
-The committed `plan.json` is synthetic, not captured Terraform output. The Rust
-generator reads the adjacent `main.tf.json` files and derives references, module
-input/output aliases and native addresses. Managed instances use `create`; data
-instances use `no-op`. It needs no AWS credentials, Terraform or provider download.
-Listener/Rule action blocks retain nested field references so component inference
+The local create.tfplan, create.json, SVG and HTML use actual Terraform evidence. The generator seeds a VPC and security group, plans the four modules with their returned IDs and destroys the seed. It does not apply the application. The separate stress.json derives instance addresses and expressions from that capture and preserves the deliberately synthetic equality cases in the committed plan.json. Listener/Rule action blocks retain nested field references so component inference
 can verify target-group paths instead of using flattened action dependencies.
 For LB, Listener, Rule and Target Group resources, the generator supplies fabricated
 known ARN values in `change.after` and evaluates only exact local ARN traversals
@@ -43,11 +41,7 @@ Route Tables, Internet Gateways and NAT Gateways similarly receive fabricated
 so the two Route cards have verified owners and next hops. These values are only
 offline equality evidence; real unknown endpoint values remain unresolved.
 
-The generator supports single-instance local modules, resource-level literal
-`count`, constants and traversal interpolations. It rejects resource `for_each`,
-computed counts, function interpolations and module `count` / `for_each` /
-`depends_on` / `providers`. Tests compare the generated JSON and SVG with their
-committed counterparts.
+Terraform expands the instances and module calls. The stress projection is restricted to the fixture’s current create actions, local unkeyed modules and read data sources. Compare the projected JSON and the maintained SVG after changing HCL.
 
 ## Expected display
 
@@ -132,7 +126,4 @@ docker compose run --rm -T --entrypoint terraform terraform-example -chdir=examp
 docker compose run --rm -T --entrypoint terraform terraform-example -chdir=examples/terraform-large validate
 ```
 
-A real plan additionally needs AWS credentials and existing `shared_vpc_id` and
-`shared_security_group_id` variables in the selected `region`. Real output depends
-on provider results and state, so it will not match this synthetic snapshot.
-Keep real plan/state output outside the committed fixture.
+The local capture reads the seed through the emulator. Keep saved plans and state in the private output directory.

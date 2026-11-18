@@ -6,8 +6,8 @@ has no real saved-plan archive. Both rendered examples therefore leave every
 account unknown. Visible role ARNs in JSON cannot prove that Terraform did not
 omit another dynamic role; see [provider evidence](../../docs/provider-evidence.md).
 
-The source of truth is [generator.rs](generator.rs), which extends the existing
-[large fixture generator](../terraform-large/generator.rs). Planned IDs and ARNs
+The source of truth is [generator.rs](generator.rs), which extends the checked
+[large stress input](../terraform-large/plan.json). Planned IDs and ARNs
 are fabricated equality evidence. No AWS credentials, cloud APIs or Terraform are
 needed to regenerate this fixture after Rust dependencies are available.
 

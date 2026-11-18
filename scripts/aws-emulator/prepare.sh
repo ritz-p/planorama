@@ -26,3 +26,11 @@ mv "$stage/terraform" "$tools/terraform"
 mv "$stage/package/opt/aws-emulator/bin/aws-emulator" "$tools/aws-emulator"
 mv "$stage/$provider/LICENSE.txt" "$tools/$provider/"
 mv "$stage/$provider/terraform-provider-aws_v6.70.0_x5" "$tools/$provider/"
+
+if [ "${1:-}" = large ]; then
+    download aws5.zip https://releases.hashicorp.com/terraform-provider-aws/5.100.0/terraform-provider-aws_5.100.0_linux_amd64.zip 1589a2266af699cbd5d80737a0fe02e54ec9cf2ca54e7e00ac51c7359056f274
+    provider=mirror/registry.terraform.io/hashicorp/aws/5.100.0/linux_amd64
+    mkdir -p "$stage/$provider" "$tools/$provider"
+    unzip -q "$stage/aws5.zip" -d "$stage/$provider"
+    mv "$stage/$provider/LICENSE.txt" "$stage/$provider/terraform-provider-aws_v5.100.0_x5" "$tools/$provider/"
+fi
