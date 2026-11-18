@@ -40,6 +40,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         .as_ref()
         .and_then(|c| c.account.clone());
     if basic.is_some()
+        && !super::dms_serverless::resource(resource)
         && !super::dms_references::resource(resource)
         && !matches!(
             resource,

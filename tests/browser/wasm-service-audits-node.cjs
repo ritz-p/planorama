@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {fixture: 'dms-serverless-plan', focus: 'aws_dms_replication_config.main', target: 9, mask: {compute_config: true}},
   {fixture: 'dms-migration-plan', focus: 'aws_dms_instance_profile.main', target: 10, mask: {vpc_security_group_ids: true}},
   {fixture: 'dms-events-plan', focus: 'aws_dms_replication_instance.first', target: 4, mask: {kerberos_authentication_settings: true}},
   {fixture: 'bedrock-agents-plan', focus: 'aws_bedrockagent_agent.main', target: 6, mask: {guardrail_configuration: true}},

@@ -2,14 +2,15 @@ use crate::model::{AttributeReference, TerraformEntity};
 use crate::provider::aws::{lambda_core, nested_references};
 use serde_json::Value;
 use std::collections::BTreeSet;
-fn context(
+pub(super) fn context(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     e: &[(&Value, &Value)],
     t: usize,
+    paths: (&str, &str),
 ) -> Option<usize> {
-    let group = lambda_core::unique(refs, t, "subnet_group_identifier")?;
-    let groups = lambda_core::unique(refs, t, "vpc_security_group_ids")?;
+    let group = lambda_core::unique(refs, t, paths.0)?;
+    let groups = lambda_core::unique(refs, t, paths.1)?;
     if !group.service_reference_verified || !groups.service_reference_verified {
         return None;
     }
@@ -48,9 +49,15 @@ pub(super) fn annotate(
                     "subnet_group_identifier" | "vpc_security_group_ids"
                 ))
             .then(|| {
-                context(nodes, refs, e, r.target)
-                    .into_iter()
-                    .collect::<Vec<_>>()
+                context(
+                    nodes,
+                    refs,
+                    e,
+                    r.target,
+                    ("subnet_group_identifier", "vpc_security_group_ids"),
+                )
+                .into_iter()
+                .collect::<Vec<_>>()
             })
         })
         .collect();

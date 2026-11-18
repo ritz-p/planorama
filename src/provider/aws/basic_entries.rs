@@ -496,7 +496,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_dms_event_subscription", "AWS Database Migration Service", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
     entry!("aws_dms_instance_profile", "AWS Database Migration Service", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
     entry!("aws_dms_migration_project", "AWS Database Migration Service", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
-    entry!("aws_dms_replication_config", "AWS Database Migration Service", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
+    entry!("aws_dms_replication_config", "AWS Database Migration Service", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
     entry!("aws_dms_replication_instance", "AWS Database Migration Service", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
     entry!("aws_dms_replication_subnet_group", "AWS Database Migration Service", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),
     entry!("aws_dms_replication_task", "AWS Database Migration Service", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDatabaseMigrationService))),

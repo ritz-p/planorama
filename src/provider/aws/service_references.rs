@@ -10,6 +10,9 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::dms_serverless::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::dms_migration::label(resource, attribute) {
         return Some(label);
     }
@@ -907,6 +910,7 @@ pub(crate) fn annotate(
     super::sagemaker::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
     super::serverless_references::annotate(nodes, references, evidence);
+    super::dms_serverless::annotate(nodes, references, evidence);
     super::dms_migration::annotate(nodes, references, evidence);
     super::dms_events::annotate(nodes, references, evidence);
     super::dms_references::annotate(nodes, references, evidence);
@@ -976,6 +980,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
         && super::s3_grants::bindings(raw, reference)
         && super::s3_mrap::bindings(raw, reference)
+        && super::dms_serverless::bindings(raw, reference)
         && super::dms_migration::bindings(raw, reference)
         && super::dms_events::bindings(raw, reference)
         && super::dms_references::bindings(raw, reference)
@@ -1625,7 +1630,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::dms_migration::indexed(&node.resource_type, &reference.attribute)
+        if super::dms_serverless::indexed(&node.resource_type, &reference.attribute)
+            || super::dms_migration::indexed(&node.resource_type, &reference.attribute)
             || super::dms_events::indexed(&node.resource_type, &reference.attribute)
             || super::dms_references::indexed(&node.resource_type, &reference.attribute)
             || super::agentcore_services::indexed(&node.resource_type, &reference.attribute)
