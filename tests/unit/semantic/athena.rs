@@ -7,17 +7,24 @@ use serde_json::{Value, json};
 const FIXTURE: &str = include_str!("../../fixtures/athena-plan.json");
 
 #[test]
-fn athena_is_regional_spatial_and_only_preserves_explicit_configuration_references() {
+fn athena_is_regional_spatial_and_verifies_explicit_configuration_references() {
     let parsed = plan::parse(FIXTURE).unwrap();
     let graph = semantic::transform(&parsed);
     assert_eq!(graph.coverage.selected.resources, 9);
     assert_eq!(graph.edges.len(), 2);
     assert!(graph.edges.iter().all(|e| e.kind == EdgeKind::Dependency));
-    assert!(
+    assert_eq!(
         parsed
             .attributes
             .iter()
-            .all(|r| !r.service_reference_verified)
+            .filter(|r| r.service_reference_verified)
+            .map(|r| r.attribute.as_str())
+            .collect::<std::collections::BTreeSet<_>>(),
+        [
+            "configuration.result_configuration.output_location",
+            "configuration.result_configuration.encryption_configuration.kms_key_arn"
+        ]
+        .into()
     );
     for node in graph
         .nodes
@@ -29,23 +36,36 @@ fn athena_is_regional_spatial_and_only_preserves_explicit_configuration_referenc
         assert!(node.member_owner.is_none());
         assert!(node.entity.scope.as_ref().is_some_and(|s| !s.global && s.region.as_ref().is_some_and(|r| r.0 == "us-east-1")));
         if node.address.ends_with(".analytics") {
-            assert!(
-                node.references
-                    .iter()
-                    .all(|r| r.label == "References" && r.complete)
-            );
-            for attribute in [
-                "configuration.result_configuration.output_location",
-                "configuration.result_configuration.encryption_configuration.kms_key_arn",
+            for (attribute, label) in [
+                (
+                    "configuration.result_configuration.output_location",
+                    "Query result bucket",
+                ),
+                (
+                    "configuration.result_configuration.encryption_configuration.kms_key_arn",
+                    "Query output key",
+                ),
             ] {
                 assert!(
+                    node.references.iter().any(|r| r.attribute == attribute
+                        && r.label == label
+                        && r.complete
+                        && r.targets.len() == 1),
+                    "{:?}",
                     node.references
-                        .iter()
-                        .any(|r| r.attribute == attribute && r.targets.len() == 1)
                 );
             }
         } else {
-            assert!(node.references.is_empty());
+            assert!(
+                !node.references.iter().any(|r| matches!(
+                    r.label,
+                    "Query output key" | "Query result bucket"
+                ) && r.complete
+                    && !r.targets.is_empty()),
+                "{}: {:?}",
+                node.address,
+                node.references
+            );
         }
     }
     let catalog = graph
@@ -137,6 +157,7 @@ fn athena_failures_and_unknown_values_keep_only_terraform_provenance() {
             parsed
                 .attributes
                 .iter()
+                .filter(|r| r.attribute.ends_with("output_location") || matches!(case, 5 | 7))
                 .all(|r| !r.service_reference_verified)
         );
         assert_eq!(
