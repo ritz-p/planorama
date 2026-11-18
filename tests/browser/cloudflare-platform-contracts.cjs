@@ -94,4 +94,19 @@ module.exports = function platformContracts({plan, resource, verify, account}) {
       assert.deepEqual(target(rows, 'cloudflare_api_shield_operation_schema_validation_settings.settings', 'operation_id'), []);
     });
   }
+  {
+    const input = plan();
+    resource(input, 'cloudflare_account', 'team', {id: account});
+    resource(input, 'cloudflare_turnstile_widget', 'widget', {sitekey: 'PRIVATE_key', secret: 'PRIVATE_secret',
+      domains: ['PRIVATE_hostname'], name: 'widget'}, {account_id: ['cloudflare_account.team.id']});
+    resource(input, 'cloudflare_pages_project', 'app', {name: 'app', subdomain: 'PRIVATE_hostname'});
+    verify(input, ['Account administration'], [], rows => {
+      assert.deepEqual(target(rows, 'cloudflare_turnstile_widget.widget', 'account_id'), ['cloudflare_account.team']);
+      assert.ok(!rows.some(row => row.targets.some(t => t.address === 'cloudflare_turnstile_widget.widget')));
+    });
+    input.resource_changes[1].change.after_unknown = {account_id: true};
+    verify(input, ['cloudflare_unknown_value'], [], rows => {
+      assert.deepEqual(target(rows, 'cloudflare_turnstile_widget.widget', 'account_id'), []);
+    });
+  }
 };
