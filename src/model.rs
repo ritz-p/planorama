@@ -158,7 +158,7 @@ pub(crate) mod modules;
 pub use architecture::{ArchitectureEntity, ArchitectureId, TerraformEntityId};
 mod checks;
 mod components;
-pub(crate) use address::module_of;
+pub(crate) use address::{ResourceAddress, address_parts, module_of};
 pub use checks::{CheckInstance, CheckResult};
 pub use components::{ComponentLabelReference, SyntheticComponent};
 pub mod cross_state;

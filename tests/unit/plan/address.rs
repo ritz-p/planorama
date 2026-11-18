@@ -6,7 +6,10 @@ fn indexed_addresses_preserve_module_keys() {
         static_address(address),
         "module.app.module.inner.aws_instance.web"
     );
-    assert_eq!(module_of(address), "module.app[\"a.b]c\"].module.inner[0]");
+    assert_eq!(
+        crate::model::module_of(address),
+        "module.app[\"a.b]c\"].module.inner[0]"
+    );
 }
 
 #[test]
