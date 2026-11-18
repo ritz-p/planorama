@@ -23,6 +23,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     }
     if kind == "cloudflare_ai_search_instance" {
         return match path {
+            "namespace" => Some("Instance namespace"),
             "ai_gateway_id" => Some("Search AI Gateway"),
             "token_id" => Some("Search token"),
             "source" => Some("Search source bucket"),
@@ -86,6 +87,7 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
                 "project_name" => Kind::Pages,
                 "gateway_id" | "ai_gateway_id" => Kind::AiGateway,
                 "token_id" => Kind::SearchToken,
+                "namespace" if node.configurable_search_namespace => Kind::SearchNamespace,
                 "script_name" | "script" | "service" => Kind::WorkerName,
                 _ => return Err(Failure::UnsupportedContract),
             },

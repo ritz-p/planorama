@@ -54,6 +54,16 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
                 verified_version,
                 ambiguous,
             } = binding;
+            node.configurable_search_namespace = !ambiguous
+                && node.provider.is_cloudflare()
+                && node.provider == *provider
+                && node.resource_type == "cloudflare_ai_search_instance"
+                && resource["type"] == node.resource_type
+                && resource["mode"] == "managed"
+                && matches!(
+                    plan["configuration"]["provider_config"][&configuration.key]["version_constraint"].as_str(),
+                    Some("5.29.0" | "= 5.29.0")
+                );
             let expression = resource["expressions"].get("region");
             node.has_region_override = expression.is_some() || *ambiguous;
             if !node.provider.is_explicit() {
