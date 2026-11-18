@@ -14,6 +14,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 pub(super) fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
+            "pipelines" => Target::new(row.text("pipeline")?, Kind::PipelineStream),
             "ai_search" => {
                 let field = row.at("namespace")?;
                 field.scalar()?;

@@ -18,6 +18,7 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
         .filter_map(|node| {
             let label = match node.resource_type.as_str() {
                 "cloudflare_worker" | "cloudflare_workers_script" => "Service bindings",
+                "cloudflare_pipeline_stream" => "Pipeline stream bindings",
                 "cloudflare_ai_search_instance" => "AI Search instance bindings",
                 "cloudflare_ai_search_namespace" => "AI Search namespace bindings",
                 "cloudflare_workflow" => "Workflow bindings",
