@@ -9,6 +9,7 @@ const manual = read('.github/workflows/spacing_calibration.yml');
 
 test('ordinary suites retain selectors and aggregate without calibration or artifact prerequisite', () => {
   assert.doesNotMatch(standard, /budget_calibration|spacing-calibration|upload-artifact|--ignored/);
+  assert.match(standard, /name: Compile tests\n\s+if: github\.event_name == 'workflow_dispatch'/);
   assert.match(standard, /suite: \[standard, large\]/);
   assert.match(standard, /node .github\/scripts\/test-suites.cjs "\$TEST_SUITE" compile/);
   assert.match(standard, /node .github\/scripts\/test-suites.cjs "\$TEST_SUITE" run/);
