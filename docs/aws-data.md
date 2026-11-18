@@ -1134,3 +1134,13 @@ Explicit Terraform references link Athena configuration to its selected endpoint
 |  | `configuration.customer_content_encryption_configuration.kms_key`, `configuration.managed_query_results_configuration.encryption_configuration.kms_key`, `configuration.result_configuration.encryption_configuration.kms_key_arn`, `configuration.monitoring_configuration.s3_logging_configuration.kms_key`, `configuration.monitoring_configuration.managed_logging_configuration.kms_key` | `aws_kms_key` (`arn`) |
 |  | `configuration.result_configuration.output_location`, `configuration.monitoring_configuration.s3_logging_configuration.log_location` | `aws_s3_bucket` (`bucket`, `id`) |
 |  | `configuration.monitoring_configuration.cloud_watch_logging_configuration.log_group` | `aws_cloudwatch_log_group` (`name`) |
+
+### Glue catalog encryption
+
+A catalog or shared security configuration references a KMS key only for a matching encryption mode. The catalog encryption service role is specific to SSE-KMS-WITH-SERVICE-ROLE. An explicit foreign catalog ID remains a selector.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_glue_data_catalog_encryption_settings` | `data_catalog_encryption_settings.connection_password_encryption.aws_kms_key_id`, `data_catalog_encryption_settings.encryption_at_rest.sse_aws_kms_key_id` | `aws_kms_key` (`arn`) |
+|  | `data_catalog_encryption_settings.encryption_at_rest.catalog_encryption_service_role` | `aws_iam_role` (`arn`) |
+| `aws_glue_security_configuration` | `encryption_configuration.cloudwatch_encryption.kms_key_arn`, `encryption_configuration.job_bookmarks_encryption.kms_key_arn`, `encryption_configuration.s3_encryption.kms_key_arn` | `aws_kms_key` (`arn`) |

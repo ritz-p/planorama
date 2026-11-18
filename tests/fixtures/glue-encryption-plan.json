@@ -1,0 +1,160 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.sample0",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_security_configuration.sample1",
+      "mode": "managed",
+      "type": "aws_glue_security_configuration",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "encryption_configuration": [
+            {
+              "cloudwatch_encryption": [
+                {
+                  "cloudwatch_encryption_mode": "SSE-KMS",
+                  "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/catalog"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_data_catalog_encryption_settings.sample3",
+      "mode": "managed",
+      "type": "aws_glue_data_catalog_encryption_settings",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "data_catalog_encryption_settings": [
+            {
+              "encryption_at_rest": [
+                {
+                  "catalog_encryption_mode": "SSE-KMS-WITH-SERVICE-ROLE",
+                  "sse_aws_kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/catalog",
+                  "catalog_encryption_service_role": "arn:aws:iam::123456789012:role/catalog"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_security_configuration.sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_configuration": [
+              {
+                "cloudwatch_encryption": [
+                  {
+                    "kms_key_arn": {
+                      "references": [
+                        "aws_kms_key.sample0.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_data_catalog_encryption_settings.sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "data_catalog_encryption_settings": [
+              {
+                "encryption_at_rest": [
+                  {
+                    "sse_aws_kms_key_id": {
+                      "references": [
+                        "aws_kms_key.sample0.arn"
+                      ]
+                    },
+                    "catalog_encryption_service_role": {
+                      "references": [
+                        "aws_iam_role.sample2.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
