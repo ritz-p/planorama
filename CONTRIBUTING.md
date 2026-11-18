@@ -160,9 +160,34 @@ emulator's generated TLS CA and credentials. Keep all saved plans local.
 The standard containment diagram uses `examples/aws-emulator/containment/main.tf`.
 Run `sh scripts/aws-emulator/generate.sh containment`, then pass the resulting
 `create.json` to `node scripts/aws-emulator/create-snapshot.cjs` and redirect it
-to `examples/aws-emulator/containment/create.json`. The snapshot omits only the
-top-level plan timestamp. Run `sh scripts/update-examples.sh` to render it.
+to `examples/aws-emulator/containment/create.json`. The snapshot omits the
+top-level plan timestamp and sorts the unordered `relevant_attributes` entries
+by resource and attribute path. Run `sh scripts/update-examples.sh` to render it.
 The local export retains the original JSON and binary for every phase.
 The compact `tests/fixtures/containment-plan.json` supports tests that mutate
 individual actions and reference evidence. The Terraform-only module and remote
 state examples in `examples/terraform/` continue to use their offline flow.
+
+### Capture checks and API coverage
+
+The Terraform emulator samples workflow checks a fresh containment create plan
+and its SVG on relevant PRs. Manually dispatch it for the queue and containment
+apply/refresh/destroy runs and the large fixture projection. Locally, set
+`PLANORAMA_BIN` to the built CLI and run `sh scripts/aws-emulator/check-samples.sh pr`
+or prepare the large tools and use `full`. The raw binary and show output stay
+in the private workspace. CI does not upload them.
+
+| Sample | Exercised emulator operations | Evidence compared |
+|---|---|---|
+| Queue, provider 6.70.0 | STS validation and SQS create, get attributes and delete | Four saved-plan actions and the ARN after refresh |
+| Containment, provider 6.70.0 | EC2 VPC and subnet create/read/delete, instance run/describe/terminate in us-east-1a | Complete create JSON and SVG, post-apply ID equality |
+| Large, provider 5.100.0 | Create/read/delete the seed VPC and security group, read those resources, images and STS identity | Full real create plan and byte-exact separate stress projection |
+
+Check the [pinned emulator release coverage](https://github.com/aws/aws-emulator/releases/tag/v1.0.508)
+before adding APIs. A 501, unimplemented waiter or inconsistent read fails the
+capture. Record the operation and phase before choosing an offline Terraform
+create plan when only configuration or unknown values are required. Keep a
+minimal synthetic fixture for historical actions, missing evidence or multiple
+account identities that neither path can establish. Never substitute synthetic
+IDs into a native capture. Comparison failures require reviewing actual changes
+to the HCL, provider output and SVG.
