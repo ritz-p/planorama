@@ -88,6 +88,7 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         "cloudflare_ai_gateway" | "cloudflare_ai_gateway_dynamic_routing" => {
             "Cloudflare AI Gateway"
         }
+        "cloudflare_turnstile_widget" => "Cloudflare Turnstile",
         "cloudflare_hyperdrive_config" => "Cloudflare Hyperdrive",
         "cloudflare_queue"
         | "cloudflare_queue_consumer"

@@ -40,6 +40,7 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_load_balancer_monitor_group"
             | "cloudflare_ruleset"
             | "cloudflare_list"
+            | "cloudflare_turnstile_widget"
             | "cloudflare_mtls_certificate"
             | "cloudflare_worker"
             | "cloudflare_worker_version"
