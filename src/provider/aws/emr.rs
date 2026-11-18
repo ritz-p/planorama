@@ -6,6 +6,10 @@ use std::collections::BTreeSet;
 const CLUSTER: &str = "aws_emr_cluster";
 const STUDIO: &str = "aws_emr_studio";
 const MAPPING: &str = "aws_emr_studio_session_mapping";
+const VIRTUAL: &str = "aws_emrcontainers_virtual_cluster";
+const TEMPLATE: &str = "aws_emrcontainers_job_template";
+const TEMPLATE_LOG: &str = "job_template_data.configuration_overrides.monitoring_configuration.cloud_watch_monitoring_configuration.log_group_name";
+const TEMPLATE_BUCKET: &str = "job_template_data.configuration_overrides.monitoring_configuration.s3_monitoring_configuration.log_uri";
 const PROFILE: &str = "ec2_attributes.instance_profile";
 const SINGLE: &str = "ec2_attributes.subnet_id";
 const SUBNETS: &str = "ec2_attributes.subnet_ids";
@@ -34,6 +38,15 @@ fn rule(kind: &str, p: &str) -> Option<Rule> {
         }
         (MAPPING, "studio_id") => (STUDIO, &["id"], "EMR Studio"),
         (MAPPING, "session_policy_arn") => ("aws_iam_policy", &["arn"], "Session policy"),
+        (VIRTUAL, "container_provider.id") => {
+            ("aws_eks_cluster", &["name"], "Registered EKS cluster")
+        }
+        (TEMPLATE, "kms_key_arn") => ("aws_kms_key", &["arn"], "Template encryption key"),
+        (TEMPLATE, "job_template_data.execution_role_arn") => {
+            ("aws_iam_role", &["arn"], "Job execution role")
+        }
+        (TEMPLATE, TEMPLATE_LOG) => ("aws_cloudwatch_log_group", &["name"], "Job log group"),
+        (TEMPLATE, TEMPLATE_BUCKET) => ("aws_s3_bucket", &["bucket", "id"], "Job log bucket"),
         (CLUSTER, SINGLE | SUBNETS) => ("aws_subnet", &["id"], "Cluster subnets"),
         (CLUSTER, MASTER | SLAVE | ACCESS | ADD_MASTER | ADD_SLAVE) => {
             ("aws_security_group", &["id"], "Cluster security groups")
@@ -71,7 +84,7 @@ fn rule(kind: &str, p: &str) -> Option<Rule> {
     })
 }
 pub(crate) fn resource(kind: &str) -> bool {
-    kind == CLUSTER
+    matches!(kind, CLUSTER | VIRTUAL | TEMPLATE)
 }
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
     path.contains(".0.") && rule(kind, &path.replace(".0.", ".")).is_some()
@@ -144,6 +157,15 @@ pub(super) fn annotate(
             let allowed = k != STUDIO
                 || r.attribute != "user_role"
                 || super::service_evidence::known(e, r.target, "auth_mode") == Some("SSO");
+            let allowed = allowed
+                && (k != VIRTUAL
+                    || nested_references::value(
+                        e[r.target].0,
+                        e[r.target].1,
+                        "container_provider.0.type",
+                    )
+                    .and_then(Value::as_str)
+                        == Some("EKS"));
             let ok = allowed
                 && nested_references::verify_values(
                     nodes,

@@ -25614,10 +25614,10 @@
       }
     },
     "aws_emrcontainers_virtual_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 843,
-      "gap": "#722 reviewed: Missing: EKS-type container_provider.id matches EKS name, not ID/ARN; namespace is Kubernetes namespace, not an AWS managed child. Follow-up #843.",
+      "gap": "Implemented #843 following audit #722. Virtual clusters resolve EKS registrations by cluster name and the EKS provider type. Reusable job templates resolve key and execution role ARNs, CloudWatch log group names and S3 log destinations.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25668,10 +25668,10 @@
       }
     },
     "aws_emrcontainers_job_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 843,
-      "gap": "#722 reviewed: Missing: KMS/execution-role ARN and typed log group/S3 references; reusable template has no virtual_cluster_id and must not be embedded into arbitrary cluster. Driver arguments and placeholder expressions excluded. Follow-up #843.",
+      "gap": "Implemented #843 following audit #722. Virtual clusters resolve EKS registrations by cluster name and the EKS provider type. Reusable job templates resolve key and execution role ARNs, CloudWatch log group names and S3 log destinations.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

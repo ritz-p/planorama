@@ -127,3 +127,27 @@ fn emr_studio_requires_verified_configuration() {
         json!({"workspace_security_group_id":true});
     assert_eq!(parent(&graph(&v), "aws_emr_studio.main"), None);
 }
+
+#[test]
+fn emr_containers_requires_verified_configuration() {
+    let mut v: Value =
+        serde_json::from_str(include_str!("../../fixtures/emr-containers-plan.json")).unwrap();
+    assert!(verified(&v, 5, "container_provider.id"));
+    for p in [
+        "kms_key_arn",
+        "job_template_data.execution_role_arn",
+        super::TEMPLATE_LOG,
+        super::TEMPLATE_BUCKET,
+    ] {
+        assert!(verified(&v, 6, p), "{p}");
+    }
+    v["resource_changes"][5]["change"]["after"]["container_provider"][0]["type"] = json!("OTHER");
+    assert!(!verified(&v, 5, "container_provider.id"));
+    v["resource_changes"][6]["change"]["after"]["job_template_data"][0]["execution_role_arn"] =
+        json!("${template.role}");
+    assert!(!verified(&v, 6, "job_template_data.execution_role_arn"));
+    assert_eq!(
+        parent(&graph(&v), "aws_emrcontainers_virtual_cluster.main"),
+        None
+    );
+}
