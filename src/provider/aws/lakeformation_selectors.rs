@@ -295,18 +295,14 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, s: usize, path: &str) -> 
         ("aws_lakeformation_resource", "role_arn") => e
             .value(r.target, "use_service_linked_role")
             .is_some_and(|v| v.is_null() || v.as_bool() == Some(false)),
-        (_, p)
-            if matches!(
-                p,
-                "instance_arn"
-                    | "admins"
-                    | "read_only_admins"
-                    | "principal"
-                    | "principal.data_lake_principal_identifier"
-            ) =>
-        {
-            true
-        }
+        (
+            _,
+            "instance_arn"
+            | "admins"
+            | "read_only_admins"
+            | "principal"
+            | "principal.data_lake_principal_identifier",
+        ) => true,
         (_, _) => qualified(e, r, s, path),
     }
 }
@@ -386,19 +382,18 @@ fn qualified(e: &Evidence<'_>, r: &AttributeReference, s: usize, path: &str) -> 
             return false;
         }
     }
-    if !scope(r.target, &owner)
+    if scope(r.target, &owner)
         .zip(scope(s, "catalog_id"))
-        .is_some_and(|(a, b)| a == b)
+        .is_none_or(|(a, b)| a != b)
     {
         return false;
     }
-    if row.contains(".table.") || row.starts_with("table.") || row.contains("table_with_columns.") {
-        if !e
+    if (row.contains(".table.") || row.starts_with("table.") || row.contains("table_with_columns."))
+        && !e
             .value(r.target, &format!("{row}.wildcard"))
             .is_some_and(|v| v.is_null() || v.as_bool() == Some(false))
-        {
-            return false;
-        }
+    {
+        return false;
     }
     if kind == "aws_glue_catalog_table" && matches!(last, "name" | "table_name") {
         let Some(db) = e.text(s, "database_name") else {
