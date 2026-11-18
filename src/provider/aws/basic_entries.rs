@@ -1030,7 +1030,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_neptune_parameter_group", "Amazon Neptune", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonNeptune))),
     entry!("aws_neptune_subnet_group", "Amazon Neptune", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonNeptune))),
     entry!("aws_neptunegraph_graph", "Amazon Neptune Analytics", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonNeptune))),
-    entry!("aws_neptunegraph_private_graph_endpoint", "Amazon Neptune Analytics", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonNeptune))),
+    entry!("aws_neptunegraph_private_graph_endpoint", "Amazon Neptune Analytics", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonNeptune))),
     entry!("aws_network_acl", "Amazon VPC", Policy, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_network_acl_association", "Amazon VPC", Association, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_network_acl_rule", "Amazon VPC", Policy, Logical, Regional, Some(ResourceIcon::Vpc)),

@@ -2,6 +2,7 @@ pub(crate) mod agentcore_gateway;
 pub(crate) mod agentcore_runtime;
 pub(crate) mod agentcore_services;
 mod aliases;
+mod analytics_databases;
 mod api_gateway;
 mod api_usage;
 mod application_scaling;
@@ -405,6 +406,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     imagebuilder::present(&raw, &mut graph);
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
+    analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);
     cloudfront_vpc_origin::present(&raw, &mut graph);
