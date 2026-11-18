@@ -1115,3 +1115,22 @@ A scheduled target requires a table in the explicitly configured database. Datab
 |  | `kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
 |  | `notification_configuration.sns_configuration.topic_arn` | `aws_sns_topic` (`arn`) |
 |  | `error_report_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+
+### Athena catalogs, queries and workgroups
+
+Explicit Terraform references link Athena configuration to its selected endpoints. Lambda parameters must form a complete supported map. Only a customer-managed output location links a result bucket; managed query results and logging settings use their own enable flags. Workgroup helpers retain their original actions and database references require an Athena database in the same scope.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_athena_data_catalog` | `parameters` | `aws_lambda_function` (`arn`) |
+| `aws_athena_database` | `bucket` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `workgroup` | `aws_athena_workgroup` (`name`) |
+|  | `encryption_configuration.kms_key` | `aws_kms_key` (`arn`, `key_id`) |
+| `aws_athena_named_query` | `workgroup` | `aws_athena_workgroup` (`name`) |
+|  | `database` | `aws_athena_database` (`name`) |
+| `aws_athena_prepared_statement` | `workgroup` | `aws_athena_workgroup` (`name`) |
+| `aws_athena_workgroup` | `configuration.execution_role` | `aws_iam_role` (`arn`) |
+|  | `configuration.identity_center_configuration.identity_center_instance_arn` | `aws_ssoadmin_instances` (`arns`) |
+|  | `configuration.customer_content_encryption_configuration.kms_key`, `configuration.managed_query_results_configuration.encryption_configuration.kms_key`, `configuration.result_configuration.encryption_configuration.kms_key_arn`, `configuration.monitoring_configuration.s3_logging_configuration.kms_key`, `configuration.monitoring_configuration.managed_logging_configuration.kms_key` | `aws_kms_key` (`arn`) |
+|  | `configuration.result_configuration.output_location`, `configuration.monitoring_configuration.s3_logging_configuration.log_location` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `configuration.monitoring_configuration.cloud_watch_logging_configuration.log_group` | `aws_cloudwatch_log_group` (`name`) |

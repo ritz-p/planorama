@@ -8,10 +8,15 @@ pub(super) struct Rule {
     pub label: &'static str,
     pub outputs: &'static [(&'static str, &'static [&'static str])],
     pub list: bool,
+    decoder: Option<nested_references::DecodeLeaf>,
     pub blocks: &'static [&'static str],
 }
 
 impl Rule {
+    pub fn decoded(mut self, decoder: nested_references::DecodeLeaf) -> Self {
+        self.decoder = Some(decoder);
+        self
+    }
     pub fn new(
         label: &'static str,
         outputs: &'static [(&'static str, &'static [&'static str])],
@@ -22,6 +27,7 @@ impl Rule {
             label,
             outputs,
             list,
+            decoder: None,
             blocks,
         }
     }
@@ -133,6 +139,38 @@ pub(super) fn annotate(
                     .find(|(k, _)| *k == src)
                     .map_or(&[][..], |(_, v)| *v)
             };
+            if rule
+                .outputs
+                .iter()
+                .any(|(kind, _)| *kind == "aws_ssoadmin_instances")
+            {
+                let path = r.attribute.split('.').collect::<Vec<_>>().join(".0.");
+                let depth = r.attribute.split('.').count() - 1;
+                let verified = lambda_core::unique(refs, r.target, &r.attribute).is_some()
+                    && r.instances_explicit
+                    && r.issues.is_empty()
+                    && lambda_core::unique(refs, r.target, &path).is_some_and(|leaf| {
+                        let [s] = leaf.sources.as_slice() else {
+                            return false;
+                        };
+                        leaf.sources == r.sources
+                            && leaf.indexed_block_lengths == vec![1; depth]
+                            && validate(&e, r, *s, &path)
+                            && eventbridge::bindings(
+                                node.provider_configuration.as_ref(),
+                                nodes[*s].provider_configuration.as_ref(),
+                                scope::scope(node).as_ref().and_then(|v| v.region.as_ref()),
+                                scope::scope(&nodes[*s])
+                                    .as_ref()
+                                    .and_then(|v| v.region.as_ref()),
+                                false,
+                            )
+                            && e.text(r.target, &path).is_some_and(|v| {
+                                super::identity_center_instance::verify(nodes, leaf, values, v)
+                            })
+                    });
+                return Some((verified, Vec::new()));
+            }
             let verified = nested_references::verify_values(
                 nodes,
                 refs,
@@ -149,7 +187,9 @@ pub(super) fn annotate(
                             .all(|part| part.parse::<usize>().is_ok());
                     shape
                         && e.value(r.target, path).is_some_and(|v| {
-                            if rule.list {
+                            if let Some(decode) = rule.decoder {
+                                decode(&r.attribute, v).is_some()
+                            } else if rule.list {
                                 v.is_array()
                             } else {
                                 v.is_string()
@@ -166,7 +206,10 @@ pub(super) fn annotate(
                         )
                         && validate(&e, r, s, path)
                 },
-                (rule.blocks, nested_references::leaf_values),
+                (
+                    rule.blocks,
+                    rule.decoder.unwrap_or(nested_references::leaf_values),
+                ),
             )
             .is_some();
             let context = if verified

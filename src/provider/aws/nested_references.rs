@@ -150,7 +150,7 @@ pub(super) fn verify_collections(
     )
 }
 
-type DecodeLeaf = for<'a> fn(&str, &'a Value) -> Option<BTreeSet<&'a str>>;
+pub(super) type DecodeLeaf = for<'a> fn(&str, &'a Value) -> Option<BTreeSet<&'a str>>;
 
 pub(super) fn verify_values(
     nodes: &[TerraformEntity],
