@@ -177,6 +177,7 @@ mod step_functions_tests;
 mod streaming;
 pub(crate) mod synthetics;
 pub(crate) mod timestream_influx;
+pub(crate) mod timestream_queries;
 pub(crate) mod traffic_mirror;
 pub(crate) mod transfer_as2;
 pub(crate) mod transfer_identity;
