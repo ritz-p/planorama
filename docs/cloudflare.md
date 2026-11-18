@@ -293,6 +293,12 @@ challenges can reference either an account or a zone. Dataset names,
 observability destination strings, ownership tokens and destination URLs
 provide no typed delivery endpoint or evidence that logs were received.
 
+Managed load-balancer pools show origin entries in Terraform list order. Each
+row reports configured enablement and any known weight. Origin names, hosts,
+addresses and headers are omitted. A masked collection, enablement or weight
+suppresses the rows. Origin rows are internal configuration and do not identify
+independent resources or report health or traffic.
+
 A managed AI Gateway dynamic route can identify its gateway through an explicit
 `gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
 Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,

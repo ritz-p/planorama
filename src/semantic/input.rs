@@ -95,6 +95,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
                 references: std::mem::take(&mut references[index]),
                 entity: {
                     let mut entity = crate::model::ArchitectureEntity::terraform(fact.into());
+                    entity.pool_origins = fact.pool_origins.clone();
                     entity.cloudflare_scope = fact.cloudflare_scope.clone();
                     entity.represented_account = fact.represented_account.clone();
                     entity.scope = crate::provider::scope(fact);

@@ -144,6 +144,13 @@ pub(crate) fn annotate(
         if account_path.is_empty() && zone_path.is_empty() {
             continue;
         }
+        if node.resource_type == "cloudflare_load_balancer_pool"
+            && node.mode == EntityMode::Managed
+            && proof::current(node)
+            && evidence.id("account_id").is_ok()
+        {
+            node.pool_origins = edge::pool_origins(*evidence).unwrap_or_default();
+        }
         node.cloudflare_scope = Some(CloudflareScope {
             account: known_id(value, mask, account_path),
             zone: known_id(value, mask, zone_path),

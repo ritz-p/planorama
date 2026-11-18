@@ -8,6 +8,7 @@ pub enum WafScope {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct TerraformEntity {
+    pub pool_origins: Vec<super::architecture::PoolOrigin>,
     pub configurable_search_namespace: bool,
     pub cloudflare_scope: Option<super::architecture::CloudflareScope>,
     pub encryption: Option<&'static str>,

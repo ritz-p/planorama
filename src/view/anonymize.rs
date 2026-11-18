@@ -352,6 +352,7 @@ impl Projection {
 
     fn entity(&mut self, entity: &mut ArchitectureEntity) {
         let ArchitectureEntity {
+            pool_origins: _,
             cloudflare_scope,
             deployment_target,
             represented_account,
