@@ -330,3 +330,21 @@ and run the same test with its seed, for example
 `PROPTEST_RNG_SEED=1372 cargo test --locked --all-features --lib reference_properties`.
 Use `PROPTEST_CASES=256` with an explicit seed for a larger local run. Keep a
 minimized case as a regression when it exposes a distinct product bug.
+
+## Targeted Rust mutation tests
+
+Install `cargo-mutants` 25.3.1 with `cargo install --locked cargo-mutants --version 25.3.1`.
+From the development environment, run `sh scripts/rust-mutants.sh` manually.
+The pilot changes one instance-key predicate, one Cloudflare provider-binding
+predicate, and one AWS certificate scope predicate in a temporary source copy.
+It runs the unmodified baseline first and uses the same reference and provider
+library tests for each mutation. The run has a 20-minute limit, with seven
+minutes for each build and 90 seconds for each test phase.
+
+Inspect `output/rust-mutants/mutants.out/outcomes.json` and its per-mutant logs.
+For a survivor, confirm the selected tests exercise the affected path and that
+the replacement changes observable behavior. Classify equivalent mutations,
+build failures and timeouts separately. Expand the pilot only if a new,
+non-equivalent survivor identifies a distinct assertion gap within the budget.
+Stop expanding when the results duplicate existing regressions or only produce
+equivalent, unbuildable or timed-out mutants.
