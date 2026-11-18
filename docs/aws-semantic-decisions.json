@@ -18492,10 +18492,10 @@
       }
     },
     "aws_quicksight_data_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 804,
-      "gap": "#724 reviewed: Intentionally unsupported: VPC connection is a connector reference, not containment of data source or remote databases. Missing: VPC connection ARN, secret/copy-source ARN and type-discriminated OpenSearch domain, Athena workgroup/role, RDS instance identifier, Redshift cluster identifier, S3 bucket/role and IoT Analytics dataset names. Host/port/URL strings never reconstruct resources. Follow-up #804. Intentionally unsupported: credentials, SQL, manifest keys, query strings and endpoint URLs.",
+      "gap": "#724 reviewed: Implemented #804. Verified VPC connection, exclusive copied credentials or secret, and type-specific Elasticsearch domain, Athena workgroup/role, RDS identifier, Redshift cluster and S3 manifest bucket/role. IoT Analytics has no managed dataset endpoint in the pinned inventory. Connector navigation only; a data source does not inherit the connection VPC.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18519,8 +18519,8 @@
         ],
         "placement": "Supported: retain Logical aws_quicksight_data_source basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_data_source configuration; no verified embedded owner in runtime.",
-        "network": "Intentionally unsupported: VPC connection is a connector reference, not containment of data source or remote databases.",
-        "references": "Missing: VPC connection ARN, secret/copy-source ARN and type-discriminated OpenSearch domain, Athena workgroup/role, RDS instance identifier, Redshift cluster identifier, S3 bucket/role and IoT Analytics dataset names. Host/port/URL strings never reconstruct resources.",
+        "network": "Supported: Connector navigation only; a data source does not inherit the connection VPC.",
+        "references": "Supported: Verified VPC connection, exclusive copied credentials or secret, and type-specific Elasticsearch domain, Athena workgroup/role, RDS identifier, Redshift cluster and S3 manifest bucket/role. IoT Analytics has no managed dataset endpoint in the pinned inventory.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: credentials, SQL, manifest keys, query strings and endpoint URLs.",
         "officialDocumentation": "website/docs/r/quicksight_data_source.html.markdown",
@@ -19301,10 +19301,10 @@
       }
     },
     "aws_quicksight_vpc_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 804,
-      "gap": "#724 reviewed: Missing: verified common-VPC connection context, without putting all QuickSight consumers in those subnets. Missing: IAM role and complete subnet/SG common-VPC proof; dns_resolvers are IPs, not Route53 resource identities. Follow-up #804. Intentionally unsupported: availability status and resolver IPs do not establish connectivity; verified network navigation is the useful context.",
+      "gap": "#724 reviewed: Implemented #804. Verified IAM role, subnet IDs and security group IDs. Resolver IPs are opaque. A common VPC requires complete subnet and security-group collections with explicit matching VPC identities.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19320,8 +19320,8 @@
         ],
         "placement": "Supported: retain Logical aws_quicksight_vpc_connection basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_vpc_connection configuration; no verified embedded owner in runtime.",
-        "network": "Missing: verified common-VPC connection context, without putting all QuickSight consumers in those subnets.",
-        "references": "Missing: IAM role and complete subnet/SG common-VPC proof; dns_resolvers are IPs, not Route53 resource identities.",
+        "network": "Supported: A common VPC requires complete subnet and security-group collections with explicit matching VPC identities.",
+        "references": "Supported: Verified IAM role, subnet IDs and security group IDs. Resolver IPs are opaque.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: availability status and resolver IPs do not establish connectivity; verified network navigation is the useful context.",
         "officialDocumentation": "website/docs/r/quicksight_vpc_connection.html.markdown",

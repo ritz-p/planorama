@@ -1029,3 +1029,22 @@ Elastic clusters use direct subnet and security group ID sets. Neptune private g
 ### Aurora DSQL (#767)
 
 Cluster policies and peerings resolve their local cluster by `identifier`. A cluster's configured `multi_region_properties.clusters` and a peering's `clusters` resolve managed clusters by ARN across regions when the account, partition, resource identifier and effective regions agree. The witness region is configuration. Cluster encryption accepts an explicit KMS key ARN. The AWS-owned key sentinel keeps the default presentation.
+
+### QuickSight connections and data sources
+
+A VPC connection verifies `role_arn` against an IAM role ARN and the complete
+`subnet_ids` and `security_group_ids` sets against managed IDs. Both sets must
+prove the same managed VPC before the connection has VPC context. Consumers
+retain their own scope. Resolver IPs do not identify Route 53 resources.
+
+A data source accepts singleton blocks for `vpc_connection_properties.vpc_connection_arn`
+and the mutually exclusive `credentials.copy_source_arn` or `credentials.secret_arn`.
+The targets are the matching connection, data source or Secrets Manager ARN.
+Within the selected `parameters` block, ATHENA accepts `athena.work_group`
+(workgroup name) and `athena.role_arn`. RDS accepts `rds.instance_id` (DB instance
+identifier), REDSHIFT accepts `redshift.cluster_id` (cluster identifier), and S3
+accepts `s3.manifest_file_location.bucket` (bucket or ID) and `s3.role_arn`.
+AMAZON_ELASTICSEARCH accepts `amazon_elasticsearch.domain` against an Elasticsearch
+domain name. The pinned provider has no OpenSearch parameter block or managed IoT
+Analytics dataset. Missing, masked, incompatible or literal-only evidence leaves
+the typed link unverified. Credentials and connection strings remain private.
