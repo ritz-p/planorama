@@ -162,7 +162,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 855,
-      "gap": "#722 reviewed: Partial: #695 retains namespace identity; Missing: complete IAM roles/default role, data KMS and password-secret KMS references. Namespace is logical identity, never workgroup VPC container. Follow-up #855.",
+      "gap": "Implemented #855 following audit #722. Complete configured IAM role set, separate default role, data encryption key ARN and credentials encryption key identifier. Existing #695 namespace identity remains logical.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -179,8 +179,8 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshiftserverless_namespace remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshiftserverless_namespace has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Partial: #695 retains namespace identity; Missing: complete IAM roles/default role, data KMS and password-secret KMS references. Namespace is logical identity, never workgroup VPC container.",
-        "scope": "Partial: Regional (conditional); scope.rs retains verified provider account. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Complete configured IAM role set, separate default role, data encryption key ARN and credentials encryption key identifier. Existing #695 namespace identity remains logical.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: namespace_name/namespace_id identity navigation belongs to #855; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshiftserverless_namespace.html.markdown",
         "shapes": {
@@ -217,7 +217,14 @@
           "default_iam_role_arn": "optional",
           "kms_key_id": "optional/computed",
           "admin_password_secret_kms_key_id": "optional/computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "src/provider/aws/redshift_helpers/serverless.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-serverless-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshiftserverless_workgroup": {
@@ -28532,10 +28539,10 @@
       }
     },
     "aws_redshiftserverless_custom_domain_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 855,
-      "gap": "#722 reviewed: Missing: workgroup name and ACM certificate ARN; DNS name does not establish Route53 relationship. Follow-up #855.",
+      "gap": "Implemented #855 following audit #722. Configured workgroup name and ACM certificate ARN. The domain name does not prove DNS ownership.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28546,10 +28553,10 @@
           "custom_domain_name"
         ],
         "placement": "Supported: retain Logical Association default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
-        "ownership": "Missing: verified workgroup custom domain helper.",
+        "ownership": "Supported: The verified workgroup owns the domain helper.",
         "network": "Not applicable: aws_redshiftserverless_custom_domain_association has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: workgroup name and ACM certificate ARN; DNS name does not establish Route53 relationship.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Configured workgroup name and ACM certificate ARN. The domain name does not prove DNS ownership.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: workgroup_name/custom_domain_certificate_arn identity navigation belongs to #855; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshiftserverless_custom_domain_association.html.markdown",
         "shapes": {
@@ -28567,7 +28574,14 @@
           "workgroup_name": "required",
           "custom_domain_certificate_arn": "required",
           "custom_domain_name": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "src/provider/aws/redshift_helpers/serverless.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-serverless-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshiftserverless_snapshot": {
@@ -28620,10 +28634,10 @@
       }
     },
     "aws_redshiftserverless_usage_limit": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 855,
-      "gap": "#722 reviewed: Missing: workgroup resource_arn proof with usage_type discriminator; limit amount is not runtime usage. Follow-up #855.",
+      "gap": "Implemented #855 following audit #722. Workgroup ARN with a known supported quota usage type.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28634,10 +28648,10 @@
           "amount"
         ],
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
-        "ownership": "Missing: verified workgroup usage helper.",
+        "ownership": "Supported: The verified workgroup owns the usage limit.",
         "network": "Not applicable: aws_redshiftserverless_usage_limit has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: workgroup resource_arn proof with usage_type discriminator; limit amount is not runtime usage.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Workgroup ARN with a known supported quota usage type.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: resource_arn/usage_type identity navigation belongs to #855; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshiftserverless_usage_limit.html.markdown",
         "shapes": {
@@ -28655,7 +28669,14 @@
           "resource_arn": "required",
           "usage_type": "required",
           "amount": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "src/provider/aws/redshift_helpers/serverless.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-serverless-helpers-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_cleanrooms_collaboration": {

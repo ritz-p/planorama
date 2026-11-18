@@ -4,6 +4,7 @@ use crate::semantic::Input;
 use serde_json::Value;
 
 mod catalog;
+mod serverless;
 
 const CLUSTER: &str = "aws_redshift_cluster";
 const EVENT: &str = "aws_redshift_event_subscription";
@@ -16,7 +17,8 @@ const WORKGROUP: &str = "aws_redshiftserverless_workgroup";
 const ACTIONS: [&str; 3] = ["pause_cluster", "resize_cluster", "resume_cluster"];
 
 pub(super) fn resource(kind: &str) -> bool {
-    catalog::resource(kind)
+    serverless::resource(kind)
+        || catalog::resource(kind)
         || matches!(kind, EVENT | LOGGING | PARTNER | ACTION | USAGE | STATEMENT)
 }
 pub(crate) fn has_indexed(kind: &str) -> bool {
@@ -34,7 +36,7 @@ pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static 
     match kind {
         LOGGING => Some(("cluster_identifier", "Logging cluster", "Audit logging")),
         USAGE => Some(("cluster_identifier", "Usage limit cluster", "Usage limits")),
-        _ => catalog::owner(kind),
+        _ => serverless::owner(kind).or_else(|| catalog::owner(kind)),
     }
 }
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
@@ -54,7 +56,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         (STATEMENT, "cluster_identifier") => Some("Statement cluster"),
         (STATEMENT, "workgroup_name") => Some("Statement workgroup"),
         (STATEMENT, "secret_arn") => Some("Statement credentials secret"),
-        _ => catalog::label(kind, path),
+        _ => serverless::label(kind, path).or_else(|| catalog::label(kind, path)),
     }
 }
 fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
@@ -74,6 +76,7 @@ fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
         ("source_ids", "aws_redshift_cluster_snapshot") => &["snapshot_identifier"],
         ("bucket_name", "aws_s3_bucket") => &["bucket", "id"],
         ("workgroup_name", WORKGROUP) => &["workgroup_name"],
+        _ if serverless::resource(kind) => serverless::fields(kind, path, source),
         _ => catalog::fields(kind, path, source),
     }
 }
@@ -146,7 +149,7 @@ pub(super) fn annotate(
                     fields,
                     |s, indexed| {
                         let shape = nested_references::value(v, m, indexed).is_some_and(|leaf| {
-                            if path == "source_ids" {
+                            if matches!(path, "source_ids" | "iam_roles") {
                                 leaf.is_array()
                             } else {
                                 leaf.is_string()
@@ -154,6 +157,7 @@ pub(super) fn annotate(
                         });
                         shape
                             && valid_mode(kind, path, &nodes[s].resource_type, v, m)
+                            && serverless::valid_mode(kind, path, v, m)
                             && catalog::valid_mode(kind, path, v, m, evidence[s])
                             && catalog::compatible_endpoint(
                                 kind,

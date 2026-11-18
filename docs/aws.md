@@ -1530,6 +1530,8 @@ exactly-once coverage are preserved across filtered/named states. See
 `tests/fixtures/dms-serverless-plan.json`. Generate current defaults with
 `sh scripts/update-resource-support.sh aws_dms_`.
 
+## Redshift workload, catalog and Serverless helpers
+
 ### Redshift workload helpers (#853)
 
 Event subscriptions resolve `sns_topic_arn` and a complete `source_ids` set qualified by `source_type`. Supported sources are cluster identifiers, parameter group names, snapshot identifiers and scheduled action names. An omitted set retains selector scope. Logging and usage-limit helpers use `cluster_identifier` for ownership. S3 logging resolves the configured bucket name in S3 mode. CloudWatch export names stay opaque.
@@ -1543,3 +1545,9 @@ IDC applications resolve the configured IAM role and the optional singleton trus
 Integrations resolve an S3 bucket or DynamoDB table ARN, a provisioned cluster's `cluster_namespace_arn` or a serverless namespace ARN, and an explicitly referenced KMS key. Namespace registrations use the selected namespace type, a cluster identifier or the serverless namespace name/UUID and workgroup name. The DataCatalog selector adds no Glue endpoint.
 
 Consumer associations resolve only an explicit namespace ARN. Whole-account and region selectors do not enumerate namespaces. The provider has no managed datashare resource. Redshift resource policies may belong to provisioned or serverless namespaces. The serverless API also supports snapshot sharing and workgroup endpoint authorization. The configured owner retains its own scope and the policy body stays opaque.
+
+### Redshift Serverless namespace and workgroup helpers (#855)
+
+A namespace retains its logical identity. Its configured IAM role set requires complete evidence for every role ARN. The default IAM role is a separate scalar reference. Data encryption takes a KMS key ARN. Password-secret encryption accepts a key identifier or key ARN. Optional/computed values without configuration evidence remain unresolved. These relationships do not assign a namespace to the workgroup's VPC.
+
+A custom domain association uses its configured workgroup name and ACM certificate ARN. A matching DNS name alone supplies no Route 53 evidence. A serverless usage limit belongs to the workgroup identified by its ARN when `usage_type` is `serverless-compute` or `cross-region-datasharing`. The amount describes configured quota. Helpers without a proven owner remain individually visible.
