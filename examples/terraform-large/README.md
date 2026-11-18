@@ -1,119 +1,44 @@
 # Large AWS architecture fixture
 
-For the combined multi-state/region fixture and account evidence limits, see
-[the maintained 250-input example](../multi-account/README.md). This smaller
-fixture remains its reusable source and a focused single-state reference.
-
-See the [routing budget](../../docs/routing.md) and [spacing calibration procedure](../../docs/ci.md#on-demand-spacing-calibration) to compare this fixture across budgets.
-
-The JSON-formatted Terraform source is split across `network`, `application`,
-`database`, and `shared` modules. Module membership differs from containment:
-application EC2 instances belong to subnets in the network module. This is a
-layout/debugging fixture, not a production deployment.
+The four Terraform modules in [main.tf.json](main.tf.json) provide the source
+for the native AWS Emulator capture. The committed [plan.json](plan.json) is
+a separate synthetic routing fixture. It also supplies the
+[multi-account generator](../multi-account/README.md).
 
 ## Regeneration
 
-On the isolated Linux setup in [CONTRIBUTING.md](../../CONTRIBUTING.md), prepare both pinned AWS providers and capture the full real plan:
+From the repository root in the [prepared development environment](../../CONTRIBUTING.md#terraform-samples-with-aws-emulator), run:
 
 ```sh
 sh scripts/aws-emulator/prepare.sh large
 sh scripts/aws-emulator/generate.sh large
-# Review stress.json in the printed directory before copying it to examples/terraform-large/plan.json.
-docker compose exec -T dev cargo run --locked -- examples/terraform-large/plan.json -o examples/terraform-large/diagram.svg
-docker compose exec -T dev cargo test --locked --test large_example
 ```
 
-The SVG integration test remains required on PRs. Three repeated-layout and
-quality unit regressions run after merge and nightly; run them locally with
-`docker compose exec -T dev cargo test --locked --all-features --lib deferred_regression_ -- --ignored --test-threads=2 --nocapture`.
-See [coverage categories](../../docs/ci.md#deferred-routing-regressions-253).
+The printed directory contains the native saved plan, its JSON, SVG and HTML,
+and a separate `stress.json`. The emulator creates a seed VPC and security group,
+uses their IDs to plan the application and destroys the seed. Keep saved plans
+and state in the private output directory.
 
-The local create.tfplan, create.json, SVG and HTML use actual Terraform evidence. The generator seeds a VPC and security group, plans the four modules with their returned IDs and destroys the seed. It does not apply the application. The separate stress.json derives instance addresses and expressions from that capture and preserves the deliberately synthetic equality cases in the committed plan.json. Listener/Rule action blocks retain nested field references so component inference
-can verify target-group paths instead of using flattened action dependencies.
-For LB, Listener, Rule and Target Group resources, the generator supplies fabricated
-known ARN values in `change.after` and evaluates only exact local ARN traversals
-in ownership/action fields. These `000000000000:fixture/` values prove equality
-in this offline fixture; they are not captured AWS identifiers or predictions of
-real create-plan values. Real plans with unknown ARNs retain ungrouped targets.
-
-Route Tables, Internet Gateways and NAT Gateways similarly receive fabricated
-`fixture-id:` IDs. Exact route endpoint traversals receive matching planned IDs,
-so the two Route cards have verified owners and next hops. These values are only
-offline equality evidence; real unknown endpoint values remain unresolved.
-
-Terraform expands the instances and module calls. The stress projection is restricted to the fixture’s current create actions, local unkeyed modules and read data sources. Compare the projected JSON and the maintained SVG after changing HCL.
+Review `stress.json` before copying it to `examples/terraform-large/plan.json`.
+Run `sh scripts/update-examples.sh` to refresh the maintained diagrams, then
+`cargo test --locked --test large_example` to check the large and multi-account
+fixtures. The [capture checks](../../CONTRIBUTING.md#capture-checks-and-api-coverage)
+compare the projection with the committed input.
 
 ## Expected display
 
-The Relationship lines legend caps its card width at 960px and places its five
-relationship kinds in 2 / 2 / 1 rows below the action/color explanation. Samples retain their circles,
-arrows and numbered badges, with the complete explanation beside each sample.
-Legend height shifts the annotations and architecture together; it does not
-change the routed geometry.
+The [stress projection](../../scripts/aws-emulator/stress-base.cjs) accepts the
+fixture's create actions, local unkeyed modules and read data sources. It adds
+fabricated ARN and ID values to exercise equality checks for load-balancer
+listeners, target groups, route owners and next hops. The native create plan
+retains Terraform's unknowns. The [diagram](diagram.svg) shows the resulting
+containment, components and routes. The Log Group reference in `tags.logs`
+supplies a reference only, and the alarm lacks the matching database identifier
+needed to verify monitoring.
 
-Either `[6]` badge links to the Relationship Resources entry for
-`module.network.aws_route.nat`. Its directed endpoint list links that Route card
-to `module.network.aws_nat_gateway.main`. The index uses five complete entries
-per card, with full addresses wrapped before horizontal packing. In HTML, number
-selection emphasizes the entry, both badges, endpoints and corresponding path.
-
-The generated plan has 50 resource changes. After omitting two AWS metadata data
-sources, the renderer retains 48 resources. Two Route resources embed in their
-route tables and produce directed associations. Route-table associations and the
-four target-group attachments retain their cards because this input lacks the
-known endpoint values required to prove them. Logical resources share the cyan
-Logical Resources section; selected resource counts include embedded resources.
-
-The managed VPC contains four subnet boxes, network policy/route resources, the
-target group, ALB, ECS Service, DB subnet group and RDS workload. EC2 workers sit
-inside their referenced subnets. ALB/ECS keep individual subnet connections; the
-DB subnet group and RDS retain their dependency chain and inferred-placement notes.
-Shared VPC and Security Group data sources remain external spatial cards. ECS
-Task Definition, IAM definitions, the external AMI, EC2 Launch Template and
-Metric Alarm are logical-resource rows. CloudWatch Log Group and ECS Cluster are
-independent cards with their own scope evidence. The two managed IAM Roles share one
-provider/type/mode group; each resource retains its own identity, action underline
-and references. Groups use neutral frames rather than a combined action color.
-A purple Logical Components section contains the load balancer, its Listener and
-its uniquely referenced Target Group as neutral member links, each with one
-action-colored underline below its wrapped text. The Target Group link points to
-the original spatial card. Relationship Resources follow in a separate neutral
-section. Empty sections are omitted in smaller examples.
-The 79 relationships remain queryable; 41 paths are spatially routed.
-Internet and NAT Routes appear inside the public and private Route Tables with
-destination constants and directed lines from their own ports to the Internet
-Gateway and NAT Gateway. Matching standalone numbers appear near both child and
-target ports, alongside each child's `Next hop [N]` text and one Relationship
-Resources entry; routable children omit the `Target:` row. Canvas dimensions follow
-the current routing geometry.
-ECS Service lists its Cluster and Task definition; each EC2 worker links its AMI and Instance profile. The Auto Scaling Group links its verified Launch template logical resource. Connections retain their endpoints and undirected dotted presentation.
-The synthetic fixture lacks planned Cluster identity values, so membership remains
-unresolved; the ordinary Cluster reference and dependency remain visible.
-
-The ECS Log Group reference comes from `tags.logs`, not a logging configuration,
-so it is labeled References. The alarm's dimensions reference the database, but
-this fixture does not supply matching planned dimension/identifier values. It
-therefore shows Monitors: unresolved, emits UnverifiedMonitoring with
-`--diagnostics`, and does not claim Monitored by on RDS.
-
-Full Uses/Dependencies labels visibly include
-`Task definition: module.application.aws_ecs_task_definition.app` and
-`Cluster: module.application.aws_ecs_cluster.app` without truncation. Reference
-rows have no count limit. Long headings and references wrap at address-element
-boundaries where possible, and their cards reserve the resulting height before
-packing and routing.
-
-SG cards remain Policies, but their attachments stay dependencies because this
-synthetic fixture has no SG collection ID evidence. The dedicated
-[SG example](../security-groups.svg) supplies that collection evidence.
-
-Module names remain card metadata rather than layout bands. The diagram exercises
-wrapping, long paths and congestion; tests check geometry and routing quality
-without claiming globally optimal layout. See [routing](../../docs/routing.md)
-and the smaller [spanning example](../spanning-dense.svg).
-Per-edge regression guards allow up to 14 bends and twice the shortest valid
-route length plus 128 pixels. The reference uses the same hard boundaries,
-ports and marker clearance. Failures identify the offending endpoint addresses.
+See [routing verification](../../docs/routing.md#verification) for the quality
+criteria and [deferred routing regressions](../../docs/ci.md#deferred-routing-regressions-253)
+for the local command and CI schedule.
 
 ## Terraform validation
 
@@ -125,5 +50,3 @@ credentials:
 docker compose run --rm -T --entrypoint terraform terraform-example -chdir=examples/terraform-large init -backend=false -input=false
 docker compose run --rm -T --entrypoint terraform terraform-example -chdir=examples/terraform-large validate
 ```
-
-The local capture reads the seed through the emulator. Keep saved plans and state in the private output directory.
