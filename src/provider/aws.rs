@@ -134,6 +134,7 @@ pub(crate) mod private_ca_references;
 mod privatelink;
 pub(crate) mod profiles;
 pub(crate) mod query_logs;
+pub(crate) mod quicksight;
 pub(crate) mod rds_auxiliary;
 mod rds_proxy;
 mod redshift_cluster;
@@ -411,6 +412,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
     emr::present(&raw, &mut graph);
+    quicksight::present(&raw, &mut graph);
     sagemaker_studio::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
