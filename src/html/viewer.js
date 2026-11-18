@@ -1,6 +1,6 @@
 (() => {
   'use strict';
-/* VIEWER_MODULES */
+__PLANORAMA_VIEWER_MODULES__
   const byId = id => {
     const el = document.getElementById(id);
     return el?.closest('[data-html-filtered]') ? null : el;

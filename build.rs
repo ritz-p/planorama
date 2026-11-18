@@ -35,7 +35,6 @@ fn revision(root: &Path) -> Option<String> {
 
 fn main() {
     let root = env::var_os("CARGO_MANIFEST_DIR").unwrap();
-    // Recheck Git even when only HEAD, the index, or untracked files changed.
     println!("cargo:rerun-if-changed=build-provenance-always-recheck");
     println!(
         "cargo:rustc-env=PLANORAMA_REVISION={}",

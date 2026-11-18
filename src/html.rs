@@ -234,13 +234,13 @@ fn document(
     interpolate(
         include_str!("html/viewer.html"),
         &[
-            ("/* VIEWER_CSS */", include_str!("html/viewer.css")),
-            ("<!-- DIAGRAM -->", &svg),
-            ("<!-- VIEWER_DATA -->", &data),
-            ("<!-- VIEWER_PROVIDER_DATA -->", &providers),
-            ("<!-- VIEWER_DIAGNOSTICS -->", &diagnostics),
-            ("<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->", &semantic),
-            ("/* VIEWER_JS */", viewer_script()),
+            ("__PLANORAMA_VIEWER_CSS__", include_str!("html/viewer.css")),
+            ("__PLANORAMA_DIAGRAM__", &svg),
+            ("__PLANORAMA_VIEWER_DATA__", &data),
+            ("__PLANORAMA_VIEWER_PROVIDER_DATA__", &providers),
+            ("__PLANORAMA_VIEWER_DIAGNOSTICS__", &diagnostics),
+            ("__PLANORAMA_VIEWER_SEMANTIC_DIAGNOSTICS__", &semantic),
+            ("__PLANORAMA_VIEWER_JS__", viewer_script()),
         ],
     )
 }
@@ -266,7 +266,7 @@ fn viewer_script() -> &'static str {
         interpolate(
             include_str!("html/viewer.js"),
             &[(
-                "/* VIEWER_MODULES */",
+                "__PLANORAMA_VIEWER_MODULES__",
                 concat!(
                     include_str!("html/generation.js"),
                     "\n",

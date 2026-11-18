@@ -57,7 +57,6 @@ fn verify(
         return Err(Failure::UnsupportedContract);
     }
     let sources: BTreeSet<_> = collect(targets.into_iter().map(|target| {
-        // Rejected candidates are expected; only explicit sources explain a failed match.
         let mut candidates = nodes.iter().enumerate().filter(|(index, endpoint)| {
             proof::current(endpoint)
                 && proof::account(node, endpoint, evidence[r.target], evidence[*index]).is_ok()
