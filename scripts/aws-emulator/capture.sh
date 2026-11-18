@@ -1,7 +1,6 @@
 #!/bin/sh
 set -eu
 repo=$1 tools=$2 binary=$3 scratch=$4 artifact=$5 sample=$6 mode=$7
-# A private network namespace can still see the host sysfs mount.
 [ "$(ip -o link show | cut -d: -f2 | tr -d ' ')" = lo ] || { echo 'Capture requires a loopback-only network namespace' >&2; exit 1; }
 if ! ip -o link show lo | grep -q '<[^>]*UP'; then ip link set lo up; fi
 cd "$scratch"
@@ -20,12 +19,14 @@ export AWS_SHARED_CREDENTIALS_FILE="$HOME/.aws/emulator/9297/emulator_credential
 "$tools/aws-emulator" --version | grep -Fx 'Version: 1.0.508'
 "$tools/aws-emulator" --bind 127.0.0.1 --port 9297 --auth on --telemetry off >emulator.log 2>&1 &
 pid=$!
-stop() {
+stop_emulator() {
     if kill -0 "$pid" 2>/dev/null; then kill "$pid"; fi
-    # SIGTERM is the requested emulator shutdown.
-    wait "$pid" || :
+    wait "$pid" || {
+        status=$?
+        [ "$status" -eq 143 ] || exit "$status"
+    }
 }
-trap stop EXIT
+trap stop_emulator EXIT
 trap 'exit 1' HUP INT TERM
 for attempt in $(seq 1 60); do
     if ! kill -0 "$pid" 2>/dev/null; then echo 'Emulator exited before readiness' >&2; exit 1; fi
