@@ -31,6 +31,7 @@ fn configured_links_require_current_typed_evidence() {
         ),
         ("aws_evidently_feature.sample3", "project"),
         ("aws_internetmonitor_monitor.sample5", "resources"),
+        ("aws_internetmonitor_monitor.sample7", "resources"),
     ] {
         assert!(verified(&fixture, address, path), "{address}/{path}");
         let mut masked = fixture.clone();
