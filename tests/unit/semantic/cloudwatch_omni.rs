@@ -70,3 +70,33 @@ fn configured_links_require_current_typed_evidence() {
         "encryption_configuration.kms_key_arn"
     ));
 }
+
+#[test]
+fn verified_domain_and_space_retain_their_account_and_regions() {
+    let mut fixture: Value =
+        serde_json::from_str(include_str!("../../fixtures/cloudwatch-omni-plan.json")).unwrap();
+    for provider in fixture["configuration"]["provider_config"]
+        .as_object_mut()
+        .unwrap()
+        .values_mut()
+    {
+        provider["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/fixture"}}]);
+    }
+    let parsed = plan::evidence::tests::parse_fixture(&fixture.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    for (address, region) in [
+        ("aws_cloudwatchomni_domain.sample0", "us-west-2"),
+        ("aws_cloudwatchomni_space.sample1", "us-east-1"),
+    ] {
+        let node = graph
+            .nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap();
+        let scope = node.entity.scope.as_ref().unwrap();
+        assert_eq!(scope.account.as_ref().unwrap().as_str(), "123456789012");
+        assert_eq!(scope.region.as_ref().unwrap().0, region);
+        assert!(node.member_owner.is_none());
+    }
+}
