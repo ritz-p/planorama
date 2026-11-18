@@ -639,3 +639,7 @@ Cluster placement uses one configured EC2 subnet form and complete security grou
 ### EMR Studio (#842)
 
 Studios resolve VPC, subnet and security group IDs, service and SSO-only user role ARNs, the encryption key and S3 backup bucket. Unshared mappings resolve the Studio and their IAM session policy. Placement requires the explicit VPC and every configured subnet, engine group and workspace group to agree. A session mapping can appear with its Studio. Identity Store user and group names alone do not establish a store-qualified identity.
+
+### EMR on EKS (#843)
+
+Virtual clusters resolve EKS registrations by cluster name and the EKS provider type. Reusable job templates resolve key and execution role ARNs, CloudWatch log group names and S3 log destinations. An EKS registration leaves the virtual cluster independently placed. Kubernetes namespaces and template parameters do not identify AWS resources. Job templates can be reused across virtual clusters.

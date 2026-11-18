@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1100" height="1986" viewBox="0 0 1100 1986" role="img" aria-labelledby="title description">
+<title id="title">Terraform plan</title>
+<desc id="description">7 resources (5 spatial cards, 2 logical resources in 2 group cards) · 5 relationships Thin solid: dependency. Dashed: association. Thick dotted: connection. Nested boxes: containment. Edge color preserves the Terraform action when available. Service label backgrounds: orange = compute; green = storage; blue = network; red = IAM; gray = unclassified.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" markerUnits="userSpaceOnUse" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/></marker></defs>
+<rect width="100%" height="100%" fill="#ffffff"/>
+<g font-family="ui-monospace, SFMono-Regular, Consolas, monospace">
+<text x="40" y="45" font-size="25" font-weight="700" fill="#0f172a">Terraform plan</text>
+<text x="40" y="73" font-size="13" fill="#475569">7 resources (5 spatial cards, 2 logical resources in 2 group cards) · 5 relationships</text>
+<metadata id="architecture-entities">[{&quot;id&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6773-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f656b735f636c75737465722e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_eks_cluster.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_emrcontainers_job_template.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_emrcontainers_virtual_cluster.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f69616d5f726f6c652e656d72-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_iam_role.emr&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f6b6d735f6b65792e6c6f6773-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_kms_key.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;id&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f6773-current&quot;,&quot;kind&quot;:&quot;terraform&quot;,&quot;sources&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs&quot;,&quot;deposed_key&quot;:null}]}]</metadata>
+<metadata id="architecture-relationships">[{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6773-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_cloudwatch_log_group.logs&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_emrcontainers_job_template.main&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f656b735f636c75737465722e6d61696e-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_eks_cluster.main&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_emrcontainers_virtual_cluster.main&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f69616d5f726f6c652e656d72-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_iam_role.emr&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_emrcontainers_job_template.main&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f6b6d735f6b65792e6c6f6773-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_kms_key.logs&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_emrcontainers_job_template.main&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;},{&quot;directionality&quot;:&quot;directed&quot;,&quot;from&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f6773-current&quot;,&quot;inferred&quot;:false,&quot;kind&quot;:&quot;dependency&quot;,&quot;provenance&quot;:[{&quot;from&quot;:&quot;aws_s3_bucket.logs&quot;,&quot;from_deposed_key&quot;:null,&quot;kind&quot;:&quot;reference&quot;,&quot;to&quot;:&quot;aws_emrcontainers_job_template.main&quot;,&quot;to_deposed_key&quot;:null}],&quot;to&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;}]</metadata>
+<metadata id="resource-references">[{&quot;attribute&quot;:&quot;job_template_data&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_iam_role.emr&quot;,&quot;deposed_key&quot;:null},{&quot;address&quot;:&quot;aws_s3_bucket.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;job_template_data&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;job_template_data.configuration_overrides.monitoring_configuration.cloud_watch_monitoring_configuration.log_group_name&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_cloudwatch_log_group.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;job_template_data.configuration_overrides.monitoring_configuration.s3_monitoring_configuration.log_uri&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_s3_bucket.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;job_template_data.execution_role_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_iam_role.emr&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;kms_key_arn&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_kms_key.logs&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;container_provider&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_eks_cluster.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;container_provider.id&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;configured&quot;,&quot;targets&quot;:[{&quot;address&quot;:&quot;aws_eks_cluster.main&quot;,&quot;deposed_key&quot;:null}]},{&quot;attribute&quot;:&quot;at_rest_encryption&quot;,&quot;complete&quot;:true,&quot;consumer&quot;:&quot;terraform:6177735f73335f6275636b65742e6c6f6773-current&quot;,&quot;dependency&quot;:false,&quot;issues&quot;:[],&quot;kind&quot;:&quot;information&quot;,&quot;targets&quot;:[]}]</metadata>
+<rect x="40" y="100" width="12" height="12" fill="#ecfdf5" stroke="#047857"/><text x="59" y="111" font-size="12" fill="#047857">create (7)</text>
+<rect x="180" y="100" width="12" height="12" fill="#eff6ff" stroke="#1d4ed8"/><text x="199" y="111" font-size="12" fill="#1d4ed8">update (0)</text>
+<rect x="320" y="100" width="12" height="12" fill="#fef2f2" stroke="#b91c1c"/><text x="339" y="111" font-size="12" fill="#b91c1c">delete (0)</text>
+<rect x="460" y="100" width="12" height="12" fill="#fff7ed" stroke="#c2410c"/><text x="479" y="111" font-size="12" fill="#c2410c">replace (0)</text>
+<rect x="600" y="100" width="12" height="12" fill="#faf5ff" stroke="#7e22ce"/><text x="619" y="111" font-size="12" fill="#7e22ce">read (0)</text>
+<rect x="740" y="100" width="12" height="12" fill="#f8fafc" stroke="#64748b"/><text x="759" y="111" font-size="12" fill="#64748b">unchanged (0)</text>
+<rect x="880" y="100" width="12" height="12" fill="#fefce8" stroke="#854d0e"/><text x="899" y="111" font-size="12" fill="#854d0e">other (0)</text>
+<g id="relationship-legend" font-size="12" fill="#475569" transform="translate(40 148)"><rect width="960" height="546" rx="12" fill="#f8fafc" stroke="#cbd5e1"/>
+<text x="16" y="29" font-size="15" font-weight="700" fill="#334155">Relationship lines</text>
+<text x="16" y="56">Line color shows the relationship&apos;s own Terraform action, independently of endpoint-card actions.</text>
+<path data-legend-action="none" d="M 16 77 H 42" fill="none" stroke="#94a3b8" stroke-width="1.5"/><text x="50" y="82">no independent change</text>
+<path data-legend-action="unchanged" d="M 234 77 H 260" fill="none" stroke="#64748b" stroke-width="1.5"/><text x="268" y="82">unchanged</text>
+<text x="16" y="110">no independent change: no separate Terraform action is identified. unchanged: an explicit no-op action.</text>
+<g data-legend-entry="dependency" transform="translate(0 132)">
+<g data-legend-sample="dependency">
+<path data-legend-kind="dependency" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="1.5" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Dependency</text>
+<text x="174" y="30">Thin solid arrow from the</text>
+<text x="174" y="48">referenced resource to the</text>
+<text x="174" y="66">dependent resource; not exact</text>
+<text x="174" y="84">Terraform execution order.</text>
+</g>
+<g data-legend-entry="association" transform="translate(492 132)">
+<g data-legend-sample="association">
+<path data-legend-kind="association" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Association</text>
+<text x="174" y="30">Dashed, undirected relationship.</text>
+<text x="174" y="48">Matching badges identify the same</text>
+<text x="174" y="66">Terraform-backed relationship at</text>
+<text x="174" y="84">both attachment points.</text>
+</g>
+<g data-legend-entry="directed-association" transform="translate(0 238)">
+<g data-legend-sample="directed-association">
+<path data-legend-kind="directed-association" data-directionality="directed" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4" marker-end="url(#arrow)"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><path data-legend-arrow="true" d="M 146.7 7.5 L 153.7 11 L 146.7 14.5 Z" fill="#94a3b8"/>
+<g data-legend-badge="source">
+<rect x="31" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="47" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+<g data-legend-badge="target">
+<rect x="111" y="2" width="32" height="18" rx="4" fill="#ffffff" stroke="#94a3b8" stroke-width="2" stroke-dasharray="7 4"/><text x="127" y="15" text-anchor="middle" font-size="11" fill="#334155">[12]</text>
+</g>
+</g>
+<text x="174" y="12" font-weight="700">Directed Association</text>
+<text x="174" y="30">Dashed line from a Route to its</text>
+<text x="174" y="48">next hop. The destination arrow</text>
+<text x="174" y="66">expresses direction; matching</text>
+<text x="174" y="84">badges identify the same</text>
+<text x="174" y="102">relationship.</text>
+</g>
+<g data-legend-entry="connection" transform="translate(492 238)">
+<g data-legend-sample="connection">
+<path data-legend-kind="connection" data-directionality="undirected" d="M 21 11 H 153" fill="none" stroke="#94a3b8" stroke-width="2.5" stroke-dasharray="0 3.5" stroke-linecap="round"/>
+<circle data-legend-endpoint="source" cx="21" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/><circle data-legend-endpoint="target" cx="153" cy="11" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+<text x="174" y="12" font-weight="700">Connection</text>
+<text x="174" y="30">Thicker dotted line shows an</text>
+<text x="174" y="48">inferred, undirected connection;</text>
+<text x="174" y="66">this does not guarantee actual</text>
+<text x="174" y="84">network reachability.</text>
+</g>
+<g data-legend-entry="containment" transform="translate(0 362)">
+<g data-legend-sample="containment">
+<g data-legend-kind="containment" fill="none" stroke="#94a3b8"><rect x="65" y="2" width="44" height="28" rx="4"/><rect x="74" y="12" width="26" height="12" rx="2"/></g>
+</g>
+<text x="174" y="12" font-weight="700">Containment</text>
+<text x="174" y="30">Nested boxes show containment;</text>
+<text x="174" y="48">nesting replaces a redundant</text>
+<text x="174" y="66">relationship line.</text>
+</g>
+<text x="16" y="462">Hollow circles mark resource/card attachment points; neither end of an undirected line is a directional start.</text>
+<text x="16" y="480">Filled internal dots mark bundle junctions.</text>
+<text x="16" y="506">Matching [N] badges identify the same Terraform-backed relationship and its Relationship Resources entry. They do</text>
+<text x="16" y="524">not express direction or count connections. Reference-only Connections and Dependencies have no number.</text>
+</g>
+<g transform="translate(0 558)">
+<g data-annotation-area="true" data-packing-width="1100" data-measured-height="478">
+<g data-annotation-card="true" transform="translate(40 160)"><rect width="1012" height="454" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-annotation-section="Logical Resources" data-packing-width="1020"><rect width="1012" height="454" rx="12" fill="#ecfeff" stroke="#0891b2"/><text x="16" y="28" font-size="15" font-weight="700" fill="#0e7490">Logical Resources</text><g data-annotation-card="true" transform="translate(16 48)"><rect width="600" height="390" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_emrcontainers_job_template" data-mode="managed"><title>aws_emrcontainers_job_template · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_emrcontainers_job_template · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Controller — manages or configures services, workloads or relate</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">d resources; does not prove runtime control, traffic or relationships.</text>
+<g data-action-section="create"><rect x="8" y="106" width="584" height="256" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="138" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon EMR on EKS" data-display-name="Amazon EMR on EKS" x="373" y="118" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="383" y="140" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon EMR on EKS</text><g id="resource-6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current" data-architecture-id="terraform:6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_emrcontainers_job_template.main" data-qualified-address="module.root.aws_emrcontainers_job_template.main" data-mode="managed" transform="translate(0 162)" data-role="controller"><title>module.root.aws_emrcontainers_job_template.main — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_emrcontainers_job_template.main</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">Region: us-east-1</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">controller</text>
+<g data-resource-references="true"><title>Job execution role: module.root.aws_iam_role.emr [job_template_data.execution_role_arn; direct attribute reference]
+Job log bucket: module.root.aws_s3_bucket.logs [job_template_data.configuration_overrides.monitoring_configuration.s3_monitoring_configuration.log_uri; direct attribute reference]
+Job log group: module.root.aws_cloudwatch_log_group.logs [job_template_data.configuration_overrides.monitoring_configuration.cloud_watch_monitoring_configuration.log_group_name; direct attribute reference]
+Template encryption key: module.root.aws_kms_key.logs [kms_key_arn; direct attribute reference]</title><text x="16" y="96" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f69616d5f726f6c652e656d72-current" data-reference-attribute="job_template_data.execution_role_arn"><title>Job execution role: module.root.aws_iam_role.emr [job_template_data.execution_role_arn; direct attribute reference]</title><text x="16" y="114" font-size="11" fill="#334155" xml:space="preserve">Job execution role: module.root.aws_iam_role.emr</text>
+</a><a href="#resource-6177735f73335f6275636b65742e6c6f6773-current" data-reference-attribute="job_template_data.configuration_overrides.monitoring_configuration.s3_monitoring_configuration.log_uri"><title>Job log bucket: module.root.aws_s3_bucket.logs [job_template_data.configuration_overrides.monitoring_configuration.s3_monitoring_configuration.log_uri; direct attribute reference]</title><text x="16" y="132" font-size="11" fill="#334155" xml:space="preserve">Job log bucket: module.root.aws_s3_bucket.logs</text>
+</a><a href="#resource-6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6773-current" data-reference-attribute="job_template_data.configuration_overrides.monitoring_configuration.cloud_watch_monitoring_configuration.log_group_name"><title>Job log group: module.root.aws_cloudwatch_log_group.logs [job_template_data.configuration_overrides.monitoring_configuration.cloud_watch_monitoring_configuration.log_group_name; direct attribute reference]</title><text x="16" y="150" font-size="11" fill="#334155" xml:space="preserve">Job log group: module.root.aws_cloudwatch_log_group.logs</text>
+</a><a href="#resource-6177735f6b6d735f6b65792e6c6f6773-current" data-reference-attribute="kms_key_arn"><title>Template encryption key: module.root.aws_kms_key.logs [kms_key_arn; direct attribute reference]</title><text x="16" y="168" font-size="11" fill="#334155" xml:space="preserve">Template encryption key: module.root.aws_kms_key.logs</text>
+</a></g>
+<line data-resource-underline="true" x1="16" y1="184" x2="584" y2="184" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+<g data-annotation-card="true" transform="translate(636 48)"><rect width="360" height="322" rx="12" fill="#f8fafc" stroke="#cbd5e1"/><g data-logical-group="true" data-provider-source="registry.terraform.io/hashicorp/aws" data-resource-type="aws_iam_role" data-mode="managed"><title>aws_iam_role · managed — registry.terraform.io/hashicorp/aws</title><text x="16" y="28" font-size="13" font-weight="700" fill="#0e7490">aws_iam_role · managed</text>
+<text x="16" y="48" font-size="11" fill="#64748b">registry.terraform.io/hashicorp/aws</text>
+<text data-role-explanation="true" x="16" y="66" font-size="12" fill="#475569" xml:space="preserve">Role: Identity — principals, identity co</text>
+<text data-role-explanation="true" x="16" y="86" font-size="12" fill="#475569" xml:space="preserve">llections or federation configuration; do</text>
+<text data-role-explanation="true" x="16" y="106" font-size="12" fill="#475569" xml:space="preserve">es not prove authentication, role assumpt</text>
+<text data-role-explanation="true" x="16" y="126" font-size="12" fill="#475569" xml:space="preserve">ion or effective permissions.</text>
+<g data-action-section="create"><rect x="8" y="146" width="344" height="148" rx="8" fill="none" stroke="#047857" stroke-width="2"/><title>Create (1)</title><text data-action-heading="true" x="20" y="178" font-size="13" font-weight="700" fill="#047857" xml:space="preserve">Create (1)</text><rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="iam" data-service-full-name="AWS Identity and Access Management" data-display-name="IAM Role" x="232" y="158" width="108" height="32" rx="4" fill="#fee2e2"/><text data-service-name="true" x="242" y="180" font-size="18" font-weight="700" fill="#7f1d1d" xml:space="preserve">IAM Role</text><g id="resource-6177735f69616d5f726f6c652e656d72-current" data-architecture-id="terraform:6177735f69616d5f726f6c652e656d72-current" data-entity-kind="terraform" data-placement="logical" data-terraform-address="aws_iam_role.emr" data-qualified-address="module.root.aws_iam_role.emr" data-mode="managed" transform="translate(0 202)" data-role="identity"><title>module.root.aws_iam_role.emr — create</title><text x="16" y="28" font-size="12" fill="#334155" xml:space="preserve" font-weight="700">module.root.aws_iam_role.emr</text>
+<text x="16" y="48" font-size="12" fill="#334155" xml:space="preserve">AWS Global</text>
+<text x="16" y="68" font-size="12" fill="#334155" xml:space="preserve">identity</text>
+<line data-resource-underline="true" x1="16" y1="76" x2="344" y2="76" stroke="#047857" stroke-width="2"/></g>
+</g>
+</g>
+</g>
+</g></g>
+</g>
+<g data-architecture="true" transform="translate(0 478)">
+<g data-deployment-scope="true" data-scope-provider="AWS" data-region="us-east-1"><rect x="40" y="160" width="1000" height="670" rx="14" fill="#f8fafc" stroke="#94a3b8" stroke-dasharray="9 5"/><text x="56" y="185" font-size="15" font-weight="700" fill="#334155">AWS us-east-1</text></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6773-current" data-target="resource-6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current"><title>module.root.aws_cloudwatch_log_group.logs → module.root.aws_emrcontainers_job_template.main</title></g>
+<path d="M 380 408 L 420 408 " data-edge-kind="dependency" data-directionality="directed" data-source="resource-6177735f656b735f636c75737465722e6d61696e-current" data-target="resource-6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-linejoin="round" marker-end="url(#arrow)"><title>module.root.aws_eks_cluster.main → module.root.aws_emrcontainers_virtual_cluster.main</title></path>
+<g data-edge-kind="dependency" data-source="resource-6177735f69616d5f726f6c652e656d72-current" data-target="resource-6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current"><title>module.root.aws_iam_role.emr → module.root.aws_emrcontainers_job_template.main</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f6b6d735f6b65792e6c6f6773-current" data-target="resource-6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current"><title>module.root.aws_kms_key.logs → module.root.aws_emrcontainers_job_template.main</title></g>
+<g data-edge-kind="dependency" data-source="resource-6177735f73335f6275636b65742e6c6f6773-current" data-target="resource-6177735f656d72636f6e7461696e6572735f6a6f625f74656d706c6174652e6d61696e-current"><title>module.root.aws_s3_bucket.logs → module.root.aws_emrcontainers_job_template.main</title></g>
+<g id="resource-6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6773-current" data-architecture-id="terraform:6177735f636c6f756477617463685f6c6f675f67726f75702e6c6f6773-current" data-qualified-address="module.root.aws_cloudwatch_log_group.logs" data-terraform-address="aws_cloudwatch_log_group.logs"><title>module.root.aws_cloudwatch_log_group.logs — create</title>
+<rect x="60" y="200" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="228" font-size="11" fill="#047857" xml:space="preserve">create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon CloudWatch" data-display-name="Log Group" x="253" y="208" width="119" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="263" y="230" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Log Group</text><text x="72" y="261" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_cloudwatch_log_group.</text>
+<text x="72" y="281" font-size="13" fill="#0f172a" xml:space="preserve">logs</text>
+</g>
+<g id="resource-6177735f656b735f636c75737465722e6d61696e-current" data-architecture-id="terraform:6177735f656b735f636c75737465722e6d61696e-current" data-qualified-address="module.root.aws_eks_cluster.main" data-terraform-address="aws_eks_cluster.main"><title>module.root.aws_eks_cluster.main — create</title>
+<rect x="60" y="352" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="380" font-size="11" fill="#047857" xml:space="preserve">create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="compute" data-service-full-name="Amazon EKS" data-display-name="EKS Cluster" x="231" y="360" width="141" height="32" rx="4" fill="#ffedd5"/><text data-service-name="true" x="241" y="382" font-size="18" font-weight="700" fill="#7c2d12" xml:space="preserve">EKS Cluster</text><text x="72" y="413" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_eks_cluster.main</text>
+<text x="72" y="452" font-size="10" fill="#64748b" data-role="controller"><title>root</title>controller · root</text>
+</g>
+<g id="resource-6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current" data-architecture-id="terraform:6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current" data-qualified-address="module.root.aws_emrcontainers_virtual_cluster.main" data-terraform-address="aws_emrcontainers_virtual_cluster.main"><title>module.root.aws_emrcontainers_virtual_cluster.main — create</title>
+<rect x="420" y="331" width="600" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="432" y="359" font-size="11" fill="#047857" xml:space="preserve">aws_emrcontainers_virtual_cluster · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="Amazon EMR on EKS" data-display-name="Amazon EMR on EKS" x="805" y="339" width="207" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="815" y="361" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">Amazon EMR on EKS</text><text x="432" y="392" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_emrcontainers_virtual_cluster.main</text>
+<g data-resource-references="true"><title>Registered EKS cluster: module.root.aws_eks_cluster.main [container_provider.id; direct attribute reference]</title><text x="432" y="433" font-size="11" font-weight="700" fill="#475569">Uses</text><a href="#resource-6177735f656b735f636c75737465722e6d61696e-current" data-reference-attribute="container_provider.id"><title>Registered EKS cluster: module.root.aws_eks_cluster.main [container_provider.id; direct attribute reference]</title><text x="432" y="451" font-size="11" fill="#334155" xml:space="preserve">Registered EKS cluster: module.root.aws_eks_cluster.main</text>
+</a></g>
+</g>
+<g id="resource-6177735f6b6d735f6b65792e6c6f6773-current" data-architecture-id="terraform:6177735f6b6d735f6b65792e6c6f6773-current" data-qualified-address="module.root.aws_kms_key.logs" data-terraform-address="aws_kms_key.logs"><title>module.root.aws_kms_key.logs — create</title>
+<rect x="60" y="504" width="320" height="112" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="532" font-size="11" fill="#047857" xml:space="preserve">aws_kms_key · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="neutral" data-service-full-name="AWS Key Management Service" data-display-name="KMS" x="319" y="512" width="53" height="32" rx="4" fill="#e2e8f0"/><text data-service-name="true" x="329" y="534" font-size="18" font-weight="700" fill="#0f172a" xml:space="preserve">KMS</text><text x="72" y="565" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_kms_key.logs</text>
+</g>
+<g id="resource-6177735f73335f6275636b65742e6c6f6773-current" data-architecture-id="terraform:6177735f73335f6275636b65742e6c6f6773-current" data-qualified-address="module.root.aws_s3_bucket.logs" data-terraform-address="aws_s3_bucket.logs"><title>module.root.aws_s3_bucket.logs — create</title>
+<rect x="60" y="656" width="320" height="154" rx="8" fill="#ecfdf5" stroke="#047857" stroke-width="1.5" data-mode="managed"/>
+<text data-resource-type-heading="true" x="72" y="684" font-size="11" fill="#047857" xml:space="preserve">aws_s3_bucket · create</text>
+<rect data-service-badge="true" data-presentation-padding="10 4" data-service-category="storage" data-service-full-name="Amazon S3" data-display-name="S3" x="330" y="664" width="42" height="32" rx="4" fill="#dcfce7"/><text data-service-name="true" x="340" y="686" font-size="18" font-weight="700" fill="#14532d" xml:space="preserve">S3</text><text x="72" y="717" font-size="13" fill="#0f172a" xml:space="preserve">module.root.aws_s3_bucket.logs</text>
+<g data-resource-references="true"><title>At-rest encryption (plan): unknown</title><text x="72" y="758" font-size="11" font-weight="700" fill="#475569">Uses</text><g><title>At-rest encryption (plan): unknown</title><text x="72" y="776" font-size="11" fill="#334155" xml:space="preserve">At-rest encryption (plan): unknown</text>
+</g></g>
+</g>
+<g data-endpoints="true" data-source="resource-6177735f656b735f636c75737465722e6d61696e-current" data-target="resource-6177735f656d72636f6e7461696e6572735f7669727475616c5f636c75737465722e6d61696e-current" aria-hidden="true">
+<circle data-endpoint="source" cx="380" cy="408" r="3.5" fill="#ffffff" stroke="#94a3b8" stroke-width="1.5"/></g>
+</g>
+</g>
+</g>
+</svg>

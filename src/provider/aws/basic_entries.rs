@@ -681,7 +681,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_emr_studio", "Amazon EMR", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emr_studio_session_mapping", "Amazon EMR", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emrcontainers_job_template", "Amazon EMR on EKS", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
-    entry!("aws_emrcontainers_virtual_cluster", "Amazon EMR on EKS", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
+    entry!("aws_emrcontainers_virtual_cluster", "Amazon EMR on EKS", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_emrserverless_application", "Amazon EMR Serverless", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonEMR))),
     entry!("aws_evidently_feature", "Amazon CloudWatch Evidently", Controller, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_evidently_launch", "Amazon CloudWatch Evidently", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
