@@ -320,3 +320,13 @@ an unstable toolchain. No percentage gates the PR suite.
 Line and region counts come from stable Rust's LLVM source coverage. Branch
 coverage requires a different toolchain. A covered line does not establish
 that both outcomes of a proof or scope check were exercised.
+
+## Reference and provider properties
+
+The native library suite runs three reference and proof properties with 24 cases
+each, seed 1372, and small keys and resource sets. Budget one second of test
+execution on a warm build. To replay a failure, use the printed minimized input
+and run the same test with its seed, for example
+`PROPTEST_RNG_SEED=1372 cargo test --locked --all-features --lib reference_properties`.
+Use `PROPTEST_CASES=256` with an explicit seed for a larger local run. Keep a
+minimized case as a regression when it exposes a distinct product bug.

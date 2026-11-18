@@ -54,3 +54,6 @@ syn = { version = "3", features = ["full", "visit"] }
 [[test]]
 name = "large_example"
 path = "tests/integration/large_example.rs"
+
+[target.'cfg(not(target_arch = "wasm32"))'.dev-dependencies]
+proptest = { version = "=1.9.0", default-features = false, features = ["std"] }
