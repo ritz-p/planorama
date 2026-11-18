@@ -302,3 +302,4 @@ for(const format of ['svg','html']){
  assert.ok(!result.content.includes('PRIVATE_'));
 }
 console.log('Cloudflare Queues named-state parity passed');
+require('./cloudflare-worker-contracts.cjs')(binding, native);

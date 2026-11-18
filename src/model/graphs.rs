@@ -12,6 +12,7 @@ pub struct StateOutput {
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct AttributeReference {
+    pub durable_object_scripts: std::collections::BTreeSet<usize>,
     pub cloudflare_percentages: std::collections::BTreeMap<usize, String>,
     pub cloudflare_failure: Option<super::CloudflareFailure>,
     pub indexed_block_lengths: Vec<usize>,

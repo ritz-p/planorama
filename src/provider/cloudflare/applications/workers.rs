@@ -3,7 +3,7 @@ use super::{Evidence, Failure, Result, collect, proof};
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
-            Some("Storage, service, queue and Hyperdrive bindings")
+            Some("Worker bindings")
         }
         ("cloudflare_workers_route", "script")
         | ("cloudflare_workers_custom_domain", "service") => Some("Configured Worker"),
@@ -13,6 +13,17 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 pub(super) fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
+            "durable_object_namespace" => {
+                row.at("environment")?.require_null()?;
+                row.at("dispatch_namespace")?.require_null()?;
+                row.text("class_name")?;
+                let script = row.at("script_name")?;
+                script.scalar()?;
+                if script.value.is_null() {
+                    return Ok(None);
+                }
+                Target::new(row.text("script_name")?, Kind::DurableObjectScript)
+            }
             "service" => service(row)?,
             "queue" => Target::new(row.text("queue_name")?, Kind::QueueName),
             "hyperdrive" => Target::new(row.text("id")?, Kind::Hyperdrive),

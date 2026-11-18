@@ -1,4 +1,16 @@
 pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::model::Graph) {
+    let durable_scripts: std::collections::BTreeSet<_> = plan
+        .attributes
+        .iter()
+        .flat_map(|r| {
+            r.durable_object_scripts.iter().map(|&source| {
+                (
+                    plan.nodes[r.target].address.as_str(),
+                    plan.nodes[source].address.as_str(),
+                )
+            })
+        })
+        .collect();
     let roles: std::collections::BTreeMap<_, _> = plan
         .nodes
         .iter()
@@ -53,10 +65,14 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
             }
             let mut groups = std::collections::BTreeMap::<_, Vec<_>>::new();
             for target in reference.targets.drain(..) {
-                groups
-                    .entry(roles.get(&target.id).copied().unwrap_or(reference.label))
-                    .or_default()
-                    .push(target);
+                let label = if durable_scripts
+                    .contains(&(node.address.as_str(), target.id.address.as_str()))
+                {
+                    "Durable Object scripts"
+                } else {
+                    roles.get(&target.id).copied().unwrap_or(reference.label)
+                };
+                groups.entry(label).or_default().push(target);
             }
             let mut groups = groups.into_iter();
             if let Some((label, targets)) = groups.next() {

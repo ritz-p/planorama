@@ -251,6 +251,13 @@ unique current identities and a known matching account:
   `id`/`name`, and legacy script `id`/`script_name` must agree before aliases
   can be used.
 
+An external `durable_object_namespace` binding with a known class and an explicit
+Worker name reference appears under **Durable Object scripts**. Environment and
+dispatch namespace must be absent. Local classes, namespace IDs, migrations and
+placement provide no external script identity. A Service binding to the same script
+in the same expression makes the role ambiguous. The graph represents the defining
+script and does not enumerate namespaces or running objects.
+
 This is partial support: unrelated bindings, deployment settings, script code,
 secret values and database contents are neither interpreted nor retained.
 D1 bindings require the configured `id`; a conflicting known `database_id`

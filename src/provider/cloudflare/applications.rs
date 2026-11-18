@@ -49,14 +49,14 @@ fn verify(
     refs: &[AttributeReference],
     r: &AttributeReference,
     evidence: &[Evidence<'_>],
-) -> Result<()> {
+) -> Result<BTreeSet<usize>> {
     proof::explicit(nodes, refs, r)?;
     let node = &nodes[r.target];
     let targets = targets(node, &r.attribute, evidence[r.target])?;
     if targets.is_empty() {
         return Err(Failure::UnsupportedContract);
     }
-    let sources: BTreeSet<_> = collect(targets.into_iter().map(|target| {
+    let proven = collect(targets.into_iter().map(|target| {
         let mut candidates = nodes.iter().enumerate().filter(|(index, endpoint)| {
             proof::current(endpoint)
                 && proof::account(node, endpoint, evidence[r.target], evidence[*index]).is_ok()
@@ -106,12 +106,21 @@ fn verify(
         {
             return Err(Failure::OwnerMismatch);
         }
-        Ok(index)
-    }))?
-    .into_iter()
-    .collect();
-    (sources == r.sources.iter().copied().collect())
-        .then_some(())
+        Ok((index, matches!(target.kind, Kind::DurableObjectScript)))
+    }))?;
+    let mut sources = BTreeSet::new();
+    let mut scripts = BTreeSet::new();
+    let mut other = BTreeSet::new();
+    for (index, durable) in proven {
+        sources.insert(index);
+        if durable {
+            scripts.insert(index);
+        } else {
+            other.insert(index);
+        }
+    }
+    (sources == r.sources.iter().copied().collect() && scripts.is_disjoint(&other))
+        .then_some(scripts)
         .ok_or(Failure::IncompleteProvenance)
 }
 pub(super) fn annotate(
@@ -130,7 +139,7 @@ pub(super) fn annotate(
                     .then(|| {
                         if node.mode == EntityMode::Managed {
                             if node.resource_type == "cloudflare_dns_record" {
-                                dns::verify(nodes, refs, r, evidence)
+                                dns::verify(nodes, refs, r, evidence).map(|()| BTreeSet::new())
                             } else {
                                 verify(nodes, refs, r, evidence)
                             }
@@ -142,6 +151,7 @@ pub(super) fn annotate(
             .collect();
         for (r, valid) in refs.iter_mut().zip(results) {
             if let Some(valid) = valid {
+                let valid = valid.map(|scripts| r.durable_object_scripts = scripts);
                 proof::record(r, valid);
                 if r.service_reference_verified && r.attribute == "versions" {
                     match deployment::percentages(r, evidence) {

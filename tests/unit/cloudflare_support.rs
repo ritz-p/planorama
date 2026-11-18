@@ -148,17 +148,20 @@ fn generated_capabilities_cover_inventory_modes_without_claiming_full_api_suppor
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
-    assert!(!data.contains("Storage, service, queue and Hyperdrive bindings"));
+    assert!(!data.contains("Worker bindings"));
     assert!(data.contains("id/script_name"));
-    assert!(workers.lines().any(|line| line.contains("| managed |")
-        && line.contains("Storage, service, queue and Hyperdrive bindings")));
+    assert!(
+        workers
+            .lines()
+            .any(|line| line.contains("| managed |") && line.contains("Worker bindings"))
+    );
     let versions = matrix("cloudflare_worker_version");
     let data = versions
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
     assert!(!data.contains("Version ID and explicitly proven Worker owner"));
-    assert!(!data.contains("Storage, service, queue and Hyperdrive bindings"));
+    assert!(!data.contains("Worker bindings"));
 }
 
 #[test]
