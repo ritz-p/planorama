@@ -18,6 +18,9 @@ pub(super) enum Kind<'a> {
     QueueName,
     Hyperdrive,
     AiGateway,
+    SearchInstance(&'a str),
+    SearchNamespace,
+    SearchToken,
 }
 pub(super) struct Target<'a> {
     pub(super) value: &'a str,
@@ -60,6 +63,9 @@ pub(super) fn fields(
         (Kind::D1, "cloudflare_d1_database") => &["id", "uuid"],
         (Kind::QueueId, "cloudflare_queue") => &["id", "queue_id"],
         (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
+        (Kind::SearchInstance(_), "cloudflare_ai_search_instance") => &["id"],
+        (Kind::SearchNamespace, "cloudflare_ai_search_namespace") => &["name"],
+        (Kind::SearchToken, "cloudflare_ai_search_token") => &["id"],
         (Kind::AiGateway, "cloudflare_ai_gateway") => &["id"],
         (Kind::Hyperdrive, "cloudflare_hyperdrive_config") => &["id"],
         _ => return Err(Failure::UnsupportedContract),
@@ -77,6 +83,11 @@ pub(super) fn identity(
     }
     if value.text(output)? != target.value {
         return Err(Failure::IdentityMismatch);
+    }
+    if let Kind::SearchInstance(namespace) = target.kind {
+        if value.text("namespace")? != namespace {
+            return Err(Failure::ScopeMismatch);
+        }
     }
     if let Kind::Workflow { class, script } = target.kind {
         if value.text("workflow_name")? != target.value {

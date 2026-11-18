@@ -5,6 +5,9 @@ use std::fmt::Write;
 fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
     match kind {
         "cloudflare_account" => "Administration ID",
+        "cloudflare_ai_search_instance" => "Account, namespace and instance ID",
+        "cloudflare_ai_search_namespace" => "Account-scoped namespace name",
+        "cloudflare_ai_search_token" => "Account-scoped token ID",
         "cloudflare_ai_gateway" => "Account-scoped Gateway ID",
         "cloudflare_hyperdrive_config" => "Account-scoped Hyperdrive ID",
         "cloudflare_zone" if mode == EntityMode::Data => "Known matching id/zone_id",

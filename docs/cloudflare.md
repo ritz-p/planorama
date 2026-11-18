@@ -259,6 +259,12 @@ A managed Workflow can also explicitly reference its defining Worker's name
 through `script_name`. Its version ID and instance statistics do not identify
 a Worker version or prove execution.
 
+Worker AI Search bindings identify an instance by account, namespace and instance ID,
+or a namespace by account and name. An omitted binding namespace selects `default`.
+An instance can reference a token ID, an AI Gateway ID or an explicitly typed R2
+bucket with matching jurisdiction. Vectorize has a Worker binding discriminator
+but no index resource or data source in v5.28.1.
+
 A managed AI Gateway dynamic route can identify its gateway through an explicit
 `gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
 Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,
