@@ -1,3 +1,4 @@
+use super::elbv2::{rows, scalar};
 use crate::model::{AttributeReference, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeSet;
@@ -29,34 +30,6 @@ pub(super) fn label(kind: &str, field: &str) -> Option<&'static str> {
         }
         _ => None,
     }
-}
-
-fn scalar<'a>(value: &'a Value, mask: &Value, key: &str) -> Option<&'a str> {
-    if !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_))
-        || !matches!(&mask[key], Value::Null | Value::Bool(false))
-    {
-        return None;
-    }
-    value[key].as_str().filter(|s| !s.is_empty())
-}
-
-fn rows<'a>(value: &'a Value, mask: &'a Value, key: &str) -> Option<Vec<(&'a Value, &'a Value)>> {
-    if !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_)) {
-        return None;
-    }
-    let values = value[key].as_array().filter(|v| !v.is_empty())?;
-    let masks = match &mask[key] {
-        Value::Null | Value::Bool(false) => None,
-        Value::Array(m) if m.len() == values.len() => Some(m),
-        _ => return None,
-    };
-    Some(
-        values
-            .iter()
-            .enumerate()
-            .map(|(i, v)| (v, masks.map_or(&Value::Null, |m| &m[i])))
-            .collect(),
-    )
 }
 
 fn endpoint(
