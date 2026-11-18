@@ -42,7 +42,9 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_emr_cluster"
+            "aws_emr_studio"
+                | "aws_emr_studio_session_mapping"
+                | "aws_emr_cluster"
                 | "aws_emr_instance_group"
                 | "aws_emr_instance_fleet"
                 | "aws_emr_managed_scaling_policy"

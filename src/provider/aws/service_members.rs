@@ -52,6 +52,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 }
                 ("cluster_id", "EMR cluster", "Cluster configuration")
             }
+            "aws_emr_studio_session_mapping" => {
+                if raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target != index && r.sources.contains(&index))
+                {
+                    continue;
+                }
+                ("studio_id", "EMR Studio", "Session mappings")
+            }
             "aws_redshift_endpoint_authorization" => (
                 "cluster_identifier",
                 "Authorized cluster",
@@ -420,6 +430,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 | "aws_emr_instance_fleet"
                 | "aws_emr_instance_group"
                 | "aws_emr_managed_scaling_policy"
+                | "aws_emr_studio_session_mapping"
                 | "aws_globalaccelerator_custom_routing_listener"
                 | "aws_vpc_route_server_peer"
                 | "aws_flow_log"

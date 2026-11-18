@@ -4,6 +4,8 @@ use crate::semantic::{Input, relationships};
 use serde_json::Value;
 use std::collections::BTreeSet;
 const CLUSTER: &str = "aws_emr_cluster";
+const STUDIO: &str = "aws_emr_studio";
+const MAPPING: &str = "aws_emr_studio_session_mapping";
 const PROFILE: &str = "ec2_attributes.instance_profile";
 const SINGLE: &str = "ec2_attributes.subnet_id";
 const SUBNETS: &str = "ec2_attributes.subnet_ids";
@@ -20,6 +22,18 @@ struct Rule {
 }
 fn rule(kind: &str, p: &str) -> Option<Rule> {
     let (source, outputs, label): (&str, &[&str], &str) = match (kind, p) {
+        (STUDIO, "vpc_id") => ("aws_vpc", &["id"], "Studio VPC"),
+        (STUDIO, "subnet_ids") => ("aws_subnet", &["id"], "Studio subnets"),
+        (STUDIO, "engine_security_group_id" | "workspace_security_group_id") => {
+            ("aws_security_group", &["id"], "Studio security group")
+        }
+        (STUDIO, "service_role" | "user_role") => ("aws_iam_role", &["arn"], "Studio role"),
+        (STUDIO, "encryption_key_arn") => ("aws_kms_key", &["arn"], "Studio encryption key"),
+        (STUDIO, "default_s3_location") => {
+            ("aws_s3_bucket", &["bucket", "id"], "Studio backup bucket")
+        }
+        (MAPPING, "studio_id") => (STUDIO, &["id"], "EMR Studio"),
+        (MAPPING, "session_policy_arn") => ("aws_iam_policy", &["arn"], "Session policy"),
         (CLUSTER, SINGLE | SUBNETS) => ("aws_subnet", &["id"], "Cluster subnets"),
         (CLUSTER, MASTER | SLAVE | ACCESS | ADD_MASTER | ADD_SLAVE) => {
             ("aws_security_group", &["id"], "Cluster security groups")
@@ -76,7 +90,7 @@ fn values<'a>(path: &str, v: &'a Value) -> Option<BTreeSet<&'a str>> {
         let set: BTreeSet<_> = parts.iter().copied().collect();
         return (set.len() == parts.len() && !set.contains("")).then_some(set);
     }
-    if path.ends_with("log_uri") {
+    if path.ends_with("log_uri") || path == "default_s3_location" {
         let uri = v.as_str()?;
         if uri.contains(['$', '{', '}', '?', '#']) {
             return None;
@@ -84,7 +98,7 @@ fn values<'a>(path: &str, v: &'a Value) -> Option<BTreeSet<&'a str>> {
         let bucket = uri.strip_prefix("s3://")?.split('/').next()?;
         return (!bucket.is_empty()).then(|| [bucket].into());
     }
-    if path == SUBNETS {
+    if matches!(path, SUBNETS | "subnet_ids") {
         return nested_references::leaf_values(path, v).filter(|_| v.is_array());
     }
     let text = v.as_str()?;
@@ -127,16 +141,20 @@ pub(super) fn annotate(
         .map(|r| {
             let k = &nodes[r.target].resource_type;
             let rule = rule(k, &r.attribute)?;
-            let ok = nested_references::verify_values(
-                nodes,
-                refs,
-                e,
-                r,
-                fields,
-                |s, _| compatible(&nodes[r.target], &nodes[s]),
-                (&[], values),
-            )
-            .is_some();
+            let allowed = k != STUDIO
+                || r.attribute != "user_role"
+                || super::service_evidence::known(e, r.target, "auth_mode") == Some("SSO");
+            let ok = allowed
+                && nested_references::verify_values(
+                    nodes,
+                    refs,
+                    e,
+                    r,
+                    fields,
+                    |s, _| compatible(&nodes[r.target], &nodes[s]),
+                    (&[], values),
+                )
+                .is_some();
             let parents = if ok && matches!(rule.source, "aws_subnet" | "aws_security_group") {
                 r.sources
                     .iter()
@@ -207,6 +225,52 @@ pub(super) fn annotate(
     }
 }
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    for (t, _) in raw
+        .nodes
+        .iter()
+        .enumerate()
+        .filter(|(_, n)| n.resource_type == STUDIO)
+    {
+        let proof = |p| {
+            lambda_core::unique(&raw.attributes, t, p)
+                .filter(|r| r.service_reference_verified && bindings(raw, r))
+        };
+        let Some(vpc) = proof("vpc_id") else { continue };
+        let [parent] = vpc.sources.as_slice() else {
+            continue;
+        };
+        let Some(network) = [
+            "subnet_ids",
+            "engine_security_group_id",
+            "workspace_security_group_id",
+        ]
+        .into_iter()
+        .map(proof)
+        .collect::<Option<Vec<_>>>() else {
+            continue;
+        };
+        if !network.iter().all(|r| {
+            r.endpoint_network_context == [*parent]
+                && r.sources.iter().all(|&s| {
+                    lambda_core::unique(&raw.attributes, s, "vpc_id")
+                        .is_some_and(|p| super::apprunner::bindings(raw, p))
+                })
+        }) {
+            continue;
+        }
+        let mut evidence = vec![relationships::reference(graph, *parent, t)];
+        for &member in network.iter().flat_map(|r| &r.sources) {
+            evidence.extend([
+                relationships::reference(graph, *parent, member),
+                relationships::reference(graph, member, t),
+            ]);
+        }
+        relationships::record(graph, *parent, t, EdgeKind::Containment, evidence);
+        graph.edges.push(Edge {
+            kind: EdgeKind::Containment,
+            ..Edge::from((*parent, t))
+        });
+    }
     for (t, _) in raw
         .nodes
         .iter()

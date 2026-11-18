@@ -72,3 +72,41 @@ fn cluster_configuration_and_owned_helpers_require_complete_inputs() {
         json!("s3://example-emr-logs-other/logs");
     assert!(!verified(&v, 11, "log_uri"));
 }
+
+#[test]
+fn emr_studio_requires_verified_configuration() {
+    let mut v: Value =
+        serde_json::from_str(include_str!("../../fixtures/emr-studio-plan.json")).unwrap();
+    for p in [
+        "vpc_id",
+        "subnet_ids",
+        "engine_security_group_id",
+        "workspace_security_group_id",
+        "service_role",
+        "user_role",
+        "encryption_key_arn",
+        "default_s3_location",
+    ] {
+        assert!(verified(&v, 8, p), "{p}");
+    }
+    for p in ["studio_id", "session_policy_arn"] {
+        assert!(verified(&v, 9, p), "{p}");
+        let g = graph(&v);
+        let mapping = g
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_emr_studio_session_mapping")
+            .unwrap();
+        assert!(crate::view::presentation::owner(&g, mapping).is_some());
+    }
+    assert_eq!(
+        parent(&graph(&v), "aws_emr_studio.main").as_deref(),
+        Some("aws_vpc.main")
+    );
+    v["resource_changes"][8]["change"]["after"]["auth_mode"] = json!("IAM");
+    assert!(!verified(&v, 8, "user_role"));
+    assert!(verified(&v, 8, "service_role"));
+    v["resource_changes"][8]["change"]["after_unknown"] =
+        json!({"workspace_security_group_id":true});
+    assert_eq!(parent(&graph(&v), "aws_emr_studio.main"), None);
+}
