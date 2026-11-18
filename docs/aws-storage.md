@@ -435,3 +435,21 @@ The pinned [Backup plan schema/source](https://github.com/hashicorp/terraform-pr
 Known output values must equal the complete set of explicitly referenced compatible current managed endpoints. Repeated uses of one endpoint and set reordering are allowed; this proves plan-level references, not positional rule-to-rule relationships. Missing fields in collection ancestry, mixed literals, unknown masks, ambiguous identical outputs, incomplete provenance, deleted/deposed endpoints and incompatible scopes retain fallback. Optional paths present in only part of a rule collection remain conservative fallback.
 
 Ordinary vault targets use compatible local provider scope; scanner roles use the global IAM account contract. Copy ARNs must match each destination's independently configured region. A single known destination account is required across the copy collection. Same-provider copies can use that common binding; cross-region aliases additionally require independent matching account evidence. Cross-account copies remain fallback. No plan containment, recovery guarantee or runtime copy status is inferred. See the [fixture](../tests/fixtures/backup-plan-rules-plan.json).
+
+## Backup report delivery (#822)
+
+Pinned Provider 6.70.0 [report-plan schema/source](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/backup/report_plan.go)
+uses singleton lists for `report_delivery_channel` and `report_setting`, with a
+set of strings for optional `framework_arns`. Delivery bucket names require an
+explicit current managed S3 Bucket `id`/`bucket`; complete framework collections
+require exact managed Backup Framework `arn` outputs. Every configured block and
+collection must match known non-sensitive values, unique explicit instances and
+compatible independent provider/account/region evidence. Missing, unknown,
+incomplete, ambiguous, deleted/deposed, data or incompatible endpoints retain
+unresolved fallback. Filters retain source identity and exactly-once coverage.
+Report plans and shared endpoints stay independent Logical resources; bucket
+references do not create containment. Account, OU and region reporting selectors
+never relocate the report plan or enumerate Organizations objects. Prefixes,
+report payloads, deployment status and runtime compliance are not interpreted.
+See [SVG](../examples/backup-report.svg); generate HTML from
+`tests/fixtures/backup-report-plan.json` with `--format html`.

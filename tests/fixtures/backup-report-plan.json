@@ -1,0 +1,147 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.reports",
+      "type": "aws_s3_bucket",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "backup-reports",
+          "bucket": "backup-reports",
+          "arn": "arn:aws:s3:::backup-reports"
+        }
+      }
+    },
+    {
+      "address": "aws_backup_framework.first",
+      "type": "aws_backup_framework",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "arn": "arn:aws:backup:us-east-1:111111111111:framework:first",
+          "name": "first"
+        }
+      }
+    },
+    {
+      "address": "aws_backup_framework.second",
+      "type": "aws_backup_framework",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "arn": "arn:aws:backup:us-east-1:111111111111:framework:second",
+          "name": "second"
+        }
+      }
+    },
+    {
+      "address": "aws_backup_report_plan.main",
+      "type": "aws_backup_report_plan",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "main",
+          "arn": "arn:aws:backup:us-east-1:111111111111:report-plan:main",
+          "report_delivery_channel": [
+            {
+              "s3_bucket_name": "backup-reports",
+              "s3_key_prefix": "PRIVATE_REPORT_PREFIX"
+            }
+          ],
+          "report_setting": [
+            {
+              "report_template": "RESOURCE_COMPLIANCE_REPORT",
+              "framework_arns": [
+                "arn:aws:backup:us-east-1:111111111111:framework:first",
+                "arn:aws:backup:us-east-1:111111111111:framework:second"
+              ],
+              "accounts": [
+                "*"
+              ],
+              "organization_units": [
+                "PRIVATE_ORG_SELECTOR"
+              ],
+              "regions": [
+                "*"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.reports",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_framework.first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_framework.second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_report_plan.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "report_delivery_channel": [
+              {
+                "s3_bucket_name": {
+                  "references": [
+                    "aws_s3_bucket.reports.bucket"
+                  ]
+                }
+              }
+            ],
+            "report_setting": [
+              {
+                "framework_arns": {
+                  "references": [
+                    "aws_backup_framework.first.arn",
+                    "aws_backup_framework.second.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

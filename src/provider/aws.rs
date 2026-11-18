@@ -17,6 +17,7 @@ mod autoscaling;
 mod autoscaling_network;
 mod backup;
 mod backup_plan;
+pub(crate) mod backup_reports;
 mod backup_vaults;
 mod basic;
 mod batch;
