@@ -10,10 +10,10 @@ fn athena_svg_and_offline_html_preserve_configuration_references_and_filtered_li
         assert!(text.contains("Amazon Athena"));
         assert!(text.contains("9 resources"));
         for label in [
-            "References: module.root.aws_s3_bucket.results",
-            "References: module.root.aws_kms_key.results",
+            "Query result bucket: module.root.aws_s3_bucket.results",
+            "Query output key: module.root.aws_kms_key.results",
         ] {
-            assert!(text.contains(label));
+            assert!(text.contains(label), "{label}");
         }
         assert!(!text.contains("arn:aws:"));
         assert!(!text.contains("fixture-only"));
