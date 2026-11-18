@@ -540,6 +540,7 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, s: usize, path: &str) -> 
             if p.starts_with("training_job_definitions.") =>
         {
             empty(e, r.target, "training_job_definition")
+                && (!path.contains(".vpc_config.") || complete_tuning_network(e, r.target))
         }
 
         _ => true,
@@ -567,10 +568,33 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "training_job_definition.vpc_config.subnets",
             "training_job_definition.vpc_config.security_group_ids",
         ),
+        (
+            "aws_sagemaker_hyper_parameter_tuning_job",
+            "training_job_definitions.vpc_config.subnets",
+            "training_job_definitions.vpc_config.security_group_ids",
+        ),
     ] {
         super::lambda_core::present_network(raw, graph, kind, (subnets, groups), bindings);
     }
 }
+fn complete_tuning_network(e: &Evidence<'_>, job: usize) -> bool {
+    let (value, _) = e.values[job];
+    value["training_job_definitions"]
+        .as_array()
+        .is_some_and(|definitions| {
+            (0..definitions.len()).all(|index| {
+                ["subnets", "security_group_ids"].into_iter().all(|field| {
+                    e.value(
+                        job,
+                        &format!("training_job_definitions.{index}.vpc_config.0.{field}"),
+                    )
+                    .and_then(Value::as_array)
+                    .is_some_and(|ids| !ids.is_empty())
+                })
+            })
+        })
+}
+
 fn empty(e: &Evidence<'_>, i: usize, p: &str) -> bool {
     e.value(i, p)
         .is_some_and(|v| v.is_null() || v.as_array().is_some_and(Vec::is_empty))
