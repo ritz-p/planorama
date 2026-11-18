@@ -7,6 +7,7 @@ AWS の共通契約とサービス別の証拠条件の正本です。型ごと�
 共通契約は [役割と data](#resource-roles-and-data)、[deployment scope](#deployment-scopes)、[包含](#containment)、[SG 接続](#security-group-attachments)、[Association](#association-resources) です。サービス固有の型・値・scope・lifecycle 条件を合わせて確認してください。共通ルールから未記載のサービス対応を推測しないでください。
 
 - [Compute and containers](aws-compute.md)
+- [AI and machine learning](aws-ai.md)
 - [Network and edge](aws-network.md)
 - [Databases and analytics](aws-data.md)
 - [Storage and backup](aws-storage.md)

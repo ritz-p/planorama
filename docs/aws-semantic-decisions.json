@@ -30187,10 +30187,10 @@
       }
     },
     "aws_bedrock_custom_model": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Distinct model and customization-job ARNs; base_model_identifier is a model ARN, not a model name. Do not turn foundation models or S3 artifact URIs into Terraform nodes. #872. Customization-job VPC context needs complete subnet/SG evidence; output model is not a subnet child. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30206,8 +30206,8 @@
         ],
         "placement": "Supported: retain current Logical default for bedrock_custom_model; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_custom_model is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
-        "network": "Missing: Customization-job VPC context needs complete subnet/SG evidence; output model is not a subnet child. #872.",
-        "references": "Missing: Distinct model and customization-job ARNs; base_model_identifier is a model ARN, not a model name. Do not turn foundation models or S3 artifact URIs into Terraform nodes. #872.",
+        "network": "Supported: complete explicit current Subnet/SG ID sets must prove one common managed VPC; this is job-data context only and does not place the model or inference-serving identity inside customer subnets.",
+        "references": "Supported: Distinct model and customization-job ARNs; base_model_identifier -> custom_model.custom_model_arn, never job_arn/name; IAM role ARN, KMS key ARN and complete common-VPC job data subnet/SG collections.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: customization type could provide a bounded summary for bedrock_custom_model; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_custom_model.html.markdown",
@@ -30266,15 +30266,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_enforced_guardrail_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Account enforcement links a guardrail and published numerical version; DRAFT invalid. Excluded/included model names are selectors, not ownership. #872. Guardrail configuration may be embedded only after unique ARN/version proof. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30285,9 +30290,9 @@
           "config_id"
         ],
         "placement": "Supported: retain current Logical default for bedrock_enforced_guardrail_configuration; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Guardrail configuration may be embedded only after unique ARN/version proof. #872.",
+        "ownership": "Supported: verified guardrail ownership requires the exact current ARN and a known published numerical version; enforcement also requires explicit version reference and matching parent identity. Unknown/mismatched/DRAFT evidence preserves independent fallback and coverage.",
         "network": "Not applicable: bedrock_enforced_guardrail_configuration has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Account enforcement links a guardrail and published numerical version; DRAFT invalid. Excluded/included model names are selectors, not ownership. #872.",
+        "references": "Supported: exact guardrail ARN plus explicit published numerical Guardrail Version reference and matching parent ARN; DRAFT, zero, mismatched or unknown pairs remain unproven.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: guardrail version could provide a bounded summary for bedrock_enforced_guardrail_configuration; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_enforced_guardrail_configuration.html.markdown",
@@ -30322,15 +30327,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_evaluation_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Role, encryption, human flow and RAG knowledge-base links need automated/human and model/RAG discriminators; precomputed source labels are not resources. #872. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30340,12 +30350,13 @@
           "role_arn",
           "customer_encryption_key_id",
           "evaluation_config.human.human_workflow_config.flow_definition_arn",
-          "inference_config.rag_config.knowledge_base_config.retrieve_config.knowledge_base_id"
+          "inference_config.rag_config.knowledge_base_config.retrieve_config.knowledge_base_id",
+          "inference_config.rag_config.knowledge_base_config.retrieve_and_generate_config.knowledge_base_id"
         ],
         "placement": "Supported: retain current Logical default for bedrock_evaluation_job; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_evaluation_job is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrock_evaluation_job has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Role, encryption, human flow and RAG knowledge-base links need automated/human and model/RAG discriminators; precomputed source labels are not resources. #872.",
+        "references": "Supported: IAM Role/KMS Key ARNs, human Flow Definition ARN and RAG Knowledge Base IDs for retrieve or retrieve-and-generate; exclusive human/automated, model/RAG and RAG source branches required.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: application type could provide a bounded summary for bedrock_evaluation_job; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_evaluation_job.html.markdown",
@@ -30371,6 +30382,13 @@
             "list",
             "list",
             "string"
+          ],
+          "inference_config.rag_config.knowledge_base_config.retrieve_and_generate_config.knowledge_base_id": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
           ]
         },
         "contracts": {
@@ -30378,7 +30396,8 @@
           "role_arn": "required",
           "customer_encryption_key_id": "optional",
           "evaluation_config.human.human_workflow_config.flow_definition_arn": "required",
-          "inference_config.rag_config.knowledge_base_config.retrieve_config.knowledge_base_id": "required"
+          "inference_config.rag_config.knowledge_base_config.retrieve_config.knowledge_base_id": "required",
+          "inference_config.rag_config.knowledge_base_config.retrieve_and_generate_config.knowledge_base_id": "required"
         },
         "registration": {
           "service": "bedrock",
@@ -30395,7 +30414,12 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
@@ -30445,10 +30469,10 @@
       }
     },
     "aws_bedrock_guardrail": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: KMS reference is actionable; cross-region guardrail profile is a service profile, not a Terraform guardrail or evidence for moving account scope. Policy contents excluded. #872. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30462,7 +30486,7 @@
         "placement": "Supported: retain current Logical default for bedrock_guardrail; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_guardrail is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrock_guardrail has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: KMS reference is actionable; cross-region guardrail profile is a service profile, not a Terraform guardrail or evidence for moving account scope. Policy contents excluded. #872.",
+        "references": "Supported: kms_key_arn -> exact KMS Key arn. Cross-region guardrail profiles remain external service profiles, not managed guardrails or account-scope evidence.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: encryption presence could provide a bounded summary for bedrock_guardrail; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_guardrail.html.markdown",
@@ -30502,15 +30526,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_guardrail_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Guardrail version attaches by guardrail ARN; a version number alone is not globally unique. #872. Version ownership requires ARN and version identity. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30520,9 +30549,9 @@
           "version"
         ],
         "placement": "Supported: retain current Logical default for bedrock_guardrail_version; independent configuration/data objects are not automatically spatial cards.",
-        "ownership": "Missing: Version ownership requires ARN and version identity. #872.",
+        "ownership": "Supported: verified guardrail ownership requires the exact current ARN and a known published numerical version; enforcement also requires explicit version reference and matching parent identity. Unknown/mismatched/DRAFT evidence preserves independent fallback and coverage.",
         "network": "Not applicable: bedrock_guardrail_version has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Guardrail version attaches by guardrail ARN; a version number alone is not globally unique. #872.",
+        "references": "Supported: guardrail_arn -> exact current Guardrail guardrail_arn with a known published numerical version; version alone never establishes parent identity.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: version could provide a bounded summary for bedrock_guardrail_version; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_guardrail_version.html.markdown",
@@ -30553,15 +30582,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_inference_profile": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Model-source ARN may identify a foundation model or system inference profile; only compatible managed profile endpoints qualify. Computed regional model lists do not make the profile multi-region containment. #872. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30574,7 +30608,7 @@
         "placement": "Supported: retain current Logical default for bedrock_inference_profile; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_inference_profile is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrock_inference_profile has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Model-source ARN may identify a foundation model or system inference profile; only compatible managed profile endpoints qualify. Computed regional model lists do not make the profile multi-region containment. #872.",
+        "references": "Supported: singleton model_source.copy_from -> compatible current managed Inference Profile arn. Foundation/system identifiers without managed endpoint proof stay external; computed regional models do not establish containment.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: profile type could provide a bounded summary for bedrock_inference_profile; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_inference_profile.html.markdown",
@@ -30610,15 +30644,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_model_invocation_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Batch role/key and compatible managed inference-profile references; foundation identifiers remain external. Bucket-owner IDs constrain destinations without creating account nodes. #872. Batch data VPC context requires full subnet/SG evidence; no inference-serving endpoint placement. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30633,8 +30672,8 @@
         ],
         "placement": "Supported: retain current Logical default for bedrock_model_invocation_job; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_model_invocation_job is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
-        "network": "Missing: Batch data VPC context requires full subnet/SG evidence; no inference-serving endpoint placement. #872.",
-        "references": "Missing: Batch role/key and compatible managed inference-profile references; foundation identifiers remain external. Bucket-owner IDs constrain destinations without creating account nodes. #872.",
+        "network": "Supported: complete explicit current Subnet/SG ID sets must prove one common managed VPC; this is job-data context only and does not place the model or inference-serving identity inside customer subnets.",
+        "references": "Supported: role ARN, compatible managed profile arn/id, exact output KMS key ARN and complete common-VPC data subnet/SG context; S3 URIs and bucket-owner selectors do not create managed resources.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: invocation type could provide a bounded summary for bedrock_model_invocation_job; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_model_invocation_job.html.markdown",
@@ -30691,15 +30730,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_model_invocation_logging_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Regional singleton logs to explicit CloudWatch/S3 destinations; deprecated id is the AWS Region, not an owner/resource identifier. #872. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30713,7 +30757,7 @@
         "placement": "Supported: retain current Logical default for bedrock_model_invocation_logging_configuration; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_model_invocation_logging_configuration is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrock_model_invocation_logging_configuration has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Regional singleton logs to explicit CloudWatch/S3 destinations; deprecated id is the AWS Region, not an owner/resource identifier. #872.",
+        "references": "Supported: exact configured CloudWatch log-group name, IAM role ARN and ordinary/large-data S3 bucket names. Deprecated region-valued id is not ownership or resource identity.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: enabled modality booleans could provide a bounded summary for bedrock_model_invocation_logging_configuration; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_model_invocation_logging_configuration.html.markdown",
@@ -30761,15 +30805,20 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },
     "aws_bedrock_provisioned_model_throughput": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 872,
-      "gap": "Reviewed #725: Provisioned capacity references custom_model_arn when the target is managed; never use customization job_arn. Shared throughput remains independent. #872. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "Reviewed #725: Implemented #872: exact typed model/profile, encryption, role, guardrail/version, evaluation and logging references with complete job data subnet/SG common-VPC context. Logical independent identities remain; output models/jobs are not customer subnet children. Foundation/service profiles, URIs, payloads and runtime state do not create managed nodes. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -30781,7 +30830,7 @@
         "placement": "Supported: retain current Logical default for bedrock_provisioned_model_throughput; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: bedrock_provisioned_model_throughput is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: bedrock_provisioned_model_throughput has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Provisioned capacity references custom_model_arn when the target is managed; never use customization job_arn. Shared throughput remains independent. #872.",
+        "references": "Supported: model_arn -> exact Custom Model custom_model_arn, never customization job_arn. Shared provisioned capacity stays independent.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: model units could provide a bounded summary for bedrock_provisioned_model_throughput; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/bedrock_provisioned_model_throughput.html.markdown",
@@ -30812,7 +30861,12 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/bedrock_models.rs",
+          "src/provider/aws/bedrock_models/evaluation.rs",
+          "src/provider/aws/bedrock_models/guardrails.rs",
+          "tests/unit/semantic/bedrock_models.rs",
+          "tests/fixtures/bedrock-models-plan.json"
         ]
       }
     },

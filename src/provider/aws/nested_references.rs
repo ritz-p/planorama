@@ -248,16 +248,25 @@ pub(super) fn value<'a>(value: &'a Value, mask: &Value, path: &str) -> Option<&'
 }
 
 pub(super) fn singleton(value: &Value, mask: &Value, path: &str) -> bool {
+    block(value, mask, path, 1)
+}
+
+pub(super) fn block(value: &Value, mask: &Value, path: &str, maximum: usize) -> bool {
     let Some((value, mask)) = at(value, mask, path) else {
         return false;
     };
-    value
-        .as_array()
-        .is_some_and(|a| a.len() == 1 && a[0].is_object())
-        && (matches!(mask, Value::Null | Value::Bool(false))
-            || mask.as_array().is_some_and(|a| {
-                a.len() == 1 && matches!(a[0], Value::Null | Value::Bool(false) | Value::Object(_))
-            }))
+    value.as_array().is_some_and(|values| {
+        !values.is_empty()
+            && values.len() <= maximum
+            && values.iter().all(Value::is_object)
+            && (matches!(mask, Value::Null | Value::Bool(false))
+                || mask.as_array().is_some_and(|masks| {
+                    masks.len() == values.len()
+                        && masks.iter().all(|m| {
+                            matches!(m, Value::Null | Value::Bool(false) | Value::Object(_))
+                        })
+                }))
+    })
 }
 
 fn known_leaf(value: &Value, mask: &Value) -> bool {
