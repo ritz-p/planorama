@@ -9507,10 +9507,10 @@
       }
     },
     "aws_msk_channel": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 754,
-      "gap": "Missing: cluster/topic/S3/role references #754. Deferred: Iceberg/catalog/schema destinations until #722/#723 establish tuple contracts; do not invent tables from names. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 reviewed: Implemented #754. Explicit channel cluster, channel topic, delivery execution role, rejected records bucket, channel storage bucket. See docs/aws-messaging.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9525,7 +9525,7 @@
         "placement": "Supported: retain Logical presentation for this independent aws_msk_channel identity.",
         "ownership": "Missing: verify channel topic belongs to referenced cluster, preserve channel identity #754.",
         "network": "Not applicable: delivery channel does not inherit source cluster subnet containment.",
-        "references": "Missing: cluster/topic/S3/role references #754. Deferred: Iceberg/catalog/schema destinations until #722/#723 establish tuple contracts; do not invent tables from names.",
+        "references": "Supported: Explicit channel cluster, channel topic, delivery execution role, rejected records bucket, channel storage bucket.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: records/partition schemas; deferred buffering summaries until destination-discriminator contract.",
         "officialDocumentation": "website/docs/r/msk_channel.html.markdown",
@@ -9555,10 +9555,10 @@
       }
     },
     "aws_msk_cluster_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 754,
-      "gap": "Missing: explicit cluster ARN #754. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 reviewed: Implemented #754. Explicit msk cluster. See docs/aws-messaging.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9570,7 +9570,7 @@
         "placement": "Supported: retain Logical presentation for this independent aws_msk_cluster_policy identity.",
         "ownership": "Missing: policy association #754; no embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit cluster ARN #754.",
+        "references": "Supported: Explicit msk cluster.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: policy contents and effective access.",
         "officialDocumentation": "website/docs/r/msk_cluster_policy.html.markdown",
@@ -9644,10 +9644,10 @@
       }
     },
     "aws_msk_topic": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 754,
-      "gap": "Missing: explicit cluster reference #754. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 reviewed: Implemented #754. Explicit msk cluster. See docs/aws-messaging.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9658,7 +9658,7 @@
         "placement": "Supported: retain Logical presentation for this independent aws_msk_topic identity.",
         "ownership": "Missing: cluster association #754, not payload/partition embedding.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit cluster reference #754.",
+        "references": "Supported: Explicit msk cluster.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: configs JSON and topic contents; partition summary deferred until a value-free use case.",
         "officialDocumentation": "website/docs/r/msk_topic.html.markdown",

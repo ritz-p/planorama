@@ -1,0 +1,177 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_msk_cluster.row0",
+      "mode": "managed",
+      "type": "aws_msk_cluster",
+      "name": "row0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:123456789012:cluster/one/01"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_cluster.row1",
+      "mode": "managed",
+      "type": "aws_msk_cluster",
+      "name": "row1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:123456789012:cluster/two/02"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_topic.row2",
+      "mode": "managed",
+      "type": "aws_msk_topic",
+      "name": "row2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:123456789012:topic/one/01/messages",
+          "cluster_arn": "arn:aws:kafka:us-east-1:123456789012:cluster/one/01"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.row3",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "row3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::store"
+        }
+      }
+    },
+    {
+      "address": "aws_msk_channel.row4",
+      "mode": "managed",
+      "type": "aws_msk_channel",
+      "name": "row4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_arn": "arn:aws:kafka:us-east-1:123456789012:cluster/one/01",
+          "topic_configuration": [
+            {
+              "topic_arn": "arn:aws:kafka:us-east-1:123456789012:topic/one/01/messages"
+            }
+          ],
+          "s3_destination": [
+            {
+              "storage": [
+                {
+                  "bucket_arn": "arn:aws:s3:::store"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_msk_cluster.row0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_msk_cluster.row1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_msk_topic.row2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_msk_cluster.row0.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.row3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_msk_channel.row4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_msk_cluster.row0.arn"
+              ]
+            },
+            "topic_configuration": [
+              {
+                "topic_arn": {
+                  "references": [
+                    "aws_msk_topic.row2.arn"
+                  ]
+                }
+              }
+            ],
+            "s3_destination": [
+              {
+                "storage": [
+                  {
+                    "bucket_arn": {
+                      "references": [
+                        "aws_s3_bucket.row3.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -115,6 +115,7 @@ pub(crate) mod messaging_policies;
 pub(crate) mod microvms;
 mod monitoring;
 pub(crate) mod msk_connect;
+pub(crate) mod msk_delivery;
 mod nested_references;
 mod network;
 mod network_acl;
