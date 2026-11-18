@@ -287,6 +287,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_vpc_peering_connection_options" => {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
+            "aws_bedrockagent_agent_action_group"
+            | "aws_bedrockagent_agent_alias"
+            | "aws_bedrockagent_agent_collaborator"
+            | "aws_bedrockagent_agent_knowledge_base_association" => {
+                ("agent_id", "Bedrock agent owner", "Agent configuration")
+            }
+            "aws_bedrockagent_data_source" => (
+                "knowledge_base_id",
+                "Bedrock knowledge base",
+                "Data sources",
+            ),
             "aws_bedrock_guardrail_version" => {
                 ("guardrail_arn", "Version guardrail", "Guardrail versions")
             }

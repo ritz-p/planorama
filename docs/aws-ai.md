@@ -48,3 +48,79 @@ region lists and S3 artifact URIs do not create Terraform nodes or alter scope.
 No policy effects, payloads, job status, runtime health or safe summary is inferred.
 See [SVG](../examples/bedrock-models.svg); generate HTML from
 `tests/fixtures/bedrock-models-plan.json` using `--format html`.
+
+## Bedrock agents, knowledge bases and flows (#873)
+
+Pinned Provider/source revision is the same as #872. Each of the nine managed
+agent-family types retains its Logical presentation: configured helper ownership
+is separate from subnet placement, and shared model, alias, storage and query
+backends remain independent. No service-generated agent version node is created.
+
+| Consumer input | Managed output and discriminator |
+| --- | --- |
+| Agent `agent_resource_role_arn`, flow `execution_role_arn`, knowledge base `role_arn` | IAM Role `arn` |
+| Agent/flow/prompt `customer_encryption_key_arn`, data source `server_side_encryption_configuration.kms_key_arn` | KMS Key `arn`; data-source ancestor is a singleton list |
+| Action group / alias / collaborator / association `agent_id` | Agent `agent_id`, never composite helper `id`; action group requires known `action_group_id` and `DRAFT` |
+| Association / data source `knowledge_base_id` | Knowledge Base `id`; association requires both endpoints, `DRAFT`, and known `ENABLED` or `DISABLED` |
+| Collaborator `agent_descriptor.alias_arn` | Agent Alias `agent_alias_arn`; singleton list, both alias and supervising agent required, `DRAFT` and known `collaborator_id` |
+| Action group `action_group_executor.lambda` | Lambda Function `arn`; singleton list, absent/empty `custom_control`; `RETURN_CONTROL` prevents a link |
+| Action group `api_schema.s3.s3_bucket_name` | S3 Bucket `id` / `bucket`; two singleton lists and absent/empty inline `payload` |
+| Data source `data_source_configuration.s3_configuration.bucket_arn` | S3 Bucket `arn`; two singleton lists and exclusive `S3` type |
+| Data source `data_source_configuration.{confluence,salesforce,share_point}_configuration.source_configuration.credentials_secret_arn` | Secrets Manager Secret `arn`; three singleton lists and exclusive `CONFLUENCE` / `SALESFORCE` / `SHAREPOINT` type |
+| Data source `vector_ingestion_configuration.context_enrichment_configuration.bedrock_foundation_model_configuration.model_arn` | System-defined cross-Region inference profile ARN and known `type = SYSTEM_DEFINED`; three singleton lists, `BEDROCK_FOUNDATION_MODEL` enrichment type; foundation model identifiers stay external |
+| Data source `vector_ingestion_configuration.custom_transformation_configuration.transformation.transformation_function.transformation_lambda_configuration.lambda_arn` | Lambda Function `arn`; five singleton lists, known `POST_CHUNKING` step |
+| Knowledge base `storage_configuration.opensearch_serverless_configuration.collection_arn` / `opensearch_managed_cluster_configuration.domain_arn` / `rds_configuration.resource_arn` / `neptune_analytics_configuration.graph_arn` / `s3_vectors_configuration.index_arn` | OpenSearch Serverless Collection `arn` / OpenSearch Domain `arn` / RDS Cluster `arn` / Neptune Graph `arn` / S3 Vectors Index `index_arn`; two singleton lists, `VECTOR` knowledge-base type and exclusive matching storage type |
+| Knowledge base `storage_configuration.{mongo_db_atlas,pinecone,rds,redis_enterprise_cloud}_configuration.credentials_secret_arn` | Secrets Manager Secret `arn`; two singleton lists, `VECTOR` and matching exclusive storage discriminator |
+| Knowledge base `knowledge_base_configuration.kendra_knowledge_base_configuration.kendra_index_arn` | Kendra Index `arn`; two singleton lists, exclusive `KENDRA` knowledge-base type |
+| Knowledge base `knowledge_base_configuration.sql_knowledge_base_configuration.redshift_configuration.query_engine_configuration.provisioned_configuration.cluster_identifier` / `serverless_configuration.workgroup_arn` | Redshift Cluster `cluster_identifier` / Serverless Workgroup `arn`; five singleton lists, exclusive `SQL`, `REDSHIFT`, `PROVISIONED` / `SERVERLESS` branches |
+| Same provisioned/serverless query branch `auth_configuration.username_password_secret_arn` | Secrets Manager Secret `arn`; additional singleton list, `USERNAME_PASSWORD` auth type |
+| Prompt `variant.model_id` / `variant.gen_ai_resource.agent.agent_identifier` | Inference Profile `arn` / `id`, or Agent `agent_arn`, with mutually exclusive model / agent branches; variant list, remaining ancestors singleton lists |
+
+Agent `guardrail_configuration` is an optional **list-of-object attribute**, not
+a nested block. Its single object must have known `guardrail_identifier` and a
+positive numeric `guardrail_version`. The root Terraform expression must reference
+exactly a Guardrail `guardrail_id` / `guardrail_arn` and a Guardrail Version
+`version`; that version must itself explicitly reference this same guardrail ARN.
+Matching another guardrail's numerical version does not establish identity.
+
+Agent `prompt_override_configuration` is an optional/computed list-of-object
+attribute. The root expression must reference only a Lambda Function `arn`
+matching `override_lambda`. Its `prompt_configurations` is a **set of objects**;
+all selected parser, creation, state and prompt-type discriminators must be known
+valid enums and at least one parser mode must be `OVERRIDDEN`. Opaque prompt text
+and inference settings are never inspected for references.
+
+Alias `routing_configuration` is an optional/computed list-of-object attribute
+with at most one item. A root reference to Provisioned Model Throughput
+`provisioned_model_arn` requires matching `provisioned_throughput` and a known
+positive published `agent_version`; `DRAFT`, literal versions without a managed
+throughput reference and computed routing alone create no extra node.
+
+Flow `definition` is a singleton list block and `node` is a list. Configuration
+lists below each node are singleton lists. Only matching node `type` and an
+exclusive `configuration` branch qualify these exact paths:
+
+| Path after `definition.node.configuration` | Node type | Required output |
+| --- | --- | --- |
+| `agent.agent_alias_arn` | `Agent` | Agent Alias `agent_alias_arn` |
+| `knowledge_base.knowledge_base_id` | `KnowledgeBase` | Knowledge Base `id` |
+| `lambda_function.lambda_arn` | `LambdaFunction` | Lambda Function `arn` |
+| `prompt.source_configuration.resource.prompt_arn` | `Prompt` | Prompt `arn`, absent/empty inline source |
+| `retrieval.service_configuration.s3.bucket_name` | `Retrieval` | S3 Bucket `id` / `bucket` |
+| `storage.service_configuration.s3.bucket_name` | `Storage` | S3 Bucket `id` / `bucket` |
+
+The whole collection must match its indexed configuration references; partial
+node/variant evidence and unknown alternative branches fall back. Lex V2 alias
+ARNs stay external because pinned Provider 6.70.0 has no managed Lex V2 alias
+resource; Classic Lex alias is not interchangeable. Database/table/index names
+without a selected parent contract, supplemental URI storage, embedding model
+payloads, connector URLs, tenant IDs, inline code, node/connection names, prompt
+templates, tool schemas and runtime status remain opaque. Safe summaries remain
+deferred. None of these references assigns a knowledge base to a backend VPC.
+
+All links require complete, unique, current managed Terraform evidence and known
+non-sensitive matching output values, compatible independent provider/account/
+region and named-state scope. Unknown, deleted/deposed, data, missing/filtered,
+foreign-provider and ambiguous references retain fallback with independent
+resource actions and coverage. See [SVG](../examples/bedrock-agents.svg), sourced
+from `tests/fixtures/bedrock-agents-plan.json`.

@@ -157,6 +157,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::efs_evidence::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::bedrock_agents::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::bedrock_models::label(resource, attribute) {
         return Some(label);
     }
@@ -935,6 +938,7 @@ pub(crate) fn annotate(
     super::backup_plan::annotate(nodes, references, evidence);
     super::backup_reports::annotate(nodes, references, evidence);
     super::backup_restore::annotate(nodes, references, evidence);
+    super::bedrock_agents::annotate(nodes, references, evidence);
     super::bedrock_models::annotate(nodes, references, evidence);
     super::backup_vaults::annotate(nodes, references, evidence);
     super::vpc_controls::annotate(nodes, references, evidence);
@@ -963,6 +967,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::glue_catalog::bindings(raw, reference)
         && super::glue_network::bindings(raw, reference)
         && super::glue_workloads::bindings(raw, reference)
+        && super::bedrock_agents::bindings(raw, reference)
         && super::bedrock_models::bindings(raw, reference)
         && super::backup_restore::bindings(raw, reference)
         && super::backup_reports::bindings(raw, reference)
@@ -1627,6 +1632,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::route53_records::indexed(&node.resource_type, &reference.attribute)
             || super::appsync::indexed(&node.resource_type, &reference.attribute)
             || super::s3_mrap::indexed(&node.resource_type, &reference.attribute)
+            || super::bedrock_agents::indexed(&node.resource_type, &reference.attribute)
             || super::bedrock_models::indexed(&node.resource_type, &reference.attribute)
             || super::backup_restore::indexed(&node.resource_type, &reference.attribute)
             || super::backup_reports::indexed(&node.resource_type, &reference.attribute)
