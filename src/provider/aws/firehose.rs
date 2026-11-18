@@ -61,16 +61,27 @@ fn alternatives_absent(
 }
 
 pub(super) fn configuration_verified(attribute: &str, value: &Value, unknown: &Value) -> bool {
-    if attribute == "kinesis_source_configuration.kinesis_stream_arn" {
-        return block(value, unknown, "kinesis_source_configuration").is_some()
+    let source = match attribute {
+        "msk_source_configuration.msk_cluster_arn"
+        | "msk_source_configuration.authentication_configuration.role_arn" => {
+            Some("msk_source_configuration")
+        }
+        "kinesis_source_configuration.kinesis_stream_arn"
+        | "kinesis_source_configuration.role_arn" => Some("kinesis_source_configuration"),
+        _ => None,
+    };
+    if let Some(source) = source {
+        return block(value, unknown, source).is_some()
             && alternatives_absent(value, unknown, |key| {
-                key.ends_with("_source_configuration") && key != "kinesis_source_configuration"
+                key.ends_with("_source_configuration") && key != source
             });
     }
     if !matches!(
         attribute,
         "extended_s3_configuration.bucket_arn"
             | "extended_s3_configuration.s3_backup_configuration.bucket_arn"
+            | "extended_s3_configuration.role_arn"
+            | "extended_s3_configuration.s3_backup_configuration.role_arn"
     ) || scalar(value, unknown, &["destination"]) != Some("extended_s3")
         || !alternatives_absent(value, unknown, |key| {
             key.ends_with("_configuration")
@@ -83,7 +94,9 @@ pub(super) fn configuration_verified(attribute: &str, value: &Value, unknown: &V
     let Some((destination, unknown)) = block(value, unknown, "extended_s3_configuration") else {
         return false;
     };
-    attribute == "extended_s3_configuration.bucket_arn"
-        || (scalar(destination, unknown, &["s3_backup_mode"]) == Some("Enabled")
-            && block(destination, unknown, "s3_backup_configuration").is_some())
+    matches!(
+        attribute,
+        "extended_s3_configuration.bucket_arn" | "extended_s3_configuration.role_arn"
+    ) || (scalar(destination, unknown, &["s3_backup_mode"]) == Some("Enabled")
+        && block(destination, unknown, "s3_backup_configuration").is_some())
 }

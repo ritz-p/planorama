@@ -688,3 +688,12 @@ A channel topic must reference the same managed cluster as the channel. Only the
 |  | `topic_configuration.topic_arn` | `aws_msk_topic` (`arn`) |
 |  | `s3_destination.service_execution_role_arn`, `iceberg_destination.service_execution_role_arn` | `aws_iam_role` (`arn`) |
 |  | `s3_destination.dead_letter_queue_s3.bucket_arn`, `iceberg_destination.dead_letter_queue_s3.bucket_arn`, `s3_destination.storage.bucket_arn` | `aws_s3_bucket` (`arn`) |
+
+### Firehose sources and delivery roles
+
+The MSK source requires an exclusive configured source. Extended S3 delivery and backup roles follow the same destination and backup-mode checks as the corresponding buckets. Streams keep their own regional placement.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_kinesis_firehose_delivery_stream` | `msk_source_configuration.msk_cluster_arn` | `aws_msk_cluster` (`arn`) or `aws_msk_serverless_cluster` (`arn`) |
+|  | `msk_source_configuration.authentication_configuration.role_arn`, `kinesis_source_configuration.role_arn`, `extended_s3_configuration.role_arn`, `extended_s3_configuration.s3_backup_configuration.role_arn` | `aws_iam_role` (`arn`) |

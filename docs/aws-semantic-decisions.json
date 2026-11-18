@@ -9250,7 +9250,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 756,
-      "gap": "Partial: exclusive Kinesis source and extended_s3 delivery/enabled backup links. Missing: MSK source and role links #756. Other destination families deferred until family-specific validation; JDBC/HTTP/processor strings cannot manufacture endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 reviewed: Implemented #756. Explicit msk source, msk source role, kinesis source role, s3 delivery role, s3 backup role. See docs/aws-messaging.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9266,7 +9266,7 @@
         "placement": "Supported: retain Spatial presentation for this independent aws_kinesis_firehose_delivery_stream identity.",
         "ownership": "Not applicable: sources/buckets remain independent.",
         "network": "Deferred: destination VPC access contexts until a family-specific network contract; source cluster VPC never contains Firehose.",
-        "references": "Partial: exclusive Kinesis source and extended_s3 delivery/enabled backup links. Missing: MSK source and role links #756. Other destination families deferred until family-specific validation; JDBC/HTTP/processor strings cannot manufacture endpoints.",
+        "references": "Supported: Explicit msk source, msk source role, kinesis source role, s3 delivery role, s3 backup role.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Existing classified resource retains verified provider account and region evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: records, processor parameters, credentials and arbitrary schema conversion values; encryption summaries require a separate allowlist.",
         "officialDocumentation": "website/docs/r/kinesis_firehose_delivery_stream.html.markdown",
