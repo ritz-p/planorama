@@ -18236,10 +18236,10 @@
       }
     },
     "aws_quicksight_account_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Missing: authentication-method-discriminated Directory Service ID or Identity Center instance ARN. AD/group names are not unique IAM objects. Follow-up #806. Intentionally unsupported: subscription contact details, billing and runtime status.",
+      "gap": "#724 reviewed: Implemented #806. Authentication-method-gated directory ID or unique Identity Center instance ARN. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18253,7 +18253,7 @@
         "placement": "Supported: retain Logical aws_quicksight_account_subscription basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_account_subscription configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_account_subscription fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: authentication-method-discriminated Directory Service ID or Identity Center instance ARN. AD/group names are not unique IAM objects.",
+        "references": "Supported: Authentication-method-gated directory ID or unique Identity Center instance ARN.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: subscription contact details, billing and runtime status.",
         "officialDocumentation": "website/docs/r/quicksight_account_subscription.html.markdown",
@@ -18274,10 +18274,10 @@
       }
     },
     "aws_quicksight_analysis": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared datasets/templates remain independent; visual sheets are not managed children. Missing: template/theme and complete dataset ARN references under selected source_entity or definition; analysis_id differs from composite id. Follow-up #805. Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+      "gap": "#724 reviewed: Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18294,7 +18294,7 @@
         "placement": "Supported: retain Logical aws_quicksight_analysis basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared datasets/templates remain independent; visual sheets are not managed children.",
         "network": "Not applicable: reviewed aws_quicksight_analysis fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: template/theme and complete dataset ARN references under selected source_entity or definition; analysis_id differs from composite id.",
+        "references": "Supported: Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: visualization definitions, parameters and calculated fields.",
         "officialDocumentation": "website/docs/r/quicksight_analysis.html.markdown",
@@ -18368,10 +18368,10 @@
       }
     },
     "aws_quicksight_dashboard": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared datasets/templates remain independent; visual sheets are not managed children. Missing: template/theme and complete dataset ARN references under selected source_entity or definition; dashboard_id differs from composite id. Follow-up #805. Intentionally unsupported: visualization definitions, parameters and calculated fields.",
+      "gap": "#724 reviewed: Implemented #805. Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18388,7 +18388,7 @@
         "placement": "Supported: retain Logical aws_quicksight_dashboard basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared datasets/templates remain independent; visual sheets are not managed children.",
         "network": "Not applicable: reviewed aws_quicksight_dashboard fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: template/theme and complete dataset ARN references under selected source_entity or definition; dashboard_id differs from composite id.",
+        "references": "Supported: Configured theme ARN, source template ARN and complete template substitutions or definition dataset ARNs use exact managed outputs.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: visualization definitions, parameters and calculated fields.",
         "officialDocumentation": "website/docs/r/quicksight_dashboard.html.markdown",
@@ -18425,10 +18425,10 @@
       }
     },
     "aws_quicksight_data_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared datasets/data sources are not embedded children. Missing: complete typed data-source ARNs, parent dataset ARN and RLS dataset reference; table-map IDs are local keys, not Terraform resources. Follow-up #805. Intentionally unsupported: SQL, transforms and row-level policy interpretation; defer import-mode enum summary until explicit unknown handling.",
+      "gap": "#724 reviewed: Implemented #805. Physical table data-source ARNs, parent dataset ARN and row-permission dataset ARN remain independent. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18447,7 +18447,7 @@
         "placement": "Supported: retain Logical aws_quicksight_data_set basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared datasets/data sources are not embedded children.",
         "network": "Not applicable: reviewed aws_quicksight_data_set fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: complete typed data-source ARNs, parent dataset ARN and RLS dataset reference; table-map IDs are local keys, not Terraform resources.",
+        "references": "Supported: Physical table data-source ARNs, parent dataset ARN and row-permission dataset ARN remain independent.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: SQL, transforms and row-level policy interpretation; defer import-mode enum summary until explicit unknown handling.",
         "officialDocumentation": "website/docs/r/quicksight_data_set.html.markdown",
@@ -18492,10 +18492,10 @@
       }
     },
     "aws_quicksight_data_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 804,
-      "gap": "#724 reviewed: Intentionally unsupported: VPC connection is a connector reference, not containment of data source or remote databases. Missing: VPC connection ARN, secret/copy-source ARN and type-discriminated OpenSearch domain, Athena workgroup/role, RDS instance identifier, Redshift cluster identifier, S3 bucket/role and IoT Analytics dataset names. Host/port/URL strings never reconstruct resources. Follow-up #804. Intentionally unsupported: credentials, SQL, manifest keys, query strings and endpoint URLs.",
+      "gap": "#724 reviewed: Implemented #804. Verified VPC connection, exclusive copied credentials or secret, and type-specific Elasticsearch domain, Athena workgroup/role, RDS identifier, Redshift cluster and S3 manifest bucket/role. IoT Analytics has no managed dataset endpoint in the pinned inventory. Connector navigation only; a data source does not inherit the connection VPC.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18519,8 +18519,8 @@
         ],
         "placement": "Supported: retain Logical aws_quicksight_data_source basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_data_source configuration; no verified embedded owner in runtime.",
-        "network": "Intentionally unsupported: VPC connection is a connector reference, not containment of data source or remote databases.",
-        "references": "Missing: VPC connection ARN, secret/copy-source ARN and type-discriminated OpenSearch domain, Athena workgroup/role, RDS instance identifier, Redshift cluster identifier, S3 bucket/role and IoT Analytics dataset names. Host/port/URL strings never reconstruct resources.",
+        "network": "Supported: Connector navigation only; a data source does not inherit the connection VPC.",
+        "references": "Supported: Verified VPC connection, exclusive copied credentials or secret, and type-specific Elasticsearch domain, Athena workgroup/role, RDS identifier, Redshift cluster and S3 manifest bucket/role. IoT Analytics has no managed dataset endpoint in the pinned inventory.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: credentials, SQL, manifest keys, query strings and endpoint URLs.",
         "officialDocumentation": "website/docs/r/quicksight_data_source.html.markdown",
@@ -18594,10 +18594,10 @@
       }
     },
     "aws_quicksight_folder": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: organizational navigation only; folder is not a network container. Missing: parent_folder_arn -> folder.arn with cycle rejection; computed folder_path is not configured hierarchy. Follow-up #805. Intentionally unsupported: folder_path, permissions and display content are not infrastructure configuration summaries.",
+      "gap": "#724 reviewed: Implemented #805. Parent folder ARN with cycle rejection. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18612,7 +18612,7 @@
         "placement": "Supported: retain Logical aws_quicksight_folder basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: organizational navigation only; folder is not a network container.",
         "network": "Not applicable: reviewed aws_quicksight_folder fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: parent_folder_arn -> folder.arn with cycle rejection; computed folder_path is not configured hierarchy.",
+        "references": "Supported: Parent folder ARN with cycle rejection.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: folder_path, permissions and display content are not infrastructure configuration summaries.",
         "officialDocumentation": "website/docs/r/quicksight_folder.html.markdown",
@@ -18639,10 +18639,10 @@
       }
     },
     "aws_quicksight_folder_membership": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Not applicable: shared folder association does not justify exclusive embedding. Missing: folder_id and member_type-discriminated analysis_id/dashboard_id/data_set_id; reject ambiguous same IDs across types. Follow-up #805. Deferred: member-type enum summary should accompany verified type-discriminated navigation; no folder-content dumping.",
+      "gap": "#724 reviewed: Implemented #805. Folder ID and member-type-selected analysis, dashboard or dataset ID. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18656,7 +18656,7 @@
         "placement": "Supported: retain Logical aws_quicksight_folder_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared folder association does not justify exclusive embedding.",
         "network": "Not applicable: reviewed aws_quicksight_folder_membership fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: folder_id and member_type-discriminated analysis_id/dashboard_id/data_set_id; reject ambiguous same IDs across types.",
+        "references": "Supported: Folder ID and member-type-selected analysis, dashboard or dataset ID.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Deferred: member-type enum summary should accompany verified type-discriminated navigation; no folder-content dumping.",
         "officialDocumentation": "website/docs/r/quicksight_folder_membership.html.markdown",
@@ -18677,10 +18677,10 @@
       }
     },
     "aws_quicksight_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Missing: namespace -> namespace.namespace with account/region agreement; default literal does not identify a managed namespace. Follow-up #806. Intentionally unsupported: group descriptions and effective permissions.",
+      "gap": "#724 reviewed: Implemented #806. Explicit same-account regional namespace navigation. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18694,7 +18694,7 @@
         "placement": "Supported: retain Logical aws_quicksight_group basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_group configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_group fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: namespace -> namespace.namespace with account/region agreement; default literal does not identify a managed namespace.",
+        "references": "Supported: Explicit same-account regional namespace navigation.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: group descriptions and effective permissions.",
         "officialDocumentation": "website/docs/r/quicksight_group.html.markdown",
@@ -18715,10 +18715,10 @@
       }
     },
     "aws_quicksight_group_membership": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Not applicable: membership is not exclusive ownership. Missing: group_name and member_name -> user.user_name under same namespace/account/region; preserve membership identity. Follow-up #806. Intentionally unsupported: group membership does not prove effective user access.",
+      "gap": "#724 reviewed: Implemented #806. Group name and user member name require equal known namespaces. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18732,7 +18732,7 @@
         "placement": "Supported: retain Logical aws_quicksight_group_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: membership is not exclusive ownership.",
         "network": "Not applicable: reviewed aws_quicksight_group_membership fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: group_name and member_name -> user.user_name under same namespace/account/region; preserve membership identity.",
+        "references": "Supported: Group name and user member name require equal known namespaces.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: group membership does not prove effective user access.",
         "officialDocumentation": "website/docs/r/quicksight_group_membership.html.markdown",
@@ -18753,10 +18753,10 @@
       }
     },
     "aws_quicksight_iam_policy_assignment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Missing: IAM policy ARN and complete same-namespace group/user names; assignment_status is configuration, not effective access. Follow-up #806. Intentionally unsupported: effective IAM permissions.",
+      "gap": "#724 reviewed: Implemented #806. IAM policy ARN and complete same-namespace group/user sets. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18772,7 +18772,7 @@
         "placement": "Supported: retain Logical aws_quicksight_iam_policy_assignment basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_iam_policy_assignment configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_iam_policy_assignment fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: IAM policy ARN and complete same-namespace group/user names; assignment_status is configuration, not effective access.",
+        "references": "Supported: IAM policy ARN and complete same-namespace group/user sets.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: effective IAM permissions.",
         "officialDocumentation": "website/docs/r/quicksight_iam_policy_assignment.html.markdown",
@@ -18807,10 +18807,10 @@
       }
     },
     "aws_quicksight_ingestion": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: dataset helper navigation. Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id. Follow-up #805. Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+      "gap": "#724 reviewed: Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18824,7 +18824,7 @@
         "placement": "Supported: retain Logical aws_quicksight_ingestion basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: dataset helper navigation.",
         "network": "Not applicable: reviewed aws_quicksight_ingestion fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id.",
+        "references": "Supported: Dataset ID must match the managed data_set_id.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
         "officialDocumentation": "website/docs/r/quicksight_ingestion.html.markdown",
@@ -18895,10 +18895,10 @@
       }
     },
     "aws_quicksight_key_registration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Missing: complete KMS key ARN registrations; default_key does not prove every dataset is encrypted with that key. Follow-up #806. Intentionally unsupported: account-wide registration is not per-dataset encryption evidence.",
+      "gap": "#724 reviewed: Implemented #806. Complete per-row KMS key ARN registration. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18911,7 +18911,7 @@
         "placement": "Supported: retain Logical aws_quicksight_key_registration basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_key_registration configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_key_registration fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: complete KMS key ARN registrations; default_key does not prove every dataset is encrypted with that key.",
+        "references": "Supported: Complete per-row KMS key ARN registration.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: account-wide registration is not per-dataset encryption evidence.",
         "officialDocumentation": "website/docs/r/quicksight_key_registration.html.markdown",
@@ -18931,10 +18931,10 @@
       }
     },
     "aws_quicksight_namespace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Not applicable: namespace stays Logical; not a VPC/container. Not applicable: QUICKSIGHT identity_store enum is not an Identity Store resource identifier; consumers originate namespace links. Follow-up #806. Intentionally unsupported: creation_status is runtime state and identity_store=QUICKSIGHT does not establish external directory integration.",
+      "gap": "#724 reviewed: Implemented #806. Namespace identity is its namespace within the selected account and region. Consumers provide the reference. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18948,7 +18948,7 @@
         "placement": "Supported: retain Logical aws_quicksight_namespace basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: namespace stays Logical; not a VPC/container.",
         "network": "Not applicable: reviewed aws_quicksight_namespace fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Not applicable: QUICKSIGHT identity_store enum is not an Identity Store resource identifier; consumers originate namespace links.",
+        "references": "Supported: Namespace identity is its namespace within the selected account and region. Consumers provide the reference.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: creation_status is runtime state and identity_store=QUICKSIGHT does not establish external directory integration.",
         "officialDocumentation": "website/docs/r/quicksight_namespace.html.markdown",
@@ -18969,10 +18969,10 @@
       }
     },
     "aws_quicksight_refresh_schedule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: dataset helper navigation. Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id. Follow-up #805. Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
+      "gap": "#724 reviewed: Implemented #805. Dataset ID must match the managed data_set_id. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18986,7 +18986,7 @@
         "placement": "Supported: retain Logical aws_quicksight_refresh_schedule basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: dataset helper navigation.",
         "network": "Not applicable: reviewed aws_quicksight_refresh_schedule fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: data_set_id -> dataset.data_set_id with matching account and region, not composite Terraform id.",
+        "references": "Supported: Dataset ID must match the managed data_set_id.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: execution status and freshness predictions; scheduling details do not prove successful refresh.",
         "officialDocumentation": "website/docs/r/quicksight_refresh_schedule.html.markdown",
@@ -19008,10 +19008,10 @@
       }
     },
     "aws_quicksight_role_custom_permission": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Not applicable: shared permission profile is not embedded. Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and namespace; role is a QuickSight enum, not IAM. Follow-up #806. Intentionally unsupported: effective custom permissions.",
+      "gap": "#724 reviewed: Implemented #806. Custom permission profile name and namespace navigation. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19025,7 +19025,7 @@
         "placement": "Supported: retain Logical aws_quicksight_role_custom_permission basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared permission profile is not embedded.",
         "network": "Not applicable: reviewed aws_quicksight_role_custom_permission fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and namespace; role is a QuickSight enum, not IAM.",
+        "references": "Supported: Custom permission profile name and namespace navigation.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: effective custom permissions.",
         "officialDocumentation": "website/docs/r/quicksight_role_custom_permission.html.markdown",
@@ -19046,10 +19046,10 @@
       }
     },
     "aws_quicksight_role_membership": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Not applicable: role membership is not exclusive ownership. Missing: member_name -> group.group_name in matching namespace; role is QuickSight ADMIN/AUTHOR/READER enum, not an IAM role. Follow-up #806. Deferred: QuickSight role enum needs an allowlist tied to group navigation; no inference of IAM privilege.",
+      "gap": "#724 reviewed: Implemented #806. The member is a same-namespace QuickSight group. QuickSight role names remain enums. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19063,7 +19063,7 @@
         "placement": "Supported: retain Logical aws_quicksight_role_membership basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: role membership is not exclusive ownership.",
         "network": "Not applicable: reviewed aws_quicksight_role_membership fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: member_name -> group.group_name in matching namespace; role is QuickSight ADMIN/AUTHOR/READER enum, not an IAM role.",
+        "references": "Supported: same-namespace QuickSight group. The QuickSight role is not an IAM role.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Deferred: QuickSight role enum needs an allowlist tied to group navigation; no inference of IAM privilege.",
         "officialDocumentation": "website/docs/r/quicksight_role_membership.html.markdown",
@@ -19084,10 +19084,10 @@
       }
     },
     "aws_quicksight_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: exclusive source analysis/template ARN and complete dataset substitutions. Version-qualified ARN needs known revision proof; computed source_entity_arn is not configured evidence. Follow-up #805. Intentionally unsupported: template definitions and parameter payloads.",
+      "gap": "#724 reviewed: Implemented #805. Exclusive analysis or template ARN and complete source-analysis dataset substitutions. Version-qualified template navigation requires the matching revision. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19103,7 +19103,7 @@
         "placement": "Supported: retain Logical aws_quicksight_template basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_template configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_template fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: exclusive source analysis/template ARN and complete dataset substitutions. Version-qualified ARN needs known revision proof; computed source_entity_arn is not configured evidence.",
+        "references": "Supported: Exclusive analysis or template ARN and complete source-analysis dataset substitutions. Version-qualified template navigation requires the matching revision.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: template definitions and parameter payloads.",
         "officialDocumentation": "website/docs/r/quicksight_template.html.markdown",
@@ -19137,10 +19137,10 @@
       }
     },
     "aws_quicksight_template_alias": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: verified template navigation; retain alias lifecycle. Missing: template_id -> template.template_id plus matching template_version_number; alias is its own resource, not a provider type alias. Follow-up #805. Deferred: version summary requires known template revision agreement; an alias alone cannot claim current published content.",
+      "gap": "#724 reviewed: Implemented #805. Template ID navigation requires matching current template version. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19155,7 +19155,7 @@
         "placement": "Supported: retain Logical aws_quicksight_template_alias basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: verified template navigation; retain alias lifecycle.",
         "network": "Not applicable: reviewed aws_quicksight_template_alias fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: template_id -> template.template_id plus matching template_version_number; alias is its own resource, not a provider type alias.",
+        "references": "Supported: Template ID navigation requires matching current template version.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Deferred: version summary requires known template revision agreement; an alias alone cannot claim current published content.",
         "officialDocumentation": "website/docs/r/quicksight_template_alias.html.markdown",
@@ -19179,10 +19179,10 @@
       }
     },
     "aws_quicksight_theme": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 805,
-      "gap": "#724 reviewed: Missing: base_theme_id -> explicit managed theme.theme_id; built-in theme IDs are not managed endpoints. Follow-up #805. Intentionally unsupported: theme colors, fonts and permissions are not infrastructure summaries.",
+      "gap": "#724 reviewed: Implemented #805. Managed base theme_id navigation requires an explicit reference. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19196,7 +19196,7 @@
         "placement": "Supported: retain Logical aws_quicksight_theme basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_theme configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_theme fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: base_theme_id -> explicit managed theme.theme_id; built-in theme IDs are not managed endpoints.",
+        "references": "Supported: Managed base theme_id navigation requires an explicit reference.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: theme colors, fonts and permissions are not infrastructure summaries.",
         "officialDocumentation": "website/docs/r/quicksight_theme.html.markdown",
@@ -19217,10 +19217,10 @@
       }
     },
     "aws_quicksight_user": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Missing: namespace and identity_type=IAM user/role ARN references with exact discriminator; session-qualified role users require separate identity proof. Follow-up #806. Intentionally unsupported: email, session names and invitation URLs.",
+      "gap": "#724 reviewed: Implemented #806. Explicit namespace and IAM-typed user or role ARN. Assumed-role sessions require matching role/name context. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19236,7 +19236,7 @@
         "placement": "Supported: retain Logical aws_quicksight_user basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_user configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_quicksight_user fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: namespace and identity_type=IAM user/role ARN references with exact discriminator; session-qualified role users require separate identity proof.",
+        "references": "Supported: Explicit namespace and IAM-typed user or role ARN. Assumed-role sessions require matching role/name context.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: email, session names and invitation URLs.",
         "officialDocumentation": "website/docs/r/quicksight_user.html.markdown",
@@ -19263,10 +19263,10 @@
       }
     },
     "aws_quicksight_user_custom_permission": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 806,
-      "gap": "#724 reviewed: Not applicable: shared permission profile is not embedded. Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and user_name -> user.user_name in matching namespace. Follow-up #806. Intentionally unsupported: effective custom permissions.",
+      "gap": "#724 reviewed: Implemented #806. Custom permission profile name and same-namespace user name navigation. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19280,7 +19280,7 @@
         "placement": "Supported: retain Logical aws_quicksight_user_custom_permission basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared permission profile is not embedded.",
         "network": "Not applicable: reviewed aws_quicksight_user_custom_permission fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: custom_permissions_name -> custom_permissions.custom_permissions_name and user_name -> user.user_name in matching namespace.",
+        "references": "Supported: Custom permission profile name and same-namespace user name navigation.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: effective custom permissions.",
         "officialDocumentation": "website/docs/r/quicksight_user_custom_permission.html.markdown",
@@ -19301,10 +19301,10 @@
       }
     },
     "aws_quicksight_vpc_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 804,
-      "gap": "#724 reviewed: Missing: verified common-VPC connection context, without putting all QuickSight consumers in those subnets. Missing: IAM role and complete subnet/SG common-VPC proof; dns_resolvers are IPs, not Route53 resource identities. Follow-up #804. Intentionally unsupported: availability status and resolver IPs do not establish connectivity; verified network navigation is the useful context.",
+      "gap": "#724 reviewed: Implemented #804. Verified IAM role, subnet IDs and security group IDs. Resolver IPs are opaque. A common VPC requires complete subnet and security-group collections with explicit matching VPC identities.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19320,8 +19320,8 @@
         ],
         "placement": "Supported: retain Logical aws_quicksight_vpc_connection basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: independent aws_quicksight_vpc_connection configuration; no verified embedded owner in runtime.",
-        "network": "Missing: verified common-VPC connection context, without putting all QuickSight consumers in those subnets.",
-        "references": "Missing: IAM role and complete subnet/SG common-VPC proof; dns_resolvers are IPs, not Route53 resource identities.",
+        "network": "Supported: A common VPC requires complete subnet and security-group collections with explicit matching VPC identities.",
+        "references": "Supported: Verified IAM role, subnet IDs and security group IDs. Resolver IPs are opaque.",
         "scope": "Partial: Regional eligibility only; aws_account_id can select a different account and namespace/ARN identities require matching account/region. Basic scope.rs intentionally clears account rather than assuming provider ownership.",
         "summaries": "Intentionally unsupported: availability status and resolver IPs do not establish connectivity; verified network navigation is the useful context.",
         "officialDocumentation": "website/docs/r/quicksight_vpc_connection.html.markdown",

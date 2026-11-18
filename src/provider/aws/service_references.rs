@@ -190,6 +190,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::backup_restore::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::quicksight::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::sagemaker_studio::label(resource, attribute) {
         return Some(label);
     }
@@ -977,6 +980,7 @@ pub(crate) fn annotate(
     super::api_usage::annotate(nodes, references, evidence);
     super::efs_evidence::annotate(nodes, references, evidence);
     super::backup_plan::annotate(nodes, references, evidence);
+    super::quicksight::annotate(nodes, references, evidence);
     super::sagemaker_studio::annotate(nodes, references, evidence);
     super::sagemaker_jobs::annotate(nodes, references, evidence);
     super::sagemaker_catalog::annotate(nodes, references, evidence);
@@ -1018,6 +1022,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::bedrock_agents::bindings(raw, reference)
         && super::bedrock_models::bindings(raw, reference)
         && super::backup_restore::bindings(raw, reference)
+        && super::quicksight::bindings(raw, reference)
         && super::sagemaker_studio::bindings(raw, reference)
         && super::sagemaker_jobs::bindings(raw, reference)
         && super::sagemaker_catalog::bindings(raw, reference)
@@ -1698,6 +1703,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::bedrock_agents::indexed(&node.resource_type, &reference.attribute)
             || super::bedrock_models::indexed(&node.resource_type, &reference.attribute)
             || super::backup_restore::indexed(&node.resource_type, &reference.attribute)
+            || super::quicksight::indexed(&node.resource_type, &reference.attribute)
             || super::sagemaker_studio::indexed(&node.resource_type, &reference.attribute)
             || super::sagemaker_jobs::indexed(&node.resource_type, &reference.attribute)
             || super::sagemaker_catalog::indexed(&node.resource_type, &reference.attribute)
