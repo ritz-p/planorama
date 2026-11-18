@@ -64,16 +64,6 @@ with results. Run on an otherwise idle machine; repeat manually if a distributio
 is needed. These observations do not guarantee performance, and CI checks report
 structure and byte equality rather than timing thresholds.
 
-One smoke measurement on 2026-10-16 used Docker Desktop Linux, Rust 1.85.1,
-release mode, `23a58b6` plus the #430 instrumentation, and the large HTML command
-above (output `/tmp/issue-430-large.html`). The input SHA-256 was
-`0767ce05f828ac12e8aadeab8f7b13cced41b07cb20db9d03f463d204cfe91a8`.
-It reported 50 input resources, 40 selected nodes, 79 edges and 379,882 output
-bytes: total 30,986.755 ms, layout/routing 30,968.665 ms, parsing 5.166 ms and
-composition 3.427 ms. Other validation processes were active, so this single
-sample only demonstrates identifying the dominant stage; it is not an idle-machine
-baseline, an overhead comparison or a performance guarantee.
-
 ## Synthetic benchmark harness
 
 Run `docker compose exec -T dev cargo test --release --locked benchmarks::pipeline -- --ignored --nocapture`

@@ -61,12 +61,8 @@ validates the actual saved-plan CLI using a local STS fixture.
 ## Measurements and limitations
 
 Use the measurement script above for current geometry, path and byte counts.
-For optional timings, run
-`benchmarks::multi_account::baseline` with `--release -- --ignored --nocapture`.
-For normal SVG/HTML generation, `--timings` reports per-stage and per-state costs
-without running a benchmark; see the [CLI measurement commands](../../docs/benchmarks.md#cli-stage-timings).
-Layout costs depend on the machine; no timing threshold is imposed. Long paths
-and crowded corridors remain possible.
+The [benchmark guide](../../docs/benchmarks.md#synthetic-benchmark-harness) covers the
+opt-in multi-account benchmark and [CLI stage timings](../../docs/benchmarks.md#cli-stage-timings).
 
 Both measurement and screenshot tools use Node.js and the development image's
 Chromium/ChromeDriver. `node tests/support/capture_multi_account.cjs` writes four
