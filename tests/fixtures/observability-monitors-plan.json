@@ -1,0 +1,184 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_resourcegroups_group.sample0",
+      "mode": "managed",
+      "type": "aws_resourcegroups_group",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-group"
+        }
+      }
+    },
+    {
+      "address": "aws_applicationinsights_application.sample1",
+      "mode": "managed",
+      "type": "aws_applicationinsights_application",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_group_name": "fixture-group",
+          "grouping_type": "RESOURCE_GROUP_BASED"
+        }
+      }
+    },
+    {
+      "address": "aws_evidently_project.sample2",
+      "mode": "managed",
+      "type": "aws_evidently_project",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-project"
+        }
+      }
+    },
+    {
+      "address": "aws_evidently_feature.sample3",
+      "mode": "managed",
+      "type": "aws_evidently_feature",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-feature",
+          "project": "fixture-project"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample4",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_internetmonitor_monitor.sample5",
+      "mode": "managed",
+      "type": "aws_internetmonitor_monitor",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "monitor_name": "fixture-monitor",
+          "resources": [
+            "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-0123"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_resourcegroups_group.sample0",
+          "mode": "managed",
+          "type": "aws_resourcegroups_group",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_applicationinsights_application.sample1",
+          "mode": "managed",
+          "type": "aws_applicationinsights_application",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_group_name": {
+              "references": [
+                "aws_resourcegroups_group.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_evidently_project.sample2",
+          "mode": "managed",
+          "type": "aws_evidently_project",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_evidently_feature.sample3",
+          "mode": "managed",
+          "type": "aws_evidently_feature",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project": {
+              "references": [
+                "aws_evidently_project.sample2.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample4",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_internetmonitor_monitor.sample5",
+          "mode": "managed",
+          "type": "aws_internetmonitor_monitor",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resources": {
+              "references": [
+                "aws_vpc.sample4.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

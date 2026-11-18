@@ -129,6 +129,7 @@ pub(crate) mod networkfirewall_extended;
 pub(crate) mod networkmanager;
 pub(crate) mod oam;
 mod observability;
+pub(crate) mod observability_monitors;
 mod opensearch_serverless;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;

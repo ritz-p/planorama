@@ -90,6 +90,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_sagemaker_workteam" => {
                 ("workforce_name", "Private workforce", "Private workteams")
             }
+            "aws_evidently_feature" => ("project", "Evidently project", "Features"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
