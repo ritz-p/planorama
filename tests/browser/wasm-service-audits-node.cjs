@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {"fixture":"sagemaker-catalog-plan","focus":"aws_sagemaker_model_card_export_job.export","target":3,"mask":{"model_card_name":true}},
   {"fixture":"sagemaker-training-jobs-plan","focus":"aws_sagemaker_training_job.job","target":3,"mask":{"input_data_config":true}},
   {"fixture":"sagemaker-studio-plan","focus":"aws_sagemaker_app.ui","target":5,"mask":{"resource_spec":true}},
   {"fixture":"emr-serverless-plan","focus":"aws_emrserverless_application.main","target":7,"mask":{"network_configuration":true}},

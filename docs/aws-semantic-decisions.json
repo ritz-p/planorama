@@ -33935,10 +33935,10 @@
       }
     },
     "aws_sagemaker_device": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Fleet-name and optional IoT thing-name links; physical device is not an AWS subnet node. #879. Device fleet membership requires matching known fleet name. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit device fleet, iot thing. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33952,7 +33952,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_device; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Device fleet membership requires matching known fleet name. #879.",
         "network": "Not applicable: sagemaker_device has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Fleet-name and optional IoT thing-name links; physical device is not an AWS subnet node. #879.",
+        "references": "Supported: Explicit device fleet, iot thing.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: device attributes excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_device.html.markdown",
@@ -33998,10 +33998,10 @@
       }
     },
     "aws_sagemaker_device_fleet": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Role/output key links; generated SageMakerEdge role alias cannot be assumed a Terraform resource. #879. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit fleet role, fleet output key. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34015,7 +34015,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_device_fleet; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_device_fleet is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_device_fleet has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Role/output key links; generated SageMakerEdge role alias cannot be assumed a Terraform resource. #879.",
+        "references": "Supported: Explicit fleet role, fleet output key.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: IoT role alias enabled could provide a bounded summary for sagemaker_device_fleet; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_device_fleet.html.markdown",
@@ -34149,10 +34149,10 @@
       }
     },
     "aws_sagemaker_feature_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Role/key and parent-qualified Glue table links; generated catalog tables are not necessarily separately managed. Feature names and record data excluded. #879. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit feature group role, offline store database, offline store table, feature store key. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34166,7 +34166,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_feature_group; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_feature_group is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_feature_group has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Role/key and parent-qualified Glue table links; generated catalog tables are not necessarily separately managed. Feature names and record data excluded. #879.",
+        "references": "Supported: Explicit feature group role, offline store database, offline store table, feature store key.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: online/offline mode could provide a bounded summary for sagemaker_feature_group; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_feature_group.html.markdown",
@@ -34327,10 +34327,10 @@
       }
     },
     "aws_sagemaker_hub_content_reference": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Private hub-name membership; public JumpStart content ARN must have no version suffix and is not a managed private content target. #879. Private hub owns helper after explicit name proof. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit private hub. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34342,7 +34342,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_hub_content_reference; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Private hub owns helper after explicit name proof. #879.",
         "network": "Not applicable: sagemaker_hub_content_reference has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Private hub-name membership; public JumpStart content ARN must have no version suffix and is not a managed private content target. #879.",
+        "references": "Supported: Explicit private hub.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: model content excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_hub_content_reference.html.markdown",
@@ -34612,10 +34612,10 @@
       }
     },
     "aws_sagemaker_inference_component": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Endpoint/model/base-component links require standard-versus-adapter and specification/specifications distinction; variants are internal endpoint configuration members. #879. Endpoint component ownership with variant/base-component agreement. Do not place component from runtime placement status. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit inference endpoint, base inference component, inference model. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34629,7 +34629,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_inference_component; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Endpoint component ownership with variant/base-component agreement. #879.",
         "network": "Missing: Do not place component from runtime placement status. #879.",
-        "references": "Missing: Endpoint/model/base-component links require standard-versus-adapter and specification/specifications distinction; variants are internal endpoint configuration members. #879.",
+        "references": "Supported: Explicit inference endpoint, base inference component, inference model.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: component variant could provide a bounded summary for sagemaker_inference_component; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_inference_component.html.markdown",
@@ -34744,10 +34744,10 @@
       }
     },
     "aws_sagemaker_mlflow_app": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: MLflow execution role reference; artifact_store S3 URI not bucket identity. App is architecture-bearing tracking service, card review warranted. #879. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit mlflow execution role. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34759,7 +34759,7 @@
         "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #879.",
         "ownership": "Not applicable: sagemaker_mlflow_app is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_mlflow_app has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: MLflow execution role reference; artifact_store S3 URI not bucket identity. App is architecture-bearing tracking service, card review warranted. #879.",
+        "references": "Supported: Explicit mlflow execution role.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: model registration mode could provide a bounded summary for sagemaker_mlflow_app; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_mlflow_app.html.markdown",
@@ -34795,10 +34795,10 @@
       }
     },
     "aws_sagemaker_mlflow_tracking_server": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Tracking server execution role; artifact_store URI and tracking URL not network references. Independent tracking service warrants card review. #879. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit mlflow execution role. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34811,7 +34811,7 @@
         "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #879.",
         "ownership": "Not applicable: sagemaker_mlflow_tracking_server is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_mlflow_tracking_server has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Tracking server execution role; artifact_store URI and tracking URL not network references. Independent tracking service warrants card review. #879.",
+        "references": "Supported: Explicit mlflow execution role.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: tracking server size could provide a bounded summary for sagemaker_mlflow_tracking_server; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_mlflow_tracking_server.html.markdown",
@@ -34851,10 +34851,10 @@
       }
     },
     "aws_sagemaker_model_card": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Model-card KMS ARN reference only; opaque content does not establish model ownership. Approval status is not model health. #879. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit model card key. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34867,7 +34867,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_model_card; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_model_card is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_model_card has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Model-card KMS ARN reference only; opaque content does not establish model ownership. Approval status is not model health. #879.",
+        "references": "Supported: Explicit model card key.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: card approval state could provide a bounded summary for sagemaker_model_card; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_model_card.html.markdown",
@@ -34908,10 +34908,10 @@
       }
     },
     "aws_sagemaker_model_card_export_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Explicit card-name reference; export S3 URI not a bucket identity. #879. Model card owns export helper after name proof. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit exported model card. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34923,7 +34923,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_model_card_export_job; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Model card owns export helper after name proof. #879.",
         "network": "Not applicable: sagemaker_model_card_export_job has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Explicit card-name reference; export S3 URI not a bucket identity. #879.",
+        "references": "Supported: Explicit exported model card.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: exported content excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_model_card_export_job.html.markdown",
@@ -35009,10 +35009,10 @@
       }
     },
     "aws_sagemaker_model_package_group_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Group-name attachment only; policy JSON never generates principal/resource edges. #879. Package group owner proof required. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit model package group. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35023,7 +35023,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_model_package_group_policy; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Package group owner proof required. #879.",
         "network": "Not applicable: sagemaker_model_package_group_policy has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Group-name attachment only; policy JSON never generates principal/resource edges. #879.",
+        "references": "Supported: Explicit model package group.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: policy content excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_model_package_group_policy.html.markdown",
@@ -35313,10 +35313,10 @@
       }
     },
     "aws_sagemaker_project": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 879,
-      "gap": "Reviewed #725: Service Catalog product and parent-qualified provisioning artifact; generated project resources not inferred from provisioning parameters. #879. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #879. Explicit service catalog product, product provisioning artifact. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35329,7 +35329,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_project; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_project is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_project has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Service Catalog product and parent-qualified provisioning artifact; generated project resources not inferred from provisioning parameters. #879.",
+        "references": "Supported: Explicit service catalog product, product provisioning artifact.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: provisioning parameters excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_project.html.markdown",

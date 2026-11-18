@@ -156,6 +156,7 @@ pub(crate) mod s3files;
 pub(crate) mod s3tables;
 pub(crate) mod s3vectors;
 mod sagemaker;
+pub(crate) mod sagemaker_catalog;
 pub(crate) mod sagemaker_jobs;
 pub(crate) mod sagemaker_studio;
 mod scaling;
