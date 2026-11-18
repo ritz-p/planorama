@@ -269,6 +269,11 @@ A managed AI Search instance can reference its namespace by name when its own
 provider configuration pins v5.29.0 exactly. In v5.28.1 the namespace is
 read-only. An absent or ranged constraint leaves the relationship unresolved.
 
+A Worker Pipelines binding can reference a stream ID. R2 and catalog sinks can
+reference the target bucket when both account IDs and the bucket jurisdiction
+agree. R2 Data Catalog uses a bucket name in the default jurisdiction. Pipeline
+tables are computed; SQL, stream URLs and credentials do not identify endpoints.
+
 A managed AI Gateway dynamic route can identify its gateway through an explicit
 `gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
 Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,

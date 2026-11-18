@@ -1,6 +1,7 @@
 mod deployment;
 mod dns;
 mod pages;
+mod pipelines;
 mod presentation;
 mod queues;
 mod target;
@@ -31,6 +32,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         };
     }
     workers::label(kind, path)
+        .or_else(|| pipelines::label(kind, path))
         .or_else(|| pages::label(kind, path))
         .or_else(|| queues::label(kind, path))
         .or_else(|| deployment::label(kind, path))
@@ -38,6 +40,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 }
 fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Vec<Target<'a>>> {
     let value = v.at(path)?;
+    if pipelines::label(&node.resource_type, path).is_some() {
+        return pipelines::targets(v, path);
+    }
     if node.resource_type == "cloudflare_queue_consumer" {
         return queues::targets(v, path);
     }

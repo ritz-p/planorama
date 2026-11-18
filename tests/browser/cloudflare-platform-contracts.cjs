@@ -51,4 +51,24 @@ module.exports = function platformContracts({plan, resource, verify, account}) {
     input.resource_changes[1].change.after_sensitive = {namespace: true};
     verify(input, ['cloudflare_sensitive_value'], [], check([]));
   }
+  {
+    const input = plan();
+    resource(input, 'cloudflare_pipeline_stream', 'events', {id: 'stream-id', name: 'events'});
+    resource(input, 'cloudflare_workers_script', 'writer', {bindings: [{type: 'pipelines', pipeline: 'stream-id'}]},
+      {bindings: ['cloudflare_pipeline_stream.events.id']});
+    resource(input, 'cloudflare_r2_bucket', 'files', {id: 'files', name: 'files'});
+    const config = {account_id: account, bucket: 'files', credentials: {secret_access_key: 'PRIVATE_secret'}};
+    resource(input, 'cloudflare_pipeline_sink', 'sink', {type: 'r2', config}, {config: ['cloudflare_r2_bucket.files.name']});
+    resource(input, 'cloudflare_r2_data_catalog', 'catalog', {bucket_name: 'files'}, {bucket_name: ['cloudflare_r2_bucket.files.name']});
+    verify(input, ['Pipeline stream bindings'], [], rows => {
+      for (const [node, field] of [['cloudflare_pipeline_sink.sink','config'], ['cloudflare_r2_data_catalog.catalog','bucket_name']]) {
+        assert.deepEqual(target(rows, node, field), ['cloudflare_r2_bucket.files']);
+      }
+    });
+    config.account_id = 'b'.repeat(32);
+    input.resource_changes[0].change.after_unknown = {id: true};
+    verify(input, ['cloudflare_scope_mismatch'], ['Pipeline stream bindings'], rows => {
+      assert.deepEqual(target(rows, 'cloudflare_pipeline_sink.sink', 'config'), []);
+    });
+  }
 };

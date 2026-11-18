@@ -21,6 +21,7 @@ pub(super) enum Kind<'a> {
     SearchInstance(&'a str),
     SearchNamespace,
     SearchToken,
+    PipelineStream,
 }
 pub(super) struct Target<'a> {
     pub(super) value: &'a str,
@@ -65,6 +66,7 @@ pub(super) fn fields(
         (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
         (Kind::SearchInstance(_), "cloudflare_ai_search_instance") => &["id"],
         (Kind::SearchNamespace, "cloudflare_ai_search_namespace") => &["name"],
+        (Kind::PipelineStream, "cloudflare_pipeline_stream") => &["id"],
         (Kind::SearchToken, "cloudflare_ai_search_token") => &["id"],
         (Kind::AiGateway, "cloudflare_ai_gateway") => &["id"],
         (Kind::Hyperdrive, "cloudflare_hyperdrive_config") => &["id"],
