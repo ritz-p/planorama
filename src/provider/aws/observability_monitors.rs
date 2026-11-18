@@ -103,7 +103,7 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
     match r.attribute.as_str() {
         "resource_group_name" => e
             .value(r.target, "grouping_type")
-            .is_some_and(|value| value.is_null() || value.as_str() == Some("RESOURCE_GROUP_BASED")),
+            .is_some_and(Value::is_null),
         "groups.feature" => ["name", "arn"].into_iter().any(|field| {
             e.same_endpoint(
                 r.target,
@@ -114,8 +114,19 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
                 field,
             )
         }),
-        "resources" if matches!(e.nodes[source].resource_type.as_str(), "aws_lb" | "aws_alb") => {
-            e.text(source, "load_balancer_type") == Some("network")
+        "resources" => {
+            let family = |kind: &str| match kind {
+                "aws_vpc" | "aws_cloudfront_distribution" => 1,
+                "aws_lb" | "aws_alb" => 2,
+                "aws_workspaces_directory" => 3,
+                _ => 0,
+            };
+            let group = family(&e.nodes[source].resource_type);
+            group != 0
+                && r.sources
+                    .iter()
+                    .all(|&index| family(&e.nodes[index].resource_type) == group)
+                && (group != 2 || e.text(source, "load_balancer_type") == Some("network"))
         }
         _ => true,
     }
