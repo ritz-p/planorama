@@ -10951,10 +10951,10 @@
       }
     },
     "aws_docdbelastic_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 766,
-      "gap": "#717 reviewed: Missing: direct complete network sets and KMS ARN #766; not ordinary DocumentDB group semantics.  Missing: direct common-VPC proof #766.",
+      "gap": "Implemented #766. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11355,10 +11355,10 @@
       }
     },
     "aws_neptunegraph_graph": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 766,
-      "gap": "#717 reviewed: Missing: KMS navigation #766; graph data is not resource evidence.  Not applicable: graph has no explicit subnet/VPC selector; private endpoint networking is separate #766.",
+      "gap": "Implemented #766. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11389,10 +11389,10 @@
       }
     },
     "aws_neptunegraph_private_graph_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 766,
-      "gap": "#717 reviewed: Missing: graph ownership/reference and endpoint VPC/subnet/SG proof #766. API does not return SG configuration; no drift assertion. Missing: currently Logical; independent private endpoint network identity warrants review in #766. Missing: endpoint common-VPC proof #766, never graph containment.",
+      "gap": "Implemented #766. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",

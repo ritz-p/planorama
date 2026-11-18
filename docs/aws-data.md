@@ -1021,3 +1021,7 @@ The source contracts are `website/docs/r/glue_{crawler,job,ml_transform,trigger,
 classifier,connection,security_configuration,workflow}.html.markdown` and their
 corresponding `internal/service/glue/*.go` files at the pinned revision. Runtime
 support defaults use `scripts/update-resource-support.sh aws_glue_`.
+
+### DocumentDB Elastic and Neptune Analytics (#766)
+
+Elastic clusters use direct subnet and security group ID sets. Neptune private graph endpoints reference a graph by its Terraform `id`, and have their own VPC, subnets and configured security groups. Placement requires complete subnet and security group references to a common VPC. For a private endpoint its explicit VPC must agree. The graph keeps its regional placement. The Neptune API does not return endpoint security groups, so these references describe configuration. Graphs and Elastic clusters can reference a managed KMS key by ARN.
