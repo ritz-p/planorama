@@ -10,6 +10,6 @@
 | Cloudflare | [固定 schema・分類・管理 scope](cloudflare.md) |
 | JSON 診断 | [Coverage・semantic diagnostics の出力形式](coverage-json.md) |
 | ブラウザ | [利用・共通 API・privacy](browser.md)、[engine・分割実行・memory](browser-engine.md)、[開発検証](browser-development.md)、[生成後の HTML 操作](viewer.md) |
-| Terraform 入力 | [互換性](terraform-compatibility.md)、[provider evidence](provider-evidence.md)、[複数 state](multi-plan.md)、[outputs](outputs.md) |
+| Terraform 入力 | [互換性](terraform-compatibility.md)、[provider evidence](provider-evidence.md)、[複数 state](multi-plan.md)、[outputs](multi-plan.md#output-provenance) |
 | 内部モデル・表示 | [architecture](architecture.md)、[models](models.md)、[resource presentation](resource-presentation.md)、[relationships](relationships.md)、[routing](routing.md) |
 | 品質・計測 | [Layout quality](ci.md#layout-quality-comparison-390)、[diagnostics](layout-diagnostics.md)、[presentation](presentation-quality.md)。[stability](layout-stability.md)・[benchmarks](benchmarks.md) は別の計測であり gate の代用にしない |

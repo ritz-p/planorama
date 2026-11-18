@@ -80,8 +80,8 @@ planorama plan.json --config planorama.toml --preset review -o review.html
 | 内容 | 文書 |
 | --- | --- |
 | 表示の読み方と AWS の対応範囲 | [関係線・凡例](docs/relationships.md)、[AWS の分類と包含](docs/aws.md)、[論理コンポーネント](docs/components.md)、[Route](docs/routes.md) |
-| 操作・変更・検査結果 | [import・移動・置換・drift](docs/operations.md)、[Terraform checks](docs/checks.md) |
-| 生成設定と選択 | [設定ファイル](docs/configuration.md)、[module 一覧・絞り込み](docs/filtering.md)、[複数 plan](docs/multi-plan.md)、[outputs](docs/outputs.md) |
+| 操作・変更・検査結果 | [import・移動・置換・drift](docs/operations.md)、[Terraform checks](docs/operations.md#terraform-check-results) |
+| 生成設定と選択 | [設定ファイル](docs/configuration.md)、[module 一覧・絞り込み](docs/filtering.md)、[複数 plan](docs/multi-plan.md)、[outputs](docs/multi-plan.md#output-provenance) |
 | Cloudflare の対応範囲 | [契約・サンプル・検証と再現手順](docs/cloudflare.md) |
 | 入力の identity・account/region の根拠 | [Models](docs/models.md)、[provider evidence](docs/provider-evidence.md) |
 | HTML と診断 | [ビューアー操作](docs/viewer.md)、[coverage report](docs/coverage.md)、[layout diagnostics](docs/layout-diagnostics.md) |
