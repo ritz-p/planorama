@@ -167,3 +167,41 @@ The domain has an independent card. VPC-only placement requires the declared VPC
 |  | `user_settings.code_editor_app_settings.default_resource_spec.sagemaker_image_arn`, `user_settings.jupyter_lab_app_settings.default_resource_spec.sagemaker_image_arn`, `user_settings.jupyter_server_app_settings.default_resource_spec.sagemaker_image_arn`, `user_settings.kernel_gateway_app_settings.default_resource_spec.sagemaker_image_arn`, `user_settings.r_session_app_settings.default_resource_spec.sagemaker_image_arn`, `user_settings.tensor_board_app_settings.default_resource_spec.sagemaker_image_arn` | `aws_sagemaker_image` (`arn`) |
 |  | `user_settings.code_editor_app_settings.default_resource_spec.sagemaker_image_version_arn`, `user_settings.jupyter_lab_app_settings.default_resource_spec.sagemaker_image_version_arn`, `user_settings.jupyter_server_app_settings.default_resource_spec.sagemaker_image_version_arn`, `user_settings.kernel_gateway_app_settings.default_resource_spec.sagemaker_image_version_arn`, `user_settings.r_session_app_settings.default_resource_spec.sagemaker_image_version_arn`, `user_settings.tensor_board_app_settings.default_resource_spec.sagemaker_image_version_arn` | `aws_sagemaker_image_version` (`arn`) |
 |  | `user_settings.custom_file_system_config.efs_file_system_config.file_system_id` | `aws_efs_file_system` (`id`) |
+
+### SageMaker Training and monitoring jobs
+
+Job references require complete row-specific evidence. The file-system type selects EFS or FSx for Lustre. Named monitoring definitions select DataQuality; an inline job uses its own endpoints and network. Network evidence is collected within a single definition. Pipeline definition JSON and generated jobs remain opaque.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_sagemaker_algorithm` | `validation_specification.validation_role` | `aws_iam_role` (`arn`) |
+|  | `validation_specification.validation_profiles.training_job_definition.input_data_config.data_source.file_system_data_source.file_system_id` | `aws_efs_file_system` (`id`) or `aws_fsx_lustre_file_system` (`id`) |
+|  | `validation_specification.validation_profiles.training_job_definition.output_data_config.kms_key_id`, `validation_specification.validation_profiles.training_job_definition.resource_config.volume_kms_key_id`, `validation_specification.validation_profiles.transform_job_definition.transform_output.kms_key_id`, `validation_specification.validation_profiles.transform_job_definition.transform_resources.volume_kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+| `aws_sagemaker_data_quality_job_definition` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `data_quality_job_input.endpoint_input.endpoint_name` | `aws_sagemaker_endpoint` (`name`) |
+|  | `data_quality_job_output_config.kms_key_id`, `job_resources.cluster_config.volume_kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `network_config.vpc_config.security_group_ids` | `aws_security_group` (`id`) |
+|  | `network_config.vpc_config.subnets` | `aws_subnet` (`id`) |
+| `aws_sagemaker_hyper_parameter_tuning_job` | `warm_start_config.parent_hyper_parameter_tuning_jobs.name` | `aws_sagemaker_hyper_parameter_tuning_job` (`name`) |
+|  | `training_job_definition.role_arn`, `training_job_definitions.role_arn` | `aws_iam_role` (`arn`) |
+|  | `training_job_definition.algorithm_specification.algorithm_name`, `training_job_definitions.algorithm_specification.algorithm_name` | `aws_sagemaker_algorithm` (`algorithm_name`) |
+|  | `training_job_definition.hyper_parameter_tuning_resource_config.volume_kms_key_id`, `training_job_definition.output_data_config.kms_key_id`, `training_job_definition.resource_config.volume_kms_key_id`, `training_job_definitions.hyper_parameter_tuning_resource_config.volume_kms_key_id`, `training_job_definitions.output_data_config.kms_key_id`, `training_job_definitions.resource_config.volume_kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `training_job_definition.input_data_config.data_source.file_system_data_source.file_system_id`, `training_job_definitions.input_data_config.data_source.file_system_data_source.file_system_id` | `aws_efs_file_system` (`id`) or `aws_fsx_lustre_file_system` (`id`) |
+|  | `training_job_definition.vpc_config.security_group_ids`, `training_job_definitions.vpc_config.security_group_ids` | `aws_security_group` (`id`) |
+|  | `training_job_definition.vpc_config.subnets`, `training_job_definitions.vpc_config.subnets` | `aws_subnet` (`id`) |
+| `aws_sagemaker_monitoring_schedule` | `monitoring_schedule_config.monitoring_job_definition_name` | `aws_sagemaker_data_quality_job_definition` (`name`) |
+|  | `monitoring_schedule_config.monitoring_job_definition.role_arn` | `aws_iam_role` (`arn`) |
+|  | `monitoring_schedule_config.monitoring_job_definition.monitoring_inputs.endpoint_input.endpoint_name` | `aws_sagemaker_endpoint` (`name`) |
+|  | `monitoring_schedule_config.monitoring_job_definition.monitoring_output_config.kms_key_id`, `monitoring_schedule_config.monitoring_job_definition.monitoring_resources.cluster_config.volume_kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `monitoring_schedule_config.monitoring_job_definition.network_config.vpc_config.security_group_ids` | `aws_security_group` (`id`) |
+|  | `monitoring_schedule_config.monitoring_job_definition.network_config.vpc_config.subnets` | `aws_subnet` (`id`) |
+| `aws_sagemaker_pipeline` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `pipeline_definition_s3_location.bucket` | `aws_s3_bucket` (`bucket`, `id`) |
+| `aws_sagemaker_training_job` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `algorithm_specification.algorithm_name` | `aws_sagemaker_algorithm` (`algorithm_name`) |
+|  | `mlflow_config.mlflow_resource_arn` | `aws_sagemaker_mlflow_app` (`arn`) or `aws_sagemaker_mlflow_tracking_server` (`arn`) |
+|  | `model_package_config.model_package_group_arn` | `aws_sagemaker_model_package_group` (`arn`) |
+|  | `input_data_config.data_source.file_system_data_source.file_system_id` | `aws_efs_file_system` (`id`) or `aws_fsx_lustre_file_system` (`id`) |
+|  | `output_data_config.kms_key_id`, `resource_config.volume_kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `vpc_config.security_group_ids` | `aws_security_group` (`id`) |
+|  | `vpc_config.subnets` | `aws_subnet` (`id`) |

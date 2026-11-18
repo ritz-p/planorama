@@ -33604,10 +33604,10 @@
       }
     },
     "aws_sagemaker_algorithm": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 878,
-      "gap": "Reviewed #725: Validation IAM role and typed EFS/FSx inputs; algorithm templates do not own their future jobs. Marketplace IDs, images and S3 artifacts are not resources. #878. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #878. Explicit validation role, training file system, configured encryption key. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33620,7 +33620,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_algorithm; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_algorithm is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_algorithm has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Validation IAM role and typed EFS/FSx inputs; algorithm templates do not own their future jobs. Marketplace IDs, images and S3 artifacts are not resources. #878.",
+        "references": "Supported: Explicit validation role, training file system, configured encryption key.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: training input mode could provide a bounded summary for sagemaker_algorithm; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_algorithm.html.markdown",
@@ -33852,10 +33852,10 @@
       }
     },
     "aws_sagemaker_data_quality_job_definition": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 878,
-      "gap": "Reviewed #725: Endpoint/role/key references; batch transform S3 inputs are different from endpoint inputs. #878. Monitoring-job network context, not endpoint containment. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #878. Explicit monitoring role, monitored endpoint, configured encryption key, job security groups, job subnets. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33871,7 +33871,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_data_quality_job_definition; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_data_quality_job_definition is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Monitoring-job network context, not endpoint containment. #878.",
-        "references": "Missing: Endpoint/role/key references; batch transform S3 inputs are different from endpoint inputs. #878.",
+        "references": "Supported: Explicit monitoring role, monitored endpoint, configured encryption key, job security groups, job subnets.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: monitoring input kind could provide a bounded summary for sagemaker_data_quality_job_definition; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_data_quality_job_definition.html.markdown",
@@ -34428,10 +34428,10 @@
       }
     },
     "aws_sagemaker_hyper_parameter_tuning_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 878,
-      "gap": "Reviewed #725: Training-template role/algorithm/filesystem/key and warm-start parent job references; nested definitions are not separately managed jobs. #878. Template VPC context requires complete per-definition evidence; never mix definitions. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #878. Explicit warm-start tuning jobs, template execution role, training algorithm, configured encryption key, training file system, job security groups, job subnets. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34446,7 +34446,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_hyper_parameter_tuning_job; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_hyper_parameter_tuning_job is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Template VPC context requires complete per-definition evidence; never mix definitions. #878.",
-        "references": "Missing: Training-template role/algorithm/filesystem/key and warm-start parent job references; nested definitions are not separately managed jobs. #878.",
+        "references": "Supported: Explicit warm-start tuning jobs, template execution role, training algorithm, configured encryption key, training file system, job security groups, job subnets.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: tuning strategy could provide a bounded summary for sagemaker_hyper_parameter_tuning_job; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_hyper_parameter_tuning_job.html.markdown",
@@ -35055,10 +35055,10 @@
       }
     },
     "aws_sagemaker_monitoring_schedule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 878,
-      "gap": "Reviewed #725: DataQuality typed job-definition name and inline endpoint/role/key references; ModelQuality/Bias/Explainability names do not match DataQuality endpoints. #878. Inline monitoring job VPC context; never inherit endpoint network. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #878. Explicit data quality job definition, inline monitoring role, inline monitored endpoint, configured encryption key, job security groups, job subnets. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35073,7 +35073,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_monitoring_schedule; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_monitoring_schedule is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Inline monitoring job VPC context; never inherit endpoint network. #878.",
-        "references": "Missing: DataQuality typed job-definition name and inline endpoint/role/key references; ModelQuality/Bias/Explainability names do not match DataQuality endpoints. #878.",
+        "references": "Supported: Explicit data quality job definition, inline monitoring role, inline monitored endpoint, configured encryption key, job security groups, job subnets.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: monitoring type could provide a bounded summary for sagemaker_monitoring_schedule; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_monitoring_schedule.html.markdown",
@@ -35256,10 +35256,10 @@
       }
     },
     "aws_sagemaker_pipeline": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 878,
-      "gap": "Reviewed #725: Execution role and explicit definition bucket; pipeline_definition JSON never expanded into resources or runtime DAG. #878. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #878. Explicit pipeline execution role, pipeline definition bucket. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35272,7 +35272,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_pipeline; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_pipeline is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_pipeline has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Execution role and explicit definition bucket; pipeline_definition JSON never expanded into resources or runtime DAG. #878.",
+        "references": "Supported: Explicit pipeline execution role, pipeline definition bucket.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: pipeline definition excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_pipeline.html.markdown",
@@ -35539,10 +35539,10 @@
       }
     },
     "aws_sagemaker_training_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 878,
-      "gap": "Reviewed #725: Role/algorithm/typed filesystem/MLflow/package-group/key references; generated ENIs and job artifacts are not managed children. serverless base model/public hub stays external. #878. VPC lists (not sets) require complete membership; no inferred ENI ownership. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #878. Explicit training execution role, training algorithm, mlflow resource, model package group, training file system, configured encryption key, job security groups, job subnets. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35559,7 +35559,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_training_job; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_training_job is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: VPC lists (not sets) require complete membership; no inferred ENI ownership. #878.",
-        "references": "Missing: Role/algorithm/typed filesystem/MLflow/package-group/key references; generated ENIs and job artifacts are not managed children. serverless base model/public hub stays external. #878.",
+        "references": "Supported: Explicit training execution role, training algorithm, mlflow resource, model package group, training file system, configured encryption key, job security groups, job subnets.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: training mode could provide a bounded summary for sagemaker_training_job; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_training_job.html.markdown",
