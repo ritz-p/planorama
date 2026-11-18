@@ -1,0 +1,35 @@
+name: Rust coverage
+on:
+  workflow_dispatch:
+    inputs:
+      html:
+        description: Also generate navigable HTML
+        type: boolean
+        default: false
+permissions:
+  contents: read
+jobs:
+  baseline:
+    runs-on: ubuntu-latest
+    container: rust:1.85.1-bookworm
+    timeout-minutes: 150
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - name: Prepare LLVM coverage tools
+        run: |
+          rustup component add llvm-tools-preview
+          curl -fsSL --retry 3 https://github.com/taiki-e/cargo-llvm-cov/releases/download/v0.6.21/cargo-llvm-cov-x86_64-unknown-linux-gnu.tar.gz -o /tmp/cov.tgz
+          echo '57f491aedf7cdb261538ceb49cbb1ee9d27df7ca205a5e1a009caaf5cb911afb  /tmp/cov.tgz' | sha256sum -c -
+          tar -xzf /tmp/cov.tgz -C /usr/local/cargo/bin cargo-llvm-cov
+      - name: Measure native tests
+        env:
+          FORMAT: ${{ inputs.html && 'html' || 'json' }}
+        run: sh scripts/rust-coverage.sh "$FORMAT"
+      - uses: actions/upload-artifact@v7.0.2
+        with:
+          name: rust-coverage-${{ github.sha }}
+          path: output/rust-coverage/
+          if-no-files-found: error
+          retention-days: 7

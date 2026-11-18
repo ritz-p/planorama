@@ -301,3 +301,22 @@ The seven-day artifact excludes input/generated content. Compare complete job
 durations as well as phase timing: setup/cache transfers add costs. Isolate target
 and compiler-cache directories for controlled cold/warm comparisons; do not compare
 cold full tests against warm focused tests as if scope were their only difference.
+
+## Native Rust test coverage
+
+Install the pinned tool with `cargo install --locked cargo-llvm-cov --version 0.6.21`
+and add `llvm-tools-preview` to the repository Rust toolchain. Run
+`sh scripts/rust-coverage.sh` in the development environment, or pass `html`
+for the source browser. The manual **Rust coverage** workflow retains the LLVM
+JSON and optional HTML for seven days. Read the file/region records under
+`output/rust-coverage/` when deciding whether an untested behavior needs a case.
+
+Measurement uses the normal non-ignored library, binary, integration and example
+targets with all features, including `large_example`. The report excludes test
+and example source from the denominator. Browser JS/Wasm execution, deferred
+routing benchmarks and opt-in saved-plan/tool runs have their own checks.
+Stable Rust supplies line and region counts here. Branch instrumentation requires
+an unstable toolchain. No percentage gates the PR suite.
+Line and region counts come from stable Rust's LLVM source coverage. Branch
+coverage requires a different toolchain. A covered line does not establish
+that both outcomes of a proof or scope check were exercised.
