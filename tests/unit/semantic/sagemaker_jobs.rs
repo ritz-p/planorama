@@ -74,3 +74,58 @@ fn sagemaker_training_jobs_requires_scoped_provenance() {
         );
     }
 }
+
+#[test]
+fn tuning_placement_requires_complete_network_evidence_for_each_definition() {
+    let mut plan = json!({
+        "format_version":"1.2",
+        "resource_changes":[],
+        "configuration": {
+            "provider_config":{"aws":{"full_name":"hashicorp/aws","expressions":{"region":{"constant_value":"us-east-1"}}}},
+            "root_module":{"resources":[]}
+        }
+    });
+    let network = json!({"subnets":["subnet-0123"],"security_group_ids":["sg-0123"]});
+    let expressions = json!({"subnets":{"references":["aws_subnet.training.id"]},"security_group_ids":{"references":["aws_security_group.training.id"]}});
+    for (kind, name, after, config) in [
+        ("aws_vpc", "training", json!({"id":"vpc-0123"}), json!({})),
+        (
+            "aws_subnet",
+            "training",
+            json!({"id":"subnet-0123","vpc_id":"vpc-0123"}),
+            json!({"vpc_id":{"references":["aws_vpc.training.id"]}}),
+        ),
+        (
+            "aws_security_group",
+            "training",
+            json!({"id":"sg-0123","vpc_id":"vpc-0123"}),
+            json!({"vpc_id":{"references":["aws_vpc.training.id"]}}),
+        ),
+        (
+            "aws_sagemaker_hyper_parameter_tuning_job",
+            "job",
+            json!({"training_job_definitions":[{"vpc_config":[network]},{"vpc_config":[network]}]}),
+            json!({"training_job_definitions":[{"vpc_config":[expressions]},{"vpc_config":[expressions]}]}),
+        ),
+    ] {
+        let address = format!("{kind}.{name}");
+        plan["resource_changes"].as_array_mut().unwrap().push(json!({
+            "address":address,"mode":"managed","type":kind,"name":name,"provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":after}
+        }));
+        plan["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({
+            "address":address,"mode":"managed","type":kind,"name":name,"provider_config_key":"aws","expressions":config
+        }));
+    }
+    let contained = |input: &Value| {
+        let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+        graph.edges.iter().any(|edge| {
+            edge.kind == crate::model::EdgeKind::Containment
+                && graph.nodes[edge.from].address == "aws_vpc.training"
+                && graph.nodes[edge.to].address == "aws_sagemaker_hyper_parameter_tuning_job.job"
+        })
+    };
+    assert!(contained(&plan));
+    plan["resource_changes"][3]["change"]["after"]["training_job_definitions"][1]["vpc_config"] =
+        json!([]);
+    assert!(!contained(&plan));
+}
