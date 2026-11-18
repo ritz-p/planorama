@@ -21,6 +21,14 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     if (kind, path) == ("cloudflare_ai_gateway_dynamic_routing", "gateway_id") {
         return Some("Configured AI Gateway");
     }
+    if kind == "cloudflare_ai_search_instance" {
+        return match path {
+            "ai_gateway_id" => Some("Search AI Gateway"),
+            "token_id" => Some("Search token"),
+            "source" => Some("Search source bucket"),
+            _ => None,
+        };
+    }
     workers::label(kind, path)
         .or_else(|| pages::label(kind, path))
         .or_else(|| queues::label(kind, path))
@@ -45,6 +53,29 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
         return Ok(vec![target]);
     }
     match path {
+        "source" if node.resource_type == "cloudflare_ai_search_instance" => {
+            if v.text("type")? != "r2" {
+                return Err(Failure::UnsupportedContract);
+            }
+            let params = v.at("source_params")?;
+            let jurisdiction = if params.value.is_null() {
+                params.require_null()?;
+                "default"
+            } else {
+                let field = params.at("r2_jurisdiction")?;
+                field.scalar()?;
+                if field.value.is_null() {
+                    "default"
+                } else {
+                    params.text("r2_jurisdiction")?
+                }
+            };
+            Ok(vec![Target {
+                value: v.text(path)?,
+                kind: Kind::R2,
+                jurisdiction: Some(jurisdiction),
+            }])
+        }
         "bindings" => workers::bindings(value, node.resource_type == "cloudflare_worker_version"),
         "deployment_configs" => pages::targets(value),
         "versions" => deployment::targets(value),
@@ -53,7 +84,8 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
             match path {
                 "worker_id" => Kind::Worker,
                 "project_name" => Kind::Pages,
-                "gateway_id" => Kind::AiGateway,
+                "gateway_id" | "ai_gateway_id" => Kind::AiGateway,
+                "token_id" => Kind::SearchToken,
                 "script_name" | "script" | "service" => Kind::WorkerName,
                 _ => return Err(Failure::UnsupportedContract),
             },

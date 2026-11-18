@@ -141,4 +141,5 @@ module.exports = function workerContracts(binding, native) {
   });
   delete ai.configuration.root_module.resources[1].expressions.gateway_id;
   verify(ai, [], ['Configured AI Gateway']);
+  require('./cloudflare-platform-contracts.cjs')({plan, resource, verify, account});
 };

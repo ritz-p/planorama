@@ -14,6 +14,17 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 pub(super) fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<'_>>> {
     Ok(collect(value.rows()?.into_iter().map(|row| {
         let target = match row.text("type")? {
+            "ai_search" => {
+                let field = row.at("namespace")?;
+                field.scalar()?;
+                let namespace = if field.value.is_null() {
+                    "default"
+                } else {
+                    row.text("namespace")?
+                };
+                Target::new(row.text("instance_name")?, Kind::SearchInstance(namespace))
+            }
+            "ai_search_namespace" => Target::new(row.text("namespace")?, Kind::SearchNamespace),
             "workflow" => {
                 row.at("environment")?.require_null()?;
                 let optional = |field| {
