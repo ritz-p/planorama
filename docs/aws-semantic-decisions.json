@@ -25731,10 +25731,10 @@
       }
     },
     "aws_emrserverless_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 844,
-      "gap": "#722 reviewed: Missing: complete configured subnet/SG proof and mode-gated logging/KMS; image URI and Prometheus URL cannot identify managed endpoints. Follow-up #844.",
+      "gap": "Implemented #844 following audit #722. Applications resolve complete subnet and security group sets to a common VPC. Enabled CloudWatch and managed persistence configurations resolve their log keys. The S3 monitoring block resolves its bucket and key.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

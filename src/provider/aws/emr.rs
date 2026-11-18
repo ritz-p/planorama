@@ -10,6 +10,15 @@ const VIRTUAL: &str = "aws_emrcontainers_virtual_cluster";
 const TEMPLATE: &str = "aws_emrcontainers_job_template";
 const TEMPLATE_LOG: &str = "job_template_data.configuration_overrides.monitoring_configuration.cloud_watch_monitoring_configuration.log_group_name";
 const TEMPLATE_BUCKET: &str = "job_template_data.configuration_overrides.monitoring_configuration.s3_monitoring_configuration.log_uri";
+const SERVERLESS: &str = "aws_emrserverless_application";
+const NET_SUBNETS: &str = "network_configuration.subnet_ids";
+const NET_GROUPS: &str = "network_configuration.security_group_ids";
+const CW_LOG: &str = "monitoring_configuration.cloudwatch_logging_configuration.log_group_name";
+const CW_KEY: &str = "monitoring_configuration.cloudwatch_logging_configuration.encryption_key_arn";
+const S3_URI: &str = "monitoring_configuration.s3_monitoring_configuration.log_uri";
+const S3_KEY: &str = "monitoring_configuration.s3_monitoring_configuration.encryption_key_arn";
+const PERSIST_KEY: &str =
+    "monitoring_configuration.managed_persistence_monitoring_configuration.encryption_key_arn";
 const PROFILE: &str = "ec2_attributes.instance_profile";
 const SINGLE: &str = "ec2_attributes.subnet_id";
 const SUBNETS: &str = "ec2_attributes.subnet_ids";
@@ -47,6 +56,17 @@ fn rule(kind: &str, p: &str) -> Option<Rule> {
         }
         (TEMPLATE, TEMPLATE_LOG) => ("aws_cloudwatch_log_group", &["name"], "Job log group"),
         (TEMPLATE, TEMPLATE_BUCKET) => ("aws_s3_bucket", &["bucket", "id"], "Job log bucket"),
+        (SERVERLESS, NET_SUBNETS) => ("aws_subnet", &["id"], "Application subnets"),
+        (SERVERLESS, NET_GROUPS) => ("aws_security_group", &["id"], "Application security groups"),
+        (SERVERLESS, CW_LOG) => (
+            "aws_cloudwatch_log_group",
+            &["name"],
+            "Application log group",
+        ),
+        (SERVERLESS, CW_KEY | PERSIST_KEY | S3_KEY) => {
+            ("aws_kms_key", &["arn"], "Application log encryption key")
+        }
+        (SERVERLESS, S3_URI) => ("aws_s3_bucket", &["bucket", "id"], "Application log bucket"),
         (CLUSTER, SINGLE | SUBNETS) => ("aws_subnet", &["id"], "Cluster subnets"),
         (CLUSTER, MASTER | SLAVE | ACCESS | ADD_MASTER | ADD_SLAVE) => {
             ("aws_security_group", &["id"], "Cluster security groups")
@@ -84,7 +104,7 @@ fn rule(kind: &str, p: &str) -> Option<Rule> {
     })
 }
 pub(crate) fn resource(kind: &str) -> bool {
-    matches!(kind, CLUSTER | VIRTUAL | TEMPLATE)
+    matches!(kind, CLUSTER | VIRTUAL | TEMPLATE | SERVERLESS)
 }
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
     path.contains(".0.") && rule(kind, &path.replace(".0.", ".")).is_some()
@@ -111,7 +131,7 @@ fn values<'a>(path: &str, v: &'a Value) -> Option<BTreeSet<&'a str>> {
         let bucket = uri.strip_prefix("s3://")?.split('/').next()?;
         return (!bucket.is_empty()).then(|| [bucket].into());
     }
-    if matches!(path, SUBNETS | "subnet_ids") {
+    if matches!(path, SUBNETS | "subnet_ids" | NET_SUBNETS | NET_GROUPS) {
         return nested_references::leaf_values(path, v).filter(|_| v.is_array());
     }
     let text = v.as_str()?;
@@ -144,6 +164,29 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
             )
         })
 }
+fn mode_allows(kind: &str, attribute: &str, (value, mask): (&Value, &Value)) -> bool {
+    let known = |path| nested_references::value(value, mask, path);
+    match (kind, attribute) {
+        (STUDIO, "user_role") => known("auth_mode").and_then(Value::as_str) == Some("SSO"),
+        (VIRTUAL, "container_provider.id") => {
+            known("container_provider.0.type").and_then(Value::as_str) == Some("EKS")
+        }
+        (SERVERLESS, CW_LOG | CW_KEY) => {
+            known("monitoring_configuration.0.cloudwatch_logging_configuration.0.enabled")
+                .and_then(Value::as_bool)
+                == Some(true)
+        }
+        (SERVERLESS, PERSIST_KEY) => {
+            known(
+                "monitoring_configuration.0.managed_persistence_monitoring_configuration.0.enabled",
+            )
+            .and_then(Value::as_bool)
+                == Some(true)
+        }
+        _ => true,
+    }
+}
+
 pub(super) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
@@ -154,19 +197,7 @@ pub(super) fn annotate(
         .map(|r| {
             let k = &nodes[r.target].resource_type;
             let rule = rule(k, &r.attribute)?;
-            let allowed = k != STUDIO
-                || r.attribute != "user_role"
-                || super::service_evidence::known(e, r.target, "auth_mode") == Some("SSO");
-            let allowed = allowed
-                && (k != VIRTUAL
-                    || nested_references::value(
-                        e[r.target].0,
-                        e[r.target].1,
-                        "container_provider.0.type",
-                    )
-                    .and_then(Value::as_str)
-                        == Some("EKS"));
-            let ok = allowed
+            let ok = mode_allows(k, &r.attribute, e[r.target])
                 && nested_references::verify_values(
                     nodes,
                     refs,
@@ -233,6 +264,7 @@ pub(super) fn annotate(
     }
 }
 pub(super) fn present(raw: &Input, graph: &mut Graph) {
+    lambda_core::present_network(raw, graph, SERVERLESS, (NET_SUBNETS, NET_GROUPS), bindings);
     for (t, _) in raw
         .nodes
         .iter()

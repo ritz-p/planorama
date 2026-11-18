@@ -643,3 +643,7 @@ Studios resolve VPC, subnet and security group IDs, service and SSO-only user ro
 ### EMR on EKS (#843)
 
 Virtual clusters resolve EKS registrations by cluster name and the EKS provider type. Reusable job templates resolve key and execution role ARNs, CloudWatch log group names and S3 log destinations. An EKS registration leaves the virtual cluster independently placed. Kubernetes namespaces and template parameters do not identify AWS resources. Job templates can be reused across virtual clusters.
+
+### EMR Serverless (#844)
+
+Applications resolve complete subnet and security group sets to a common VPC. Enabled CloudWatch and managed persistence configurations resolve their log keys. The S3 monitoring block resolves its bucket and key. Both network sets must resolve for placement. A missing network block leaves the application regional. CloudWatch log groups require enabled logging. Key and bucket references are restricted to their configured monitoring destination.

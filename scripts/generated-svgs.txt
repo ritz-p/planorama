@@ -212,3 +212,4 @@ examples/dsql.svg
 examples/emr-cluster.svg
 examples/emr-studio.svg
 examples/emr-containers.svg
+examples/emr-serverless.svg
