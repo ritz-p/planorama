@@ -33661,10 +33661,10 @@
       }
     },
     "aws_sagemaker_app": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Image/version/lifecycle references; domain-qualified user or space owner required, app_name alone is ambiguous. #877. Domain plus profile/space composite ownership. Domain context cannot be inferred from name alone. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit studio domain, app user profile, app space, studio lifecycle configuration, studio image, studio image version. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33682,7 +33682,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_app; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Domain plus profile/space composite ownership. #877.",
         "network": "Missing: Domain context cannot be inferred from name alone. #877.",
-        "references": "Missing: Image/version/lifecycle references; domain-qualified user or space owner required, app_name alone is ambiguous. #877.",
+        "references": "Supported: Explicit studio domain, app user profile, app space, studio lifecycle configuration, studio image, studio image version.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: app type could provide a bounded summary for sagemaker_app; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_app.html.markdown",
@@ -33795,10 +33795,10 @@
       }
     },
     "aws_sagemaker_code_repository": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Repository credential secret reference; Git URL/branch does not identify Terraform repository or network ownership. #877. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit repository secret. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33811,7 +33811,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_code_repository; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_code_repository is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_code_repository has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Repository credential secret reference; Git URL/branch does not identify Terraform repository or network ownership. #877.",
+        "references": "Supported: Explicit repository secret.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: repository URL/credentials excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_code_repository.html.markdown",
@@ -34060,10 +34060,10 @@
       }
     },
     "aws_sagemaker_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Studio domain deserves architecture-card review; role/image/lifecycle/EFS references remain distinct from generated home EFS output. Canvas cross-account role does not relocate domain. #877. VPC/subnet proof plus PublicInternetOnly versus VpcOnly semantics; do not infer effective security rules. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit domain vpc, domain subnets, default user role, default user security groups, configured efs file system, built-in lifecycle configuration, studio lifecycle configurations, studio lifecycle configuration, studio image, studio image version. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34078,10 +34078,10 @@
           "default_user_settings.security_groups",
           "home_efs_file_system_id"
         ],
-        "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #877.",
+        "placement": "Supported: independent regional Studio domain card.",
         "ownership": "Not applicable: sagemaker_domain is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
-        "network": "Missing: VPC/subnet proof plus PublicInternetOnly versus VpcOnly semantics; do not infer effective security rules. #877.",
-        "references": "Missing: Studio domain deserves architecture-card review; role/image/lifecycle/EFS references remain distinct from generated home EFS output. Canvas cross-account role does not relocate domain. #877.",
+        "network": "Supported: VpcOnly context requires compatible VPC, subnet and security group references.",
+        "references": "Supported: Explicit domain vpc, domain subnets, default user role, default user security groups, configured efs file system, built-in lifecycle configuration, studio lifecycle configurations, studio lifecycle configuration, studio image, studio image version.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: auth/network mode could provide a bounded summary for sagemaker_domain; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_domain.html.markdown",
@@ -34505,10 +34505,10 @@
       }
     },
     "aws_sagemaker_image": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Image role reference; custom image is shared configuration, ECR image URI is not resource ownership. #877. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit image role. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34521,7 +34521,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_image; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_image is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_image has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Image role reference; custom image is shared configuration, ECR image URI is not resource ownership. #877.",
+        "references": "Supported: Explicit image role.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Intentionally unsupported: image content excluded.",
         "officialDocumentation": "website/docs/r/sagemaker_image.html.markdown",
@@ -34561,10 +34561,10 @@
       }
     },
     "aws_sagemaker_image_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Image-name owner; base/resolved container image URI not an ECR repository proof. #877. Version ownership needs image name and version identity. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit version image. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34576,7 +34576,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_image_version; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Version ownership needs image name and version identity. #877.",
         "network": "Not applicable: sagemaker_image_version has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Image-name owner; base/resolved container image URI not an ECR repository proof. #877.",
+        "references": "Supported: Explicit version image.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: job type/processor could provide a bounded summary for sagemaker_image_version; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_image_version.html.markdown",
@@ -35132,10 +35132,10 @@
       }
     },
     "aws_sagemaker_notebook_instance": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Notebook subnet/SG/role/key/lifecycle/code-repository links; repository name-or-URL requires typed name branch. Computed ENI not a managed child. #877. Existing Spatial notebook lacks dedicated subnet placement; require known subnet and consistent SG VPC. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit notebook role, notebook subnet, notebook security groups, notebook key, notebook lifecycle configuration, default code repository. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35150,8 +35150,8 @@
         ],
         "placement": "Supported: retain current Spatial default for sagemaker_notebook_instance; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_notebook_instance is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
-        "network": "Missing: Existing Spatial notebook lacks dedicated subnet placement; require known subnet and consistent SG VPC. #877.",
-        "references": "Missing: Notebook subnet/SG/role/key/lifecycle/code-repository links; repository name-or-URL requires typed name branch. Computed ENI not a managed child. #877.",
+        "network": "Supported: one proven subnet with consistent security group VPC.",
+        "references": "Supported: Explicit notebook role, notebook subnet, notebook security groups, notebook key, notebook lifecycle configuration, default code repository.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: instance type/direct internet configuration could provide a bounded summary for sagemaker_notebook_instance; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_notebook_instance.html.markdown",
@@ -35416,10 +35416,10 @@
       }
     },
     "aws_sagemaker_space": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Domain-qualified private/shared owner, image/lifecycle/EFS links; owner username alone cannot identify a profile. #877. Domain and optional private profile ownership must agree. Domain network inheritance deferred until composite ownership proven. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit studio domain, private space owner, studio lifecycle configuration, studio image, studio image version, configured efs file system, studio lifecycle configurations. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35434,7 +35434,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_space; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Domain and optional private profile ownership must agree. #877.",
         "network": "Missing: Domain network inheritance deferred until composite ownership proven. #877.",
-        "references": "Missing: Domain-qualified private/shared owner, image/lifecycle/EFS links; owner username alone cannot identify a profile. #877.",
+        "references": "Supported: Explicit studio domain, private space owner, studio lifecycle configuration, studio image, studio image version, configured efs file system, studio lifecycle configurations.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: sharing/app type could provide a bounded summary for sagemaker_space; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_space.html.markdown",
@@ -35626,10 +35626,10 @@
       }
     },
     "aws_sagemaker_user_profile": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 877,
-      "gap": "Reviewed #725: Domain/profile ownership and explicit settings role/image/lifecycle/EFS links; SSO username does not prove IAM user identity. #877. Domain ID plus profile name; preserve independent lifecycle. SG context alone insufficient for subnet placement; domain evidence required. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #877. Explicit studio domain, profile role, profile security groups, built-in lifecycle configuration, studio lifecycle configurations, studio lifecycle configuration, studio image, studio image version, configured efs file system. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35644,7 +35644,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_user_profile; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Domain ID plus profile name; preserve independent lifecycle. #877.",
         "network": "Missing: SG context alone insufficient for subnet placement; domain evidence required. #877.",
-        "references": "Missing: Domain/profile ownership and explicit settings role/image/lifecycle/EFS links; SSO username does not prove IAM user identity. #877.",
+        "references": "Supported: Explicit studio domain, profile role, profile security groups, built-in lifecycle configuration, studio lifecycle configurations, studio lifecycle configuration, studio image, studio image version, configured efs file system.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: app settings mode could provide a bounded summary for sagemaker_user_profile; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_user_profile.html.markdown",

@@ -1377,7 +1377,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_sagemaker_data_quality_job_definition", "Amazon SageMaker AI", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
     entry!("aws_sagemaker_device", "Amazon SageMaker AI", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
     entry!("aws_sagemaker_device_fleet", "Amazon SageMaker AI", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
-    entry!("aws_sagemaker_domain", "Amazon SageMaker AI", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
+    entry!("aws_sagemaker_domain", "Amazon SageMaker AI", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
     entry!("aws_sagemaker_endpoint", "Amazon SageMaker AI", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
     entry!("aws_sagemaker_endpoint_configuration", "Amazon SageMaker AI", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
     entry!("aws_sagemaker_feature_group", "Amazon SageMaker AI", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSageMakerAI))),
