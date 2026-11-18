@@ -1535,3 +1535,11 @@ exactly-once coverage are preserved across filtered/named states. See
 Event subscriptions resolve `sns_topic_arn` and a complete `source_ids` set qualified by `source_type`. Supported sources are cluster identifiers, parameter group names, snapshot identifiers and scheduled action names. An omitted set retains selector scope. Logging and usage-limit helpers use `cluster_identifier` for ownership. S3 logging resolves the configured bucket name in S3 mode. CloudWatch export names stay opaque.
 
 A partner's `account_id` must match the cluster's independently known provider account. Scheduled actions resolve the IAM role ARN and the cluster identifier from exactly one pause, resize or resume block. Data API statements resolve one of cluster identifier or workgroup name and an optional Secrets Manager ARN. SQL, database names, schedules and quota amounts do not establish additional relationships. Unproven helpers retain independent identity and coverage.
+
+### Redshift catalog and resource policies (#854)
+
+IDC applications resolve the configured IAM role and the optional singleton trusted token issuer in the same Identity Center instance. Provider 6.70.0 exposes instance discovery through a data source and has no managed instance resource. The instance ARN qualifies the issuer without promoting discovery results to managed owners.
+
+Integrations resolve an S3 bucket or DynamoDB table ARN, a provisioned cluster's `cluster_namespace_arn` or a serverless namespace ARN, and an explicitly referenced KMS key. Namespace registrations use the selected namespace type, a cluster identifier or the serverless namespace name/UUID and workgroup name. The DataCatalog selector adds no Glue endpoint.
+
+Consumer associations resolve only an explicit namespace ARN. Whole-account and region selectors do not enumerate namespaces. The provider has no managed datashare resource. Redshift resource policies may belong to provisioned or serverless namespaces. The serverless API also supports snapshot sharing and workgroup endpoint authorization. The configured owner retains its own scope and the policy body stays opaque.

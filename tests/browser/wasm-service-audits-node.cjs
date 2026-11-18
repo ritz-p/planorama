@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {"fixture":"redshift-catalog-plan","focus":"aws_redshift_integration.table","target":10,"mask":{"target_arn":true}},
   {"fixture":"redshift-helpers-plan","focus":"aws_redshift_scheduled_action.resize_cluster","target":10,"mask":{"target_action":true}},
   {fixture: 'dms-serverless-plan', focus: 'aws_dms_replication_config.main', target: 9, mask: {compute_config: true}},
   {fixture: 'dms-migration-plan', focus: 'aws_dms_instance_profile.main', target: 10, mask: {vpc_security_group_ids: true}},

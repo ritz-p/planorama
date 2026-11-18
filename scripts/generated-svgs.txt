@@ -205,3 +205,4 @@ examples/dms-events.svg
 examples/dms-migration.svg
 examples/dms-serverless.svg
 examples/redshift-helpers.svg
+examples/redshift-catalog.svg

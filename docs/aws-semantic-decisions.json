@@ -27944,10 +27944,10 @@
       }
     },
     "aws_redshift_idc_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 854,
-      "gap": "#722 reviewed: Missing: role, Identity Center instance and trusted-token-issuer ARNs; service integration authorization flags are not configured endpoint identities. Follow-up #854.",
+      "gap": "Implemented #854 following audit #722. Explicit IAM role and same-instance trusted token issuer ARN. The pinned managed inventory has no instance owner.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27961,8 +27961,8 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_idc_application remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_idc_application has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: role, Identity Center instance and trusted-token-issuer ARNs; service integration authorization flags are not configured endpoint identities.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Explicit IAM role and same-instance trusted token issuer ARN. The pinned managed inventory has no instance owner.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: redshift_idc_application_arn/iam_role_arn identity navigation belongs to #854; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_idc_application.html.markdown",
         "shapes": {
@@ -27985,14 +27985,20 @@
           "iam_role_arn": "required",
           "idc_instance_arn": "required",
           "authorized_token_issuer.trusted_token_issuer_arn": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-catalog-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_integration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 854,
-      "gap": "#722 reviewed: Missing: source S3/DynamoDB ARN, Redshift namespace target ARN and encryption key; namespace ARN differs from cluster ARN. Separate from RDS-origin #769 zero ETL. Follow-up #854.",
+      "gap": "Implemented #854 following audit #722. Explicit S3/DynamoDB source ARN, namespace target ARN and configured encryption key.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28006,8 +28012,8 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_integration remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_integration has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: source S3/DynamoDB ARN, Redshift namespace target ARN and encryption key; namespace ARN differs from cluster ARN. Separate from RDS-origin #769 zero ETL.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Explicit S3/DynamoDB source ARN, namespace target ARN and configured encryption key.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: source_arn/target_arn identity navigation belongs to #854; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_integration.html.markdown",
         "shapes": {
@@ -28029,14 +28035,20 @@
           "source_arn": "required",
           "target_arn": "required",
           "kms_key_id": "optional/computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-catalog-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_namespace_registration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 854,
-      "gap": "#722 reviewed: Missing: type-gated provisioned cluster or serverless namespace/workgroup identity; namespace identifier allows name/UUID, consumer DataCatalog/account selector is not Glue catalog resource name. Follow-up #854.",
+      "gap": "Implemented #854 following audit #722. Namespace-type-qualified cluster identifier or serverless namespace name/UUID and workgroup name.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28051,8 +28063,8 @@
         "placement": "Supported: retain Logical Association default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_namespace_registration remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_namespace_registration has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: type-gated provisioned cluster or serverless namespace/workgroup identity; namespace identifier allows name/UUID, consumer DataCatalog/account selector is not Glue catalog resource name.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Namespace-type-qualified cluster identifier or serverless namespace name/UUID and workgroup name.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: namespace_type/consumer_identifier identity navigation belongs to #854; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_namespace_registration.html.markdown",
         "shapes": {
@@ -28078,7 +28090,13 @@
           "provisioned_cluster_identifier": "optional",
           "serverless_namespace_identifier": "optional",
           "serverless_workgroup_identifier": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-catalog-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_data_share_authorization": {
@@ -28120,10 +28138,10 @@
       }
     },
     "aws_redshift_data_share_consumer_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 854,
-      "gap": "#722 reviewed: Missing: explicit namespace consumer ARN; defer datashare endpoint until managed type exists. Entire-account/region selectors do not enumerate current/future namespaces. Follow-up #854.",
+      "gap": "Implemented #854 following audit #722. Explicit namespace consumer ARN. Data share, regional and whole-account selectors stay external.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28138,8 +28156,8 @@
         "placement": "Supported: retain Logical Association default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_redshift_data_share_consumer_association remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_redshift_data_share_consumer_association has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: explicit namespace consumer ARN; defer datashare endpoint until managed type exists. Entire-account/region selectors do not enumerate current/future namespaces.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Explicit namespace consumer ARN. Data share, regional and whole-account selectors stay external.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: data_share_arn/consumer_arn identity navigation belongs to #854; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_data_share_consumer_association.html.markdown",
         "shapes": {
@@ -28165,7 +28183,13 @@
           "consumer_region": "optional",
           "associate_entire_account": "optional",
           "producer_arn": "computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-catalog-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_logging": {
@@ -28272,10 +28296,10 @@
       }
     },
     "aws_redshift_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 854,
-      "gap": "#722 reviewed: Missing: allowlisted Redshift resource ARN owner; policy body never parsed, arbitrary ARN not accepted. Follow-up #854.",
+      "gap": "Implemented #854 following audit #722. Allowlisted namespace output ARN.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28285,10 +28309,10 @@
           "policy"
         ],
         "placement": "Supported: retain Logical Policy default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
-        "ownership": "Missing: verified compatible resource policy helper; preserve independent policy identity.",
+        "ownership": "Supported: Resource policies retain independent identity with an explicitly verified namespace owner.",
         "network": "Not applicable: aws_redshift_resource_policy has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: allowlisted Redshift resource ARN owner; policy body never parsed, arbitrary ARN not accepted.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Allowlisted namespace output ARN.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: resource_arn/policy identity navigation belongs to #854; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshift_resource_policy.html.markdown",
         "shapes": {
@@ -28302,14 +28326,20 @@
         "contracts": {
           "resource_arn": "required",
           "policy": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-catalog-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshiftserverless_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 854,
-      "gap": "#722 reviewed: Missing: allowlisted Redshift resource ARN owner; policy body never parsed, arbitrary ARN not accepted. Follow-up #854.",
+      "gap": "Implemented #854 following audit #722. Allowlisted snapshot or workgroup ARN.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28319,10 +28349,10 @@
           "policy"
         ],
         "placement": "Supported: retain Logical Policy default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
-        "ownership": "Missing: verified compatible resource policy helper; preserve independent policy identity.",
+        "ownership": "Supported: Resource policies retain independent identity with an explicitly verified snapshot or workgroup owner.",
         "network": "Not applicable: aws_redshiftserverless_resource_policy has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: allowlisted Redshift resource ARN owner; policy body never parsed, arbitrary ARN not accepted.",
-        "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
+        "references": "Supported: Allowlisted snapshot or workgroup ARN.",
+        "scope": "Supported: independently verified provider binding and effective region; named states retain separate identities.",
         "summaries": "Deferred: resource_arn/policy identity navigation belongs to #854; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/redshiftserverless_resource_policy.html.markdown",
         "shapes": {
@@ -28336,7 +28366,13 @@
         "contracts": {
           "resource_arn": "required",
           "policy": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/redshift_helpers.rs",
+          "tests/unit/semantic/redshift_helpers.rs",
+          "tests/fixtures/redshift-catalog-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_redshift_scheduled_action": {

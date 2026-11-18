@@ -3,6 +3,8 @@ use crate::model::{AttributeReference, AwsAccountScope, TerraformEntity};
 use crate::semantic::Input;
 use serde_json::Value;
 
+mod catalog;
+
 const CLUSTER: &str = "aws_redshift_cluster";
 const EVENT: &str = "aws_redshift_event_subscription";
 const LOGGING: &str = "aws_redshift_logging";
@@ -14,15 +16,17 @@ const WORKGROUP: &str = "aws_redshiftserverless_workgroup";
 const ACTIONS: [&str; 3] = ["pause_cluster", "resize_cluster", "resume_cluster"];
 
 pub(super) fn resource(kind: &str) -> bool {
-    matches!(kind, EVENT | LOGGING | PARTNER | ACTION | USAGE | STATEMENT)
+    catalog::resource(kind)
+        || matches!(kind, EVENT | LOGGING | PARTNER | ACTION | USAGE | STATEMENT)
 }
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    kind == ACTION
+    kind == ACTION || catalog::has_indexed(kind)
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
-    kind == ACTION
-        && matches!(path.split('.').collect::<Vec<_>>().as_slice(),
+    catalog::indexed(kind, path)
+        || kind == ACTION
+            && matches!(path.split('.').collect::<Vec<_>>().as_slice(),
         ["target_action", "0", action, "0", "cluster_identifier"] if ACTIONS.contains(action))
 }
 
@@ -30,7 +34,7 @@ pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static 
     match kind {
         LOGGING => Some(("cluster_identifier", "Logging cluster", "Audit logging")),
         USAGE => Some(("cluster_identifier", "Usage limit cluster", "Usage limits")),
-        _ => None,
+        _ => catalog::owner(kind),
     }
 }
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
@@ -50,10 +54,10 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         (STATEMENT, "cluster_identifier") => Some("Statement cluster"),
         (STATEMENT, "workgroup_name") => Some("Statement workgroup"),
         (STATEMENT, "secret_arn") => Some("Statement credentials secret"),
-        _ => None,
+        _ => catalog::label(kind, path),
     }
 }
-fn fields(_: &str, path: &str, source: &str) -> &'static [&'static str] {
+fn fields(kind: &str, path: &str, source: &str) -> &'static [&'static str] {
     match (path, source) {
         ("sns_topic_arn", "aws_sns_topic")
         | ("iam_role", "aws_iam_role")
@@ -70,7 +74,7 @@ fn fields(_: &str, path: &str, source: &str) -> &'static [&'static str] {
         ("source_ids", "aws_redshift_cluster_snapshot") => &["snapshot_identifier"],
         ("bucket_name", "aws_s3_bucket") => &["bucket", "id"],
         ("workgroup_name", WORKGROUP) => &["workgroup_name"],
-        _ => &[],
+        _ => catalog::fields(kind, path, source),
     }
 }
 fn absent_block(v: &Value, m: &Value, path: &str) -> bool {
@@ -148,9 +152,18 @@ pub(super) fn annotate(
                                 leaf.is_string()
                             }
                         });
-                        shape && valid_mode(kind, path, &nodes[s].resource_type, v, m)
+                        shape
+                            && valid_mode(kind, path, &nodes[s].resource_type, v, m)
+                            && catalog::valid_mode(kind, path, v, m, evidence[s])
+                            && catalog::compatible_endpoint(
+                                kind,
+                                path,
+                                &nodes[s],
+                                nested_references::value(v, m, indexed).and_then(Value::as_str),
+                            )
                     },
                     &[
+                        "authorized_token_issuer",
                         "target_action",
                         "pause_cluster",
                         "resize_cluster",
