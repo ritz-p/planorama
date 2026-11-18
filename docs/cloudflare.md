@@ -301,6 +301,12 @@ Each configured consumer uses a separate Queue, following the service's
 Managed Queues are spatial resources; consumers remain independent logical
 resources with their own actions. Neither is contained in a Worker.
 
+- A managed R2 event notification can explicitly reference a bucket by
+  `bucket_name` and a destination Queue by `queue_id`. Each field uses its own
+  proof. The bucket must match account, name and jurisdiction; the Queue must
+  match account and both ID aliases. Its Worker consumer is a separate Queue
+  consumer configuration. Rules, prefixes, delivery order and runtime delivery
+  do not supply endpoint identity.
 - Producer bindings use `type = queue` and `queue_name`, accepting only a
   Queue's `queue_name` output. Queue IDs cannot substitute for names.
 - Consumer `queue_id` accepts `cloudflare_queue.id` or `queue_id`; both

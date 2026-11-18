@@ -3,6 +3,8 @@ use super::{AttributeReference, Evidence, Failure, Result, proof};
 use std::collections::BTreeSet;
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
+        ("cloudflare_r2_bucket_event_notification", "bucket_name") => Some("Notification bucket"),
+        ("cloudflare_r2_bucket_event_notification", "queue_id") => Some("Notification Queue"),
         ("cloudflare_queue_consumer", "queue_id") => Some("Consumed Queue"),
         ("cloudflare_queue_consumer", "script_name") => Some("Consumer Worker"),
         ("cloudflare_queue_consumer", "dead_letter_queue") => Some("Configured dead letter Queue"),
