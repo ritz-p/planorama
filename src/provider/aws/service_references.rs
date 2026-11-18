@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::observability_logs::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::observability_monitors::label(resource, attribute) {
         return Some(label);
     }
@@ -1022,6 +1025,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::observability_logs::annotate(nodes, references, evidence);
     super::observability_monitors::annotate(nodes, references, evidence);
     super::lakeformation_selectors::annotate(nodes, references, evidence);
     super::backup_reports::annotate(nodes, references, evidence);
@@ -1074,6 +1078,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::observability_logs::bindings(raw, reference)
         && super::observability_monitors::bindings(raw, reference)
         && super::lakeformation_selectors::bindings(raw, reference)
         && super::backup_reports::bindings(raw, reference)
@@ -1765,6 +1770,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::observability_logs::indexed(&node.resource_type, &reference.attribute)
             || super::observability_monitors::indexed(&node.resource_type, &reference.attribute)
             || super::lakeformation_selectors::indexed(&node.resource_type, &reference.attribute)
             || super::backup_reports::indexed(&node.resource_type, &reference.attribute)

@@ -9,10 +9,16 @@ pub(super) struct Rule {
     pub outputs: &'static [(&'static str, &'static [&'static str])],
     pub list: bool,
     decoder: Option<nested_references::DecodeLeaf>,
+    explicit_destination: bool,
     pub blocks: &'static [&'static str],
 }
 
 impl Rule {
+    pub fn with_explicit_destination(mut self) -> Self {
+        self.explicit_destination = true;
+        self
+    }
+
     pub fn decoded(mut self, decoder: nested_references::DecodeLeaf) -> Self {
         self.decoder = Some(decoder);
         self
@@ -28,6 +34,7 @@ impl Rule {
             outputs,
             list,
             decoder: None,
+            explicit_destination: false,
             blocks,
         }
     }
@@ -103,9 +110,15 @@ fn global(kind: &str) -> bool {
 
 pub(super) fn bindings(raw: &Input, r: &AttributeReference, lookup: Lookup) -> bool {
     let left = &raw.nodes[r.target];
-    lookup(&left.resource_type, &r.attribute).is_none()
-        || r.sources.iter().all(|&s| {
+    lookup(&left.resource_type, &r.attribute).is_none_or(|rule| {
+        r.sources.iter().all(|&s| {
             let right = &raw.nodes[s];
+            if rule.explicit_destination {
+                return destination_bindings(
+                    left.provider_configuration.as_ref(),
+                    right.provider_configuration.as_ref(),
+                );
+            }
             eventbridge::bindings(
                 left.provider_configuration.as_ref(),
                 right.provider_configuration.as_ref(),
@@ -114,6 +127,15 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference, lookup: Lookup) -> b
                 global(&right.resource_type),
             )
         })
+    })
+}
+
+fn destination_bindings(
+    left: Option<&crate::model::ProviderConfiguration>,
+    right: Option<&crate::model::ProviderConfiguration>,
+) -> bool {
+    left.zip(right)
+        .is_some_and(|(left, right)| !left.account_conflict && !right.account_conflict)
 }
 
 pub(super) fn annotate(
@@ -195,15 +217,22 @@ pub(super) fn annotate(
                                 v.is_string()
                             }
                         })
-                        && eventbridge::bindings(
-                            node.provider_configuration.as_ref(),
-                            endpoint.provider_configuration.as_ref(),
-                            scope::scope(node).as_ref().and_then(|c| c.region.as_ref()),
-                            scope::scope(endpoint)
-                                .as_ref()
-                                .and_then(|c| c.region.as_ref()),
-                            global(&endpoint.resource_type),
-                        )
+                        && if rule.explicit_destination {
+                            destination_bindings(
+                                node.provider_configuration.as_ref(),
+                                endpoint.provider_configuration.as_ref(),
+                            )
+                        } else {
+                            eventbridge::bindings(
+                                node.provider_configuration.as_ref(),
+                                endpoint.provider_configuration.as_ref(),
+                                scope::scope(node).as_ref().and_then(|c| c.region.as_ref()),
+                                scope::scope(endpoint)
+                                    .as_ref()
+                                    .and_then(|c| c.region.as_ref()),
+                                global(&endpoint.resource_type),
+                            )
+                        }
                         && validate(&e, r, s, path)
                 },
                 (
