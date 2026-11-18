@@ -106,4 +106,39 @@ module.exports = function workerContracts(binding, native) {
   notification.after.jurisdiction = 'eu';
   events.configuration.root_module.resources[4].expressions.queue_id.references = ['cloudflare_queue.events.queue_name'];
   verify(events, ['cloudflare_output_mismatch']);
+  const ai = plan();
+  resource(ai, 'cloudflare_ai_gateway', 'gateway', {id: 'example'});
+  resource(ai, 'cloudflare_ai_gateway_dynamic_routing', 'route', {
+    gateway_id: 'example', name: 'my-route', elements: [{id: 'PRIVATE_model', type: 'model'}],
+  }, {gateway_id: ['cloudflare_ai_gateway.gateway.id']});
+  resource(ai, 'cloudflare_worker_version', 'caller', {
+    bindings: [{name: 'AI', type: 'ai'}], main_script_base64: 'PRIVATE_payload',
+  });
+  verify(ai, ['Configured AI Gateway'], [], rows => {
+    const gateway = rows.find(row => row.attribute === 'gateway_id' && !row.dependency);
+    assert.ok(gateway.complete);
+    assert.deepEqual(gateway.targets.map(target => target.address), ['cloudflare_ai_gateway.gateway']);
+    assert.ok(!rows.some(row => row.attribute === 'bindings' && row.complete));
+  });
+  const ambiguous = structuredClone(ai);
+  resource(ambiguous, 'cloudflare_ai_gateway', 'duplicate', {id: 'example'});
+  verify(ambiguous, ['cloudflare_ambiguous_endpoint']);
+  const hidden = structuredClone(ai);
+  hidden.resource_changes[0].change.after_sensitive = {id: true};
+  verify(hidden, ['cloudflare_sensitive_value']);
+  const bindingRef = structuredClone(ai);
+  bindingRef.configuration.root_module.resources[2].expressions.bindings = {
+    references: ['cloudflare_ai_gateway.gateway.id'],
+  };
+  verify(bindingRef, ['cloudflare_unsupported_contract'], [], rows => {
+    const bindingRow = rows.find(row => row.attribute === 'bindings' && !row.dependency);
+    assert.ok(!bindingRow.complete);
+    assert.deepEqual(bindingRow.targets, []);
+  });
+  ai.resource_changes[0].change.after.account_id = 'b'.repeat(32);
+  verify(ai, ['cloudflare_scope_mismatch'], [], rows => {
+    assert.deepEqual(rows.find(row => row.attribute === 'gateway_id' && !row.dependency).targets, []);
+  });
+  delete ai.configuration.root_module.resources[1].expressions.gateway_id;
+  verify(ai, [], ['Configured AI Gateway']);
 };

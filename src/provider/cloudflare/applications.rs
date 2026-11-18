@@ -18,6 +18,9 @@ pub(super) fn present(plan: &crate::model::TerraformPlan, graph: &mut crate::mod
     presentation::present(plan, graph);
 }
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
+    if (kind, path) == ("cloudflare_ai_gateway_dynamic_routing", "gateway_id") {
+        return Some("Configured AI Gateway");
+    }
     workers::label(kind, path)
         .or_else(|| pages::label(kind, path))
         .or_else(|| queues::label(kind, path))
@@ -50,6 +53,7 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
             match path {
                 "worker_id" => Kind::Worker,
                 "project_name" => Kind::Pages,
+                "gateway_id" => Kind::AiGateway,
                 "script_name" | "script" | "service" => Kind::WorkerName,
                 _ => return Err(Failure::UnsupportedContract),
             },

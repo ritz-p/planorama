@@ -17,6 +17,7 @@ pub(super) enum Kind<'a> {
     QueueId,
     QueueName,
     Hyperdrive,
+    AiGateway,
 }
 pub(super) struct Target<'a> {
     pub(super) value: &'a str,
@@ -59,6 +60,7 @@ pub(super) fn fields(
         (Kind::D1, "cloudflare_d1_database") => &["id", "uuid"],
         (Kind::QueueId, "cloudflare_queue") => &["id", "queue_id"],
         (Kind::QueueName, "cloudflare_queue") => &["queue_name"],
+        (Kind::AiGateway, "cloudflare_ai_gateway") => &["id"],
         (Kind::Hyperdrive, "cloudflare_hyperdrive_config") => &["id"],
         _ => return Err(Failure::UnsupportedContract),
     })
