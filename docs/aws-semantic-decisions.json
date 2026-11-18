@@ -10954,7 +10954,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 766,
-      "gap": "Implemented #766. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
+      "gap": "Implemented #766 following audit #717. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11358,7 +11358,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 766,
-      "gap": "Implemented #766. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
+      "gap": "Implemented #766 following audit #717. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11392,7 +11392,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 766,
-      "gap": "Implemented #766. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
+      "gap": "Implemented #766 following audit #717. Explicit graph ID, KMS ARN, subnet and security group references. Only network clients with complete common-VPC evidence acquire network placement. Endpoint security groups describe configuration.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
