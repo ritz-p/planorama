@@ -102,3 +102,60 @@ fn data_source_requires_current_typed_unmasked_evidence() {
         );
     }
 }
+
+#[test]
+fn content_links_require_compatible_type_version_and_acyclic_folders() {
+    let original: Value =
+        serde_json::from_str(include_str!("../../fixtures/quicksight-content-plan.json")).unwrap();
+    for (addr, path) in [
+        ("aws_quicksight_dashboard.d", "theme_arn"),
+        (
+            "aws_quicksight_dashboard.d",
+            "source_entity.source_template.arn",
+        ),
+        (
+            "aws_quicksight_dashboard.d",
+            "source_entity.source_template.data_set_references.data_set_arn",
+        ),
+        ("aws_quicksight_folder.child", "parent_folder_arn"),
+        ("aws_quicksight_folder_membership.m", "folder_id"),
+        ("aws_quicksight_folder_membership.m", "member_id"),
+        ("aws_quicksight_template_alias.live", "template_id"),
+    ] {
+        assert!(verified(&original, addr, path), "{addr}/{path}");
+    }
+    let mut value = original.clone();
+    value["resource_changes"][6]["change"]["after"]["member_type"] = json!("DATASET");
+    assert!(!verified(
+        &value,
+        "aws_quicksight_folder_membership.m",
+        "member_id"
+    ));
+    value["resource_changes"][7]["change"]["after"]["template_version_number"] = json!(3);
+    assert!(!verified(
+        &value,
+        "aws_quicksight_template_alias.live",
+        "template_id"
+    ));
+    value["resource_changes"][4]["change"]["after"]["parent_folder_arn"] =
+        value["resource_changes"][5]["change"]["after"]["arn"].clone();
+    value["configuration"]["root_module"]["resources"][4]["expressions"]["parent_folder_arn"] =
+        json!({"references":["aws_quicksight_folder.child.arn"]});
+    assert!(!verified(
+        &value,
+        "aws_quicksight_folder.child",
+        "parent_folder_arn"
+    ));
+    assert!(!verified(
+        &value,
+        "aws_quicksight_folder.root",
+        "parent_folder_arn"
+    ));
+    value["resource_changes"][3]["change"]["after_sensitive"] =
+        json!({"source_entity":[{"source_template":[{"data_set_references":true}]}]});
+    assert!(!verified(
+        &value,
+        "aws_quicksight_dashboard.d",
+        "source_entity.source_template.data_set_references.data_set_arn"
+    ));
+}

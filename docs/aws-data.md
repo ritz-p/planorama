@@ -1048,3 +1048,23 @@ AMAZON_ELASTICSEARCH accepts `amazon_elasticsearch.domain` against an Elasticsea
 domain name. The pinned provider has no OpenSearch parameter block or managed IoT
 Analytics dataset. Missing, masked, incompatible or literal-only evidence leaves
 the typed link unverified. Credentials and connection strings remain private.
+
+### QuickSight content navigation
+
+Analysis and dashboard references use `theme_arn`, `source_entity.source_template.arn`,
+its `data_set_references.data_set_arn` substitutions, or
+`definition.data_set_identifiers_declarations.data_set_arn`. Templates select one
+source analysis or template and verify all configured source-analysis dataset
+substitutions. These fields match the target ARN. A template ARN with a version
+suffix also requires that version on the target. A template alias matches
+`template_id` and `template_version_number` against the same template.
+
+Dataset data-source ARNs are scoped to each physical table's custom SQL,
+relational or S3 source. Logical table `source.data_set_arn` and row-level
+permission dataset `arn` point to independent datasets. Local table-map keys
+and SQL text do not identify resources.
+
+Folder parent links reject cycles. Membership uses the folder's `folder_id`
+and the selected member's `analysis_id`, `dashboard_id` or `data_set_id`.
+Ingestions and refresh schedules use the dataset ID. Base themes use the theme
+ID. Literal IDs, built-in themes and composite Terraform IDs remain unresolved.
