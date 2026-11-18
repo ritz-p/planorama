@@ -72,6 +72,7 @@ for (const suite of ['pr', 'full']) {
     assert.equal(artifacts['planorama.js'], 'bindings\nadapter\n');
     assert.ok(commands.includes('node tests/browser/wasm.cjs'));
     assert.ok(commands.includes('node tests/browser/wasm-engine.cjs'));
+    assert.ok(commands.includes('node tests/browser/wasm-dms-node.cjs'));
     assert.equal(commands.some(line => line.startsWith('cargo test ')), suite === 'full');
   });
 }
