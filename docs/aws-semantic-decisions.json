@@ -711,7 +711,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 699,
-      "gap": "Implemented #699: exact subnet-group identifier and complete subnet/SG common-VPC proof; instance remains Spatial. #864 owns KMS/Kerberos extensions. See aws.md#dms-replication-configuration-699. #723 review retains the historical baseline.",
+      "gap": "Implemented #864; historical audit #723 retained. Unique typed SNS and complete source-type-qualified instance/task ID sets; explicitly configured instance KMS and singleton Kerberos secret/role references. Existing #699 provisioned network scope remains separate. See aws.md#dms-event-and-instance-auxiliary-references-864.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -728,7 +728,7 @@
         "placement": "Supported: retain Spatial Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
         "ownership": "Not applicable: aws_dms_replication_instance remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Missing: #699 subnet-group common-VPC placement with complete known subnet/SG evidence; service defaults cannot select customer VPC.",
-        "references": "Missing: subnet group ID and complete SG collections #699. KMS and Kerberos secret/role references belong to #864; DNS/IP and krb5 contents cannot create endpoints.",
+        "references": "Supported: #864 verifies explicit known matching SNS ARN, complete source-type-qualified instance/task identifiers and explicitly configured KMS/Kerberos secret/role inputs. Absent sources never enumerate resources; krb5 payload is opaque. Existing #699 network/task relationships remain separate.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: replication_instance_id/replication_instance_arn identity navigation belongs to #699; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_replication_instance.html.markdown",
@@ -768,7 +768,13 @@
           "kms_key_arn": "optional/computed",
           "kerberos_authentication_settings.key_cache_secret_iam_arn": "required",
           "kerberos_authentication_settings.key_cache_secret_id": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_events.rs",
+          "tests/unit/semantic/dms_events.rs",
+          "tests/fixtures/dms-events-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_dms_replication_subnet_group": {
@@ -29702,10 +29708,10 @@
       }
     },
     "aws_dms_event_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 864,
-      "gap": "#723 reviewed: Missing: SNS ARN and source-type-gated complete replication-instance/task identifiers; names and ARNs are not interchangeable. No inferred sources when collection is absent. Follow-up #864.",
+      "gap": "Implemented #864; historical audit #723 retained. Unique typed SNS and complete source-type-qualified instance/task ID sets; explicitly configured instance KMS and singleton Kerberos secret/role references. Existing #699 provisioned network scope remains separate. See aws.md#dms-event-and-instance-auxiliary-references-864.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29718,7 +29724,7 @@
         "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
         "ownership": "Not applicable: aws_dms_event_subscription remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_dms_event_subscription has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: SNS ARN and source-type-gated complete replication-instance/task identifiers; names and ARNs are not interchangeable. No inferred sources when collection is absent.",
+        "references": "Supported: #864 verifies explicit known matching SNS ARN, complete source-type-qualified instance/task identifiers and explicitly configured KMS/Kerberos secret/role inputs. Absent sources never enumerate resources; krb5 payload is opaque. Existing #699 network/task relationships remain separate.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: sns_topic_arn/source_ids identity navigation belongs to #864; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dms_event_subscription.html.markdown",
@@ -29740,7 +29746,13 @@
           "sns_topic_arn": "required",
           "source_ids": "optional",
           "source_type": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dms_events.rs",
+          "tests/unit/semantic/dms_events.rs",
+          "tests/fixtures/dms-events-plan.json",
+          "tests/browser/wasm-service-audits-node.cjs"
+        ]
       }
     },
     "aws_dms_instance_profile": {

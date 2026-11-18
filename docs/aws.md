@@ -1388,3 +1388,35 @@ are global within the account. Nested shape checks do not inspect opaque payload
 unknown/sensitive identity or discriminator values still fail. Unverified selectors
 retain normal reference/dependency fallback. No records, prompts, scores, policies,
 credentials, namespace contents or runtime reachability are summarized.
+
+## DMS event and instance auxiliary references (#864)
+
+Contracts use Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/dms/{event_subscription,replication_instance}.go` and the pinned
+schema. Event subscriptions remain independent Logical configuration; replication
+instances retain their existing individual Spatial default and #699 network
+proof. Event sources, secret storage and IAM roles do not supply containment.
+
+| Configured input | Shape and required managed output |
+| --- | --- |
+| Event `sns_topic_arn` | Required string → SNS Topic `arn` |
+| Event `source_ids` | Optional set of strings → complete matching Instance `replication_instance_id` set with required `source_type=replication-instance`, or Task `replication_task_id` set with `source_type=replication-task`; ARNs and generic IDs are not substitutes |
+| Instance `kms_key_arn` | Optional/computed string → KMS Key `arn`, only when explicitly configured |
+| Instance `kerberos_authentication_settings.key_cache_secret_iam_arn` | Optional singleton list, required string leaf → IAM Role `arn` |
+| Instance `kerberos_authentication_settings.key_cache_secret_id` | Same singleton list, required string leaf → Secrets Manager Secret `arn` / `id` / `name` by exact value |
+
+Every link requires complete unique explicit references to current managed AWS
+resources, known non-sensitive matching input/output values and independent
+compatible provider/account/region/state evidence. IAM role scope is global within
+the compatible account. Missing/empty event source collections remain selectors;
+no resource list is inferred. A bad source set does not invalidate an independently
+proven SNS topic. Unknown, sensitive, partial, duplicate, wrong-type, filtered,
+foreign-provider, deleted/deposed and ambiguous evidence retains fallback.
+
+The Kerberos configuration's required `krb5_file_contents` stays opaque; its
+payload or sensitivity does not prove or invalidate separately known secret/role
+leaves. No credentials, SQL, runtime health or network policy is interpreted.
+Independent actions and exactly-once resource coverage are retained, including
+filtered and named states. See [SVG](../examples/dms-events.svg), sourced from
+`tests/fixtures/dms-events-plan.json`.

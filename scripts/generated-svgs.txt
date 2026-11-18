@@ -201,3 +201,4 @@ examples/backup-restore.svg
 examples/bedrock-models.svg
 examples/bedrock-agents.svg
 examples/dms-endpoints.svg
+examples/dms-events.svg
