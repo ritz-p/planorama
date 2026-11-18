@@ -42,7 +42,7 @@ while IFS= read -r output || [ -n "$output" ]; do
             update_snapshot provider::aws::organization_accounts::tests::verified_deployment_example UPDATE_ORGANIZATION_DEPLOYMENTS
             ;;
         examples/region-overrides.svg)
-            "$binary" tests/fixtures/aws-region-overrides/plan.json -o "$output"
+            "$binary" tests/fixtures/compatibility/1.9.8/overrides/plan.json -o "$output"
             ;;
         examples/cloudflare-captured-create.svg|examples/cloudflare-captured-update.svg)
             name=${output#examples/cloudflare-captured-}

@@ -3,7 +3,7 @@ use serde_json::{Value, json};
 
 fn fixtures() -> [Value; 3] {
     [
-        include_str!("../../fixtures/aws-region-overrides/plan.json"),
+        include_str!("../../fixtures/compatibility/1.9.8/overrides/plan.json"),
         include_str!("../../fixtures/compatibility/1.16.6/overrides/plan.json"),
         include_str!("../../fixtures/compatibility/1.9.8/overrides670/plan.json"),
     ]
