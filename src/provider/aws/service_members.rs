@@ -40,6 +40,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             kind if super::redshift_snapshots::owner(kind).is_some() => {
                 super::redshift_snapshots::owner(kind).unwrap()
             }
+            "aws_emr_instance_fleet"
+            | "aws_emr_instance_group"
+            | "aws_emr_managed_scaling_policy" => {
+                if raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target != index && r.sources.contains(&index))
+                {
+                    continue;
+                }
+                ("cluster_id", "EMR cluster", "Cluster configuration")
+            }
             "aws_redshift_endpoint_authorization" => (
                 "cluster_identifier",
                 "Authorized cluster",
@@ -405,6 +417,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if ((matches!(
             node.resource_type.as_str(),
             "aws_globalaccelerator_listener"
+                | "aws_emr_instance_fleet"
+                | "aws_emr_instance_group"
+                | "aws_emr_managed_scaling_policy"
                 | "aws_globalaccelerator_custom_routing_listener"
                 | "aws_vpc_route_server_peer"
                 | "aws_flow_log"

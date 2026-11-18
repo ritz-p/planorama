@@ -25233,10 +25233,10 @@
       }
     },
     "aws_emr_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 841,
-      "gap": "#722 reviewed: Missing: explicit network, instance profile, service/scaling roles, security configuration name, KMS ID/ARN, log destination and AMI references. Additional SGs are comma-delimited strings; optional/computed managed SGs/subnets cannot manufacture configured provenance. Follow-up #841.",
+      "gap": "Implemented #841 following audit #722. Cluster configuration resolves explicit network, profile, role, security configuration, key, bucket and AMI references. Unshared helpers can be presented with their cluster.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25348,10 +25348,10 @@
       }
     },
     "aws_emr_instance_fleet": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 841,
-      "gap": "#722 reviewed: Missing: cluster_id matches EMR cluster id; capacity/instance specifications do not identify EC2 instances. Follow-up #841.",
+      "gap": "Implemented #841 following audit #722. Cluster configuration resolves explicit network, profile, role, security configuration, key, bucket and AMI references. Unshared helpers can be presented with their cluster.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25382,10 +25382,10 @@
       }
     },
     "aws_emr_instance_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 841,
-      "gap": "#722 reviewed: Missing: cluster_id matches EMR cluster id; capacity/instance specifications do not identify EC2 instances. Follow-up #841.",
+      "gap": "Implemented #841 following audit #722. Cluster configuration resolves explicit network, profile, role, security configuration, key, bucket and AMI references. Unshared helpers can be presented with their cluster.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25416,10 +25416,10 @@
       }
     },
     "aws_emr_managed_scaling_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 841,
-      "gap": "#722 reviewed: Missing: cluster_id matches EMR cluster id; capacity/instance specifications do not identify EC2 instances. Follow-up #841.",
+      "gap": "Implemented #841 following audit #722. Cluster configuration resolves explicit network, profile, role, security configuration, key, bucket and AMI references. Unshared helpers can be presented with their cluster.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",

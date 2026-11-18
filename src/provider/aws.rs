@@ -77,6 +77,7 @@ pub(crate) mod elbv2;
 pub(crate) mod elbv2_cognito;
 pub(crate) mod elbv2_network;
 mod elbv2_tls;
+pub(crate) mod emr;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
@@ -407,6 +408,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     imagebuilder::present(&raw, &mut graph);
     classic_elb::present(&raw, &mut graph);
     synthetics::present(&raw, &mut graph);
+    emr::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);

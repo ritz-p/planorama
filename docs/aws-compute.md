@@ -631,3 +631,7 @@ Filtered endpoints and named states never borrow evidence. Attributes-map IP/por
 values, generated hosted zones, DNS health and deprecated custom health-check
 configuration are excluded. See [fixture](../tests/fixtures/cloud-map-plan.json)
 and [tests](../tests/unit/semantic/cloud_map.rs).
+
+### EMR clusters (#841)
+
+Cluster placement uses one configured EC2 subnet form and complete security group evidence for the same VPC. Additional security groups are comma-separated IDs. Instance profiles, service and scaling roles, security configurations, log keys, S3 log buckets and custom AMIs retain their own identities. A fleet, instance group or managed scaling policy can appear under its cluster when its cluster ID is verified and the helper has no external consumer. Instance specifications do not create EC2 resources.
