@@ -82,7 +82,7 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         | "cloudflare_workers_route"
         | "cloudflare_workers_custom_domain" => "Cloudflare Workers",
         "cloudflare_pages_project" | "cloudflare_pages_domain" => "Cloudflare Pages",
-        "cloudflare_r2_bucket" => "Cloudflare R2",
+        "cloudflare_r2_bucket" | "cloudflare_r2_bucket_event_notification" => "Cloudflare R2",
         "cloudflare_workers_kv_namespace" => "Cloudflare KV",
         "cloudflare_d1_database" => "Cloudflare D1",
         "cloudflare_hyperdrive_config" => "Cloudflare Hyperdrive",

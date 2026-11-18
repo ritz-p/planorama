@@ -29,6 +29,18 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
     if node.resource_type == "cloudflare_queue_consumer" {
         return queues::targets(v, path);
     }
+    if node.resource_type == "cloudflare_r2_bucket_event_notification" {
+        let target = match path {
+            "bucket_name" => Target {
+                value: v.text(path)?,
+                kind: Kind::R2,
+                jurisdiction: Some(target::jurisdiction(v)?),
+            },
+            "queue_id" => Target::new(v.text(path)?, Kind::QueueId),
+            _ => return Err(Failure::UnsupportedContract),
+        };
+        return Ok(vec![target]);
+    }
     match path {
         "bindings" => workers::bindings(value, node.resource_type == "cloudflare_worker_version"),
         "deployment_configs" => pages::targets(value),

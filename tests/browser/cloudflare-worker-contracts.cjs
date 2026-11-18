@@ -24,11 +24,15 @@ module.exports = function workerContracts(binding, native) {
       expressions: Object.fromEntries(Object.entries(references).map(([field, refs]) =>
         [field, {references: refs}]))});
   }
-  function verify(input, expected, excluded = []) {
+  function verify(input, expected, excluded = [], checkRows) {
     const json = JSON.stringify(input);
     for (const format of ['svg', 'html']) {
       const result = JSON.parse(binding.generate(json, JSON.stringify({format}))).content;
       assert.equal(result, native(json, ['--format', format]));
+      if (checkRows) {
+        const metadata = result.match(/<metadata id="resource-references">([\s\S]*?)<\/metadata>/)[1];
+        checkRows(JSON.parse(metadata.replaceAll('&quot;', '"').replaceAll('&amp;', '&')));
+      }
       for (const label of expected) assert.ok(result.includes(label), label);
       for (const label of [...excluded, 'PRIVATE_']) assert.ok(!result.includes(label), label);
     }
@@ -69,4 +73,37 @@ module.exports = function workerContracts(binding, native) {
     row.class_name = 'PRIVATE_other';
     verify(input, ['Workflow script'], ['Workflow bindings']);
   }
+  const events = plan();
+  const queueId = 'c'.repeat(32);
+  resource(events, 'cloudflare_queue', 'events', {queue_name: 'events', id: queueId, queue_id: queueId});
+  resource(events, 'cloudflare_r2_bucket', 'files', {name: 'files', id: 'files', jurisdiction: 'eu'});
+  resource(events, 'cloudflare_worker', 'consumer', {name: 'consumer'});
+  resource(events, 'cloudflare_queue_consumer', 'worker', {
+    type: 'worker', queue_id: queueId, script_name: 'consumer',
+  }, {queue_id: ['cloudflare_queue.events.id'], script_name: ['cloudflare_worker.consumer.name']});
+  resource(events, 'cloudflare_r2_bucket_event_notification', 'notify', {
+    bucket_name: 'files', jurisdiction: 'eu', queue_id: queueId,
+    rules: [{actions: ['PutObject'], prefix: 'PRIVATE_filter'}],
+  }, {bucket_name: ['cloudflare_r2_bucket.files.name'], queue_id: ['cloudflare_queue.events.queue_id']});
+  function notificationTargets(rows, attribute) {
+    const consumer = 'terraform:' + Buffer.from('cloudflare_r2_bucket_event_notification.notify').toString('hex') + '-current';
+    const row = rows.find(r => !r.dependency && r.consumer === consumer && r.attribute === attribute);
+    assert.equal(row.complete, row.targets.length > 0);
+    return row.targets.map(target => target.address);
+  }
+  verify(events, ['Notification bucket', 'Notification Queue', 'Consumed Queue', 'Consumer Worker'], [], rows => {
+    assert.deepEqual(notificationTargets(rows, 'bucket_name'), ['cloudflare_r2_bucket.files']);
+    assert.deepEqual(notificationTargets(rows, 'queue_id'), ['cloudflare_queue.events']);
+  });
+  const notification = events.resource_changes[4].change;
+  notification.after.jurisdiction = 'default';
+  notification.after_sensitive = {queue_id: true};
+  verify(events, ['cloudflare_identity_mismatch', 'cloudflare_sensitive_value'], [], rows => {
+    assert.deepEqual(notificationTargets(rows, 'bucket_name'), []);
+    assert.deepEqual(notificationTargets(rows, 'queue_id'), []);
+  });
+  notification.after_sensitive = {};
+  notification.after.jurisdiction = 'eu';
+  events.configuration.root_module.resources[4].expressions.queue_id.references = ['cloudflare_queue.events.queue_name'];
+  verify(events, ['cloudflare_output_mismatch']);
 };
