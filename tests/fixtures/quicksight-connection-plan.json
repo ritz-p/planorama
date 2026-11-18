@@ -1,0 +1,258 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.one",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "one",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-one",
+          "arn": "arn:aws:ec2:us-east-1:123456789012:vpc/vpc-one"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.one",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "one",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-one",
+          "vpc_id": "vpc-one",
+          "arn": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-one"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.one",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "one",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-one",
+          "vpc_id": "vpc-one",
+          "arn": "arn:aws:ec2:us-east-1:123456789012:security-group/sg-one"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.read",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "read",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/analytics"
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_vpc_connection.one",
+      "mode": "managed",
+      "type": "aws_quicksight_vpc_connection",
+      "name": "one",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:quicksight:us-east-1:123456789012:vpcConnection/q",
+          "vpc_connection_id": "q",
+          "aws_account_id": "123456789012",
+          "role_arn": "arn:aws:iam::123456789012:role/analytics",
+          "subnet_ids": [
+            "subnet-one"
+          ],
+          "security_group_ids": [
+            "sg-one"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_athena_workgroup.analytics",
+      "mode": "managed",
+      "type": "aws_athena_workgroup",
+      "name": "analytics",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "analytics",
+          "arn": "arn:aws:athena:us-east-1:123456789012:workgroup/analytics"
+        }
+      }
+    },
+    {
+      "address": "aws_quicksight_data_source.analytics",
+      "mode": "managed",
+      "type": "aws_quicksight_data_source",
+      "name": "analytics",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_account_id": "123456789012",
+          "data_source_id": "a",
+          "type": "ATHENA",
+          "parameters": [
+            {
+              "athena": [
+                {
+                  "work_group": "analytics",
+                  "role_arn": "arn:aws:iam::123456789012:role/analytics"
+                }
+              ]
+            }
+          ],
+          "vpc_connection_properties": [
+            {
+              "vpc_connection_arn": "arn:aws:quicksight:us-east-1:123456789012:vpcConnection/q"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.one",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.one",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.one.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.one",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.one.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.read",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_quicksight_vpc_connection.one",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.read.arn"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.one.id"
+              ]
+            },
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.one.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_athena_workgroup.analytics",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_quicksight_data_source.analytics",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parameters": [
+              {
+                "athena": [
+                  {
+                    "work_group": {
+                      "references": [
+                        "aws_athena_workgroup.analytics.name"
+                      ]
+                    },
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.read.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "vpc_connection_properties": [
+              {
+                "vpc_connection_arn": {
+                  "references": [
+                    "aws_quicksight_vpc_connection.one.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
