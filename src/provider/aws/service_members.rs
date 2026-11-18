@@ -87,6 +87,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("hub_name", "Private hub", "Public content references")
             }
             "aws_sagemaker_device" => ("device_fleet_name", "Device fleet", "Fleet devices"),
+            "aws_sagemaker_workteam" => {
+                ("workforce_name", "Private workforce", "Private workteams")
+            }
             "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
             kind if super::glue_catalog::owner(kind).is_some() => {
                 if kind == "aws_glue_schema"

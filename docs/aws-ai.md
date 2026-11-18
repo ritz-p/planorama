@@ -231,3 +231,31 @@ Tracking services keep independent regional cards. Catalog and Service Catalog c
 | `aws_sagemaker_model_package_group_policy` | `model_package_group_name` | `aws_sagemaker_model_package_group` (`model_package_group_name`) |
 | `aws_sagemaker_project` | `service_catalog_provisioning_details.product_id` | `aws_servicecatalog_product` (`id`) |
 |  | `service_catalog_provisioning_details.provisioning_artifact_id` | `aws_servicecatalog_provisioning_artifact` (`provisioning_artifact_id`, `id`) |
+
+### SageMaker Private workforce and labeling resources
+
+Private workteams and explicit Cognito pool, client and group references require compatible identities. OIDC issuer and group strings remain external. Workforce VPC placement requires its own VPC and complete subnets/security groups. A labeling job uses only its configured automated labeling VPC; worker location and generated VPC endpoints remain unknown.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_sagemaker_flow_definition` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `human_loop_config.human_task_ui_arn` | `aws_sagemaker_human_task_ui` (`arn`) |
+|  | `human_loop_config.workteam_arn` | `aws_sagemaker_workteam` (`arn`) |
+| `aws_sagemaker_labeling_job` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `human_task_config.workteam_arn` | `aws_sagemaker_workteam` (`arn`) |
+|  | `human_task_config.pre_human_task_lambda_arn`, `human_task_config.annotation_consolidation_config.annotation_consolidation_lambda_arn` | `aws_lambda_function` (`arn`) |
+|  | `human_task_config.ui_config.human_task_ui_arn` | `aws_sagemaker_human_task_ui` (`arn`) |
+|  | `input_config.data_source.sns_data_source.sns_topic_arn`, `output_config.sns_topic_arn` | `aws_sns_topic` (`arn`) |
+|  | `labeling_job_algorithms_config.labeling_job_resource_config.volume_kms_key_id`, `output_config.kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `labeling_job_algorithms_config.labeling_job_resource_config.vpc_config.security_group_ids` | `aws_security_group` (`id`) |
+|  | `labeling_job_algorithms_config.labeling_job_resource_config.vpc_config.subnets` | `aws_subnet` (`id`) |
+| `aws_sagemaker_workforce` | `cognito_config.user_pool` | `aws_cognito_user_pool` (`id`) |
+|  | `cognito_config.client_id` | `aws_cognito_user_pool_client` (`id`) |
+|  | `workforce_vpc_config.vpc_id` | `aws_vpc` (`id`) |
+|  | `workforce_vpc_config.subnets` | `aws_subnet` (`id`) |
+|  | `workforce_vpc_config.security_group_ids` | `aws_security_group` (`id`) |
+| `aws_sagemaker_workteam` | `workforce_name` | `aws_sagemaker_workforce` (`workforce_name`) |
+|  | `member_definition.cognito_member_definition.user_pool` | `aws_cognito_user_pool` (`id`) |
+|  | `member_definition.cognito_member_definition.client_id` | `aws_cognito_user_pool_client` (`id`) |
+|  | `member_definition.cognito_member_definition.user_group` | `aws_cognito_user_group` (`name`) |
+|  | `notification_configuration.notification_topic_arn` | `aws_sns_topic` (`arn`) |

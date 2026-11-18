@@ -159,6 +159,7 @@ mod sagemaker;
 pub(crate) mod sagemaker_catalog;
 pub(crate) mod sagemaker_jobs;
 pub(crate) mod sagemaker_studio;
+pub(crate) mod sagemaker_workforce;
 mod scaling;
 mod scraper;
 pub(crate) mod search;
@@ -415,6 +416,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     emr::present(&raw, &mut graph);
     sagemaker_studio::present(&raw, &mut graph);
     sagemaker_jobs::present(&raw, &mut graph);
+    sagemaker_workforce::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);
