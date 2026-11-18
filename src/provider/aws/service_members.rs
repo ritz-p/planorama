@@ -94,6 +94,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
             }
+            "aws_lakeformation_data_cells_filter" => (
+                "table_data.table_name",
+                "Filtered table",
+                "Data cells filters",
+            ),
             "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
             kind if super::glue_catalog::owner(kind).is_some() => {
                 if kind == "aws_glue_schema"

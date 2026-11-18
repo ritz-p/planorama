@@ -1144,3 +1144,34 @@ A catalog or shared security configuration references a KMS key only for a match
 | `aws_glue_data_catalog_encryption_settings` | `data_catalog_encryption_settings.connection_password_encryption.aws_kms_key_id`, `data_catalog_encryption_settings.encryption_at_rest.sse_aws_kms_key_id` | `aws_kms_key` (`arn`) |
 |  | `data_catalog_encryption_settings.encryption_at_rest.catalog_encryption_service_role` | `aws_iam_role` (`arn`) |
 | `aws_glue_security_configuration` | `encryption_configuration.cloudwatch_encryption.kms_key_arn`, `encryption_configuration.job_bookmarks_encryption.kms_key_arn`, `encryption_configuration.s3_encryption.kms_key_arn` | `aws_kms_key` (`arn`) |
+
+### Lake Formation catalog and principal selectors
+
+Only the configured catalog, database, table, principal, registered location or tag is considered. Table names and tag keys require matching catalog identity. A table wildcard, tag policy or filter expression never expands into resources. A data cells filter can be grouped with its verified table.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_lakeformation_data_cells_filter` | `table_data.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `table_data.database_name` | `aws_glue_catalog_database` (`name`) |
+| `aws_lakeformation_identity_center_configuration` | `instance_arn` | `aws_ssoadmin_instances` (`arns`) |
+| `aws_lakeformation_data_lake_settings` | `admins`, `read_only_admins` | `aws_iam_role` (`arn`) or `aws_iam_user` (`arn`) |
+| `aws_lakeformation_lf_tag_expression` | `expression.tag_key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_resource` | `arn` | `aws_s3_bucket` (`arn`) or `aws_glue_connection` (`arn`) |
+|  | `role_arn` | `aws_iam_role` (`arn`) |
+| `aws_lakeformation_permissions` | `principal` | `aws_iam_role` (`arn`) or `aws_iam_user` (`arn`) |
+|  | `data_location.arn` | `aws_lakeformation_resource` (`arn`) |
+|  | `database.name`, `table.database_name`, `table_with_columns.database_name`, `data_cells_filter.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `table.name`, `table_with_columns.name`, `data_cells_filter.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `lf_tag.key`, `lf_tag_policy.expression.key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_opt_in` | `principal.data_lake_principal_identifier` | `aws_iam_role` (`arn`) or `aws_iam_user` (`arn`) |
+|  | `resource_data.data_location.resource_arn` | `aws_lakeformation_resource` (`arn`) |
+|  | `resource_data.lf_tag_expression.name`, `resource_data.lf_tag_policy.expression_name` | `aws_lakeformation_lf_tag_expression` (`name`) |
+|  | `resource_data.database.name`, `resource_data.table.database_name`, `resource_data.table_with_columns.database_name`, `resource_data.data_cells_filter.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `resource_data.table.name`, `resource_data.table_with_columns.name`, `resource_data.data_cells_filter.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `resource_data.lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_resource_lf_tag` | `database.name`, `table.database_name`, `table_with_columns.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `table.name`, `table_with_columns.name` | `aws_glue_catalog_table` (`name`) |
+|  | `lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_resource_lf_tags` | `database.name`, `table.database_name`, `table_with_columns.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `table.name`, `table_with_columns.name` | `aws_glue_catalog_table` (`name`) |
+|  | `lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |

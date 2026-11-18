@@ -1,0 +1,184 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_glue_catalog_table.sample0",
+      "mode": "managed",
+      "type": "aws_glue_catalog_table",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "database_name": "logs",
+          "name": "events"
+        }
+      }
+    },
+    {
+      "address": "aws_lakeformation_data_cells_filter.sample1",
+      "mode": "managed",
+      "type": "aws_lakeformation_data_cells_filter",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_data": [
+            {
+              "table_catalog_id": "123456789012",
+              "database_name": "logs",
+              "table_name": "events",
+              "name": "subset"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lakeformation_lf_tag.sample2",
+      "mode": "managed",
+      "type": "aws_lakeformation_lf_tag",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key": "Team",
+          "catalog_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_lakeformation_lf_tag_expression.sample3",
+      "mode": "managed",
+      "type": "aws_lakeformation_lf_tag_expression",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "name": "restricted",
+          "expression": [
+            {
+              "tag_key": "Team",
+              "tag_values": [
+                "ops"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lakeformation_permissions.sample4",
+      "mode": "managed",
+      "type": "aws_lakeformation_permissions",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table": [
+            {
+              "catalog_id": "123456789012",
+              "database_name": "logs",
+              "name": "events",
+              "wildcard": false
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_glue_catalog_table.sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lakeformation_data_cells_filter.sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_data": [
+              {
+                "table_name": {
+                  "references": [
+                    "aws_glue_catalog_table.sample0.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lakeformation_lf_tag.sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lakeformation_lf_tag_expression.sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "expression": [
+              {
+                "tag_key": {
+                  "references": [
+                    "aws_lakeformation_lf_tag.sample2.key"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lakeformation_permissions.sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table": [
+              {
+                "name": {
+                  "references": [
+                    "aws_glue_catalog_table.sample0.name"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -104,6 +104,7 @@ pub(crate) mod imagebuilder_distribution;
 pub(crate) mod ipam;
 pub(crate) mod kinesis_owners;
 pub(crate) mod kms;
+pub(crate) mod lakeformation_selectors;
 mod lambda;
 pub(crate) mod lambda_capacity;
 pub(crate) mod lambda_config;
