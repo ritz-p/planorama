@@ -105,6 +105,7 @@ pub(super) fn collect(
                     })
                     .collect();
                 result.push(AttributeReference {
+                    durable_object_scripts: Default::default(),
                     cloudflare_percentages: std::collections::BTreeMap::new(),
                     cloudflare_failure: None,
                     indexed_block_lengths: lengths.to_vec(),

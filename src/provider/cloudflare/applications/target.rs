@@ -4,6 +4,7 @@ use crate::model::TerraformEntity;
 pub(super) enum Kind {
     Worker,
     WorkerName,
+    DurableObjectScript,
     Version,
     Pages,
     R2,
@@ -42,8 +43,10 @@ pub(super) fn fields(
 ) -> Result<&'static [&'static str]> {
     Ok(match (target.kind, node.resource_type.as_str()) {
         (Kind::Worker, "cloudflare_worker") => &["id", "name"],
-        (Kind::WorkerName, "cloudflare_worker") => &["name"],
-        (Kind::WorkerName, "cloudflare_workers_script") => &["id", "script_name"],
+        (Kind::WorkerName | Kind::DurableObjectScript, "cloudflare_worker") => &["name"],
+        (Kind::WorkerName | Kind::DurableObjectScript, "cloudflare_workers_script") => {
+            &["id", "script_name"]
+        }
         (Kind::Version, "cloudflare_worker_version") => &["id"],
         (Kind::Pages, "cloudflare_pages_project") => &["id", "name"],
         (Kind::R2, "cloudflare_r2_bucket") => &["id", "name"],
