@@ -42,7 +42,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
-            "aws_docdbelastic_cluster"
+            "aws_dsql_cluster"
+                | "aws_dsql_cluster_peering"
+                | "aws_dsql_cluster_policy"
+                | "aws_docdbelastic_cluster"
                 | "aws_neptunegraph_graph"
                 | "aws_neptunegraph_private_graph_endpoint"
         )

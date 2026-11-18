@@ -7,7 +7,8 @@ pub(crate) fn has_indexed_service_references(
     resource: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::dms_serverless::resource(resource)
+        && (resource == "aws_dsql_cluster"
+            || aws::dms_serverless::resource(resource)
             || aws::dms_migration::resource(resource)
             || aws::redshift_helpers::has_indexed(resource)
             || aws::dms_events::resource(resource)
@@ -68,7 +69,8 @@ pub(crate) fn indexed_service_reference(
     attribute: &str,
 ) -> bool {
     provider.is_aws()
-        && (aws::dms_serverless::indexed(resource, attribute)
+        && ((resource == "aws_dsql_cluster" && attribute == "multi_region_properties.0.clusters")
+            || aws::dms_serverless::indexed(resource, attribute)
             || aws::dms_migration::indexed(resource, attribute)
             || aws::redshift_helpers::indexed(resource, attribute)
             || aws::dms_events::indexed(resource, attribute)

@@ -1025,3 +1025,7 @@ support defaults use `scripts/update-resource-support.sh aws_glue_`.
 ### DocumentDB Elastic and Neptune Analytics (#766)
 
 Elastic clusters use direct subnet and security group ID sets. Neptune private graph endpoints reference a graph by its Terraform `id`, and have their own VPC, subnets and configured security groups. Placement requires complete subnet and security group references to a common VPC. For a private endpoint its explicit VPC must agree. The graph keeps its regional placement. The Neptune API does not return endpoint security groups, so these references describe configuration. Graphs and Elastic clusters can reference a managed KMS key by ARN.
+
+### Aurora DSQL (#767)
+
+Cluster policies and peerings resolve their local cluster by `identifier`. A cluster's configured `multi_region_properties.clusters` and a peering's `clusters` resolve managed clusters by ARN across regions when the account, partition, resource identifier and effective regions agree. The witness region is configuration. Cluster encryption accepts an explicit KMS key ARN. The AWS-owned key sentinel keeps the default presentation.

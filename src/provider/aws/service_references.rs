@@ -58,6 +58,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::imagebuilder::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::dsql::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::analytics_databases::label(resource, attribute) {
         return Some(label);
     }
@@ -929,6 +932,7 @@ pub(crate) fn annotate(
     super::redshift_cluster::annotate(nodes, references, evidence);
     super::redshift_helpers::annotate(nodes, references, evidence);
     super::redshift_snapshots::annotate(nodes, references, evidence);
+    super::dsql::annotate(nodes, references, evidence);
     super::analytics_databases::annotate(nodes, references, evidence);
     super::redshift_endpoints::annotate(nodes, references, evidence);
     super::transfer_identity::annotate(nodes, references, evidence);
@@ -1004,6 +1008,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::redshift_cluster::bindings(raw, reference)
         && super::redshift_helpers::bindings(raw, reference)
         && super::redshift_snapshots::bindings(raw, reference)
+        && super::dsql::bindings(raw, reference)
         && super::analytics_databases::bindings(raw, reference)
         && super::redshift_endpoints::bindings(raw, reference)
         && super::transfer_identity::bindings(raw, reference)
@@ -1640,7 +1645,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::dms_serverless::indexed(&node.resource_type, &reference.attribute)
+        if (node.resource_type == "aws_dsql_cluster"
+            && reference.attribute == "multi_region_properties.0.clusters")
+            || super::dms_serverless::indexed(&node.resource_type, &reference.attribute)
             || super::dms_migration::indexed(&node.resource_type, &reference.attribute)
             || super::redshift_helpers::indexed(&node.resource_type, &reference.attribute)
             || super::dms_events::indexed(&node.resource_type, &reference.attribute)

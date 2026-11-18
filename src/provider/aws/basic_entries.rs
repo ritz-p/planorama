@@ -510,7 +510,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_docdb_subnet_group", "Amazon DocumentDB", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonDocumentDB))),
     entry!("aws_docdbelastic_cluster", "Amazon DocumentDB", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonDocumentDB))),
     entry!("aws_drs_replication_configuration_template", "AWS Elastic Disaster Recovery", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSElasticDisasterRecovery))),
-    entry!("aws_dsql_cluster", "Amazon Aurora DSQL", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonAurora))),
+    entry!("aws_dsql_cluster", "Amazon Aurora DSQL", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonAurora))),
     entry!("aws_dsql_cluster_peering", "Amazon Aurora DSQL", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonAurora))),
     entry!("aws_dsql_cluster_policy", "Amazon Aurora DSQL", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonAurora))),
     entry!("aws_dx_bgp_peer", "AWS Direct Connect", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDirectConnect))),

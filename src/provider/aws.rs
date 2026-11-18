@@ -65,6 +65,7 @@ pub(crate) mod dms_events;
 pub(crate) mod dms_migration;
 pub(crate) mod dms_references;
 pub(crate) mod dms_serverless;
+pub(crate) mod dsql;
 mod dynamodb;
 mod ecs_capacity;
 mod ecs_workloads;
