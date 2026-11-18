@@ -113,16 +113,14 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
         "resource_group_name" => e
             .value(r.target, "grouping_type")
             .is_some_and(Value::is_null),
-        "groups.feature" => ["name", "arn"].into_iter().any(|field| {
-            e.same_endpoint(
-                r.target,
-                "project",
-                source,
-                "project",
-                "aws_evidently_project",
-                field,
-            )
-        }),
+        "groups.feature" => {
+            let project = |node| {
+                e.configured_endpoint(node, "project", "aws_evidently_project", &["name", "arn"])
+            };
+            project(r.target)
+                .zip(project(source))
+                .is_some_and(|(launch_project, feature_project)| launch_project == feature_project)
+        }
         "resources" => {
             let Some(family) = monitor_family(&e.nodes[source].resource_type) else {
                 return false;
