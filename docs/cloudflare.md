@@ -286,6 +286,13 @@ the widget within the provider. Allowed domains, Waiting Room challenge modes
 and application code provide no typed Worker or Pages integration in v5.28.1.
 Widget secrets and sitekeys are omitted from the diagram.
 
+Configured log tail Workers use `tail_consumers[].name` on Worker resources
+and `tail_consumers[].service` on Workers scripts. The latter requires absent
+environment and dispatch namespace qualifiers. Logpush jobs and ownership
+challenges can reference either an account or a zone. Dataset names,
+observability destination strings, ownership tokens and destination URLs
+provide no typed delivery endpoint or evidence that logs were received.
+
 A managed AI Gateway dynamic route can identify its gateway through an explicit
 `gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
 Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,

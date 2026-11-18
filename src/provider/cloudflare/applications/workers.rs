@@ -5,6 +5,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         ("cloudflare_workers_script" | "cloudflare_worker_version", "bindings") => {
             Some("Worker bindings")
         }
+        ("cloudflare_worker" | "cloudflare_workers_script", "tail_consumers") => {
+            Some("Configured log tail Workers")
+        }
         ("cloudflare_workflow", "script_name") => Some("Workflow script"),
         ("cloudflare_workers_route", "script")
         | ("cloudflare_workers_custom_domain", "service") => Some("Configured Worker"),
@@ -93,6 +96,19 @@ pub(super) fn bindings(value: Evidence<'_>, version: bool) -> Result<Vec<Target<
     .flatten()
     .collect())
 }
+pub(super) fn tail_consumers<'a>(value: Evidence<'a>, kind: &str) -> Result<Vec<Target<'a>>> {
+    collect(value.rows()?.into_iter().map(|row| {
+        let name = if kind == "cloudflare_workers_script" {
+            row.at("environment")?.require_null()?;
+            row.at("namespace")?.require_null()?;
+            row.text("service")?
+        } else {
+            row.text("name")?
+        };
+        Ok(Target::new(name, Kind::WorkerName))
+    }))
+}
+
 pub(super) fn service(row: Evidence<'_>) -> Result<Target<'_>> {
     row.at("environment")?.require_null()?;
     let entrypoint = row.at("entrypoint")?;

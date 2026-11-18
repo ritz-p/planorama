@@ -109,4 +109,27 @@ module.exports = function platformContracts({plan, resource, verify, account}) {
       assert.deepEqual(target(rows, 'cloudflare_turnstile_widget.widget', 'account_id'), []);
     });
   }
+  {
+    const input = plan();
+    resource(input, 'cloudflare_worker', 'logger', {id: 'worker-id', name: 'logger'});
+    for (const [kind, row] of [['cloudflare_worker',{name:'logger'}], ['cloudflare_workers_script',{service:'logger'}]]) {
+      resource(input, kind, 'emitter', {name:'emitter', tail_consumers:[row]},
+        {tail_consumers:['cloudflare_worker.logger.name']});
+    }
+    resource(input, 'cloudflare_account', 'team', {id:account});
+    resource(input, 'cloudflare_logpush_job', 'logs', {destination_conf:'PRIVATE_url', ownership_challenge:'PRIVATE_token', dataset:'workers_trace_events'},
+      {account_id:['cloudflare_account.team.id']});
+    verify(input, ['Configured log tail Workers'], [], rows => {
+      for (const type of ['cloudflare_worker','cloudflare_workers_script']) {
+        assert.deepEqual(target(rows, type+'.emitter', 'tail_consumers'), ['cloudflare_worker.logger']);
+      }
+      assert.deepEqual(target(rows, 'cloudflare_logpush_job.logs','account_id'), ['cloudflare_account.team']);
+    });
+    input.resource_changes[2].change.after.tail_consumers[0].namespace = 'PRIVATE_space';
+    input.resource_changes[4].change.after.zone_id = 'c'.repeat(32);
+    verify(input, ['cloudflare_unsupported_contract','cloudflare_scope_unavailable'], [], rows => {
+      assert.deepEqual(target(rows,'cloudflare_workers_script.emitter','tail_consumers'), []);
+      assert.deepEqual(target(rows,'cloudflare_logpush_job.logs','account_id'), []);
+    });
+  }
 };
