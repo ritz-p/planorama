@@ -71,4 +71,27 @@ module.exports = function platformContracts({plan, resource, verify, account}) {
       assert.deepEqual(target(rows, 'cloudflare_pipeline_sink.sink', 'config'), []);
     });
   }
+  {
+    const input = plan(), zone = 'f'.repeat(32);
+    resource(input, 'cloudflare_authenticated_origin_pulls_hostname_certificate', 'tls', {zone_id: zone, id: 'cert', private_key: 'PRIVATE_PEM'});
+    const config = [{hostname: 'PRIVATE_origin', enabled: false, cert_id: 'cert'}];
+    resource(input, 'cloudflare_authenticated_origin_pulls', 'pulls', {zone_id: zone, config},
+      {config: ['cloudflare_authenticated_origin_pulls_hostname_certificate.tls.id']});
+    resource(input, 'cloudflare_api_shield_operation', 'api', {zone_id: zone, id: 'op', operation_id: 'op'});
+    resource(input, 'cloudflare_api_shield_operation_schema_validation_settings', 'settings', {zone_id: zone, operation_id: 'op'},
+      {operation_id: ['cloudflare_api_shield_operation.api.operation_id']});
+    resource(input, 'cloudflare_mtls_certificate', 'client', {id: 'mtls'});
+    resource(input, 'cloudflare_workers_script', 'caller', {bindings: [{type: 'mtls_certificate', certificate_id: 'mtls'}]},
+      {bindings: ['cloudflare_mtls_certificate.client.id']});
+    verify(input, ['mTLS certificate bindings'], [], rows => {
+      assert.deepEqual(target(rows, 'cloudflare_authenticated_origin_pulls.pulls', 'config'), ['cloudflare_authenticated_origin_pulls_hostname_certificate.tls']);
+      assert.deepEqual(target(rows, 'cloudflare_api_shield_operation_schema_validation_settings.settings', 'operation_id'), ['cloudflare_api_shield_operation.api']);
+    });
+    config[0].enabled = null;
+    input.resource_changes[2].change.after.zone_id = 'e'.repeat(32);
+    verify(input, ['cloudflare_unsupported_contract','cloudflare_scope_mismatch'], [], rows => {
+      assert.deepEqual(target(rows, 'cloudflare_authenticated_origin_pulls.pulls', 'config'), []);
+      assert.deepEqual(target(rows, 'cloudflare_api_shield_operation_schema_validation_settings.settings', 'operation_id'), []);
+    });
+  }
 };

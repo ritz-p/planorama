@@ -1,3 +1,4 @@
+mod certificates;
 mod deployment;
 mod dns;
 mod pages;
@@ -32,6 +33,7 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
         };
     }
     workers::label(kind, path)
+        .or_else(|| certificates::label(kind, path))
         .or_else(|| pipelines::label(kind, path))
         .or_else(|| pages::label(kind, path))
         .or_else(|| queues::label(kind, path))
@@ -40,6 +42,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 }
 fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Vec<Target<'a>>> {
     let value = v.at(path)?;
+    if certificates::label(&node.resource_type, path).is_some() {
+        return certificates::targets(v, path);
+    }
     if pipelines::label(&node.resource_type, path).is_some() {
         return pipelines::targets(v, path);
     }
@@ -112,9 +117,18 @@ fn verify(
         return Err(Failure::UnsupportedContract);
     }
     let proven = collect(targets.into_iter().map(|target| {
+        let scope = |index: usize| {
+            if matches!(
+                target.kind,
+                Kind::HostnameCertificate | Kind::ShieldOperation
+            ) {
+                return certificates::zone(evidence[r.target], evidence[index]);
+            }
+            proof::account(node, &nodes[index], evidence[r.target], evidence[index])
+        };
         let mut candidates = nodes.iter().enumerate().filter(|(index, endpoint)| {
             proof::current(endpoint)
-                && proof::account(node, endpoint, evidence[r.target], evidence[*index]).is_ok()
+                && scope(*index).is_ok()
                 && matching(&target, endpoint, evidence[*index])
         });
         let Some((index, endpoint)) = candidates.next() else {
@@ -124,7 +138,7 @@ fn verify(
                     .filter(|&&index| fields(&target, &nodes[index]).is_ok())
                     .map(|&index| -> Result<()> {
                         proof::endpoint(&nodes[index])?;
-                        proof::account(node, &nodes[index], evidence[r.target], evidence[index])?;
+                        scope(index)?;
                         let outputs = r
                             .source_attributes_by_instance
                             .get(&index)
