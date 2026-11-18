@@ -18495,7 +18495,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 804,
-      "gap": "Implemented #804. Verified VPC connection, exclusive copied credentials or secret, and type-specific Elasticsearch domain, Athena workgroup/role, RDS identifier, Redshift cluster and S3 manifest bucket/role. IoT Analytics has no managed dataset endpoint in the pinned inventory. Connector navigation only; a data source does not inherit the connection VPC.",
+      "gap": "#724 reviewed: Implemented #804. Verified VPC connection, exclusive copied credentials or secret, and type-specific Elasticsearch domain, Athena workgroup/role, RDS identifier, Redshift cluster and S3 manifest bucket/role. IoT Analytics has no managed dataset endpoint in the pinned inventory. Connector navigation only; a data source does not inherit the connection VPC.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -19304,7 +19304,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 804,
-      "gap": "Implemented #804. Verified IAM role, subnet IDs and security group IDs. Resolver IPs are opaque. A common VPC requires complete subnet and security-group collections with explicit matching VPC identities.",
+      "gap": "#724 reviewed: Implemented #804. Verified IAM role, subnet IDs and security group IDs. Resolver IPs are opaque. A common VPC requires complete subnet and security-group collections with explicit matching VPC identities.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
