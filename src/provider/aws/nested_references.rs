@@ -118,6 +118,18 @@ pub(super) fn verify(
     verify_collections(nodes, refs, evidence, r, fields, valid, &[])
 }
 
+pub(super) fn leaf_values<'a>(_: &str, actual: &'a Value) -> Option<BTreeSet<&'a str>> {
+    Some(if let Some(values) = actual.as_array() {
+        let values: BTreeSet<_> = values.iter().map(Value::as_str).collect::<Option<_>>()?;
+        if values.len() != actual.as_array()?.len() {
+            return None;
+        }
+        values
+    } else {
+        [actual.as_str()?].into()
+    })
+}
+
 pub(super) fn verify_collections(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
@@ -126,6 +138,28 @@ pub(super) fn verify_collections(
     fields: fn(&str, &str, &str) -> &'static [&'static str],
     valid: impl Fn(usize, &str) -> bool,
     collections: &[&str],
+) -> Option<()> {
+    verify_values(
+        nodes,
+        refs,
+        evidence,
+        r,
+        fields,
+        valid,
+        (collections, leaf_values),
+    )
+}
+
+type DecodeLeaf = for<'a> fn(&str, &'a Value) -> Option<BTreeSet<&'a str>>;
+
+pub(super) fn verify_values(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+    fields: fn(&str, &str, &str) -> &'static [&'static str],
+    valid: impl Fn(usize, &str) -> bool,
+    (collections, decode): (&[&str], DecodeLeaf),
 ) -> Option<()> {
     let node = &nodes[r.target];
     if !current(node) || !r.issues.is_empty() || !r.instances_explicit {
@@ -170,15 +204,7 @@ pub(super) fn verify_collections(
         if !reference.complete || !reference.instances_explicit || !reference.issues.is_empty() {
             return None;
         }
-        let actual: BTreeSet<_> = if let Some(values) = actual.as_array() {
-            let values: BTreeSet<_> = values.iter().map(Value::as_str).collect::<Option<_>>()?;
-            if values.len() != actual.as_array()?.len() {
-                return None;
-            }
-            values
-        } else {
-            [actual.as_str()?].into()
-        };
+        let actual = decode(&r.attribute, actual)?;
         if actual.is_empty() || actual.contains("") {
             return None;
         }
