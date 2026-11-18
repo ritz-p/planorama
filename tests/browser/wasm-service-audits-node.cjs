@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {fixture: "quicksight-connection-plan", focus: "aws_quicksight_vpc_connection.one", target: 6, mask: {parameters: true}},
   {"fixture":"emr-serverless-plan","focus":"aws_emrserverless_application.main","target":7,"mask":{"network_configuration":true}},
   {"fixture":"emr-containers-plan","focus":"aws_emrcontainers_virtual_cluster.main","target":5,"mask":{"container_provider":true}},
   {"fixture":"emr-studio-plan","focus":"aws_emr_studio.main","target":8,"mask":{"user_role":true}},
