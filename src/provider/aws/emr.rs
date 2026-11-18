@@ -240,33 +240,19 @@ pub(super) fn annotate(
         let paths = [
             SINGLE, SUBNETS, MASTER, SLAVE, ACCESS, ADD_MASTER, ADD_SLAVE,
         ];
-        let selected: Option<Vec<_>> = paths
+        let configured: Vec<_> = refs
             .iter()
-            .map(|p| {
-                let actual = p.replace("ec2_attributes.", "ec2_attributes.0.");
-                let v = nested_references::value(e[i].0, e[i].1, &actual)?;
-                Some(
-                    (!v.is_null()
-                        && v.as_array().is_none_or(|a| !a.is_empty())
-                        && v.as_str() != Some(""))
-                    .then_some(*p),
-                )
-            })
+            .filter(|r| r.target == i && paths.contains(&r.attribute.as_str()))
             .collect();
-        let valid = selected.is_some_and(|paths| {
-            let paths: Vec<_> = paths.into_iter().flatten().collect();
-            paths
+        let valid = configured
+            .iter()
+            .filter(|r| matches!(r.attribute.as_str(), SINGLE | SUBNETS))
+            .count()
+            == 1
+            && configured.len() >= 2
+            && configured
                 .iter()
-                .filter(|p| matches!(**p, SINGLE | SUBNETS))
-                .count()
-                == 1
-                && paths.len() >= 2
-                && paths.iter().all(|p| {
-                    lambda_core::unique(refs, i, p).is_some_and(|r| {
-                        r.service_reference_verified && r.endpoint_network_context.len() == 1
-                    })
-                })
-        });
+                .all(|r| r.service_reference_verified && r.endpoint_network_context.len() == 1);
         if !valid {
             for r in refs
                 .iter_mut()

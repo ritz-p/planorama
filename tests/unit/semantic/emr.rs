@@ -30,6 +30,23 @@ fn parent(g: &Graph, address: &str) -> Option<String> {
         .map(|e| g.nodes[e.from].address.clone())
 }
 #[test]
+fn cluster_placement_uses_only_configured_ec2_network_fields() {
+    let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
+    let t = 11;
+    v["resource_changes"][t]["change"]["after_unknown"] =
+        json!({"ec2_attributes":[{"subnet_id":true}]});
+    v["resource_changes"][t]["change"]["after"]["ec2_attributes"][0]["service_access_security_group"] =
+        json!("sg-computed");
+    assert_eq!(
+        parent(&graph(&v), "aws_emr_cluster.main").as_deref(),
+        Some("aws_vpc.main")
+    );
+    v["configuration"]["root_module"]["resources"][t]["expressions"]["ec2_attributes"][0]["service_access_security_group"] =
+        json!({"constant_value":"sg-computed"});
+    assert_eq!(parent(&graph(&v), "aws_emr_cluster.main"), None);
+}
+
+#[test]
 fn cluster_configuration_and_owned_helpers_require_complete_inputs() {
     let mut v: Value = serde_json::from_str(FIXTURE).unwrap();
     for p in [
