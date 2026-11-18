@@ -5,7 +5,6 @@ repo=$1 tools=$2 binary=$3 scratch=$4 artifact=$5 sample=$6
 if ! ip -o link show lo | grep -q '<[^>]*UP'; then ip link set lo up; fi
 cd "$scratch"
 mkdir module
-cp "$repo/examples/aws-emulator/$sample/main.tf" "$repo/examples/aws-emulator/queue/.terraform.lock.hcl" module/
 export TF_CLI_CONFIG_FILE="$scratch/terraform.rc" TF_IN_AUTOMATION=1 CHECKPOINT_DISABLE=1
 cat >"$TF_CLI_CONFIG_FILE" <<CONF
 provider_installation {
@@ -35,6 +34,12 @@ for attempt in $(seq 1 60); do
     sleep 1
 done
 curl -fsS --max-time 2 --cacert "$AWS_CA_BUNDLE" "$AWS_ENDPOINT_URL/__admin/health" >/dev/null
+if [ "$sample" = large ]; then
+    sh "$repo/scripts/aws-emulator/large.sh" "$repo" "$tools" "$binary" "$artifact"
+    node "$repo/scripts/aws-emulator/check-artifacts.cjs" "$artifact" "$AWS_SHARED_CREDENTIALS_FILE"
+    exit 0
+fi
+cp "$repo/examples/aws-emulator/$sample/main.tf" "$repo/examples/aws-emulator/queue/.terraform.lock.hcl" module/
 tf() { timeout 5m "$tools/terraform" -chdir=module "$@"; }
 tf init -lockfile=readonly -input=false -no-color
 phases="create refreshed destroy"

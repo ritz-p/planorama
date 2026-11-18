@@ -11,7 +11,7 @@ function metadata() {
     packages: [{id: ROOT, name: 'planorama', targets: [
       target('build-script-build', 'custom-build'), target('planorama', 'bin'),
       target('cli', 'test'), target('large_example', 'test'), target('rendering', 'test'),
-      target('terraform_plan', 'test'), target('generate_large_fixture', 'example', {test: false}),
+      target('terraform_plan', 'test'), target('generate_multi_fixture', 'example', {test: false}),
     ]}],
   };
 }
@@ -21,7 +21,7 @@ test('partitions all current unit, integration and example targets without overl
   assert.deepEqual(suiteCommands(data, 'standard'), [[
     'test', '--locked', '--all-features', '--package', ROOT,
     '--bin', 'planorama', '--test', 'cli', '--test', 'rendering', '--test', 'terraform_plan',
-    '--example', 'generate_large_fixture',
+    '--example', 'generate_multi_fixture',
   ]]);
   assert.deepEqual(suiteCommands(data, 'large'), [[
     'test', '--locked', '--all-features', '--package', ROOT, '--test', 'large_example',
