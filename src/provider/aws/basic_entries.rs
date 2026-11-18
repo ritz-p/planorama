@@ -315,7 +315,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_cloudwatch_resource_metrics_configuration", "Amazon CloudWatch", Controller, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_cloudwatchomni_access_grant", "Amazon CloudWatch Omni", Policy, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_cloudwatchomni_access_profile", "Amazon CloudWatch Omni", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
-    entry!("aws_cloudwatchomni_domain", "Amazon CloudWatch Omni", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
+    entry!("aws_cloudwatchomni_domain", "Amazon CloudWatch Omni", Node, Spatial, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_cloudwatchomni_space", "Amazon CloudWatch Omni", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_cloudwatchomni_view", "Amazon CloudWatch Omni", Node, Logical, Regional, Some(ResourceIcon::Monitoring)),
     entry!("aws_codeartifact_domain", "AWS CodeArtifact", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSCodeArtifact))),

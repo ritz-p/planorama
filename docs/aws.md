@@ -1565,3 +1565,10 @@ Integrations link to their IAM role and to a KMS key when `aws:kms` is selected.
 Centralization rules require the destination account and the destination or backup
 region to agree with referenced ARN evidence. Data source and organization selectors
 and the service-generated table bucket do not establish managed endpoints.
+
+CloudWatch Omni spaces link to an explicitly referenced domain in the same account,
+including a domain in another region. Access profiles link to their verified space
+and grants verify the domain and space together. Principal type determines whether a
+grant can link to an IAM role, IAM user, or a profile of that space. Space encryption
+links require `CUSTOMER_MANAGED` and a Domain Identity Center link requires an
+explicit singleton lookup and `IDC` configuration.

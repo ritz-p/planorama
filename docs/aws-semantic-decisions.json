@@ -55647,7 +55647,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 991,
-      "gap": "#730 audit: Missing: domain-qualified space and type-gated IAM/access-profile principal references. IDC IDs need identity-store context; ARN patterns and row scopes are not endpoint evidence. Follow-up #991. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Domain and domain-qualified space references. IAM and access profile principals require matching principal types; Identity Center users and groups require additional identity-store context. Implemented in #991.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -55662,7 +55662,7 @@
         "placement": "Supported: retain Logical Policy default for aws_cloudwatchomni_access_grant; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_cloudwatchomni_access_grant identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_cloudwatchomni_access_grant has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: domain-qualified space and type-gated IAM/access-profile principal references. IDC IDs need identity-store context; ARN patterns and row scopes are not endpoint evidence. Follow-up #991.",
+        "references": "Supported: Domain and domain-qualified space references. IAM and access profile principals require matching principal types; Identity Center users and groups require additional identity-store context.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Intentionally unsupported: aws_cloudwatchomni_access_grant policy/principal/credential contents and effective permissions are not emitted.",
         "officialDocumentation": "website/docs/r/cloudwatchomni_access_grant.html.markdown",
@@ -55706,7 +55706,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/cloudwatch_omni.rs",
+          "tests/unit/semantic/cloudwatch_omni.rs"
         ]
       }
     },
@@ -55714,7 +55716,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 991,
-      "gap": "#730 audit: Missing: space ID owner; profile_id is identity, assume_status is not authorization proof. Follow-up #991. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Explicit space ID. Implemented in #991.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -55725,9 +55727,9 @@
           "arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_cloudwatchomni_access_profile; configuration/monitor identity remains independently selectable without automatic card promotion.",
-        "ownership": "Not applicable: retain independent aws_cloudwatchomni_access_profile identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
+        "ownership": "Supported: Verified space owns the profile identity.",
         "network": "Not applicable: aws_cloudwatchomni_access_profile has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: space ID owner; profile_id is identity, assume_status is not authorization proof. Follow-up #991.",
+        "references": "Supported: Explicit space ID.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Intentionally unsupported: aws_cloudwatchomni_access_profile policy/principal/credential contents and effective permissions are not emitted.",
         "officialDocumentation": "website/docs/r/cloudwatchomni_access_profile.html.markdown",
@@ -55761,7 +55763,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/cloudwatch_omni.rs",
+          "tests/unit/semantic/cloudwatch_omni.rs"
         ]
       }
     },
@@ -55769,7 +55773,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 991,
-      "gap": "#730 audit: Deferred: Identity Center instance has no corresponding managed instance type in the inventory; revisit data-source endpoint evidence separately. Computed application/URLs do not create children. Follow-up #991. Missing: Logical domain is independent observability entry point; review Spatial presentation with domain/space ownership. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Explicit singleton Identity Center instance lookup when IDC is configured. Implemented in #991.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -55780,10 +55784,10 @@
           "identity_providers",
           "identity_provider_configuration.identity_center_configuration.identity_center_instance_arn"
         ],
-        "placement": "Missing: Logical domain is independent observability entry point; review Spatial presentation with domain/space ownership.",
+        "placement": "Supported: Independent regional Spatial domain.",
         "ownership": "Not applicable: retain independent aws_cloudwatchomni_domain identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_cloudwatchomni_domain has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Deferred: Identity Center instance has no corresponding managed instance type in the inventory; revisit data-source endpoint evidence separately. Computed application/URLs do not create children. Follow-up #991.",
+        "references": "Supported: Explicit singleton Identity Center instance lookup when IDC is configured.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_cloudwatchomni_domain configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/cloudwatchomni_domain.html.markdown",
@@ -55826,7 +55830,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/cloudwatch_omni.rs",
+          "tests/unit/semantic/cloudwatch_omni.rs"
         ]
       }
     },
@@ -55834,7 +55840,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 991,
-      "gap": "#730 audit: Missing: domain_id (space may be in a different region), same-account data-access role, optional evaluation role and CUSTOMER_MANAGED KMS ARN; preserve independent space scope. Follow-up #991. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Explicit domain ID including a domain in a different region, same-account IAM roles, and the configured CUSTOMER_MANAGED key. Implemented in #991.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -55849,9 +55855,9 @@
           "encryption_configuration.kms_key_arn"
         ],
         "placement": "Supported: retain Logical Node default for aws_cloudwatchomni_space; configuration/monitor identity remains independently selectable without automatic card promotion.",
-        "ownership": "Missing: verified domain-space hierarchy; space retains separate identity and coverage.",
+        "ownership": "Supported: Domain hierarchy uses a verified domain reference and retains the independent space scope.",
         "network": "Not applicable: aws_cloudwatchomni_space has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: domain_id (space may be in a different region), same-account data-access role, optional evaluation role and CUSTOMER_MANAGED KMS ARN; preserve independent space scope. Follow-up #991.",
+        "references": "Supported: Explicit domain ID including a domain in a different region, same-account IAM roles, and the configured CUSTOMER_MANAGED key.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_cloudwatchomni_space configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/cloudwatchomni_space.html.markdown",
@@ -55903,7 +55909,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/cloudwatch_omni.rs",
+          "tests/unit/semantic/cloudwatch_omni.rs"
         ]
       }
     },

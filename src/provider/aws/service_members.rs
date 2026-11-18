@@ -90,6 +90,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_sagemaker_workteam" => {
                 ("workforce_name", "Private workforce", "Private workteams")
             }
+            "aws_cloudwatchomni_space" => ("domain_id", "Omni domain", "Spaces"),
+            "aws_cloudwatchomni_access_profile" => ("space_id", "Omni space", "Access profiles"),
             "aws_evidently_feature" => ("project", "Evidently project", "Features"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
