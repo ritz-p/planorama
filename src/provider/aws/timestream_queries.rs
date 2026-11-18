@@ -130,16 +130,18 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, s: usize, path: &str) -> 
         (
             "aws_timestreamquery_scheduled_query",
             "target_configuration.timestream_configuration.table_name",
-        ) => ["database_name", "id"].iter().any(|f| {
-            e.same_endpoint(
+        ) => {
+            let fields = &["database_name", "id"];
+            let kind = "aws_timestreamwrite_database";
+            e.configured_endpoint(
                 r.target,
                 "target_configuration.0.timestream_configuration.0.database_name",
-                s,
-                "database_name",
-                "aws_timestreamwrite_database",
-                f,
+                kind,
+                fields,
             )
-        }),
+            .zip(e.configured_endpoint(s, "database_name", kind, fields))
+            .is_some_and(|(query_database, table_database)| query_database == table_database)
+        }
         ("aws_timestreamwrite_table", p) if p.starts_with("magnetic_store_write_properties.") => {
             e.value(
                 r.target,
