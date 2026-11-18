@@ -88,6 +88,7 @@ fn targets<'a>(node: &TerraformEntity, path: &str, v: Evidence<'a>) -> Result<Ve
             }])
         }
         "bindings" => workers::bindings(value, node.resource_type == "cloudflare_worker_version"),
+        "tail_consumers" => workers::tail_consumers(value, &node.resource_type),
         "deployment_configs" => pages::targets(value),
         "versions" => deployment::targets(value),
         _ => Ok(vec![Target::new(

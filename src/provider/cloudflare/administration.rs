@@ -12,6 +12,9 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
         }
         (
             "cloudflare_dns_record"
+            | "cloudflare_logpush_job"
+            | "cloudflare_logpush_ownership_challenge"
+            | "cloudflare_logpull_retention"
             | "cloudflare_certificate_pack"
             | "cloudflare_client_certificate"
             | "cloudflare_authenticated_origin_pulls"
@@ -40,6 +43,8 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_load_balancer_monitor_group"
             | "cloudflare_ruleset"
             | "cloudflare_list"
+            | "cloudflare_logpush_job"
+            | "cloudflare_logpush_ownership_challenge"
             | "cloudflare_turnstile_widget"
             | "cloudflare_mtls_certificate"
             | "cloudflare_worker"
@@ -79,6 +84,8 @@ fn scope_valid(node: &TerraformEntity, evidence: Evidence<'_>) -> Result<()> {
     if !matches!(
         node.resource_type.as_str(),
         "cloudflare_ruleset"
+            | "cloudflare_logpush_job"
+            | "cloudflare_logpush_ownership_challenge"
             | "cloudflare_zero_trust_access_application"
             | "cloudflare_zero_trust_access_identity_provider"
     ) {
