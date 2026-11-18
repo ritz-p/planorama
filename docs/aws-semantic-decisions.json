@@ -10995,10 +10995,10 @@
       }
     },
     "aws_dsql_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 767,
-      "gap": "#717 reviewed: Missing: key and complete peer ARN references #767; AWS_OWNED_KMS_KEY is a sentinel, witness region is not an endpoint. Missing: independent database currently Logical; spatial architecture #767. Not applicable: no configured VPC/subnet contract.",
+      "gap": "Implemented #767 following audit #717. Regional DSQL cluster cards with configured KMS, local identifiers and complete cross-region cluster ARN sets. Witness regions and policy contents remain opaque.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11042,10 +11042,10 @@
       }
     },
     "aws_dsql_cluster_peering": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 767,
-      "gap": "#717 reviewed: Missing: cluster identifier and complete peer ARN set #767; witness is not a Terraform node.  Not applicable: regional database peering is not VPC peering.",
+      "gap": "Implemented #767 following audit #717. Regional DSQL cluster cards with configured KMS, local identifiers and complete cross-region cluster ARN sets. Witness regions and policy contents remain opaque.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
@@ -11079,10 +11079,10 @@
       }
     },
     "aws_dsql_cluster_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 767,
-      "gap": "#717 reviewed: Missing: policy owner identifier #767; policy body intentionally uninterpreted.  Not applicable: resource policy has no network placement.",
+      "gap": "Implemented #767 following audit #717. Regional DSQL cluster cards with configured KMS, local identifiers and complete cross-region cluster ARN sets. Witness regions and policy contents remain opaque.",
       "review": {
         "issue": 717,
         "implementationCommit": "5d233e4a467f323b46082a35ede1467eec999898",
