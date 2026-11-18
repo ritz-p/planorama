@@ -15,7 +15,6 @@ pub fn run_with_args(input: &[u8], args: &[&str]) -> Output {
         .spawn()
         .unwrap();
     if let Err(error) = child.stdin.take().unwrap().write_all(input) {
-        // Invalid arguments can close stdin early; callers still check the exit status and output.
         assert_eq!(error.kind(), ErrorKind::BrokenPipe, "{error}");
     }
     child.wait_with_output().unwrap()

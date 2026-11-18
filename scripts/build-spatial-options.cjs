@@ -8,7 +8,7 @@ if (types.length !== Number(definition[1]) || new Set(types).size !== types.leng
   throw new Error('Invalid spatial type definition');
 }
 const template = readFileSync('browser/index.html', 'utf8');
-const marker = '<!-- spatial-type-options -->';
+const marker = '<template id="spatial-type-options"></template>';
 if (template.split(marker).length !== 2) throw new Error('Spatial options placeholder not found');
 writeFileSync('output/browser/index.html', template.replace(marker, types.map(type =>
   `<label><input id="spatial-${type}" type="checkbox" value="${type}"> ${type}</label>`

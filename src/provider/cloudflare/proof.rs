@@ -113,7 +113,6 @@ pub(super) fn verify(
                 .then_some(())
                 .ok_or(Failure::IdentityMismatch)
         };
-        // Rejected candidates are expected; only explicit sources explain a failed match.
         let mut candidates = (0..nodes.len()).filter(|&index| matches(index).is_ok());
         let Some(source) = candidates.next() else {
             return Err(r

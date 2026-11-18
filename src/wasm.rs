@@ -9,6 +9,12 @@ extern "C" {
     fn notify(this: &ProgressCallback, context: &JsValue, stage: &str) -> Result<JsValue, JsValue>;
 }
 
+impl ProgressCallback {
+    fn notify_best_effort(&self, stage: &str) {
+        let _ = self.notify(&JsValue::UNDEFINED, stage);
+    }
+}
+
 #[wasm_bindgen]
 pub fn generate_with_progress(
     json: &str,
@@ -16,10 +22,7 @@ pub fn generate_with_progress(
     callback: ProgressCallback,
 ) -> Result<String, JsValue> {
     crate::generation::progress::observe(
-        std::rc::Rc::new(move |stage| {
-            // Observer failures must not change the generated result.
-            let _ = callback.notify(&JsValue::UNDEFINED, stage);
-        }),
+        std::rc::Rc::new(move |stage| callback.notify_best_effort(stage)),
         || generate(json, options),
     )
 }
@@ -78,10 +81,7 @@ pub fn generate_named_with_progress(
     callback: ProgressCallback,
 ) -> Result<String, JsValue> {
     crate::generation::progress::observe(
-        std::rc::Rc::new(move |stage| {
-            // Observer failures must not change the generated result.
-            let _ = callback.notify(&JsValue::UNDEFINED, stage);
-        }),
+        std::rc::Rc::new(move |stage| callback.notify_best_effort(stage)),
         || generate_named(inputs, options),
     )
 }
@@ -167,8 +167,7 @@ impl Generation {
         }
         self.inner
             .step_with_progress(units as usize, move |stage| {
-                // Observer failures must not change the generated result.
-                let _ = callback.notify(&JsValue::UNDEFINED, stage);
+                callback.notify_best_effort(stage)
             })
             .map_err(error)?
             .map(|result| {

@@ -19,9 +19,7 @@ self.onmessage = ({data}) => {
     try {
       const parsed = JSON.parse(error);
       if (['invalid_state_name', 'duplicate_state_name', 'empty_inputs', 'input_too_large', 'invalid_json', 'unsupported_input', 'invalid_options', 'selection_failed', 'generation_failed', 'resource_limit', 'invalid_remote_state_mapping', 'unknown_remote_state_mapping', 'ambiguous_remote_state_mapping'].includes(parsed.code)) failure = parsed;
-    } catch {
-      // Traps and runtime exceptions must not expose input or implementation details.
-    }
+    } catch {}
     self.postMessage({ok: false, error: failure});
   }
 };
