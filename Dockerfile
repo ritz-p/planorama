@@ -4,7 +4,7 @@ COPY --from=hashicorp/terraform:1.9.8 /bin/terraform /usr/local/bin/terraform
 RUN rustup component add rustfmt clippy
 RUN rustup target add wasm32-unknown-unknown \
     && cargo install wasm-bindgen-cli --version 0.2.100 --locked
-RUN apt-get update && apt-get install -y --no-install-recommends librsvg2-bin fonts-dejavu-core chromium chromium-driver nodejs jq time curl unzip \
+RUN apt-get update && apt-get install -y --no-install-recommends librsvg2-bin fonts-dejavu-core chromium chromium-driver nodejs jq time curl unzip iproute2 util-linux \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /workspace
 COPY scripts/install-mold.sh scripts/native-linker.sh scripts/install-sccache.sh scripts/rustc-cache.sh /tmp/planorama-tools/

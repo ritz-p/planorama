@@ -139,3 +139,20 @@ provider evidence の追加検証は [専用手順](docs/provider-evidence.md#pr
 - [ネイティブ CLI の公開・再実行手順](docs/releases.md#開発者向け公開手順)
 
 ブランチ・PR・レビューの進め方は [AGENTS.md](AGENTS.md#ブランチ運用) に従います。
+
+### Terraform samples with AWS Emulator
+
+On Linux amd64 (WSL 2 Ubuntu 26.04 or the Linux development container), run
+`sh scripts/aws-emulator/prepare.sh` to install the checksum-pinned Terraform
+1.9.8, AWS Provider 6.70.0 and AWS Emulator 1.0.508 under `output/`.
+Run `sh scripts/aws-emulator/generate.sh` to create private saved plans, plan
+JSON, SVG and HTML under the printed output directory. The four phases are
+create, post-apply refreshed no-op, proposed update and destroy. Local state
+and per-run emulator credentials are discarded. Use `PLANORAMA_BIN` for an
+existing CLI and `PLANORAMA_EMULATOR_TOOLS` for a prepared tools directory.
+
+Capture requires Linux user/network namespaces or a container already running
+with `--network none` and loopback up. Prepare tools and build the CLI before
+entering an offline container. Required OS commands include iproute2, util-linux,
+curl, dpkg-deb and unzip. The generator uses a local provider mirror and the
+emulator's generated TLS CA and credentials. Keep all saved plans local.
