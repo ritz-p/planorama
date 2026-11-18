@@ -2,6 +2,8 @@ name: Terraform emulator samples
 on:
   pull_request:
     paths:
+      - Dockerfile
+      - .dockerignore
       - examples/aws-emulator/**
       - examples/terraform-large/main.tf.json
       - examples/terraform-large/**/*.tf.json
@@ -21,24 +23,35 @@ jobs:
   samples:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    env:
-      PLANORAMA_BIN: ${{ github.workspace }}/target/release/planorama
     steps:
       - uses: actions/checkout@v7.0.1
         with:
           persist-credentials: false
-      - name: Build native renderer
-        run: cargo build --locked --release --bin planorama
+      - uses: docker/setup-buildx-action@v3
+      - name: Build development image
+        uses: docker/build-push-action@v7.4.0
+        with:
+          context: .
+          load: true
+          tags: planorama-emulator:local
+          cache-from: type=gha,scope=browser-wasm
+      - name: Build native renderer in the development container
+        run: |
+          docker run --rm --volume "$PWD:/workspace" planorama-emulator:local \
+            cargo build --locked --release --bin planorama
       - name: Install pinned sample tools
         env:
           SUITE: ${{ github.event_name == 'workflow_dispatch' && 'large' || 'standard' }}
-        run: sh scripts/aws-emulator/prepare.sh "$SUITE"
-      - name: Verify capture in a loopback-only namespace
+        run: |
+          docker run --rm --user "$(id -u):$(id -g)" --volume "$PWD:/workspace" \
+            planorama-emulator:local sh scripts/aws-emulator/prepare.sh "$SUITE"
+      - name: Verify capture in an offline development container
         env:
           SUITE: ${{ github.event_name == 'workflow_dispatch' && 'full' || 'pr' }}
         run: |
-          sudo unshare --net sh -ec '
-            ip link set lo up
-            exec setpriv --reuid "$1" --regid "$2" --clear-groups --no-new-privs \
-              env PLANORAMA_BIN="$3" sh scripts/aws-emulator/check-samples.sh "$4"
-          ' sh "$(id -u)" "$(id -g)" "$PLANORAMA_BIN" "$SUITE"
+          mkdir -p output/aws-emulator
+          docker run --rm --network none --user "$(id -u):$(id -g)" \
+            --cap-drop ALL --security-opt no-new-privileges \
+            --volume "$PWD:/workspace:ro" --volume "$PWD/output/aws-emulator:/workspace/output/aws-emulator" \
+            --env PLANORAMA_BIN=/workspace/target/release/planorama \
+            planorama-emulator:local sh scripts/aws-emulator/check-samples.sh "$SUITE"
