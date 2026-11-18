@@ -5,6 +5,26 @@ use super::{
 };
 use crate::model::{AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 
+pub(super) fn pool_origins(
+    value: Evidence<'_>,
+) -> Result<Vec<crate::model::architecture::PoolOrigin>> {
+    collect(value.at("origins")?.rows()?.into_iter().map(|row| {
+        let enabled = row.at("enabled")?;
+        let weight = row.at("weight")?;
+        enabled.scalar()?;
+        weight.scalar()?;
+        if !(enabled.value.is_null() || enabled.value.is_boolean())
+            || !(weight.value.is_null() || weight.value.is_number())
+        {
+            return Err(Failure::InvalidValue);
+        }
+        Ok(crate::model::architecture::PoolOrigin {
+            enabled: enabled.value.as_bool(),
+            weight: weight.value.as_number().map(ToString::to_string),
+        })
+    }))
+}
+
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
         ("cloudflare_load_balancer", "default_pools") => Some("Default pools"),

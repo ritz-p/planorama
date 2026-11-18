@@ -132,4 +132,18 @@ module.exports = function platformContracts({plan, resource, verify, account}) {
       assert.deepEqual(target(rows,'cloudflare_logpush_job.logs','account_id'), []);
     });
   }
+  {
+    const input = plan();
+    const origins = [
+      {name: 'PRIVATE_name', address:'PRIVATE_host', enabled:true, weight:0.25},
+      {name: 'PRIVATE_backup', address:'192.0.2.4', enabled:false, weight:0},
+    ];
+    resource(input, 'cloudflare_load_balancer_pool', 'pool', {origins, id:'pool'});
+    verify(input, ['Origin 1: enabled','weight 0.25','Origin 2: disabled','weight 0'], ['192.0.2.4']);
+    input.resource_changes[0].change.after_sensitive = {origins:[{}, {weight:true}]};
+    verify(input, [], ['Origin 1:', 'Origin 2:', '192.0.2.4']);
+    input.resource_changes[0].change.after_sensitive = {};
+    input.resource_changes[0].change.after_unknown = {origins:true};
+    verify(input, [], ['Origin 1:', 'Origin 2:', '192.0.2.4']);
+  }
 };
