@@ -28,8 +28,7 @@
           "create"
         ],
         "after": {
-          "resource_group_name": "fixture-group",
-          "grouping_type": "RESOURCE_GROUP_BASED"
+          "resource_group_name": "fixture-group"
         }
       }
     },
