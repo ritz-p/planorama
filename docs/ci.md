@@ -38,6 +38,22 @@ contract. Keep new targets assigned to a suite; do not infer coverage from names
 A failed suite does not cancel the other. CI retains cargo test; revisit runner
 choice only when workload distribution warrants a new measurement.
 
+The standard PR critical path has a 600-second design budget. Allow 60 seconds
+for runner setup and caches, 240 for compilation, 285 for tests and 15 for
+aggregation. Independent format, lint and browser jobs run alongside Rust.
+The PR suites build and test in one Cargo invocation per package. Explicit
+dispatched validation retains the separate compile step for its status contract.
+Inspect the suite summary for Cargo build and test times and the compiler-cache
+step for hits and misses.
+
+The weekly or manual **PR timing report** samples completed first-attempt PR
+revisions with Rust and browser runs, including format and lint when present.
+It measures from the earliest workflow start to the last successful job finish.
+Job execution and wait from workflow start are separate fields (dependent jobs
+also wait for prerequisites). Its JSON artifact includes per-step timings and
+excluded run IDs. Three successive samples over budget raise a warning. Keep
+conditional generation, layout, release and offline analysis on their own checks.
+
 ## Layout quality comparison (#390)
 
 **Layout quality** runs manually or on PRs with the `layout-quality` label,
