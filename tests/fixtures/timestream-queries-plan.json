@@ -1,0 +1,150 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.row0",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "row0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/a"
+        }
+      }
+    },
+    {
+      "address": "aws_timestreamwrite_database.row1",
+      "mode": "managed",
+      "type": "aws_timestreamwrite_database",
+      "name": "row1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "database_name": "metrics",
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/a"
+        }
+      }
+    },
+    {
+      "address": "aws_timestreamwrite_table.row2",
+      "mode": "managed",
+      "type": "aws_timestreamwrite_table",
+      "name": "row2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "database_name": "metrics",
+          "table_name": "records"
+        }
+      }
+    },
+    {
+      "address": "aws_timestreamquery_scheduled_query.row3",
+      "mode": "managed",
+      "type": "aws_timestreamquery_scheduled_query",
+      "name": "row3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_configuration": [
+            {
+              "timestream_configuration": [
+                {
+                  "database_name": "metrics",
+                  "table_name": "records"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.row0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_timestreamwrite_database.row1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.row0.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_timestreamwrite_table.row2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_timestreamwrite_database.row1.database_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_timestreamquery_scheduled_query.row3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_configuration": [
+              {
+                "timestream_configuration": [
+                  {
+                    "database_name": {
+                      "references": [
+                        "aws_timestreamwrite_database.row1.database_name"
+                      ]
+                    },
+                    "table_name": {
+                      "references": [
+                        "aws_timestreamwrite_table.row2.table_name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

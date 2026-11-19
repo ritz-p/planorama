@@ -8826,10 +8826,10 @@
       }
     },
     "aws_timestreamquery_scheduled_query": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 743,
-      "gap": "Missing: destination database+table tuple, role/KMS/SNS/error-bucket references. SQL source parsing and computed run status intentionally unsupported. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 reviewed: Implemented #743. Explicit target database, target table, query execution role, query encryption key, query notifications, query error bucket. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8845,7 +8845,7 @@
         "placement": "Logical query configuration retained.",
         "ownership": "Not applicable: query does not own destination table.",
         "network": "Not applicable: service execution has no subnet contract.",
-        "references": "Missing: destination database+table tuple, role/KMS/SNS/error-bucket references. SQL source parsing and computed run status intentionally unsupported.",
+        "references": "Supported: Explicit target database, target table, query execution role, query encryption key, query notifications, query error bucket.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/timestreamquery_scheduled_query.html.markdown",
@@ -8880,10 +8880,10 @@
       }
     },
     "aws_timestreamwrite_database": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 743,
-      "gap": "Missing: KMS ARN and inbound table references. kms_key_id contract excludes alias ARN. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 reviewed: Implemented #743. Explicit database encryption key. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8895,7 +8895,7 @@
         "placement": "Missing: architecture-bearing database currently logical; review independent card under #743.",
         "ownership": "Missing: explicit table ownership; never infer from matching names.",
         "network": "Not applicable: service database has no subnet contract.",
-        "references": "Missing: KMS ARN and inbound table references. kms_key_id contract excludes alias ARN.",
+        "references": "Supported: Explicit database encryption key.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/timestreamwrite_database.html.markdown",
@@ -8910,10 +8910,10 @@
       }
     },
     "aws_timestreamwrite_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 743,
-      "gap": "Missing: database/rejected-record S3/KMS references with encryption option proof; schema and record values excluded. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 reviewed: Implemented #743. Explicit timestream database, rejected data bucket, rejected data key. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8927,7 +8927,7 @@
         "placement": "Missing: logical table needs architecture/proven-child review under #743.",
         "ownership": "Missing: explicit database ownership with composite identity.",
         "network": "Not applicable: service table has no subnet contract.",
-        "references": "Missing: database/rejected-record S3/KMS references with encryption option proof; schema and record values excluded.",
+        "references": "Supported: Explicit timestream database, rejected data bucket, rejected data key.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/timestreamwrite_table.html.markdown",

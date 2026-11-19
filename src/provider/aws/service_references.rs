@@ -217,6 +217,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::timestream_influx::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::timestream_queries::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::backup_reports::label(resource, attribute) {
         return Some(label);
     }
@@ -1004,6 +1007,7 @@ pub(crate) fn annotate(
     super::msk_delivery::annotate(nodes, references, evidence);
     super::firehose_sources::annotate(nodes, references, evidence);
     super::timestream_influx::annotate(nodes, references, evidence);
+    super::timestream_queries::annotate(nodes, references, evidence);
     super::backup_reports::annotate(nodes, references, evidence);
     super::backup_restore::annotate(nodes, references, evidence);
     super::bedrock_agents::annotate(nodes, references, evidence);
@@ -1051,6 +1055,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::msk_delivery::bindings(raw, reference)
         && super::firehose_sources::bindings(raw, reference)
         && super::timestream_influx::bindings(raw, reference)
+        && super::timestream_queries::bindings(raw, reference)
         && super::backup_reports::bindings(raw, reference)
         && super::private_ca_references::bindings(raw, reference)
         && super::rolesanywhere::bindings(raw, reference)
@@ -1737,6 +1742,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::msk_delivery::indexed(&node.resource_type, &reference.attribute)
             || super::firehose_sources::indexed(&node.resource_type, &reference.attribute)
             || super::timestream_influx::indexed(&node.resource_type, &reference.attribute)
+            || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::backup_reports::indexed(&node.resource_type, &reference.attribute)
             || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)

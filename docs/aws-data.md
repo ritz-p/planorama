@@ -1098,3 +1098,20 @@ Clusters and instances keep separate cards. Complete subnet and security-group r
 | `aws_timestreaminfluxdb_db_instance` | `vpc_subnet_ids` | `aws_subnet` (`id`) |
 |  | `vpc_security_group_ids` | `aws_security_group` (`id`) |
 |  | `log_delivery_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+
+### Timestream tables and scheduled queries
+
+A scheduled target requires a table in the explicitly configured database. Database and table cards retain their identities. Rejected-data KMS keys require SSE_KMS. SQL and computed run summaries supply no evidence.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_timestreamwrite_database` | `kms_key_id` | `aws_kms_key` (`arn`) |
+| `aws_timestreamwrite_table` | `database_name` | `aws_timestreamwrite_database` (`database_name`, `id`) |
+|  | `magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.kms_key_id` | `aws_kms_key` (`arn`) |
+| `aws_timestreamquery_scheduled_query` | `target_configuration.timestream_configuration.database_name` | `aws_timestreamwrite_database` (`database_name`, `id`) |
+|  | `target_configuration.timestream_configuration.table_name` | `aws_timestreamwrite_table` (`table_name`) |
+|  | `execution_role_arn` | `aws_iam_role` (`arn`) |
+|  | `kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `notification_configuration.sns_configuration.topic_arn` | `aws_sns_topic` (`arn`) |
+|  | `error_report_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
