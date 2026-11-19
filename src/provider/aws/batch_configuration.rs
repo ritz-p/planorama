@@ -115,10 +115,11 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _source: usize, path: &st
             e.value(r.target, &format!("{parent}.{other}"))
                 .is_some_and(|v| v.is_null() || v.as_str() == Some(""))
         }
-        "compute_resources.image_id" => {
-            e.value(r.target, "compute_resources.0.ec2_configuration")
-                .is_some_and(|v| {
-                    v.is_null() || v.as_array().is_some_and(|items| {
+        "compute_resources.image_id" => e
+            .value(r.target, "compute_resources.0.ec2_configuration")
+            .is_some_and(|v| {
+                v.is_null()
+                    || v.as_array().is_some_and(|items| {
                         items.iter().enumerate().all(|(i, _)| {
                             e.value(
                                 r.target,
@@ -129,8 +130,7 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _source: usize, path: &st
                             .is_some_and(|id| id.is_null() || id.as_str() == Some(""))
                         })
                     })
-                })
-        }
+            }),
         _ => true,
     }
 }
