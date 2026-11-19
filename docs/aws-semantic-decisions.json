@@ -70438,7 +70438,8 @@
     "aws_accessanalyzer_archive_rule": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join the archive rule to its regional analyzer by analyzer_name. Filter criteria and values select findings.",
+      "issue": 1470,
+      "gap": "#1470 — Join the archive rule to its regional analyzer by analyzer_name. Filter criteria and values select findings.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70488,7 +70489,8 @@
     "aws_auditmanager_account_registration": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured encryption key and delegated account independently. Registration status does not identify either endpoint.",
+      "issue": 1471,
+      "gap": "#1471 — Resolve the configured encryption key and delegated account independently. Registration status does not identify either endpoint.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70532,7 +70534,8 @@
     "aws_auditmanager_assessment": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the framework and assigned IAM roles. Account scope and an S3 report destination URI have distinct contracts.",
+      "issue": 1471,
+      "gap": "#1471 — Resolve the framework and assigned IAM roles. Account scope and an S3 report destination URI have distinct contracts.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70590,7 +70593,8 @@
     "aws_auditmanager_assessment_delegation": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join the assessment and assignee role. Qualify the control set inside that assessment.",
+      "issue": 1471,
+      "gap": "#1471 — Join the assessment and assignee role. Qualify the control set inside that assessment.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70639,7 +70643,8 @@
     "aws_auditmanager_assessment_report": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve its assessment ID. Report status and author are service observations.",
+      "issue": 1471,
+      "gap": "#1471 — Resolve its assessment ID. Report status and author are service observations.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70751,7 +70756,8 @@
     "aws_auditmanager_framework": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve individual control IDs within each control set. Controls may be reused across frameworks.",
+      "issue": 1471,
+      "gap": "#1471 — Resolve individual control IDs within each control set. Controls may be reused across frameworks.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70810,7 +70816,8 @@
     "aws_auditmanager_framework_share": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the framework in the origin. Keep destination account and region paired as share scope.",
+      "issue": 1471,
+      "gap": "#1471 — Resolve the framework in the origin. Keep destination account and region paired as share scope.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70859,7 +70866,8 @@
     "aws_auditmanager_organization_admin_account_registration": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Identify the configured administrator by account ID. The organization ID is a result.",
+      "issue": 1471,
+      "gap": "#1471 — Identify the configured administrator by account ID. The organization ID is a result.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70903,7 +70911,8 @@
     "aws_config_aggregate_authorization": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Qualify the authorized aggregator account and AWS region as a pair. They are distinct from the authorizing account.",
+      "issue": 1472,
+      "gap": "#1472 — Qualify the authorized aggregator account and AWS region as a pair. They are distinct from the authorizing account.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70947,7 +70956,8 @@
     "aws_config_config_rule": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the Lambda function ARN only for CUSTOM_LAMBDA. Managed rule identifiers, policy text and compliance filters have no endpoint.",
+      "issue": 1473,
+      "gap": "#1473 — Resolve the Lambda function ARN only for CUSTOM_LAMBDA. Managed rule identifiers, policy text and compliance filters have no endpoint.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70999,7 +71009,8 @@
     "aws_config_configuration_aggregator": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the organization role and preserve each source account/region selection. An all-regions selector cannot enumerate infrastructure.",
+      "issue": 1472,
+      "gap": "#1472 — Resolve the organization role and preserve each source account/region selection. An all-regions selector cannot enumerate infrastructure.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71063,7 +71074,8 @@
     "aws_config_configuration_recorder": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve its recorder IAM role. Recorded resource types select inventory.",
+      "issue": 1474,
+      "gap": "#1474 — Resolve its recorder IAM role. Recorded resource types select inventory.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71116,7 +71128,8 @@
     "aws_config_configuration_recorder_status": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Bind enabled configuration to the same account/region recorder by name.",
+      "issue": 1474,
+      "gap": "#1474 — Bind enabled configuration to the same account/region recorder by name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71160,7 +71173,8 @@
     "aws_config_conformance_pack": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the explicit delivery bucket; keep the template URI and delivery prefix separate.",
+      "issue": 1474,
+      "gap": "#1474 — Resolve the explicit delivery bucket; keep the template URI and delivery prefix separate.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71209,7 +71223,8 @@
     "aws_config_delivery_channel": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Independently verify bucket name, SNS topic ARN and KMS key ARN. The shared channel is not owned by a recorder.",
+      "issue": 1474,
+      "gap": "#1474 — Independently verify bucket name, SNS topic ARN and KMS key ARN. The shared channel is not owned by a recorder.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71258,7 +71273,8 @@
     "aws_config_organization_conformance_pack": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the named delivery bucket while preserving organization exclusion scope. Template content is opaque.",
+      "issue": 1474,
+      "gap": "#1474 — Resolve the named delivery bucket while preserving organization exclusion scope. Template content is opaque.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71365,7 +71381,8 @@
     "aws_config_organization_custom_rule": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured evaluation function ARN. Excluded accounts and type filters restrict evaluation.",
+      "issue": 1473,
+      "gap": "#1473 — Resolve the configured evaluation function ARN. Excluded accounts and type filters restrict evaluation.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71475,7 +71492,8 @@
     "aws_config_remediation_configuration": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join the Config rule by name and the SSM document for a compatible target_type. AWS-owned documents may be external.",
+      "issue": 1473,
+      "gap": "#1473 — Join the Config rule by name and the SSM document for a compatible target_type. AWS-owned documents may be external.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71612,7 +71630,8 @@
     "aws_detective_invitation_accepter": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the invited graph ARN across verified member and administrator scopes.",
+      "issue": 1475,
+      "gap": "#1475 — Resolve the invited graph ARN across verified member and administrator scopes.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71651,7 +71670,8 @@
     "aws_detective_member": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the graph and explicitly configured member account. Email and invitation state are excluded.",
+      "issue": 1475,
+      "gap": "#1475 — Resolve the graph and explicitly configured member account. Email and invitation state are excluded.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71700,7 +71720,8 @@
     "aws_detective_organization_admin_account": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the delegated administrator account by account_id.",
+      "issue": 1475,
+      "gap": "#1475 — Resolve the delegated administrator account by account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71739,7 +71760,8 @@
     "aws_detective_organization_configuration": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the organization configuration's graph. Auto-enable predicts no future members.",
+      "issue": 1475,
+      "gap": "#1475 — Resolve the organization configuration's graph. Auto-enable predicts no future members.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71853,7 +71875,8 @@
     "aws_guardduty_detector_feature": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the regional detector ID. Feature name and configured status are scoped to that detector.",
+      "issue": 1476,
+      "gap": "#1476 — Resolve the regional detector ID. Feature name and configured status are scoped to that detector.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71902,7 +71925,8 @@
     "aws_guardduty_filter": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join the filter to the regional detector. Finding selectors never identify protected endpoints.",
+      "issue": 1476,
+      "gap": "#1476 — Join the filter to the regional detector. Finding selectors never identify protected endpoints.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71951,7 +71975,8 @@
     "aws_guardduty_invite_accepter": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the member's detector and administrator account separately, preserving the provider's legacy field name.",
+      "issue": 1476,
+      "gap": "#1476 — Resolve the member's detector and administrator account separately, preserving the provider's legacy field name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71995,7 +72020,8 @@
     "aws_guardduty_ipset": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join the detector. A list location is a document URL and its entries cannot prove network containment.",
+      "issue": 1476,
+      "gap": "#1476 — Join the detector. A list location is a document URL and its entries cannot prove network containment.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72044,7 +72070,8 @@
     "aws_guardduty_malware_protection_plan": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the execution role and configured S3 bucket. Exclude object keys and scan outcomes.",
+      "issue": 1477,
+      "gap": "#1477 — Resolve the execution role and configured S3 bucket. Exclude object keys and scan outcomes.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72090,7 +72117,8 @@
     "aws_guardduty_member": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join detector and member account. Invitation messages and computed relationship status do not prove acceptance.",
+      "issue": 1476,
+      "gap": "#1476 — Join detector and member account. Invitation messages and computed relationship status do not prove acceptance.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72139,7 +72167,8 @@
     "aws_guardduty_member_detector_feature": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve detector and account together. Qualify the feature within that membership.",
+      "issue": 1476,
+      "gap": "#1476 — Resolve detector and account together. Qualify the feature within that membership.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72188,7 +72217,8 @@
     "aws_guardduty_organization_admin_account": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the designated administrator by account ID.",
+      "issue": 1476,
+      "gap": "#1476 — Resolve the designated administrator by account ID.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72227,7 +72257,8 @@
     "aws_guardduty_organization_configuration": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Bind configuration to its detector. Legacy datasources and enrollment defaults do not enumerate members.",
+      "issue": 1476,
+      "gap": "#1476 — Bind configuration to its detector. Legacy datasources and enrollment defaults do not enumerate members.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72276,7 +72307,8 @@
     "aws_guardduty_organization_configuration_feature": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the detector for a named organization feature. Future enrollment remains unspecified.",
+      "issue": 1476,
+      "gap": "#1476 — Resolve the detector for a named organization feature. Future enrollment remains unspecified.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72325,7 +72357,8 @@
     "aws_guardduty_publishing_destination": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve detector, type-compatible S3 destination and encryption key independently.",
+      "issue": 1477,
+      "gap": "#1477 — Resolve detector, type-compatible S3 destination and encryption key independently.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72379,7 +72412,8 @@
     "aws_guardduty_threatintelset": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the owning detector. Feed URL and contents do not identify AWS workload endpoints.",
+      "issue": 1476,
+      "gap": "#1476 — Resolve the owning detector. Feed URL and contents do not identify AWS workload endpoints.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72428,7 +72462,8 @@
     "aws_inspector_assessment_target": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Join the Classic Inspector resource group by ARN. Tag matches do not enumerate instances.",
+      "issue": 1478,
+      "gap": "#1478 — Join the Classic Inspector resource group by ARN. Tag matches do not enumerate instances.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72472,7 +72507,8 @@
     "aws_inspector_assessment_template": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve Classic assessment target and SNS notification topic. Preserve AWS rules package ARNs as catalog identifiers.",
+      "issue": 1478,
+      "gap": "#1478 — Resolve Classic assessment target and SNS notification topic. Preserve AWS rules package ARNs as catalog identifiers.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72564,7 +72600,8 @@
     "aws_inspector2_delegated_admin_account": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the explicit Inspector2 administrator account. Its observed relationship status is separate.",
+      "issue": 1478,
+      "gap": "#1478 — Resolve the explicit Inspector2 administrator account. Its observed relationship status is separate.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72608,7 +72645,8 @@
     "aws_inspector2_enabler": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve configured account IDs independently of scan resource types. An enabled category cannot identify workloads.",
+      "issue": 1478,
+      "gap": "#1478 — Resolve configured account IDs independently of scan resource types. An enabled category cannot identify workloads.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72707,7 +72745,8 @@
     "aws_inspector2_member_association": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured member account separately from the returned administrator account.",
+      "issue": 1478,
+      "gap": "#1478 — Resolve the configured member account separately from the returned administrator account.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72841,7 +72880,8 @@
     "aws_macie2_classification_export_configuration": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the destination bucket and encryption key independently. Key prefixes do not identify resources.",
+      "issue": 1479,
+      "gap": "#1479 — Resolve the destination bucket and encryption key independently. Key prefixes do not identify resources.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72887,7 +72927,8 @@
     "aws_macie2_classification_job": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve custom identifier IDs and explicitly named buckets in their declared accounts. Dynamic selection criteria do not enumerate buckets.",
+      "issue": 1479,
+      "gap": "#1479 — Resolve custom identifier IDs and explicitly named buckets in their declared accounts. Dynamic selection criteria do not enumerate buckets.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73044,7 +73085,8 @@
     "aws_macie2_invitation_accepter": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured administrator; invitation ID is returned by the service.",
+      "issue": 1479,
+      "gap": "#1479 — Resolve the configured administrator; invitation ID is returned by the service.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73088,7 +73130,8 @@
     "aws_macie2_member": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured member account. Administrator/master outputs are aliases of the administrator identity, not two endpoints.",
+      "issue": 1479,
+      "gap": "#1479 — Resolve the configured member account. Administrator/master outputs are aliases of the administrator identity, not two endpoints.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73137,7 +73180,8 @@
     "aws_macie2_organization_admin_account": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the organization administrator account without inferring other membership.",
+      "issue": 1479,
+      "gap": "#1479 — Resolve the organization administrator account without inferring other membership.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73352,7 +73396,8 @@
     "aws_securityhub_aggregator_v2": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Represent the V2 home region and configured linking mode/regions. Preserve implicit future regions without enumerating them.",
+      "issue": 1480,
+      "gap": "#1480 — Represent the V2 home region and configured linking mode/regions. Preserve implicit future regions without enumerating them.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73454,7 +73499,8 @@
     "aws_securityhub_automation_rule_v2": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the explicitly configured V2 integration connector. OCSF JSON selectors and finding mutations are opaque.",
+      "issue": 1481,
+      "gap": "#1481 — Resolve the explicitly configured V2 integration connector. OCSF JSON selectors and finding mutations are opaque.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73500,7 +73546,8 @@
     "aws_securityhub_configuration_policy": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Distinguish catalog standard ARNs from configured subscriptions and associate this policy only via verified policy IDs.",
+      "issue": 1480,
+      "gap": "#1480 — Distinguish catalog standard ARNs from configured subscriptions and associate this policy only via verified policy IDs.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73549,7 +73596,8 @@
     "aws_securityhub_configuration_policy_association": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the policy and type-disambiguated account, OU or root. SELF_MANAGED_SECURITY_HUB is a sentinel.",
+      "issue": 1480,
+      "gap": "#1480 — Resolve the policy and type-disambiguated account, OU or root. SELF_MANAGED_SECURITY_HUB is a sentinel.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73593,7 +73641,8 @@
     "aws_securityhub_connector_v2": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured KMS key and Secrets Manager ARN. Provider credentials and connection health are excluded.",
+      "issue": 1481,
+      "gap": "#1481 — Resolve the configured KMS key and Secrets Manager ARN. Provider credentials and connection health are excluded.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73683,7 +73732,8 @@
     "aws_securityhub_finding_aggregator": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Represent only explicitly linked regions under the configured linking mode. Distinguish the original finding aggregator from V2.",
+      "issue": 1480,
+      "gap": "#1480 — Represent only explicitly linked regions under the configured linking mode. Distinguish the original finding aggregator from V2.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73779,7 +73829,8 @@
     "aws_securityhub_invite_accepter": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the configured administrator account. The invitation identifier is an output.",
+      "issue": 1480,
+      "gap": "#1480 — Resolve the configured administrator account. The invitation identifier is an output.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73823,7 +73874,8 @@
     "aws_securityhub_member": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the member account and retain the configured invite flag separately from observed membership.",
+      "issue": 1480,
+      "gap": "#1480 — Resolve the member account and retain the configured invite flag separately from observed membership.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73872,7 +73924,8 @@
     "aws_securityhub_organization_admin_account": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the explicitly selected organization administrator.",
+      "issue": 1480,
+      "gap": "#1480 — Resolve the explicitly selected organization administrator.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74142,7 +74195,8 @@
     "aws_securitylake_aws_log_source": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Retain the account/region-qualified AWS source tuple. A catalog log source does not prove producing workloads.",
+      "issue": 1482,
+      "gap": "#1482 — Retain the account/region-qualified AWS source tuple. A catalog log source does not prove producing workloads.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74200,7 +74254,8 @@
     "aws_securitylake_custom_log_source": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the crawler IAM role. Preserve source name/version and provider identity without exposing external IDs.",
+      "issue": 1482,
+      "gap": "#1482 — Resolve the crawler IAM role. Preserve source name/version and provider identity without exposing external IDs.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74258,7 +74313,8 @@
     "aws_securitylake_data_lake": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Represent each configured lake region, replication role, encryption key and metastore role. The lake bucket ARN is a service output.",
+      "issue": 1482,
+      "gap": "#1482 — Represent each configured lake region, replication role, encryption key and metastore role. The lake bucket ARN is a service output.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74339,7 +74395,8 @@
     "aws_securitylake_subscriber": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve custom sources by name/version in scope. Separate subscriber principal from returned bucket and role.",
+      "issue": 1482,
+      "gap": "#1482 — Resolve custom sources by name/version in scope. Separate subscriber principal from returned bucket and role.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74403,7 +74460,8 @@
     "aws_securitylake_subscriber_notification": {
       "status": "Basic-only",
       "priority": "P2",
-      "gap": "Resolve the subscriber and HTTPS notification role when configured. Exclude tokens, authorization headers and generated endpoints.",
+      "issue": 1482,
+      "gap": "#1482 — Resolve the subscriber and HTTPS notification role when configured. Exclude tokens, authorization headers and generated endpoints.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
