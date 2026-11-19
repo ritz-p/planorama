@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::securityhub_integrations::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::securityhub_organization::label(resource, attribute) {
         return Some(label);
     }
@@ -1187,6 +1190,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::securityhub_integrations::annotate(nodes, references, evidence);
     super::securityhub_organization::annotate(nodes, references, evidence);
     super::macie_classification::annotate(nodes, references, evidence);
     super::inspector_assessments::annotate(nodes, references, evidence);
@@ -1294,6 +1298,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::securityhub_integrations::bindings(raw, reference)
         && super::securityhub_organization::bindings(raw, reference)
         && super::macie_classification::bindings(raw, reference)
         && super::inspector_assessments::bindings(raw, reference)
@@ -2040,6 +2045,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::securityhub_integrations::indexed(&node.resource_type, &reference.attribute)
             || super::securityhub_organization::indexed(&node.resource_type, &reference.attribute)
             || super::macie_classification::indexed(&node.resource_type, &reference.attribute)
             || super::inspector_assessments::indexed(&node.resource_type, &reference.attribute)

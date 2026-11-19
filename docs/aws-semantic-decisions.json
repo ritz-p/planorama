@@ -73792,10 +73792,10 @@
       }
     },
     "aws_securityhub_automation_rule_v2": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1481,
-      "gap": "#1481 — Resolve the explicitly configured V2 integration connector. OCSF JSON selectors and finding mutations are opaque.",
+      "gap": "#1481 — Verified configuration references: action.external_integration_configuration.connector_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73807,7 +73807,7 @@
         "placement": "Supported: Logical Policy for the managed securityhub_automation_rule_v2 declaration. Manages a Security Hub V2 automation rule.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_automation_rule_v2.",
-        "references": "Missing: Resolve the explicitly configured V2 integration connector. OCSF JSON selectors and finding mutations are opaque.",
+        "references": "Supported: Verified configuration references: action.external_integration_configuration.connector_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_automation_rule_v2 summaries.",
         "officialDocumentation": "website/docs/r/securityhub_automation_rule_v2.html.markdown",
@@ -73832,7 +73832,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_integrations.rs",
+          "tests/unit/semantic/securityhub_integrations.rs"
         ],
         "managedDataContract": "Managed newAutomationRuleV2Resource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73938,10 +73940,10 @@
       }
     },
     "aws_securityhub_connector_v2": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1481,
-      "gap": "#1481 — Resolve the configured KMS key and Secrets Manager ARN. Provider credentials and connection health are excluded.",
+      "gap": "#1481 — Verified configuration references: kms_key_arn, connector_provider.service_now.secret_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73953,7 +73955,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_connector_v2 declaration. Manages a Security Hub V2 connector.",
         "ownership": "Not applicable: The managed securityhub_connector_v2 declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_connector_v2.",
-        "references": "Missing: Resolve the configured KMS key and Secrets Manager ARN. Provider credentials and connection health are excluded.",
+        "references": "Supported: Verified configuration references: kms_key_arn, connector_provider.service_now.secret_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_connector_v2 summaries.",
         "officialDocumentation": "website/docs/r/securityhub_connector_v2.html.markdown",
@@ -73978,7 +73980,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_integrations.rs",
+          "tests/unit/semantic/securityhub_integrations.rs"
         ],
         "managedDataContract": "Managed newConnectorV2Resource. No same-name data source in 6.70.0.",
         "dataContracts": {}

@@ -217,6 +217,7 @@ pub(crate) mod search;
 pub(crate) mod search_connections;
 pub(crate) mod secondary_network;
 pub(crate) mod secrets_manager;
+pub(crate) mod securityhub_integrations;
 pub(crate) mod securityhub_organization;
 mod serverless_references;
 pub(crate) mod signer_configuration;

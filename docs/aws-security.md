@@ -536,3 +536,7 @@ Macie classification jobs resolve named buckets within the account declared on e
 ## Verify Security Hub central policy and aggregation scope (#1480)
 
 Security Hub policy associations distinguish customer policies, the self-managed sentinel, member accounts, OUs and organization roots. Aggregators show their linking mode and explicit regions. Catalog standards do not become subscription endpoints.
+
+## Verify Security Hub V2 integration references (#1481)
+
+Only the external integration action resolves its configured connector. Connectors resolve their encryption key and the ServiceNow secret ARN. Credentials, finding mutations and OCSF queries are omitted.
