@@ -69493,10 +69493,10 @@
       }
     },
     "aws_verifiedaccess_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1446,
-      "gap": "#1446 — Missing: verify group, certificate, selected LB/ENI/CIDR/RDS option and enabled KMS key. Only an explicit supported RDS ARN identifies an endpoint; returned instance ID or DNS does not.",
+      "gap": "#711 audit: #1446 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69519,11 +69519,11 @@
           "sse_specification.customer_managed_key_enabled",
           "sse_specification.kms_key_arn"
         ],
-        "placement": "Missing: current Logical Node; show application access endpoint from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Endpoint belongs to one group but has independent identity and action.",
-        "network": "Missing: require vpc attachment type, matching endpoint_type and complete same-VPC subnet/SG or verified ENI evidence. Never infer networks from domains or CIDRs.",
-        "references": "Missing: verify group, certificate, selected LB/ENI/CIDR/RDS option and enabled KMS key. Only an explicit supported RDS ARN identifies an endpoint; returned instance ID or DNS does not.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "network": "Supported: Mode-specific subnet or ENI evidence and any configured security groups must identify one VPC.",
+        "references": "Supported: Verified explicit verified_access_group_id, domain_certificate_arn, security_group_ids, load_balancer_options.load_balancer_arn, network_interface_options.network_interface_id, rds_options.rds_db_proxy_arn, rds_options.rds_db_instance_arn, rds_options.rds_db_cluster_arn, rds_options.subnet_ids, load_balancer_options.subnet_ids, cidr_options.subnet_ids, sse_specification.kms_key_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude policy text, DNS and access decisions.",
         "officialDocumentation": "website/docs/r/verifiedaccess_endpoint.html.markdown",
         "shapes": {
@@ -69621,17 +69621,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/verified_access.rs",
+          "tests/unit/semantic/verified_access.rs"
         ],
         "managedDataContract": "Managed registration resourceVerifiedAccessEndpoint. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_verifiedaccess_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1446,
-      "gap": "#1446 — Missing: link instance and explicitly selected customer-managed KMS key under enabled encryption. Preserve group-specific ID output and distinction from endpoint.verified_access_group_id spelling.",
+      "gap": "#711 audit: #1446 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69644,10 +69646,10 @@
           "sse_configuration.kms_key_arn"
         ],
         "placement": "Supported: retain Logical Node presentation for aws_verifiedaccess_group.",
-        "ownership": "Missing: group has one explicit service instance; shared keys and endpoints retain independent identities.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Group membership does not establish VPC containment.",
-        "references": "Missing: link instance and explicitly selected customer-managed KMS key under enabled encryption. Preserve group-specific ID output and distinction from endpoint.verified_access_group_id spelling.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit verifiedaccess_instance_id, sse_configuration.kms_key_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude group policy and access outcomes.",
         "officialDocumentation": "website/docs/r/verifiedaccess_group.html.markdown",
         "shapes": {
@@ -69681,17 +69683,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/verified_access.rs",
+          "tests/unit/semantic/verified_access.rs"
         ],
         "managedDataContract": "Managed registration resourceVerifiedAccessGroup. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_verifiedaccess_instance": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1446,
-      "gap": "#1446 — Missing: independent Verified Access service identity for group, logging and attachment helpers. The returned trust provider collection is not configured membership.",
+      "gap": "#711 audit: #1446 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69701,11 +69705,11 @@
           "fips_enabled",
           "verified_access_trust_providers"
         ],
-        "placement": "Missing: current Logical Node; show regional access service boundary from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Do not embed independently shared trust providers in the instance.",
         "network": "Intentionally unsupported: Verified Access service has no network selector of its own.",
-        "references": "Missing: independent Verified Access service identity for group, logging and attachment helpers. The returned trust provider collection is not configured membership.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Independent regional identity for group, logging and trust provider helpers. The returned provider list never produces attachment nodes.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit computed provider lists and generated DNS information.",
         "officialDocumentation": "website/docs/r/verifiedaccess_instance.html.markdown",
         "shapes": {
@@ -69741,17 +69745,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/verified_access.rs",
+          "tests/unit/semantic/verified_access.rs"
         ],
         "managedDataContract": "Managed registration resourceVerifiedAccessInstance. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_verifiedaccess_instance_logging_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1446,
-      "gap": "#1446 — Missing: verify owning instance and each enabled delivery destination by log group, Firehose stream or S3 bucket name; bucket_owner qualifies cross-account delivery. Disabled branches cannot bind.",
+      "gap": "#711 audit: #1446 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69767,10 +69773,10 @@
           "access_logs.s3.bucket_owner"
         ],
         "placement": "Supported: retain Logical Controller presentation for aws_verifiedaccess_instance_logging_configuration.",
-        "ownership": "Missing: show logging configuration with its verified instance; shared destinations remain independent.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Log delivery conveys no subnet placement.",
-        "references": "Missing: verify owning instance and each enabled delivery destination by log group, Firehose stream or S3 bucket name; bucket_owner qualifies cross-account delivery. Disabled branches cannot bind.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit verifiedaccess_instance_id, access_logs.s3.bucket_name, access_logs.cloudwatch_logs.log_group, access_logs.kinesis_data_firehose.delivery_stream references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude trust context, prefixes and log contents.",
         "officialDocumentation": "website/docs/r/verifiedaccess_instance_logging_configuration.html.markdown",
         "shapes": {
@@ -69828,17 +69834,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/verified_access.rs",
+          "tests/unit/semantic/verified_access.rs"
         ],
         "managedDataContract": "Managed registration resourceVerifiedAccessInstanceLoggingConfiguration. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_verifiedaccess_instance_trust_provider_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1446,
-      "gap": "#1446 — Missing: verify both instance and trust provider IDs; composite attachment id is not either endpoint ID.",
+      "gap": "#711 audit: #1446 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69851,8 +69859,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_verifiedaccess_instance_trust_provider_attachment.",
         "ownership": "Not applicable: Many-to-many attachment retains its own change and shared provider identity.",
         "network": "Intentionally unsupported: Authentication association has no network parent.",
-        "references": "Missing: verify both instance and trust provider IDs; composite attachment id is not either endpoint ID.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit verifiedaccess_instance_id, verifiedaccess_trust_provider_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit claims about authentication success.",
         "officialDocumentation": "website/docs/r/verifiedaccess_instance_trust_provider_attachment.html.markdown",
         "shapes": {
@@ -69876,17 +69884,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/verified_access.rs",
+          "tests/unit/semantic/verified_access.rs"
         ],
         "managedDataContract": "Managed registration resourceVerifiedAccessInstanceTrustProviderAttachment. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_verifiedaccess_trust_provider": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1446,
-      "gap": "#1446 — Missing: link explicitly configured customer-managed KMS ARN only when enabled. User/device and vendor type discriminate external trust configuration, not managed identity endpoints.",
+      "gap": "#711 audit: #1446 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69901,8 +69911,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_verifiedaccess_trust_provider.",
         "ownership": "Not applicable: Trust provider may be shared between service instances.",
         "network": "Intentionally unsupported: Identity provider URLs and tenant IDs have no subnet meaning.",
-        "references": "Missing: link explicitly configured customer-managed KMS ARN only when enabled. User/device and vendor type discriminate external trust configuration, not managed identity endpoints.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit sse_specification.kms_key_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Never display client secrets, OIDC payloads or endpoint credentials.",
         "officialDocumentation": "website/docs/r/verifiedaccess_trust_provider.html.markdown",
         "shapes": {
@@ -69936,7 +69946,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/verified_access.rs",
+          "tests/unit/semantic/verified_access.rs"
         ],
         "managedDataContract": "Managed registration resourceVerifiedAccessTrustProvider. No same-name data registration. No managed alias.",
         "dataContracts": {}

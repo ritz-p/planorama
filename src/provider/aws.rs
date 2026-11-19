@@ -229,6 +229,7 @@ pub(crate) mod transit_attachments;
 pub(crate) mod transit_multicast;
 pub(crate) mod transit_policies;
 pub(crate) mod transit_routes;
+pub(crate) mod verified_access;
 pub(crate) mod verifiedpermissions;
 pub(crate) mod vpclattice;
 pub(crate) mod xray_encryption;
@@ -453,6 +454,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     cognito::present(&raw, &mut graph);
     agentcore_runtime::present(&raw, &mut graph);
     datazone_environments::present(&raw, &mut graph);
+    verified_access::present(&raw, &mut graph);
     site_vpn::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);

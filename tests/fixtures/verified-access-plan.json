@@ -1,0 +1,347 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_verifiedaccess_endpoint.sample0",
+      "mode": "managed",
+      "type": "aws_verifiedaccess_endpoint",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_type": "cidr",
+          "attachment_type": "vpc",
+          "verified_access_group_id": "vagr-1",
+          "cidr_options": [
+            {
+              "subnet_ids": [
+                "subnet-va"
+              ]
+            }
+          ],
+          "security_group_ids": [
+            "sg-va"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedaccess_group.sample1",
+      "mode": "managed",
+      "type": "aws_verifiedaccess_group",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "verifiedaccess_group_id": "vagr-1",
+          "verifiedaccess_instance_id": "vai-1"
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedaccess_instance.sample2",
+      "mode": "managed",
+      "type": "aws_verifiedaccess_instance",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vai-1"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample3",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-va",
+          "vpc_id": "vpc-va"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample4",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-va"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.sample5",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-va",
+          "vpc_id": "vpc-va"
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedaccess_instance_logging_configuration.sample6",
+      "mode": "managed",
+      "type": "aws_verifiedaccess_instance_logging_configuration",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "access_logs": [
+            {
+              "s3": [
+                {
+                  "enabled": true,
+                  "bucket_name": "access-logs"
+                }
+              ]
+            }
+          ],
+          "verifiedaccess_instance_id": "vai-1"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample7",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "access-logs"
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedaccess_instance_trust_provider_attachment.sample8",
+      "mode": "managed",
+      "type": "aws_verifiedaccess_instance_trust_provider_attachment",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "verifiedaccess_instance_id": "vai-1",
+          "verifiedaccess_trust_provider_id": "vatp-1"
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedaccess_trust_provider.sample9",
+      "mode": "managed",
+      "type": "aws_verifiedaccess_trust_provider",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vatp-1"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_verifiedaccess_endpoint.sample0",
+          "mode": "managed",
+          "type": "aws_verifiedaccess_endpoint",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "verified_access_group_id": {
+              "references": [
+                "aws_verifiedaccess_group.sample1.verifiedaccess_group_id"
+              ]
+            },
+            "cidr_options": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.sample3.id"
+                  ]
+                }
+              }
+            ],
+            "security_group_ids": {
+              "references": [
+                "aws_security_group.sample5.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_verifiedaccess_group.sample1",
+          "mode": "managed",
+          "type": "aws_verifiedaccess_group",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "verifiedaccess_instance_id": {
+              "references": [
+                "aws_verifiedaccess_instance.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_verifiedaccess_instance.sample2",
+          "mode": "managed",
+          "type": "aws_verifiedaccess_instance",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.sample3",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample4.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample4",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_security_group.sample5",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample4.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_verifiedaccess_instance_logging_configuration.sample6",
+          "mode": "managed",
+          "type": "aws_verifiedaccess_instance_logging_configuration",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "verifiedaccess_instance_id": {
+              "references": [
+                "aws_verifiedaccess_instance.sample2.id"
+              ]
+            },
+            "access_logs": [
+              {
+                "s3": [
+                  {
+                    "bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.sample7.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample7",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_verifiedaccess_instance_trust_provider_attachment.sample8",
+          "mode": "managed",
+          "type": "aws_verifiedaccess_instance_trust_provider_attachment",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "verifiedaccess_instance_id": {
+              "references": [
+                "aws_verifiedaccess_instance.sample2.id"
+              ]
+            },
+            "verifiedaccess_trust_provider_id": {
+              "references": [
+                "aws_verifiedaccess_trust_provider.sample9.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_verifiedaccess_trust_provider.sample9",
+          "mode": "managed",
+          "type": "aws_verifiedaccess_trust_provider",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

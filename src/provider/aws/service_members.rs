@@ -242,6 +242,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Transit policy table",
                 "Policy entries",
             ),
+            "aws_verifiedaccess_group" => (
+                "verifiedaccess_instance_id",
+                "Verified Access instance",
+                "Access groups",
+            ),
+            "aws_verifiedaccess_instance_logging_configuration" => (
+                "verifiedaccess_instance_id",
+                "Verified Access instance",
+                "Log delivery",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -637,6 +647,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 node.resource_type.as_str(),
                 "aws_ec2_transit_gateway_metering_policy_entry"
                     | "aws_ec2_transit_gateway_policy_table_entry"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_verifiedaccess_group" | "aws_verifiedaccess_instance_logging_configuration"
             )
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"
