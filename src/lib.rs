@@ -9,6 +9,9 @@ mod benchmarks;
 mod classification;
 #[cfg(not(target_arch = "wasm32"))]
 mod cli;
+#[cfg(test)]
+#[path = "../tests/support/configured_service_links.rs"]
+mod configured_service_links;
 mod coverage;
 mod html;
 mod icons;
