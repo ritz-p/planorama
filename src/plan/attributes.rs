@@ -203,8 +203,9 @@ fn collect_expressions(
                 }
                 if include_indexed {
                     resource_expressions.indexed.extend(
-                        indexed_paths(expression, name, &[]).into_iter().map(
-                            |(path, (refs, complete, lengths))| {
+                        indexed_paths(expression, name, &[], &mut resource_expressions.root_nulls)
+                            .into_iter()
+                            .map(|(path, (refs, complete, lengths))| {
                                 (
                                     path,
                                     (
@@ -215,8 +216,7 @@ fn collect_expressions(
                                         lengths,
                                     ),
                                 )
-                            },
-                        ),
+                            }),
                     );
                 }
             }
@@ -243,9 +243,17 @@ fn collect_expressions(
     }
 }
 
-fn indexed_paths(value: &Value, path: &str, lengths: &[usize]) -> IndexedExpressionPaths {
+fn indexed_paths(
+    value: &Value,
+    path: &str,
+    lengths: &[usize],
+    nulls: &mut BTreeSet<String>,
+) -> IndexedExpressionPaths {
     match value {
         Value::Object(fields) if super::references::expression_object(fields) => {
+            if fields.get("constant_value").is_some_and(Value::is_null) {
+                nulls.insert(path.to_owned());
+            }
             nested_paths(value, path)
                 .into_iter()
                 .map(|(path, (refs, complete))| (path, (refs, complete, lengths.to_vec())))
@@ -253,7 +261,9 @@ fn indexed_paths(value: &Value, path: &str, lengths: &[usize]) -> IndexedExpress
         }
         Value::Object(fields) => fields
             .iter()
-            .flat_map(|(name, value)| indexed_paths(value, &format!("{path}.{name}"), lengths))
+            .flat_map(|(name, value)| {
+                indexed_paths(value, &format!("{path}.{name}"), lengths, nulls)
+            })
             .collect(),
         Value::Array(values) => {
             let mut nested = lengths.to_vec();
@@ -262,7 +272,7 @@ fn indexed_paths(value: &Value, path: &str, lengths: &[usize]) -> IndexedExpress
                 .iter()
                 .enumerate()
                 .flat_map(|(index, value)| {
-                    indexed_paths(value, &format!("{path}.{index}"), &nested)
+                    indexed_paths(value, &format!("{path}.{index}"), &nested, nulls)
                 })
                 .collect()
         }

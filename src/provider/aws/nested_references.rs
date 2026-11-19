@@ -1,6 +1,6 @@
 use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
 use serde_json::Value;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
 fn current(node: &TerraformEntity, mode: EntityMode) -> bool {
     node.provider.is_aws()
@@ -146,8 +146,106 @@ pub(super) fn verify_collections(
         r,
         fields,
         valid,
-        (collections, leaf_values, EntityMode::Managed),
+        (
+            NestedBlocks::Indexed(collections),
+            leaf_values,
+            EntityMode::Managed,
+        ),
     )
+}
+
+#[derive(Clone, Copy)]
+pub(super) enum NestedBlocks<'a> {
+    Indexed(&'a [&'a str]),
+    ScalarSet,
+}
+
+fn endpoint_value<'a>(
+    reference: &AttributeReference,
+    source: usize,
+    evidence: &[(&'a Value, &Value)],
+    outputs: &[&str],
+) -> Option<&'a str> {
+    let attrs = reference.source_attributes_by_instance.get(&source)?;
+    let output = attrs.first()?;
+    if attrs.len() != 1 || !outputs.contains(&output.as_str()) {
+        return None;
+    }
+    super::service_evidence::known(evidence, source, output)
+}
+
+fn verify_scalar_set(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+    fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
+    valid: impl Fn(usize, &str) -> bool,
+    mode: EntityMode,
+) -> Option<()> {
+    let (block_name, field) = r.attribute.split_once('.')?;
+    let (v, mask) = evidence[r.target];
+    if !block(v, mask, block_name, usize::MAX) {
+        return None;
+    }
+    let count = v[block_name].as_array()?.len();
+    let path = |index| format!("{block_name}.{index}.{field}");
+    let mut expected = BTreeMap::new();
+    for index in 0..count {
+        let attribute = path(index);
+        let mut matches = refs
+            .iter()
+            .filter(|leaf| leaf.target == r.target && leaf.attribute == attribute);
+        let Some(leaf) = matches.next() else { continue };
+        if matches.next().is_some() || leaf.indexed_block_lengths != [count] {
+            return None;
+        }
+        if leaf.root_constant_null {
+            continue;
+        }
+        let [source] = *leaf.sources.as_slice() else {
+            return None;
+        };
+        let endpoint = &nodes[source];
+        if !leaf.complete
+            || !leaf.instances_explicit
+            || !leaf.issues.is_empty()
+            || source == r.target
+            || !current(endpoint, mode)
+        {
+            return None;
+        }
+        let outputs = fields(
+            &nodes[r.target].resource_type,
+            &r.attribute,
+            super::aliases::entity_type(endpoint),
+        );
+        let id = endpoint_value(leaf, source, evidence, outputs)?;
+        let (owner, occurrences) = expected.entry(id).or_insert((source, 0usize));
+        if *owner != source {
+            return None;
+        }
+        *occurrences += 1;
+    }
+    if expected.is_empty()
+        || expected.values().map(|(s, _)| *s).collect::<BTreeSet<_>>()
+            != r.sources.iter().copied().collect()
+    {
+        return None;
+    }
+    for index in 0..count {
+        let attribute = path(index);
+        let actual = value(v, mask, &attribute)?;
+        if actual.is_null() {
+            continue;
+        }
+        let (source, remaining) = expected.get_mut(actual.as_str()?)?;
+        *remaining = remaining.checked_sub(1)?;
+        if !valid(*source, &attribute) {
+            return None;
+        }
+    }
+    expected.values().all(|(_, n)| *n == 0).then_some(())
 }
 
 pub(super) type DecodeLeaf = for<'a> fn(&str, &'a Value) -> Option<BTreeSet<&'a str>>;
@@ -159,7 +257,7 @@ pub(super) fn verify_values(
     r: &AttributeReference,
     fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
     valid: impl Fn(usize, &str) -> bool,
-    (collections, decode, endpoint_mode): (&[&str], DecodeLeaf, EntityMode),
+    (blocks, decode, endpoint_mode): (NestedBlocks, DecodeLeaf, EntityMode),
 ) -> Option<()> {
     let node = &nodes[r.target];
     if !current(node, EntityMode::Managed) || !r.issues.is_empty() || !r.instances_explicit {
@@ -173,6 +271,9 @@ pub(super) fn verify_values(
     {
         return None;
     }
+    let NestedBlocks::Indexed(collections) = blocks else {
+        return verify_scalar_set(nodes, refs, evidence, r, fields, valid, endpoint_mode);
+    };
     let (value, mask) = evidence[r.target];
     let mut leaves = Vec::new();
     rows(
@@ -219,15 +320,7 @@ pub(super) fn verify_values(
                 &r.attribute,
                 super::aliases::entity_type(endpoint),
             );
-            let attrs = reference.source_attributes_by_instance.get(&source)?;
-            let outputs_by_instance = attrs.iter().collect::<Vec<_>>();
-            let [output] = outputs_by_instance.as_slice() else {
-                return None;
-            };
-            if !outputs.contains(&output.as_str()) {
-                return None;
-            }
-            let expected_value = super::service_evidence::known(evidence, source, output)?;
+            let expected_value = endpoint_value(reference, source, evidence, outputs)?;
             if !expected.insert(expected_value) {
                 return None;
             }

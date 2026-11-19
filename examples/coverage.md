@@ -31,7 +31,7 @@ Excluded resource instances: 0.
 | unresolved | 0 | 0 |
 | ambiguous | 0 | 0 |
 | dynamic | 0 | 0 |
-| unavailable&#95;endpoint | 0 | 0 |
+| unavailable&#95;endpoint | 2 | 2 |
 | classification | 0 | 0 |
 | scope | 10 | 10 |
 | drift | 0 | 0 |
@@ -66,7 +66,7 @@ Excluded resource instances: 0.
 | unresolved | 0 | 0 |
 | ambiguous | 0 | 0 |
 | dynamic | 0 | 0 |
-| unavailable&#95;endpoint | 0 | 0 |
+| unavailable&#95;endpoint | 2 | 2 |
 | classification | 0 | 0 |
 | scope | 10 | 10 |
 | drift | 0 | 0 |

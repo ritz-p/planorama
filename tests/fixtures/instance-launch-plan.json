@@ -1,0 +1,245 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_instance.sample0",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "ami": "ami-1",
+          "iam_instance_profile": "app",
+          "placement_group_id": "pg-1",
+          "capacity_reservation_specification": [
+            {
+              "capacity_reservation_target": [
+                {
+                  "capacity_reservation_id": "cr-1"
+                }
+              ]
+            }
+          ],
+          "id": "i-1",
+          "ebs_block_device": [
+            {
+              "snapshot_id": "snap-1"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ami.sample1",
+      "mode": "managed",
+      "type": "aws_ami",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ami-1"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_instance_profile.sample2",
+      "mode": "managed",
+      "type": "aws_iam_instance_profile",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "app"
+        }
+      }
+    },
+    {
+      "address": "aws_placement_group.sample3",
+      "mode": "managed",
+      "type": "aws_placement_group",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "placement_group_id": "pg-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_capacity_reservation.sample4",
+      "mode": "managed",
+      "type": "aws_ec2_capacity_reservation",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cr-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_instance_state.sample5",
+      "mode": "managed",
+      "type": "aws_ec2_instance_state",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_id": "i-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_snapshot.sample6",
+      "mode": "managed",
+      "type": "aws_ebs_snapshot",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "snap-1"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_instance.sample0",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ami": {
+              "references": [
+                "aws_ami.sample1.id"
+              ]
+            },
+            "iam_instance_profile": {
+              "references": [
+                "aws_iam_instance_profile.sample2.name"
+              ]
+            },
+            "placement_group_id": {
+              "references": [
+                "aws_placement_group.sample3.placement_group_id"
+              ]
+            },
+            "capacity_reservation_specification": [
+              {
+                "capacity_reservation_target": [
+                  {
+                    "capacity_reservation_id": {
+                      "references": [
+                        "aws_ec2_capacity_reservation.sample4.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "ebs_block_device": [
+              {
+                "snapshot_id": {
+                  "references": [
+                    "aws_ebs_snapshot.sample6.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ami.sample1",
+          "mode": "managed",
+          "type": "aws_ami",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_instance_profile.sample2",
+          "mode": "managed",
+          "type": "aws_iam_instance_profile",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_placement_group.sample3",
+          "mode": "managed",
+          "type": "aws_placement_group",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_capacity_reservation.sample4",
+          "mode": "managed",
+          "type": "aws_ec2_capacity_reservation",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_instance_state.sample5",
+          "mode": "managed",
+          "type": "aws_ec2_instance_state",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_id": {
+              "references": [
+                "aws_instance.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ebs_snapshot.sample6",
+          "mode": "managed",
+          "type": "aws_ebs_snapshot",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

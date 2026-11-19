@@ -11,13 +11,23 @@ pub(super) struct Rule {
     decoder: Option<nested_references::DecodeLeaf>,
     explicit_destination: bool,
     endpoint_mode: crate::model::EntityMode,
-    pub blocks: &'static [&'static str],
+    blocks: nested_references::NestedBlocks<'static>,
 }
 
 impl Rule {
     pub fn with_explicit_destination(mut self) -> Self {
         self.explicit_destination = true;
         self
+    }
+
+    pub fn scalar_set(
+        label: &'static str,
+        outputs: &'static [(&'static str, &'static [&'static str])],
+    ) -> Self {
+        Self {
+            blocks: nested_references::NestedBlocks::ScalarSet,
+            ..Self::new(label, outputs, false, &[])
+        }
     }
 
     pub fn data_source(mut self) -> Self {
@@ -42,7 +52,7 @@ impl Rule {
             decoder: None,
             explicit_destination: false,
             endpoint_mode: crate::model::EntityMode::Managed,
-            blocks,
+            blocks: nested_references::NestedBlocks::Indexed(blocks),
         }
     }
 }
@@ -69,6 +79,11 @@ impl Evidence<'_> {
                 self.absent(node, &format!("{base}.{other}"))
             }
         })
+    }
+    pub fn has_argument(&self, node: usize, path: &str) -> bool {
+        self.refs
+            .iter()
+            .any(|r| r.target == node && r.attribute == path && !r.root_constant_null)
     }
     pub fn absent(&self, node: usize, path: &str) -> bool {
         self.value(node, path).is_some_and(|v| {

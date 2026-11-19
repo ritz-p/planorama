@@ -196,6 +196,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("pipeline_id", "Data Pipeline", "Definitions")
             }
             "aws_ami_launch_permission" => ("image_id", "Image", "Launch permissions"),
+            "aws_ec2_instance_state" => ("instance_id", "Managed instance", "State management"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -572,6 +573,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 | "aws_keyspaces_table"
         ) || super::ipam::owner(&node.resource_type).is_some()
             || matches!(node.resource_type.as_str(), "aws_ami_launch_permission")
+            || matches!(node.resource_type.as_str(), "aws_ec2_instance_state")
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"
             || matches!(
