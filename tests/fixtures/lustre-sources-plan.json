@@ -1,0 +1,114 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_fsx_backup.sample0",
+      "mode": "managed",
+      "type": "aws_fsx_backup",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "backup-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_fsx_lustre_file_system.sample1",
+      "mode": "managed",
+      "type": "aws_fsx_lustre_file_system",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "backup_id": "backup-fixture",
+          "log_configuration": [
+            {
+              "destination": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fsx/fixture",
+              "level": "WARN_ERROR"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.sample2",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fsx/fixture",
+          "name": "/aws/fsx/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_fsx_backup.sample0",
+          "mode": "managed",
+          "type": "aws_fsx_backup",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fsx_lustre_file_system.sample1",
+          "mode": "managed",
+          "type": "aws_fsx_lustre_file_system",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "backup_id": {
+              "references": [
+                "aws_fsx_backup.sample0.id"
+              ]
+            },
+            "log_configuration": [
+              {
+                "destination": {
+                  "references": [
+                    "aws_cloudwatch_log_group.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_group.sample2",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

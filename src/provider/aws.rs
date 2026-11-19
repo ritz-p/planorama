@@ -116,6 +116,7 @@ pub(crate) mod lambda_core;
 pub(crate) mod lambda_events;
 pub(crate) mod lambda_policy;
 pub(crate) mod lambda_qualified;
+pub(crate) mod lustre_sources;
 mod members;
 mod memorydb;
 mod messaging;
