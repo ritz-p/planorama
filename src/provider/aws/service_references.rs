@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::batch_configuration::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::signer_configuration::label(resource, attribute) {
         return Some(label);
     }
@@ -1073,6 +1076,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::batch_configuration::annotate(nodes, references, evidence);
     super::signer_configuration::annotate(nodes, references, evidence);
     super::paymentcryptography_configuration::annotate(nodes, references, evidence);
     super::cloudhsm_configuration::annotate(nodes, references, evidence);
@@ -1142,6 +1146,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::batch_configuration::bindings(raw, reference)
         && super::signer_configuration::bindings(raw, reference)
         && super::paymentcryptography_configuration::bindings(raw, reference)
         && super::cloudhsm_configuration::bindings(raw, reference)
@@ -1850,6 +1855,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::batch_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::signer_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::paymentcryptography_configuration::indexed(
                 &node.resource_type,

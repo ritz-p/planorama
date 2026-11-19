@@ -27,6 +27,7 @@ pub(crate) mod backup_restore;
 mod backup_vaults;
 mod basic;
 mod batch;
+pub(crate) mod batch_configuration;
 pub(crate) mod beanstalk_configuration;
 pub(crate) mod bedrock_agents;
 pub(crate) mod bedrock_models;

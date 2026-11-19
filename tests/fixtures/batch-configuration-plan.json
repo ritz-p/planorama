@@ -1,0 +1,355 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_batch_compute_environment.sample0",
+      "mode": "managed",
+      "type": "aws_batch_compute_environment",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "MANAGED",
+          "service_role": "arn:aws:iam::123456789012:role/batch",
+          "eks_configuration": [
+            {
+              "eks_cluster_arn": "arn:aws:eks:us-east-1:123456789012:cluster/batch",
+              "kubernetes_namespace": "batch"
+            }
+          ],
+          "compute_resources": [
+            {
+              "type": "SPOT",
+              "instance_role": "arn:aws:iam::123456789012:instance-profile/batch",
+              "spot_iam_fleet_role": "arn:aws:iam::123456789012:role/spot",
+              "launch_template": [
+                {
+                  "launch_template_id": "lt-fixture"
+                }
+              ],
+              "ec2_configuration": [
+                {
+                  "image_type": "EKS_AL2",
+                  "image_id_override": "ami-fixture"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample1",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/batch"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/spot"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_instance_profile.sample3",
+      "mode": "managed",
+      "type": "aws_iam_instance_profile",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:instance-profile/batch"
+        }
+      }
+    },
+    {
+      "address": "aws_eks_cluster.sample4",
+      "mode": "managed",
+      "type": "aws_eks_cluster",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:eks:us-east-1:123456789012:cluster/batch"
+        }
+      }
+    },
+    {
+      "address": "aws_launch_template.sample5",
+      "mode": "managed",
+      "type": "aws_launch_template",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "lt-fixture",
+          "name": "fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ami.sample6",
+      "mode": "managed",
+      "type": "aws_ami",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ami-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_batch_compute_environment.sample7",
+      "mode": "managed",
+      "type": "aws_batch_compute_environment",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "UNMANAGED",
+          "service_role": "arn:aws:iam::123456789012:role/batch",
+          "eks_configuration": [
+            {
+              "eks_cluster_arn": "arn:aws:eks:us-east-1:123456789012:cluster/batch",
+              "kubernetes_namespace": "batch"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_batch_compute_environment.sample8",
+      "mode": "managed",
+      "type": "aws_batch_compute_environment",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "MANAGED",
+          "compute_resources": [
+            {
+              "type": "EC2",
+              "launch_template": [
+                {
+                  "launch_template_name": "fixture"
+                }
+              ],
+              "image_id": "ami-fixture"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_batch_compute_environment.sample0",
+          "mode": "managed",
+          "type": "aws_batch_compute_environment",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_role": {
+              "references": [
+                "aws_iam_role.sample1.arn"
+              ]
+            },
+            "eks_configuration": [
+              {
+                "eks_cluster_arn": {
+                  "references": [
+                    "aws_eks_cluster.sample4.arn"
+                  ]
+                }
+              }
+            ],
+            "compute_resources": [
+              {
+                "instance_role": {
+                  "references": [
+                    "aws_iam_instance_profile.sample3.arn"
+                  ]
+                },
+                "spot_iam_fleet_role": {
+                  "references": [
+                    "aws_iam_role.sample2.arn"
+                  ]
+                },
+                "launch_template": [
+                  {
+                    "launch_template_id": {
+                      "references": [
+                        "aws_launch_template.sample5.id"
+                      ]
+                    }
+                  }
+                ],
+                "ec2_configuration": [
+                  {
+                    "image_id_override": {
+                      "references": [
+                        "aws_ami.sample6.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample1",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.sample2",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_instance_profile.sample3",
+          "mode": "managed",
+          "type": "aws_iam_instance_profile",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_eks_cluster.sample4",
+          "mode": "managed",
+          "type": "aws_eks_cluster",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_launch_template.sample5",
+          "mode": "managed",
+          "type": "aws_launch_template",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ami.sample6",
+          "mode": "managed",
+          "type": "aws_ami",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_batch_compute_environment.sample7",
+          "mode": "managed",
+          "type": "aws_batch_compute_environment",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_role": {
+              "references": [
+                "aws_iam_role.sample1.arn"
+              ]
+            },
+            "eks_configuration": [
+              {
+                "eks_cluster_arn": {
+                  "references": [
+                    "aws_eks_cluster.sample4.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_batch_compute_environment.sample8",
+          "mode": "managed",
+          "type": "aws_batch_compute_environment",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "compute_resources": [
+              {
+                "launch_template": [
+                  {
+                    "launch_template_name": {
+                      "references": [
+                        "aws_launch_template.sample5.name"
+                      ]
+                    }
+                  }
+                ],
+                "image_id": {
+                  "references": [
+                    "aws_ami.sample6.id"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
