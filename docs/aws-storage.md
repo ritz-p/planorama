@@ -493,3 +493,12 @@ ARN, IAM role ARN, and audit log destination ARN. Windows associations accept
 an FSx Windows ARN and a CloudWatch Logs or S3 audit ARN. KMS references require
 known enabled encryption. Prefixed storage locations retain ordinary Terraform
 provenance unless an exact managed output matches.
+
+## FSx Lustre backup and logging
+
+The configured `backup_id` links to a matching explicit `aws_fsx_backup.id`.
+`log_configuration.destination` links to a matching CloudWatch Logs ARN
+when the singleton block selects a supported enabled level and the log
+group name starts with `/aws/fsx`. Unverified evidence retains Terraform
+provenance where available. Network placement and filesystem encryption
+have separate evidence rules.

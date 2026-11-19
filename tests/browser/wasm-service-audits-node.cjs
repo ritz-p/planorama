@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"lustre-sources-plan","focus":"aws_fsx_lustre_file_system.sample1","target":0,"mask":{"id":true}},
   {"fixture":"storagegateway-config-plan","focus":"aws_storagegateway_gateway.sample0","target":0,"mask":{"arn":true}},
   {"fixture":"kendra-index-plan","focus":"aws_kendra_experience.sample5","target":3,"mask":{"data_source_id":true}},
   {"fixture":"qbusiness-application-plan","focus":"aws_qbusiness_application.sample1","target":0,"mask":{"customer_master_key_spec":true}},

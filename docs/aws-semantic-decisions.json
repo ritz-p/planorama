@@ -1393,7 +1393,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 702,
-      "gap": "Implemented #702: complete known explicit subnet/SG IDs, persistent-only KMS Key ARN and common-VPC placement; independent filesystem card and conservative fallback. See aws.md#fsx-lustre-networking-and-encryption-702. #720 review preserves the historical baseline; source-backup/logging #825 and other FSx variants #826 remain separate. Import/export paths, mount endpoints and filesystem content are excluded.",
+      "gap": "#720 audit: #825 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -1415,7 +1415,7 @@
         "placement": "Supported: retain Spatial default in classification.rs/basic_entries.rs and runtime resource-support.md; independent architecture identity.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Missing: #702 verified common-VPC context from complete subnet/SG collections; computed vpc_id alone is insufficient.",
-        "references": "Missing: #702 complete subnet/SG IDs and KMS ARN (PERSISTENT_1/PERSISTENT_2). Auxiliary backup_id/log destination belong to #825; import/export S3 URIs are not endpoint proof. Follow-up #825.",
+        "references": "Supported: Explicit source backup ID and enabled, typed log destination. Network and encryption remain scoped to #702.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Deferred: deployment/storage/encryption modes require variant-specific applicability and unknown-value tests before a bounded summary; no mount endpoints, passwords, quotas or filesystem content.",
         "officialDocumentation": "website/docs/r/fsx_lustre_file_system.html.markdown",
@@ -1480,7 +1480,11 @@
           "export_path": "optional/computed"
         },
         "managedData": "No same-name registered data source in pinned schema; managed contract only.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/lustre_sources.rs",
+          "tests/unit/semantic/lustre_sources.rs"
+        ]
       }
     },
     "aws_msk_cluster": {
