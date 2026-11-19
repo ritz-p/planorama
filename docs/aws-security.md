@@ -552,3 +552,7 @@ Region Switch plans verify their execution role, alarm and workflow references a
 ## Verify explicit FIS template and account references (#1484)
 
 FIS templates identify the execution role, explicit typed target ARNs, CloudWatch stop alarms, logging and report destinations. Target account configurations verify the template ID and the role in the specified account. Resource filters and action parameters remain opaque.
+
+## Verify Firewall Manager policy scopes and resource sets (#1485)
+
+Firewall Manager policies reference resource set IDs and distinguish included and excluded accounts and OUs. An explicit administrator account resolves by its Organizations ID. Policy JSON, resource type selectors and tag matching do not enumerate workloads.

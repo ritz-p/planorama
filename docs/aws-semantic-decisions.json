@@ -75210,10 +75210,10 @@
       }
     },
     "aws_fms_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1485,
-      "gap": "#1485 — Resolve an explicitly supplied delegated administrator. An omitted account ID is not evidence for another account node.",
+      "gap": "#1485 — Verified configuration references: account_id.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75224,7 +75224,7 @@
         "placement": "Supported: Logical Node for the managed fms_admin_account declaration. Provides a resource to associate/disassociate an AWS Firewall Manager administrator account",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
-        "references": "Missing: Resolve an explicitly supplied delegated administrator. An omitted account ID is not evidence for another account node.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_admin_account summaries.",
         "officialDocumentation": "website/docs/r/fms_admin_account.html.markdown",
@@ -75243,17 +75243,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/firewall_manager.rs",
+          "tests/unit/semantic/firewall_manager.rs"
         ],
         "managedDataContract": "Managed resourceAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_fms_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1485,
-      "gap": "#1485 — Resolve resource-set IDs and separately qualified account/OU include and exclude scopes. Treat managed_service_data as opaque.",
+      "gap": "#1485 — Verified configuration references: resource_set_ids, include_map.account, include_map.orgunit, exclude_map.account, exclude_map.orgunit.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75269,7 +75271,7 @@
         "placement": "Supported: Logical Policy for the managed fms_policy declaration. Provides a resource to create an AWS Firewall Manager policy",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
-        "references": "Missing: Resolve resource-set IDs and separately qualified account/OU include and exclude scopes. Treat managed_service_data as opaque.",
+        "references": "Supported: Verified configuration references: resource_set_ids, include_map.account, include_map.orgunit, exclude_map.account, exclude_map.orgunit.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_policy summaries.",
         "officialDocumentation": "website/docs/r/fms_policy.html.markdown",
@@ -75328,7 +75330,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/firewall_manager.rs",
+          "tests/unit/semantic/firewall_manager.rs"
         ],
         "managedDataContract": "Managed resourcePolicy. No same-name data source in 6.70.0.",
         "dataContracts": {}
