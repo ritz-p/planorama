@@ -2,9 +2,9 @@ use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
 use serde_json::Value;
 use std::collections::BTreeSet;
 
-fn current(node: &TerraformEntity) -> bool {
+fn current(node: &TerraformEntity, mode: EntityMode) -> bool {
     node.provider.is_aws()
-        && node.mode == EntityMode::Managed
+        && node.mode == mode
         && node.action != Action::Delete
         && node.deposed_key.is_none()
 }
@@ -146,7 +146,7 @@ pub(super) fn verify_collections(
         r,
         fields,
         valid,
-        (collections, leaf_values),
+        (collections, leaf_values, EntityMode::Managed),
     )
 }
 
@@ -159,10 +159,10 @@ pub(super) fn verify_values(
     r: &AttributeReference,
     fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
     valid: impl Fn(usize, &str) -> bool,
-    (collections, decode): (&[&str], DecodeLeaf),
+    (collections, decode, endpoint_mode): (&[&str], DecodeLeaf, EntityMode),
 ) -> Option<()> {
     let node = &nodes[r.target];
-    if !current(node) || !r.issues.is_empty() || !r.instances_explicit {
+    if !current(node, EntityMode::Managed) || !r.issues.is_empty() || !r.instances_explicit {
         return None;
     }
     if refs
@@ -211,7 +211,7 @@ pub(super) fn verify_values(
         let mut expected = BTreeSet::new();
         for &source in &reference.sources {
             let endpoint = &nodes[source];
-            if source == r.target || !current(endpoint) || !valid(source, &path) {
+            if source == r.target || !current(endpoint, endpoint_mode) || !valid(source, &path) {
                 return None;
             }
             let outputs = fields(

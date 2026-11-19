@@ -1,0 +1,127 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_capacity_reservation.sample0",
+      "mode": "managed",
+      "type": "aws_ec2_capacity_reservation",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "placement_group_arn": "arn:aws:ec2:us-east-1:123456789012:placement-group/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_placement_group.sample1",
+      "mode": "managed",
+      "type": "aws_placement_group",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:placement-group/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_host.sample2",
+      "mode": "managed",
+      "type": "aws_ec2_host",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "outpost_arn": "arn:aws:outposts:us-east-1:123456789012:outpost/op-fixture"
+        }
+      }
+    },
+    {
+      "address": "data.aws_outposts_outpost.sample3",
+      "mode": "data",
+      "type": "aws_outposts_outpost",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:outposts:us-east-1:123456789012:outpost/op-fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_capacity_reservation.sample0",
+          "mode": "managed",
+          "type": "aws_ec2_capacity_reservation",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "placement_group_arn": {
+              "references": [
+                "aws_placement_group.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_placement_group.sample1",
+          "mode": "managed",
+          "type": "aws_placement_group",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_host.sample2",
+          "mode": "managed",
+          "type": "aws_ec2_host",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "outpost_arn": {
+              "references": [
+                "data.aws_outposts_outpost.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "data.aws_outposts_outpost.sample3",
+          "mode": "data",
+          "type": "aws_outposts_outpost",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

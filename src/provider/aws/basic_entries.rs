@@ -562,7 +562,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_ec2_client_vpn_route", "Amazon VPC", Connector, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_ec2_default_credit_specification", "Amazon EC2", Controller, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_fleet", "Amazon EC2", Controller, Logical, Regional, Some(ResourceIcon::Ec2)),
-    entry!("aws_ec2_host", "Amazon EC2", Node, Logical, Regional, Some(ResourceIcon::Ec2)),
+    entry!("aws_ec2_host", "Amazon EC2", Node, Spatial, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_image_block_public_access", "Amazon EC2", Policy, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_instance_connect_endpoint", "Amazon EC2", Connector, Spatial, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_instance_metadata_defaults", "Amazon EC2", Node, Logical, Regional, Some(ResourceIcon::Ec2)),

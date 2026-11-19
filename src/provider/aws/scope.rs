@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::ec2_capacity::resource(resource)
         && !super::ebs_provenance::resource(resource)
         && !super::ec2_images::resource(resource)
         && resource != "aws_finspace_kx_environment"
@@ -444,7 +445,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     let region = if global {
         None
     } else if basic.is_some_and(|entry| entry.scope == super::basic::Scope::Regional)
-        || (entity.mode == EntityMode::Data && resource == "aws_ssoadmin_instances")
+        || (entity.mode == EntityMode::Data
+            && matches!(resource, "aws_ssoadmin_instances" | "aws_outposts_outpost"))
         || entity.waf_scope == Some(crate::model::WafScope::Regional)
         || matches!(
             resource,
