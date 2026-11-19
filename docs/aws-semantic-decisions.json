@@ -65052,6 +65052,2283 @@
           "tests/unit/semantic/verifiedpermissions.rs"
         ]
       }
+    },
+    "aws_ami": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1432,
+      "gap": "#1432 — Missing: link configured per-device EBS snapshot IDs. Computed root_snapshot_id does not establish ownership. Batch and launch-configuration consumers already accept AMI identities.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "ebs_block_device.snapshot_id",
+          "root_snapshot_id",
+          "owner_id",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ami.",
+        "ownership": "Not applicable: Independent image available to multiple consumers.",
+        "network": "Intentionally unsupported: No subnet follows from a backing snapshot.",
+        "references": "Missing: link configured per-device EBS snapshot IDs. Computed root_snapshot_id does not establish ownership. Batch and launch-configuration consumers already accept AMI identities.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Exclude UEFI data and image manifests.",
+        "officialDocumentation": "website/docs/r/ami.html.markdown",
+        "shapes": {
+          "ebs_block_device.snapshot_id": [
+            "set",
+            "string"
+          ],
+          "root_snapshot_id": [
+            "string"
+          ],
+          "owner_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "ebs_block_device.snapshot_id": "optional",
+          "root_snapshot_id": "computed",
+          "owner_id": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/batch_configuration.rs",
+          "tests/unit/semantic/batch_configuration.rs",
+          "src/provider/aws/autoscaling_network.rs",
+          "tests/unit/semantic/autoscaling_network.rs"
+        ],
+        "managedDataContract": "Managed registration resourceAMI. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "allow_unsafe_filter": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "executable_users": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "include_deprecated": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "most_recent": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "name_regex": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "owners": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "uefi_data": {
+            "shape": "string",
+            "contract": "optional"
+          }
+        }
+      }
+    },
+    "aws_ami_copy": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1432,
+      "gap": "#1432 — Missing: match the source image in the explicit source region and the destination encryption key in the copy region. Require independent evidence for cross-account sharing.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_ami_id",
+          "source_ami_region",
+          "encrypted",
+          "kms_key_id",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ami_copy.",
+        "ownership": "Not applicable: Copy has its own image identity.",
+        "network": "Intentionally unsupported: An Outpost destination does not identify a VPC.",
+        "references": "Missing: match the source image in the explicit source region and the destination encryption key in the copy region. Require independent evidence for cross-account sharing.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude copy progress and computed block devices.",
+        "officialDocumentation": "website/docs/r/ami_copy.html.markdown",
+        "shapes": {
+          "source_ami_id": [
+            "string"
+          ],
+          "source_ami_region": [
+            "string"
+          ],
+          "encrypted": [
+            "bool"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "source_ami_id": "required",
+          "source_ami_region": "required",
+          "encrypted": "optional",
+          "kms_key_id": "optional/computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/batch_configuration.rs",
+          "tests/unit/semantic/batch_configuration.rs"
+        ],
+        "managedDataContract": "Managed registration resourceAMICopy. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ami_from_instance": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1432,
+      "gap": "#1432 — Missing: link source_instance_id to a managed instance ID. Resulting snapshots are outputs of image creation.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_instance_id",
+          "snapshot_without_reboot",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ami_from_instance.",
+        "ownership": "Not applicable: Image survives its source instance.",
+        "network": "Intentionally unsupported: Do not inherit the source instance subnet.",
+        "references": "Missing: link source_instance_id to a managed instance ID. Resulting snapshots are outputs of image creation.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Reboot preference does not establish application consistency.",
+        "officialDocumentation": "website/docs/r/ami_from_instance.html.markdown",
+        "shapes": {
+          "source_instance_id": [
+            "string"
+          ],
+          "snapshot_without_reboot": [
+            "bool"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "source_instance_id": "required",
+          "snapshot_without_reboot": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/batch_configuration.rs",
+          "tests/unit/semantic/batch_configuration.rs"
+        ],
+        "managedDataContract": "Managed registration resourceAMIFromInstance. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ami_launch_permission": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1432,
+      "gap": "#1432 — Missing: link the image and explicitly selected Organization or OU ARN. Account ID and public group are grantee selectors, never IAM principals inferred from strings.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "image_id",
+          "account_id",
+          "group",
+          "organization_arn",
+          "organizational_unit_arn"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ami_launch_permission.",
+        "ownership": "Missing: identify the owning image from image_id before grouping the grant; preserve the permission action.",
+        "network": "Intentionally unsupported: Image permissions have no network boundary.",
+        "references": "Missing: link the image and explicitly selected Organization or OU ARN. Account ID and public group are grantee selectors, never IAM principals inferred from strings.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude effective access and organization membership expansion.",
+        "officialDocumentation": "website/docs/r/ami_launch_permission.html.markdown",
+        "shapes": {
+          "image_id": [
+            "string"
+          ],
+          "account_id": [
+            "string"
+          ],
+          "group": [
+            "string"
+          ],
+          "organization_arn": [
+            "string"
+          ],
+          "organizational_unit_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "image_id": "required",
+          "account_id": "optional",
+          "group": "optional",
+          "organization_arn": "optional",
+          "organizational_unit_arn": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceAMILaunchPermission. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ebs_default_kms_key": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Missing: link the configured regional default key by exact KMS ARN. No fan-out to every encrypted volume.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "key_arn"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ebs_default_kms_key.",
+        "ownership": "Not applicable: Regional account setting, shared by future creations.",
+        "network": "Intentionally unsupported: A key establishes no subnet placement.",
+        "references": "Missing: link the configured regional default key by exact KMS ARN. No fan-out to every encrypted volume.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not assert that existing disks use the default.",
+        "officialDocumentation": "website/docs/r/ebs_default_kms_key.html.markdown",
+        "shapes": {
+          "key_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "key_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSDefaultKMSKey. Separate same-name lookup; configurable data attributes are listed separately. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ebs_encryption_by_default": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: the regional enabled switch has no resource selector.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "enabled"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ebs_encryption_by_default.",
+        "ownership": "Not applicable: One account/region default, no child volumes.",
+        "network": "Intentionally unsupported: Encryption has no network boundary.",
+        "references": "Not applicable: the regional enabled switch has no resource selector.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Keep logical setting; revisit an enabled badge only for a regional defaults view.",
+        "officialDocumentation": "website/docs/r/ebs_encryption_by_default.html.markdown",
+        "shapes": {
+          "enabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "enabled": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSEncryptionByDefault. Separate same-name lookup; configurable data attributes are listed separately. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ebs_fast_snapshot_restore": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Missing: link snapshot_id to a snapshot producer in the same region; availability_zone qualifies the request.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "snapshot_id",
+          "availability_zone",
+          "state"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ebs_fast_snapshot_restore.",
+        "ownership": "Not applicable: Restore setting is qualified by snapshot and AZ.",
+        "network": "Intentionally unsupported: AZ is not a subnet.",
+        "references": "Missing: link snapshot_id to a snapshot producer in the same region; availability_zone qualifies the request.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude computed activation/readiness state.",
+        "officialDocumentation": "website/docs/r/ebs_fast_snapshot_restore.html.markdown",
+        "shapes": {
+          "snapshot_id": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "snapshot_id": "required",
+          "availability_zone": "required",
+          "state": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newEBSFastSnapshotRestoreResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ebs_snapshot": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Missing: link the configured source volume ID; kms_key_id is computed here and describes inherited encryption.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "volume_id",
+          "kms_key_id",
+          "owner_id",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ebs_snapshot.",
+        "ownership": "Not applicable: Independent snapshot can outlive the volume.",
+        "network": "Intentionally unsupported: Source volume does not place the snapshot in a subnet.",
+        "references": "Missing: link the configured source volume ID; kms_key_id is computed here and describes inherited encryption.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude storage contents and restore status.",
+        "officialDocumentation": "website/docs/r/ebs_snapshot.html.markdown",
+        "shapes": {
+          "volume_id": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "owner_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "volume_id": "required",
+          "kms_key_id": "computed",
+          "owner_id": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/storagegateway.rs",
+          "tests/unit/semantic/storagegateway.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSSnapshot. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "most_recent": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "owners": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "restorable_by_user_ids": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "snapshot_ids": {
+            "shape": [
+              "list",
+              "string"
+            ],
+            "contract": "optional"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ebs_snapshot_block_public_access": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: account/region public-sharing setting selects no snapshot.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "state"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ebs_snapshot_block_public_access.",
+        "ownership": "Not applicable: No individual snapshot owner.",
+        "network": "Intentionally unsupported: Account setting has no VPC boundary.",
+        "references": "Not applicable: account/region public-sharing setting selects no snapshot.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Preserve state as configuration only; no effective visibility or public-access verdict.",
+        "officialDocumentation": "website/docs/r/ebs_snapshot_block_public_access.html.markdown",
+        "shapes": {
+          "state": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "state": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSSnapshotBlockPublicAccess. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ebs_snapshot_copy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Missing: match the source snapshot in source_region and destination KMS key in the copy region. The returned volume_id is not a selected source volume.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_snapshot_id",
+          "source_region",
+          "encrypted",
+          "kms_key_id",
+          "volume_id"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ebs_snapshot_copy.",
+        "ownership": "Not applicable: Independent destination snapshot.",
+        "network": "Intentionally unsupported: Do not inherit source location or attached networks.",
+        "references": "Missing: match the source snapshot in source_region and destination KMS key in the copy region. The returned volume_id is not a selected source volume.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit transfer progress and snapshot contents.",
+        "officialDocumentation": "website/docs/r/ebs_snapshot_copy.html.markdown",
+        "shapes": {
+          "source_snapshot_id": [
+            "string"
+          ],
+          "source_region": [
+            "string"
+          ],
+          "encrypted": [
+            "bool"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "volume_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "source_snapshot_id": "required",
+          "source_region": "required",
+          "encrypted": "optional",
+          "kms_key_id": "optional",
+          "volume_id": "computed"
+        },
+        "sourceContracts": {
+          "volume_id": {
+            "file": "internal/service/ec2/ebs_snapshot_copy.go",
+            "token": "\"volume_id\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSSnapshotCopy. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ebs_snapshot_import": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Missing: verify the nested import bucket, explicit import IAM role name and destination key. URL and object key are not evidence of an independently managed object.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "disk_container.user_bucket.s3_bucket",
+          "disk_container.user_bucket.s3_key",
+          "role_name",
+          "encrypted",
+          "kms_key_id"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ebs_snapshot_import.",
+        "ownership": "Not applicable: The imported snapshot is independent of its source bucket.",
+        "network": "Intentionally unsupported: A disk file does not locate a subnet.",
+        "references": "Missing: verify the nested import bucket, explicit import IAM role name and destination key. URL and object key are not evidence of an independently managed object.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Never expose signed URLs or object paths.",
+        "officialDocumentation": "website/docs/r/ebs_snapshot_import.html.markdown",
+        "shapes": {
+          "disk_container.user_bucket.s3_bucket": [
+            "list",
+            "list",
+            "string"
+          ],
+          "disk_container.user_bucket.s3_key": [
+            "list",
+            "list",
+            "string"
+          ],
+          "role_name": [
+            "string"
+          ],
+          "encrypted": [
+            "bool"
+          ],
+          "kms_key_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "disk_container.user_bucket.s3_bucket": "required",
+          "disk_container.user_bucket.s3_key": "required",
+          "role_name": "optional",
+          "encrypted": "optional",
+          "kms_key_id": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSSnapshotImport. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ebs_volume": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Partial: #498 verifies incoming attachments. Missing: source snapshot ID and explicitly configured KMS key with known encryption mode; computed defaults alone do not bind.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "snapshot_id",
+          "kms_key_id",
+          "availability_zone",
+          "multi_attach_enabled",
+          "arn"
+        ],
+        "placement": "Supported: retain Spatial Node presentation for aws_ebs_volume.",
+        "ownership": "Not applicable: Volume remains independently visible with zero or multiple attachments.",
+        "network": "Supported: #498 keeps the volume outside instance subnet containment.",
+        "references": "Partial: #498 verifies incoming attachments. Missing: source snapshot ID and explicitly configured KMS key with known encryption mode; computed defaults alone do not bind.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Device paths and observed mount state are excluded.",
+        "officialDocumentation": "website/docs/r/ebs_volume.html.markdown",
+        "shapes": {
+          "snapshot_id": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "multi_attach_enabled": [
+            "bool"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "snapshot_id": "optional/computed",
+          "kms_key_id": "optional/computed",
+          "availability_zone": "required",
+          "multi_attach_enabled": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/associations.rs",
+          "tests/unit/semantic/ebs.rs"
+        ],
+        "managedDataContract": "Managed registration resourceEBSVolume. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "most_recent": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ebs_volume_copy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1433,
+      "gap": "#1433 — Missing: match a source volume by ID; preserve the new volume identity separately from attachment identity. Review an independent volume card alongside #498.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "source_volume_id",
+          "availability_zone",
+          "id"
+        ],
+        "placement": "Missing: current Logical Node; show independent copied volume, matching the existing EBS volume presentation from independently proven scope.",
+        "ownership": "Not applicable: Copy is separately addressable from source.",
+        "network": "Intentionally unsupported: Computed AZ gives no VPC or subnet.",
+        "references": "Missing: match a source volume by ID; preserve the new volume identity separately from attachment identity. Review an independent volume card alongside #498.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Ignore completion state and performance estimates.",
+        "officialDocumentation": "website/docs/r/ebs_volume_copy.html.markdown",
+        "shapes": {
+          "source_volume_id": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "source_volume_id": "required",
+          "availability_zone": "computed",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newEBSVolumeCopyResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_allowed_images_settings": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Intentionally unsupported: provider/name criteria may contain patterns or account selectors and do not identify managed AMIs.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "state",
+          "image_criterion.image_providers",
+          "image_criterion.image_names"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_allowed_images_settings.",
+        "ownership": "Not applicable: Account image policy has no unique image owner.",
+        "network": "Intentionally unsupported: Selection criteria imply no subnet.",
+        "references": "Intentionally unsupported: provider/name criteria may contain patterns or account selectors and do not identify managed AMIs.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude allow/deny evaluation and enumerated matching images.",
+        "officialDocumentation": "website/docs/r/ec2_allowed_images_settings.html.markdown",
+        "shapes": {
+          "state": [
+            "string"
+          ],
+          "image_criterion.image_providers": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "image_criterion.image_names": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "state": "required",
+          "image_criterion.image_providers": "optional",
+          "image_criterion.image_names": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newAllowedImagesSettingsResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_availability_zone_group": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: group_name selects an AWS zone group, without a managed group endpoint.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "group_name",
+          "opt_in_status"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_availability_zone_group.",
+        "ownership": "Not applicable: Regional opt-in is not a VPC owner.",
+        "network": "Intentionally unsupported: Zone-group opt-in does not place workloads.",
+        "references": "Not applicable: group_name selects an AWS zone group, without a managed group endpoint.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Defer opt-in badges until a regional enrollment view needs them.",
+        "officialDocumentation": "website/docs/r/ec2_availability_zone_group.html.markdown",
+        "shapes": {
+          "group_name": [
+            "string"
+          ],
+          "opt_in_status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "group_name": "required",
+          "opt_in_status": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceAvailabilityZoneGroup. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_capacity_block_reservation": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Intentionally unsupported: offering ID is a purchase selector, not a managed reservation or placement group; placement_group_arn and AZ are returned by EC2.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "capacity_block_offering_id",
+          "instance_platform",
+          "placement_group_arn",
+          "availability_zone"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_capacity_block_reservation.",
+        "ownership": "Not applicable: Purchased capacity is independent of the instances consuming it.",
+        "network": "Intentionally unsupported: Computed zone does not identify a subnet.",
+        "references": "Intentionally unsupported: offering ID is a purchase selector, not a managed reservation or placement group; placement_group_arn and AZ are returned by EC2.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not expose prices or infer running capacity.",
+        "officialDocumentation": "website/docs/r/ec2_capacity_block_reservation.html.markdown",
+        "shapes": {
+          "capacity_block_offering_id": [
+            "string"
+          ],
+          "instance_platform": [
+            "string"
+          ],
+          "placement_group_arn": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "capacity_block_offering_id": "required",
+          "instance_platform": "required",
+          "placement_group_arn": "computed",
+          "availability_zone": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newCapacityBlockReservationResource. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_capacity_reservation": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1434,
+      "gap": "#1434 — Missing: link configured placement-group ARN; verify Outpost registration/mode separately before accepting an Outpost ARN. Keep reservations independent of launches.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "placement_group_arn",
+          "outpost_arn",
+          "availability_zone",
+          "instance_type",
+          "instance_count"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_capacity_reservation.",
+        "ownership": "Not applicable: Shared reserved capacity, no embedded instances.",
+        "network": "Intentionally unsupported: AZ and Outpost are location qualifiers, not subnet IDs.",
+        "references": "Missing: link configured placement-group ARN; verify Outpost registration/mode separately before accepting an Outpost ARN. Keep reservations independent of launches.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not infer free capacity or utilization.",
+        "officialDocumentation": "website/docs/r/ec2_capacity_reservation.html.markdown",
+        "shapes": {
+          "placement_group_arn": [
+            "string"
+          ],
+          "outpost_arn": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "instance_type": [
+            "string"
+          ],
+          "instance_count": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "placement_group_arn": "optional",
+          "outpost_arn": "optional",
+          "availability_zone": "required",
+          "instance_type": "required",
+          "instance_count": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceCapacityReservation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_default_credit_specification": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: family/default credit mode selects no individual instance.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_family",
+          "cpu_credits"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_default_credit_specification.",
+        "ownership": "Not applicable: One default per instance family in the region.",
+        "network": "Intentionally unsupported: CPU credit defaults have no network scope.",
+        "references": "Not applicable: family/default credit mode selects no individual instance.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit balance, cost and actual CPU usage.",
+        "officialDocumentation": "website/docs/r/ec2_default_credit_specification.html.markdown",
+        "shapes": {
+          "instance_family": [
+            "string"
+          ],
+          "cpu_credits": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_family": "required",
+          "cpu_credits": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newDefaultCreditSpecificationResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_fleet": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1435,
+      "gap": "#1435 — Missing: verify template ID or name per configuration and subnet per override. Returned instance IDs are fulfillment observations.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "launch_template_config.launch_template_specification.launch_template_id",
+          "launch_template_config.launch_template_specification.launch_template_name",
+          "launch_template_config.launch_template_specification.version",
+          "launch_template_config.override.subnet_id",
+          "fleet_instance_set.instance_ids"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_fleet.",
+        "ownership": "Not applicable: Fleet controller manages requests; output members do not prove Terraform-owned instances.",
+        "network": "Intentionally unsupported: Override subnets are alternative launch choices, never a single parent.",
+        "references": "Missing: verify template ID or name per configuration and subnet per override. Returned instance IDs are fulfillment observations.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude fleet health, fulfillment and pricing.",
+        "officialDocumentation": "website/docs/r/ec2_fleet.html.markdown",
+        "shapes": {
+          "launch_template_config.launch_template_specification.launch_template_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "launch_template_config.launch_template_specification.launch_template_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "launch_template_config.launch_template_specification.version": [
+            "list",
+            "list",
+            "string"
+          ],
+          "launch_template_config.override.subnet_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "fleet_instance_set.instance_ids": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "launch_template_config.launch_template_specification.launch_template_id": "optional",
+          "launch_template_config.launch_template_specification.launch_template_name": "optional",
+          "launch_template_config.launch_template_specification.version": "required",
+          "launch_template_config.override.subnet_id": "optional",
+          "fleet_instance_set.instance_ids": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceFleet. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_host": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1434,
+      "gap": "#1434 — Missing: review independent dedicated host card and exact configured Outpost ARN if endpoint evidence exists; callers can select host_id. Family and instance type are alternative capabilities.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "outpost_arn",
+          "availability_zone",
+          "instance_type",
+          "instance_family"
+        ],
+        "placement": "Missing: current Logical Node; show dedicated compute host with independent identity from independently proven scope.",
+        "ownership": "Not applicable: Host may be shared across launches; no children inferred.",
+        "network": "Intentionally unsupported: Host AZ is not a VPC or subnet.",
+        "references": "Missing: review independent dedicated host card and exact configured Outpost ARN if endpoint evidence exists; callers can select host_id. Family and instance type are alternative capabilities.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude utilization, capacity and host reachability.",
+        "officialDocumentation": "website/docs/r/ec2_host.html.markdown",
+        "shapes": {
+          "outpost_arn": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "instance_type": [
+            "string"
+          ],
+          "instance_family": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "outpost_arn": "optional",
+          "availability_zone": "required",
+          "instance_type": "optional",
+          "instance_family": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceHost. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "host_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_image_block_public_access": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: image-sharing block setting has no image endpoint.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "state"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_image_block_public_access.",
+        "ownership": "Not applicable: Regional account policy is independent of AMIs.",
+        "network": "Intentionally unsupported: No network placement for a regional policy.",
+        "references": "Not applicable: image-sharing block setting has no image endpoint.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude claims about effective image sharing.",
+        "officialDocumentation": "website/docs/r/ec2_image_block_public_access.html.markdown",
+        "shapes": {
+          "state": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "state": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceImageBlockPublicAccess. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_instance_metadata_defaults": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: account defaults contain no instance selector or launch reference.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "http_tokens",
+          "http_endpoint",
+          "http_put_response_hop_limit",
+          "instance_metadata_tags"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_instance_metadata_defaults.",
+        "ownership": "Not applicable: Do not attach defaults to every instance.",
+        "network": "Intentionally unsupported: Metadata endpoint settings do not establish VPC membership.",
+        "references": "Not applicable: account defaults contain no instance selector or launch reference.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit effective per-instance metadata configuration.",
+        "officialDocumentation": "website/docs/r/ec2_instance_metadata_defaults.html.markdown",
+        "shapes": {
+          "http_tokens": [
+            "string"
+          ],
+          "http_endpoint": [
+            "string"
+          ],
+          "http_put_response_hop_limit": [
+            "number"
+          ],
+          "instance_metadata_tags": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "http_tokens": "optional/computed",
+          "http_endpoint": "optional/computed",
+          "http_put_response_hop_limit": "optional/computed",
+          "instance_metadata_tags": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newInstanceMetadataDefaultsResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_instance_state": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1436,
+      "gap": "#1436 — Missing: explicit instance ID identifies the target of a requested state change; action is independent of the instance resource.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "state",
+          "force"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_instance_state.",
+        "ownership": "Missing: preserve the state helper identity when presenting it with its uniquely selected instance.",
+        "network": "Intentionally unsupported: State management does not inherit the subnet.",
+        "references": "Missing: explicit instance ID identifies the target of a requested state change; action is independent of the instance resource.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Desired state is not observed power state.",
+        "officialDocumentation": "website/docs/r/ec2_instance_state.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ],
+          "force": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "state": "required",
+          "force": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceInstanceState. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_serial_console_access": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Not applicable: regional serial-console access switch has no managed endpoint.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "enabled"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_serial_console_access.",
+        "ownership": "Not applicable: Account setting selects no instance.",
+        "network": "Intentionally unsupported: Management access does not identify a network path.",
+        "references": "Not applicable: regional serial-console access switch has no managed endpoint.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not infer login capability for any principal.",
+        "officialDocumentation": "website/docs/r/ec2_serial_console_access.html.markdown",
+        "shapes": {
+          "enabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "enabled": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceSerialConsoleAccess. Separate same-name lookup; configurable data attributes are listed separately. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_tag": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Intentionally unsupported: resource_id is polymorphic. Revisit with an explicit EC2 target/output allowlist and a concrete navigation use case; arbitrary tags do not identify managed types.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_id",
+          "key",
+          "value"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_ec2_tag.",
+        "ownership": "Not applicable: Independent tag change; a key/value does not prove an owner.",
+        "network": "Intentionally unsupported: Tags are never subnet evidence.",
+        "references": "Intentionally unsupported: resource_id is polymorphic. Revisit with an explicit EC2 target/output allowlist and a concrete navigation use case; arbitrary tags do not identify managed types.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude arbitrary keys and values.",
+        "officialDocumentation": "website/docs/r/ec2_tag.html.markdown",
+        "shapes": {
+          "resource_id": [
+            "string"
+          ],
+          "key": [
+            "string"
+          ],
+          "value": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_id": "required",
+          "key": "required",
+          "value": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTag. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_instance": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1436,
+      "gap": "#1436 — Partial: AMI/profile have reference labels; subnet, security groups and incoming EBS attachment have dedicated behavior. Missing: verify typed image/profile, template ID/name, key, host, group name vs group ID, reservation, explicit interfaces and backing snapshot/key. Deprecated network_interface differs from primary_network_interface.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "ami",
+          "iam_instance_profile",
+          "key_name",
+          "subnet_id",
+          "vpc_security_group_ids",
+          "launch_template.id",
+          "launch_template.name",
+          "launch_template.version",
+          "primary_network_interface.network_interface_id",
+          "network_interface.network_interface_id",
+          "secondary_network_interface.secondary_subnet_id",
+          "placement_group",
+          "placement_group_id",
+          "host_id",
+          "capacity_reservation_specification.capacity_reservation_target.capacity_reservation_id",
+          "ebs_block_device.snapshot_id",
+          "ebs_block_device.kms_key_id",
+          "root_block_device.kms_key_id"
+        ],
+        "placement": "Supported: retain Spatial Node presentation for aws_instance.",
+        "ownership": "Not applicable: Instance is independently tracked; inline disks create no managed volume.",
+        "network": "Supported: subnet_id containment and VPC security-group membership. Explicit interfaces require separate proof and must not replace the parent with an inferred subnet.",
+        "references": "Partial: AMI/profile have reference labels; subnet, security groups and incoming EBS attachment have dedicated behavior. Missing: verify typed image/profile, template ID/name, key, host, group name vs group ID, reservation, explicit interfaces and backing snapshot/key. Deprecated network_interface differs from primary_network_interface.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Exclude user data, password data and runtime state.",
+        "officialDocumentation": "website/docs/r/instance.html.markdown",
+        "shapes": {
+          "ami": [
+            "string"
+          ],
+          "iam_instance_profile": [
+            "string"
+          ],
+          "key_name": [
+            "string"
+          ],
+          "subnet_id": [
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "launch_template.id": [
+            "list",
+            "string"
+          ],
+          "launch_template.name": [
+            "list",
+            "string"
+          ],
+          "launch_template.version": [
+            "list",
+            "string"
+          ],
+          "primary_network_interface.network_interface_id": [
+            "list",
+            "string"
+          ],
+          "network_interface.network_interface_id": [
+            "set",
+            "string"
+          ],
+          "secondary_network_interface.secondary_subnet_id": [
+            "set",
+            "string"
+          ],
+          "placement_group": [
+            "string"
+          ],
+          "placement_group_id": [
+            "string"
+          ],
+          "host_id": [
+            "string"
+          ],
+          "capacity_reservation_specification.capacity_reservation_target.capacity_reservation_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "ebs_block_device.snapshot_id": [
+            "set",
+            "string"
+          ],
+          "ebs_block_device.kms_key_id": [
+            "set",
+            "string"
+          ],
+          "root_block_device.kms_key_id": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "ami": "optional/computed",
+          "iam_instance_profile": "optional/computed",
+          "key_name": "optional/computed",
+          "subnet_id": "optional/computed",
+          "vpc_security_group_ids": "optional/computed",
+          "launch_template.id": "optional/computed",
+          "launch_template.name": "optional/computed",
+          "launch_template.version": "optional",
+          "primary_network_interface.network_interface_id": "required",
+          "network_interface.network_interface_id": "required",
+          "secondary_network_interface.secondary_subnet_id": "required",
+          "placement_group": "optional/computed",
+          "placement_group_id": "optional/computed",
+          "host_id": "optional/computed",
+          "capacity_reservation_specification.capacity_reservation_target.capacity_reservation_id": "optional",
+          "ebs_block_device.snapshot_id": "optional/computed",
+          "ebs_block_device.kms_key_id": "optional/computed",
+          "root_block_device.kms_key_id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/containment.rs",
+          "tests/unit/semantic/containment.rs",
+          "src/provider/aws/security_groups.rs",
+          "tests/unit/semantic/security_groups.rs",
+          "src/provider/aws/eni.rs",
+          "tests/unit/semantic/eni.rs",
+          "src/provider/aws/associations.rs",
+          "tests/unit/semantic/ebs.rs"
+        ],
+        "managedDataContract": "Managed registration resourceInstance. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "get_password_data": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "get_user_data": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "instance_tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_key_pair": {
+      "status": "Partial",
+      "priority": "P3",
+      "gap": "Not applicable: the key pair is a shared launch target. Resolve requests at callers by known key_name; never match a prefix or key_pair_id as a name.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "key_name",
+          "key_name_prefix",
+          "key_pair_id"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_key_pair.",
+        "ownership": "Not applicable: Shared credential identity, no instance owner.",
+        "network": "Intentionally unsupported: Key pairs have no network containment.",
+        "references": "Not applicable: the key pair is a shared launch target. Resolve requests at callers by known key_name; never match a prefix or key_pair_id as a name.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude public key bytes and fingerprint.",
+        "officialDocumentation": "website/docs/r/key_pair.html.markdown",
+        "shapes": {
+          "key_name": [
+            "string"
+          ],
+          "key_name_prefix": [
+            "string"
+          ],
+          "key_pair_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "key_name": "optional/computed",
+          "key_name_prefix": "optional/computed",
+          "key_pair_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/autoscaling_network.rs",
+          "tests/unit/semantic/autoscaling_network.rs"
+        ],
+        "managedDataContract": "Managed registration resourceKeyPair. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "include_public_key": {
+            "shape": "bool",
+            "contract": "optional"
+          },
+          "key_name": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "key_pair_id": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_launch_template": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1437,
+      "gap": "#1437 — Partial: Auto Scaling and Batch template consumers already exist (#361, #816). Missing: verify configured image, profile name/ARN, key pair, host/group, reservation, explicit interface and subnet/SG collection, disk snapshot/key and license configuration ARN per nested item. SSM image selectors are not AMI IDs.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "image_id",
+          "key_name",
+          "iam_instance_profile.name",
+          "iam_instance_profile.arn",
+          "network_interfaces.subnet_id",
+          "network_interfaces.network_interface_id",
+          "network_interfaces.security_groups",
+          "vpc_security_group_ids",
+          "placement.group_id",
+          "placement.group_name",
+          "placement.host_id",
+          "block_device_mappings.ebs.snapshot_id",
+          "block_device_mappings.ebs.kms_key_id",
+          "capacity_reservation_specification.capacity_reservation_target.capacity_reservation_id",
+          "secondary_interfaces.secondary_subnet_id",
+          "license_specification.license_configuration_arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_launch_template.",
+        "ownership": "Not applicable: Reusable definition, shared by fleets and instances.",
+        "network": "Intentionally unsupported: Network options describe future launches and do not place the template.",
+        "references": "Partial: Auto Scaling and Batch template consumers already exist (#361, #816). Missing: verify configured image, profile name/ARN, key pair, host/group, reservation, explicit interface and subnet/SG collection, disk snapshot/key and license configuration ARN per nested item. SSM image selectors are not AMI IDs.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Exclude user data, tags and interpretation of symbolic version selectors.",
+        "officialDocumentation": "website/docs/r/launch_template.html.markdown",
+        "shapes": {
+          "image_id": [
+            "string"
+          ],
+          "key_name": [
+            "string"
+          ],
+          "iam_instance_profile.name": [
+            "list",
+            "string"
+          ],
+          "iam_instance_profile.arn": [
+            "list",
+            "string"
+          ],
+          "network_interfaces.subnet_id": [
+            "list",
+            "string"
+          ],
+          "network_interfaces.network_interface_id": [
+            "list",
+            "string"
+          ],
+          "network_interfaces.security_groups": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "placement.group_id": [
+            "list",
+            "string"
+          ],
+          "placement.group_name": [
+            "list",
+            "string"
+          ],
+          "placement.host_id": [
+            "list",
+            "string"
+          ],
+          "block_device_mappings.ebs.snapshot_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "block_device_mappings.ebs.kms_key_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "capacity_reservation_specification.capacity_reservation_target.capacity_reservation_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "secondary_interfaces.secondary_subnet_id": [
+            "list",
+            "string"
+          ],
+          "license_specification.license_configuration_arn": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "image_id": "optional",
+          "key_name": "optional",
+          "iam_instance_profile.name": "optional",
+          "iam_instance_profile.arn": "optional",
+          "network_interfaces.subnet_id": "optional",
+          "network_interfaces.network_interface_id": "optional",
+          "network_interfaces.security_groups": "optional",
+          "vpc_security_group_ids": "optional",
+          "placement.group_id": "optional",
+          "placement.group_name": "optional",
+          "placement.host_id": "optional",
+          "block_device_mappings.ebs.snapshot_id": "optional",
+          "block_device_mappings.ebs.kms_key_id": "optional",
+          "capacity_reservation_specification.capacity_reservation_target.capacity_reservation_id": "optional",
+          "secondary_interfaces.secondary_subnet_id": "optional",
+          "license_specification.license_configuration_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/autoscaling_network.rs",
+          "tests/unit/semantic/autoscaling_network.rs",
+          "src/provider/aws/batch_configuration.rs",
+          "tests/unit/semantic/batch_configuration.rs"
+        ],
+        "managedDataContract": "Managed registration resourceLaunchTemplate. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_placement_group": {
+      "status": "Partial",
+      "priority": "P3",
+      "gap": "Not applicable: group supplies distinct name, ID and ARN to launch/reservation callers. No members are configured on the group.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "placement_group_id",
+          "arn",
+          "strategy"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_placement_group.",
+        "ownership": "Not applicable: Shared scheduling group, no embedded workloads.",
+        "network": "Intentionally unsupported: Scheduling locality does not identify a subnet.",
+        "references": "Not applicable: group supplies distinct name, ID and ARN to launch/reservation callers. No members are configured on the group.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Defer strategy display until a scheduling comparison is required.",
+        "officialDocumentation": "website/docs/r/placement_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "placement_group_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "strategy": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "placement_group_id": "computed",
+          "arn": "computed",
+          "strategy": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/autoscaling_network.rs",
+          "tests/unit/semantic/autoscaling_network.rs"
+        ],
+        "managedDataContract": "Managed registration resourcePlacementGroup. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_snapshot_create_volume_permission": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1432,
+      "gap": "#1432 — Missing: verify the selected snapshot ID. The numeric recipient is an AWS account selector, not an inferred IAM resource.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "snapshot_id",
+          "account_id"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_snapshot_create_volume_permission.",
+        "ownership": "Not applicable: Grant is qualified by snapshot and recipient.",
+        "network": "Intentionally unsupported: Permission does not place recipient resources.",
+        "references": "Missing: verify the selected snapshot ID. The numeric recipient is an AWS account selector, not an inferred IAM resource.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude derived access and policy conclusions.",
+        "officialDocumentation": "website/docs/r/snapshot_create_volume_permission.html.markdown",
+        "shapes": {
+          "snapshot_id": [
+            "string"
+          ],
+          "account_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "snapshot_id": "required",
+          "account_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceSnapshotCreateVolumePermission. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_spot_datafeed_subscription": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1435,
+      "gap": "#1435 — Missing: link explicit S3 bucket name to a compatible bucket; prefix only selects a delivery location.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bucket",
+          "prefix"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_spot_datafeed_subscription.",
+        "ownership": "Not applicable: Subscription is a regional account setting, not a bucket child.",
+        "network": "Intentionally unsupported: Bucket destination provides no subnet.",
+        "references": "Missing: link explicit S3 bucket name to a compatible bucket; prefix only selects a delivery location.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit delivery prefixes, filenames and billing data.",
+        "officialDocumentation": "website/docs/r/spot_datafeed_subscription.html.markdown",
+        "shapes": {
+          "bucket": [
+            "string"
+          ],
+          "prefix": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "bucket": "required",
+          "prefix": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceSpotDataFeedSubscription. Separate same-name lookup; configurable data attributes are listed separately. No managed alias.",
+        "dataContracts": {
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_spot_fleet_request": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1435,
+      "gap": "#1435 — Missing: link fleet role, classic LB names or target group ARNs and mode-specific launch inputs. Direct launch specifications conflict with template configurations; do not split literal subnet lists into proven references.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "iam_fleet_role",
+          "load_balancers",
+          "target_group_arns",
+          "launch_specification.ami",
+          "launch_specification.subnet_id",
+          "launch_specification.vpc_security_group_ids",
+          "launch_specification.iam_instance_profile_arn",
+          "launch_specification.key_name",
+          "launch_template_config.launch_template_specification.id",
+          "launch_template_config.launch_template_specification.name",
+          "launch_template_config.overrides.subnet_id"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_spot_fleet_request.",
+        "ownership": "Not applicable: Fleet request owns no managed instances by observed fulfillment.",
+        "network": "Intentionally unsupported: Launch alternatives are network references, not fleet containment.",
+        "references": "Missing: link fleet role, classic LB names or target group ARNs and mode-specific launch inputs. Direct launch specifications conflict with template configurations; do not split literal subnet lists into proven references.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit bids, capacity fulfillment and rendered user data.",
+        "officialDocumentation": "website/docs/r/spot_fleet_request.html.markdown",
+        "shapes": {
+          "iam_fleet_role": [
+            "string"
+          ],
+          "load_balancers": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "target_group_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "launch_specification.ami": [
+            "set",
+            "string"
+          ],
+          "launch_specification.subnet_id": [
+            "set",
+            "string"
+          ],
+          "launch_specification.vpc_security_group_ids": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "launch_specification.iam_instance_profile_arn": [
+            "set",
+            "string"
+          ],
+          "launch_specification.key_name": [
+            "set",
+            "string"
+          ],
+          "launch_template_config.launch_template_specification.id": [
+            "set",
+            "list",
+            "string"
+          ],
+          "launch_template_config.launch_template_specification.name": [
+            "set",
+            "list",
+            "string"
+          ],
+          "launch_template_config.overrides.subnet_id": [
+            "set",
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "iam_fleet_role": "required",
+          "load_balancers": "optional/computed",
+          "target_group_arns": "optional/computed",
+          "launch_specification.ami": "required",
+          "launch_specification.subnet_id": "optional/computed",
+          "launch_specification.vpc_security_group_ids": "optional/computed",
+          "launch_specification.iam_instance_profile_arn": "optional",
+          "launch_specification.key_name": "optional/computed",
+          "launch_template_config.launch_template_specification.id": "optional",
+          "launch_template_config.launch_template_specification.name": "optional",
+          "launch_template_config.overrides.subnet_id": "optional/computed"
+        },
+        "sourceContracts": {
+          "launch_specification.ami": {
+            "file": "internal/service/ec2/ec2_spot_fleet_request.go",
+            "token": "\"ami\""
+          },
+          "launch_specification.vpc_security_group_ids": {
+            "file": "internal/service/ec2/ec2_spot_fleet_request.go",
+            "token": "names.AttrVPCSecurityGroupIDs: {"
+          },
+          "launch_specification.key_name": {
+            "file": "internal/service/ec2/ec2_spot_fleet_request.go",
+            "token": "\"key_name\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceSpotFleetRequest. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_spot_instance_request": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1435,
+      "gap": "#1435 — Missing: verify configured AMI, subnet, profile, key, security groups and selected launch template under the legacy Spot request contract. spot_instance_id is fulfillment output.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "ami",
+          "subnet_id",
+          "key_name",
+          "iam_instance_profile",
+          "launch_template.id",
+          "launch_template.name",
+          "vpc_security_group_ids",
+          "spot_instance_id",
+          "spot_type"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_spot_instance_request.",
+        "ownership": "Not applicable: Request is distinct from the instance AWS may create.",
+        "network": "Intentionally unsupported: An explicitly configured subnet is a launch target only.",
+        "references": "Missing: verify configured AMI, subnet, profile, key, security groups and selected launch template under the legacy Spot request contract. spot_instance_id is fulfillment output.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit bid/status and payloads.",
+        "officialDocumentation": "website/docs/r/spot_instance_request.html.markdown",
+        "shapes": {
+          "ami": [
+            "string"
+          ],
+          "subnet_id": [
+            "string"
+          ],
+          "key_name": [
+            "string"
+          ],
+          "iam_instance_profile": [
+            "string"
+          ],
+          "launch_template.id": [
+            "list",
+            "string"
+          ],
+          "launch_template.name": [
+            "list",
+            "string"
+          ],
+          "vpc_security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "spot_instance_id": [
+            "string"
+          ],
+          "spot_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "ami": "optional/computed",
+          "subnet_id": "optional/computed",
+          "key_name": "optional/computed",
+          "iam_instance_profile": "optional/computed",
+          "launch_template.id": "optional/computed",
+          "launch_template.name": "optional/computed",
+          "vpc_security_group_ids": "optional/computed",
+          "spot_instance_id": "computed",
+          "spot_type": "optional"
+        },
+        "sourceContracts": {
+          "ami": {
+            "file": "internal/service/ec2/ec2_instance.go",
+            "token": "\"ami\""
+          },
+          "subnet_id": {
+            "file": "internal/service/ec2/ec2_instance.go",
+            "token": "names.AttrSubnetID: {"
+          },
+          "key_name": {
+            "file": "internal/service/ec2/ec2_instance.go",
+            "token": "\"key_name\""
+          },
+          "iam_instance_profile": {
+            "file": "internal/service/ec2/ec2_instance.go",
+            "token": "\"iam_instance_profile\""
+          },
+          "launch_template.name": {
+            "file": "internal/service/ec2/ec2_instance.go",
+            "token": "names.AttrName: {"
+          },
+          "vpc_security_group_ids": {
+            "file": "internal/service/ec2/ec2_instance.go",
+            "token": "names.AttrVPCSecurityGroupIDs: {"
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceSpotInstanceRequest. No same-name data registration. Legacy request reuses resourceInstanceSchema in ec2_spot_instance_request.go, with Spot-specific outputs and overrides. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_volume_attachment": {
+      "status": "Implemented",
+      "priority": "P2",
+      "issue": 498,
+      "gap": "#498 — Supported: #498 verifies both current managed IDs and matching known values before lowering, preserves action and filtered fallback.",
+      "review": {
+        "issue": 709,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "volume_id",
+          "device_name"
+        ],
+        "placement": "Supported: retain Spatial Association presentation for aws_volume_attachment.",
+        "ownership": "Supported: association retains its resource provenance. Neither endpoint owns the other.",
+        "network": "Supported: attachment does not move the regional volume into the instance subnet.",
+        "references": "Supported: #498 verifies both current managed IDs and matching known values before lowering, preserves action and filtered fallback.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Supported: change provenance is retained, device path is omitted.",
+        "officialDocumentation": "website/docs/r/volume_attachment.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "volume_id": [
+            "string"
+          ],
+          "device_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "volume_id": "required",
+          "device_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/associations.rs",
+          "tests/unit/semantic/ebs.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVolumeAttachment. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
     }
   }
 }
