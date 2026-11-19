@@ -511,3 +511,10 @@ configured KMS ARN only when the key matches the destination region and proven
 account scope. DRS links its staging subnet and complete security-group list
 when their configured VPC evidence agrees. Its encryption key requires `CUSTOM`
 mode. The replication template remains a logical configuration resource.
+
+## Transfer Family workflow steps
+
+Ordinary and exception steps link a configured Lambda ARN for `CUSTOM`, or an
+explicit EFS file system ID or S3 bucket name for `COPY` and `DECRYPT`. Each
+reference must belong to the matching step and use a single destination kind.
+Workflow paths, runtime file expressions and PGP inputs remain opaque.
