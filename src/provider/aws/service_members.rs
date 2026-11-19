@@ -207,6 +207,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Local route table",
                 "Local routes",
             ),
+            "aws_ec2_client_vpn_authorization_rule" => (
+                "client_vpn_endpoint_id",
+                "Client VPN endpoint",
+                "Authorization rules",
+            ),
+            "aws_ec2_client_vpn_route" => (
+                "client_vpn_endpoint_id",
+                "Client VPN endpoint",
+                "Client routes",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -586,6 +596,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(node.resource_type.as_str(), "aws_ec2_instance_state")
             || matches!(node.resource_type.as_str(), "aws_vpn_connection_route")
             || matches!(node.resource_type.as_str(), "aws_ec2_local_gateway_route")
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_client_vpn_authorization_rule" | "aws_ec2_client_vpn_route"
+            )
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"
             || matches!(

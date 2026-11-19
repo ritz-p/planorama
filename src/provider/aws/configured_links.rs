@@ -173,6 +173,7 @@ fn global(kind: &str) -> bool {
         kind,
         "aws_organizations_organization"
             | "aws_organizations_organizational_unit"
+            | "aws_iam_saml_provider"
             | "aws_iam_instance_profile"
             | "aws_iam_role"
             | "aws_iam_user"
