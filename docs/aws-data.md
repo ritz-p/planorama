@@ -1234,3 +1234,17 @@ object keys and signed URLs do not create resources.
 A Data Pipeline has an independent card. A definition with a verified
 `pipeline_id` appears under its pipeline and preserves its own identity and
 lifecycle. Object fields and internal `ref_value` entries stay opaque.
+
+## FinSpace KX configuration
+
+KX environments and clusters have independent regional cards. Environment
+references link KMS keys and transit gateways. Workloads link an explicit
+environment ID, and database, dataview, scaling-group and volume names require
+agreement on the referenced environment. A cluster's dataview also requires the
+same verified database. Dataview volumes require matching availability zones.
+IAM role and code bucket links use their exact configured identities.
+
+Complete subnet and security-group collections must agree with the explicitly
+referenced VPC. That context describes a PrivateLink endpoint without placing
+service compute inside the customer network. Computed capacity and cluster
+lists, CIDRs, DNS values and code or object paths remain opaque.
