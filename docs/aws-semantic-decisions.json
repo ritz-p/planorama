@@ -68290,10 +68290,10 @@
       }
     },
     "aws_ec2_transit_gateway_default_route_table_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: associate TGW with explicitly selected default association table after proving the table belongs to it. Original default ID is restore metadata.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68306,8 +68306,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_default_route_table_association.",
         "ownership": "Not applicable: Default association changes one setting, independently of propagation.",
         "network": "Intentionally unsupported: Default selection does not contain attached VPCs.",
-        "references": "Missing: associate TGW with explicitly selected default association table after proving the table belongs to it. Original default ID is restore metadata.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id, transit_gateway_route_table_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude resulting traffic flow.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_default_route_table_association.html.markdown",
         "shapes": {
@@ -68337,17 +68337,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration newTransitGatewayDefaultRouteTableAssociationResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_default_route_table_propagation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: link TGW with selected default propagation table and prove common gateway. Original default table is a computed rollback value.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68360,8 +68362,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_default_route_table_propagation.",
         "ownership": "Not applicable: Default propagation is independent of default association.",
         "network": "Intentionally unsupported: Propagation settings have no subnet hierarchy.",
-        "references": "Missing: link TGW with selected default propagation table and prove common gateway. Original default table is a computed rollback value.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id, transit_gateway_route_table_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude claims about learned routes.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_default_route_table_propagation.html.markdown",
         "shapes": {
@@ -68391,7 +68393,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration newTransitGatewayDefaultRouteTablePropagationResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -69028,10 +69032,10 @@
       }
     },
     "aws_ec2_transit_gateway_prefix_list_reference": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: link TGW table and prefix list using the exact IDs; link a verified same-gateway attachment only in known non-blackhole mode. Preserve independent prefix-list owner evidence.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69044,10 +69048,10 @@
           "prefix_list_owner_id"
         ],
         "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_prefix_list_reference.",
-        "ownership": "Missing: present configuration with its route table while keeping shared prefix list independent.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Prefix list entries are not subnet identities.",
-        "references": "Missing: link TGW table and prefix list using the exact IDs; link a verified same-gateway attachment only in known non-blackhole mode. Preserve independent prefix-list owner evidence.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_route_table_id, transit_gateway_attachment_id, prefix_list_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit effective routing.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_prefix_list_reference.html.markdown",
         "shapes": {
@@ -69085,17 +69089,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayPrefixListReference. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_route": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: TGW route has a Spatial Connector classification; implement explicit TGW table and non-blackhole attachment proof. Preserve blackhole routes as table entries without an attachment target.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69107,10 +69113,10 @@
           "blackhole"
         ],
         "placement": "Supported: retain Spatial Connector presentation for aws_ec2_transit_gateway_route.",
-        "ownership": "Missing: route belongs to its uniquely selected route table.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Destination CIDR does not identify a subnet or VPC.",
-        "references": "Missing: TGW route has a Spatial Connector classification; implement explicit TGW table and non-blackhole attachment proof. Preserve blackhole routes as table entries without an attachment target.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Verified explicit transit_gateway_route_table_id, transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not report packets forwarded or dropped.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_route.html.markdown",
         "shapes": {
@@ -69138,7 +69144,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayRoute. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -69148,7 +69156,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: link table to its configured TGW. Cloud WAN uses table identity as incoming evidence. Computed default flags do not create a default-helper resource.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69162,8 +69170,8 @@
         "placement": "Supported: retain Spatial Connector presentation for aws_ec2_transit_gateway_route_table.",
         "ownership": "Not applicable: Table is independent within one TGW and can serve several attachments.",
         "network": "Intentionally unsupported: TGW is a service parent, never a VPC or subnet.",
-        "references": "Missing: link table to its configured TGW. Cloud WAN uses table identity as incoming evidence. Computed default flags do not create a default-helper resource.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Verified explicit transit_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit effective route set.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_route_table.html.markdown",
         "shapes": {
@@ -69193,7 +69201,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/cloudwan.rs",
-          "tests/unit/semantic/cloudwan.rs"
+          "tests/unit/semantic/cloudwan.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayRouteTable. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -69216,10 +69226,10 @@
       }
     },
     "aws_ec2_transit_gateway_route_table_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: verify attachment and association table IDs in the same gateway. Spatial Association classification has no two-ended lowering rule for this type.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69233,8 +69243,8 @@
         "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_route_table_association.",
         "ownership": "Not applicable: Helper's plan change belongs to this association, not to propagation.",
         "network": "Intentionally unsupported: A route table association does not place a VPC.",
-        "references": "Missing: verify attachment and association table IDs in the same gateway. Spatial Association classification has no two-ended lowering rule for this type.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Verified explicit transit_gateway_route_table_id, transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude claims about propagated prefixes.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_route_table_association.html.markdown",
         "shapes": {
@@ -69262,17 +69272,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayRouteTableAssociation. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_route_table_propagation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1443,
-      "gap": "#1443 — Missing: prove which attachment propagates to which TGW table. Outputs resource_id and resource_type are not independent input references.",
+      "gap": "#711 audit: #1443 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69286,8 +69298,8 @@
         "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_route_table_propagation.",
         "ownership": "Not applicable: Propagation keeps its own action even when an association has identical endpoints.",
         "network": "Intentionally unsupported: Propagation is not containment.",
-        "references": "Missing: prove which attachment propagates to which TGW table. Outputs resource_id and resource_type are not independent input references.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Verified explicit transit_gateway_route_table_id, transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit learned routes and convergence.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_route_table_propagation.html.markdown",
         "shapes": {
@@ -69315,7 +69327,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_routes.rs",
+          "tests/unit/semantic/transit_routes.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayRouteTablePropagation. No same-name data registration. No managed alias.",
         "dataContracts": {}

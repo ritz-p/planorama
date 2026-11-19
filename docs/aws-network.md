@@ -1077,3 +1077,7 @@ VPC and Transit Gateway modes select separate endpoint networks. Authentication 
 ## Transit Gateway attachments and acceptance (#1442)
 
 VPC attachments retain the hub, VPC and complete same-VPC subnet selection. Connect requires a transport attachment for the same gateway, and peers select a Connect attachment. A peering request qualifies its peer with the selected region and account. Accepters keep a separate identity and must match the provider binding of the accepting gateway.
+
+## Transit Gateway route and propagation evidence (#1443)
+
+Transit route tables identify their own gateway. Default association and default propagation remain independent changes. Route and prefix-list targets require a known forwarding mode and an attachment for the same gateway. A blackhole route retains its table relationship. Original default IDs, destination CIDRs and learned routes supply no endpoints.

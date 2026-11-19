@@ -222,6 +222,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Connect attachment",
                 "Connect peers",
             ),
+            "aws_ec2_transit_gateway_route" => (
+                "transit_gateway_route_table_id",
+                "Transit route table",
+                "Routes",
+            ),
+            "aws_ec2_transit_gateway_prefix_list_reference" => (
+                "transit_gateway_route_table_id",
+                "Transit route table",
+                "Prefix list routes",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -608,6 +618,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_ec2_transit_gateway_connect_peer"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_transit_gateway_route" | "aws_ec2_transit_gateway_prefix_list_reference"
             )
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"

@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"transit-routes-plan","focus":"aws_ec2_transit_gateway_route.sample0","target":0,"mask":{"blackhole":true}},
   {"fixture":"transit-attachments-plan","focus":"aws_ec2_transit_gateway_vpc_attachment.sample0","target":0,"mask":{"transit_gateway_id":true}},
   {"fixture":"client-vpn-plan","focus":"aws_ec2_client_vpn_endpoint.sample0","target":0,"mask":{"authentication_options":true}},
   {"fixture":"local-gateways-plan","focus":"aws_ec2_carrier_gateway.sample0","target":0,"mask":{"vpc_id":true}},
