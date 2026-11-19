@@ -184,6 +184,7 @@ mod serverless_references;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
+pub(crate) mod storagegateway;
 mod streaming;
 pub(crate) mod synthetics;
 pub(crate) mod timestream_influx;

@@ -478,3 +478,18 @@ remain independent; provider/account/region, lifecycle, mode and named-state
 boundaries must all match. No payload, mount path, recovery guarantee or runtime
 health is displayed. See [SVG](../examples/backup-restore.svg); HTML uses the same
 `tests/fixtures/backup-restore-plan.json` with `--format html`.
+
+## Storage Gateway configuration
+
+Gateways use independent regional cards. Local storage, volumes and shares
+can link to their verified gateway while retaining separate Terraform identities
+and actions. Windows filesystem associations link to the gateway and filesystem
+independently. Host IDs, interface IPs and local disk identifiers supply no
+network placement or EBS ownership.
+
+Verified fields include gateway log group ARN, helpers' gateway ARN, volume
+snapshot ID or cached recovery volume ARN, file-share bucket or access-point
+ARN, IAM role ARN, and audit log destination ARN. Windows associations accept
+an FSx Windows ARN and a CloudWatch Logs or S3 audit ARN. KMS references require
+known enabled encryption. Prefixed storage locations retain ordinary Terraform
+provenance unless an exact managed output matches.

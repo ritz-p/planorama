@@ -100,6 +100,25 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("index_id", "Kendra index", "Query suggestions block lists")
             }
             "aws_kendra_thesaurus" => ("index_id", "Kendra index", "Thesauri"),
+            "aws_storagegateway_cache" => ("gateway_arn", "Storage Gateway", "Local storage"),
+            "aws_storagegateway_upload_buffer" => {
+                ("gateway_arn", "Storage Gateway", "Local storage")
+            }
+            "aws_storagegateway_working_storage" => {
+                ("gateway_arn", "Storage Gateway", "Local storage")
+            }
+            "aws_storagegateway_cached_iscsi_volume" => {
+                ("gateway_arn", "Storage Gateway", "Volumes")
+            }
+            "aws_storagegateway_stored_iscsi_volume" => {
+                ("gateway_arn", "Storage Gateway", "Volumes")
+            }
+            "aws_storagegateway_nfs_file_share" => {
+                ("gateway_arn", "Storage Gateway", "File shares")
+            }
+            "aws_storagegateway_smb_file_share" => {
+                ("gateway_arn", "Storage Gateway", "File shares")
+            }
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
