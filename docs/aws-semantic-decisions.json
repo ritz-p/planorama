@@ -9832,10 +9832,10 @@
       }
     },
     "aws_mwaa_environment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 751,
-      "gap": "Missing: role/source bucket/KMS #751. Computed log group ARNs do not prove configured log resource identity. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 audit: #751 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9847,10 +9847,10 @@
           "source_bucket_arn",
           "kms_key"
         ],
-        "placement": "Missing: environment architecture card review #751; currently Logical.",
+        "placement": "Supported: Independent regional environment card with verified common VPC placement.",
         "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
         "network": "Missing: two private subnet/SG network evidence #751; no reachability from private/public mode.",
-        "references": "Missing: role/source bucket/KMS #751. Computed log group ARNs do not prove configured log resource identity.",
+        "references": "Supported: Explicit environment role, bucket ARN, customer key ARN and complete network evidence.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: DAG/script paths, Airflow options and credentials.",
         "officialDocumentation": "website/docs/r/mwaa_environment.html.markdown",
@@ -9878,7 +9878,11 @@
           "kms_key": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/mwaa_configuration.rs",
+          "tests/unit/semantic/mwaa_configuration.rs"
+        ]
       }
     },
     "aws_schemas_discoverer": {

@@ -1017,7 +1017,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_mskconnect_connector", "Amazon MSK Connect", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_mskconnect_custom_plugin", "Amazon MSK Connect", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
     entry!("aws_mskconnect_worker_configuration", "Amazon MSK Connect", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedStreamingforApacheKafka))),
-    entry!("aws_mwaa_environment", "Amazon Managed Workflows for Apache Airflow", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedWorkflowsforApacheAirflow))),
+    entry!("aws_mwaa_environment", "Amazon Managed Workflows for Apache Airflow", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedWorkflowsforApacheAirflow))),
     entry!("aws_nat_gateway", "Amazon VPC", Node, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_nat_gateway_eip_association", "Amazon VPC", Association, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_neptune_cluster", "Amazon Neptune", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonNeptune))),
