@@ -217,6 +217,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Client VPN endpoint",
                 "Client routes",
             ),
+            "aws_ec2_transit_gateway_connect_peer" => (
+                "transit_gateway_attachment_id",
+                "Connect attachment",
+                "Connect peers",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -599,6 +604,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_ec2_client_vpn_authorization_rule" | "aws_ec2_client_vpn_route"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_transit_gateway_connect_peer"
             )
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"

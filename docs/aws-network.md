@@ -1073,3 +1073,7 @@ Carrier gateways attach to a verified VPC. Local routes and associations use the
 ## Client VPN endpoint configuration (#1441)
 
 VPC and Transit Gateway modes select separate endpoint networks. Authentication options link only their selected provider type, while Lambda and log delivery require enabled options. A VPC route links a subnet through a matching endpoint association. A TGW route does not manufacture a managed attachment from its computed ID.
+
+## Transit Gateway attachments and acceptance (#1442)
+
+VPC attachments retain the hub, VPC and complete same-VPC subnet selection. Connect requires a transport attachment for the same gateway, and peers select a Connect attachment. A peering request qualifies its peer with the selected region and account. Accepters keep a separate identity and must match the provider binding of the accepting gateway.
