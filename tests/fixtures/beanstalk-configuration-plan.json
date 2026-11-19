@@ -1,0 +1,216 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_elastic_beanstalk_application.sample0",
+      "mode": "managed",
+      "type": "aws_elastic_beanstalk_application",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "store",
+          "appversion_lifecycle": [
+            {
+              "service_role": "arn:aws:iam::123456789012:role/beanstalk-lifecycle"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_elastic_beanstalk_environment.sample1",
+      "mode": "managed",
+      "type": "aws_elastic_beanstalk_environment",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "production",
+          "application": "store",
+          "version_label": "release-1",
+          "template_name": "default"
+        }
+      }
+    },
+    {
+      "address": "aws_elastic_beanstalk_application_version.sample2",
+      "mode": "managed",
+      "type": "aws_elastic_beanstalk_application_version",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "release-1",
+          "application": "store",
+          "bucket": "deployment-artifacts",
+          "key": "PRIVATE_BUNDLE"
+        }
+      }
+    },
+    {
+      "address": "aws_elastic_beanstalk_configuration_template.sample3",
+      "mode": "managed",
+      "type": "aws_elastic_beanstalk_configuration_template",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "default",
+          "application": "store"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample4",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/beanstalk-lifecycle"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample5",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "deployment-artifacts"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_elastic_beanstalk_application.sample0",
+          "mode": "managed",
+          "type": "aws_elastic_beanstalk_application",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "appversion_lifecycle": [
+              {
+                "service_role": {
+                  "references": [
+                    "aws_iam_role.sample4.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_elastic_beanstalk_environment.sample1",
+          "mode": "managed",
+          "type": "aws_elastic_beanstalk_environment",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application": {
+              "references": [
+                "aws_elastic_beanstalk_application.sample0.name"
+              ]
+            },
+            "version_label": {
+              "references": [
+                "aws_elastic_beanstalk_application_version.sample2.name"
+              ]
+            },
+            "template_name": {
+              "references": [
+                "aws_elastic_beanstalk_configuration_template.sample3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elastic_beanstalk_application_version.sample2",
+          "mode": "managed",
+          "type": "aws_elastic_beanstalk_application_version",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application": {
+              "references": [
+                "aws_elastic_beanstalk_application.sample0.name"
+              ]
+            },
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.sample5.bucket"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_elastic_beanstalk_configuration_template.sample3",
+          "mode": "managed",
+          "type": "aws_elastic_beanstalk_configuration_template",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application": {
+              "references": [
+                "aws_elastic_beanstalk_application.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.sample4",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample5",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

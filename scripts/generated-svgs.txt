@@ -101,6 +101,7 @@ examples/docdb.svg
 examples/neptune.svg
 examples/redshift-serverless.svg
 examples/apprunner.svg
+examples/beanstalk-configuration.svg
 examples/opensearch-serverless.svg
 examples/batch.svg
 examples/networkfirewall.svg
