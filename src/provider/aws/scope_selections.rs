@@ -28,6 +28,13 @@ type Details = Vec<(&'static str, &'static str, String)>;
 fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
     let mut details = Vec::new();
     match kind {
+        "aws_auditmanager_assessment_delegation" => {
+            if let Some((assessment, control)) = value(v, mask, "assessment_id")
+                .and_then(Value::as_str).filter(|v| !v.is_empty())
+                .zip(value(v, mask, "control_set_id").and_then(Value::as_str).filter(|v| !v.is_empty())) {
+                details.push(("control_set_id", "Assessment control set", format!("{assessment} / {control}")));
+            }
+        }
         "aws_auditmanager_framework_share" => {
             if let Some((account, region)) = value(v, mask, "destination_account")
                 .and_then(Value::as_str)
