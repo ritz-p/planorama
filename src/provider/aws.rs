@@ -39,6 +39,7 @@ pub(crate) mod cloudfront_multitenant;
 mod cloudfront_observability;
 pub(crate) mod cloudfront_security;
 pub(crate) mod cloudfront_vpc_origin;
+pub(crate) mod cloudhsm_configuration;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cloudtrail.rs"]
 mod cloudtrail_tests;
@@ -441,6 +442,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     quicksight::present(&raw, &mut graph);
     sagemaker_studio::present(&raw, &mut graph);
     sagemaker_jobs::present(&raw, &mut graph);
+    cloudhsm_configuration::present(&raw, &mut graph);
     sagemaker_workforce::present(&raw, &mut graph);
     msk_connect::present(&raw, &mut graph);
     timestream_influx::present(&raw, &mut graph);
