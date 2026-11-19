@@ -113,7 +113,6 @@ pub(crate) fn parse_with_provider_bindings(
     }
     let mut nodes: Vec<_> = nodes.into_values().collect();
     providers::enrich(&plan, &mut nodes);
-    bind(&mut nodes);
     routes::enrich(&plan, &mut nodes);
     let mut drift = drift::collect(&plan, &mut nodes)?;
     let relevant_attributes = relevance::collect(&plan, &mut nodes, &mut drift);
@@ -125,8 +124,7 @@ pub(crate) fn parse_with_provider_bindings(
         false,
     );
     let configured_value_matches =
-        collections::annotate(&plan, &mut nodes, &mut attributes, recover);
-    crate::provider::aws::encryption::enrich(&plan, &mut nodes, &mut attributes);
+        collections::annotate(&plan, &mut nodes, &mut attributes, recover, bind);
     let graph_references = attributes::collect(
         &plan["configuration"]["root_module"],
         &nodes,
