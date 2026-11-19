@@ -71130,10 +71130,10 @@
       }
     },
     "aws_config_aggregate_authorization": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1472,
-      "gap": "#1472 — Qualify the authorized aggregator account and AWS region as a pair. They are distinct from the authorizing account.",
+      "gap": "#1472 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71145,8 +71145,8 @@
         "placement": "Supported: Logical Policy for the managed config_aggregate_authorization declaration. Manages an AWS Config Aggregate Authorization.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Qualify the authorized aggregator account and AWS region as a pair. They are distinct from the authorizing account.",
-        "scope": "Missing: the aggregation account and authorized AWS region identify the grantee, not local deployment scope.",
+        "references": "Supported: Verified configuration references: account_id.",
+        "scope": "Supported: display the authorized account and region together, independently of local deployment scope.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_aggregate_authorization summaries.",
         "officialDocumentation": "website/docs/r/config_aggregate_authorization.html.markdown",
         "shapes": {
@@ -71168,7 +71168,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_aggregation.rs",
+          "tests/unit/semantic/config_aggregation.rs"
         ],
         "managedDataContract": "Managed resourceAggregateAuthorization. No same-name data source in 6.70.0. Deprecated managed attributes: region.",
         "dataContracts": {}
@@ -71228,10 +71230,10 @@
       }
     },
     "aws_config_configuration_aggregator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1472,
-      "gap": "#1472 — Resolve the organization role and preserve each source account/region selection. An all-regions selector cannot enumerate infrastructure.",
+      "gap": "#1472 — Verified configuration references: account_aggregation_source.account_ids, organization_aggregation_source.role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71245,7 +71247,7 @@
         "placement": "Supported: Logical Controller for the managed config_configuration_aggregator declaration. Manages an AWS Config Configuration Aggregator.",
         "ownership": "Not applicable: The managed config_configuration_aggregator declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the organization role and preserve each source account/region selection. An all-regions selector cannot enumerate infrastructure.",
+        "references": "Supported: Verified configuration references: account_aggregation_source.account_ids, organization_aggregation_source.role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_configuration_aggregator summaries.",
         "officialDocumentation": "website/docs/r/config_configuration_aggregator.html.markdown",
@@ -71286,7 +71288,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_aggregation.rs",
+          "tests/unit/semantic/config_aggregation.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationAggregator. No same-name data source in 6.70.0.",
         "dataContracts": {}

@@ -807,7 +807,7 @@ test('#728 distinguishes detector inputs, source selectors and service-produced 
   assert.equal(review('securitylake_subscriber').contracts.role_arn, 'computed');
   assert.equal(review('securityhub_member').contracts.account_id, 'required');
   assert.match(review('inspector2_filter').references, /comparison operands/);
-  assert.match(review('config_aggregate_authorization').scope, /^Missing:/);
+  assert.match(review('config_aggregate_authorization').scope, /independently of local deployment scope/);
 });
 
 test('#729 distinguishes Classic WAF scopes, WAFv2 endpoints and recovery control inputs', () => {
