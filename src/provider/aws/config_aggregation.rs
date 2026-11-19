@@ -19,6 +19,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 true,
                 &[],
             )
+            .with_explicit_destination()
         }
         ("aws_config_configuration_aggregator", "organization_aggregation_source.role_arn") => {
             Rule::new(
