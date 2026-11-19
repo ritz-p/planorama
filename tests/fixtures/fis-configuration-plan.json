@@ -17,14 +17,14 @@
             {
               "resource_type": "aws:ec2:instance",
               "resource_arns": [
-                "arn:aws:instance:us-east-1:123456789012:resource/instance"
+                "arn:aws:ec2:us-east-1:123456789012:instance/i-0123456789abcdef0"
               ]
             }
           ],
           "stop_condition": [
             {
               "source": "aws:cloudwatch:alarm",
-              "value": "arn:aws:cloudwatch:us-east-1:123456789012:resource/cloudwatch_metric_alarm"
+              "value": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:fixture"
             }
           ],
           "role_arn": "arn:aws:iam::123456789012:role/fis",
@@ -32,7 +32,7 @@
             {
               "cloudwatch_logs_configuration": [
                 {
-                  "log_group_arn": "arn:aws:cloudwatch:us-east-1:123456789012:resource/cloudwatch_log_group"
+                  "log_group_arn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fis/fixture"
                 }
               ],
               "s3_configuration": [
@@ -48,7 +48,7 @@
                 {
                   "cloudwatch_dashboard": [
                     {
-                      "dashboard_arn": "cloudwatch_dashboard-fixture"
+                      "dashboard_arn": "arn:aws:cloudwatch::123456789012:dashboard/fixture"
                     }
                   ]
                 }
@@ -94,7 +94,7 @@
           "create"
         ],
         "after": {
-          "arn": "arn:aws:instance:us-east-1:123456789012:resource/instance"
+          "arn": "arn:aws:ec2:us-east-1:123456789012:instance/i-0123456789abcdef0"
         }
       }
     },
@@ -109,7 +109,7 @@
           "create"
         ],
         "after": {
-          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:resource/cloudwatch_metric_alarm"
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:fixture"
         }
       }
     },
@@ -124,7 +124,7 @@
           "create"
         ],
         "after": {
-          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:resource/cloudwatch_log_group"
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fis/fixture"
         }
       }
     },
@@ -154,7 +154,7 @@
           "create"
         ],
         "after": {
-          "dashboard_arn": "cloudwatch_dashboard-fixture"
+          "dashboard_arn": "arn:aws:cloudwatch::123456789012:dashboard/fixture"
         }
       }
     },
