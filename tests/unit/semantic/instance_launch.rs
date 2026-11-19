@@ -74,3 +74,55 @@ fn configured_links_require_current_typed_evidence() {
     changed["resource_changes"][1]["deposed"] = json!("old");
     assert!(!verified(&changed, "aws_instance.sample0", "ami"));
 }
+
+#[test]
+fn refreshed_launch_template_uses_the_configured_selector() {
+    let mut fixture: Value =
+        serde_json::from_str(include_str!("../../fixtures/instance-launch-plan.json")).unwrap();
+    let template = json!({"id": "lt-123", "name": "app"});
+    fixture["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address": "aws_launch_template.app", "mode": "managed",
+            "type": "aws_launch_template", "name": "app",
+            "provider_name": "registry.terraform.io/hashicorp/aws",
+            "change": {"actions": ["no-op"], "before": template, "after": template}
+        }));
+    fixture["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address": "aws_launch_template.app", "mode": "managed",
+            "type": "aws_launch_template", "name": "app", "provider_config_key": "aws",
+            "expressions": {}
+        }));
+    fixture["resource_changes"][0]["change"]["after"]["launch_template"] = json!([template]);
+    let change = &mut fixture["resource_changes"][0]["change"];
+    change["before"] = change["after"].clone();
+    change["actions"] = json!(["no-op"]);
+    for (selected, other) in [("id", "name"), ("name", "id")] {
+        let mut plan = fixture.clone();
+        let path = format!("launch_template.{selected}");
+        plan["configuration"]["root_module"]["resources"][0]["expressions"]["launch_template"] =
+            json!([{(selected): {"references": [format!("aws_launch_template.app.{selected}")]}}]);
+        assert!(verified(&plan, "aws_instance.sample0", &path), "{selected}");
+        assert!(!verified(
+            &plan,
+            "aws_instance.sample0",
+            &format!("launch_template.{other}")
+        ));
+        plan["configuration"]["root_module"]["resources"][0]["expressions"]["launch_template"][0]
+            [other] = json!({"constant_value": null});
+        assert!(
+            verified(&plan, "aws_instance.sample0", &path),
+            "explicit null"
+        );
+        plan["configuration"]["root_module"]["resources"][0]["expressions"]["launch_template"][0]
+            [other] = json!({"constant_value": template[other]});
+        assert!(
+            !verified(&plan, "aws_instance.sample0", &path),
+            "both selectors configured"
+        );
+    }
+}

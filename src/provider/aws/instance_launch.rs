@@ -136,7 +136,6 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _source: usize, path: &st
         r.target,
         path,
         &[
-            ("id", "name"),
             (
                 "capacity_reservation_id",
                 "capacity_reservation_resource_group_arn",
@@ -147,6 +146,8 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _source: usize, path: &st
         return false;
     }
     match r.attribute.as_str() {
+        "launch_template.id" => !e.has_argument(r.target, "launch_template.0.name"),
+        "launch_template.name" => !e.has_argument(r.target, "launch_template.0.id"),
         "placement_group" => !e.has_argument(r.target, "placement_group_id"),
         "placement_group_id" => !e.has_argument(r.target, "placement_group"),
         "primary_network_interface.network_interface_id" => e.absent(r.target, "network_interface"),
