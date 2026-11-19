@@ -213,6 +213,7 @@ mod step_functions_tests;
 pub(crate) mod storagegateway;
 mod streaming;
 pub(crate) mod synthetics;
+pub(crate) mod template_launch;
 pub(crate) mod timestream_influx;
 pub(crate) mod timestream_queries;
 pub(crate) mod traffic_mirror;

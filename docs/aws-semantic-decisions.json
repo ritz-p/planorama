@@ -66781,7 +66781,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1437,
-      "gap": "#1437 — Partial: Auto Scaling and Batch template consumers already exist (#361, #816). Missing: verify configured image, profile name/ARN, key pair, host/group, reservation, explicit interface and subnet/SG collection, disk snapshot/key and license configuration ARN per nested item. SSM image selectors are not AMI IDs.",
+      "gap": "#709 audit: #1437 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66807,8 +66807,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_launch_template.",
         "ownership": "Not applicable: Reusable definition, shared by fleets and instances.",
         "network": "Intentionally unsupported: Network options describe future launches and do not place the template.",
-        "references": "Partial: Auto Scaling and Batch template consumers already exist (#361, #816). Missing: verify configured image, profile name/ARN, key pair, host/group, reservation, explicit interface and subnet/SG collection, disk snapshot/key and license configuration ARN per nested item. SSM image selectors are not AMI IDs.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Auto Scaling and Batch retain their inbound template links. The template independently verifies its configured image, profile, key pair, placement, capacity, interfaces, device backing and license references.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude user data, tags and interpretation of symbolic version selectors.",
         "officialDocumentation": "website/docs/r/launch_template.html.markdown",
         "shapes": {
@@ -66910,7 +66910,9 @@
           "src/provider/aws/autoscaling_network.rs",
           "tests/unit/semantic/autoscaling_network.rs",
           "src/provider/aws/batch_configuration.rs",
-          "tests/unit/semantic/batch_configuration.rs"
+          "tests/unit/semantic/batch_configuration.rs",
+          "src/provider/aws/template_launch.rs",
+          "tests/unit/semantic/template_launch.rs"
         ],
         "managedDataContract": "Managed registration resourceLaunchTemplate. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {

@@ -748,3 +748,7 @@ Fleets link launch templates by the selected ID or name and keep override subnet
 ## Configured instance launch references (#1436)
 
 Instance launch references distinguish AMI IDs, profile and key names, template IDs or names, dedicated host IDs, placement group names or IDs and explicit reservations. Interface and block-device inputs retain their own typed references. A state helper identifies its instance without asserting an observed power state. Inline device definitions do not synthesize volumes.
+
+## Launch template inputs (#1437)
+
+Launch templates link explicit AMI, key pair, profile, placement, reservation and license inputs. Interface security groups must agree with the configured selection mode. Device encryption accepts the provider’s string-valued enabled flag. Subnets describe launch choices and do not place a reusable template inside a VPC.
