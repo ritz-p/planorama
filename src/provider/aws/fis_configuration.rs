@@ -15,7 +15,11 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 ("aws_subnet", &["arn"]),
                 ("aws_ebs_volume", &["arn"]),
                 ("aws_ecs_cluster", &["arn"]),
-                ("aws_ecs_service", &["arn"]),
+                ("aws_autoscaling_group", &["arn"]),
+                ("aws_ec2_transit_gateway", &["arn"]),
+                ("aws_vpc_endpoint", &["arn"]),
+                ("aws_eks_node_group", &["arn"]),
+                ("aws_kinesis_stream", &["arn"]),
                 ("aws_eks_cluster", &["arn"]),
                 ("aws_rds_cluster", &["arn"]),
                 ("aws_db_instance", &["arn"]),
@@ -119,15 +123,24 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     match r.attribute.as_str() {
         "target.resource_arns" => path
             .rsplit_once('.')
+            .filter(|(p, _)| {
+                ["filter", "resource_tag", "parameters"]
+                    .iter()
+                    .all(|field| e.absent(r.target, &format!("{p}.{field}")))
+            })
             .and_then(|(p, _)| e.text(r.target, &format!("{p}.resource_type")))
             .is_some_and(|kind| {
                 matches!(
                     (kind, e.nodes[source].resource_type.as_str()),
                     ("aws:ec2:instance", "aws_instance")
                         | ("aws:ec2:subnet", "aws_subnet")
-                        | ("aws:ec2:volume", "aws_ebs_volume")
+                        | ("aws:ec2:ebs-volume", "aws_ebs_volume")
                         | ("aws:ecs:cluster", "aws_ecs_cluster")
-                        | ("aws:ecs:service", "aws_ecs_service")
+                        | ("aws:ec2:autoscaling-group", "aws_autoscaling_group")
+                        | ("aws:ec2:transit-gateway", "aws_ec2_transit_gateway")
+                        | ("aws:ec2:vpc-endpoint", "aws_vpc_endpoint")
+                        | ("aws:eks:nodegroup", "aws_eks_node_group")
+                        | ("aws:kinesis:stream", "aws_kinesis_stream")
                         | ("aws:eks:cluster", "aws_eks_cluster")
                         | ("aws:rds:cluster", "aws_rds_cluster")
                         | ("aws:rds:db", "aws_db_instance")
