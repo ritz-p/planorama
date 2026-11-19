@@ -1,0 +1,313 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_macie2_classification_export_configuration.sample0",
+      "mode": "managed",
+      "type": "aws_macie2_classification_export_configuration",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "s3_destination": [
+            {
+              "bucket_name": "s3_bucket-fixture",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:resource/kms_key"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample1",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "s3_bucket-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample2",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:resource/kms_key"
+        }
+      }
+    },
+    {
+      "address": "aws_macie2_classification_job.sample3",
+      "mode": "managed",
+      "type": "aws_macie2_classification_job",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "custom_data_identifier_ids": [
+            "macie2_custom_data_identifier-fixture"
+          ],
+          "s3_job_definition": [
+            {
+              "bucket_definitions": [
+                {
+                  "buckets": [
+                    "s3_bucket-fixture"
+                  ],
+                  "account_id": "123456789012"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_macie2_custom_data_identifier.sample4",
+      "mode": "managed",
+      "type": "aws_macie2_custom_data_identifier",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "macie2_custom_data_identifier-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample5",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_macie2_invitation_accepter.sample6",
+      "mode": "managed",
+      "type": "aws_macie2_invitation_accepter",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "administrator_account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_macie2_member.sample7",
+      "mode": "managed",
+      "type": "aws_macie2_member",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_macie2_organization_admin_account.sample8",
+      "mode": "managed",
+      "type": "aws_macie2_organization_admin_account",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "admin_account_id": "123456789012"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_macie2_classification_export_configuration.sample0",
+          "mode": "managed",
+          "type": "aws_macie2_classification_export_configuration",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "s3_destination": [
+              {
+                "bucket_name": {
+                  "references": [
+                    "aws_s3_bucket.sample1.bucket"
+                  ]
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample1",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample2",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_macie2_classification_job.sample3",
+          "mode": "managed",
+          "type": "aws_macie2_classification_job",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "custom_data_identifier_ids": {
+              "references": [
+                "aws_macie2_custom_data_identifier.sample4.id"
+              ]
+            },
+            "s3_job_definition": [
+              {
+                "bucket_definitions": [
+                  {
+                    "buckets": {
+                      "references": [
+                        "aws_s3_bucket.sample1.bucket"
+                      ]
+                    },
+                    "account_id": {
+                      "references": [
+                        "aws_organizations_account.sample5.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_macie2_custom_data_identifier.sample4",
+          "mode": "managed",
+          "type": "aws_macie2_custom_data_identifier",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.sample5",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_macie2_invitation_accepter.sample6",
+          "mode": "managed",
+          "type": "aws_macie2_invitation_accepter",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "administrator_account_id": {
+              "references": [
+                "aws_organizations_account.sample5.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_macie2_member.sample7",
+          "mode": "managed",
+          "type": "aws_macie2_member",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample5.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_macie2_organization_admin_account.sample8",
+          "mode": "managed",
+          "type": "aws_macie2_organization_admin_account",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "admin_account_id": {
+              "references": [
+                "aws_organizations_account.sample5.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

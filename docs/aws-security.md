@@ -528,3 +528,7 @@ Publishing configurations resolve their detector, S3 destination and KMS key sep
 ## Verify Inspector assessment and enrollment references (#1478)
 
 Classic assessment templates resolve the target and explicitly subscribed SNS topics. Inspector2 enrollment identifies configured Organizations accounts, independently of scan categories or observed membership status.
+
+## Verify Macie classification and membership references (#1479)
+
+Macie classification jobs resolve named buckets within the account declared on each bucket definition and match custom identifier IDs independently. Export buckets and encryption keys have separate contracts. Criteria, regular expressions and invitation contents stay opaque.

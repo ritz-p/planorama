@@ -73161,10 +73161,10 @@
       }
     },
     "aws_macie2_classification_export_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the destination bucket and encryption key independently. Key prefixes do not identify resources.",
+      "gap": "#1479 — Verified configuration references: s3_destination.bucket_name, s3_destination.kms_key_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73176,7 +73176,7 @@
         "placement": "Supported: Logical Controller for the managed macie2_classification_export_configuration declaration. Provides a resource to manage Classification Results - Export Configuration",
         "ownership": "Not applicable: The managed macie2_classification_export_configuration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_classification_export_configuration.",
-        "references": "Missing: Resolve the destination bucket and encryption key independently. Key prefixes do not identify resources.",
+        "references": "Supported: Verified configuration references: s3_destination.bucket_name, s3_destination.kms_key_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_classification_export_configuration summaries.",
         "officialDocumentation": "website/docs/r/macie2_classification_export_configuration.html.markdown",
@@ -73201,17 +73201,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceClassificationExportConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_macie2_classification_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve custom identifier IDs and explicitly named buckets in their declared accounts. Dynamic selection criteria do not enumerate buckets.",
+      "gap": "#1479 — Verified configuration references: custom_data_identifier_ids, s3_job_definition.bucket_definitions.buckets, s3_job_definition.bucket_definitions.account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73224,7 +73226,7 @@
         "placement": "Supported: Logical Controller for the managed macie2_classification_job declaration. Provides a resource to manage an AWS Macie Classification Job.",
         "ownership": "Not applicable: The managed macie2_classification_job declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_classification_job.",
-        "references": "Missing: Resolve custom identifier IDs and explicitly named buckets in their declared accounts. Dynamic selection criteria do not enumerate buckets.",
+        "references": "Supported: Verified configuration references: custom_data_identifier_ids, s3_job_definition.bucket_definitions.buckets, s3_job_definition.bucket_definitions.account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_classification_job summaries.",
         "officialDocumentation": "website/docs/r/macie2_classification_job.html.markdown",
@@ -73261,7 +73263,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceClassificationJob. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73366,10 +73370,10 @@
       }
     },
     "aws_macie2_invitation_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the configured administrator; invitation ID is returned by the service.",
+      "gap": "#1479 — Verified configuration references: administrator_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73381,7 +73385,7 @@
         "placement": "Supported: Logical Association for the managed macie2_invitation_accepter declaration. Provides a resource to manage an Amazon Macie Invitation Accepter.",
         "ownership": "Not applicable: The managed macie2_invitation_accepter declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_invitation_accepter.",
-        "references": "Missing: Resolve the configured administrator; invitation ID is returned by the service.",
+        "references": "Supported: Verified configuration references: administrator_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_invitation_accepter summaries.",
         "officialDocumentation": "website/docs/r/macie2_invitation_accepter.html.markdown",
@@ -73404,17 +73408,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceInvitationAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_macie2_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the configured member account. Administrator/master outputs are aliases of the administrator identity, not two endpoints.",
+      "gap": "#1479 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73427,7 +73433,7 @@
         "placement": "Supported: Logical Association for the managed macie2_member declaration. Provides a resource to manage an Amazon Macie Member.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_member.",
-        "references": "Missing: Resolve the configured member account. Administrator/master outputs are aliases of the administrator identity, not two endpoints.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_member summaries.",
         "officialDocumentation": "website/docs/r/macie2_member.html.markdown",
@@ -73454,17 +73460,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_macie2_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the organization administrator account without inferring other membership.",
+      "gap": "#1479 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73475,7 +73483,7 @@
         "placement": "Supported: Logical Node for the managed macie2_organization_admin_account declaration. Provides a resource to manage an Amazon Macie Organization Admin Account.",
         "ownership": "Not applicable: The managed macie2_organization_admin_account declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_organization_admin_account.",
-        "references": "Missing: Resolve the organization administrator account without inferring other membership.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/macie2_organization_admin_account.html.markdown",
@@ -73494,7 +73502,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
