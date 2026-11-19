@@ -5388,7 +5388,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 840,
-      "gap": "#722 reviewed: Partial: #505/#547 retain generic S3/KMS configuration provenance, not dedicated semantics. Missing: mode-gated result/logging KMS and S3, execution role, log group and Identity Center navigation. Schema uses customer_content_encryption_configuration.kms_key and managed logging kms_key, unlike documentation kms_key_arn/kms_keys. Follow-up #840.",
+      "gap": "#722 reviewed: Implemented #840. Explicit workgroup execution role, identity center instance, customer content key, managed results key, query output key, query result bucket, workgroup logging bucket, s3 logging key, managed logging key, workgroup log group. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -5412,7 +5412,7 @@
         "placement": "Supported: retain Spatial Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_athena_workgroup remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_athena_workgroup has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Partial: #505/#547 retain generic S3/KMS configuration provenance, not dedicated semantics. Missing: mode-gated result/logging KMS and S3, execution role, log group and Identity Center navigation. Schema uses customer_content_encryption_configuration.kms_key and managed logging kms_key, unlike documentation kms_key_arn/kms_keys.",
+        "references": "Supported: Explicit workgroup execution role, identity center instance, customer content key, managed results key, query output key, query result bucket, workgroup logging bucket, s3 logging key, managed logging key, workgroup log group.",
         "scope": "Partial: Regional (conditional); scope.rs retains verified provider account. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: name/configuration.execution_role identity navigation belongs to #840; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/athena_workgroup.html.markdown",
@@ -5512,7 +5512,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 840,
-      "gap": "#722 reviewed: Missing: discriminator-gated LAMBDA parameter function/metadata-function/record-function ARN navigation; GLUE catalog-id is an account selector, HIVE metadata-function differs. No database ownership from catalog parameters. Follow-up #840.",
+      "gap": "#722 reviewed: Implemented #840. Explicit catalog lambda functions. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -5526,7 +5526,7 @@
         "placement": "Supported: retain Spatial Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_athena_data_catalog remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_athena_data_catalog has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: discriminator-gated LAMBDA parameter function/metadata-function/record-function ARN navigation; GLUE catalog-id is an account selector, HIVE metadata-function differs. No database ownership from catalog parameters.",
+        "references": "Supported: Explicit catalog lambda functions.",
         "scope": "Partial: Regional (conditional); scope.rs retains verified provider account. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: name/type identity navigation belongs to #840; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/athena_data_catalog.html.markdown",
@@ -25064,10 +25064,10 @@
       }
     },
     "aws_athena_database": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 840,
-      "gap": "#722 reviewed: Missing: explicit S3 bucket name, workgroup name and encryption-mode-gated KMS ID/ARN; bucket is optional in schema despite required docs, and bucket/encryption are not read after import. No alias to Glue database. Follow-up #840.",
+      "gap": "#722 reviewed: Implemented #840. Explicit database result bucket, database workgroup, database encryption key. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25083,7 +25083,7 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_athena_database remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_athena_database has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: explicit S3 bucket name, workgroup name and encryption-mode-gated KMS ID/ARN; bucket is optional in schema despite required docs, and bucket/encryption are not read after import. No alias to Glue database.",
+        "references": "Supported: Explicit database result bucket, database workgroup, database encryption key.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: name/bucket identity navigation belongs to #840; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/athena_database.html.markdown",
@@ -25120,10 +25120,10 @@
       }
     },
     "aws_athena_named_query": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 840,
-      "gap": "#722 reviewed: Missing: explicit workgroup and database names with catalog identity; default primary and SQL text cannot create references. Follow-up #840.",
+      "gap": "#722 reviewed: Implemented #840. Explicit query workgroup, athena database. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25136,7 +25136,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Missing: verified workgroup query helper; database reference does not imply exclusive database ownership.",
         "network": "Not applicable: aws_athena_named_query has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: explicit workgroup and database names with catalog identity; default primary and SQL text cannot create references.",
+        "references": "Supported: Explicit query workgroup, athena database.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: database/workgroup identity navigation belongs to #840; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/athena_named_query.html.markdown",
@@ -25159,10 +25159,10 @@
       }
     },
     "aws_athena_prepared_statement": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 840,
-      "gap": "#722 reviewed: Missing: workgroup name proof; name is workgroup-qualified and query_statement is opaque. Follow-up #840.",
+      "gap": "#722 reviewed: Implemented #840. Explicit query workgroup. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -25174,7 +25174,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Missing: workgroup-qualified statement helper with independent lifecycle.",
         "network": "Not applicable: aws_athena_prepared_statement has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: workgroup name proof; name is workgroup-qualified and query_statement is opaque.",
+        "references": "Supported: Explicit query workgroup.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: name/workgroup identity navigation belongs to #840; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/athena_prepared_statement.html.markdown",

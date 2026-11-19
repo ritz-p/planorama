@@ -90,6 +90,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_sagemaker_workteam" => {
                 ("workforce_name", "Private workforce", "Private workteams")
             }
+            "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
+            "aws_athena_prepared_statement" => {
+                ("workgroup", "Query workgroup", "Prepared statements")
+            }
             "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
             kind if super::glue_catalog::owner(kind).is_some() => {
                 if kind == "aws_glue_schema"

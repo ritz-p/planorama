@@ -14,6 +14,7 @@ pub(crate) mod appsync_events;
 mod appsync_execution;
 mod appsync_helpers;
 mod associations;
+pub(crate) mod athena_queries;
 mod autoscaling;
 mod autoscaling_network;
 mod backup;

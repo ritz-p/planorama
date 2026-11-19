@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {"fixture":"athena-queries-plan","focus":"aws_athena_workgroup.sample2","target":2,"mask":{"configuration":true}},
   {"fixture":"timestream-queries-plan","focus":"aws_timestreamquery_scheduled_query.row3","target":3,"mask":{"target_configuration":true}},
   {"fixture":"timestream-influx-plan","focus":"aws_timestreaminfluxdb_db_instance.row5","target":5,"mask":{"vpc_security_group_ids":true}},
   {"fixture":"firehose-msk-source-plan","focus":"aws_kinesis_firehose_delivery_stream.row2","target":2,"mask":{"msk_source_configuration":true}},
