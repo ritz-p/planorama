@@ -492,3 +492,7 @@ ACM certificate ARN in their singleton signing material block. A permission
 belongs to a verified profile and a configured profile version must equal the
 profile's known version. Object keys, principal strings and computed signed
 objects do not identify managed endpoints or effective permissions.
+
+## Verify Access Analyzer archive rule ownership (#1470)
+
+An archive rule references its regional analyzer through the configured analyzer name. The parent must have a matching name and a compatible provider account and region. Finding filters stay opaque.

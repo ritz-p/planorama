@@ -252,6 +252,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Verified Access instance",
                 "Log delivery",
             ),
+            "aws_accessanalyzer_archive_rule" => {
+                ("analyzer_name", "Archive rule analyzer", "Archive rules")
+            }
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
