@@ -1,0 +1,338 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_apprunner_auto_scaling_configuration_version.sample0",
+      "mode": "managed",
+      "type": "aws_apprunner_auto_scaling_configuration_version",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:apprunner:us-east-1:123456789012:autoscalingconfiguration/shared/3/config-id",
+          "latest": false
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_service.sample1",
+      "mode": "managed",
+      "type": "aws_apprunner_service",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:apprunner:us-east-1:123456789012:service/api/service-id",
+          "auto_scaling_configuration_arn": "arn:aws:apprunner:us-east-1:123456789012:autoscalingconfiguration/shared/3/config-id",
+          "instance_configuration": [
+            {
+              "instance_role_arn": "arn:aws:iam::123456789012:role/app"
+            }
+          ],
+          "source_configuration": [
+            {
+              "code_repository": [
+                {}
+              ],
+              "authentication_configuration": [
+                {
+                  "connection_arn": "arn:aws:apprunner:us-east-1:123456789012:connection/github/connection-id"
+                }
+              ]
+            }
+          ],
+          "observability_configuration": [
+            {
+              "observability_enabled": true,
+              "observability_configuration_arn": "arn:aws:apprunner:us-east-1:123456789012:observabilityconfiguration/trace/2/config-id"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_observability_configuration.sample2",
+      "mode": "managed",
+      "type": "aws_apprunner_observability_configuration",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:apprunner:us-east-1:123456789012:observabilityconfiguration/trace/2/config-id"
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_connection.sample3",
+      "mode": "managed",
+      "type": "aws_apprunner_connection",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:apprunner:us-east-1:123456789012:connection/github/connection-id"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample4",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/app"
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_default_auto_scaling_configuration_version.sample5",
+      "mode": "managed",
+      "type": "aws_apprunner_default_auto_scaling_configuration_version",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "auto_scaling_configuration_arn": "arn:aws:apprunner:us-east-1:123456789012:autoscalingconfiguration/shared/3/config-id"
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_deployment.sample6",
+      "mode": "managed",
+      "type": "aws_apprunner_deployment",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "service_arn": "arn:aws:apprunner:us-east-1:123456789012:service/api/service-id"
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_custom_domain_association.sample7",
+      "mode": "managed",
+      "type": "aws_apprunner_custom_domain_association",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "service_arn": "arn:aws:apprunner:us-east-1:123456789012:service/api/service-id",
+          "domain_name": "PRIVATE_DOMAIN.example"
+        }
+      }
+    },
+    {
+      "address": "aws_apprunner_service.sample8",
+      "mode": "managed",
+      "type": "aws_apprunner_service",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_configuration": [
+            {
+              "image_repository": [
+                {
+                  "image_repository_type": "ECR"
+                }
+              ],
+              "authentication_configuration": [
+                {
+                  "access_role_arn": "arn:aws:iam::123456789012:role/app"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_apprunner_auto_scaling_configuration_version.sample0",
+          "mode": "managed",
+          "type": "aws_apprunner_auto_scaling_configuration_version",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apprunner_service.sample1",
+          "mode": "managed",
+          "type": "aws_apprunner_service",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "auto_scaling_configuration_arn": {
+              "references": [
+                "aws_apprunner_auto_scaling_configuration_version.sample0.arn"
+              ]
+            },
+            "instance_configuration": [
+              {
+                "instance_role_arn": {
+                  "references": [
+                    "aws_iam_role.sample4.arn"
+                  ]
+                }
+              }
+            ],
+            "source_configuration": [
+              {
+                "authentication_configuration": [
+                  {
+                    "connection_arn": {
+                      "references": [
+                        "aws_apprunner_connection.sample3.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "observability_configuration": [
+              {
+                "observability_configuration_arn": {
+                  "references": [
+                    "aws_apprunner_observability_configuration.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_apprunner_observability_configuration.sample2",
+          "mode": "managed",
+          "type": "aws_apprunner_observability_configuration",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apprunner_connection.sample3",
+          "mode": "managed",
+          "type": "aws_apprunner_connection",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.sample4",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_apprunner_default_auto_scaling_configuration_version.sample5",
+          "mode": "managed",
+          "type": "aws_apprunner_default_auto_scaling_configuration_version",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "auto_scaling_configuration_arn": {
+              "references": [
+                "aws_apprunner_auto_scaling_configuration_version.sample0.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apprunner_deployment.sample6",
+          "mode": "managed",
+          "type": "aws_apprunner_deployment",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_arn": {
+              "references": [
+                "aws_apprunner_service.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apprunner_custom_domain_association.sample7",
+          "mode": "managed",
+          "type": "aws_apprunner_custom_domain_association",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_arn": {
+              "references": [
+                "aws_apprunner_service.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_apprunner_service.sample8",
+          "mode": "managed",
+          "type": "aws_apprunner_service",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_configuration": [
+              {
+                "authentication_configuration": [
+                  {
+                    "access_role_arn": {
+                      "references": [
+                        "aws_iam_role.sample4.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

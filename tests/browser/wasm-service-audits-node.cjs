@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"apprunner-configuration-plan","focus":"aws_apprunner_service.sample1","target":0,"mask":{"arn":true}},
   {"fixture":"cloudwatch-omni-plan","focus":"aws_cloudwatchomni_space.sample1","target":0,"mask":{"domain_id":true}},
   {"fixture":"observability-logs-plan","focus":"aws_observabilityadmin_s3_table_integration.sample1","target":0,"mask":{"arn":true}},
   {"fixture":"observability-monitors-plan","focus":"aws_applicationinsights_application.sample1","target":0,"mask":{"name":true}},

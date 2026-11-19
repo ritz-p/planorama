@@ -4,7 +4,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 694,
-      "gap": "Implemented #694: verified VPC-egress connector ARN, ingress service ARN, complete connector subnet/SG references and common-VPC context. Service remains outside customer subnets; connectors stay independent logical resources. See aws.md#app-runner-networking-694. #713 review preserves the historical baseline; auxiliary configuration #776 and deferred ingress endpoint/VPC-pair proof remain separate.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -24,7 +24,7 @@
         "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Intentionally unsupported: egress connector subnets do not contain service; ingress is a separate connection #694.",
-        "references": "Missing: VPC-only egress connector ARN #694; scaling/repository-auth/instance-role/enabled observability #776. Deferred: KMS until key-only ARN and encryption summary contract is selected. Image identifiers/URLs do not prove ECR ownership.",
+        "references": "Supported: Full scaling revision ARN, instance IAM role, selected repository authentication and enabled observability configuration. Existing VPC egress connector navigation remains available. Deferred: KMS encryption configuration.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: network mode and encryption summary require known/unknown allowlist; environment maps, build commands and runtime status excluded.",
         "officialDocumentation": "website/docs/r/apprunner_service.html.markdown",
@@ -71,7 +71,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_apprunner_vpc_connector": {
@@ -12520,7 +12524,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 776,
-      "gap": "#713 reviewed: Missing: incoming full revision ARN from service #776.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: scaling limits require a separate numerical known/unknown allowlist.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12535,7 +12539,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: incoming full revision ARN from service #776.",
+        "references": "Supported: Incoming full revision ARN from services and the configured default.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: scaling limits require a separate numerical known/unknown allowlist.",
         "officialDocumentation": "website/docs/r/apprunner_auto_scaling_configuration_version.html.markdown",
@@ -12555,14 +12559,18 @@
           "max_size": [
             "number"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_apprunner_connection": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 776,
-      "gap": "#713 reviewed: Missing: incoming service authentication connection ARN #776.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: connection status and repository credentials are excluded.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12575,7 +12583,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: incoming service authentication connection ARN #776.",
+        "references": "Supported: Incoming repository connection ARN from App Runner code sources.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: connection status and repository credentials are excluded.",
         "officialDocumentation": "website/docs/r/apprunner_connection.html.markdown",
@@ -12589,14 +12597,18 @@
           "provider_type": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_apprunner_custom_domain_association": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 776,
-      "gap": "#713 reviewed: Missing: service ARN #776; domain name and validation records cannot establish Route53/ACM ownership.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: DNS validation data and live verification status excluded.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12609,7 +12621,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: service ARN #776; domain name and validation records cannot establish Route53/ACM ownership.",
+        "references": "Supported: Configured service ARN. Domain names and certificate validation records do not establish Route 53 or ACM relationships.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: DNS validation data and live verification status excluded.",
         "officialDocumentation": "website/docs/r/apprunner_custom_domain_association.html.markdown",
@@ -12623,14 +12635,18 @@
           "enable_www_subdomain": [
             "bool"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_apprunner_default_auto_scaling_configuration_version": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 776,
-      "gap": "#713 reviewed: Missing: full configuration ARN #776; account default is not ownership of all services.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: default selection is not current deployed capacity.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12641,7 +12657,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: full configuration ARN #776; account default is not ownership of all services.",
+        "references": "Supported: Full configuration revision ARN. The account default does not establish service ownership.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: default selection is not current deployed capacity.",
         "officialDocumentation": "website/docs/r/apprunner_default_auto_scaling_configuration_version.html.markdown",
@@ -12649,14 +12665,18 @@
           "auto_scaling_configuration_arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_apprunner_deployment": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 776,
-      "gap": "#713 reviewed: Missing: service ARN #776; deployment trigger stays logical.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: computed operation/status is not successful deployment evidence.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12667,7 +12687,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: service ARN #776; deployment trigger stays logical.",
+        "references": "Supported: Configured service ARN. Deployment stays independently selectable.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: computed operation/status is not successful deployment evidence.",
         "officialDocumentation": "website/docs/r/apprunner_deployment.html.markdown",
@@ -12675,14 +12695,18 @@
           "service_arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_apprunner_observability_configuration": {
       "status": "Basic-only",
       "priority": "P2",
       "issue": 776,
-      "gap": "#713 reviewed: Missing: incoming enabled service observability ARN #776.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: trace vendor requires a separate enum allowlist, no runtime telemetry.",
+      "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12695,7 +12719,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: incoming enabled service observability ARN #776.",
+        "references": "Supported: Incoming full observability configuration ARN when enabled on the service.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: trace vendor requires a separate enum allowlist, no runtime telemetry.",
         "officialDocumentation": "website/docs/r/apprunner_observability_configuration.html.markdown",
@@ -12710,7 +12734,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/apprunner_configuration.rs",
+          "tests/unit/semantic/apprunner_configuration.rs"
+        ]
       }
     },
     "aws_ecr_account_setting": {

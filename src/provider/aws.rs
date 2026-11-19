@@ -7,6 +7,7 @@ mod api_gateway;
 mod api_usage;
 mod application_scaling;
 mod apprunner;
+pub(crate) mod apprunner_configuration;
 pub(crate) mod appsync;
 mod appsync_datasource;
 mod appsync_domains;
