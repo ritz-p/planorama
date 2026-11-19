@@ -1,0 +1,275 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kinesisanalyticsv2_application.sample0",
+      "mode": "managed",
+      "type": "aws_kinesisanalyticsv2_application",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "runtime_environment": "FLINK-1_20",
+          "application_configuration": [
+            {
+              "application_code_configuration": [
+                {
+                  "code_content_type": "ZIPFILE",
+                  "code_content": [
+                    {
+                      "s3_content_location": [
+                        {
+                          "bucket_arn": "arn:aws:s3:::fixture-bucket"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "vpc_configuration": [
+                {
+                  "subnet_ids": [
+                    "subnet-fixture"
+                  ],
+                  "security_group_ids": [
+                    "sg-fixture"
+                  ]
+                }
+              ]
+            }
+          ],
+          "service_execution_role": "arn:aws:iam::123456789012:role/fixture",
+          "name": "fixture-flink"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample1",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.sample2",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample3",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample4",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample5",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::fixture-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesisanalyticsv2_application_snapshot.sample6",
+      "mode": "managed",
+      "type": "aws_kinesisanalyticsv2_application_snapshot",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_name": "fixture-flink"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kinesisanalyticsv2_application.sample0",
+          "mode": "managed",
+          "type": "aws_kinesisanalyticsv2_application",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_configuration": [
+              {
+                "vpc_configuration": [
+                  {
+                    "subnet_ids": {
+                      "references": [
+                        "aws_subnet.sample1.id"
+                      ]
+                    },
+                    "security_group_ids": {
+                      "references": [
+                        "aws_security_group.sample2.id"
+                      ]
+                    }
+                  }
+                ],
+                "application_code_configuration": [
+                  {
+                    "code_content": [
+                      {
+                        "s3_content_location": [
+                          {
+                            "bucket_arn": {
+                              "references": [
+                                "aws_s3_bucket.sample5.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "service_execution_role": {
+              "references": [
+                "aws_iam_role.sample4.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.sample1",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample3.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.sample2",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample3.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample3",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.sample4",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample5",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesisanalyticsv2_application_snapshot.sample6",
+          "mode": "managed",
+          "type": "aws_kinesisanalyticsv2_application_snapshot",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_name": {
+              "references": [
+                "aws_kinesisanalyticsv2_application.sample0.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

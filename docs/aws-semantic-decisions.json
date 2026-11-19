@@ -9447,10 +9447,10 @@
       }
     },
     "aws_kinesisanalyticsv2_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 752,
-      "gap": "Missing: execution role and code bucket #752. Deferred: SQL stream chains, encryption, logs and restore snapshots until runtime-mode and version-specific contracts; application properties cannot supply endpoints. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 audit: #752 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9462,10 +9462,10 @@
           "application_configuration.application_code_configuration.code_content.s3_content_location.bucket_arn",
           "application_configuration.application_encryption_configuration.key_id"
         ],
-        "placement": "Missing: application is Logical; independent architecture card review under #752.",
+        "placement": "Supported: Verified Flink configuration supports a regional application card; common VPC proof supplies placement.",
         "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
         "network": "Missing: complete subnet/SG common-VPC evidence #752.",
-        "references": "Missing: execution role and code bucket #752. Deferred: SQL stream chains, encryption, logs and restore snapshots until runtime-mode and version-specific contracts; application properties cannot supply endpoints.",
+        "references": "Supported: Explicit Flink role, ZIP code bucket, complete subnet and security-group references.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: code/property_map/SQL. Deferred runtime summary until SQL versus Flink modes and unknowns are allowlisted.",
         "officialDocumentation": "website/docs/r/kinesisanalyticsv2_application.html.markdown",
@@ -9501,14 +9501,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/flink_configuration.rs",
+          "tests/unit/semantic/flink_configuration.rs"
+        ]
       }
     },
     "aws_kinesisanalyticsv2_application_snapshot": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 752,
-      "gap": "Missing: explicit application.name reference #752. Snapshot name is not proof of restored state. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 audit: #752 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9517,10 +9521,10 @@
           "application_name",
           "snapshot_name"
         ],
-        "placement": "Supported: retain Logical presentation for this independent aws_kinesisanalyticsv2_application_snapshot identity.",
+        "placement": "Supported: Snapshot retains its logical, independent identity.",
         "ownership": "Missing: application association #752; keep snapshot identity independent.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: explicit application.name reference #752. Snapshot name is not proof of restored state.",
+        "references": "Supported: Explicit application name with Flink runtime evidence.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: snapshot state/contents and running-status inference.",
         "officialDocumentation": "website/docs/r/kinesisanalyticsv2_application_snapshot.html.markdown",
@@ -9531,7 +9535,11 @@
           "snapshot_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/flink_configuration.rs",
+          "tests/unit/semantic/flink_configuration.rs"
+        ]
       }
     },
     "aws_msk_channel": {

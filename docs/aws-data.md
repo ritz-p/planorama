@@ -1202,3 +1202,11 @@ and customer KMS key ARN. A common verified VPC is required for placement from
 complete configured subnet and security-group references. An environment without
 this evidence retains a regional card. Scripts, DAG paths, managed log groups
 and workers are outside these references.
+
+## Managed Flink configuration
+
+A Flink application links its execution role and its S3 code bucket when using
+`ZIPFILE`. Complete configured subnet and security-group references with a common
+VPC establish application placement. An explicit configured snapshot name link
+preserves the snapshot's logical identity. SQL, code and property-map contents,
+worker inference, restore activity and service-managed encryption are excluded.
