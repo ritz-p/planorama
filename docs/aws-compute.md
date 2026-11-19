@@ -723,3 +723,12 @@ region. An explicit Lightsail origin must match `origin.region_name`, with
 independent account evidence for a different provider binding. DNS names and
 addresses do not create endpoints. Static IPs, domains and databases retain
 independent cards without VPC or subnet inference.
+
+## ECR repository and registry configuration
+
+An ECR Public repository has an independent card. Its policy links the exact
+`repository_name` in `us-east-1`. Private repositories and creation templates
+link a configured customer KMS ARN in `KMS` mode. Creation templates and pull
+through cache rules link explicit custom IAM roles. Cache rules can link a
+Secrets Manager secret by ARN, and pull-time exclusions link an IAM role or
+user by ARN. Templates, credentials and prefixes retain independent identities.

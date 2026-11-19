@@ -69,6 +69,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && resource != "aws_ecrpublic_repository"
+        && !super::ecr_configuration::resource(resource)
         && !super::glacier_configuration::resource(resource)
         && !super::flink_configuration::resource(resource)
         && !super::mwaa_configuration::resource(resource)

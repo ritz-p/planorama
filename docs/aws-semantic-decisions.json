@@ -6897,7 +6897,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 777,
-      "gap": "#713 reviewed: Partial: existing policy/lifecycle inbound references retained (service_references.rs, ECR tests). Missing: KMS-only key ARN #777.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Deferred: encryption_type/KMS summary until explicit allowlist covers unknown/default key semantics.",
+      "gap": "#713 audit: #777 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -6911,7 +6911,7 @@
         "placement": "Supported: retain Spatial default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Partial: existing policy/lifecycle inbound references retained (service_references.rs, ECR tests). Missing: KMS-only key ARN #777.",
+        "references": "Supported: Explicit customer KMS ARN in KMS mode. Existing private repository-policy relationships are preserved.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Deferred: encryption_type/KMS summary until explicit allowlist covers unknown/default key semantics.",
         "officialDocumentation": "website/docs/r/ecr_repository.html.markdown",
@@ -6930,7 +6930,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/ecr_configuration.rs",
+          "tests/unit/semantic/ecr_configuration.rs"
+        ]
       }
     },
     "aws_ecr_repository_policy": {
@@ -12835,10 +12839,10 @@
       }
     },
     "aws_ecr_pull_through_cache_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 777,
-      "gap": "#713 reviewed: Missing: secret ARN/custom role ARN #777; upstream URL and prefixes are not managed repository identifiers.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: credentials and upstream registry details are not displayed.",
+      "gap": "#713 audit: #777 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12852,7 +12856,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: secret ARN/custom role ARN #777; upstream URL and prefixes are not managed repository identifiers.",
+        "references": "Supported: Explicit upstream credentials secret ARN and IAM role ARN. Secret material is excluded.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: credentials and upstream registry details are not displayed.",
         "officialDocumentation": "website/docs/r/ecr_pull_through_cache_rule.html.markdown",
@@ -12869,14 +12873,18 @@
           "upstream_registry_url": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/ecr_configuration.rs",
+          "tests/unit/semantic/ecr_configuration.rs"
+        ]
       }
     },
     "aws_ecr_pull_time_update_exclusion": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 777,
-      "gap": "#713 reviewed: Missing: explicit compatible IAM principal ARN #777; exclusion does not own the principal.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: pull-time exclusion is not image access/activity evidence.",
+      "gap": "#713 audit: #777 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -12887,7 +12895,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: explicit compatible IAM principal ARN #777; exclusion does not own the principal.",
+        "references": "Supported: Explicit IAM role or user ARN with compatible provider scope.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: pull-time exclusion is not image access/activity evidence.",
         "officialDocumentation": "website/docs/r/ecr_pull_time_update_exclusion.html.markdown",
@@ -12895,7 +12903,11 @@
           "principal_arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/ecr_configuration.rs",
+          "tests/unit/semantic/ecr_configuration.rs"
+        ]
       }
     },
     "aws_ecr_registry_policy": {
@@ -12995,10 +13007,10 @@
       }
     },
     "aws_ecr_repository_creation_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 777,
-      "gap": "#713 reviewed: Missing: creation role and KMS-only key ARN #777; ROOT/prefix rules never synthesize repositories.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy/lifecycle templates and tags are arbitrary configuration payloads.",
+      "gap": "#713 audit: #777 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13012,7 +13024,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: creation role and KMS-only key ARN #777; ROOT/prefix rules never synthesize repositories.",
+        "references": "Supported: Explicit role ARN and customer KMS ARN in KMS mode.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: policy/lifecycle templates and tags are arbitrary configuration payloads.",
         "officialDocumentation": "website/docs/r/ecr_repository_creation_template.html.markdown",
@@ -13031,14 +13043,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/ecr_configuration.rs",
+          "tests/unit/semantic/ecr_configuration.rs"
+        ]
       }
     },
     "aws_ecrpublic_repository": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 777,
-      "gap": "#713 reviewed: Missing: incoming public repository policy reference #777. Missing: currently Logical; evaluate independent Spatial repository parity #777. API is us-east-1 only, not inferred global scope. Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: catalog Markdown/logo/usage text and image contents are excluded.",
+      "gap": "#713 audit: #777 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13049,10 +13065,10 @@
           "registry_id",
           "repository_uri"
         ],
-        "placement": "Missing: currently Logical; evaluate independent Spatial repository parity #777. API is us-east-1 only, not inferred global scope.",
+        "placement": "Supported: Independent regional Public repository card.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: incoming public repository policy reference #777.",
+        "references": "Supported: Receives explicit policy repository-name references in us-east-1.",
         "scope": "Partial: current Regional conditional eligibility; pinned API only supports us-east-1. No global account/region inference from public URI. Revisit scope with #777.",
         "summaries": "Intentionally unsupported: catalog Markdown/logo/usage text and image contents are excluded.",
         "officialDocumentation": "website/docs/r/ecrpublic_repository.html.markdown",
@@ -13069,14 +13085,18 @@
           "repository_uri": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/ecr_configuration.rs",
+          "tests/unit/semantic/ecr_configuration.rs"
+        ]
       }
     },
     "aws_ecrpublic_repository_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 777,
-      "gap": "#713 reviewed: Missing: repository_name -> public repository.repository_name #777; private repository rule does not apply.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: policy document is not effective permission evidence.",
+      "gap": "#713 audit: #777 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13088,7 +13108,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Missing: verified public-repository navigation #777; retain logical independent policy.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: repository_name -> public repository.repository_name #777; private repository rule does not apply.",
+        "references": "Supported: Explicit compatible Public repository name in us-east-1.",
         "scope": "Partial: current Regional conditional eligibility; pinned API only supports us-east-1. No global account/region inference from public URI. Revisit scope with #777.",
         "summaries": "Intentionally unsupported: policy document is not effective permission evidence.",
         "officialDocumentation": "website/docs/r/ecrpublic_repository_policy.html.markdown",
@@ -13099,7 +13119,11 @@
           "registry_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/ecr_configuration.rs",
+          "tests/unit/semantic/ecr_configuration.rs"
+        ]
       }
     },
     "aws_ecs_account_setting_default": {

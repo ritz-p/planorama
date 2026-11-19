@@ -618,7 +618,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_ecr_repository", "Amazon ECR", Node, Logical, Regional, Some(ResourceIcon::Ecr)),
     entry!("aws_ecr_repository_creation_template", "Amazon ECR", Controller, Logical, Regional, Some(ResourceIcon::Ecr)),
     entry!("aws_ecr_repository_policy", "Amazon ECR", Policy, Logical, Regional, Some(ResourceIcon::Ecr)),
-    entry!("aws_ecrpublic_repository", "Amazon ECR Public", Node, Logical, Regional, Some(ResourceIcon::Ecr)),
+    entry!("aws_ecrpublic_repository", "Amazon ECR Public", Node, Spatial, Regional, Some(ResourceIcon::Ecr)),
     entry!("aws_ecrpublic_repository_policy", "Amazon ECR Public", Policy, Logical, Regional, Some(ResourceIcon::Ecr)),
     entry!("aws_ecs_account_setting_default", "Amazon ECS", Node, Logical, Regional, Some(ResourceIcon::Ecs)),
     entry!("aws_ecs_capacity_provider", "Amazon ECS", Node, Logical, Regional, Some(ResourceIcon::Ecs)),
