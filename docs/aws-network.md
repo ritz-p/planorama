@@ -1081,3 +1081,7 @@ VPC attachments retain the hub, VPC and complete same-VPC subnet selection. Conn
 ## Transit Gateway route and propagation evidence (#1443)
 
 Transit route tables identify their own gateway. Default association and default propagation remain independent changes. Route and prefix-list targets require a known forwarding mode and an attachment for the same gateway. A blackhole route retains its table relationship. Original default IDs, destination CIDRs and learned routes supply no endpoints.
+
+## Transit policy and metering configuration (#1444)
+
+Policy entries distinguish their policy table from their target route table. Metering policies identify the gateway and a complete set of middlebox attachments. Entry source and destination IDs are checked against their optional attachment-type selectors and the owning gateway. Traffic selectors, rule numbers and charging modes do not identify additional resources.

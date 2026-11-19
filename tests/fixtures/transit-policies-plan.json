@@ -1,0 +1,245 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_transit_gateway_metering_policy.sample0",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_metering_policy",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "transit_gateway_id": "tgw-1",
+          "middlebox_attachment_ids": [
+            "tgw-attach-1"
+          ],
+          "transit_gateway_metering_policy_id": "tgw-meter-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.sample1",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_vpc_attachment.sample2",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_vpc_attachment",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-attach-1",
+          "transit_gateway_id": "tgw-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_metering_policy_entry.sample3",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_metering_policy_entry",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_transit_gateway_attachment_type": "vpc",
+          "transit_gateway_metering_policy_id": "tgw-meter-1",
+          "source_transit_gateway_attachment_id": "tgw-attach-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_policy_table.sample4",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_policy_table",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "transit_gateway_id": "tgw-1",
+          "id": "tgw-pt-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_policy_table_entry.sample5",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_policy_table_entry",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "transit_gateway_policy_table_id": "tgw-pt-1",
+          "target_route_table_id": "tgw-rtb-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_route_table.sample6",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_route_table",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-rtb-1",
+          "transit_gateway_id": "tgw-1"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_transit_gateway_metering_policy.sample0",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_metering_policy",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.sample1.id"
+              ]
+            },
+            "middlebox_attachment_ids": {
+              "references": [
+                "aws_ec2_transit_gateway_vpc_attachment.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway.sample1",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_transit_gateway_vpc_attachment.sample2",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_vpc_attachment",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_metering_policy_entry.sample3",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_metering_policy_entry",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_metering_policy_id": {
+              "references": [
+                "aws_ec2_transit_gateway_metering_policy.sample0.transit_gateway_metering_policy_id"
+              ]
+            },
+            "source_transit_gateway_attachment_id": {
+              "references": [
+                "aws_ec2_transit_gateway_vpc_attachment.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_policy_table.sample4",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_policy_table",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_policy_table_entry.sample5",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_policy_table_entry",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_policy_table_id": {
+              "references": [
+                "aws_ec2_transit_gateway_policy_table.sample4.id"
+              ]
+            },
+            "target_route_table_id": {
+              "references": [
+                "aws_ec2_transit_gateway_route_table.sample6.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_route_table.sample6",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_route_table",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.sample1.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
