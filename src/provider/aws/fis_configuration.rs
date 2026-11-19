@@ -11,6 +11,8 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         ("aws_fis_experiment_template", "target.resource_arns") => Rule::new(
             "Explicit experiment targets",
             &[
+                ("aws_dsql_cluster", &["arn"]),
+                ("aws_memorydb_multi_region_cluster", &["arn"]),
                 ("aws_instance", &["arn"]),
                 ("aws_subnet", &["arn"]),
                 ("aws_ebs_volume", &["arn"]),
@@ -124,7 +126,7 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         "target.resource_arns" => path
             .rsplit_once('.')
             .filter(|(p, _)| {
-                ["filter", "resource_tag", "parameters"]
+                ["filter", "resource_tag"]
                     .iter()
                     .all(|field| e.absent(r.target, &format!("{p}.{field}")))
             })
@@ -132,7 +134,12 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             .is_some_and(|kind| {
                 matches!(
                     (kind, e.nodes[source].resource_type.as_str()),
-                    ("aws:ec2:instance", "aws_instance")
+                    ("aws:dsql:cluster", "aws_dsql_cluster")
+                        | (
+                            "aws:memorydb:multi-region-cluster",
+                            "aws_memorydb_multi_region_cluster"
+                        )
+                        | ("aws:ec2:instance", "aws_instance")
                         | ("aws:ec2:subnet", "aws_subnet")
                         | ("aws:ec2:ebs-volume", "aws_ebs_volume")
                         | ("aws:ecs:cluster", "aws_ecs_cluster")
