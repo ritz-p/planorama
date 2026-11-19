@@ -1183,3 +1183,12 @@ match verified endpoint account evidence. Restore source names and ARNs link
 only to the exact referenced table output in compatible provider scope.
 These links describe configured data movement and do not establish delivery
 status or containment.
+
+## Amazon Keyspaces configuration
+
+A keyspace has an independent regional card. A table retains its own identity
+and action while linking to the verified keyspace through
+`keyspace_name` → `aws_keyspaces_keyspace.name` or `id`.
+A singleton encryption configuration links `kms_key_identifier` to a managed
+KMS ARN when it selects `CUSTOMER_MANAGED_KMS_KEY`. Replication regions
+do not identify separate Terraform replicas or imply VPC membership.

@@ -860,7 +860,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_kendra_query_suggestions_block_list", "Amazon Kendra", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonKendra))),
     entry!("aws_kendra_thesaurus", "Amazon Kendra", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonKendra))),
     entry!("aws_key_pair", "Amazon EC2", Node, Logical, Regional, Some(ResourceIcon::Ec2)),
-    entry!("aws_keyspaces_keyspace", "Amazon Keyspaces", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonKeyspaces))),
+    entry!("aws_keyspaces_keyspace", "Amazon Keyspaces", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonKeyspaces))),
     entry!("aws_keyspaces_table", "Amazon Keyspaces", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonKeyspaces))),
     entry!("aws_kinesis_account_settings", "Amazon Kinesis Data Streams", Controller, Logical, Regional, Some(ResourceIcon::Kinesis)),
     entry!("aws_kinesis_analytics_application", "Amazon Kinesis Data Analytics", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonKinesis))),

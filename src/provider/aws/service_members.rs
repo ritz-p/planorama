@@ -119,6 +119,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_storagegateway_smb_file_share" => {
                 ("gateway_arn", "Storage Gateway", "File shares")
             }
+            "aws_keyspaces_table" => ("keyspace_name", "Keyspace", "Tables"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

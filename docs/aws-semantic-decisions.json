@@ -8342,10 +8342,10 @@
       }
     },
     "aws_keyspaces_keyspace": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 741,
-      "gap": "Missing: inbound table reference. Multi-region region_list is not Terraform replica identity. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 audit: #741 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8355,10 +8355,10 @@
           "replication_specification.region_list",
           "replication_specification.replication_strategy"
         ],
-        "placement": "Missing: architecture-bearing keyspace currently logical; review independent card under #741.",
+        "placement": "Supported: Independent regional Spatial keyspace.",
         "ownership": "Missing: table ownership needs explicit keyspace reference.",
         "network": "Not applicable: managed Keyspaces is not contained by a client VPC endpoint.",
-        "references": "Missing: inbound table reference. Multi-region region_list is not Terraform replica identity.",
+        "references": "Supported: Explicit incoming table keyspace references. Region lists do not create replicas.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/keyspaces_keyspace.html.markdown",
@@ -8377,14 +8377,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/keyspaces_configuration.rs",
+          "tests/unit/semantic/keyspaces_configuration.rs"
+        ]
       }
     },
     "aws_keyspaces_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 741,
-      "gap": "Missing: keyspace/KMS references. Composite table identity includes keyspace; names alone insufficient. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 audit: #741 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8395,9 +8399,9 @@
           "encryption_specification.type"
         ],
         "placement": "Missing: architecture-bearing table currently logical; review card versus proven child under #741.",
-        "ownership": "Missing: unique keyspace ownership proof.",
+        "ownership": "Supported: Verified keyspace retains independent table lifecycle.",
         "network": "Not applicable: managed table has no subnet contract.",
-        "references": "Missing: keyspace/KMS references. Composite table identity includes keyspace; names alone insufficient.",
+        "references": "Supported: Explicit keyspace name and customer-managed encryption key ARN.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/keyspaces_table.html.markdown",
@@ -8413,7 +8417,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/keyspaces_configuration.rs",
+          "tests/unit/semantic/keyspaces_configuration.rs"
+        ]
       }
     },
     "aws_memorydb_acl": {

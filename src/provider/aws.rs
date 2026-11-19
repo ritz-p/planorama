@@ -107,6 +107,7 @@ pub(crate) mod imagebuilder;
 pub(crate) mod imagebuilder_distribution;
 pub(crate) mod ipam;
 pub(crate) mod kendra;
+pub(crate) mod keyspaces_configuration;
 pub(crate) mod kinesis_owners;
 pub(crate) mod kms;
 pub(crate) mod lakeformation_selectors;
