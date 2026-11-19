@@ -719,7 +719,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_gamelift_game_server_group", "Amazon GameLift Servers", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonGameLiftServers))),
     entry!("aws_gamelift_game_session_queue", "Amazon GameLift Servers", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonGameLiftServers))),
     entry!("aws_gamelift_script", "Amazon GameLift Servers", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonGameLiftServers))),
-    entry!("aws_glacier_vault", "Amazon S3 Glacier", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSimpleStorageServiceGlacier))),
+    entry!("aws_glacier_vault", "Amazon S3 Glacier", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSimpleStorageServiceGlacier))),
     entry!("aws_glacier_vault_lock", "Amazon S3 Glacier", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonSimpleStorageServiceGlacier))),
     entry!("aws_globalaccelerator_accelerator", "AWS Global Accelerator", Connector, Spatial, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),
     entry!("aws_globalaccelerator_cross_account_attachment", "AWS Global Accelerator", Association, Logical, Global, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSGlobalAccelerator))),

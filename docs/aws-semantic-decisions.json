@@ -50625,10 +50625,10 @@
       }
     },
     "aws_glacier_vault": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 973,
-      "gap": "#719 audit: Missing: configured notification SNS ARN; vault is not an S3 bucket. Follow-up #973. Missing: Logical vault is independent archival storage; review Spatial vault presentation. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #973 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -50638,10 +50638,10 @@
           "arn",
           "notification.sns_topic"
         ],
-        "placement": "Missing: Logical vault is independent archival storage; review Spatial vault presentation.",
+        "placement": "Supported: An independent regional archive vault.",
         "ownership": "Not applicable: retain independent aws_glacier_vault identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_glacier_vault has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: configured notification SNS ARN; vault is not an S3 bucket. Follow-up #973.",
+        "references": "Supported: Configured notification SNS ARN.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
         "summaries": "Deferred: aws_glacier_vault settings remain private to input; revisit configured-only enum/boolean summaries with unknown and absent semantics when its relationship contract is implemented. No payloads or runtime status.",
         "officialDocumentation": "website/docs/r/glacier_vault.html.markdown",
@@ -50677,15 +50677,17 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/glacier_configuration.rs",
+          "tests/unit/semantic/glacier_configuration.rs"
         ]
       }
     },
     "aws_glacier_vault_lock": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 973,
-      "gap": "#719 audit: Missing: vault_name to explicit Glacier vault name; lock id is vault name, not a separate vault. Follow-up #973. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#719 audit: #973 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 719,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -50697,7 +50699,7 @@
         "placement": "Supported: retain Logical Node default for aws_glacier_vault_lock; configuration/access identity remains independently selectable; no automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_glacier_vault_lock identity and action; references do not establish exclusive presentation ownership.",
         "network": "Not applicable: aws_glacier_vault_lock has no configured subnet containment contract; storage/service associations do not relocate resources into customer networks.",
-        "references": "Missing: vault_name to explicit Glacier vault name; lock id is vault name, not a separate vault. Follow-up #973.",
+        "references": "Supported: Explicit vault name. The lock identity does not identify a second vault.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic scope clears account; explicit account IDs constrain targets but are not currently resource-owner proof. Target references do not overwrite provider scope or named-state identity.",
         "summaries": "Intentionally unsupported: complete_lock is irreversible policy configuration, not evidence of compliance or effective retention.",
         "officialDocumentation": "website/docs/r/glacier_vault_lock.html.markdown",
@@ -50728,7 +50730,9 @@
           "tests/unit/semantic/s3.rs",
           "tests/unit/semantic/s3_notification.rs",
           "tests/unit/semantic/s3_replication.rs",
-          "tests/unit/semantic/encryption.rs"
+          "tests/unit/semantic/encryption.rs",
+          "src/provider/aws/glacier_configuration.rs",
+          "tests/unit/semantic/glacier_configuration.rs"
         ]
       }
     },

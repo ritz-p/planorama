@@ -95,6 +95,7 @@ pub(crate) mod firehose_sources;
 pub(crate) mod flink_configuration;
 pub(crate) mod flow_logs;
 mod fsx;
+pub(crate) mod glacier_configuration;
 pub(crate) mod global_accelerator;
 mod glue;
 pub(crate) mod glue_catalog;
