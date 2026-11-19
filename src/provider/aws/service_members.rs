@@ -138,6 +138,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("policy_store_id", "Policy store", "Templates")
             }
             "aws_verifiedpermissions_schema" => ("policy_store_id", "Policy store", "Schemas"),
+            "aws_accountaccess_entitlement" => (
+                "application_arn",
+                "Account Access application",
+                "Entitlements",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
