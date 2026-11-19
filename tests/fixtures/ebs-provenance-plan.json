@@ -1,0 +1,291 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ebs_snapshot_copy.sample0",
+      "mode": "managed",
+      "type": "aws_ebs_snapshot_copy",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_region": "us-east-1",
+          "encrypted": true,
+          "source_snapshot_id": "snap-source",
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_snapshot.sample1",
+      "mode": "managed",
+      "type": "aws_ebs_snapshot",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "snap-source",
+          "volume_id": "vol-source"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_volume.sample2",
+      "mode": "managed",
+      "type": "aws_ebs_volume",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vol-source"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample3",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_volume_copy.sample4",
+      "mode": "managed",
+      "type": "aws_ebs_volume_copy",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_volume_id": "vol-source"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_snapshot_import.sample5",
+      "mode": "managed",
+      "type": "aws_ebs_snapshot_import",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "disk_container": [
+            {
+              "user_bucket": [
+                {
+                  "s3_bucket": "audit-import"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample6",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "audit-import"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_fast_snapshot_restore.sample7",
+      "mode": "managed",
+      "type": "aws_ebs_fast_snapshot_restore",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "snapshot_id": "snap-source"
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_default_kms_key.sample8",
+      "mode": "managed",
+      "type": "aws_ebs_default_kms_key",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ebs_snapshot_copy.sample0",
+          "mode": "managed",
+          "type": "aws_ebs_snapshot_copy",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_snapshot_id": {
+              "references": [
+                "aws_ebs_snapshot.sample1.id"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ebs_snapshot.sample1",
+          "mode": "managed",
+          "type": "aws_ebs_snapshot",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "volume_id": {
+              "references": [
+                "aws_ebs_volume.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ebs_volume.sample2",
+          "mode": "managed",
+          "type": "aws_ebs_volume",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample3",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ebs_volume_copy.sample4",
+          "mode": "managed",
+          "type": "aws_ebs_volume_copy",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_volume_id": {
+              "references": [
+                "aws_ebs_volume.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ebs_snapshot_import.sample5",
+          "mode": "managed",
+          "type": "aws_ebs_snapshot_import",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "disk_container": [
+              {
+                "user_bucket": [
+                  {
+                    "s3_bucket": {
+                      "references": [
+                        "aws_s3_bucket.sample6.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample6",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ebs_fast_snapshot_restore.sample7",
+          "mode": "managed",
+          "type": "aws_ebs_fast_snapshot_restore",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "snapshot_id": {
+              "references": [
+                "aws_ebs_snapshot.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ebs_default_kms_key.sample8",
+          "mode": "managed",
+          "type": "aws_ebs_default_kms_key",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_arn": {
+              "references": [
+                "aws_kms_key.sample3.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -65338,10 +65338,10 @@
       }
     },
     "aws_ebs_default_kms_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Missing: link the configured regional default key by exact KMS ARN. No fan-out to every encrypted volume.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65352,8 +65352,8 @@
         "placement": "Supported: retain Logical Controller presentation for aws_ebs_default_kms_key.",
         "ownership": "Not applicable: Regional account setting, shared by future creations.",
         "network": "Intentionally unsupported: A key establishes no subnet placement.",
-        "references": "Missing: link the configured regional default key by exact KMS ARN. No fan-out to every encrypted volume.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit key_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not assert that existing disks use the default.",
         "officialDocumentation": "website/docs/r/ebs_default_kms_key.html.markdown",
         "shapes": {
@@ -65369,7 +65369,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration resourceEBSDefaultKMSKey. Separate same-name lookup; configurable data attributes are listed separately. No managed alias.",
         "dataContracts": {
@@ -65431,10 +65433,10 @@
       }
     },
     "aws_ebs_fast_snapshot_restore": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Missing: link snapshot_id to a snapshot producer in the same region; availability_zone qualifies the request.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65447,8 +65449,8 @@
         "placement": "Supported: retain Logical Controller presentation for aws_ebs_fast_snapshot_restore.",
         "ownership": "Not applicable: Restore setting is qualified by snapshot and AZ.",
         "network": "Intentionally unsupported: AZ is not a subnet.",
-        "references": "Missing: link snapshot_id to a snapshot producer in the same region; availability_zone qualifies the request.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit snapshot_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude computed activation/readiness state.",
         "officialDocumentation": "website/docs/r/ebs_fast_snapshot_restore.html.markdown",
         "shapes": {
@@ -65472,7 +65474,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration newEBSFastSnapshotRestoreResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -65482,7 +65486,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Missing: link the configured source volume ID; kms_key_id is computed here and describes inherited encryption.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65496,8 +65500,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ebs_snapshot.",
         "ownership": "Not applicable: Independent snapshot can outlive the volume.",
         "network": "Intentionally unsupported: Source volume does not place the snapshot in a subnet.",
-        "references": "Missing: link the configured source volume ID; kms_key_id is computed here and describes inherited encryption.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit volume_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude storage contents and restore status.",
         "officialDocumentation": "website/docs/r/ebs_snapshot.html.markdown",
         "shapes": {
@@ -65527,7 +65531,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/storagegateway.rs",
-          "tests/unit/semantic/storagegateway.rs"
+          "tests/unit/semantic/storagegateway.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration resourceEBSSnapshot. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -65612,10 +65618,10 @@
       }
     },
     "aws_ebs_snapshot_copy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Missing: match the source snapshot in source_region and destination KMS key in the copy region. The returned volume_id is not a selected source volume.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65630,8 +65636,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ebs_snapshot_copy.",
         "ownership": "Not applicable: Independent destination snapshot.",
         "network": "Intentionally unsupported: Do not inherit source location or attached networks.",
-        "references": "Missing: match the source snapshot in source_region and destination KMS key in the copy region. The returned volume_id is not a selected source volume.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit source_snapshot_id, kms_key_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit transfer progress and snapshot contents.",
         "officialDocumentation": "website/docs/r/ebs_snapshot_copy.html.markdown",
         "shapes": {
@@ -65669,17 +65675,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration resourceEBSSnapshotCopy. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ebs_snapshot_import": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Missing: verify the nested import bucket, explicit import IAM role name and destination key. URL and object key are not evidence of an independently managed object.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65694,8 +65702,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ebs_snapshot_import.",
         "ownership": "Not applicable: The imported snapshot is independent of its source bucket.",
         "network": "Intentionally unsupported: A disk file does not locate a subnet.",
-        "references": "Missing: verify the nested import bucket, explicit import IAM role name and destination key. URL and object key are not evidence of an independently managed object.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit kms_key_id, disk_container.user_bucket.s3_bucket, role_name references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Never expose signed URLs or object paths.",
         "officialDocumentation": "website/docs/r/ebs_snapshot_import.html.markdown",
         "shapes": {
@@ -65731,7 +65739,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration resourceEBSSnapshotImport. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -65741,7 +65751,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Partial: #498 verifies incoming attachments. Missing: source snapshot ID and explicitly configured KMS key with known encryption mode; computed defaults alone do not bind.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65756,8 +65766,8 @@
         "placement": "Supported: retain Spatial Node presentation for aws_ebs_volume.",
         "ownership": "Not applicable: Volume remains independently visible with zero or multiple attachments.",
         "network": "Supported: #498 keeps the volume outside instance subnet containment.",
-        "references": "Partial: #498 verifies incoming attachments. Missing: source snapshot ID and explicitly configured KMS key with known encryption mode; computed defaults alone do not bind.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Existing verified attachment associations plus explicit snapshot ID and encryption-enabled KMS key ARN.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Device paths and observed mount state are excluded.",
         "officialDocumentation": "website/docs/r/ebs_volume.html.markdown",
         "shapes": {
@@ -65791,7 +65801,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/associations.rs",
-          "tests/unit/semantic/ebs.rs"
+          "tests/unit/semantic/ebs.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration resourceEBSVolume. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -65818,10 +65830,10 @@
       }
     },
     "aws_ebs_volume_copy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1433,
-      "gap": "#1433 — Missing: match a source volume by ID; preserve the new volume identity separately from attachment identity. Review an independent volume card alongside #498.",
+      "gap": "#709 audit: #1433 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65831,11 +65843,11 @@
           "availability_zone",
           "id"
         ],
-        "placement": "Missing: current Logical Node; show independent copied volume, matching the existing EBS volume presentation from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Copy is separately addressable from source.",
         "network": "Intentionally unsupported: Computed AZ gives no VPC or subnet.",
-        "references": "Missing: match a source volume by ID; preserve the new volume identity separately from attachment identity. Review an independent volume card alongside #498.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit source_volume_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Ignore completion state and performance estimates.",
         "officialDocumentation": "website/docs/r/ebs_volume_copy.html.markdown",
         "shapes": {
@@ -65859,7 +65871,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ebs_provenance.rs",
+          "tests/unit/semantic/ebs_provenance.rs"
         ],
         "managedDataContract": "Managed registration newEBSVolumeCopyResource. No same-name data registration. No managed alias.",
         "dataContracts": {}

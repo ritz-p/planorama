@@ -525,3 +525,7 @@ A Glacier vault is independent regional archival storage. A configured
 notification can link an SNS topic ARN, and a vault lock can link the vault's
 explicit name. The lock retains its own identity and action. Vault and lock
 policies remain opaque.
+
+## Verify EBS volume and snapshot provenance (#1433)
+
+Snapshots and volume copies retain independent identities. Snapshot copies qualify the source region and sharing grant. Import links require an explicit S3 bucket, IAM role or encryption key. Restore settings link the selected snapshot, and the regional default key does not create volume relationships.
