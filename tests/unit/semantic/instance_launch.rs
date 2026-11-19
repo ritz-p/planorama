@@ -57,7 +57,14 @@ fn configured_links_require_current_typed_evidence() {
         assert!(!verified(&masked, address, path), "{address}/{path}");
     }
     let mut changed = fixture.clone();
-    changed["resource_changes"][0]["change"]["after"]["placement_group"] = json!("other");
+    changed["resource_changes"][0]["change"]["after"]["placement_group"] = json!("group-name");
+    assert!(verified(
+        &changed,
+        "aws_instance.sample0",
+        "placement_group_id"
+    ));
+    changed["configuration"]["root_module"]["resources"][0]["expressions"]["placement_group"] =
+        json!({"constant_value":"group-name"});
     assert!(!verified(
         &changed,
         "aws_instance.sample0",

@@ -70,6 +70,11 @@ impl Evidence<'_> {
             }
         })
     }
+    pub fn has_argument(&self, node: usize, path: &str) -> bool {
+        self.refs
+            .iter()
+            .any(|r| r.target == node && r.attribute == path && !r.root_constant_null)
+    }
     pub fn absent(&self, node: usize, path: &str) -> bool {
         self.value(node, path).is_some_and(|v| {
             v.is_null() || v.as_str() == Some("") || v.as_array().is_some_and(Vec::is_empty)
