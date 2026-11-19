@@ -736,3 +736,7 @@ user by ARN. Templates, credentials and prefixes retain independent identities.
 ## Verify AMI provenance and sharing references (#1432)
 
 AMI registrations link explicit snapshot mappings. Copies use the source image region and the destination KMS key, and images created from an instance link that instance. Permission helpers retain their identities. An account grantee can qualify a cross-account copy when the plan independently proves both accounts and the grant on the exact image.
+
+## Dedicated hosts and capacity reservations (#1434)
+
+Dedicated hosts remain independent cards. Hosts and reservations can identify an Outpost through the regional data source ARN. Reservations link placement groups by ARN. An Availability Zone or instance family supplies no subnet containment.

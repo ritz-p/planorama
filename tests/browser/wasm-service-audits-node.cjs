@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"ec2-capacity-plan","focus":"aws_ec2_capacity_reservation.sample0","target":0,"mask":{"placement_group_arn":true}},
   {"fixture":"ebs-provenance-plan","focus":"aws_ebs_snapshot_copy.sample0","target":0,"mask":{"source_region":true}},
   {"fixture":"ec2-images-plan","focus":"aws_ami_copy.sample0","target":0,"mask":{"source_ami_region":true}},
   {"fixture":"finspace-kx-configuration-plan","focus":"aws_finspace_kx_environment.sample0","target":0,"mask":{"kms_key_id":true}},

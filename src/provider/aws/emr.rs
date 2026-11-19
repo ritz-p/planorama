@@ -205,7 +205,7 @@ pub(super) fn annotate(
                     r,
                     fields,
                     |s, _| compatible(&nodes[r.target], &nodes[s]),
-                    (&[], values),
+                    (&[], values, crate::model::EntityMode::Managed),
                 )
                 .is_some();
             let parents = if ok && matches!(rule.source, "aws_subnet" | "aws_security_group") {

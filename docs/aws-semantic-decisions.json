@@ -66038,10 +66038,10 @@
       }
     },
     "aws_ec2_capacity_reservation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1434,
-      "gap": "#1434 — Missing: link configured placement-group ARN; verify Outpost registration/mode separately before accepting an Outpost ARN. Keep reservations independent of launches.",
+      "gap": "#709 audit: #1434 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66056,8 +66056,8 @@
         "placement": "Supported: retain Logical Controller presentation for aws_ec2_capacity_reservation.",
         "ownership": "Not applicable: Shared reserved capacity, no embedded instances.",
         "network": "Intentionally unsupported: AZ and Outpost are location qualifiers, not subnet IDs.",
-        "references": "Missing: link configured placement-group ARN; verify Outpost registration/mode separately before accepting an Outpost ARN. Keep reservations independent of launches.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit placement_group_arn, outpost_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not infer free capacity or utilization.",
         "officialDocumentation": "website/docs/r/ec2_capacity_reservation.html.markdown",
         "shapes": {
@@ -66089,7 +66089,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_capacity.rs",
+          "tests/unit/semantic/ec2_capacity.rs"
         ],
         "managedDataContract": "Managed registration resourceCapacityReservation. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -66208,10 +66210,10 @@
       }
     },
     "aws_ec2_host": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1434,
-      "gap": "#1434 — Missing: review independent dedicated host card and exact configured Outpost ARN if endpoint evidence exists; callers can select host_id. Family and instance type are alternative capabilities.",
+      "gap": "#709 audit: #1434 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66222,11 +66224,11 @@
           "instance_type",
           "instance_family"
         ],
-        "placement": "Missing: current Logical Node; show dedicated compute host with independent identity from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Host may be shared across launches; no children inferred.",
         "network": "Intentionally unsupported: Host AZ is not a VPC or subnet.",
-        "references": "Missing: review independent dedicated host card and exact configured Outpost ARN if endpoint evidence exists; callers can select host_id. Family and instance type are alternative capabilities.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit outpost_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude utilization, capacity and host reachability.",
         "officialDocumentation": "website/docs/r/ec2_host.html.markdown",
         "shapes": {
@@ -66254,7 +66256,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_capacity.rs",
+          "tests/unit/semantic/ec2_capacity.rs"
         ],
         "managedDataContract": "Managed registration resourceHost. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {

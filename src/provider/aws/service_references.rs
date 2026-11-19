@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::ec2_capacity::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::ebs_provenance::label(resource, attribute) {
         return Some(label);
     }
@@ -1118,6 +1121,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::ec2_capacity::annotate(nodes, references, evidence);
     super::ebs_provenance::annotate(nodes, references, evidence);
     super::ec2_images::annotate(nodes, references, evidence);
     super::finspace_kx_configuration::annotate(nodes, references, evidence);
@@ -1202,6 +1206,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::ec2_capacity::bindings(raw, reference)
         && super::ebs_provenance::bindings(raw, reference)
         && super::ec2_images::bindings(raw, reference)
         && super::finspace_kx_configuration::bindings(raw, reference)
@@ -1925,6 +1930,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::ec2_capacity::indexed(&node.resource_type, &reference.attribute)
             || super::ebs_provenance::indexed(&node.resource_type, &reference.attribute)
             || super::ec2_images::indexed(&node.resource_type, &reference.attribute)
             || super::finspace_kx_configuration::indexed(&node.resource_type, &reference.attribute)

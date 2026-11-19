@@ -10,12 +10,18 @@ pub(super) struct Rule {
     pub list: bool,
     decoder: Option<nested_references::DecodeLeaf>,
     explicit_destination: bool,
+    endpoint_mode: crate::model::EntityMode,
     pub blocks: &'static [&'static str],
 }
 
 impl Rule {
     pub fn with_explicit_destination(mut self) -> Self {
         self.explicit_destination = true;
+        self
+    }
+
+    pub fn data_source(mut self) -> Self {
+        self.endpoint_mode = crate::model::EntityMode::Data;
         self
     }
 
@@ -35,6 +41,7 @@ impl Rule {
             list,
             decoder: None,
             explicit_destination: false,
+            endpoint_mode: crate::model::EntityMode::Managed,
             blocks,
         }
     }
@@ -263,6 +270,7 @@ pub(super) fn annotate(
                 (
                     rule.blocks,
                     rule.decoder.unwrap_or(nested_references::leaf_values),
+                    rule.endpoint_mode,
                 ),
             )
             .is_some();

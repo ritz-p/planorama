@@ -281,6 +281,7 @@ pub(super) fn annotate(
                                 content::COLLECTIONS
                             },
                             decode,
+                            crate::model::EntityMode::Managed,
                         ),
                     )
                     .is_some()
