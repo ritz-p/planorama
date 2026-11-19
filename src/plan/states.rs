@@ -5,6 +5,7 @@ use std::collections::BTreeMap;
 #[path = "../../tests/unit/plan/states.rs"]
 mod tests;
 
+#[cfg(test)]
 pub fn parse_inputs(inputs: Vec<PlanInput>) -> Result<MultiPlan, String> {
     parse_inputs_with(inputs, |_, json| super::parse(json))
 }
