@@ -43,6 +43,7 @@ pub(crate) mod cloudwatch_alarms;
 pub(crate) mod cloudwatch_delivery;
 pub(crate) mod cloudwatch_logs;
 pub(crate) mod cloudwatch_metrics;
+pub(crate) mod cloudwatch_omni;
 pub(crate) mod cognito;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
