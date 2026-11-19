@@ -687,3 +687,13 @@ Virtual clusters resolve EKS registrations by cluster name and the EKS provider 
 ### EMR Serverless (#844)
 
 Applications resolve complete subnet and security group sets to a common VPC. Enabled CloudWatch and managed persistence configurations resolve their log keys. The S3 monitoring block resolves its bucket and key. Both network sets must resolve for placement. A missing network block leaves the application regional. CloudWatch log groups require enabled logging. Key and bucket references are restricted to their configured monitoring destination.
+
+## App Mesh configuration
+
+Mesh membership uses the explicit mesh name and matching owner account
+evidence where supplied. Routes link to their virtual router or gateway and
+to same-mesh targets through their selected protocol specification. Weighted
+targets and virtual-node backends require complete row-level references.
+Virtual services link to their exclusively configured virtual node or router.
+Mesh and configuration resources remain Logical. These references do not
+establish VPC containment or effective routing.

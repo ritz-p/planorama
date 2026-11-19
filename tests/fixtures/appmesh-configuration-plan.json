@@ -1,0 +1,246 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_appmesh_mesh.sample0",
+      "mode": "managed",
+      "type": "aws_appmesh_mesh",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_appmesh_route.sample1",
+      "mode": "managed",
+      "type": "aws_appmesh_route",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "mesh_name": "fixture",
+          "virtual_router_name": "router",
+          "spec": [
+            {
+              "http_route": [
+                {
+                  "action": [
+                    {
+                      "weighted_target": [
+                        {
+                          "virtual_node": "node"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_appmesh_virtual_router.sample2",
+      "mode": "managed",
+      "type": "aws_appmesh_virtual_router",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "router",
+          "mesh_name": "fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_appmesh_virtual_node.sample3",
+      "mode": "managed",
+      "type": "aws_appmesh_virtual_node",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "node",
+          "mesh_name": "fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_appmesh_virtual_service.sample4",
+      "mode": "managed",
+      "type": "aws_appmesh_virtual_service",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "service",
+          "mesh_name": "fixture",
+          "spec": [
+            {
+              "provider": [
+                {
+                  "virtual_node": [
+                    {
+                      "virtual_node_name": "node"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_appmesh_mesh.sample0",
+          "mode": "managed",
+          "type": "aws_appmesh_mesh",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_appmesh_route.sample1",
+          "mode": "managed",
+          "type": "aws_appmesh_route",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "mesh_name": {
+              "references": [
+                "aws_appmesh_mesh.sample0.name"
+              ]
+            },
+            "virtual_router_name": {
+              "references": [
+                "aws_appmesh_virtual_router.sample2.name"
+              ]
+            },
+            "spec": [
+              {
+                "http_route": [
+                  {
+                    "action": [
+                      {
+                        "weighted_target": [
+                          {
+                            "virtual_node": {
+                              "references": [
+                                "aws_appmesh_virtual_node.sample3.name"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_appmesh_virtual_router.sample2",
+          "mode": "managed",
+          "type": "aws_appmesh_virtual_router",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "mesh_name": {
+              "references": [
+                "aws_appmesh_mesh.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appmesh_virtual_node.sample3",
+          "mode": "managed",
+          "type": "aws_appmesh_virtual_node",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "mesh_name": {
+              "references": [
+                "aws_appmesh_mesh.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_appmesh_virtual_service.sample4",
+          "mode": "managed",
+          "type": "aws_appmesh_virtual_service",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "mesh_name": {
+              "references": [
+                "aws_appmesh_mesh.sample0.name"
+              ]
+            },
+            "spec": [
+              {
+                "provider": [
+                  {
+                    "virtual_node": [
+                      {
+                        "virtual_node_name": {
+                          "references": [
+                            "aws_appmesh_virtual_node.sample3.name"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
