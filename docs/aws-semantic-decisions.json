@@ -12521,7 +12521,7 @@
       }
     },
     "aws_apprunner_auto_scaling_configuration_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 776,
       "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
@@ -12567,7 +12567,7 @@
       }
     },
     "aws_apprunner_connection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 776,
       "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
@@ -12605,7 +12605,7 @@
       }
     },
     "aws_apprunner_custom_domain_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 776,
       "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
@@ -12643,7 +12643,7 @@
       }
     },
     "aws_apprunner_default_auto_scaling_configuration_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 776,
       "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
@@ -12673,7 +12673,7 @@
       }
     },
     "aws_apprunner_deployment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 776,
       "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
@@ -12703,7 +12703,7 @@
       }
     },
     "aws_apprunner_observability_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 776,
       "gap": "#713 audit: #776 implements configuration navigation. See docs/aws-compute.md.",
