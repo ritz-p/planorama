@@ -2007,7 +2007,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         };
         let verified = verified(raw, reference);
         if !verified
-            && super::ecs_workloads::label(&node.resource_type, &reference.attribute).is_some()
+            && (super::ecs_workloads::label(&node.resource_type, &reference.attribute).is_some()
+                || (node.resource_type == "aws_instance"
+                    && matches!(reference.attribute.as_str(), "ami" | "iam_instance_profile")))
         {
             continue;
         }
