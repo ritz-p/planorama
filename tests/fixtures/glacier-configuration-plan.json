@@ -1,0 +1,113 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_glacier_vault.sample0",
+      "mode": "managed",
+      "type": "aws_glacier_vault",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "notification": [
+            {
+              "sns_topic": "arn:aws:sns:us-east-1:123456789012:fixture"
+            }
+          ],
+          "name": "fixture-vault"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.sample1",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_glacier_vault_lock.sample2",
+      "mode": "managed",
+      "type": "aws_glacier_vault_lock",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vault_name": "fixture-vault"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_glacier_vault.sample0",
+          "mode": "managed",
+          "type": "aws_glacier_vault",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "notification": [
+              {
+                "sns_topic": {
+                  "references": [
+                    "aws_sns_topic.sample1.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_sns_topic.sample1",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glacier_vault_lock.sample2",
+          "mode": "managed",
+          "type": "aws_glacier_vault_lock",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vault_name": {
+              "references": [
+                "aws_glacier_vault.sample0.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

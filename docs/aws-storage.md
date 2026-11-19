@@ -518,3 +518,10 @@ Ordinary and exception steps link a configured Lambda ARN for `CUSTOM`, or an
 explicit EFS file system ID or S3 bucket name for `COPY` and `DECRYPT`. Each
 reference must belong to the matching step and use a single destination kind.
 Workflow paths, runtime file expressions and PGP inputs remain opaque.
+
+## Glacier vault configuration
+
+A Glacier vault is independent regional archival storage. A configured
+notification can link an SNS topic ARN, and a vault lock can link the vault's
+explicit name. The lock retains its own identity and action. Vault and lock
+policies remain opaque.
