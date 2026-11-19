@@ -190,14 +190,13 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _source: usize, path: &str) -> bool {
-    if e.nodes[r.target].resource_type == "aws_spot_fleet_request" {
-        if path.starts_with("launch_specification.")
-            && !e.absent(r.target, "launch_template_config")
-            || path.starts_with("launch_template_config.")
-                && !e.absent(r.target, "launch_specification")
-        {
-            return false;
-        }
+    let conflicting_specification = match path.split('.').next() {
+        Some("launch_specification") => !e.absent(r.target, "launch_template_config"),
+        Some("launch_template_config") => !e.absent(r.target, "launch_specification"),
+        _ => false,
+    };
+    if e.nodes[r.target].resource_type == "aws_spot_fleet_request" && conflicting_specification {
+        return false;
     }
     e.exclusive_leaf(
         r.target,
