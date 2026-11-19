@@ -1,0 +1,309 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_transit_gateway_multicast_domain.sample0",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_multicast_domain",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "transit_gateway_id": "tgw-main",
+          "id": "tgw-mcast"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.sample1",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_multicast_domain_association.sample2",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_multicast_domain_association",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "transit_gateway_multicast_domain_id": "tgw-mcast",
+          "transit_gateway_attachment_id": "tgw-attach",
+          "subnet_id": "subnet-a"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_vpc_attachment.sample3",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_vpc_attachment",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-attach",
+          "vpc_id": "vpc-a",
+          "subnet_ids": [
+            "subnet-a"
+          ],
+          "transit_gateway_id": "tgw-main"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample4",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-a"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample5",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-a"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_multicast_group_member.sample6",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_multicast_group_member",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_ip_address": "239.0.1.1",
+          "transit_gateway_multicast_domain_id": "tgw-mcast",
+          "network_interface_id": "eni-a"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway_multicast_group_source.sample7",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway_multicast_group_source",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_ip_address": "239.0.1.1",
+          "transit_gateway_multicast_domain_id": "tgw-mcast",
+          "network_interface_id": "eni-a"
+        }
+      }
+    },
+    {
+      "address": "aws_network_interface.sample8",
+      "mode": "managed",
+      "type": "aws_network_interface",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "eni-a"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_transit_gateway_multicast_domain.sample0",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_multicast_domain",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway.sample1",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_transit_gateway_multicast_domain_association.sample2",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_multicast_domain_association",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_multicast_domain_id": {
+              "references": [
+                "aws_ec2_transit_gateway_multicast_domain.sample0.id"
+              ]
+            },
+            "transit_gateway_attachment_id": {
+              "references": [
+                "aws_ec2_transit_gateway_vpc_attachment.sample3.id"
+              ]
+            },
+            "subnet_id": {
+              "references": [
+                "aws_subnet.sample4.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_vpc_attachment.sample3",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_vpc_attachment",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample5.id"
+              ]
+            },
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.sample4.id"
+              ]
+            },
+            "transit_gateway_id": {
+              "references": [
+                "aws_ec2_transit_gateway.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.sample4",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample5.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample5",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_transit_gateway_multicast_group_member.sample6",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_multicast_group_member",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_multicast_domain_id": {
+              "references": [
+                "aws_ec2_transit_gateway_multicast_domain.sample0.id"
+              ]
+            },
+            "network_interface_id": {
+              "references": [
+                "aws_network_interface.sample8.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_transit_gateway_multicast_group_source.sample7",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway_multicast_group_source",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "transit_gateway_multicast_domain_id": {
+              "references": [
+                "aws_ec2_transit_gateway_multicast_domain.sample0.id"
+              ]
+            },
+            "network_interface_id": {
+              "references": [
+                "aws_network_interface.sample8.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_network_interface.sample8",
+          "mode": "managed",
+          "type": "aws_network_interface",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

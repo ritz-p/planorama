@@ -68525,10 +68525,10 @@
       }
     },
     "aws_ec2_transit_gateway_multicast_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1445,
-      "gap": "#1445 — Missing: link the domain to its TGW; callers use the multicast domain ID. Require common gateway evidence for attachment relationships.",
+      "gap": "#711 audit: #1445 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68542,8 +68542,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_multicast_domain.",
         "ownership": "Not applicable: Domain has its own identity and can serve multiple members.",
         "network": "Intentionally unsupported: A multicast domain is not a subnet container.",
-        "references": "Missing: link the domain to its TGW; callers use the multicast domain ID. Require common gateway evidence for attachment relationships.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude IGMP runtime membership and traffic health.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_domain.html.markdown",
         "shapes": {
@@ -68571,7 +68571,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_multicast.rs",
+          "tests/unit/semantic/transit_multicast.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayMulticastDomain. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -68598,10 +68600,10 @@
       }
     },
     "aws_ec2_transit_gateway_multicast_domain_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1445,
-      "gap": "#1445 — Missing: prove all three distinct inputs, including a compatible VPC attachment with the selected subnet and gateway. A two-endpoint edge would lose evidence.",
+      "gap": "#711 audit: #1445 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68614,8 +68616,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_multicast_domain_association.",
         "ownership": "Not applicable: Ternary association keeps its Terraform action and identity.",
         "network": "Intentionally unsupported: Subnet is an association endpoint; it is not owned by the multicast domain.",
-        "references": "Missing: prove all three distinct inputs, including a compatible VPC attachment with the selected subnet and gateway. A two-endpoint edge would lose evidence.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_multicast_domain_id, transit_gateway_attachment_id, subnet_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit effective group membership.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_domain_association.html.markdown",
         "shapes": {
@@ -68639,17 +68641,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_multicast.rs",
+          "tests/unit/semantic/transit_multicast.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayMulticastDomainAssociation. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_multicast_group_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1445,
-      "gap": "#1445 — Missing: verify domain and member ENI IDs with group IP as a qualifier only. Do not merge member and source registration on equal IP.",
+      "gap": "#711 audit: #1445 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68662,8 +68666,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_multicast_group_member.",
         "ownership": "Not applicable: Member registration remains separate from shared domain and ENI.",
         "network": "Intentionally unsupported: Group IP is not a subnet or resource address.",
-        "references": "Missing: verify domain and member ENI IDs with group IP as a qualifier only. Do not merge member and source registration on equal IP.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_multicast_domain_id, network_interface_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit observed subscribers and packet delivery.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_group_member.html.markdown",
         "shapes": {
@@ -68687,17 +68691,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_multicast.rs",
+          "tests/unit/semantic/transit_multicast.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayMulticastGroupMember. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_multicast_group_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1445,
-      "gap": "#1445 — Missing: verify domain and source ENI IDs; preserve source direction separately from membership for the same group address.",
+      "gap": "#711 audit: #1445 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68710,8 +68716,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_multicast_group_source.",
         "ownership": "Not applicable: Source registration is distinct from multicast membership.",
         "network": "Intentionally unsupported: ENI participation does not place the domain in its subnet.",
-        "references": "Missing: verify domain and source ENI IDs; preserve source direction separately from membership for the same group address.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_multicast_domain_id, network_interface_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit actual transmitters and traffic.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_group_source.html.markdown",
         "shapes": {
@@ -68735,7 +68741,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_multicast.rs",
+          "tests/unit/semantic/transit_multicast.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayMulticastGroupSource. No same-name data registration. No managed alias.",
         "dataContracts": {}
