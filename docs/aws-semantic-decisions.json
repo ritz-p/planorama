@@ -68402,10 +68402,10 @@
       }
     },
     "aws_ec2_transit_gateway_metering_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1444,
-      "gap": "#1444 — Missing: link TGW and complete explicit middlebox attachment ID set for that gateway. Use the policy-specific ID output.",
+      "gap": "#711 audit: #1444 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68418,8 +68418,8 @@
         "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_metering_policy.",
         "ownership": "Not applicable: One TGW policy; middleboxes are independently shared attachments.",
         "network": "Intentionally unsupported: Metering is not subnet placement.",
-        "references": "Missing: link TGW and complete explicit middlebox attachment ID set for that gateway. Use the policy-specific ID output.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id, middlebox_attachment_ids references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit charge estimates and billing outcomes.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_metering_policy.html.markdown",
         "shapes": {
@@ -68446,17 +68446,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_policies.rs",
+          "tests/unit/semantic/transit_policies.rs"
         ],
         "managedDataContract": "Managed registration newTransitGatewayMeteringPolicyResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_metering_policy_entry": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1444,
-      "gap": "#1444 — Missing: link the parent metering policy and exact source/destination attachment IDs under compatible optional type selectors. A type or metered_account enum alone selects no resource.",
+      "gap": "#711 audit: #1444 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68471,10 +68473,10 @@
           "metered_account"
         ],
         "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_metering_policy_entry.",
-        "ownership": "Missing: entry belongs to a policy, qualified by rule number.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Metering selectors do not contain endpoints.",
-        "references": "Missing: link the parent metering policy and exact source/destination attachment IDs under compatible optional type selectors. A type or metered_account enum alone selects no resource.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_metering_policy_id, source_transit_gateway_attachment_id, destination_transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude charging predictions, port/CIDR expansion or policy evaluation.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_metering_policy_entry.html.markdown",
         "shapes": {
@@ -68514,7 +68516,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_policies.rs",
+          "tests/unit/semantic/transit_policies.rs"
         ],
         "managedDataContract": "Managed registration newTransitGatewayMeteringPolicyEntryResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -68877,10 +68881,10 @@
       }
     },
     "aws_ec2_transit_gateway_policy_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1444,
-      "gap": "#1444 — Missing: link policy table to verified TGW. Distinguish policy table IDs from ordinary route table IDs.",
+      "gap": "#711 audit: #1444 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68893,8 +68897,8 @@
         "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_policy_table.",
         "ownership": "Not applicable: Policy table identity is shared by entries and associations.",
         "network": "Intentionally unsupported: A policy table does not contain VPCs.",
-        "references": "Missing: link policy table to verified TGW. Distinguish policy table IDs from ordinary route table IDs.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit effective policy and readiness.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_policy_table.html.markdown",
         "shapes": {
@@ -68918,17 +68922,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_policies.rs",
+          "tests/unit/semantic/transit_policies.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayPolicyTable. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_policy_table_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1444,
-      "gap": "#1444 — Missing: link policy table plus explicitly selected attachment on the same TGW; returned resource_type/resource_id do not establish a second target.",
+      "gap": "#711 audit: #1444 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68942,8 +68948,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_policy_table_association.",
         "ownership": "Not applicable: Both endpoints stay independent.",
         "network": "Intentionally unsupported: Binding a policy table is not VPC placement.",
-        "references": "Missing: link policy table plus explicitly selected attachment on the same TGW; returned resource_type/resource_id do not establish a second target.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_policy_table_id, transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude inferred policy effects.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_policy_table_association.html.markdown",
         "shapes": {
@@ -68971,17 +68977,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_policies.rs",
+          "tests/unit/semantic/transit_policies.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayPolicyTableAssociation. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_transit_gateway_policy_table_entry": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1444,
-      "gap": "#1444 — Missing: distinguish parent policy table ID from target TGW route table ID and prove a common TGW. Match fields select traffic only.",
+      "gap": "#711 audit: #1444 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68993,10 +69001,10 @@
           "policy_rule.protocol"
         ],
         "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_policy_table_entry.",
-        "ownership": "Missing: qualify entry by policy table and rule number.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: CIDRs and ports describe rule matches, not resource placement.",
-        "references": "Missing: distinguish parent policy table ID from target TGW route table ID and prove a common TGW. Match fields select traffic only.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_policy_table_id, target_route_table_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not interpret rule priority, metadata or forwarding outcomes.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_policy_table_entry.html.markdown",
         "shapes": {
@@ -69025,7 +69033,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_policies.rs",
+          "tests/unit/semantic/transit_policies.rs"
         ],
         "managedDataContract": "Managed registration newTransitGatewayPolicyTableEntryResource. No same-name data registration. No managed alias.",
         "dataContracts": {}

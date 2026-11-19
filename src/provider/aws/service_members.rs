@@ -232,6 +232,16 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Transit route table",
                 "Prefix list routes",
             ),
+            "aws_ec2_transit_gateway_metering_policy_entry" => (
+                "transit_gateway_metering_policy_id",
+                "Metering policy",
+                "Metering entries",
+            ),
+            "aws_ec2_transit_gateway_policy_table_entry" => (
+                "transit_gateway_policy_table_id",
+                "Transit policy table",
+                "Policy entries",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -622,6 +632,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(
                 node.resource_type.as_str(),
                 "aws_ec2_transit_gateway_route" | "aws_ec2_transit_gateway_prefix_list_reference"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_transit_gateway_metering_policy_entry"
+                    | "aws_ec2_transit_gateway_policy_table_entry"
             )
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"
