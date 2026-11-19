@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::transit_multicast::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::transit_policies::label(resource, attribute) {
         return Some(label);
     }
@@ -1148,6 +1151,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::transit_multicast::annotate(nodes, references, evidence);
     super::transit_policies::annotate(nodes, references, evidence);
     super::transit_routes::annotate(nodes, references, evidence);
     super::transit_attachments::annotate(nodes, references, evidence);
@@ -1242,6 +1246,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::transit_multicast::bindings(raw, reference)
         && super::transit_policies::bindings(raw, reference)
         && super::transit_routes::bindings(raw, reference)
         && super::transit_attachments::bindings(raw, reference)
@@ -1975,6 +1980,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::transit_multicast::indexed(&node.resource_type, &reference.attribute)
             || super::transit_policies::indexed(&node.resource_type, &reference.attribute)
             || super::transit_routes::indexed(&node.resource_type, &reference.attribute)
             || super::transit_attachments::indexed(&node.resource_type, &reference.attribute)

@@ -1085,3 +1085,7 @@ Transit route tables identify their own gateway. Default association and default
 ## Transit policy and metering configuration (#1444)
 
 Policy entries distinguish their policy table from their target route table. Metering policies identify the gateway and a complete set of middlebox attachments. Entry source and destination IDs are checked against their optional attachment-type selectors and the owning gateway. Traffic selectors, rule numbers and charging modes do not identify additional resources.
+
+## Transit multicast associations and ENIs (#1445)
+
+A multicast association must identify the domain, a VPC attachment on its gateway, and a subnet in that attachment’s complete VPC subnet selection. Group members and group sources remain separate registrations even when the domain, interface and multicast address match.
