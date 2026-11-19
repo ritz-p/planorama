@@ -202,6 +202,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Static VPN connection",
                 "Static routes",
             ),
+            "aws_ec2_local_gateway_route" => (
+                "local_gateway_route_table_id",
+                "Local route table",
+                "Local routes",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -580,6 +585,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || matches!(node.resource_type.as_str(), "aws_ami_launch_permission")
             || matches!(node.resource_type.as_str(), "aws_ec2_instance_state")
             || matches!(node.resource_type.as_str(), "aws_vpn_connection_route")
+            || matches!(node.resource_type.as_str(), "aws_ec2_local_gateway_route")
             || super::lightsail_configuration::owner_member(&node.resource_type)
             || node.resource_type == "aws_datapipeline_pipeline_definition"
             || matches!(

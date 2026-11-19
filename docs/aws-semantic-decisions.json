@@ -67454,7 +67454,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1440,
-      "gap": "#1440 — Partial: VPC route target recognition exists. Missing: represent a gateway with a verified VPC ID and retain incoming carrier gateway routes (#897).",
+      "gap": "#711 audit: #1440 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67464,11 +67464,11 @@
           "id",
           "arn"
         ],
-        "placement": "Missing: current Logical Connector; show VPC carrier gateway from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Gateway has its own identity and action.",
-        "network": "Missing: require explicit current matching VPC ID for placement. Wavelength zone name cannot substitute.",
-        "references": "Partial: VPC route target recognition exists. Missing: represent a gateway with a verified VPC ID and retain incoming carrier gateway routes (#897).",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "network": "Supported: Explicit VPC ID establishes placement with matching evidence.",
+        "references": "Supported: Verified explicit vpc_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude inferred carrier reachability.",
         "officialDocumentation": "website/docs/r/ec2_carrier_gateway.html.markdown",
         "shapes": {
@@ -67494,7 +67494,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/routes.rs",
-          "tests/unit/semantic/routes.rs"
+          "tests/unit/semantic/routes.rs",
+          "src/provider/aws/local_gateways.rs",
+          "tests/unit/semantic/local_gateways.rs"
         ],
         "managedDataContract": "Managed registration resourceCarrierGateway. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -67803,10 +67805,10 @@
       }
     },
     "aws_ec2_local_gateway_route": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1440,
-      "gap": "#1440 — Missing: link managed table by local_gateway_route_table_id output; interface group is a distinct data-only registration. Verify its data ID independently.",
+      "gap": "#711 audit: #1440 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67817,10 +67819,10 @@
           "destination_cidr_block"
         ],
         "placement": "Supported: retain Logical Connector presentation for aws_ec2_local_gateway_route.",
-        "ownership": "Missing: identify the route under its unique local table.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: CIDR is a destination match only.",
-        "references": "Missing: link managed table by local_gateway_route_table_id output; interface group is a distinct data-only registration. Verify its data ID independently.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit local_gateway_route_table_id, local_gateway_virtual_interface_group_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not infer an active forwarding path.",
         "officialDocumentation": "website/docs/r/ec2_local_gateway_route.html.markdown",
         "shapes": {
@@ -67844,17 +67846,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/local_gateways.rs",
+          "tests/unit/semantic/local_gateways.rs"
         ],
         "managedDataContract": "Managed registration resourceLocalGatewayRoute. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_local_gateway_route_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1440,
-      "gap": "#1440 — Missing: link configured local_gateway_id only to the exact data-only local gateway contract; expose the table ID for its callers. outpost_arn is computed.",
+      "gap": "#711 audit: #1440 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67868,8 +67872,8 @@
         "placement": "Supported: retain Logical Connector presentation for aws_ec2_local_gateway_route_table.",
         "ownership": "Not applicable: Local table is independent of VPC and interface group associations.",
         "network": "Intentionally unsupported: Local gateway is an Outposts resource; no VPC or subnet parent from table mode.",
-        "references": "Missing: link configured local_gateway_id only to the exact data-only local gateway contract; expose the table ID for its callers. outpost_arn is computed.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit local_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not infer traffic behavior from direct-vpc-routing or coip.",
         "officialDocumentation": "website/docs/r/ec2_local_gateway_route_table.html.markdown",
         "shapes": {
@@ -67897,7 +67901,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/local_gateways.rs",
+          "tests/unit/semantic/local_gateways.rs"
         ],
         "managedDataContract": "Managed registration newLocalGatewayRouteTableResource. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -67936,10 +67942,10 @@
       }
     },
     "aws_ec2_local_gateway_route_table_virtual_interface_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1440,
-      "gap": "#1440 — Missing: verify table output and distinct data-only interface group ID. Computed local gateway ID cannot replace either input.",
+      "gap": "#711 audit: #1440 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67952,8 +67958,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_local_gateway_route_table_virtual_interface_group_association.",
         "ownership": "Not applicable: Association carries its own identity between table and group.",
         "network": "Intentionally unsupported: Virtual interface groups do not identify subnets.",
-        "references": "Missing: verify table output and distinct data-only interface group ID. Computed local gateway ID cannot replace either input.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit local_gateway_route_table_id, local_gateway_virtual_interface_group_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit association readiness.",
         "officialDocumentation": "website/docs/r/ec2_local_gateway_route_table_virtual_interface_group_association.html.markdown",
         "shapes": {
@@ -67977,17 +67983,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/local_gateways.rs",
+          "tests/unit/semantic/local_gateways.rs"
         ],
         "managedDataContract": "Managed registration newLocalGatewayRouteTableVirtualInterfaceGroupAssociationResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_local_gateway_route_table_vpc_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1440,
-      "gap": "#1440 — Missing: link the named local route-table output and known VPC ID. The returned local gateway ID is contextual.",
+      "gap": "#711 audit: #1440 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68000,8 +68008,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_local_gateway_route_table_vpc_association.",
         "ownership": "Not applicable: Shared VPC and table stay independent.",
         "network": "Intentionally unsupported: Association is not VPC ownership of the table.",
-        "references": "Missing: link the named local route-table output and known VPC ID. The returned local gateway ID is contextual.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit vpc_id, local_gateway_route_table_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit propagated or effective routes.",
         "officialDocumentation": "website/docs/r/ec2_local_gateway_route_table_vpc_association.html.markdown",
         "shapes": {
@@ -68031,7 +68039,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/local_gateways.rs",
+          "tests/unit/semantic/local_gateways.rs"
         ],
         "managedDataContract": "Managed registration resourceLocalGatewayRouteTableVPCAssociation. No same-name data registration. No managed alias.",
         "dataContracts": {}

@@ -136,6 +136,7 @@ pub(crate) mod lambda_events;
 pub(crate) mod lambda_policy;
 pub(crate) mod lambda_qualified;
 pub(crate) mod lightsail_configuration;
+pub(crate) mod local_gateways;
 pub(crate) mod lustre_sources;
 mod members;
 mod memorydb;
