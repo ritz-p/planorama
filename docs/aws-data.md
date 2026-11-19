@@ -1194,3 +1194,11 @@ Logical Resources and retain any verified references.
 A singleton encryption configuration links `kms_key_identifier` to a managed
 KMS ARN when it selects `CUSTOMER_MANAGED_KMS_KEY`. Replication regions
 do not identify separate Terraform replicas or imply VPC membership.
+
+## Managed Airflow configuration
+
+An MWAA environment links its configured execution role, S3 artifact bucket ARN
+and customer KMS key ARN. A common verified VPC is required for placement from
+complete configured subnet and security-group references. An environment without
+this evidence retains a regional card. Scripts, DAG paths, managed log groups
+and workers are outside these references.

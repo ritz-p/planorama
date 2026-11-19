@@ -132,6 +132,7 @@ pub(crate) mod microvms;
 mod monitoring;
 pub(crate) mod msk_connect;
 pub(crate) mod msk_delivery;
+pub(crate) mod mwaa_configuration;
 mod nested_references;
 mod network;
 mod network_acl;
@@ -449,6 +450,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     sagemaker_studio::present(&raw, &mut graph);
     sagemaker_jobs::present(&raw, &mut graph);
     cloudhsm_configuration::present(&raw, &mut graph);
+    mwaa_configuration::present(&raw, &mut graph);
     sagemaker_workforce::present(&raw, &mut graph);
     msk_connect::present(&raw, &mut graph);
     timestream_influx::present(&raw, &mut graph);
