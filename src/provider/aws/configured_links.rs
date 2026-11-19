@@ -280,3 +280,69 @@ pub(super) fn annotate(
         }
     }
 }
+
+pub(super) fn network_context(
+    e: &Evidence<'_>,
+    target: usize,
+    paths: &[(&str, &str)],
+) -> Option<usize> {
+    let consumer = &e.nodes[target];
+    let consumer_scope = scope::scope(consumer)?;
+    let compatible = |source: usize| {
+        let endpoint = &e.nodes[source];
+        eventbridge::bindings(
+            consumer.provider_configuration.as_ref(),
+            endpoint.provider_configuration.as_ref(),
+            consumer_scope.region.as_ref(),
+            scope::scope(endpoint)
+                .as_ref()
+                .and_then(|scope| scope.region.as_ref()),
+            false,
+        )
+    };
+    let mut vpcs = BTreeSet::new();
+    for &(path, kind) in paths {
+        let reference = lambda_core::unique(e.refs, target, path)?;
+        nested_references::verify(
+            e.nodes,
+            e.refs,
+            e.values,
+            reference,
+            |_, _, resource| {
+                if matches!(resource, "aws_subnet" | "aws_security_group") {
+                    &["id"]
+                } else {
+                    &[]
+                }
+            },
+            |source, _| e.nodes[source].resource_type == kind && compatible(source),
+        )?;
+        for &source in &reference.sources {
+            vpcs.insert(lambda_core::parent(e.nodes, e.refs, e.values, source)?);
+        }
+    }
+    let vpc = vpcs.pop_first()?;
+    (vpcs.is_empty() && compatible(vpc)).then_some(vpc)
+}
+
+pub(super) fn destination_in_same_account(raw: &Input, reference: &AttributeReference) -> bool {
+    let Some(consumer) = raw.nodes[reference.target].provider_configuration.as_ref() else {
+        return false;
+    };
+    reference.sources.iter().all(|&source| {
+        let Some(endpoint) = raw.nodes[source].provider_configuration.as_ref() else {
+            return false;
+        };
+        match (&consumer.account, &endpoint.account) {
+            (Some(left), Some(right)) => {
+                left == right
+                    && reference
+                        .service_reference_owner_account
+                        .as_ref()
+                        .is_none_or(|owner| owner == right)
+            }
+            (None, None) => consumer == endpoint,
+            _ => false,
+        }
+    })
+}

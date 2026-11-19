@@ -502,3 +502,12 @@ when the singleton block selects a supported enabled level and the log
 group name starts with `/aws/fsx`. Unverified evidence retains Terraform
 provenance where available. Network placement and filesystem encryption
 have separate evidence rules.
+
+## DLM and Elastic Disaster Recovery configuration
+
+DLM resolves an explicit IAM execution role and a customer Systems Manager
+script document by name or ARN. Snapshot, AMI and event copy rules link a
+configured KMS ARN only when the key matches the destination region and proven
+account scope. DRS links its staging subnet and complete security-group list
+when their configured VPC evidence agrees. Its encryption key requires `CUSTOM`
+mode. The replication template remains a logical configuration resource.
