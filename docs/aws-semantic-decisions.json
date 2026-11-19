@@ -66376,10 +66376,10 @@
       }
     },
     "aws_ec2_instance_state": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1436,
-      "gap": "#1436 — Missing: explicit instance ID identifies the target of a requested state change; action is independent of the instance resource.",
+      "gap": "#709 audit: #1436 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66390,10 +66390,10 @@
           "force"
         ],
         "placement": "Supported: retain Logical Controller presentation for aws_ec2_instance_state.",
-        "ownership": "Missing: preserve the state helper identity when presenting it with its uniquely selected instance.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: State management does not inherit the subnet.",
-        "references": "Missing: explicit instance ID identifies the target of a requested state change; action is independent of the instance resource.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit instance_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Desired state is not observed power state.",
         "officialDocumentation": "website/docs/r/ec2_instance_state.html.markdown",
         "shapes": {
@@ -66417,7 +66417,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/instance_launch.rs",
+          "tests/unit/semantic/instance_launch.rs"
         ],
         "managedDataContract": "Managed registration resourceInstanceState. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -66520,7 +66522,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1436,
-      "gap": "#1436 — Partial: AMI/profile have reference labels; subnet, security groups and incoming EBS attachment have dedicated behavior. Missing: verify typed image/profile, template ID/name, key, host, group name vs group ID, reservation, explicit interfaces and backing snapshot/key. Deprecated network_interface differs from primary_network_interface.",
+      "gap": "#709 audit: #1436 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66548,8 +66550,8 @@
         "placement": "Supported: retain Spatial Node presentation for aws_instance.",
         "ownership": "Not applicable: Instance is independently tracked; inline disks create no managed volume.",
         "network": "Supported: subnet_id containment and VPC security-group membership. Explicit interfaces require separate proof and must not replace the parent with an inferred subnet.",
-        "references": "Partial: AMI/profile have reference labels; subnet, security groups and incoming EBS attachment have dedicated behavior. Missing: verify typed image/profile, template ID/name, key, host, group name vs group ID, reservation, explicit interfaces and backing snapshot/key. Deprecated network_interface differs from primary_network_interface.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Configured launch inputs require the exact source type and output. Existing subnet containment, VPC security group membership and incoming EBS attachments retain their separate proof.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude user data, password data and runtime state.",
         "officialDocumentation": "website/docs/r/instance.html.markdown",
         "shapes": {
@@ -66655,7 +66657,9 @@
           "src/provider/aws/eni.rs",
           "tests/unit/semantic/eni.rs",
           "src/provider/aws/associations.rs",
-          "tests/unit/semantic/ebs.rs"
+          "tests/unit/semantic/ebs.rs",
+          "src/provider/aws/instance_launch.rs",
+          "tests/unit/semantic/instance_launch.rs"
         ],
         "managedDataContract": "Managed registration resourceInstance. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {

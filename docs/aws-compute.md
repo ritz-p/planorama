@@ -744,3 +744,7 @@ Dedicated hosts remain independent cards. Hosts and reservations can identify an
 ## EC2 Fleet and Spot launch choices (#1435)
 
 Fleets link launch templates by the selected ID or name and keep override subnets as launch choices. Spot Fleet distinguishes direct specifications from templates, classic load balancer names from target group ARNs, and fleet roles from instance profiles. Spot requests remain separate from fulfilled instances. Datafeed subscriptions link only the explicit destination bucket.
+
+## Configured instance launch references (#1436)
+
+Instance launch references distinguish AMI IDs, profile and key names, template IDs or names, dedicated host IDs, placement group names or IDs and explicit reservations. Interface and block-device inputs retain their own typed references. A state helper identifies its instance without asserting an observed power state. Inline device definitions do not synthesize volumes.
