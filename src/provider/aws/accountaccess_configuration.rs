@@ -122,6 +122,9 @@ fn principal_store(e: &Evidence<'_>, entitlement: usize, principal: usize) -> bo
     ) else {
         return false;
     };
+    if !super::identity_center::compatible(e.nodes, entitlement, app, false) {
+        return false;
+    }
     let path = "identity_source.0.identity_center.0.instance_arn";
     let Some(lookup) = super::lambda_core::unique(e.refs, app, path) else {
         return false;
@@ -129,54 +132,19 @@ fn principal_store(e: &Evidence<'_>, entitlement: usize, principal: usize) -> bo
     let [endpoint] = lookup.sources.as_slice() else {
         return false;
     };
-    if lookup.indexed_block_lengths != [1, 1]
-        || e.text(app, path).is_none_or(|value| {
-            !super::identity_center_instance::verify(e.nodes, lookup, e.values, value)
+    lookup.indexed_block_lengths == [1, 1]
+        && e.text(app, path).is_some_and(|value| {
+            super::identity_center_instance::verify(e.nodes, lookup, e.values, value)
         })
-    {
-        return false;
-    }
-    let application = &e.nodes[app];
-    let identity = &e.nodes[*endpoint];
-    if !super::eventbridge::bindings(
-        application.provider_configuration.as_ref(),
-        identity.provider_configuration.as_ref(),
-        super::scope::scope(application)
-            .as_ref()
-            .and_then(|s| s.region.as_ref()),
-        super::scope::scope(identity)
-            .as_ref()
-            .and_then(|s| s.region.as_ref()),
-        false,
-    ) {
-        return false;
-    }
-    let Some([store]) = e
-        .value(*endpoint, "identity_store_ids")
-        .and_then(Value::as_array)
-        .map(Vec::as_slice)
-    else {
-        return false;
-    };
-    let Some(store) = store.as_str().filter(|id| !id.is_empty()) else {
-        return false;
-    };
-    e.text(principal, "identity_store_id") == Some(store)
-        && super::lambda_core::unique(e.refs, principal, "identity_store_id").is_some_and(
-            |reference| {
-                reference.sources == [*endpoint]
-                    && reference.complete
-                    && reference.instances_explicit
-                    && reference.issues.is_empty()
-                    && reference.source_attributes.len() == 1
-                    && reference.source_attributes.iter().all(|field| {
-                        matches!(
-                            field.as_str(),
-                            "identity_store_ids" | "identity_store_ids[0]"
-                        )
-                    })
-            },
-        )
+        && super::identity_center::compatible(e.nodes, app, *endpoint, false)
+        && super::identity_center::instance_bridge(
+            e.nodes,
+            e.refs,
+            e.values,
+            principal,
+            "identity_store_id",
+            "identity_store_ids",
+        ) == Some(*endpoint)
 }
 
 #[cfg(test)]
