@@ -109,7 +109,8 @@ pub(super) fn indexed(kind: &str, path: &str, lookup: Lookup) -> bool {
 fn global(kind: &str) -> bool {
     matches!(
         kind,
-        "aws_iam_role"
+        "aws_iam_instance_profile"
+            | "aws_iam_role"
             | "aws_iam_user"
             | "aws_iam_policy"
             | "aws_cloudfront_distribution"

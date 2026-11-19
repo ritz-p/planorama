@@ -1004,7 +1004,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 700,
-      "gap": "Implemented #700: complete known managed subnet/SG references and common-VPC placement for MANAGED compute environments, queue environment ARN collections and scheduling-policy ARN navigation. Environments remain independent Spatial cards; queues/policies stay Logical. No inferred instances, jobs or ownership. #712 review preserves its historical baseline; auxiliary compute references remain #816. See aws.md#batch-compute-environments-and-queues-700.",
+      "gap": "#712 audit: #816 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -1028,7 +1028,7 @@
         "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: retain independent reusable configuration; references do not prove exclusive ownership.",
         "network": "Missing: #700 MANAGED compute_resources complete subnet and SG sets with common VPC; UNMANAGED has no inferred placement.",
-        "references": "Missing: #700 subnet/SG identities; #816 owns IAM instance-profile/role, launch-template/AMI and EKS references. ecs_cluster_arn is computed, not configured ownership.",
+        "references": "Supported: Explicit service role and EKS cluster plus mode-gated instance profile, Spot role, launch template and AMI references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: desired_vcpus and state/status do not create instances or imply health.",
         "officialDocumentation": "website/docs/r/batch_compute_environment.html.markdown",
@@ -1094,7 +1094,11 @@
           "ecs_cluster_arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/batch_configuration.rs",
+          "tests/unit/semantic/batch_configuration.rs"
+        ]
       }
     },
     "aws_batch_job_queue": {

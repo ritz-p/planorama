@@ -697,3 +697,14 @@ targets and virtual-node backends require complete row-level references.
 Virtual services link to their exclusively configured virtual node or router.
 Mesh and configuration resources remain Logical. These references do not
 establish VPC containment or effective routing.
+
+## AWS Batch compute configuration
+
+Explicit `service_role` and `eks_configuration.eks_cluster_arn` can link an IAM
+role and an EKS cluster for supported managed or unmanaged compute environments.
+For managed EC2 or Spot, `compute_resources.instance_role` links an IAM
+instance profile ARN, `launch_template` links an explicit ID or name, and the
+EC2 image override links an AMI ID. The deprecated image ID links an AMI when
+image overrides are absent. `spot_iam_fleet_role` applies to Spot only. These
+references preserve the compute environment's independent placement and the
+existing network and queue rules.
