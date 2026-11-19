@@ -931,6 +931,14 @@ fn indexed_scalar<'a>(
         .flatten()
 }
 
+pub(crate) fn annotate_provider_accounts(
+    nodes: &[TerraformEntity],
+    references: &mut [AttributeReference],
+    evidence: &[(&Value, &Value)],
+) {
+    super::detective_graphs::annotate(nodes, references, evidence);
+}
+
 pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     references: &mut [AttributeReference],
@@ -1172,7 +1180,6 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
-    super::detective_graphs::annotate(nodes, references, evidence);
     super::config_delivery::annotate(nodes, references, evidence);
     super::config_rules::annotate(nodes, references, evidence);
     super::config_aggregation::annotate(nodes, references, evidence);
