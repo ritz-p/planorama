@@ -437,10 +437,13 @@ pub(crate) fn run() -> Result<(), String> {
         path => std::fs::read_to_string(path).map_err(|e| format!("cannot read {path}: {e}"))?,
     };
     drop(input_timing);
-    let mut raw = plan::parse_with_value_matches(&json, filter.cloudflare_value_matches)?;
-    if let Some(evidence) = provider_plan.load(None, &json)? {
-        evidence.apply(&mut raw);
-    }
+    let evidence = provider_plan.load(None, &json)?;
+    let raw =
+        plan::parse_with_provider_bindings(&json, filter.cloudflare_value_matches, |nodes| {
+            if let Some(evidence) = evidence {
+                evidence.apply(nodes);
+            }
+        })?;
     if diagnostics {
         let mut stderr = io::stderr().lock();
         for relevant in &raw.relevant_attributes {
