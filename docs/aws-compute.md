@@ -740,3 +740,7 @@ AMI registrations link explicit snapshot mappings. Copies use the source image r
 ## Dedicated hosts and capacity reservations (#1434)
 
 Dedicated hosts remain independent cards. Hosts and reservations can identify an Outpost through the regional data source ARN. Reservations link placement groups by ARN. An Availability Zone or instance family supplies no subnet containment.
+
+## EC2 Fleet and Spot launch choices (#1435)
+
+Fleets link launch templates by the selected ID or name and keep override subnets as launch choices. Spot Fleet distinguishes direct specifications from templates, classic load balancer names from target group ARNs, and fleet roles from instance profiles. Spot requests remain separate from fulfilled instances. Datafeed subscriptions link only the explicit destination bucket.

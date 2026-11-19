@@ -66140,10 +66140,10 @@
       }
     },
     "aws_ec2_fleet": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1435,
-      "gap": "#1435 — Missing: verify template ID or name per configuration and subnet per override. Returned instance IDs are fulfillment observations.",
+      "gap": "#709 audit: #1435 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66158,8 +66158,8 @@
         "placement": "Supported: retain Logical Controller presentation for aws_ec2_fleet.",
         "ownership": "Not applicable: Fleet controller manages requests; output members do not prove Terraform-owned instances.",
         "network": "Intentionally unsupported: Override subnets are alternative launch choices, never a single parent.",
-        "references": "Missing: verify template ID or name per configuration and subnet per override. Returned instance IDs are fulfillment observations.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit launch_template_config.launch_template_specification.launch_template_id, launch_template_config.launch_template_specification.launch_template_name, launch_template_config.override.subnet_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude fleet health, fulfillment and pricing.",
         "officialDocumentation": "website/docs/r/ec2_fleet.html.markdown",
         "shapes": {
@@ -66203,7 +66203,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_fleets.rs",
+          "tests/unit/semantic/ec2_fleets.rs"
         ],
         "managedDataContract": "Managed registration resourceFleet. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -67030,10 +67032,10 @@
       }
     },
     "aws_spot_datafeed_subscription": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1435,
-      "gap": "#1435 — Missing: link explicit S3 bucket name to a compatible bucket; prefix only selects a delivery location.",
+      "gap": "#709 audit: #1435 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67045,8 +67047,8 @@
         "placement": "Supported: retain Logical Controller presentation for aws_spot_datafeed_subscription.",
         "ownership": "Not applicable: Subscription is a regional account setting, not a bucket child.",
         "network": "Intentionally unsupported: Bucket destination provides no subnet.",
-        "references": "Missing: link explicit S3 bucket name to a compatible bucket; prefix only selects a delivery location.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit bucket references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit delivery prefixes, filenames and billing data.",
         "officialDocumentation": "website/docs/r/spot_datafeed_subscription.html.markdown",
         "shapes": {
@@ -67066,7 +67068,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_fleets.rs",
+          "tests/unit/semantic/ec2_fleets.rs"
         ],
         "managedDataContract": "Managed registration resourceSpotDataFeedSubscription. Separate same-name lookup; configurable data attributes are listed separately. No managed alias.",
         "dataContracts": {
@@ -67078,10 +67082,10 @@
       }
     },
     "aws_spot_fleet_request": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1435,
-      "gap": "#1435 — Missing: link fleet role, classic LB names or target group ARNs and mode-specific launch inputs. Direct launch specifications conflict with template configurations; do not split literal subnet lists into proven references.",
+      "gap": "#709 audit: #1435 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67102,8 +67106,8 @@
         "placement": "Supported: retain Logical Controller presentation for aws_spot_fleet_request.",
         "ownership": "Not applicable: Fleet request owns no managed instances by observed fulfillment.",
         "network": "Intentionally unsupported: Launch alternatives are network references, not fleet containment.",
-        "references": "Missing: link fleet role, classic LB names or target group ARNs and mode-specific launch inputs. Direct launch specifications conflict with template configurations; do not split literal subnet lists into proven references.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit launch_template_config.launch_template_specification.id, launch_template_config.launch_template_specification.name, launch_template_config.overrides.subnet_id, iam_fleet_role, load_balancers, target_group_arns, launch_specification.ami, launch_specification.subnet_id, launch_specification.vpc_security_group_ids, launch_specification.key_name, launch_specification.iam_instance_profile_arn, launch_specification.iam_instance_profile, launch_specification.placement_group references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit bids, capacity fulfillment and rendered user data.",
         "officialDocumentation": "website/docs/r/spot_fleet_request.html.markdown",
         "shapes": {
@@ -67193,17 +67197,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_fleets.rs",
+          "tests/unit/semantic/ec2_fleets.rs"
         ],
         "managedDataContract": "Managed registration resourceSpotFleetRequest. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_spot_instance_request": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1435,
-      "gap": "#1435 — Missing: verify configured AMI, subnet, profile, key, security groups and selected launch template under the legacy Spot request contract. spot_instance_id is fulfillment output.",
+      "gap": "#709 audit: #1435 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67222,8 +67228,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_spot_instance_request.",
         "ownership": "Not applicable: Request is distinct from the instance AWS may create.",
         "network": "Intentionally unsupported: An explicitly configured subnet is a launch target only.",
-        "references": "Missing: verify configured AMI, subnet, profile, key, security groups and selected launch template under the legacy Spot request contract. spot_instance_id is fulfillment output.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit ami, subnet_id, key_name, iam_instance_profile, vpc_security_group_ids, launch_template.id, launch_template.name references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit bid/status and payloads.",
         "officialDocumentation": "website/docs/r/spot_instance_request.html.markdown",
         "shapes": {
@@ -67302,7 +67308,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_fleets.rs",
+          "tests/unit/semantic/ec2_fleets.rs"
         ],
         "managedDataContract": "Managed registration resourceSpotInstanceRequest. No same-name data registration. Legacy request reuses resourceInstanceSchema in ec2_spot_instance_request.go, with Spot-specific outputs and overrides. No managed alias.",
         "dataContracts": {}

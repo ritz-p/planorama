@@ -53,6 +53,23 @@ pub(super) struct Evidence<'a> {
     pub values: &'a [(&'a Value, &'a Value)],
 }
 impl Evidence<'_> {
+    pub fn exclusive_leaf(&self, node: usize, path: &str, pairs: &[(&str, &str)]) -> bool {
+        let (base, leaf) = path.rsplit_once('.').unwrap_or(("", path));
+        pairs.iter().all(|&(left, right)| {
+            let other = if leaf == left {
+                right
+            } else if leaf == right {
+                left
+            } else {
+                return true;
+            };
+            if base.is_empty() {
+                self.absent(node, other)
+            } else {
+                self.absent(node, &format!("{base}.{other}"))
+            }
+        })
+    }
     pub fn absent(&self, node: usize, path: &str) -> bool {
         self.value(node, path).is_some_and(|v| {
             v.is_null() || v.as_str() == Some("") || v.as_array().is_some_and(Vec::is_empty)

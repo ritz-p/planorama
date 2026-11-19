@@ -1,0 +1,307 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_fleet.sample0",
+      "mode": "managed",
+      "type": "aws_ec2_fleet",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "launch_template_config": [
+            {
+              "launch_template_specification": [
+                {
+                  "launch_template_id": "lt-1"
+                }
+              ],
+              "override": [
+                {
+                  "subnet_id": "subnet-1"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_launch_template.sample1",
+      "mode": "managed",
+      "type": "aws_launch_template",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "lt-1",
+          "name": "workload"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample2",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-1"
+        }
+      }
+    },
+    {
+      "address": "aws_spot_fleet_request.sample3",
+      "mode": "managed",
+      "type": "aws_spot_fleet_request",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "launch_specification": [
+            {
+              "ami": "ami-1"
+            }
+          ],
+          "iam_fleet_role": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample4",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_spot_instance_request.sample5",
+      "mode": "managed",
+      "type": "aws_spot_instance_request",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "launch_template": [
+            {
+              "name": "workload"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ami.sample6",
+      "mode": "managed",
+      "type": "aws_ami",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ami-1"
+        }
+      }
+    },
+    {
+      "address": "aws_spot_datafeed_subscription.sample7",
+      "mode": "managed",
+      "type": "aws_spot_datafeed_subscription",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "feed-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample8",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "feed-bucket"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_fleet.sample0",
+          "mode": "managed",
+          "type": "aws_ec2_fleet",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "launch_template_config": [
+              {
+                "launch_template_specification": [
+                  {
+                    "launch_template_id": {
+                      "references": [
+                        "aws_launch_template.sample1.id"
+                      ]
+                    }
+                  }
+                ],
+                "override": [
+                  {
+                    "subnet_id": {
+                      "references": [
+                        "aws_subnet.sample2.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_launch_template.sample1",
+          "mode": "managed",
+          "type": "aws_launch_template",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.sample2",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_spot_fleet_request.sample3",
+          "mode": "managed",
+          "type": "aws_spot_fleet_request",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "launch_specification": [
+              {
+                "ami": {
+                  "references": [
+                    "aws_ami.sample6.id"
+                  ]
+                }
+              }
+            ],
+            "iam_fleet_role": {
+              "references": [
+                "aws_iam_role.sample4.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.sample4",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_spot_instance_request.sample5",
+          "mode": "managed",
+          "type": "aws_spot_instance_request",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "launch_template": [
+              {
+                "name": {
+                  "references": [
+                    "aws_launch_template.sample1.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ami.sample6",
+          "mode": "managed",
+          "type": "aws_ami",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_spot_datafeed_subscription.sample7",
+          "mode": "managed",
+          "type": "aws_spot_datafeed_subscription",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket": {
+              "references": [
+                "aws_s3_bucket.sample8.bucket"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample8",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
