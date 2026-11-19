@@ -47,6 +47,7 @@ pub(crate) mod cognito;
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
 mod components;
+mod configured_links;
 mod containment;
 mod data;
 mod database_events;
@@ -156,6 +157,7 @@ pub(crate) mod s3files;
 pub(crate) mod s3tables;
 pub(crate) mod s3vectors;
 mod sagemaker;
+pub(crate) mod sagemaker_studio;
 mod scaling;
 mod scraper;
 pub(crate) mod search;
@@ -411,6 +413,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     synthetics::present(&raw, &mut graph);
     emr::present(&raw, &mut graph);
     quicksight::present(&raw, &mut graph);
+    sagemaker_studio::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);

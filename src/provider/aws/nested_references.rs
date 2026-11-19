@@ -157,7 +157,7 @@ pub(super) fn verify_values(
     refs: &[AttributeReference],
     evidence: &[(&Value, &Value)],
     r: &AttributeReference,
-    fields: fn(&str, &str, &str) -> &'static [&'static str],
+    fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
     valid: impl Fn(usize, &str) -> bool,
     (collections, decode): (&[&str], DecodeLeaf),
 ) -> Option<()> {
