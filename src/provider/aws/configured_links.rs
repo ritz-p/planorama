@@ -324,3 +324,25 @@ pub(super) fn network_context(
     let vpc = vpcs.pop_first()?;
     (vpcs.is_empty() && compatible(vpc)).then_some(vpc)
 }
+
+pub(super) fn destination_in_same_account(raw: &Input, reference: &AttributeReference) -> bool {
+    let Some(consumer) = raw.nodes[reference.target].provider_configuration.as_ref() else {
+        return false;
+    };
+    reference.sources.iter().all(|&source| {
+        let Some(endpoint) = raw.nodes[source].provider_configuration.as_ref() else {
+            return false;
+        };
+        match (&consumer.account, &endpoint.account) {
+            (Some(left), Some(right)) => {
+                left == right
+                    && reference
+                        .service_reference_owner_account
+                        .as_ref()
+                        .is_none_or(|owner| owner == right)
+            }
+            (None, None) => consumer == endpoint,
+            _ => false,
+        }
+    })
+}
