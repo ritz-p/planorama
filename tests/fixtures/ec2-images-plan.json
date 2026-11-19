@@ -1,0 +1,255 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ami_copy.sample0",
+      "mode": "managed",
+      "type": "aws_ami_copy",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_ami_region": "us-east-1",
+          "encrypted": true,
+          "source_ami_id": "ami-fixture",
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ami.sample1",
+      "mode": "managed",
+      "type": "aws_ami",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ami-fixture",
+          "ebs_block_device": [
+            {
+              "snapshot_id": "snap-fixture"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ebs_snapshot.sample2",
+      "mode": "managed",
+      "type": "aws_ebs_snapshot",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "snap-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample3",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ami_from_instance.sample4",
+      "mode": "managed",
+      "type": "aws_ami_from_instance",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_instance_id": "i-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.sample5",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "i-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ami_launch_permission.sample6",
+      "mode": "managed",
+      "type": "aws_ami_launch_permission",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "222222222222",
+          "image_id": "ami-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_snapshot_create_volume_permission.sample7",
+      "mode": "managed",
+      "type": "aws_snapshot_create_volume_permission",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "snapshot_id": "snap-fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ami_copy.sample0",
+          "mode": "managed",
+          "type": "aws_ami_copy",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_ami_id": {
+              "references": [
+                "aws_ami.sample1.id"
+              ]
+            },
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ami.sample1",
+          "mode": "managed",
+          "type": "aws_ami",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "ebs_block_device": [
+              {
+                "snapshot_id": {
+                  "references": [
+                    "aws_ebs_snapshot.sample2.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ebs_snapshot.sample2",
+          "mode": "managed",
+          "type": "aws_ebs_snapshot",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample3",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ami_from_instance.sample4",
+          "mode": "managed",
+          "type": "aws_ami_from_instance",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_instance_id": {
+              "references": [
+                "aws_instance.sample5.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_instance.sample5",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ami_launch_permission.sample6",
+          "mode": "managed",
+          "type": "aws_ami_launch_permission",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "image_id": {
+              "references": [
+                "aws_ami.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_snapshot_create_volume_permission.sample7",
+          "mode": "managed",
+          "type": "aws_snapshot_create_volume_permission",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "snapshot_id": {
+              "references": [
+                "aws_ebs_snapshot.sample2.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
