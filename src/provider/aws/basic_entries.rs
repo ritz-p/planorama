@@ -550,7 +550,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_ebs_snapshot_copy", "Amazon EBS", Node, Logical, Regional, Some(ResourceIcon::Ebs)),
     entry!("aws_ebs_snapshot_import", "Amazon EBS", Node, Logical, Regional, Some(ResourceIcon::Ebs)),
     entry!("aws_ebs_volume", "Amazon EBS", Node, Logical, Regional, Some(ResourceIcon::Ebs)),
-    entry!("aws_ebs_volume_copy", "Amazon EBS", Node, Logical, Regional, Some(ResourceIcon::Ebs)),
+    entry!("aws_ebs_volume_copy", "Amazon EBS", Node, Spatial, Regional, Some(ResourceIcon::Ebs)),
     entry!("aws_ec2_allowed_images_settings", "Amazon EC2", Policy, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_availability_zone_group", "Amazon EC2", Node, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_capacity_block_reservation", "Amazon EC2", Controller, Logical, Regional, Some(ResourceIcon::Ec2)),

@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::ebs_provenance::resource(resource)
         && !super::ec2_images::resource(resource)
         && resource != "aws_finspace_kx_environment"
         && !super::finspace_kx_configuration::resource(resource)
