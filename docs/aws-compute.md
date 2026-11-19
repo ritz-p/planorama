@@ -194,7 +194,7 @@ retained for these three managed types; ARN strings do not invent account identi
 
 Service URLs, image identifiers, environment variables/secrets, credentials and
 runtime status are not rendered. Relationships do not imply network reachability.
-Configuration/domain references remain #776. See the maintained
+See the maintained
 [SVG](../examples/apprunner.svg) and [HTML](../examples/apprunner.html).
 
 Verified against AWS Provider 6.70.0 commit
@@ -204,6 +204,24 @@ Verified against AWS Provider 6.70.0 commit
 [ingress connection](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/apprunner_vpc_ingress_connection.html.markdown).
 The schema uses sets for connector subnet/SG collections. The synthetic fixture
 models known planned values; it does not claim an applied AWS deployment.
+
+### App Runner configuration and domain links
+
+| Configured input | Verified endpoint |
+| --- | --- |
+| Service or default scaling selection | Auto scaling configuration version by full revision ARN |
+| Service instance role | IAM role ARN |
+| Private ECR image source access role | IAM role ARN |
+| Code source connection | App Runner connection ARN |
+| Enabled service observability configuration | Observability configuration by full ARN |
+| Deployment or custom domain service | App Runner service ARN |
+
+The configuration links use explicit, current managed Terraform references and
+known matching values under compatible provider bindings. Unknown or conflicting
+source modes leave repository authentication unverified. Shared configurations
+remain independently selectable. Deployment and custom-domain links point to
+the service while preserving their own identity and action. Domain names and
+computed DNS or certificate records do not establish managed endpoints.
 
 ## ECR repositories
 
