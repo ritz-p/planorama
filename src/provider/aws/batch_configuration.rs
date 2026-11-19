@@ -115,25 +115,29 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, _source: usize, path: &st
             e.value(r.target, &format!("{parent}.{other}"))
                 .is_some_and(|v| v.is_null() || v.as_str() == Some(""))
         }
-        "compute_resources.image_id" => e
-            .value(r.target, "compute_resources.0.ec2_configuration")
-            .is_some_and(|v| {
-                v.is_null()
-                    || v.as_array().is_some_and(|items| {
-                        items.iter().enumerate().all(|(i, _)| {
-                            e.value(
-                                r.target,
-                                &format!(
-                                    "compute_resources.0.ec2_configuration.{i}.image_id_override"
-                                ),
-                            )
-                            .is_some_and(|id| id.is_null() || id.as_str() == Some(""))
-                        })
-                    })
-            }),
+        "compute_resources.image_id" => overrides_absent(e, r.target),
         _ => true,
     }
 }
+fn overrides_absent(e: &Evidence<'_>, target: usize) -> bool {
+    const PATH: &str = "compute_resources.0.ec2_configuration";
+    if e.value(target, PATH)
+        .is_some_and(|value| value.is_null() || value.as_array().is_some_and(Vec::is_empty))
+    {
+        return true;
+    }
+    let (value, mask) = e.values[target];
+    super::nested_references::block(value, mask, PATH, 2)
+        && value["compute_resources"][0]["ec2_configuration"]
+            .as_array()
+            .is_some_and(|rows| {
+                (0..rows.len()).all(|index| {
+                    e.value(target, &format!("{PATH}.{index}.image_id_override"))
+                        .is_some_and(|id| id.is_null() || id.as_str() == Some(""))
+                })
+            })
+}
+
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/batch_configuration.rs"]
 mod tests;
