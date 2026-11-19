@@ -780,7 +780,11 @@ function auditedServiceTypes(issue, services, count) {
   assert.equal(expected.length, count);
   assert.deepEqual(audited.sort(), expected.map(resource => resource.type).sort());
   for (const { type, documentation } of expected) {
-    const { review } = decisions[type];
+    const { review, issue: followUp, gap } = decisions[type];
+    if (dimensions.some(dimension => /^(Missing|Partial):/.test(review[dimension]))) {
+      assert.ok(Number.isInteger(followUp) && followUp > 0, type);
+      assert.ok(gap.startsWith('#' + followUp + ' — '), type);
+    }
     assert.equal(review.officialDocumentation, documentation, type);
     assert.equal(review.providerCommit, inventory.commit, type);
     assert.deepEqual(Object.keys(review.shapes), review.fields, type);
