@@ -70,3 +70,28 @@ fn configured_links_require_current_typed_evidence() {
         "spec.provider.virtual_node.virtual_node_name"
     ));
 }
+
+#[test]
+fn member_owner_preserves_known_provider_account() {
+    let parsed = plan::parse(include_str!(
+        "../../fixtures/appmesh-configuration-plan.json"
+    ))
+    .unwrap();
+    let graph = semantic::transform(&parsed);
+    let node = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_appmesh_route.sample1")
+        .unwrap();
+    let owner = node.member_owner.as_ref().unwrap();
+    assert_eq!(owner.target.address, "aws_appmesh_mesh.sample0");
+    assert_eq!(owner.section, "Mesh configuration");
+    assert_eq!(
+        node.entity
+            .scope
+            .as_ref()
+            .and_then(|scope| scope.account.as_ref())
+            .map(|account| account.as_str()),
+        Some("123456789012")
+    );
+}
