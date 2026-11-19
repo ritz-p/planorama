@@ -27,6 +27,7 @@ pub(super) fn parse(resource: &Value, address: &str, action: Action) -> Terrafor
         pool_origins: Vec::new(),
         configurable_search_namespace: false,
         cloudflare_scope: None,
+        configured_scopes: Vec::new(),
         encryption: None,
         represented_account: None,
         organization_policy_type: None,

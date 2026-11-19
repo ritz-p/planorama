@@ -70694,10 +70694,10 @@
       }
     },
     "aws_auditmanager_account_registration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Resolve the configured encryption key and delegated account independently. Registration status does not identify either endpoint.",
+      "gap": "#1471 — Verified configuration references: kms_key, delegated_admin_account.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70709,7 +70709,7 @@
         "placement": "Supported: Logical Association for the managed auditmanager_account_registration declaration. Terraform resource for managing AWS Audit Manager Account Registration.",
         "ownership": "Not applicable: The managed auditmanager_account_registration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_account_registration.",
-        "references": "Missing: Resolve the configured encryption key and delegated account independently. Registration status does not identify either endpoint.",
+        "references": "Supported: Verified configuration references: kms_key, delegated_admin_account.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_account_registration summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_account_registration.html.markdown",
@@ -70732,17 +70732,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newAccountRegistrationResource. No same-name data source in 6.70.0. Deprecated managed attributes: id.",
         "dataContracts": {}
       }
     },
     "aws_auditmanager_assessment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Resolve the framework and assigned IAM roles. Account scope and an S3 report destination URI have distinct contracts.",
+      "gap": "#1471 — Verified configuration references: framework_id, roles.role_arn, scope.aws_accounts.id, assessment_reports_destination.destination.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70756,7 +70758,7 @@
         "placement": "Supported: Logical Node for the managed auditmanager_assessment declaration. Terraform resource for managing an AWS Audit Manager Assessment.",
         "ownership": "Not applicable: The managed auditmanager_assessment declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_assessment.",
-        "references": "Missing: Resolve the framework and assigned IAM roles. Account scope and an S3 report destination URI have distinct contracts.",
+        "references": "Supported: Verified configuration references: framework_id, roles.role_arn, scope.aws_accounts.id, assessment_reports_destination.destination.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_assessment summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_assessment.html.markdown",
@@ -70791,17 +70793,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newAssessmentResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_auditmanager_assessment_delegation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Join the assessment and assignee role. Qualify the control set inside that assessment.",
+      "gap": "#1471 — Verified configuration references: assessment_id, role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70812,9 +70816,9 @@
           "role_arn"
         ],
         "placement": "Supported: Logical Node for the managed auditmanager_assessment_delegation declaration. Terraform resource for managing an AWS Audit Manager Assessment Delegation.",
-        "ownership": "Missing: use a verified assessment_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_assessment_delegation.",
-        "references": "Missing: Join the assessment and assignee role. Qualify the control set inside that assessment.",
+        "references": "Supported: Verified configuration references: assessment_id, role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_assessment_delegation summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_assessment_delegation.html.markdown",
@@ -70841,17 +70845,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newAssessmentDelegationResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_auditmanager_assessment_report": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Resolve its assessment ID. Report status and author are service observations.",
+      "gap": "#1471 — Verified configuration references: assessment_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70862,9 +70868,9 @@
           "status"
         ],
         "placement": "Supported: Logical Node for the managed auditmanager_assessment_report declaration. Terraform resource for managing an AWS Audit Manager Assessment Report.",
-        "ownership": "Missing: use a verified assessment_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_assessment_report.",
-        "references": "Missing: Resolve its assessment ID. Report status and author are service observations.",
+        "references": "Supported: Verified configuration references: assessment_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_assessment_report summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_assessment_report.html.markdown",
@@ -70891,7 +70897,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newAssessmentReportResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -70961,10 +70969,10 @@
       }
     },
     "aws_auditmanager_framework": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Resolve individual control IDs within each control set. Controls may be reused across frameworks.",
+      "gap": "#1471 — Verified configuration references: control_sets.controls.id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70976,7 +70984,7 @@
         "placement": "Supported: Logical Node for the managed auditmanager_framework declaration. Terraform resource for managing an AWS Audit Manager Framework.",
         "ownership": "Not applicable: The managed auditmanager_framework declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_framework.",
-        "references": "Missing: Resolve individual control IDs within each control set. Controls may be reused across frameworks.",
+        "references": "Supported: Verified configuration references: control_sets.controls.id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_framework summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_framework.html.markdown",
@@ -71001,7 +71009,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newFrameworkResource. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -71021,10 +71031,10 @@
       }
     },
     "aws_auditmanager_framework_share": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Resolve the framework in the origin. Keep destination account and region paired as share scope.",
+      "gap": "#1471 — Verified configuration references: framework_id, destination_account.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71037,7 +71047,7 @@
         "placement": "Supported: Logical Node for the managed auditmanager_framework_share declaration. Terraform resource for managing an AWS Audit Manager Framework Share.",
         "ownership": "Not applicable: The managed auditmanager_framework_share declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_framework_share.",
-        "references": "Missing: Resolve the framework in the origin. Keep destination account and region paired as share scope.",
+        "references": "Supported: Verified configuration references: framework_id, destination_account.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_framework_share summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_framework_share.html.markdown",
@@ -71064,17 +71074,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newFrameworkShareResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_auditmanager_organization_admin_account_registration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1471,
-      "gap": "#1471 — Identify the configured administrator by account ID. The organization ID is a result.",
+      "gap": "#1471 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71086,7 +71098,7 @@
         "placement": "Supported: Logical Association for the managed auditmanager_organization_admin_account_registration declaration. Terraform resource for managing AWS Audit Manager Organization Admin Account Registration.",
         "ownership": "Not applicable: The managed auditmanager_organization_admin_account_registration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Audit Manager control-plane configuration has no network placement contract for auditmanager_organization_admin_account_registration.",
-        "references": "Missing: Identify the configured administrator by account ID. The organization ID is a result.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment evidence, comments and report contents from auditmanager_organization_admin_account_registration summaries.",
         "officialDocumentation": "website/docs/r/auditmanager_organization_admin_account_registration.html.markdown",
@@ -71109,7 +71121,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/audit_manager.rs",
+          "tests/unit/semantic/audit_manager.rs"
         ],
         "managedDataContract": "Managed newOrganizationAdminAccountRegistrationResource. No same-name data source in 6.70.0.",
         "dataContracts": {}

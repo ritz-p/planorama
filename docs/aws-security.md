@@ -496,3 +496,7 @@ objects do not identify managed endpoints or effective permissions.
 ## Verify Access Analyzer archive rule ownership (#1470)
 
 An archive rule references its regional analyzer through the configured analyzer name. The parent must have a matching name and a compatible provider account and region. Finding filters stay opaque.
+
+## Verify Audit Manager configuration relationships (#1471)
+
+Assessments, reports, framework controls, delegates, report buckets and KMS keys use typed configuration references. Framework shares retain their destination account and region together. Evidence text and report contents are excluded.
