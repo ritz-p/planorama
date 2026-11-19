@@ -1061,3 +1061,7 @@ The endpoint and statement allowlists use the AWS
 [Reachability Analyzer](https://docs.aws.amazon.com/vpc/latest/reachability/how-reachability-analyzer-works.html)
 and [Network Access Analyzer](https://docs.aws.amazon.com/vpc/latest/network-access-analyzer/resource-statement.html)
 resource contracts.
+
+## Site-to-site VPN topology (#1439)
+
+Customer gateways, virtual private gateways, VPN connections and concentrators have independent regional cards. A connection selects one gateway mode and links enabled tunnel and BGP log destinations. Static routes require a static connection. VPC placement uses a single verified inline or standalone attachment, and propagation requires the route table and gateway to share a VPC.

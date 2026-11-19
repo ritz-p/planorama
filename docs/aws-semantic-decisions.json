@@ -67376,7 +67376,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Missing: link the customer certificate to the explicitly referenced ACM certificate ARN. Network Manager associations already use the customer gateway as an endpoint.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67388,11 +67388,11 @@
           "bgp_asn_extended",
           "ip_address"
         ],
-        "placement": "Missing: current Logical Connector; show independent customer-side VPN peer from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Independent customer-side peer can serve multiple connections.",
         "network": "Intentionally unsupported: External IP and BGP ASN do not place an on-premises device inside a VPC.",
-        "references": "Missing: link the customer certificate to the explicitly referenced ACM certificate ARN. Network Manager associations already use the customer gateway as an endpoint.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit certificate_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit peer address and operational tunnel status.",
         "officialDocumentation": "website/docs/r/customer_gateway.html.markdown",
         "shapes": {
@@ -67426,7 +67426,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/networkmanager.rs",
-          "tests/unit/semantic/networkmanager.rs"
+          "tests/unit/semantic/networkmanager.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceCustomerGateway. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -69879,10 +69881,10 @@
       }
     },
     "aws_vpn_concentrator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Missing: link the configured TGW and expose the distinct vpn_concentrator_id for VPN connections. Returned attachment ID cannot create a managed attachment.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69893,11 +69895,11 @@
           "transit_gateway_attachment_id",
           "type"
         ],
-        "placement": "Missing: current Logical Connector; show regional VPN concentrator from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Concentrator is separate from the shared transit gateway.",
         "network": "Intentionally unsupported: TGW association supplies no VPC or subnet parent.",
-        "references": "Missing: link the configured TGW and expose the distinct vpn_concentrator_id for VPN connections. Returned attachment ID cannot create a managed attachment.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit connection counts and tunnel health.",
         "officialDocumentation": "website/docs/r/vpn_concentrator.html.markdown",
         "shapes": {
@@ -69925,7 +69927,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration newVPNConcentratorResource. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -69935,7 +69939,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Missing: link customer gateway and selected exclusive VGW/TGW/concentrator, private-IP transport attachment and each enabled tunnel/BGP log group. Preserve Cloud WAN consumers; computed attachment ID is distinct from configured transport.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69958,11 +69962,11 @@
           "tunnel2_log_options.cloudwatch_log_options.bgp_log_enabled",
           "tunnel2_log_options.cloudwatch_log_options.bgp_log_group_arn"
         ],
-        "placement": "Missing: current Logical Connector; show site-to-site VPN connector from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Connection is independent of both gateways; generated tunnels are not Terraform children.",
         "network": "Intentionally unsupported: Private outside addresses and tunnel CIDRs do not place a connection in a subnet.",
-        "references": "Missing: link customer gateway and selected exclusive VGW/TGW/concentrator, private-IP transport attachment and each enabled tunnel/BGP log group. Preserve Cloud WAN consumers; computed attachment ID is distinct from configured transport.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit customer_gateway_id, transit_gateway_id, vpn_gateway_id, vpn_concentrator_id, transport_transit_gateway_attachment_id, tunnel1_log_options.cloudwatch_log_options.log_group_arn, tunnel1_log_options.cloudwatch_log_options.bgp_log_group_arn, tunnel2_log_options.cloudwatch_log_options.log_group_arn, tunnel2_log_options.cloudwatch_log_options.bgp_log_group_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Never expose preshared keys, configuration XML or BGP telemetry.",
         "officialDocumentation": "website/docs/r/vpn_connection.html.markdown",
         "shapes": {
@@ -70056,7 +70060,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/cloudwan.rs",
-          "tests/unit/semantic/cloudwan.rs"
+          "tests/unit/semantic/cloudwan.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceVPNConnection. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -70072,10 +70078,10 @@
       }
     },
     "aws_vpn_connection_route": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Missing: link the owning static-route VPN connection ID; destination is a CIDR selector. Require compatible static routing mode before asserting a static route relationship.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -70085,10 +70091,10 @@
           "destination_cidr_block"
         ],
         "placement": "Supported: retain Logical Connector presentation for aws_vpn_connection_route.",
-        "ownership": "Missing: keep the connection-qualified route and its change with its proven VPN connection.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Destination range does not select a subnet.",
-        "references": "Missing: link the owning static-route VPN connection ID; destination is a CIDR selector. Require compatible static routing mode before asserting a static route relationship.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit vpn_connection_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Do not infer that traffic can traverse the tunnel.",
         "officialDocumentation": "website/docs/r/vpn_connection_route.html.markdown",
         "shapes": {
@@ -70108,7 +70114,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceVPNConnectionRoute. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -70118,7 +70126,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Partial: VPC routes, propagating_vgws and Direct Connect consumers recognize the gateway. Missing: verify optional inline VPC attachment without duplicating standalone attachment provenance.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -70129,11 +70137,11 @@
           "availability_zone",
           "arn"
         ],
-        "placement": "Missing: current Logical Connector; show virtual private gateway from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Gateway can exist detached and stays separately tracked.",
-        "network": "Missing: place only via independently verified attachment to one VPC; availability_zone cannot identify a network.",
-        "references": "Partial: VPC routes, propagating_vgws and Direct Connect consumers recognize the gateway. Missing: verify optional inline VPC attachment without duplicating standalone attachment provenance.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "network": "Supported: Only a unique verified inline or standalone VPC attachment establishes VPC containment.",
+        "references": "Supported: Verified explicit vpc_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit BGP and tunnel status.",
         "officialDocumentation": "website/docs/r/vpn_gateway.html.markdown",
         "shapes": {
@@ -70167,7 +70175,9 @@
           "src/provider/aws/vpc_routes.rs",
           "tests/unit/semantic/vpc_routes.rs",
           "src/provider/aws/direct_connect.rs",
-          "tests/unit/semantic/direct_connect.rs"
+          "tests/unit/semantic/direct_connect.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceVPNGateway. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -70206,10 +70216,10 @@
       }
     },
     "aws_vpn_gateway_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Missing: verify explicit VPC and virtual private gateway IDs; retain standalone attachment change independently of inline VPC configuration.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -70220,9 +70230,9 @@
         ],
         "placement": "Supported: retain Logical Association presentation for aws_vpn_gateway_attachment.",
         "ownership": "Not applicable: Two-ended association retains both resource identities and action exactly once.",
-        "network": "Missing: support VPC attachment evidence without claiming subnet membership.",
-        "references": "Missing: verify explicit VPC and virtual private gateway IDs; retain standalone attachment change independently of inline VPC configuration.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "network": "Supported: Preserves both endpoints as proof of gateway placement.",
+        "references": "Supported: Verified explicit vpc_id, vpn_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit attachment readiness.",
         "officialDocumentation": "website/docs/r/vpn_gateway_attachment.html.markdown",
         "shapes": {
@@ -70242,17 +70252,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceVPNGatewayAttachment. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_vpn_gateway_route_propagation": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1439,
-      "gap": "#1439 — Missing: verify VPC route table and VGW in compatible VPC context. Preserve existing inline route-table propagating_vgws (#897); this helper selects neither TGW nor TGW table.",
+      "gap": "#711 audit: #1439 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -70264,8 +70276,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_vpn_gateway_route_propagation.",
         "ownership": "Not applicable: Propagation change is independent of the gateway attachment.",
         "network": "Intentionally unsupported: Propagation does not move a gateway or route table.",
-        "references": "Missing: verify VPC route table and VGW in compatible VPC context. Preserve existing inline route-table propagating_vgws (#897); this helper selects neither TGW nor TGW table.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit vpn_gateway_id, route_table_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit inferred learned prefixes or route health.",
         "officialDocumentation": "website/docs/r/vpn_gateway_route_propagation.html.markdown",
         "shapes": {
@@ -70285,7 +70297,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/site_vpn.rs",
+          "tests/unit/semantic/site_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceVPNGatewayRoutePropagation. No same-name data registration. No managed alias.",
         "dataContracts": {}
