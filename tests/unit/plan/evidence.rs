@@ -1,4 +1,5 @@
 use super::*;
+use crate::model::TerraformPlan;
 use std::io::Write;
 
 fn archive(files: &[(&str, &str)]) -> Vec<u8> {
@@ -103,7 +104,7 @@ fn captured_archives_resolve_root_alias_and_child_module_for_every_verified_pair
                 .validate_installed(&serde_json::to_vec(&runtime).unwrap())
                 .unwrap();
             let mut plan = crate::plan::parse(&input).unwrap();
-            evidence.apply(&mut plan);
+            evidence.apply(&mut plan.nodes);
             assert_eq!(plan.nodes.len(), 2);
             for node in &plan.nodes {
                 assert_eq!(
@@ -193,9 +194,8 @@ pub(crate) fn parse_fixture(json: &str) -> Result<TerraformPlan, String> {
             .collect::<Vec<_>>(),
     );
     let json = value.to_string();
-    let mut plan = crate::plan::parse(&json)?;
-    Evidence::validate(&archive, &json, json.as_bytes())?.apply(&mut plan);
-    Ok(plan)
+    let evidence = Evidence::validate(&archive, &json, json.as_bytes())?;
+    crate::plan::parse_with_provider_bindings(&json, false, |nodes| evidence.apply(nodes))
 }
 
 #[test]
@@ -213,7 +213,7 @@ fn verified_static_snapshot_resolves_exact_module_binding_only() {
     );
     Evidence::validate(&snapshot(STATIC), &json, json.as_bytes())
         .unwrap()
-        .apply(&mut plan);
+        .apply(&mut plan.nodes);
     let binding = plan.nodes[0].provider_configuration.as_ref().unwrap();
     assert_eq!(binding.account.as_ref().unwrap().as_str(), "123456789012");
     assert_eq!(binding.key, "aws.prod");
@@ -231,7 +231,7 @@ fn omitted_dynamic_and_unresolved_roles_never_prove_an_account() {
         STATIC.replace("prod", "other"),
     ] {
         let mut plan = crate::plan::parse(&json).unwrap();
-        Evidence::validate(&snapshot(&source), &json, json.as_bytes()).unwrap().apply(&mut plan);
+        Evidence::validate(&snapshot(&source), &json, json.as_bytes()).unwrap().apply(&mut plan.nodes);
         assert!(plan.nodes[0].provider_configuration.as_ref().unwrap().account.is_none());
     }
 }
@@ -413,7 +413,7 @@ fn core_binary_archive_json_and_lock_are_independently_checked() {
                 .is_err()
         );
         let mut parsed = crate::plan::parse(&json).unwrap();
-        evidence.apply(&mut parsed);
+        evidence.apply(&mut parsed.nodes);
         assert_eq!(
             parsed.nodes[0]
                 .provider_configuration
