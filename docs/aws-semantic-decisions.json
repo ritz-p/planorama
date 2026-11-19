@@ -1812,7 +1812,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 744,
-      "gap": "Partial: #690/Backup retained; import/restore references missing (#744); DynamoDB Lambda stream lowering NOT implemented (#714). See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 audit: #744 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -1827,7 +1827,7 @@
         "placement": "Spatial table retained; Backup endpoint remains supported.",
         "ownership": "Partial: #690 inbound configuration navigation; inline replica/GSI/witness expansion deferred until distinct identity and coverage rules exist.",
         "network": "Not applicable: service table is not contained in a client VPC endpoint.",
-        "references": "Partial: #690/Backup retained; import/restore references missing (#744); DynamoDB Lambda stream lowering NOT implemented (#714).",
+        "references": "Supported: Verified configured import bucket and explicit restore table. Existing #690 table and stream behavior is independent.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/dynamodb_table.html.markdown",
@@ -1851,7 +1851,11 @@
           "restore_source_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dynamodb_transfer.rs",
+          "tests/unit/semantic/dynamodb_transfer.rs"
+        ]
       }
     },
     "aws_elasticache_replication_group": {
@@ -8037,10 +8041,10 @@
       }
     },
     "aws_dynamodb_table_export": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 744,
-      "gap": "Missing: explicit table/S3/KMS references; export timestamps do not establish live delivery. See #718 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#718 audit: #744 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 718,
         "implementationCommit": "bebadbbeac605bae9efd6810957a89130616d947",
@@ -8055,7 +8059,7 @@
         "placement": "Logical export operation retained.",
         "ownership": "Not applicable: historical export does not own its source table or shared bucket.",
         "network": "Not applicable: no network placement fields.",
-        "references": "Missing: explicit table/S3/KMS references; export timestamps do not establish live delivery.",
+        "references": "Supported: Verified export table, bucket and selected KMS key.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
         "summaries": "Intentionally unsupported: credentials, payloads, arbitrary parameters and runtime health. Deferred: service-specific encryption/capacity/retention summaries until a bounded allowlist has known/unknown/sensitive rules; current encryption.rs supports S3/SQS/RDS only.",
         "officialDocumentation": "website/docs/r/dynamodb_table_export.html.markdown",
@@ -8075,7 +8079,11 @@
           "s3_sse_kms_key_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dynamodb_transfer.rs",
+          "tests/unit/semantic/dynamodb_transfer.rs"
+        ]
       }
     },
     "aws_dynamodb_table_item": {

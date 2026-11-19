@@ -1,0 +1,209 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_dynamodb_table.sample0",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:dynamodb:us-east-1:123456789012:table/source",
+          "name": "source"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table_export.sample1",
+      "mode": "managed",
+      "type": "aws_dynamodb_table_export",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_arn": "arn:aws:dynamodb:us-east-1:123456789012:table/source",
+          "s3_bucket": "fixture",
+          "s3_sse_algorithm": "KMS",
+          "s3_sse_kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/export"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample2",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample3",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/export"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.sample4",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "restore_source_name": "source"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.sample5",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "import_table": [
+            {
+              "s3_bucket_source": [
+                {
+                  "bucket": "fixture"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dynamodb_table.sample0",
+          "mode": "managed",
+          "type": "aws_dynamodb_table",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dynamodb_table_export.sample1",
+          "mode": "managed",
+          "type": "aws_dynamodb_table_export",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_arn": {
+              "references": [
+                "aws_dynamodb_table.sample0.arn"
+              ]
+            },
+            "s3_bucket": {
+              "references": [
+                "aws_s3_bucket.sample2.bucket"
+              ]
+            },
+            "s3_sse_kms_key_id": {
+              "references": [
+                "aws_kms_key.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample2",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample3",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dynamodb_table.sample4",
+          "mode": "managed",
+          "type": "aws_dynamodb_table",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "restore_source_name": {
+              "references": [
+                "aws_dynamodb_table.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dynamodb_table.sample5",
+          "mode": "managed",
+          "type": "aws_dynamodb_table",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "import_table": [
+              {
+                "s3_bucket_source": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.sample2.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

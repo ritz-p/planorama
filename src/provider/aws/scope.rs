@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::dynamodb_transfer::resource(resource)
         && !super::storagegateway::resource(resource)
         && !super::qbusiness::resource(resource)
         && !super::kendra::resource(resource)
