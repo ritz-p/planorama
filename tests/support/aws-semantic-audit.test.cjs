@@ -740,3 +740,34 @@ test('#709 distinguishes image provenance, launch selectors and EBS attachment e
   assert.equal(decisions.aws_spot_instance_request.review.contracts.spot_instance_id, 'computed');
   assert.equal(decisions.aws_volume_attachment.issue, 498);
 });
+
+test('#711 completes the pinned EC2 partition and preserves distinct network contracts', () => {
+  const inventory = read('tests/fixtures/aws-inventory/6.70.0.json');
+  const decisions = read('docs/aws-semantic-decisions.json').types;
+  const ec2 = inventory.resources.filter(resource => resource.service === 'ec2');
+  const network = Object.entries(decisions).filter(([, entry]) => entry.review?.issue === 711);
+  assert.equal(network.length, 45);
+  assert.equal(ec2.length, 162);
+  for (const resource of ec2) {
+    assert.ok([709, 710, 711].includes(decisions[resource.type]?.review?.issue), resource.type);
+  }
+  for (const [type, { review, issue }] of network) {
+    const resource = ec2.find(entry => entry.type === type);
+    assert.equal(review.officialDocumentation, resource.documentation);
+    assert.equal(review.providerCommit, inventory.commit);
+    assert.deepEqual(Object.keys(review.shapes), review.fields);
+    assert.deepEqual(Object.keys(review.contracts), review.fields);
+    for (const dimension of dimensions) {
+      assert.ok(review[dimension], type + ' ' + dimension);
+      if (review[dimension].includes('Missing:')) assert.ok(Number.isInteger(issue), type);
+    }
+  }
+  const review = type => decisions['aws_' + type].review;
+  assert.deepEqual(review('ec2_transit_gateway_vpc_attachment').shapes.subnet_ids, [['set', 'string']]);
+  assert.equal(review('ec2_transit_gateway_vpc_attachment_accepter').contracts.subnet_ids, 'computed');
+  assert.equal(review('ec2_client_vpn_route').contracts.transit_gateway_attachment_id, 'computed');
+  assert.equal(review('ec2_transit_gateway_route').contracts.blackhole, 'optional');
+  assert.equal(review('ec2_local_gateway_route_table').contracts.local_gateway_route_table_id, 'computed');
+  assert.equal(review('verifiedaccess_endpoint').contracts.verified_access_group_id, 'required');
+  assert.equal(review('verifiedaccess_group').contracts.verifiedaccess_group_id, 'computed');
+});

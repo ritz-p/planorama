@@ -67329,6 +67329,2925 @@
         "managedDataContract": "Managed registration resourceVolumeAttachment. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
+    },
+    "aws_customer_gateway": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Missing: link the customer certificate to the explicitly referenced ACM certificate ARN. Network Manager associations already use the customer gateway as an endpoint.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "certificate_arn",
+          "type",
+          "bgp_asn",
+          "bgp_asn_extended",
+          "ip_address"
+        ],
+        "placement": "Missing: current Logical Connector; show independent customer-side VPN peer from independently proven scope.",
+        "ownership": "Not applicable: Independent customer-side peer can serve multiple connections.",
+        "network": "Intentionally unsupported: External IP and BGP ASN do not place an on-premises device inside a VPC.",
+        "references": "Missing: link the customer certificate to the explicitly referenced ACM certificate ARN. Network Manager associations already use the customer gateway as an endpoint.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit peer address and operational tunnel status.",
+        "officialDocumentation": "website/docs/r/customer_gateway.html.markdown",
+        "shapes": {
+          "certificate_arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "bgp_asn": [
+            "string"
+          ],
+          "bgp_asn_extended": [
+            "string"
+          ],
+          "ip_address": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "certificate_arn": "optional",
+          "type": "required",
+          "bgp_asn": "optional",
+          "bgp_asn_extended": "optional",
+          "ip_address": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/networkmanager.rs",
+          "tests/unit/semantic/networkmanager.rs"
+        ],
+        "managedDataContract": "Managed registration resourceCustomerGateway. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_carrier_gateway": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1440,
+      "gap": "#1440 — Partial: VPC route target recognition exists. Missing: represent a gateway with a verified VPC ID and retain incoming carrier gateway routes (#897).",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_id",
+          "id",
+          "arn"
+        ],
+        "placement": "Missing: current Logical Connector; show VPC carrier gateway from independently proven scope.",
+        "ownership": "Not applicable: Gateway has its own identity and action.",
+        "network": "Missing: require explicit current matching VPC ID for placement. Wavelength zone name cannot substitute.",
+        "references": "Partial: VPC route target recognition exists. Missing: represent a gateway with a verified VPC ID and retain incoming carrier gateway routes (#897).",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude inferred carrier reachability.",
+        "officialDocumentation": "website/docs/r/ec2_carrier_gateway.html.markdown",
+        "shapes": {
+          "vpc_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_id": "required",
+          "id": "optional/computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/routes.rs",
+          "tests/unit/semantic/routes.rs"
+        ],
+        "managedDataContract": "Managed registration resourceCarrierGateway. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_client_vpn_authorization_rule": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1441,
+      "gap": "#1441 — Missing: link the endpoint by ID. access_group_id is an external identity-group selector; authorize_all_groups is a distinct mode.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "client_vpn_endpoint_id",
+          "target_network_cidr",
+          "access_group_id",
+          "authorize_all_groups"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_client_vpn_authorization_rule.",
+        "ownership": "Missing: present authorization under the uniquely proven endpoint and preserve the rule action.",
+        "network": "Intentionally unsupported: Authorized CIDR is not a subnet selector.",
+        "references": "Missing: link the endpoint by ID. access_group_id is an external identity-group selector; authorize_all_groups is a distinct mode.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude access decisions and expansion of directory groups.",
+        "officialDocumentation": "website/docs/r/ec2_client_vpn_authorization_rule.html.markdown",
+        "shapes": {
+          "client_vpn_endpoint_id": [
+            "string"
+          ],
+          "target_network_cidr": [
+            "string"
+          ],
+          "access_group_id": [
+            "string"
+          ],
+          "authorize_all_groups": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "client_vpn_endpoint_id": "required",
+          "target_network_cidr": "required",
+          "access_group_id": "optional",
+          "authorize_all_groups": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceClientVPNAuthorizationRule. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_client_vpn_endpoint": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1441,
+      "gap": "#1441 — Missing: verify server certificate, authentication-mode-specific directory, ACM or SAML inputs, enabled Lambda client hook and enabled log group/qualified stream. VPC and transit-gateway configuration branches conflict.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "server_certificate_arn",
+          "vpc_id",
+          "security_group_ids",
+          "transit_gateway_configuration.transit_gateway_id",
+          "transit_gateway_configuration.transit_gateway_attachment_id",
+          "authentication_options.type",
+          "authentication_options.active_directory_id",
+          "authentication_options.root_certificate_chain_arn",
+          "authentication_options.saml_provider_arn",
+          "authentication_options.self_service_saml_provider_arn",
+          "client_connect_options.enabled",
+          "client_connect_options.lambda_function_arn",
+          "connection_log_options.enabled",
+          "connection_log_options.cloudwatch_log_group",
+          "connection_log_options.cloudwatch_log_stream"
+        ],
+        "placement": "Missing: current Logical Connector; show client access endpoint with exclusive VPC or transit configuration from independently proven scope.",
+        "ownership": "Not applicable: Endpoint independently owns client configuration helpers; authentication providers remain shared.",
+        "network": "Missing: use explicit VPC ID and matching security group set only in VPC mode. Transit Gateway mode links its TGW, never inferred subnets from the client CIDR or AZs.",
+        "references": "Missing: verify server certificate, authentication-mode-specific directory, ACM or SAML inputs, enabled Lambda client hook and enabled log group/qualified stream. VPC and transit-gateway configuration branches conflict.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit client addresses, banners, session status and authentication results.",
+        "officialDocumentation": "website/docs/r/ec2_client_vpn_endpoint.html.markdown",
+        "shapes": {
+          "server_certificate_arn": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "transit_gateway_configuration.transit_gateway_id": [
+            "list",
+            "string"
+          ],
+          "transit_gateway_configuration.transit_gateway_attachment_id": [
+            "list",
+            "string"
+          ],
+          "authentication_options.type": [
+            "set",
+            "string"
+          ],
+          "authentication_options.active_directory_id": [
+            "set",
+            "string"
+          ],
+          "authentication_options.root_certificate_chain_arn": [
+            "set",
+            "string"
+          ],
+          "authentication_options.saml_provider_arn": [
+            "set",
+            "string"
+          ],
+          "authentication_options.self_service_saml_provider_arn": [
+            "set",
+            "string"
+          ],
+          "client_connect_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "client_connect_options.lambda_function_arn": [
+            "list",
+            "string"
+          ],
+          "connection_log_options.enabled": [
+            "list",
+            "bool"
+          ],
+          "connection_log_options.cloudwatch_log_group": [
+            "list",
+            "string"
+          ],
+          "connection_log_options.cloudwatch_log_stream": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "server_certificate_arn": "required",
+          "vpc_id": "optional/computed",
+          "security_group_ids": "optional/computed",
+          "transit_gateway_configuration.transit_gateway_id": "optional",
+          "transit_gateway_configuration.transit_gateway_attachment_id": "computed",
+          "authentication_options.type": "required",
+          "authentication_options.active_directory_id": "optional",
+          "authentication_options.root_certificate_chain_arn": "optional",
+          "authentication_options.saml_provider_arn": "optional",
+          "authentication_options.self_service_saml_provider_arn": "optional",
+          "client_connect_options.enabled": "optional/computed",
+          "client_connect_options.lambda_function_arn": "optional/computed",
+          "connection_log_options.enabled": "required",
+          "connection_log_options.cloudwatch_log_group": "optional",
+          "connection_log_options.cloudwatch_log_stream": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceClientVPNEndpoint. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "client_vpn_endpoint_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_client_vpn_network_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1441,
+      "gap": "#1441 — Missing: associate the explicit endpoint and target subnet only in compatible VPC mode. Computed vpc_id is not the input selector.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "client_vpn_endpoint_id",
+          "subnet_id",
+          "association_id",
+          "vpc_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_client_vpn_network_association.",
+        "ownership": "Not applicable: Two endpoints; avoid hiding shared subnet or double counting association.",
+        "network": "Intentionally unsupported: Subnet is a target network. Multiple associations do not place the VPN in one subnet.",
+        "references": "Missing: associate the explicit endpoint and target subnet only in compatible VPC mode. Computed vpc_id is not the input selector.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit connection readiness.",
+        "officialDocumentation": "website/docs/r/ec2_client_vpn_network_association.html.markdown",
+        "shapes": {
+          "client_vpn_endpoint_id": [
+            "string"
+          ],
+          "subnet_id": [
+            "string"
+          ],
+          "association_id": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "client_vpn_endpoint_id": "required",
+          "subnet_id": "required",
+          "association_id": "computed",
+          "vpc_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceClientVPNNetworkAssociation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_client_vpn_route": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1441,
+      "gap": "#1441 — Missing: link endpoint plus explicit associated subnet in VPC mode. In TGW mode the attachment ID is computed; do not treat it as a route target input.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "client_vpn_endpoint_id",
+          "target_vpc_subnet_id",
+          "destination_cidr_block",
+          "transit_gateway_attachment_id"
+        ],
+        "placement": "Supported: retain Logical Connector presentation for aws_ec2_client_vpn_route.",
+        "ownership": "Missing: qualify the route by its endpoint and keep the route change visible.",
+        "network": "Intentionally unsupported: Route destination is a CIDR, not containment.",
+        "references": "Missing: link endpoint plus explicit associated subnet in VPC mode. In TGW mode the attachment ID is computed; do not treat it as a route target input.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit reachability and route-selection claims.",
+        "officialDocumentation": "website/docs/r/ec2_client_vpn_route.html.markdown",
+        "shapes": {
+          "client_vpn_endpoint_id": [
+            "string"
+          ],
+          "target_vpc_subnet_id": [
+            "string"
+          ],
+          "destination_cidr_block": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "client_vpn_endpoint_id": "required",
+          "target_vpc_subnet_id": "optional",
+          "destination_cidr_block": "required",
+          "transit_gateway_attachment_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceClientVPNRoute. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_local_gateway_route": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1440,
+      "gap": "#1440 — Missing: link managed table by local_gateway_route_table_id output; interface group is a distinct data-only registration. Verify its data ID independently.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "local_gateway_route_table_id",
+          "local_gateway_virtual_interface_group_id",
+          "destination_cidr_block"
+        ],
+        "placement": "Supported: retain Logical Connector presentation for aws_ec2_local_gateway_route.",
+        "ownership": "Missing: identify the route under its unique local table.",
+        "network": "Intentionally unsupported: CIDR is a destination match only.",
+        "references": "Missing: link managed table by local_gateway_route_table_id output; interface group is a distinct data-only registration. Verify its data ID independently.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not infer an active forwarding path.",
+        "officialDocumentation": "website/docs/r/ec2_local_gateway_route.html.markdown",
+        "shapes": {
+          "local_gateway_route_table_id": [
+            "string"
+          ],
+          "local_gateway_virtual_interface_group_id": [
+            "string"
+          ],
+          "destination_cidr_block": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "local_gateway_route_table_id": "required",
+          "local_gateway_virtual_interface_group_id": "required",
+          "destination_cidr_block": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceLocalGatewayRoute. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_local_gateway_route_table": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1440,
+      "gap": "#1440 — Missing: link configured local_gateway_id only to the exact data-only local gateway contract; expose the table ID for its callers. outpost_arn is computed.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "local_gateway_id",
+          "local_gateway_route_table_id",
+          "mode",
+          "outpost_arn"
+        ],
+        "placement": "Supported: retain Logical Connector presentation for aws_ec2_local_gateway_route_table.",
+        "ownership": "Not applicable: Local table is independent of VPC and interface group associations.",
+        "network": "Intentionally unsupported: Local gateway is an Outposts resource; no VPC or subnet parent from table mode.",
+        "references": "Missing: link configured local_gateway_id only to the exact data-only local gateway contract; expose the table ID for its callers. outpost_arn is computed.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not infer traffic behavior from direct-vpc-routing or coip.",
+        "officialDocumentation": "website/docs/r/ec2_local_gateway_route_table.html.markdown",
+        "shapes": {
+          "local_gateway_id": [
+            "string"
+          ],
+          "local_gateway_route_table_id": [
+            "string"
+          ],
+          "mode": [
+            "string"
+          ],
+          "outpost_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "local_gateway_id": "required",
+          "local_gateway_route_table_id": "computed",
+          "mode": "required",
+          "outpost_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newLocalGatewayRouteTableResource. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "local_gateway_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "local_gateway_route_table_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "outpost_arn": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "state": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_local_gateway_route_table_virtual_interface_group_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1440,
+      "gap": "#1440 — Missing: verify table output and distinct data-only interface group ID. Computed local gateway ID cannot replace either input.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "local_gateway_route_table_id",
+          "local_gateway_virtual_interface_group_id",
+          "local_gateway_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_local_gateway_route_table_virtual_interface_group_association.",
+        "ownership": "Not applicable: Association carries its own identity between table and group.",
+        "network": "Intentionally unsupported: Virtual interface groups do not identify subnets.",
+        "references": "Missing: verify table output and distinct data-only interface group ID. Computed local gateway ID cannot replace either input.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit association readiness.",
+        "officialDocumentation": "website/docs/r/ec2_local_gateway_route_table_virtual_interface_group_association.html.markdown",
+        "shapes": {
+          "local_gateway_route_table_id": [
+            "string"
+          ],
+          "local_gateway_virtual_interface_group_id": [
+            "string"
+          ],
+          "local_gateway_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "local_gateway_route_table_id": "required",
+          "local_gateway_virtual_interface_group_id": "required",
+          "local_gateway_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newLocalGatewayRouteTableVirtualInterfaceGroupAssociationResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_local_gateway_route_table_vpc_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1440,
+      "gap": "#1440 — Missing: link the named local route-table output and known VPC ID. The returned local gateway ID is contextual.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "local_gateway_route_table_id",
+          "vpc_id",
+          "local_gateway_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_local_gateway_route_table_vpc_association.",
+        "ownership": "Not applicable: Shared VPC and table stay independent.",
+        "network": "Intentionally unsupported: Association is not VPC ownership of the table.",
+        "references": "Missing: link the named local route-table output and known VPC ID. The returned local gateway ID is contextual.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit propagated or effective routes.",
+        "officialDocumentation": "website/docs/r/ec2_local_gateway_route_table_vpc_association.html.markdown",
+        "shapes": {
+          "local_gateway_route_table_id": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "local_gateway_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "local_gateway_route_table_id": "required",
+          "vpc_id": "required",
+          "local_gateway_id": "computed"
+        },
+        "sourceContracts": {
+          "local_gateway_id": {
+            "file": "internal/service/ec2/outposts_local_gateway_route_table_vpc_association.go",
+            "token": "\"local_gateway_id\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceLocalGatewayRouteTableVPCAssociation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway": {
+      "status": "Partial",
+      "priority": "P3",
+      "gap": "Supported: gateway identity is an existing VPC route, flow log and Network Manager endpoint. Both default table IDs are computed; do not fabricate managed tables. Explicit table and attachment inputs are owned by their helper types.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "arn",
+          "owner_id",
+          "association_default_route_table_id",
+          "propagation_default_route_table_id"
+        ],
+        "placement": "Supported: retain Spatial Connector presentation for aws_ec2_transit_gateway.",
+        "ownership": "Not applicable: Regional hub shared by attachments, including cross-account attachments.",
+        "network": "Intentionally unsupported: A TGW spans VPCs and has no subnet parent.",
+        "references": "Supported: gateway identity is an existing VPC route, flow log and Network Manager endpoint. Both default table IDs are computed; do not fabricate managed tables. Explicit table and attachment inputs are owned by their helper types.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Exclude propagation, effective routes and transit traffic health.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "owner_id": [
+            "string"
+          ],
+          "association_default_route_table_id": [
+            "string"
+          ],
+          "propagation_default_route_table_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "arn": "computed",
+          "owner_id": "computed",
+          "association_default_route_table_id": "computed",
+          "propagation_default_route_table_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/routes.rs",
+          "tests/unit/semantic/routes.rs",
+          "src/provider/aws/vpc_routes.rs",
+          "tests/unit/semantic/vpc_routes.rs",
+          "src/provider/aws/cloudwan.rs",
+          "tests/unit/semantic/cloudwan.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGateway. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_connect": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1442,
+      "gap": "#1442 — Missing: link the gateway and underlying transport VPC attachment by distinct IDs, require both to identify the same gateway. Return the Connect attachment ID for peers.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "transport_attachment_id",
+          "protocol",
+          "id"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_connect.",
+        "ownership": "Not applicable: Connect is a separate overlay attachment from its transport.",
+        "network": "Intentionally unsupported: Underlying VPC attachment supplies transport, not subnet containment.",
+        "references": "Missing: link the gateway and underlying transport VPC attachment by distinct IDs, require both to identify the same gateway. Return the Connect attachment ID for peers.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude inferred GRE tunnel state.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_connect.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "transport_attachment_id": [
+            "string"
+          ],
+          "protocol": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "transport_attachment_id": "required",
+          "protocol": "optional",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayConnect. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "transit_gateway_connect_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_connect_peer": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1442,
+      "gap": "#1442 — Missing: link only a Connect attachment ID. Network Manager may already reference the peer ARN; ordinary VPC attachment IDs are not Connect attachments.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_attachment_id",
+          "peer_address",
+          "inside_cidr_blocks",
+          "arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_connect_peer.",
+        "ownership": "Missing: identify each peer under its proven Connect attachment while retaining the Terraform peer identity.",
+        "network": "Intentionally unsupported: Peer and inside addresses do not identify subnets or instances.",
+        "references": "Missing: link only a Connect attachment ID. Network Manager may already reference the peer ARN; ordinary VPC attachment IDs are not Connect attachments.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit BGP state and tunnel addresses.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_connect_peer.html.markdown",
+        "shapes": {
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "peer_address": [
+            "string"
+          ],
+          "inside_cidr_blocks": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_attachment_id": "required",
+          "peer_address": "required",
+          "inside_cidr_blocks": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/networkmanager.rs",
+          "tests/unit/semantic/networkmanager.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayConnectPeer. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "transit_gateway_connect_peer_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_default_route_table_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: associate TGW with explicitly selected default association table after proving the table belongs to it. Original default ID is restore metadata.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "transit_gateway_route_table_id",
+          "original_default_route_table_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_default_route_table_association.",
+        "ownership": "Not applicable: Default association changes one setting, independently of propagation.",
+        "network": "Intentionally unsupported: Default selection does not contain attached VPCs.",
+        "references": "Missing: associate TGW with explicitly selected default association table after proving the table belongs to it. Original default ID is restore metadata.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude resulting traffic flow.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_default_route_table_association.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "transit_gateway_route_table_id": [
+            "string"
+          ],
+          "original_default_route_table_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "transit_gateway_route_table_id": "required",
+          "original_default_route_table_id": "computed"
+        },
+        "sourceContracts": {
+          "original_default_route_table_id": {
+            "file": "internal/service/ec2/transitgateway_default_route_table_association.go",
+            "token": "\"original_default_route_table_id\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newTransitGatewayDefaultRouteTableAssociationResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_default_route_table_propagation": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: link TGW with selected default propagation table and prove common gateway. Original default table is a computed rollback value.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "transit_gateway_route_table_id",
+          "original_default_route_table_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_default_route_table_propagation.",
+        "ownership": "Not applicable: Default propagation is independent of default association.",
+        "network": "Intentionally unsupported: Propagation settings have no subnet hierarchy.",
+        "references": "Missing: link TGW with selected default propagation table and prove common gateway. Original default table is a computed rollback value.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude claims about learned routes.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_default_route_table_propagation.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "transit_gateway_route_table_id": [
+            "string"
+          ],
+          "original_default_route_table_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "transit_gateway_route_table_id": "required",
+          "original_default_route_table_id": "computed"
+        },
+        "sourceContracts": {
+          "original_default_route_table_id": {
+            "file": "internal/service/ec2/transitgateway_default_route_table_propagation.go",
+            "token": "\"original_default_route_table_id\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newTransitGatewayDefaultRouteTablePropagationResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_metering_policy": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1444,
+      "gap": "#1444 — Missing: link TGW and complete explicit middlebox attachment ID set for that gateway. Use the policy-specific ID output.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "transit_gateway_metering_policy_id",
+          "middlebox_attachment_ids"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_metering_policy.",
+        "ownership": "Not applicable: One TGW policy; middleboxes are independently shared attachments.",
+        "network": "Intentionally unsupported: Metering is not subnet placement.",
+        "references": "Missing: link TGW and complete explicit middlebox attachment ID set for that gateway. Use the policy-specific ID output.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit charge estimates and billing outcomes.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_metering_policy.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "transit_gateway_metering_policy_id": [
+            "string"
+          ],
+          "middlebox_attachment_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "transit_gateway_metering_policy_id": "computed",
+          "middlebox_attachment_ids": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newTransitGatewayMeteringPolicyResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_metering_policy_entry": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1444,
+      "gap": "#1444 — Missing: link the parent metering policy and exact source/destination attachment IDs under compatible optional type selectors. A type or metered_account enum alone selects no resource.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_metering_policy_id",
+          "policy_rule_number",
+          "source_transit_gateway_attachment_type",
+          "source_transit_gateway_attachment_id",
+          "destination_transit_gateway_attachment_type",
+          "destination_transit_gateway_attachment_id",
+          "metered_account"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_metering_policy_entry.",
+        "ownership": "Missing: entry belongs to a policy, qualified by rule number.",
+        "network": "Intentionally unsupported: Metering selectors do not contain endpoints.",
+        "references": "Missing: link the parent metering policy and exact source/destination attachment IDs under compatible optional type selectors. A type or metered_account enum alone selects no resource.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude charging predictions, port/CIDR expansion or policy evaluation.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_metering_policy_entry.html.markdown",
+        "shapes": {
+          "transit_gateway_metering_policy_id": [
+            "string"
+          ],
+          "policy_rule_number": [
+            "number"
+          ],
+          "source_transit_gateway_attachment_type": [
+            "string"
+          ],
+          "source_transit_gateway_attachment_id": [
+            "string"
+          ],
+          "destination_transit_gateway_attachment_type": [
+            "string"
+          ],
+          "destination_transit_gateway_attachment_id": [
+            "string"
+          ],
+          "metered_account": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_metering_policy_id": "required",
+          "policy_rule_number": "required",
+          "source_transit_gateway_attachment_type": "optional",
+          "source_transit_gateway_attachment_id": "optional",
+          "destination_transit_gateway_attachment_type": "optional",
+          "destination_transit_gateway_attachment_id": "optional",
+          "metered_account": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newTransitGatewayMeteringPolicyEntryResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_multicast_domain": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1445,
+      "gap": "#1445 — Missing: link the domain to its TGW; callers use the multicast domain ID. Require common gateway evidence for attachment relationships.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "id",
+          "igmpv2_support",
+          "static_sources_support"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_multicast_domain.",
+        "ownership": "Not applicable: Domain has its own identity and can serve multiple members.",
+        "network": "Intentionally unsupported: A multicast domain is not a subnet container.",
+        "references": "Missing: link the domain to its TGW; callers use the multicast domain ID. Require common gateway evidence for attachment relationships.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude IGMP runtime membership and traffic health.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_domain.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "igmpv2_support": [
+            "string"
+          ],
+          "static_sources_support": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "id": "optional/computed",
+          "igmpv2_support": "optional",
+          "static_sources_support": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayMulticastDomain. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "transit_gateway_multicast_domain_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_multicast_domain_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1445,
+      "gap": "#1445 — Missing: prove all three distinct inputs, including a compatible VPC attachment with the selected subnet and gateway. A two-endpoint edge would lose evidence.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_multicast_domain_id",
+          "transit_gateway_attachment_id",
+          "subnet_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_multicast_domain_association.",
+        "ownership": "Not applicable: Ternary association keeps its Terraform action and identity.",
+        "network": "Intentionally unsupported: Subnet is an association endpoint; it is not owned by the multicast domain.",
+        "references": "Missing: prove all three distinct inputs, including a compatible VPC attachment with the selected subnet and gateway. A two-endpoint edge would lose evidence.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit effective group membership.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_domain_association.html.markdown",
+        "shapes": {
+          "transit_gateway_multicast_domain_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "subnet_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_multicast_domain_id": "required",
+          "transit_gateway_attachment_id": "required",
+          "subnet_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayMulticastDomainAssociation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_multicast_group_member": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1445,
+      "gap": "#1445 — Missing: verify domain and member ENI IDs with group IP as a qualifier only. Do not merge member and source registration on equal IP.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_multicast_domain_id",
+          "network_interface_id",
+          "group_ip_address"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_multicast_group_member.",
+        "ownership": "Not applicable: Member registration remains separate from shared domain and ENI.",
+        "network": "Intentionally unsupported: Group IP is not a subnet or resource address.",
+        "references": "Missing: verify domain and member ENI IDs with group IP as a qualifier only. Do not merge member and source registration on equal IP.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit observed subscribers and packet delivery.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_group_member.html.markdown",
+        "shapes": {
+          "transit_gateway_multicast_domain_id": [
+            "string"
+          ],
+          "network_interface_id": [
+            "string"
+          ],
+          "group_ip_address": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_multicast_domain_id": "required",
+          "network_interface_id": "required",
+          "group_ip_address": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayMulticastGroupMember. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_multicast_group_source": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1445,
+      "gap": "#1445 — Missing: verify domain and source ENI IDs; preserve source direction separately from membership for the same group address.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_multicast_domain_id",
+          "network_interface_id",
+          "group_ip_address"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_multicast_group_source.",
+        "ownership": "Not applicable: Source registration is distinct from multicast membership.",
+        "network": "Intentionally unsupported: ENI participation does not place the domain in its subnet.",
+        "references": "Missing: verify domain and source ENI IDs; preserve source direction separately from membership for the same group address.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit actual transmitters and traffic.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_multicast_group_source.html.markdown",
+        "shapes": {
+          "transit_gateway_multicast_domain_id": [
+            "string"
+          ],
+          "network_interface_id": [
+            "string"
+          ],
+          "group_ip_address": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_multicast_domain_id": "required",
+          "network_interface_id": "required",
+          "group_ip_address": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayMulticastGroupSource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_peering_attachment": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1442,
+      "gap": "#1442 — Missing: verify requester and peer gateway ID independently, qualify the peer by region and account including provider default only when proved. Preserve Network Insights consumers.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "peer_transit_gateway_id",
+          "peer_account_id",
+          "peer_region",
+          "id"
+        ],
+        "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_peering_attachment.",
+        "ownership": "Not applicable: Cross-account peer is independently owned; acceptance has its own Terraform identity.",
+        "network": "Intentionally unsupported: TGW peering spans networks and does not establish containment.",
+        "references": "Missing: verify requester and peer gateway ID independently, qualify the peer by region and account including provider default only when proved. Preserve Network Insights consumers.",
+        "scope": "Missing: peering attachment has no regional rule in scope.rs. Qualify the requester and peer separately using peer_account_id and peer_region; preserve verified caller account when present.",
+        "summaries": "Intentionally unsupported: Omit connectivity/acceptance conclusions from creation alone.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_peering_attachment.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "peer_transit_gateway_id": [
+            "string"
+          ],
+          "peer_account_id": [
+            "string"
+          ],
+          "peer_region": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "peer_transit_gateway_id": "required",
+          "peer_account_id": "optional/computed",
+          "peer_region": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/network_insights.rs",
+          "tests/unit/semantic/network_insights.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayPeeringAttachment. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_peering_attachment_accepter": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1442,
+      "gap": "#1442 — Missing: match the exact peering request ID on the accepting side with independently proven peer region/account. Returned gateway identifiers cannot replace the request reference.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_attachment_id",
+          "peer_account_id",
+          "peer_region",
+          "transit_gateway_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_peering_attachment_accepter.",
+        "ownership": "Not applicable: Acceptance adopts one side; do not coalesce Terraform nodes or transfer requester ownership.",
+        "network": "Intentionally unsupported: Accepter cannot place either gateway in a VPC.",
+        "references": "Missing: match the exact peering request ID on the accepting side with independently proven peer region/account. Returned gateway identifiers cannot replace the request reference.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit live approval and connectivity status.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_peering_attachment_accepter.html.markdown",
+        "shapes": {
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "peer_account_id": [
+            "string"
+          ],
+          "peer_region": [
+            "string"
+          ],
+          "transit_gateway_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_attachment_id": "required",
+          "peer_account_id": "computed",
+          "peer_region": "computed",
+          "transit_gateway_id": "computed"
+        },
+        "sourceContracts": {
+          "peer_region": {
+            "file": "internal/service/ec2/transitgateway_peering_attachment_accepter.go",
+            "token": "\"peer_region\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayPeeringAttachmentAccepter. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_policy_table": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1444,
+      "gap": "#1444 — Missing: link policy table to verified TGW. Distinguish policy table IDs from ordinary route table IDs.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "id",
+          "state"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_policy_table.",
+        "ownership": "Not applicable: Policy table identity is shared by entries and associations.",
+        "network": "Intentionally unsupported: A policy table does not contain VPCs.",
+        "references": "Missing: link policy table to verified TGW. Distinguish policy table IDs from ordinary route table IDs.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit effective policy and readiness.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_policy_table.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "id": "optional/computed",
+          "state": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayPolicyTable. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_policy_table_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1444,
+      "gap": "#1444 — Missing: link policy table plus explicitly selected attachment on the same TGW; returned resource_type/resource_id do not establish a second target.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_policy_table_id",
+          "transit_gateway_attachment_id",
+          "resource_type",
+          "resource_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_policy_table_association.",
+        "ownership": "Not applicable: Both endpoints stay independent.",
+        "network": "Intentionally unsupported: Binding a policy table is not VPC placement.",
+        "references": "Missing: link policy table plus explicitly selected attachment on the same TGW; returned resource_type/resource_id do not establish a second target.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude inferred policy effects.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_policy_table_association.html.markdown",
+        "shapes": {
+          "transit_gateway_policy_table_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "resource_type": [
+            "string"
+          ],
+          "resource_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_policy_table_id": "required",
+          "transit_gateway_attachment_id": "required",
+          "resource_type": "computed",
+          "resource_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayPolicyTableAssociation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_policy_table_entry": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1444,
+      "gap": "#1444 — Missing: distinguish parent policy table ID from target TGW route table ID and prove a common TGW. Match fields select traffic only.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_policy_table_id",
+          "policy_rule_number",
+          "target_route_table_id",
+          "policy_rule.protocol"
+        ],
+        "placement": "Supported: retain Logical Policy presentation for aws_ec2_transit_gateway_policy_table_entry.",
+        "ownership": "Missing: qualify entry by policy table and rule number.",
+        "network": "Intentionally unsupported: CIDRs and ports describe rule matches, not resource placement.",
+        "references": "Missing: distinguish parent policy table ID from target TGW route table ID and prove a common TGW. Match fields select traffic only.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not interpret rule priority, metadata or forwarding outcomes.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_policy_table_entry.html.markdown",
+        "shapes": {
+          "transit_gateway_policy_table_id": [
+            "string"
+          ],
+          "policy_rule_number": [
+            "string"
+          ],
+          "target_route_table_id": [
+            "string"
+          ],
+          "policy_rule.protocol": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_policy_table_id": "required",
+          "policy_rule_number": "required",
+          "target_route_table_id": "required",
+          "policy_rule.protocol": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newTransitGatewayPolicyTableEntryResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_prefix_list_reference": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: link TGW table and prefix list using the exact IDs; link a verified same-gateway attachment only in known non-blackhole mode. Preserve independent prefix-list owner evidence.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_route_table_id",
+          "prefix_list_id",
+          "transit_gateway_attachment_id",
+          "blackhole",
+          "prefix_list_owner_id"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_prefix_list_reference.",
+        "ownership": "Missing: present configuration with its route table while keeping shared prefix list independent.",
+        "network": "Intentionally unsupported: Prefix list entries are not subnet identities.",
+        "references": "Missing: link TGW table and prefix list using the exact IDs; link a verified same-gateway attachment only in known non-blackhole mode. Preserve independent prefix-list owner evidence.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit effective routing.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_prefix_list_reference.html.markdown",
+        "shapes": {
+          "transit_gateway_route_table_id": [
+            "string"
+          ],
+          "prefix_list_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "blackhole": [
+            "bool"
+          ],
+          "prefix_list_owner_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_route_table_id": "required",
+          "prefix_list_id": "required",
+          "transit_gateway_attachment_id": "optional",
+          "blackhole": "optional",
+          "prefix_list_owner_id": "computed"
+        },
+        "sourceContracts": {
+          "prefix_list_owner_id": {
+            "file": "internal/service/ec2/transitgateway_prefix_list_reference.go",
+            "token": "\"prefix_list_owner_id\""
+          }
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayPrefixListReference. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_route": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: TGW route has a Spatial Connector classification; implement explicit TGW table and non-blackhole attachment proof. Preserve blackhole routes as table entries without an attachment target.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_route_table_id",
+          "transit_gateway_attachment_id",
+          "destination_cidr_block",
+          "blackhole"
+        ],
+        "placement": "Supported: retain Spatial Connector presentation for aws_ec2_transit_gateway_route.",
+        "ownership": "Missing: route belongs to its uniquely selected route table.",
+        "network": "Intentionally unsupported: Destination CIDR does not identify a subnet or VPC.",
+        "references": "Missing: TGW route has a Spatial Connector classification; implement explicit TGW table and non-blackhole attachment proof. Preserve blackhole routes as table entries without an attachment target.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Do not report packets forwarded or dropped.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_route.html.markdown",
+        "shapes": {
+          "transit_gateway_route_table_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "destination_cidr_block": [
+            "string"
+          ],
+          "blackhole": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_route_table_id": "required",
+          "transit_gateway_attachment_id": "optional",
+          "destination_cidr_block": "required",
+          "blackhole": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayRoute. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_route_table": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: link table to its configured TGW. Cloud WAN uses table identity as incoming evidence. Computed default flags do not create a default-helper resource.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "id",
+          "default_association_route_table",
+          "default_propagation_route_table"
+        ],
+        "placement": "Supported: retain Spatial Connector presentation for aws_ec2_transit_gateway_route_table.",
+        "ownership": "Not applicable: Table is independent within one TGW and can serve several attachments.",
+        "network": "Intentionally unsupported: TGW is a service parent, never a VPC or subnet.",
+        "references": "Missing: link table to its configured TGW. Cloud WAN uses table identity as incoming evidence. Computed default flags do not create a default-helper resource.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Omit effective route set.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_route_table.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "default_association_route_table": [
+            "bool"
+          ],
+          "default_propagation_route_table": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "id": "optional/computed",
+          "default_association_route_table": "computed",
+          "default_propagation_route_table": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudwan.rs",
+          "tests/unit/semantic/cloudwan.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayRouteTable. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_route_table_association": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: verify attachment and association table IDs in the same gateway. Spatial Association classification has no two-ended lowering rule for this type.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_route_table_id",
+          "transit_gateway_attachment_id",
+          "resource_type",
+          "resource_id"
+        ],
+        "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_route_table_association.",
+        "ownership": "Not applicable: Helper's plan change belongs to this association, not to propagation.",
+        "network": "Intentionally unsupported: A route table association does not place a VPC.",
+        "references": "Missing: verify attachment and association table IDs in the same gateway. Spatial Association classification has no two-ended lowering rule for this type.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Exclude claims about propagated prefixes.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_route_table_association.html.markdown",
+        "shapes": {
+          "transit_gateway_route_table_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "resource_type": [
+            "string"
+          ],
+          "resource_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_route_table_id": "required",
+          "transit_gateway_attachment_id": "required",
+          "resource_type": "computed",
+          "resource_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayRouteTableAssociation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_route_table_propagation": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1443,
+      "gap": "#1443 — Missing: prove which attachment propagates to which TGW table. Outputs resource_id and resource_type are not independent input references.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_route_table_id",
+          "transit_gateway_attachment_id",
+          "resource_type",
+          "resource_id"
+        ],
+        "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_route_table_propagation.",
+        "ownership": "Not applicable: Propagation keeps its own action even when an association has identical endpoints.",
+        "network": "Intentionally unsupported: Propagation is not containment.",
+        "references": "Missing: prove which attachment propagates to which TGW table. Outputs resource_id and resource_type are not independent input references.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Omit learned routes and convergence.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_route_table_propagation.html.markdown",
+        "shapes": {
+          "transit_gateway_route_table_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "resource_type": [
+            "string"
+          ],
+          "resource_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_route_table_id": "required",
+          "transit_gateway_attachment_id": "required",
+          "resource_type": "computed",
+          "resource_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayRouteTablePropagation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_ec2_transit_gateway_vpc_attachment": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1442,
+      "gap": "#1442 — Missing: verify TGW, VPC and every explicitly selected subnet on that VPC. Flow Logs already consume the attachment ID; association classification alone does not link its endpoints.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "vpc_id",
+          "subnet_ids",
+          "vpc_owner_id",
+          "id"
+        ],
+        "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_vpc_attachment.",
+        "ownership": "Not applicable: Attachment preserves distinct TGW and VPC owners.",
+        "network": "Missing: identify attachment subnets only with complete same-VPC evidence. Do not embed the TGW in any one attachment subnet.",
+        "references": "Missing: verify TGW, VPC and every explicitly selected subnet on that VPC. Flow Logs already consume the attachment ID; association classification alone does not link its endpoints.",
+        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "summaries": "Intentionally unsupported: Omit data-plane reachability and generated ENIs.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_vpc_attachment.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_owner_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "vpc_id": "required",
+          "subnet_ids": "required",
+          "vpc_owner_id": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/flow_logs.rs",
+          "tests/unit/semantic/flow_logs.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayVPCAttachment. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_ec2_transit_gateway_vpc_attachment_accepter": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1442,
+      "gap": "#1442 — Missing: match the accepted VPC attachment ID with independently proven requester and accepting TGW accounts. Computed subnet and VPC fields are observations.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_attachment_id",
+          "vpc_owner_id",
+          "vpc_id",
+          "subnet_ids"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_vpc_attachment_accepter.",
+        "ownership": "Not applicable: Adoption keeps requester and accepter actions distinct and independently filterable.",
+        "network": "Intentionally unsupported: Accepter outputs do not place the TGW in the remote VPC.",
+        "references": "Missing: match the accepted VPC attachment ID with independently proven requester and accepting TGW accounts. Computed subnet and VPC fields are observations.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit acceptance readiness.",
+        "officialDocumentation": "website/docs/r/ec2_transit_gateway_vpc_attachment_accepter.html.markdown",
+        "shapes": {
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "vpc_owner_id": [
+            "string"
+          ],
+          "vpc_id": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "transit_gateway_attachment_id": "required",
+          "vpc_owner_id": "computed",
+          "vpc_id": "computed",
+          "subnet_ids": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceTransitGatewayVPCAttachmentAccepter. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_verifiedaccess_endpoint": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1446,
+      "gap": "#1446 — Missing: verify group, certificate, selected LB/ENI/CIDR/RDS option and enabled KMS key. Only an explicit supported RDS ARN identifies an endpoint; returned instance ID or DNS does not.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "verified_access_group_id",
+          "verified_access_instance_id",
+          "attachment_type",
+          "endpoint_type",
+          "domain_certificate_arn",
+          "security_group_ids",
+          "load_balancer_options.load_balancer_arn",
+          "load_balancer_options.subnet_ids",
+          "network_interface_options.network_interface_id",
+          "cidr_options.subnet_ids",
+          "rds_options.rds_db_cluster_arn",
+          "rds_options.rds_db_instance_arn",
+          "rds_options.rds_db_proxy_arn",
+          "rds_options.subnet_ids",
+          "sse_specification.customer_managed_key_enabled",
+          "sse_specification.kms_key_arn"
+        ],
+        "placement": "Missing: current Logical Node; show application access endpoint from independently proven scope.",
+        "ownership": "Not applicable: Endpoint belongs to one group but has independent identity and action.",
+        "network": "Missing: require vpc attachment type, matching endpoint_type and complete same-VPC subnet/SG or verified ENI evidence. Never infer networks from domains or CIDRs.",
+        "references": "Missing: verify group, certificate, selected LB/ENI/CIDR/RDS option and enabled KMS key. Only an explicit supported RDS ARN identifies an endpoint; returned instance ID or DNS does not.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude policy text, DNS and access decisions.",
+        "officialDocumentation": "website/docs/r/verifiedaccess_endpoint.html.markdown",
+        "shapes": {
+          "verified_access_group_id": [
+            "string"
+          ],
+          "verified_access_instance_id": [
+            "string"
+          ],
+          "attachment_type": [
+            "string"
+          ],
+          "endpoint_type": [
+            "string"
+          ],
+          "domain_certificate_arn": [
+            "string"
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "load_balancer_options.load_balancer_arn": [
+            "list",
+            "string"
+          ],
+          "load_balancer_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "network_interface_options.network_interface_id": [
+            "list",
+            "string"
+          ],
+          "cidr_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "rds_options.rds_db_cluster_arn": [
+            "list",
+            "string"
+          ],
+          "rds_options.rds_db_instance_arn": [
+            "list",
+            "string"
+          ],
+          "rds_options.rds_db_proxy_arn": [
+            "list",
+            "string"
+          ],
+          "rds_options.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "sse_specification.customer_managed_key_enabled": [
+            "list",
+            "bool"
+          ],
+          "sse_specification.kms_key_arn": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "verified_access_group_id": "required",
+          "verified_access_instance_id": "computed",
+          "attachment_type": "required",
+          "endpoint_type": "required",
+          "domain_certificate_arn": "optional",
+          "security_group_ids": "optional",
+          "load_balancer_options.load_balancer_arn": "optional",
+          "load_balancer_options.subnet_ids": "optional",
+          "network_interface_options.network_interface_id": "optional",
+          "cidr_options.subnet_ids": "optional",
+          "rds_options.rds_db_cluster_arn": "optional",
+          "rds_options.rds_db_instance_arn": "optional",
+          "rds_options.rds_db_proxy_arn": "optional",
+          "rds_options.subnet_ids": "optional",
+          "sse_specification.customer_managed_key_enabled": "optional",
+          "sse_specification.kms_key_arn": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVerifiedAccessEndpoint. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_verifiedaccess_group": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1446,
+      "gap": "#1446 — Missing: link instance and explicitly selected customer-managed KMS key under enabled encryption. Preserve group-specific ID output and distinction from endpoint.verified_access_group_id spelling.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "verifiedaccess_instance_id",
+          "verifiedaccess_group_id",
+          "verifiedaccess_group_arn",
+          "sse_configuration.customer_managed_key_enabled",
+          "sse_configuration.kms_key_arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_verifiedaccess_group.",
+        "ownership": "Missing: group has one explicit service instance; shared keys and endpoints retain independent identities.",
+        "network": "Intentionally unsupported: Group membership does not establish VPC containment.",
+        "references": "Missing: link instance and explicitly selected customer-managed KMS key under enabled encryption. Preserve group-specific ID output and distinction from endpoint.verified_access_group_id spelling.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude group policy and access outcomes.",
+        "officialDocumentation": "website/docs/r/verifiedaccess_group.html.markdown",
+        "shapes": {
+          "verifiedaccess_instance_id": [
+            "string"
+          ],
+          "verifiedaccess_group_id": [
+            "string"
+          ],
+          "verifiedaccess_group_arn": [
+            "string"
+          ],
+          "sse_configuration.customer_managed_key_enabled": [
+            "list",
+            "bool"
+          ],
+          "sse_configuration.kms_key_arn": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "verifiedaccess_instance_id": "required",
+          "verifiedaccess_group_id": "computed",
+          "verifiedaccess_group_arn": "computed",
+          "sse_configuration.customer_managed_key_enabled": "optional",
+          "sse_configuration.kms_key_arn": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVerifiedAccessGroup. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_verifiedaccess_instance": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1446,
+      "gap": "#1446 — Missing: independent Verified Access service identity for group, logging and attachment helpers. The returned trust provider collection is not configured membership.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "id",
+          "fips_enabled",
+          "verified_access_trust_providers"
+        ],
+        "placement": "Missing: current Logical Node; show regional access service boundary from independently proven scope.",
+        "ownership": "Not applicable: Do not embed independently shared trust providers in the instance.",
+        "network": "Intentionally unsupported: Verified Access service has no network selector of its own.",
+        "references": "Missing: independent Verified Access service identity for group, logging and attachment helpers. The returned trust provider collection is not configured membership.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit computed provider lists and generated DNS information.",
+        "officialDocumentation": "website/docs/r/verifiedaccess_instance.html.markdown",
+        "shapes": {
+          "id": [
+            "string"
+          ],
+          "fips_enabled": [
+            "bool"
+          ],
+          "verified_access_trust_providers": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "description": "string",
+                  "device_trust_provider_type": "string",
+                  "trust_provider_type": "string",
+                  "user_trust_provider_type": "string",
+                  "verified_access_trust_provider_id": "string"
+                }
+              ]
+            ]
+          ]
+        },
+        "contracts": {
+          "id": "optional/computed",
+          "fips_enabled": "optional",
+          "verified_access_trust_providers": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVerifiedAccessInstance. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_verifiedaccess_instance_logging_configuration": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1446,
+      "gap": "#1446 — Missing: verify owning instance and each enabled delivery destination by log group, Firehose stream or S3 bucket name; bucket_owner qualifies cross-account delivery. Disabled branches cannot bind.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "verifiedaccess_instance_id",
+          "access_logs.cloudwatch_logs.enabled",
+          "access_logs.cloudwatch_logs.log_group",
+          "access_logs.kinesis_data_firehose.enabled",
+          "access_logs.kinesis_data_firehose.delivery_stream",
+          "access_logs.s3.enabled",
+          "access_logs.s3.bucket_name",
+          "access_logs.s3.bucket_owner"
+        ],
+        "placement": "Supported: retain Logical Controller presentation for aws_verifiedaccess_instance_logging_configuration.",
+        "ownership": "Missing: show logging configuration with its verified instance; shared destinations remain independent.",
+        "network": "Intentionally unsupported: Log delivery conveys no subnet placement.",
+        "references": "Missing: verify owning instance and each enabled delivery destination by log group, Firehose stream or S3 bucket name; bucket_owner qualifies cross-account delivery. Disabled branches cannot bind.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Exclude trust context, prefixes and log contents.",
+        "officialDocumentation": "website/docs/r/verifiedaccess_instance_logging_configuration.html.markdown",
+        "shapes": {
+          "verifiedaccess_instance_id": [
+            "string"
+          ],
+          "access_logs.cloudwatch_logs.enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "access_logs.cloudwatch_logs.log_group": [
+            "list",
+            "list",
+            "string"
+          ],
+          "access_logs.kinesis_data_firehose.enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "access_logs.kinesis_data_firehose.delivery_stream": [
+            "list",
+            "list",
+            "string"
+          ],
+          "access_logs.s3.enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "access_logs.s3.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "access_logs.s3.bucket_owner": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "verifiedaccess_instance_id": "required",
+          "access_logs.cloudwatch_logs.enabled": "required",
+          "access_logs.cloudwatch_logs.log_group": "optional",
+          "access_logs.kinesis_data_firehose.enabled": "required",
+          "access_logs.kinesis_data_firehose.delivery_stream": "optional",
+          "access_logs.s3.enabled": "required",
+          "access_logs.s3.bucket_name": "optional",
+          "access_logs.s3.bucket_owner": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVerifiedAccessInstanceLoggingConfiguration. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_verifiedaccess_instance_trust_provider_attachment": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1446,
+      "gap": "#1446 — Missing: verify both instance and trust provider IDs; composite attachment id is not either endpoint ID.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "verifiedaccess_instance_id",
+          "verifiedaccess_trust_provider_id",
+          "id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_verifiedaccess_instance_trust_provider_attachment.",
+        "ownership": "Not applicable: Many-to-many attachment retains its own change and shared provider identity.",
+        "network": "Intentionally unsupported: Authentication association has no network parent.",
+        "references": "Missing: verify both instance and trust provider IDs; composite attachment id is not either endpoint ID.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit claims about authentication success.",
+        "officialDocumentation": "website/docs/r/verifiedaccess_instance_trust_provider_attachment.html.markdown",
+        "shapes": {
+          "verifiedaccess_instance_id": [
+            "string"
+          ],
+          "verifiedaccess_trust_provider_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "verifiedaccess_instance_id": "required",
+          "verifiedaccess_trust_provider_id": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVerifiedAccessInstanceTrustProviderAttachment. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_verifiedaccess_trust_provider": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1446,
+      "gap": "#1446 — Missing: link explicitly configured customer-managed KMS ARN only when enabled. User/device and vendor type discriminate external trust configuration, not managed identity endpoints.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "trust_provider_type",
+          "user_trust_provider_type",
+          "device_trust_provider_type",
+          "sse_specification.customer_managed_key_enabled",
+          "sse_specification.kms_key_arn"
+        ],
+        "placement": "Supported: retain Logical Node presentation for aws_verifiedaccess_trust_provider.",
+        "ownership": "Not applicable: Trust provider may be shared between service instances.",
+        "network": "Intentionally unsupported: Identity provider URLs and tenant IDs have no subnet meaning.",
+        "references": "Missing: link explicitly configured customer-managed KMS ARN only when enabled. User/device and vendor type discriminate external trust configuration, not managed identity endpoints.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Never display client secrets, OIDC payloads or endpoint credentials.",
+        "officialDocumentation": "website/docs/r/verifiedaccess_trust_provider.html.markdown",
+        "shapes": {
+          "trust_provider_type": [
+            "string"
+          ],
+          "user_trust_provider_type": [
+            "string"
+          ],
+          "device_trust_provider_type": [
+            "string"
+          ],
+          "sse_specification.customer_managed_key_enabled": [
+            "list",
+            "bool"
+          ],
+          "sse_specification.kms_key_arn": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "trust_provider_type": "required",
+          "user_trust_provider_type": "optional",
+          "device_trust_provider_type": "optional",
+          "sse_specification.customer_managed_key_enabled": "optional",
+          "sse_specification.kms_key_arn": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVerifiedAccessTrustProvider. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_vpn_concentrator": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Missing: link the configured TGW and expose the distinct vpn_concentrator_id for VPN connections. Returned attachment ID cannot create a managed attachment.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "transit_gateway_id",
+          "vpn_concentrator_id",
+          "transit_gateway_attachment_id",
+          "type"
+        ],
+        "placement": "Missing: current Logical Connector; show regional VPN concentrator from independently proven scope.",
+        "ownership": "Not applicable: Concentrator is separate from the shared transit gateway.",
+        "network": "Intentionally unsupported: TGW association supplies no VPC or subnet parent.",
+        "references": "Missing: link the configured TGW and expose the distinct vpn_concentrator_id for VPN connections. Returned attachment ID cannot create a managed attachment.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit connection counts and tunnel health.",
+        "officialDocumentation": "website/docs/r/vpn_concentrator.html.markdown",
+        "shapes": {
+          "transit_gateway_id": [
+            "string"
+          ],
+          "vpn_concentrator_id": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "transit_gateway_id": "required",
+          "vpn_concentrator_id": "computed",
+          "transit_gateway_attachment_id": "computed",
+          "type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration newVPNConcentratorResource. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_vpn_connection": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Missing: link customer gateway and selected exclusive VGW/TGW/concentrator, private-IP transport attachment and each enabled tunnel/BGP log group. Preserve Cloud WAN consumers; computed attachment ID is distinct from configured transport.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "static_routes_only",
+          "customer_gateway_id",
+          "transit_gateway_id",
+          "vpn_gateway_id",
+          "vpn_concentrator_id",
+          "transport_transit_gateway_attachment_id",
+          "outside_ip_address_type",
+          "transit_gateway_attachment_id",
+          "tunnel1_log_options.cloudwatch_log_options.log_enabled",
+          "tunnel1_log_options.cloudwatch_log_options.log_group_arn",
+          "tunnel2_log_options.cloudwatch_log_options.log_enabled",
+          "tunnel2_log_options.cloudwatch_log_options.log_group_arn",
+          "tunnel1_log_options.cloudwatch_log_options.bgp_log_enabled",
+          "tunnel1_log_options.cloudwatch_log_options.bgp_log_group_arn",
+          "tunnel2_log_options.cloudwatch_log_options.bgp_log_enabled",
+          "tunnel2_log_options.cloudwatch_log_options.bgp_log_group_arn"
+        ],
+        "placement": "Missing: current Logical Connector; show site-to-site VPN connector from independently proven scope.",
+        "ownership": "Not applicable: Connection is independent of both gateways; generated tunnels are not Terraform children.",
+        "network": "Intentionally unsupported: Private outside addresses and tunnel CIDRs do not place a connection in a subnet.",
+        "references": "Missing: link customer gateway and selected exclusive VGW/TGW/concentrator, private-IP transport attachment and each enabled tunnel/BGP log group. Preserve Cloud WAN consumers; computed attachment ID is distinct from configured transport.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Never expose preshared keys, configuration XML or BGP telemetry.",
+        "officialDocumentation": "website/docs/r/vpn_connection.html.markdown",
+        "shapes": {
+          "static_routes_only": [
+            "bool"
+          ],
+          "customer_gateway_id": [
+            "string"
+          ],
+          "transit_gateway_id": [
+            "string"
+          ],
+          "vpn_gateway_id": [
+            "string"
+          ],
+          "vpn_concentrator_id": [
+            "string"
+          ],
+          "transport_transit_gateway_attachment_id": [
+            "string"
+          ],
+          "outside_ip_address_type": [
+            "string"
+          ],
+          "transit_gateway_attachment_id": [
+            "string"
+          ],
+          "tunnel1_log_options.cloudwatch_log_options.log_enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "tunnel1_log_options.cloudwatch_log_options.log_group_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "tunnel2_log_options.cloudwatch_log_options.log_enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "tunnel2_log_options.cloudwatch_log_options.log_group_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "tunnel1_log_options.cloudwatch_log_options.bgp_log_enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "tunnel1_log_options.cloudwatch_log_options.bgp_log_group_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "tunnel2_log_options.cloudwatch_log_options.bgp_log_enabled": [
+            "list",
+            "list",
+            "bool"
+          ],
+          "tunnel2_log_options.cloudwatch_log_options.bgp_log_group_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "static_routes_only": "optional/computed",
+          "customer_gateway_id": "required",
+          "transit_gateway_id": "optional",
+          "vpn_gateway_id": "optional",
+          "vpn_concentrator_id": "optional",
+          "transport_transit_gateway_attachment_id": "optional",
+          "outside_ip_address_type": "optional/computed",
+          "transit_gateway_attachment_id": "computed",
+          "tunnel1_log_options.cloudwatch_log_options.log_enabled": "optional",
+          "tunnel1_log_options.cloudwatch_log_options.log_group_arn": "optional",
+          "tunnel2_log_options.cloudwatch_log_options.log_enabled": "optional",
+          "tunnel2_log_options.cloudwatch_log_options.log_group_arn": "optional",
+          "tunnel1_log_options.cloudwatch_log_options.bgp_log_enabled": "optional",
+          "tunnel1_log_options.cloudwatch_log_options.bgp_log_group_arn": "optional",
+          "tunnel2_log_options.cloudwatch_log_options.bgp_log_enabled": "optional",
+          "tunnel2_log_options.cloudwatch_log_options.bgp_log_group_arn": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudwan.rs",
+          "tests/unit/semantic/cloudwan.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVPNConnection. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "vpn_connection_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_vpn_connection_route": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Missing: link the owning static-route VPN connection ID; destination is a CIDR selector. Require compatible static routing mode before asserting a static route relationship.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpn_connection_id",
+          "destination_cidr_block"
+        ],
+        "placement": "Supported: retain Logical Connector presentation for aws_vpn_connection_route.",
+        "ownership": "Missing: keep the connection-qualified route and its change with its proven VPN connection.",
+        "network": "Intentionally unsupported: Destination range does not select a subnet.",
+        "references": "Missing: link the owning static-route VPN connection ID; destination is a CIDR selector. Require compatible static routing mode before asserting a static route relationship.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Do not infer that traffic can traverse the tunnel.",
+        "officialDocumentation": "website/docs/r/vpn_connection_route.html.markdown",
+        "shapes": {
+          "vpn_connection_id": [
+            "string"
+          ],
+          "destination_cidr_block": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpn_connection_id": "required",
+          "destination_cidr_block": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVPNConnectionRoute. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_vpn_gateway": {
+      "status": "Partial",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Partial: VPC routes, propagating_vgws and Direct Connect consumers recognize the gateway. Missing: verify optional inline VPC attachment without duplicating standalone attachment provenance.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_id",
+          "id",
+          "availability_zone",
+          "arn"
+        ],
+        "placement": "Missing: current Logical Connector; show virtual private gateway from independently proven scope.",
+        "ownership": "Not applicable: Gateway can exist detached and stays separately tracked.",
+        "network": "Missing: place only via independently verified attachment to one VPC; availability_zone cannot identify a network.",
+        "references": "Partial: VPC routes, propagating_vgws and Direct Connect consumers recognize the gateway. Missing: verify optional inline VPC attachment without duplicating standalone attachment provenance.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit BGP and tunnel status.",
+        "officialDocumentation": "website/docs/r/vpn_gateway.html.markdown",
+        "shapes": {
+          "vpc_id": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "availability_zone": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_id": "optional/computed",
+          "id": "optional/computed",
+          "availability_zone": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/routes.rs",
+          "tests/unit/semantic/routes.rs",
+          "src/provider/aws/vpc_routes.rs",
+          "tests/unit/semantic/vpc_routes.rs",
+          "src/provider/aws/direct_connect.rs",
+          "tests/unit/semantic/direct_connect.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVPNGateway. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
+        "dataContracts": {
+          "amazon_side_asn": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "attached_vpc_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "availability_zone": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "state": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_vpn_gateway_attachment": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Missing: verify explicit VPC and virtual private gateway IDs; retain standalone attachment change independently of inline VPC configuration.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_id",
+          "vpn_gateway_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_vpn_gateway_attachment.",
+        "ownership": "Not applicable: Two-ended association retains both resource identities and action exactly once.",
+        "network": "Missing: support VPC attachment evidence without claiming subnet membership.",
+        "references": "Missing: verify explicit VPC and virtual private gateway IDs; retain standalone attachment change independently of inline VPC configuration.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit attachment readiness.",
+        "officialDocumentation": "website/docs/r/vpn_gateway_attachment.html.markdown",
+        "shapes": {
+          "vpc_id": [
+            "string"
+          ],
+          "vpn_gateway_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_id": "required",
+          "vpn_gateway_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVPNGatewayAttachment. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
+    },
+    "aws_vpn_gateway_route_propagation": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1439,
+      "gap": "#1439 — Missing: verify VPC route table and VGW in compatible VPC context. Preserve existing inline route-table propagating_vgws (#897); this helper selects neither TGW nor TGW table.",
+      "review": {
+        "issue": 711,
+        "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "route_table_id",
+          "vpn_gateway_id"
+        ],
+        "placement": "Supported: retain Logical Association presentation for aws_vpn_gateway_route_propagation.",
+        "ownership": "Not applicable: Propagation change is independent of the gateway attachment.",
+        "network": "Intentionally unsupported: Propagation does not move a gateway or route table.",
+        "references": "Missing: verify VPC route table and VGW in compatible VPC context. Preserve existing inline route-table propagating_vgws (#897); this helper selects neither TGW nor TGW table.",
+        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "summaries": "Intentionally unsupported: Omit inferred learned prefixes or route health.",
+        "officialDocumentation": "website/docs/r/vpn_gateway_route_propagation.html.markdown",
+        "shapes": {
+          "route_table_id": [
+            "string"
+          ],
+          "vpn_gateway_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "route_table_id": "required",
+          "vpn_gateway_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/scope.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed registration resourceVPNGatewayRoutePropagation. No same-name data registration. No managed alias.",
+        "dataContracts": {}
+      }
     }
   }
 }
