@@ -70,6 +70,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
         && !super::paymentcryptography_configuration::resource(resource)
+        && resource != "aws_paymentcryptography_key"
         && !super::cloudhsm_configuration::resource(resource)
         && !super::accountaccess_configuration::resource(resource)
         && !super::verifiedpermissions::resource(resource)
