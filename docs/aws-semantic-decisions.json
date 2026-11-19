@@ -8398,8 +8398,8 @@
           "encryption_specification.kms_key_identifier",
           "encryption_specification.type"
         ],
-        "placement": "Missing: architecture-bearing table currently logical; review card versus proven child under #741.",
-        "ownership": "Supported: Verified keyspace retains independent table lifecycle.",
+        "placement": "Supported: A uniquely owned table renders in the keyspace's Tables section. Shared tables and tables with unresolved ownership retain logical placement.",
+        "ownership": "Supported: An explicit, verified keyspace owner presents the table with its independent identity and lifecycle when no other resource references it.",
         "network": "Not applicable: managed table has no subnet contract.",
         "references": "Supported: Explicit keyspace name and customer-managed encryption key ARN.",
         "scope": "Partial: Regional eligibility from provider/static resource-region evidence; unknown evidence stays unresolved. Basic fallback intentionally clears account; existing classified endpoints retain verified provider account. Data sources do not inherit managed fallback.",
