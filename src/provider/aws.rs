@@ -18,6 +18,7 @@ mod appsync_domains;
 pub(crate) mod appsync_events;
 mod appsync_execution;
 mod appsync_helpers;
+pub(crate) mod arc_configuration;
 mod associations;
 pub(crate) mod athena_queries;
 pub(crate) mod audit_manager;

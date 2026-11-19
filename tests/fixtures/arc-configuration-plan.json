@@ -1,0 +1,327 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_arcregionswitch_plan.sample0",
+      "mode": "managed",
+      "type": "aws_arcregionswitch_plan",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "regions": [
+            "us-east-1",
+            "us-west-2"
+          ],
+          "workflow": [
+            {
+              "step": [
+                {
+                  "arc_routing_control_config": [
+                    {
+                      "region_and_routing_controls": [
+                        {
+                          "region": "us-east-1",
+                          "routing_control": [
+                            {
+                              "routing_control_arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/test/routingcontrol/test"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ],
+                  "custom_action_lambda_config": [
+                    {
+                      "lambda": [
+                        {
+                          "arn": "arn:aws:lambda:us-east-1:123456789012:function:test"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "execution_role": "arn:aws:iam::123456789012:role/arc",
+          "associated_alarms": [
+            {
+              "resource_identifier": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:test",
+              "cross_account_role": "arn:aws:iam::123456789012:role/arc"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample1",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/arc"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.sample2",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:test"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoverycontrolconfig_routing_control.sample3",
+      "mode": "managed",
+      "type": "aws_route53recoverycontrolconfig_routing_control",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/test/routingcontrol/test"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.sample4",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:test"
+        }
+      }
+    },
+    {
+      "address": "aws_arczonalshift_zonal_autoshift_configuration.sample5",
+      "mode": "managed",
+      "type": "aws_arczonalshift_zonal_autoshift_configuration",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "blocking_alarms": [
+            {
+              "type": "CLOUDWATCH",
+              "alarm_identifier": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:test"
+            }
+          ],
+          "outcome_alarms": [
+            {
+              "type": "CLOUDWATCH",
+              "alarm_identifier": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:test"
+            }
+          ],
+          "resource_arn": "arn:aws:lb:us-east-1:123456789012:resource/lb"
+        }
+      }
+    },
+    {
+      "address": "aws_lb.sample6",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_type": "application",
+          "arn": "arn:aws:lb:us-east-1:123456789012:resource/lb"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_arcregionswitch_plan.sample0",
+          "mode": "managed",
+          "type": "aws_arcregionswitch_plan",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role": {
+              "references": [
+                "aws_iam_role.sample1.arn"
+              ]
+            },
+            "associated_alarms": [
+              {
+                "resource_identifier": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.sample2.arn"
+                  ]
+                },
+                "cross_account_role": {
+                  "references": [
+                    "aws_iam_role.sample1.arn"
+                  ]
+                }
+              }
+            ],
+            "workflow": [
+              {
+                "step": [
+                  {
+                    "arc_routing_control_config": [
+                      {
+                        "region_and_routing_controls": [
+                          {
+                            "routing_control": [
+                              {
+                                "routing_control_arn": {
+                                  "references": [
+                                    "aws_route53recoverycontrolconfig_routing_control.sample3.arn"
+                                  ]
+                                }
+                              }
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "custom_action_lambda_config": [
+                      {
+                        "lambda": [
+                          {
+                            "arn": {
+                              "references": [
+                                "aws_lambda_function.sample4.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample1",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_metric_alarm.sample2",
+          "mode": "managed",
+          "type": "aws_cloudwatch_metric_alarm",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53recoverycontrolconfig_routing_control.sample3",
+          "mode": "managed",
+          "type": "aws_route53recoverycontrolconfig_routing_control",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.sample4",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_arczonalshift_zonal_autoshift_configuration.sample5",
+          "mode": "managed",
+          "type": "aws_arczonalshift_zonal_autoshift_configuration",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_lb.sample6.arn"
+              ]
+            },
+            "blocking_alarms": [
+              {
+                "alarm_identifier": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.sample2.arn"
+                  ]
+                }
+              }
+            ],
+            "outcome_alarms": [
+              {
+                "alarm_identifier": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lb.sample6",
+          "mode": "managed",
+          "type": "aws_lb",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

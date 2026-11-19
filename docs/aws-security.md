@@ -544,3 +544,7 @@ Only the external integration action resolves its configured connector. Connecto
 ## Verify Security Lake sources, replication and subscribers (#1482)
 
 Lake configuration retains each region and its replication destinations. Encryption keys, crawler, metastore and replication roles, custom source names and versions, and subscriber notifications resolve through their own configured fields. Generated roles, credentials and external IDs are excluded.
+
+## Verify ARC recovery plan and zonal shift references (#1483)
+
+Region Switch plans verify their execution role, alarm and workflow references against endpoint identities and the configured regions. Cross-account targets require matching role evidence. Zonal shift separates the protected resource and the blocking and outcome CloudWatch alarms.

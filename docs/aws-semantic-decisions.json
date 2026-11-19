@@ -74826,10 +74826,10 @@
       }
     },
     "aws_arcregionswitch_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1483,
-      "gap": "#1483 — Resolve the plan execution role, configured alarms, routing controls and Lambda steps in their own account and region. Workflow definitions describe planned actions, not failover results.",
+      "gap": "#1483 — Verified configuration references: execution_role, associated_alarms.resource_identifier, associated_alarms.cross_account_role, workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn, workflow.step.custom_action_lambda_config.lambda.arn.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74846,7 +74846,7 @@
         "placement": "Supported: Logical Node for the managed arcregionswitch_plan declaration. Terraform resource for managing an Amazon ARC Region Switch Plan.",
         "ownership": "Not applicable: The managed arcregionswitch_plan declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Amazon ARC (Application Recovery Controller) Region Switch control-plane configuration has no network placement contract for arcregionswitch_plan.",
-        "references": "Missing: Resolve the plan execution role, configured alarms, routing controls and Lambda steps in their own account and region. Workflow definitions describe planned actions, not failover results.",
+        "references": "Supported: Verified configuration references: execution_role, associated_alarms.resource_identifier, associated_alarms.cross_account_role, workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn, workflow.step.custom_action_lambda_config.lambda.arn.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit workflow payloads and execution results from arcregionswitch_plan summaries.",
         "officialDocumentation": "website/docs/r/arcregionswitch_plan.html.markdown",
@@ -74903,7 +74903,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_configuration.rs",
+          "tests/unit/semantic/arc_configuration.rs"
         ],
         "managedDataContract": "Managed newResourcePlan. Separate same-name data lookup with its own selector contracts. Deprecated managed attributes: region.",
         "dataContracts": {
@@ -74958,10 +74960,10 @@
       }
     },
     "aws_arczonalshift_zonal_autoshift_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1483,
-      "gap": "#1483 — Identify the supported target and distinguish blocking alarms from outcome alarms. Their state does not describe current availability.",
+      "gap": "#1483 — Verified configuration references: resource_arn, blocking_alarms.alarm_identifier, outcome_alarms.alarm_identifier.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74974,7 +74976,7 @@
         "placement": "Supported: Logical Controller for the managed arczonalshift_zonal_autoshift_configuration declaration. Manages an AWS Application Recovery Controller Zonal Shift Zonal Autoshift Configuration.",
         "ownership": "Not applicable: The managed arczonalshift_zonal_autoshift_configuration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Amazon ARC (Application Recovery Controller) Zonal Shift control-plane configuration has no network placement contract for arczonalshift_zonal_autoshift_configuration.",
-        "references": "Missing: Identify the supported target and distinguish blocking alarms from outcome alarms. Their state does not describe current availability.",
+        "references": "Supported: Verified configuration references: resource_arn, blocking_alarms.alarm_identifier, outcome_alarms.alarm_identifier.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit alarm values and inferred availability from arczonalshift_zonal_autoshift_configuration summaries.",
         "officialDocumentation": "website/docs/r/arczonalshift_zonal_autoshift_configuration.html.markdown",
@@ -75003,7 +75005,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_configuration.rs",
+          "tests/unit/semantic/arc_configuration.rs"
         ],
         "managedDataContract": "Managed newResourceZonalAutoshiftConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
