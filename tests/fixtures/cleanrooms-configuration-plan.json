@@ -1,0 +1,264 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_cleanrooms_collaboration.sample0",
+      "mode": "managed",
+      "type": "aws_cleanrooms_collaboration",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cleanrooms:us-east-1:123456789012:collaboration/fixture",
+          "id": "fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cleanrooms_configured_table.sample1",
+      "mode": "managed",
+      "type": "aws_cleanrooms_configured_table",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "table_reference": [
+            {
+              "database_name": "fixture-db",
+              "table_name": "fixture-table"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cleanrooms_membership.sample2",
+      "mode": "managed",
+      "type": "aws_cleanrooms_membership",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "collaboration_creator_account_id": "123456789012",
+          "collaboration_id": "fixture",
+          "default_result_configuration": [
+            {
+              "role_arn": "arn:aws:iam::123456789012:role/fixture",
+              "output_configuration": [
+                {
+                  "s3": [
+                    {
+                      "bucket": "fixture-bucket"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_database.sample3",
+      "mode": "managed",
+      "type": "aws_glue_catalog_database",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "name": "fixture-db"
+        }
+      }
+    },
+    {
+      "address": "aws_glue_catalog_table.sample4",
+      "mode": "managed",
+      "type": "aws_glue_catalog_table",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "catalog_id": "123456789012",
+          "database_name": "fixture-db",
+          "name": "fixture-table"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample5",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample6",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-bucket"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cleanrooms_collaboration.sample0",
+          "mode": "managed",
+          "type": "aws_cleanrooms_collaboration",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cleanrooms_configured_table.sample1",
+          "mode": "managed",
+          "type": "aws_cleanrooms_configured_table",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "table_reference": [
+              {
+                "database_name": {
+                  "references": [
+                    "aws_glue_catalog_database.sample3.name"
+                  ]
+                },
+                "table_name": {
+                  "references": [
+                    "aws_glue_catalog_table.sample4.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cleanrooms_membership.sample2",
+          "mode": "managed",
+          "type": "aws_cleanrooms_membership",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "collaboration_id": {
+              "references": [
+                "aws_cleanrooms_collaboration.sample0.id"
+              ]
+            },
+            "default_result_configuration": [
+              {
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.sample5.arn"
+                  ]
+                },
+                "output_configuration": [
+                  {
+                    "s3": [
+                      {
+                        "bucket": {
+                          "references": [
+                            "aws_s3_bucket.sample6.bucket"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_glue_catalog_database.sample3",
+          "mode": "managed",
+          "type": "aws_glue_catalog_database",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_glue_catalog_table.sample4",
+          "mode": "managed",
+          "type": "aws_glue_catalog_table",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "database_name": {
+              "references": [
+                "aws_glue_catalog_database.sample3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.sample5",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample6",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

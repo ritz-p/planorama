@@ -33,6 +33,7 @@ pub(crate) mod bedrock_agents;
 pub(crate) mod bedrock_models;
 pub(crate) mod classic_elb;
 mod classification;
+pub(crate) mod cleanrooms_configuration;
 mod cloud_map;
 pub(crate) mod cloudfront;
 mod cloudfront_functions;

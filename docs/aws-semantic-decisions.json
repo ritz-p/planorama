@@ -28976,10 +28976,10 @@
       }
     },
     "aws_cleanrooms_collaboration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 857,
-      "gap": "#723 reviewed: Not applicable: member account IDs are invitation selectors, not Organizations ownership; query/encryption permissions never imply access. Follow-up #857.",
+      "gap": "#723 audit: #857 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -28990,10 +28990,10 @@
           "member.account_id",
           "analytics_engine"
         ],
-        "placement": "Missing: Logical collaboration is a shared analytics identity; review independent architecture presentation.",
+        "placement": "Supported: Independent regional collaboration card.",
         "ownership": "Not applicable: aws_cleanrooms_collaboration remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_cleanrooms_collaboration has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Not applicable: member account IDs are invitation selectors, not Organizations ownership; query/encryption permissions never imply access.",
+        "references": "Supported: Receives explicit creator-qualified collaboration references.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: id/arn identity navigation belongs to #857; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/cleanrooms_collaboration.html.markdown",
@@ -29017,14 +29017,18 @@
           "arn": "computed",
           "member.account_id": "required",
           "analytics_engine": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/cleanrooms_configuration.rs",
+          "tests/unit/semantic/cleanrooms_configuration.rs"
+        ]
       }
     },
     "aws_cleanrooms_configured_table": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 857,
-      "gap": "#723 reviewed: Missing: Glue table reference needs database name plus verified provider-account/catalog identity; names alone cannot borrow a cross-account catalog. No membership field implies collaboration ownership. Follow-up #857.",
+      "gap": "#723 audit: #857 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29038,7 +29042,7 @@
         "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
         "ownership": "Not applicable: aws_cleanrooms_configured_table remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_cleanrooms_configured_table has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: Glue table reference needs database name plus verified provider-account/catalog identity; names alone cannot borrow a cross-account catalog. No membership field implies collaboration ownership.",
+        "references": "Supported: Explicit table and database references require a shared, proven Glue catalog account.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: id/arn identity navigation belongs to #857; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/cleanrooms_configured_table.html.markdown",
@@ -29063,14 +29067,18 @@
           "arn": "computed",
           "table_reference.database_name": "required",
           "table_reference.table_name": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/cleanrooms_configuration.rs",
+          "tests/unit/semantic/cleanrooms_configuration.rs"
+        ]
       }
     },
     "aws_cleanrooms_membership": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 857,
-      "gap": "#723 reviewed: Missing: collaboration ID plus creator-account consistency, IAM role ARN and S3 bucket name. Cross-account membership does not relocate collaboration or transfer ownership. Follow-up #857.",
+      "gap": "#723 audit: #857 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29083,9 +29091,9 @@
           "default_result_configuration.output_configuration.s3.bucket"
         ],
         "placement": "Supported: retain Logical Association default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
-        "ownership": "Missing: verified collaboration membership context; preserve member-account lifecycle independently.",
+        "ownership": "Supported: Collaboration membership supplies navigation while preserving member-account lifecycle.",
         "network": "Not applicable: aws_cleanrooms_membership has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: collaboration ID plus creator-account consistency, IAM role ARN and S3 bucket name. Cross-account membership does not relocate collaboration or transfer ownership.",
+        "references": "Supported: Explicit collaboration ID and matching creator, plus configured IAM role ARN and result bucket name.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: id/collaboration_id identity navigation belongs to #857; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/cleanrooms_membership.html.markdown",
@@ -29122,7 +29130,11 @@
             "file": "internal/service/cleanrooms/membership.go",
             "token": "names.AttrBucket: schema.StringAttribute"
           }
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/cleanrooms_configuration.rs",
+          "tests/unit/semantic/cleanrooms_configuration.rs"
+        ]
       }
     },
     "aws_dataexchange_data_set": {
