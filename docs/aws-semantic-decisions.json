@@ -20593,10 +20593,10 @@
       }
     },
     "aws_lightsail_bucket": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: bucket is an endpoint; #815 owns access-helper relationships. See per-dimension review; Intentionally unsupported: access rules/versioning are not permission analysis.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20609,7 +20609,7 @@
         "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: independent bucket; access helpers do not own it.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: bucket is an endpoint; #815 owns access-helper relationships.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: access rules/versioning are not permission analysis.",
         "officialDocumentation": "website/docs/r/lightsail_bucket.html.markdown",
@@ -20623,14 +20623,18 @@
           "bundle_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_bucket_access_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 bucket_name owner; never expose access-key material. See per-dimension review; Intentionally unsupported: access_key_id, secret_access_key and session credentials are not summaries.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20640,9 +20644,9 @@
           "access_key_id"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 exact bucket owner before embedding key identity.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 bucket_name owner; never expose access-key material.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: access_key_id, secret_access_key and session credentials are not summaries.",
         "officialDocumentation": "website/docs/r/lightsail_bucket_access_key.html.markdown",
@@ -20653,14 +20657,18 @@
           "access_key_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_bucket_resource_access": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 typed Lightsail instance resource_name and bucket_name endpoints. See per-dimension review; Intentionally unsupported: access association is not effective permission proof.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20670,9 +20678,9 @@
           "resource_name"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Not applicable: relationship has two endpoints and does not own either.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 typed Lightsail instance resource_name and bucket_name endpoints.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: access association is not effective permission proof.",
         "officialDocumentation": "website/docs/r/lightsail_bucket_resource_access.html.markdown",
@@ -20683,14 +20691,18 @@
           "resource_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_certificate": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: general Lightsail certificate endpoint; consumers in #815, not an ACM alias. See per-dimension review; Intentionally unsupported: domain validation does not prove DNS-resource ownership.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20703,7 +20715,7 @@
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: independent certificate; domain strings are not owner references.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: general Lightsail certificate endpoint; consumers in #815, not an ACM alias.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
         "summaries": "Intentionally unsupported: domain validation does not prove DNS-resource ownership.",
         "officialDocumentation": "website/docs/r/lightsail_certificate.html.markdown",
@@ -20717,14 +20729,18 @@
           "domain_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_container_service": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 certificate-name references with complete nested set evidence. See per-dimension review; Intentionally unsupported: private domain/ECR principal outputs do not establish customer VPC or repository ownership.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20737,7 +20753,7 @@
         "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: independent service; deployments handled separately by #815.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 certificate-name references with complete nested set evidence.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: private domain/ECR principal outputs do not establish customer VPC or repository ownership.",
         "officialDocumentation": "website/docs/r/lightsail_container_service.html.markdown",
@@ -20753,14 +20769,18 @@
             "set",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_container_service_deployment_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 service name; container names identify entries inside deployment, not Terraform resources. See per-dimension review; Intentionally unsupported: image/env/commands are payloads; health-check output is not reachability.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20771,9 +20791,9 @@
           "public_endpoint.container_name"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 unique service ownership; preserve each deployment version identity.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 service name; container names identify entries inside deployment, not Terraform resources.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: image/env/commands are payloads; health-check output is not reachability.",
         "officialDocumentation": "website/docs/r/lightsail_container_service_deployment_version.html.markdown",
@@ -20789,7 +20809,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_database": {
@@ -20835,10 +20859,10 @@
       }
     },
     "aws_lightsail_disk": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: disk is an endpoint; #815 owns disk attachments. See per-dimension review; Deferred: size summary only with bounded storage-unit presentation; no mount-path dump.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20851,7 +20875,7 @@
         "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: independent disk, not automatically embedded in instance.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: disk is an endpoint; #815 owns disk attachments.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Deferred: size summary only with bounded storage-unit presentation; no mount-path dump.",
         "officialDocumentation": "website/docs/r/lightsail_disk.html.markdown",
@@ -20865,14 +20889,18 @@
           "availability_zone": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_disk_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 disk and instance names; instance id is ARN, not name. See per-dimension review; Intentionally unsupported: disk_path is not proof of mount health.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20882,9 +20910,9 @@
           "instance_name"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Not applicable: preserve association identity and independently managed disk.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 disk and instance names; instance id is ARN, not name.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: disk_path is not proof of mount health.",
         "officialDocumentation": "website/docs/r/lightsail_disk_attachment.html.markdown",
@@ -20895,14 +20923,18 @@
           "instance_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_distribution": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 typed origin name/region and general certificate name; computed resource_type is not sole configured evidence. Missing: #815 evaluate independent architecture-bearing distribution card; current basic default is Logical. See per-dimension review; Intentionally unsupported: cache behavior/health and origin DNS cannot reconstruct resources.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20915,10 +20947,10 @@
           "origin.resource_type",
           "certificate_name"
         ],
-        "placement": "Missing: #815 evaluate independent architecture-bearing distribution card; current basic default is Logical.",
+        "placement": "Supported: Independent Lightsail card.",
         "ownership": "Not applicable: shared origin is not owned by distribution.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 typed origin name/region and general certificate name; computed resource_type is not sole configured evidence.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
         "summaries": "Intentionally unsupported: cache behavior/health and origin DNS cannot reconstruct resources.",
         "officialDocumentation": "website/docs/r/lightsail_distribution.html.markdown",
@@ -20944,14 +20976,18 @@
           "certificate_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_domain": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: DNS-zone endpoint; #815 owns entry relationships. See per-dimension review; Intentionally unsupported: no DNS-health inference.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20960,10 +20996,10 @@
           "domain_name",
           "arn"
         ],
-        "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
+        "placement": "Supported: Independent Lightsail card.",
         "ownership": "Not applicable: independent DNS domain; matching certificate strings do not establish ownership.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: DNS-zone endpoint; #815 owns entry relationships.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
         "summaries": "Intentionally unsupported: no DNS-health inference.",
         "officialDocumentation": "website/docs/r/lightsail_domain.html.markdown",
@@ -20974,14 +21010,18 @@
           "arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_domain_entry": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 explicit domain owner; target IP/DNS and alias flag cannot identify Terraform target. See per-dimension review; Intentionally unsupported: record values and DNS interpretation.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -20993,9 +21033,9 @@
           "target"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 exact domain owner; composite ID separator changed from underscore to comma.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 explicit domain owner; target IP/DNS and alias flag cannot identify Terraform target.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: basic scope.rs uses provider/resource region; DNS/distribution service control-region versus global-serving semantics need explicit #815 contract, not CloudFront/Route53 alias assumptions.",
         "summaries": "Intentionally unsupported: record values and DNS interpretation.",
         "officialDocumentation": "website/docs/r/lightsail_domain_entry.html.markdown",
@@ -21012,14 +21052,18 @@
           "target": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_instance": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 Lightsail key-pair name (not aws_key_pair); id/arn are ARN, not attachment names. See per-dimension review; Intentionally unsupported: user_data, addresses and credentials remain excluded.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21034,7 +21078,7 @@
         "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: independent compute instance; bundle/blueprint IDs are catalog selections.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 Lightsail key-pair name (not aws_key_pair); id/arn are ARN, not attachment names.",
+        "references": "Supported: Explicit key pair name; instance id/arn are ARN and attachment names use the name output.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: user_data, addresses and credentials remain excluded.",
         "officialDocumentation": "website/docs/r/lightsail_instance.html.markdown",
@@ -21054,14 +21098,18 @@
           "key_pair_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_instance_public_ports": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 explicit instance-name owner; CIDRs/aliases are not endpoint references. See per-dimension review; Intentionally unsupported: port rules are not reachability/security analysis.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21073,9 +21121,9 @@
           "port_info.cidr_list_aliases"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 owner context for full port configuration.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 explicit instance-name owner; CIDRs/aliases are not endpoint references.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: port rules are not reachability/security analysis.",
         "officialDocumentation": "website/docs/r/lightsail_instance_public_ports.html.markdown",
@@ -21104,14 +21152,18 @@
               "string"
             ]
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_key_pair": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: key-pair endpoint; #815 owns instance usage. See per-dimension review; Intentionally unsupported: private/public/encrypted key material and fingerprints.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21123,7 +21175,7 @@
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: shared key configuration remains independent.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: key-pair endpoint; #815 owns instance usage.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: private/public/encrypted key material and fingerprints.",
         "officialDocumentation": "website/docs/r/lightsail_key_pair.html.markdown",
@@ -21134,14 +21186,18 @@
           "arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_lb": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: LB endpoint; #815 owns attachments and LB-qualified settings. See per-dimension review; Intentionally unsupported: health-check paths and public ports do not prove traffic.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21154,7 +21210,7 @@
         "placement": "Supported: retain Spatial default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
         "ownership": "Not applicable: independent load balancer does not own instances.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: LB endpoint; #815 owns attachments and LB-qualified settings.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: health-check paths and public ports do not prove traffic.",
         "officialDocumentation": "website/docs/r/lightsail_lb.html.markdown",
@@ -21168,14 +21224,18 @@
           "instance_port": [
             "number"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_lb_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 unique LB and instance name endpoints. See per-dimension review; Intentionally unsupported: attachment is not runtime health.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21185,9 +21245,9 @@
           "instance_name"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Not applicable: association is not instance ownership.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 unique LB and instance name endpoints.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: attachment is not runtime health.",
         "officialDocumentation": "website/docs/r/lightsail_lb_attachment.html.markdown",
@@ -21198,14 +21258,18 @@
           "instance_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_lb_certificate": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 LB-qualified certificate; distinct from general Lightsail certificate and ACM. See per-dimension review; Intentionally unsupported: certificate validation records do not identify DNS resources.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21216,9 +21280,9 @@
           "arn"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 exact LB owner; certificate name alone is ambiguous.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 LB-qualified certificate; distinct from general Lightsail certificate and ACM.",
+        "references": "Supported: Explicit LB-qualified certificate identity with verified load balancer.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: certificate validation records do not identify DNS resources.",
         "officialDocumentation": "website/docs/r/lightsail_lb_certificate.html.markdown",
@@ -21232,14 +21296,18 @@
           "arn": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_lb_certificate_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 certificate_name plus same lb_name consistency. See per-dimension review; Intentionally unsupported: TLS attachment does not prove endpoint health.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21249,9 +21317,9 @@
           "certificate_name"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Not applicable: retain association identity, do not merge certificate and attachment.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 certificate_name plus same lb_name consistency.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: TLS attachment does not prove endpoint health.",
         "officialDocumentation": "website/docs/r/lightsail_lb_certificate_attachment.html.markdown",
@@ -21262,14 +21330,18 @@
           "certificate_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_lb_https_redirection_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 LB name owner. See per-dimension review; Deferred: enabled toggle only with explicit configured-versus-effective redirect wording.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21279,9 +21351,9 @@
           "enabled"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 verified owner before embedding redirect configuration.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 LB name owner.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Deferred: enabled toggle only with explicit configured-versus-effective redirect wording.",
         "officialDocumentation": "website/docs/r/lightsail_lb_https_redirection_policy.html.markdown",
@@ -21292,14 +21364,18 @@
           "enabled": [
             "bool"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_lb_stickiness_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 LB name owner; same-name settings remain separate Terraform identities. See per-dimension review; Deferred: configured stickiness toggle only; cookie_duration is not observed session behavior.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21310,9 +21386,9 @@
           "cookie_duration"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Missing: #815 verified LB owner.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 LB name owner; same-name settings remain separate Terraform identities.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Deferred: configured stickiness toggle only; cookie_duration is not observed session behavior.",
         "officialDocumentation": "website/docs/r/lightsail_lb_stickiness_policy.html.markdown",
@@ -21326,14 +21402,18 @@
           "cookie_duration": [
             "number"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_static_ip": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Not applicable: address endpoint; #815 owns attachment references. Missing: #815 evaluate independent architecture-bearing static_ip card; current basic default is Logical. See per-dimension review; Intentionally unsupported: IP equality cannot establish resources or traffic.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21343,10 +21423,10 @@
           "arn",
           "ip_address"
         ],
-        "placement": "Missing: #815 evaluate independent architecture-bearing static_ip card; current basic default is Logical.",
+        "placement": "Supported: Independent Lightsail card.",
         "ownership": "Not applicable: independently allocated address does not own instance.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Not applicable: address endpoint; #815 owns attachment references.",
+        "references": "Supported: Independent Lightsail resource with typed configuration or incoming attachment references.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: IP equality cannot establish resources or traffic.",
         "officialDocumentation": "website/docs/r/lightsail_static_ip.html.markdown",
@@ -21360,14 +21440,18 @@
           "ip_address": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_lightsail_static_ip_attachment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 815,
-      "gap": "#712 reviewed: Missing: #815 explicit names for address and instance; ip_address output is not reference evidence. See per-dimension review; Intentionally unsupported: public IP assignment is not reachability.",
+      "gap": "#712 audit: #815 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 712,
         "implementationCommit": "2bef52d045db4c5cf72374a0dca24d0629ed84e3",
@@ -21377,9 +21461,9 @@
           "instance_name"
         ],
         "placement": "Supported: retain Logical default from runtime support matrix/classification.rs/basic_entries.rs; no automatic card promotion.",
-        "ownership": "Not applicable: preserve association and both independent endpoint identities.",
+        "ownership": "Supported: Explicit service owner retains the helper identity and action.",
         "network": "Intentionally unsupported: Lightsail service networking/AZ/IP does not identify a customer VPC or subnet; no EC2 containment inheritance.",
-        "references": "Missing: #815 explicit names for address and instance; ip_address output is not reference evidence.",
+        "references": "Supported: Explicit Lightsail endpoint identity with compatible scope and qualified names.",
         "scope": "Partial: Regional eligibility in scope.rs/basic.rs requires known provider/resource region; basic fallback clears account and delete/deposed region. Does not prove endpoint compatibility.",
         "summaries": "Intentionally unsupported: public IP assignment is not reachability.",
         "officialDocumentation": "website/docs/r/lightsail_static_ip_attachment.html.markdown",
@@ -21390,7 +21474,11 @@
           "instance_name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/lightsail_configuration.rs",
+          "tests/unit/semantic/lightsail_configuration.rs"
+        ]
       }
     },
     "aws_outposts_capacity_task": {

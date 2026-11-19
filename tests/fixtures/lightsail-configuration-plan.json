@@ -1,0 +1,684 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_lightsail_instance.sample0",
+      "mode": "managed",
+      "type": "aws_lightsail_instance",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-instance",
+          "key_pair_name": "fixture-key"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_disk.sample1",
+      "mode": "managed",
+      "type": "aws_lightsail_disk",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-disk"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_static_ip.sample2",
+      "mode": "managed",
+      "type": "aws_lightsail_static_ip",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-static_ip"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_lb.sample3",
+      "mode": "managed",
+      "type": "aws_lightsail_lb",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-lb"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_bucket.sample4",
+      "mode": "managed",
+      "type": "aws_lightsail_bucket",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_container_service.sample5",
+      "mode": "managed",
+      "type": "aws_lightsail_container_service",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-container_service",
+          "public_domain_names": [
+            {
+              "certificate": [
+                {
+                  "certificate_name": "fixture-cert"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_certificate.sample6",
+      "mode": "managed",
+      "type": "aws_lightsail_certificate",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-cert"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_key_pair.sample7",
+      "mode": "managed",
+      "type": "aws_lightsail_key_pair",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture-key"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_domain.sample8",
+      "mode": "managed",
+      "type": "aws_lightsail_domain",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "fixture-domain"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_disk_attachment.sample9",
+      "mode": "managed",
+      "type": "aws_lightsail_disk_attachment",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "disk_name": "fixture-disk",
+          "instance_name": "fixture-instance"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_static_ip_attachment.sample10",
+      "mode": "managed",
+      "type": "aws_lightsail_static_ip_attachment",
+      "name": "sample10",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "static_ip_name": "fixture-static_ip",
+          "instance_name": "fixture-instance"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_lb_attachment.sample11",
+      "mode": "managed",
+      "type": "aws_lightsail_lb_attachment",
+      "name": "sample11",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "lb_name": "fixture-lb",
+          "instance_name": "fixture-instance"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_bucket_resource_access.sample12",
+      "mode": "managed",
+      "type": "aws_lightsail_bucket_resource_access",
+      "name": "sample12",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket_name": "fixture-bucket",
+          "resource_name": "fixture-instance"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_bucket_access_key.sample13",
+      "mode": "managed",
+      "type": "aws_lightsail_bucket_access_key",
+      "name": "sample13",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket_name": "fixture-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_instance_public_ports.sample14",
+      "mode": "managed",
+      "type": "aws_lightsail_instance_public_ports",
+      "name": "sample14",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "instance_name": "fixture-instance"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_container_service_deployment_version.sample15",
+      "mode": "managed",
+      "type": "aws_lightsail_container_service_deployment_version",
+      "name": "sample15",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "service_name": "fixture-container_service"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_lb_certificate.sample16",
+      "mode": "managed",
+      "type": "aws_lightsail_lb_certificate",
+      "name": "sample16",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "lb_name": "fixture-lb",
+          "name": "fixture-lb-cert"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_lb_certificate_attachment.sample17",
+      "mode": "managed",
+      "type": "aws_lightsail_lb_certificate_attachment",
+      "name": "sample17",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "lb_name": "fixture-lb",
+          "certificate_name": "fixture-lb-cert"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_lb_https_redirection_policy.sample18",
+      "mode": "managed",
+      "type": "aws_lightsail_lb_https_redirection_policy",
+      "name": "sample18",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "lb_name": "fixture-lb"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_lb_stickiness_policy.sample19",
+      "mode": "managed",
+      "type": "aws_lightsail_lb_stickiness_policy",
+      "name": "sample19",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "lb_name": "fixture-lb"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_domain_entry.sample20",
+      "mode": "managed",
+      "type": "aws_lightsail_domain_entry",
+      "name": "sample20",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_name": "fixture-domain"
+        }
+      }
+    },
+    {
+      "address": "aws_lightsail_distribution.sample21",
+      "mode": "managed",
+      "type": "aws_lightsail_distribution",
+      "name": "sample21",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "origin": [
+            {
+              "region_name": "us-east-1",
+              "resource_type": "Bucket",
+              "name": "fixture-bucket"
+            }
+          ],
+          "certificate_name": "fixture-cert"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_lightsail_instance.sample0",
+          "mode": "managed",
+          "type": "aws_lightsail_instance",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_pair_name": {
+              "references": [
+                "aws_lightsail_key_pair.sample7.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_disk.sample1",
+          "mode": "managed",
+          "type": "aws_lightsail_disk",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_static_ip.sample2",
+          "mode": "managed",
+          "type": "aws_lightsail_static_ip",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_lb.sample3",
+          "mode": "managed",
+          "type": "aws_lightsail_lb",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_bucket.sample4",
+          "mode": "managed",
+          "type": "aws_lightsail_bucket",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_container_service.sample5",
+          "mode": "managed",
+          "type": "aws_lightsail_container_service",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "public_domain_names": [
+              {
+                "certificate": [
+                  {
+                    "certificate_name": {
+                      "references": [
+                        "aws_lightsail_certificate.sample6.name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lightsail_certificate.sample6",
+          "mode": "managed",
+          "type": "aws_lightsail_certificate",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_key_pair.sample7",
+          "mode": "managed",
+          "type": "aws_lightsail_key_pair",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_domain.sample8",
+          "mode": "managed",
+          "type": "aws_lightsail_domain",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lightsail_disk_attachment.sample9",
+          "mode": "managed",
+          "type": "aws_lightsail_disk_attachment",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {
+            "disk_name": {
+              "references": [
+                "aws_lightsail_disk.sample1.name"
+              ]
+            },
+            "instance_name": {
+              "references": [
+                "aws_lightsail_instance.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_static_ip_attachment.sample10",
+          "mode": "managed",
+          "type": "aws_lightsail_static_ip_attachment",
+          "name": "sample10",
+          "provider_config_key": "aws",
+          "expressions": {
+            "static_ip_name": {
+              "references": [
+                "aws_lightsail_static_ip.sample2.name"
+              ]
+            },
+            "instance_name": {
+              "references": [
+                "aws_lightsail_instance.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_lb_attachment.sample11",
+          "mode": "managed",
+          "type": "aws_lightsail_lb_attachment",
+          "name": "sample11",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lb_name": {
+              "references": [
+                "aws_lightsail_lb.sample3.name"
+              ]
+            },
+            "instance_name": {
+              "references": [
+                "aws_lightsail_instance.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_bucket_resource_access.sample12",
+          "mode": "managed",
+          "type": "aws_lightsail_bucket_resource_access",
+          "name": "sample12",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket_name": {
+              "references": [
+                "aws_lightsail_bucket.sample4.name"
+              ]
+            },
+            "resource_name": {
+              "references": [
+                "aws_lightsail_instance.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_bucket_access_key.sample13",
+          "mode": "managed",
+          "type": "aws_lightsail_bucket_access_key",
+          "name": "sample13",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket_name": {
+              "references": [
+                "aws_lightsail_bucket.sample4.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_instance_public_ports.sample14",
+          "mode": "managed",
+          "type": "aws_lightsail_instance_public_ports",
+          "name": "sample14",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_name": {
+              "references": [
+                "aws_lightsail_instance.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_container_service_deployment_version.sample15",
+          "mode": "managed",
+          "type": "aws_lightsail_container_service_deployment_version",
+          "name": "sample15",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_name": {
+              "references": [
+                "aws_lightsail_container_service.sample5.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_lb_certificate.sample16",
+          "mode": "managed",
+          "type": "aws_lightsail_lb_certificate",
+          "name": "sample16",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lb_name": {
+              "references": [
+                "aws_lightsail_lb.sample3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_lb_certificate_attachment.sample17",
+          "mode": "managed",
+          "type": "aws_lightsail_lb_certificate_attachment",
+          "name": "sample17",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lb_name": {
+              "references": [
+                "aws_lightsail_lb.sample3.name"
+              ]
+            },
+            "certificate_name": {
+              "references": [
+                "aws_lightsail_lb_certificate.sample16.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_lb_https_redirection_policy.sample18",
+          "mode": "managed",
+          "type": "aws_lightsail_lb_https_redirection_policy",
+          "name": "sample18",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lb_name": {
+              "references": [
+                "aws_lightsail_lb.sample3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_lb_stickiness_policy.sample19",
+          "mode": "managed",
+          "type": "aws_lightsail_lb_stickiness_policy",
+          "name": "sample19",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lb_name": {
+              "references": [
+                "aws_lightsail_lb.sample3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_domain_entry.sample20",
+          "mode": "managed",
+          "type": "aws_lightsail_domain_entry",
+          "name": "sample20",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_name": {
+              "references": [
+                "aws_lightsail_domain.sample8.domain_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lightsail_distribution.sample21",
+          "mode": "managed",
+          "type": "aws_lightsail_distribution",
+          "name": "sample21",
+          "provider_config_key": "aws",
+          "expressions": {
+            "origin": [
+              {
+                "name": {
+                  "references": [
+                    "aws_lightsail_bucket.sample4.name"
+                  ]
+                }
+              }
+            ],
+            "certificate_name": {
+              "references": [
+                "aws_lightsail_certificate.sample6.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
