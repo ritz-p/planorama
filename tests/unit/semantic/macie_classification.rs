@@ -1,8 +1,8 @@
-use crate::{plan, semantic};
+use crate::semantic;
 use serde_json::{Value, json};
 
 fn verified(value: &Value, address: &str, path: &str) -> bool {
-    let parsed = plan::parse(&value.to_string()).unwrap();
+    let parsed = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
     let graph = semantic::transform(&parsed);
     let node = graph
         .nodes
