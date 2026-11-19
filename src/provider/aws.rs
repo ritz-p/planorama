@@ -62,6 +62,7 @@ mod data;
 mod database_events;
 mod database_snapshots;
 mod databases;
+pub(crate) mod dataexchange_configuration;
 mod datasync;
 pub(crate) mod datazone;
 pub(crate) mod datazone_access;
