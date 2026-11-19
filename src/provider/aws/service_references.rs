@@ -961,6 +961,7 @@ pub(crate) fn annotate_provider_accounts(
     evidence: &[(&Value, &Value)],
 ) {
     super::macie_classification::annotate(nodes, references, evidence);
+    super::arc_configuration::annotate(nodes, references, evidence);
     super::detective_graphs::annotate(nodes, references, evidence);
 }
 
@@ -1205,7 +1206,6 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
-    super::arc_configuration::annotate(nodes, references, evidence);
     super::security_lake::annotate(nodes, references, evidence);
     super::securityhub_integrations::annotate(nodes, references, evidence);
     super::securityhub_organization::annotate(nodes, references, evidence);
