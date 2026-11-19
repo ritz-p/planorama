@@ -771,3 +771,41 @@ test('#711 completes the pinned EC2 partition and preserves distinct network con
   assert.equal(review('verifiedaccess_endpoint').contracts.verified_access_group_id, 'required');
   assert.equal(review('verifiedaccess_group').contracts.verifiedaccess_group_id, 'computed');
 });
+
+function auditedServiceTypes(issue, services, count) {
+  const inventory = read('tests/fixtures/aws-inventory/6.70.0.json');
+  const expected = inventory.resources.filter(resource => services.includes(resource.service));
+  const decisions = read('docs/aws-semantic-decisions.json').types;
+  const audited = Object.keys(decisions).filter(type => decisions[type].review?.issue === issue);
+  assert.equal(expected.length, count);
+  assert.deepEqual(audited.sort(), expected.map(resource => resource.type).sort());
+  for (const { type, documentation } of expected) {
+    const { review, issue: followUp, gap } = decisions[type];
+    if (dimensions.some(dimension => /^(Missing|Partial):/.test(review[dimension]))) {
+      assert.ok(Number.isInteger(followUp) && followUp > 0, type);
+      assert.ok(gap.startsWith('#' + followUp + ' — '), type);
+    }
+    assert.equal(review.officialDocumentation, documentation, type);
+    assert.equal(review.providerCommit, inventory.commit, type);
+    assert.deepEqual(Object.keys(review.shapes), review.fields, type);
+    assert.deepEqual(Object.keys(review.contracts), review.fields, type);
+    for (const dimension of dimensions) {
+      assert.match(review[dimension], /^(Supported|Partial|Missing|Not applicable|Intentionally unsupported): .+/, type);
+    }
+  }
+  return decisions;
+}
+
+test('#728 distinguishes detector inputs, source selectors and service-produced identities', () => {
+  const decisions = auditedServiceTypes(728, [
+    'accessanalyzer', 'auditmanager', 'configservice', 'detective', 'guardduty',
+    'inspector', 'inspector2', 'macie2', 'securityhub', 'securitylake',
+  ], 83);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('guardduty_detector_feature').contracts.detector_id, 'required');
+  assert.equal(review('securitylake_data_lake').contracts.s3_bucket_arn, 'computed');
+  assert.equal(review('securitylake_subscriber').contracts.role_arn, 'computed');
+  assert.equal(review('securityhub_member').contracts.account_id, 'required');
+  assert.match(review('inspector2_filter').references, /comparison operands/);
+  assert.match(review('config_aggregate_authorization').scope, /^Missing:/);
+});
