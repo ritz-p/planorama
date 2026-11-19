@@ -22,7 +22,8 @@ fn verified(value: &Value, address: &str, path: &str) -> bool {
 fn configured_links_require_current_typed_evidence() {
     let fixture: Value =
         serde_json::from_str(include_str!("../../fixtures/access-analyzer-plan.json")).unwrap();
-    for (address, path) in [("aws_accessanalyzer_archive_rule.sample0", "analyzer_name")] {
+    let (address, path) = ("aws_accessanalyzer_archive_rule.sample0", "analyzer_name");
+    {
         assert!(verified(&fixture, address, path), "{address}/{path}");
         let mut masked = fixture.clone();
         let entry = masked["resource_changes"]
