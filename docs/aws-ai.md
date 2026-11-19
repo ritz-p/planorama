@@ -205,3 +205,29 @@ Job references require complete row-specific evidence. The file-system type sele
 |  | `output_data_config.kms_key_id`, `resource_config.volume_kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
 |  | `vpc_config.security_group_ids` | `aws_security_group` (`id`) |
 |  | `vpc_config.subnets` | `aws_subnet` (`id`) |
+
+### SageMaker Catalog, tracking and inference resources
+
+Tracking services keep independent regional cards. Catalog and Service Catalog children require compatible parent identity. A base inference component must share the endpoint and variant. Model card contents, model packages, artifact URIs and public hub content never synthesize resources.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_sagemaker_device` | `device_fleet_name` | `aws_sagemaker_device_fleet` (`device_fleet_name`) |
+|  | `device.iot_thing_name` | `aws_iot_thing` (`name`) |
+| `aws_sagemaker_device_fleet` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `output_config.kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+| `aws_sagemaker_feature_group` | `role_arn` | `aws_iam_role` (`arn`) |
+|  | `offline_store_config.data_catalog_config.database` | `aws_glue_catalog_database` (`name`) |
+|  | `offline_store_config.data_catalog_config.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `offline_store_config.s3_storage_config.kms_key_id`, `online_store_config.security_config.kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+| `aws_sagemaker_hub_content_reference` | `hub_name` | `aws_sagemaker_hub` (`hub_name`) |
+| `aws_sagemaker_inference_component` | `endpoint_name` | `aws_sagemaker_endpoint` (`name`) |
+|  | `specification.base_inference_component_name`, `specifications.base_inference_component_name` | `aws_sagemaker_inference_component` (`name`) |
+|  | `specification.model_name`, `specifications.model_name` | `aws_sagemaker_model` (`name`) |
+| `aws_sagemaker_mlflow_app` | `role_arn` | `aws_iam_role` (`arn`) |
+| `aws_sagemaker_mlflow_tracking_server` | `role_arn` | `aws_iam_role` (`arn`) |
+| `aws_sagemaker_model_card` | `security_config.kms_key_id` | `aws_kms_key` (`arn`) |
+| `aws_sagemaker_model_card_export_job` | `model_card_name` | `aws_sagemaker_model_card` (`model_card_name`) |
+| `aws_sagemaker_model_package_group_policy` | `model_package_group_name` | `aws_sagemaker_model_package_group` (`model_package_group_name`) |
+| `aws_sagemaker_project` | `service_catalog_provisioning_details.product_id` | `aws_servicecatalog_product` (`id`) |
+|  | `service_catalog_provisioning_details.provisioning_artifact_id` | `aws_servicecatalog_provisioning_artifact` (`provisioning_artifact_id`, `id`) |

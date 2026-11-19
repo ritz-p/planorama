@@ -75,6 +75,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("certificate_authority_arn", "Permission CA", "Permissions")
             }
             "aws_acmpca_policy" => ("resource_arn", "Policy CA", "Policies"),
+            "aws_sagemaker_model_card_export_job" => {
+                ("model_card_name", "Exported model card", "Export jobs")
+            }
+            "aws_sagemaker_model_package_group_policy" => (
+                "model_package_group_name",
+                "Model package group",
+                "Policies",
+            ),
+            "aws_sagemaker_hub_content_reference" => {
+                ("hub_name", "Private hub", "Public content references")
+            }
+            "aws_sagemaker_device" => ("device_fleet_name", "Device fleet", "Fleet devices"),
             "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
             kind if super::glue_catalog::owner(kind).is_some() => {
                 if kind == "aws_glue_schema"
