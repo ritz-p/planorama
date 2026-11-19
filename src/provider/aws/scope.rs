@@ -72,6 +72,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::appmesh_configuration::resource(resource)
         && resource != "aws_appmesh_mesh"
         && !super::keyspaces_configuration::resource(resource)
+        && resource != "aws_keyspaces_keyspace"
         && !super::dynamodb_transfer::resource(resource)
         && !super::storagegateway::resource(resource)
         && !super::qbusiness::resource(resource)
