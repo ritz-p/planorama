@@ -61069,7 +61069,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1145,
-      "gap": "#726 audit: Missing: explicit Identity Center instance ARN navigation when an independently identified endpoint is available; computed application_arn does not synthesize an SSO application. Not applicable: independent account-access application, not an alias of ssoadmin_application. Implementation follow-up #1145. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: #1145 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61083,7 +61083,7 @@
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Neutral card / AWS Account Access (no matching service artwork in package 07312026) runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: independent account-access application, not an alias of ssoadmin_application.",
         "network": "Not applicable: aws_accountaccess_application is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: explicit Identity Center instance ARN navigation when an independently identified endpoint is available; computed application_arn does not synthesize an SSO application.",
+        "references": "Supported: Explicit singleton Identity Center instance lookup. Computed application ARN does not identify a managed SSO application.",
         "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional accountaccess_application summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/accountaccess_application.html.markdown",
@@ -61136,7 +61136,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/accountaccess_configuration.rs",
+          "tests/unit/semantic/accountaccess_configuration.rs"
         ]
       }
     },
@@ -61144,7 +61146,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1145,
-      "gap": "#726 audit: Missing: application_arn -> accountaccess_application.arn, role_arn -> IAM role.arn and type-gated user/group IDs with independently proved identity store. Computed account_id is not management account. Missing: application-owned entitlement, distinct from shared principal/role identities. Implementation follow-up #1145. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: #1145 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61155,9 +61157,9 @@
           "entitlement.principal_role.principal.identity_center"
         ],
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Neutral card / AWS Account Access (no matching service artwork in package 07312026) runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: application-owned entitlement, distinct from shared principal/role identities.",
+        "ownership": "Supported: Verified application owner retains independent entitlement lifecycle.",
         "network": "Not applicable: aws_accountaccess_entitlement is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: application_arn -> accountaccess_application.arn, role_arn -> IAM role.arn and type-gated user/group IDs with independently proved identity store. Computed account_id is not management account.",
+        "references": "Supported: Explicit application and IAM role ARN. User or group ID requires the same verified identity store.",
         "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional accountaccess_entitlement summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/accountaccess_entitlement.html.markdown",
@@ -61194,7 +61196,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/accountaccess_configuration.rs",
+          "tests/unit/semantic/accountaccess_configuration.rs"
         ]
       }
     },

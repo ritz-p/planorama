@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::accountaccess_configuration::resource(resource)
         && !super::verifiedpermissions::resource(resource)
         && !super::network_insights::resource(resource)
         && !super::appmesh_configuration::resource(resource)

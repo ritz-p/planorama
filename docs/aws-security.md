@@ -458,3 +458,12 @@ require the same verified store on the policy and template. Cognito identity
 sources can link a pool ARN and a complete set of client IDs when every
 client belongs to the explicitly referenced pool. OIDC issuer strings and
 Cedar and schema contents do not identify managed endpoints.
+
+## Account Access configuration
+
+Applications link to an explicit singleton Identity Center instance lookup.
+Entitlements link to the configured application ARN and IAM role ARN. A user
+or group ID requires a typed and exclusive principal field plus explicit
+identity store evidence tied to the application's verified lookup.
+The role and principal remain independent of the application owner.
+Computed application or account identifiers supply no ownership or access proof.
