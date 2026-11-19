@@ -61,6 +61,7 @@ pub(crate) mod cognito;
 mod cognito_tests;
 mod components;
 pub(crate) mod config_aggregation;
+pub(crate) mod config_rules;
 mod configured_links;
 mod containment;
 mod data;

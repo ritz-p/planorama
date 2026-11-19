@@ -504,3 +504,7 @@ Assessments, reports, framework controls, delegates, report buckets and KMS keys
 ## Verify AWS Config aggregation scopes (#1472)
 
 Aggregation authorizations pair a grantee account with its authorized AWS region. Aggregators retain the account and region selections for each source and verify the organization role independently. All-regions mode is represented explicitly.
+
+## Verify AWS Config evaluation and remediation targets (#1473)
+
+Config rules reference Lambda evaluators only in custom Lambda mode. Remediation uses the Config rule name and a compatible SSM document name. Managed catalog identifiers and evaluation criteria stay independent of infrastructure.

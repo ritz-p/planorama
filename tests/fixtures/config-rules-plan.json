@@ -1,0 +1,173 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_config_config_rule.sample0",
+      "mode": "managed",
+      "type": "aws_config_config_rule",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source": [
+            {
+              "owner": "CUSTOM_LAMBDA",
+              "source_identifier": "arn:aws:lambda:us-east-1:123456789012:resource/lambda_function"
+            }
+          ],
+          "name": "config_config_rule-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.sample1",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:resource/lambda_function"
+        }
+      }
+    },
+    {
+      "address": "aws_config_organization_custom_rule.sample2",
+      "mode": "managed",
+      "type": "aws_config_organization_custom_rule",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "lambda_function_arn": "arn:aws:lambda:us-east-1:123456789012:resource/lambda_function"
+        }
+      }
+    },
+    {
+      "address": "aws_config_remediation_configuration.sample3",
+      "mode": "managed",
+      "type": "aws_config_remediation_configuration",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_type": "SSM_DOCUMENT",
+          "config_rule_name": "config_config_rule-fixture",
+          "target_id": "ssm_document-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_document.sample4",
+      "mode": "managed",
+      "type": "aws_ssm_document",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "ssm_document-fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_config_config_rule.sample0",
+          "mode": "managed",
+          "type": "aws_config_config_rule",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": [
+              {
+                "source_identifier": {
+                  "references": [
+                    "aws_lambda_function.sample1.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_function.sample1",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_config_organization_custom_rule.sample2",
+          "mode": "managed",
+          "type": "aws_config_organization_custom_rule",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "lambda_function_arn": {
+              "references": [
+                "aws_lambda_function.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_config_remediation_configuration.sample3",
+          "mode": "managed",
+          "type": "aws_config_remediation_configuration",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "config_rule_name": {
+              "references": [
+                "aws_config_config_rule.sample0.name"
+              ]
+            },
+            "target_id": {
+              "references": [
+                "aws_ssm_document.sample4.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_document.sample4",
+          "mode": "managed",
+          "type": "aws_ssm_document",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
