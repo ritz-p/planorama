@@ -284,40 +284,56 @@ The AWS 5.100.0 schema and official [Cluster](https://registry.terraform.io/prov
 and [Parameter Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_parameter_group)
 contracts define these scalar names and set-valued ID collections.
 
-## Athena Workgroup and Data Catalog
+## Athena workgroups, catalogs and queries
 
-Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent
-regional spatial Nodes with the Amazon Athena service label. Neither is a
-presentation owner of the other. Their own deployment region comes
-from the verified provider binding; a catalog's parameters do not relocate it to
-the region/account of a backend. Missing or unresolved region overrides remain
-unknown. Managed/data resources keep separate identities and coverage entries.
+Workgroups and data catalogs are independent regional cards. Their region follows
+the verified provider binding. An unresolved region override remains unknown.
+A named query or prepared statement appears under its workgroup when an explicit
+reference verifies the owner in the same scope. Each retains its own Terraform
+identity, action and coverage entry. A named query can also link to its verified
+Athena database.
 
-Explicit Workgroup configuration references, including S3 output-location and
-KMS encryption-key expressions, remain ordinary Terraform `References` and
-dependencies. They do not assert query execution, effective encryption, access or
-runtime use. Unknown planned values do not erase structurally explicit Terraform
-provenance. Dynamic, missing and ambiguous references use shared diagnostics;
-filtered targets become Unavailable. Foreign providers and unsupported exact types
-keep generic presentation and ordinary references.
+The table lists inputs that can produce dedicated configuration references.
+These require explicit Terraform references and matching known values with
+compatible provider scope.
 
-No dedicated association is inferred between Workgroups and Data Catalogs, or
-between a Data Catalog and a Glue Database merely present in the same input.
-Literal output URIs, matching names and Catalog parameters never create links.
-Query bodies/history, Catalog parameter values and arbitrary attributes are not
-rendered. Named queries, prepared statements and runtime query graphs are outside
-the initial scope. Current configuration does not prove historical use for
-deleted/deposed objects; their lifecycle and Terraform provenance remain visible.
+- Workgroup result settings show `Query result bucket` and `Query output key`
+  for verified customer-managed results. The key requires `SSE_KMS` or
+  `CSE_KMS`. A configured expected bucket owner must match the verified bucket
+  account. Managed results, logging and Identity Center links require their
+  respective settings to be enabled. Identity Center also requires a verified
+  singleton lookup.
+- A `LAMBDA` catalog accepts the complete `function` map or the
+  `metadata-function` and `record-function` pair. Both roles can reference the
+  same Lambda. A `HIVE` catalog accepts `metadata-function`. Parameter values
+  and SQL bodies are omitted from the output.
+- Literal URIs, matching names and nearby Glue databases do not supply reference
+  evidence. Unverified configuration can retain ordinary Terraform provenance.
+  Filtered targets appear as Unavailable. Configuration references describe the
+  plan and do not establish runtime query execution, access or effective
+  encryption. Deleted and deposed resources retain their lifecycle and
+  provenance.
 
-AWS Provider 5.100.0 official
-[Workgroup](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/athena_workgroup.html.markdown)
-and [Data Catalog](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/athena_data_catalog.html.markdown)
-definitions, installed schemas and a Terraform 1.9.8 offline plan confirm the
-nested configuration and map-expression shapes. The synthetic
-[fixture](../tests/fixtures/athena-plan.json), [SVG](../examples/athena.svg) and
-[offline HTML](../examples/athena.html) contrast explicit S3/KMS references with
-literal-only settings, multiple indexed instances and independent Athena/Glue
-catalogs.
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_athena_data_catalog` | `parameters` | `aws_lambda_function` (`arn`) |
+| `aws_athena_database` | `bucket` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `workgroup` | `aws_athena_workgroup` (`name`) |
+|  | `encryption_configuration.kms_key` | `aws_kms_key` (`arn`, `key_id`) |
+| `aws_athena_named_query` | `workgroup` | `aws_athena_workgroup` (`name`) |
+|  | `database` | `aws_athena_database` (`name`) |
+| `aws_athena_prepared_statement` | `workgroup` | `aws_athena_workgroup` (`name`) |
+| `aws_athena_workgroup` | `configuration.execution_role` | `aws_iam_role` (`arn`) |
+|  | `configuration.identity_center_configuration.identity_center_instance_arn` | `aws_ssoadmin_instances` (`arns`) |
+|  | `configuration.customer_content_encryption_configuration.kms_key`, `configuration.managed_query_results_configuration.encryption_configuration.kms_key`, `configuration.result_configuration.encryption_configuration.kms_key_arn`, `configuration.monitoring_configuration.s3_logging_configuration.kms_key`, `configuration.monitoring_configuration.managed_logging_configuration.kms_key` | `aws_kms_key` (`arn`) |
+|  | `configuration.result_configuration.output_location`, `configuration.monitoring_configuration.s3_logging_configuration.log_location` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `configuration.monitoring_configuration.cloud_watch_logging_configuration.log_group` | `aws_cloudwatch_log_group` (`name`) |
+
+The [Athena example fixture](../tests/fixtures/athena-plan.json) and its
+[SVG](../examples/athena.svg) and [offline HTML](../examples/athena.html) show
+explicit and literal-only configurations. The
+[query configuration fixture](../tests/fixtures/athena-queries-plan.json)
+covers catalog and query references.
 
 ## Glue Catalog, Crawler and Job
 
@@ -1115,25 +1131,6 @@ A scheduled target requires a table in the explicitly configured database. Datab
 |  | `kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
 |  | `notification_configuration.sns_configuration.topic_arn` | `aws_sns_topic` (`arn`) |
 |  | `error_report_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
-
-### Athena catalogs, queries and workgroups
-
-Explicit Terraform references link Athena configuration to its selected endpoints. Lambda parameters must form a complete supported map. Only a customer-managed output location links a result bucket; managed query results and logging settings use their own enable flags. Workgroup helpers retain their original actions and database references require an Athena database in the same scope.
-
-| Terraform resource | Configured input | Accepted endpoint outputs |
-| --- | --- | --- |
-| `aws_athena_data_catalog` | `parameters` | `aws_lambda_function` (`arn`) |
-| `aws_athena_database` | `bucket` | `aws_s3_bucket` (`bucket`, `id`) |
-|  | `workgroup` | `aws_athena_workgroup` (`name`) |
-|  | `encryption_configuration.kms_key` | `aws_kms_key` (`arn`, `key_id`) |
-| `aws_athena_named_query` | `workgroup` | `aws_athena_workgroup` (`name`) |
-|  | `database` | `aws_athena_database` (`name`) |
-| `aws_athena_prepared_statement` | `workgroup` | `aws_athena_workgroup` (`name`) |
-| `aws_athena_workgroup` | `configuration.execution_role` | `aws_iam_role` (`arn`) |
-|  | `configuration.identity_center_configuration.identity_center_instance_arn` | `aws_ssoadmin_instances` (`arns`) |
-|  | `configuration.customer_content_encryption_configuration.kms_key`, `configuration.managed_query_results_configuration.encryption_configuration.kms_key`, `configuration.result_configuration.encryption_configuration.kms_key_arn`, `configuration.monitoring_configuration.s3_logging_configuration.kms_key`, `configuration.monitoring_configuration.managed_logging_configuration.kms_key` | `aws_kms_key` (`arn`) |
-|  | `configuration.result_configuration.output_location`, `configuration.monitoring_configuration.s3_logging_configuration.log_location` | `aws_s3_bucket` (`bucket`, `id`) |
-|  | `configuration.monitoring_configuration.cloud_watch_logging_configuration.log_group` | `aws_cloudwatch_log_group` (`name`) |
 
 ### Glue catalog encryption
 
