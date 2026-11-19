@@ -17134,10 +17134,10 @@
       }
     },
     "aws_kendra_data_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 802,
-      "gap": "#724 reviewed: Missing: index navigation requires matching index_id; data_source_id is distinct from composite Terraform id. Missing: index ID, non-CUSTOM role, structured legacy S3 bucket and pre/post Lambda/bucket hooks. Deprecated web-crawler secret-ARN navigation is deferred until a legacy-migration use case; template JSON interpretation intentionally unsupported. Follow-up #802. Intentionally unsupported: template JSON, crawler credentials/URLs and enrichment document contents.",
+      "gap": "#724 reviewed: #802 implements Kendra configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17156,10 +17156,10 @@
           "custom_document_enrichment_configuration.post_extraction_hook_configuration.s3_bucket"
         ],
         "placement": "Supported: retain Logical aws_kendra_data_source basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: index navigation requires matching index_id; data_source_id is distinct from composite Terraform id.",
+        "ownership": "Supported: explicit verified index owner; each helper retains logical identity and coverage.",
         "network": "Not applicable: reviewed aws_kendra_data_source fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: index ID, non-CUSTOM role, structured legacy S3 bucket and pre/post Lambda/bucket hooks. Deprecated web-crawler secret-ARN navigation is deferred until a legacy-migration use case; template JSON interpretation intentionally unsupported.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: Verified index ID, non-CUSTOM role, structured legacy S3 bucket and typed pre/post extraction hooks. Deferred: web-crawler credential links. Template JSON is opaque.",
+        "scope": "Supported: retain verified provider account and region. Identifiers do not infer provider scope.",
         "summaries": "Intentionally unsupported: template JSON, crawler credentials/URLs and enrichment document contents.",
         "officialDocumentation": "website/docs/r/kendra_data_source.html.markdown",
         "shapes": {
@@ -17209,14 +17209,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/kendra.rs",
+          "tests/unit/semantic/kendra.rs"
+        ]
       }
     },
     "aws_kendra_experience": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 802,
-      "gap": "#724 reviewed: Missing: index navigation; configured content sources remain independent identities. Missing: index/role and complete data-source/FAQ ID sets require same-index proof; child data_source_id/faq_id differ from composite id. Follow-up #802. Intentionally unsupported: endpoint availability, direct-put document content and SSO identity attributes.",
+      "gap": "#724 reviewed: #802 implements Kendra configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17229,10 +17233,10 @@
           "configuration.content_source_configuration.faq_ids"
         ],
         "placement": "Supported: retain Logical aws_kendra_experience basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: index navigation; configured content sources remain independent identities.",
+        "ownership": "Supported: explicit verified index owner; each helper retains logical identity and coverage.",
         "network": "Not applicable: reviewed aws_kendra_experience fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: index/role and complete data-source/FAQ ID sets require same-index proof; child data_source_id/faq_id differ from composite id.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: Verified index ID, execution role and complete data source and FAQ sets under the same Kendra index. Content sets use service IDs instead of composite Terraform IDs.",
+        "scope": "Supported: retain verified provider account and region. Identifiers do not infer provider scope.",
         "summaries": "Intentionally unsupported: endpoint availability, direct-put document content and SSO identity attributes.",
         "officialDocumentation": "website/docs/r/kendra_experience.html.markdown",
         "shapes": {
@@ -17261,14 +17265,18 @@
               "string"
             ]
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/kendra.rs",
+          "tests/unit/semantic/kendra.rs"
+        ]
       }
     },
     "aws_kendra_faq": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 802,
-      "gap": "#724 reviewed: Missing: verified index helper navigation; shared source bucket is not embedded. Missing: index_id -> index.id, role_arn -> IAM role.arn and s3_path.bucket -> bucket.bucket. faq_id is the service identifier; do not compare composite Terraform id. Follow-up #802. Intentionally unsupported: faq contents, file keys and runtime processing status.",
+      "gap": "#724 reviewed: #802 implements Kendra configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17281,10 +17289,10 @@
           "s3_path.key"
         ],
         "placement": "Supported: retain Logical aws_kendra_faq basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified index helper navigation; shared source bucket is not embedded.",
+        "ownership": "Supported: explicit verified index owner; each helper retains logical identity and coverage.",
         "network": "Not applicable: reviewed aws_kendra_faq fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: index_id -> index.id, role_arn -> IAM role.arn and s3_path.bucket -> bucket.bucket. faq_id is the service identifier; do not compare composite Terraform id.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: Verified index ID, execution role and configured source bucket name.",
+        "scope": "Supported: retain verified provider account and region. Identifiers do not infer provider scope.",
         "summaries": "Intentionally unsupported: faq contents, file keys and runtime processing status.",
         "officialDocumentation": "website/docs/r/kendra_faq.html.markdown",
         "shapes": {
@@ -17305,14 +17313,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/kendra.rs",
+          "tests/unit/semantic/kendra.rs"
+        ]
       }
     },
     "aws_kendra_index": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 802,
-      "gap": "#724 reviewed: Missing: Logical search index merits independent-card review. Missing: IAM role, symmetric KMS key and key_location=SECRET_MANAGER secret ARN references; URL signing keys cannot identify resources. Follow-up #802. Deferred: edition/encryption needs an enum/unknown allowlist; document metadata and JWT claims excluded.",
+      "gap": "#724 reviewed: #802 implements Kendra configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17325,11 +17337,11 @@
           "user_token_configurations.jwt_token_type_configuration.key_location",
           "user_token_configurations.jwt_token_type_configuration.secrets_manager_arn"
         ],
-        "placement": "Missing: Logical search index merits independent-card review.",
+        "placement": "Supported: independent regional Spatial search index.",
         "ownership": "Not applicable: independent aws_kendra_index configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_kendra_index fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: IAM role, symmetric KMS key and key_location=SECRET_MANAGER secret ARN references; URL signing keys cannot identify resources.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: IAM execution role, known symmetric KMS key and JWT secret ARN in SECRET_MANAGER mode.",
+        "scope": "Supported: retain verified provider account and region. Identifiers do not infer provider scope.",
         "summaries": "Deferred: edition/encryption needs an enum/unknown allowlist; document metadata and JWT claims excluded.",
         "officialDocumentation": "website/docs/r/kendra_index.html.markdown",
         "shapes": {
@@ -17356,14 +17368,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/kendra.rs",
+          "tests/unit/semantic/kendra.rs"
+        ]
       }
     },
     "aws_kendra_query_suggestions_block_list": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 802,
-      "gap": "#724 reviewed: Missing: verified index helper navigation; shared source bucket is not embedded. Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. query_suggestions_block_list_id is the service identifier; do not compare composite Terraform id. Follow-up #802. Intentionally unsupported: query_suggestions_block_list contents, file keys and runtime processing status.",
+      "gap": "#724 reviewed: #802 implements Kendra configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17376,10 +17392,10 @@
           "source_s3_path.key"
         ],
         "placement": "Supported: retain Logical aws_kendra_query_suggestions_block_list basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified index helper navigation; shared source bucket is not embedded.",
+        "ownership": "Supported: explicit verified index owner; each helper retains logical identity and coverage.",
         "network": "Not applicable: reviewed aws_kendra_query_suggestions_block_list fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. query_suggestions_block_list_id is the service identifier; do not compare composite Terraform id.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: Verified index ID, execution role and configured source bucket name.",
+        "scope": "Supported: retain verified provider account and region. Identifiers do not infer provider scope.",
         "summaries": "Intentionally unsupported: query_suggestions_block_list contents, file keys and runtime processing status.",
         "officialDocumentation": "website/docs/r/kendra_query_suggestions_block_list.html.markdown",
         "shapes": {
@@ -17400,14 +17416,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/kendra.rs",
+          "tests/unit/semantic/kendra.rs"
+        ]
       }
     },
     "aws_kendra_thesaurus": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 802,
-      "gap": "#724 reviewed: Missing: verified index helper navigation; shared source bucket is not embedded. Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. thesaurus_id is the service identifier; do not compare composite Terraform id. Follow-up #802. Intentionally unsupported: thesaurus contents, file keys and runtime processing status.",
+      "gap": "#724 reviewed: #802 implements Kendra configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17420,10 +17440,10 @@
           "source_s3_path.key"
         ],
         "placement": "Supported: retain Logical aws_kendra_thesaurus basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
-        "ownership": "Missing: verified index helper navigation; shared source bucket is not embedded.",
+        "ownership": "Supported: explicit verified index owner; each helper retains logical identity and coverage.",
         "network": "Not applicable: reviewed aws_kendra_thesaurus fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: index_id -> index.id, role_arn -> IAM role.arn and source_s3_path.bucket -> bucket.bucket. thesaurus_id is the service identifier; do not compare composite Terraform id.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: Verified index ID, execution role and configured source bucket name.",
+        "scope": "Supported: retain verified provider account and region. Identifiers do not infer provider scope.",
         "summaries": "Intentionally unsupported: thesaurus contents, file keys and runtime processing status.",
         "officialDocumentation": "website/docs/r/kendra_thesaurus.html.markdown",
         "shapes": {
@@ -17444,7 +17464,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/kendra.rs",
+          "tests/unit/semantic/kendra.rs"
+        ]
       }
     },
     "aws_opensearch_application": {

@@ -1,0 +1,541 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.sample0",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/index",
+          "customer_master_key_spec": "SYMMETRIC_DEFAULT"
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_index.sample1",
+      "mode": "managed",
+      "type": "aws_kendra_index",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fixture-index",
+          "role_arn": "arn:aws:iam::123456789012:role/kendra",
+          "server_side_encryption_configuration": [
+            {
+              "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/index"
+            }
+          ],
+          "user_token_configurations": [
+            {
+              "jwt_token_type_configuration": [
+                {
+                  "key_location": "SECRET_MANAGER",
+                  "secrets_manager_arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:fixture"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/kendra"
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_data_source.sample3",
+      "mode": "managed",
+      "type": "aws_kendra_data_source",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fixture-index/fixture-document-source",
+          "index_id": "fixture-index",
+          "data_source_id": "fixture-document-source",
+          "type": "S3",
+          "role_arn": "arn:aws:iam::123456789012:role/kendra",
+          "configuration": [
+            {
+              "s3_configuration": [
+                {
+                  "bucket_name": "fixture-documents"
+                }
+              ]
+            }
+          ],
+          "custom_document_enrichment_configuration": [
+            {
+              "role_arn": "arn:aws:iam::123456789012:role/kendra",
+              "pre_extraction_hook_configuration": [
+                {
+                  "lambda_arn": "arn:aws:lambda:us-east-1:123456789012:function:enrich",
+                  "s3_bucket": "fixture-documents"
+                }
+              ],
+              "post_extraction_hook_configuration": [
+                {
+                  "lambda_arn": "arn:aws:lambda:us-east-1:123456789012:function:enrich",
+                  "s3_bucket": "fixture-documents"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_faq.sample4",
+      "mode": "managed",
+      "type": "aws_kendra_faq",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fixture-index/fixture-faq",
+          "index_id": "fixture-index",
+          "faq_id": "fixture-faq",
+          "role_arn": "arn:aws:iam::123456789012:role/kendra",
+          "s3_path": [
+            {
+              "bucket": "fixture-documents",
+              "key": "PRIVATE_FAQ_CONTENT"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_experience.sample5",
+      "mode": "managed",
+      "type": "aws_kendra_experience",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fixture-index/fixture-experience",
+          "index_id": "fixture-index",
+          "experience_id": "fixture-experience",
+          "role_arn": "arn:aws:iam::123456789012:role/kendra",
+          "configuration": [
+            {
+              "content_source_configuration": [
+                {
+                  "data_source_ids": [
+                    "fixture-document-source"
+                  ],
+                  "faq_ids": [
+                    "fixture-faq"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample6",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-documents"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.sample7",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:enrich"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.sample8",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_query_suggestions_block_list.sample9",
+      "mode": "managed",
+      "type": "aws_kendra_query_suggestions_block_list",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "index_id": "fixture-index",
+          "role_arn": "arn:aws:iam::123456789012:role/kendra",
+          "source_s3_path": [
+            {
+              "bucket": "fixture-documents",
+              "key": "PRIVATE_LIST_CONTENT"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kendra_thesaurus.sample10",
+      "mode": "managed",
+      "type": "aws_kendra_thesaurus",
+      "name": "sample10",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "index_id": "fixture-index",
+          "role_arn": "arn:aws:iam::123456789012:role/kendra",
+          "source_s3_path": [
+            {
+              "bucket": "fixture-documents",
+              "key": "PRIVATE_THESAURUS"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.sample0",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kendra_index.sample1",
+          "mode": "managed",
+          "type": "aws_kendra_index",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "server_side_encryption_configuration": [
+              {
+                "kms_key_id": {
+                  "references": [
+                    "aws_kms_key.sample0.arn"
+                  ]
+                }
+              }
+            ],
+            "user_token_configurations": [
+              {
+                "jwt_token_type_configuration": [
+                  {
+                    "secrets_manager_arn": {
+                      "references": [
+                        "aws_secretsmanager_secret.sample8.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample2",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kendra_data_source.sample3",
+          "mode": "managed",
+          "type": "aws_kendra_data_source",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "index_id": {
+              "references": [
+                "aws_kendra_index.sample1.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "configuration": [
+              {
+                "s3_configuration": [
+                  {
+                    "bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.sample6.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "custom_document_enrichment_configuration": [
+              {
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.sample2.arn"
+                  ]
+                },
+                "pre_extraction_hook_configuration": [
+                  {
+                    "lambda_arn": {
+                      "references": [
+                        "aws_lambda_function.sample7.arn"
+                      ]
+                    },
+                    "s3_bucket": {
+                      "references": [
+                        "aws_s3_bucket.sample6.bucket"
+                      ]
+                    }
+                  }
+                ],
+                "post_extraction_hook_configuration": [
+                  {
+                    "lambda_arn": {
+                      "references": [
+                        "aws_lambda_function.sample7.arn"
+                      ]
+                    },
+                    "s3_bucket": {
+                      "references": [
+                        "aws_s3_bucket.sample6.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kendra_faq.sample4",
+          "mode": "managed",
+          "type": "aws_kendra_faq",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "index_id": {
+              "references": [
+                "aws_kendra_index.sample1.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "s3_path": [
+              {
+                "bucket": {
+                  "references": [
+                    "aws_s3_bucket.sample6.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kendra_experience.sample5",
+          "mode": "managed",
+          "type": "aws_kendra_experience",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "index_id": {
+              "references": [
+                "aws_kendra_index.sample1.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "configuration": [
+              {
+                "content_source_configuration": [
+                  {
+                    "data_source_ids": {
+                      "references": [
+                        "aws_kendra_data_source.sample3.data_source_id"
+                      ]
+                    },
+                    "faq_ids": {
+                      "references": [
+                        "aws_kendra_faq.sample4.faq_id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample6",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.sample7",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.sample8",
+          "mode": "managed",
+          "type": "aws_secretsmanager_secret",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kendra_query_suggestions_block_list.sample9",
+          "mode": "managed",
+          "type": "aws_kendra_query_suggestions_block_list",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {
+            "index_id": {
+              "references": [
+                "aws_kendra_index.sample1.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "source_s3_path": [
+              {
+                "bucket": {
+                  "references": [
+                    "aws_s3_bucket.sample6.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kendra_thesaurus.sample10",
+          "mode": "managed",
+          "type": "aws_kendra_thesaurus",
+          "name": "sample10",
+          "provider_config_key": "aws",
+          "expressions": {
+            "index_id": {
+              "references": [
+                "aws_kendra_index.sample1.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "source_s3_path": [
+              {
+                "bucket": {
+                  "references": [
+                    "aws_s3_bucket.sample6.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -93,6 +93,13 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_cloudwatchomni_space" => ("domain_id", "Omni domain", "Spaces"),
             "aws_cloudwatchomni_access_profile" => ("space_id", "Omni space", "Access profiles"),
             "aws_evidently_feature" => ("project", "Evidently project", "Features"),
+            "aws_kendra_data_source" => ("index_id", "Kendra index", "Data sources"),
+            "aws_kendra_experience" => ("index_id", "Kendra index", "Experiences"),
+            "aws_kendra_faq" => ("index_id", "Kendra index", "FAQs"),
+            "aws_kendra_query_suggestions_block_list" => {
+                ("index_id", "Kendra index", "Query suggestions block lists")
+            }
+            "aws_kendra_thesaurus" => ("index_id", "Kendra index", "Thesauri"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
