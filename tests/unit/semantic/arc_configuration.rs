@@ -5,36 +5,36 @@ fn configured_links_require_current_typed_evidence() {
         crate::plan::parse,
         super::label,
         &[
-        ("aws_arcregionswitch_plan.sample0", "execution_role"),
-        (
-            "aws_arcregionswitch_plan.sample0",
-            "associated_alarms.resource_identifier",
-        ),
-        (
-            "aws_arcregionswitch_plan.sample0",
-            "associated_alarms.cross_account_role",
-        ),
-        (
-            "aws_arcregionswitch_plan.sample0",
-            "workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn",
-        ),
-        (
-            "aws_arcregionswitch_plan.sample0",
-            "workflow.step.custom_action_lambda_config.lambda.arn",
-        ),
-        (
-            "aws_arczonalshift_zonal_autoshift_configuration.sample5",
-            "resource_arn",
-        ),
-        (
-            "aws_arczonalshift_zonal_autoshift_configuration.sample5",
-            "blocking_alarms.alarm_identifier",
-        ),
-        (
-            "aws_arczonalshift_zonal_autoshift_configuration.sample5",
-            "outcome_alarms.alarm_identifier",
-        ),
-    ],
+            ("aws_arcregionswitch_plan.sample0", "execution_role"),
+            (
+                "aws_arcregionswitch_plan.sample0",
+                "associated_alarms.resource_identifier",
+            ),
+            (
+                "aws_arcregionswitch_plan.sample0",
+                "associated_alarms.cross_account_role",
+            ),
+            (
+                "aws_arcregionswitch_plan.sample0",
+                "workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn",
+            ),
+            (
+                "aws_arcregionswitch_plan.sample0",
+                "workflow.step.custom_action_lambda_config.lambda.arn",
+            ),
+            (
+                "aws_arczonalshift_zonal_autoshift_configuration.sample5",
+                "resource_arn",
+            ),
+            (
+                "aws_arczonalshift_zonal_autoshift_configuration.sample5",
+                "blocking_alarms.alarm_identifier",
+            ),
+            (
+                "aws_arczonalshift_zonal_autoshift_configuration.sample5",
+                "outcome_alarms.alarm_identifier",
+            ),
+        ],
         ("aws_iam_role.sample1", "arn"),
     );
 }

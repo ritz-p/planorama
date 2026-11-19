@@ -80,7 +80,10 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     let regions = e.value(r.target, "regions").and_then(Value::as_array);
     let in_plan = |s: &str| regions.is_some_and(|rs| rs.iter().any(|r| r.as_str() == Some(s)));
     if !region.is_empty()
-        && (!in_plan(region) || super::scope(&e.nodes[source]).and_then(|s| s.region).is_none_or(|v| v.0 != *region))
+        && (!in_plan(region)
+            || super::scope(&e.nodes[source])
+                .and_then(|s| s.region)
+                .is_none_or(|v| v.0 != *region))
     {
         return false;
     }
