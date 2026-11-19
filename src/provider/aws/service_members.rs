@@ -262,6 +262,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_config_configuration_recorder_status" => {
                 ("name", "Configuration recorder", "Recorder status")
             }
+            "aws_detective_organization_configuration" => {
+                ("graph_arn", "Detective graph", "Organization configuration")
+            }
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

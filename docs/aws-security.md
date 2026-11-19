@@ -512,3 +512,7 @@ Config rules reference Lambda evaluators only in custom Lambda mode. Remediation
 ## Verify AWS Config recording and delivery references (#1474)
 
 Recorder status binds to a same-scope recorder by name. Recording roles, named delivery buckets, notification topics and encryption keys resolve independently. Delivery prefixes and conformance template URIs do not identify delivery targets.
+
+## Verify Detective graph relationships (#1475)
+
+Graph members and organization settings identify their graph by ARN. Invitation acceptance checks the graph administrator and region independently of the member. Explicit account references use the Organizations account ID.

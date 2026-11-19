@@ -71869,10 +71869,10 @@
       }
     },
     "aws_detective_invitation_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the invited graph ARN across verified member and administrator scopes.",
+      "gap": "#1475 — Verified configuration references: graph_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71883,7 +71883,7 @@
         "placement": "Supported: Logical Association for the managed detective_invitation_accepter declaration. Provides a resource to manage an Amazon Detective member invitation accepter.",
         "ownership": "Not applicable: The managed detective_invitation_accepter declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_invitation_accepter.",
-        "references": "Missing: Resolve the invited graph ARN across verified member and administrator scopes.",
+        "references": "Supported: Verified configuration references: graph_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_invitation_accepter summaries.",
         "officialDocumentation": "website/docs/r/detective_invitation_accepter.html.markdown",
@@ -71902,17 +71902,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceInvitationAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_detective_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the graph and explicitly configured member account. Email and invitation state are excluded.",
+      "gap": "#1475 — Verified configuration references: graph_arn, account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71925,7 +71927,7 @@
         "placement": "Supported: Logical Association for the managed detective_member declaration. Provides a resource to manage an Amazon Detective member.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_member.",
-        "references": "Missing: Resolve the graph and explicitly configured member account. Email and invitation state are excluded.",
+        "references": "Supported: Verified configuration references: graph_arn, account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_member summaries.",
         "officialDocumentation": "website/docs/r/detective_member.html.markdown",
@@ -71952,17 +71954,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_detective_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the delegated administrator account by account_id.",
+      "gap": "#1475 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71973,7 +71977,7 @@
         "placement": "Supported: Logical Node for the managed detective_organization_admin_account declaration. Manages a Detective Organization Admin Account",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_organization_admin_account.",
-        "references": "Missing: Resolve the delegated administrator account by account_id.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/detective_organization_admin_account.html.markdown",
@@ -71992,17 +71996,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_detective_organization_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the organization configuration's graph. Auto-enable predicts no future members.",
+      "gap": "#1475 — Verified configuration references: graph_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72012,9 +72018,9 @@
           "auto_enable"
         ],
         "placement": "Supported: Logical Controller for the managed detective_organization_configuration declaration. Manages the Detective Organization Configuration",
-        "ownership": "Missing: use a verified graph_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_organization_configuration.",
-        "references": "Missing: Resolve the organization configuration's graph. Auto-enable predicts no future members.",
+        "references": "Supported: Verified configuration references: graph_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_organization_configuration summaries.",
         "officialDocumentation": "website/docs/r/detective_organization_configuration.html.markdown",
@@ -72037,7 +72043,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}

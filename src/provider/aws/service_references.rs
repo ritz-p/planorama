@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::detective_graphs::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::config_delivery::label(resource, attribute) {
         return Some(label);
     }
@@ -1169,6 +1172,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::detective_graphs::annotate(nodes, references, evidence);
     super::config_delivery::annotate(nodes, references, evidence);
     super::config_rules::annotate(nodes, references, evidence);
     super::config_aggregation::annotate(nodes, references, evidence);
@@ -1270,6 +1274,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::detective_graphs::bindings(raw, reference)
         && super::config_delivery::bindings(raw, reference)
         && super::config_rules::bindings(raw, reference)
         && super::config_aggregation::bindings(raw, reference)
@@ -2010,6 +2015,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::detective_graphs::indexed(&node.resource_type, &reference.attribute)
             || super::config_delivery::indexed(&node.resource_type, &reference.attribute)
             || super::config_rules::indexed(&node.resource_type, &reference.attribute)
             || super::config_aggregation::indexed(&node.resource_type, &reference.attribute)
