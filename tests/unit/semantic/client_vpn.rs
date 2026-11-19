@@ -89,3 +89,36 @@ fn configured_links_require_current_typed_evidence() {
         "vpc_id"
     ));
 }
+
+#[test]
+fn refreshed_network_defaults_preserve_explicit_vpc_and_subnet_evidence() {
+    let mut f: Value =
+        serde_json::from_str(include_str!("../../fixtures/client-vpn-plan.json")).unwrap();
+    f["resource_changes"][0]["change"]["after"]["security_group_ids"] = json!(["sg-default"]);
+    assert!(verified(
+        &f,
+        "aws_ec2_client_vpn_endpoint.sample0",
+        "vpc_id"
+    ));
+    assert!(!verified(
+        &f,
+        "aws_ec2_client_vpn_endpoint.sample0",
+        "security_group_ids"
+    ));
+    f["configuration"]["root_module"]["resources"][0]["expressions"]
+        .as_object_mut()
+        .unwrap()
+        .remove("vpc_id");
+    for (address, path) in [
+        (
+            "aws_ec2_client_vpn_network_association.sample3",
+            "subnet_id",
+        ),
+        ("aws_ec2_client_vpn_route.sample5", "target_vpc_subnet_id"),
+    ] {
+        assert!(verified(&f, address, path));
+        let mut changed = f.clone();
+        changed["resource_changes"][0]["change"]["after"]["vpc_id"] = json!("vpc-other");
+        assert!(!verified(&changed, address, path));
+    }
+}

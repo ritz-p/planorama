@@ -155,9 +155,7 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         let Some(vpc) = super::lambda_core::parent(e.nodes, e.refs, e.values, subnet) else {
             return false;
         };
-        if !e.absent(endpoint, "vpc_id")
-            && e.configured_endpoint(endpoint, "vpc_id", "aws_vpc", &["id"]) != Some(vpc)
-        {
+        if !e.optional_vpc_matches(endpoint, vpc) {
             return false;
         }
         return kind != "aws_ec2_client_vpn_route"
@@ -183,7 +181,8 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                 return false;
             };
             e.absent(node, "transit_gateway_configuration")
-                && (e.absent(node, "security_group_ids")
+                && (!e.has_argument(node, "security_group_ids")
+                    || e.absent(node, "security_group_ids")
                     || configured_links::network_context(
                         e,
                         node,
