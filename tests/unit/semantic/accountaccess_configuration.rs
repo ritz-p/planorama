@@ -68,3 +68,29 @@ fn configured_links_require_current_typed_evidence() {
         "identity_source.identity_center.instance_arn"
     ));
 }
+
+#[test]
+fn principal_requires_current_application_and_store_in_its_scope() {
+    let mut fixture: Value = serde_json::from_str(include_str!(
+        "../../fixtures/accountaccess-configuration-plan.json"
+    ))
+    .unwrap();
+    let entitlement = "aws_accountaccess_entitlement.sample1";
+    let principal = "entitlement.principal_role.principal.identity_center.user_id";
+    assert!(verified(&fixture, entitlement, principal));
+
+    let mut unknown = fixture.clone();
+    unknown["resource_changes"][3]["change"]["after_unknown"] =
+        json!({"identity_store_ids": [true]});
+    assert!(!verified(&unknown, entitlement, principal));
+
+    let mut foreign = fixture["configuration"]["provider_config"]["aws"].clone();
+    foreign["expressions"]["region"] = json!({"constant_value": "us-west-2"});
+    fixture["configuration"]["provider_config"]["aws.foreign"] = foreign;
+    for index in [0, 3] {
+        fixture["configuration"]["root_module"]["resources"][index]["provider_config_key"] =
+            json!("aws.foreign");
+    }
+    assert!(!verified(&fixture, entitlement, "application_arn"));
+    assert!(!verified(&fixture, entitlement, principal));
+}
