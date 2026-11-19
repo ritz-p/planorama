@@ -82,6 +82,7 @@ pub(crate) mod emr;
 pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
+pub(crate) mod firehose_sources;
 pub(crate) mod flow_logs;
 mod fsx;
 pub(crate) mod global_accelerator;

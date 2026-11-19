@@ -9,6 +9,7 @@ binding.initSync({module: fs.readFileSync(`${directory}/planorama_bg.wasm`), mem
 const binary = resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama');
 const native = require('../support/native-reference.cjs')(binary);
 const cases = [
+  {"fixture":"firehose-msk-source-plan","focus":"aws_kinesis_firehose_delivery_stream.row2","target":2,"mask":{"msk_source_configuration":true}},
   {"fixture":"msk-delivery-plan","focus":"aws_msk_channel.row4","target":4,"mask":{"topic_configuration":true}},
   {"fixture":"msk-connect-plan","focus":"aws_mskconnect_connector.row3","target":3,"mask":{"plugin":true}},
   {fixture: "quicksight-identity-plan", focus: "aws_quicksight_group_membership.g", target: 3, mask: {member_name: true}},

@@ -1,0 +1,140 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_msk_cluster.row0",
+      "mode": "managed",
+      "type": "aws_msk_cluster",
+      "name": "row0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafka:us-east-1:123456789012:cluster/one/01"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.row1",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "row1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/reader"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.row2",
+      "mode": "managed",
+      "type": "aws_kinesis_firehose_delivery_stream",
+      "name": "row2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "destination": "extended_s3",
+          "msk_source_configuration": [
+            {
+              "msk_cluster_arn": "arn:aws:kafka:us-east-1:123456789012:cluster/one/01",
+              "authentication_configuration": [
+                {
+                  "role_arn": "arn:aws:iam::123456789012:role/reader"
+                }
+              ]
+            }
+          ],
+          "extended_s3_configuration": [
+            {
+              "s3_backup_mode": "Enabled",
+              "s3_backup_configuration": [
+                {
+                  "role_arn": "arn:aws:iam::123456789012:role/reader"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_msk_cluster.row0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.row1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesis_firehose_delivery_stream.row2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "msk_source_configuration": [
+              {
+                "msk_cluster_arn": {
+                  "references": [
+                    "aws_msk_cluster.row0.arn"
+                  ]
+                },
+                "authentication_configuration": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.row1.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "extended_s3_configuration": [
+              {
+                "s3_backup_configuration": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.row1.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
