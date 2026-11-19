@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::datapipeline_configuration::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::dataexchange_configuration::label(resource, attribute) {
         return Some(label);
     }
@@ -1103,6 +1106,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::datapipeline_configuration::annotate(nodes, references, evidence);
     super::dataexchange_configuration::annotate(nodes, references, evidence);
     super::cleanrooms_configuration::annotate(nodes, references, evidence);
     super::ecr_configuration::annotate(nodes, references, evidence);
@@ -1182,6 +1186,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::datapipeline_configuration::bindings(raw, reference)
         && super::dataexchange_configuration::bindings(raw, reference)
         && super::cleanrooms_configuration::bindings(raw, reference)
         && super::ecr_configuration::bindings(raw, reference)
@@ -1900,6 +1905,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::datapipeline_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::dataexchange_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::cleanrooms_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::ecr_configuration::indexed(&node.resource_type, &reference.attribute)

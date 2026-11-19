@@ -1228,3 +1228,9 @@ S3 access and import asset blocks require the matching dataset type and a
 single configured asset variant. S3 snapshot revision export links a bucket
 and uses an explicit KMS ARN only in `aws:kms` mode. Computed access points,
 object keys and signed URLs do not create resources.
+
+## Data Pipeline definitions
+
+A Data Pipeline has an independent card. A definition with a verified
+`pipeline_id` appears under its pipeline and preserves its own identity and
+lifecycle. Object fields and internal `ref_value` entries stay opaque.

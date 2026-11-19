@@ -411,7 +411,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_dataexchange_event_action", "AWS Data Exchange", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
     entry!("aws_dataexchange_revision", "AWS Data Exchange", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
     entry!("aws_dataexchange_revision_assets", "AWS Data Exchange", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
-    entry!("aws_datapipeline_pipeline", "AWS Data Pipeline", Node, Logical, Regional, None),
+    entry!("aws_datapipeline_pipeline", "AWS Data Pipeline", Node, Spatial, Regional, None),
     entry!("aws_datapipeline_pipeline_definition", "AWS Data Pipeline", Controller, Logical, Regional, None),
     entry!("aws_datasync_agent", "AWS DataSync", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataSync))),
     entry!("aws_datasync_location_azure_blob", "AWS DataSync", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataSync))),
