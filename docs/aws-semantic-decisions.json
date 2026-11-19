@@ -72733,10 +72733,10 @@
       }
     },
     "aws_inspector_assessment_target": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Join the Classic Inspector resource group by ARN. Tag matches do not enumerate instances.",
+      "gap": "#1478 — Verified configuration references: resource_group_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72748,7 +72748,7 @@
         "placement": "Supported: Logical Controller for the managed inspector_assessment_target declaration. Provides an Inspector Classic Assessment Target.",
         "ownership": "Not applicable: The managed inspector_assessment_target declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Inspector Classic control-plane configuration has no network placement contract for inspector_assessment_target.",
-        "references": "Missing: Join the Classic Inspector resource group by ARN. Tag matches do not enumerate instances.",
+        "references": "Supported: Verified configuration references: resource_group_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment results and tag values from inspector_assessment_target summaries.",
         "officialDocumentation": "website/docs/r/inspector_assessment_target.html.markdown",
@@ -72771,17 +72771,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceAssessmentTarget. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_inspector_assessment_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve Classic assessment target and SNS notification topic. Preserve AWS rules package ARNs as catalog identifiers.",
+      "gap": "#1478 — Verified configuration references: target_arn, event_subscription.topic_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72794,7 +72796,7 @@
         "placement": "Supported: Logical Controller for the managed inspector_assessment_template declaration. Provides an Inspector Classic Assessment Template.",
         "ownership": "Not applicable: The managed inspector_assessment_template declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Inspector Classic control-plane configuration has no network placement contract for inspector_assessment_template.",
-        "references": "Missing: Resolve Classic assessment target and SNS notification topic. Preserve AWS rules package ARNs as catalog identifiers.",
+        "references": "Supported: Verified configuration references: target_arn, event_subscription.topic_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment results and tag values from inspector_assessment_template summaries.",
         "officialDocumentation": "website/docs/r/inspector_assessment_template.html.markdown",
@@ -72825,7 +72827,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceAssessmentTemplate. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72871,10 +72875,10 @@
       }
     },
     "aws_inspector2_delegated_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve the explicit Inspector2 administrator account. Its observed relationship status is separate.",
+      "gap": "#1478 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72886,7 +72890,7 @@
         "placement": "Supported: Logical Node for the managed inspector2_delegated_admin_account declaration. Terraform resource for managing an Amazon Inspector Delegated Admin Account.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Scan categories and finding filters are not subnet assignments.",
-        "references": "Missing: Resolve the explicit Inspector2 administrator account. Its observed relationship status is separate.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit vulnerability findings and matching resource inventory from inspector2_delegated_admin_account summaries.",
         "officialDocumentation": "website/docs/r/inspector2_delegated_admin_account.html.markdown",
@@ -72909,17 +72913,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceDelegatedAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_inspector2_enabler": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve configured account IDs independently of scan resource types. An enabled category cannot identify workloads.",
+      "gap": "#1478 — Verified configuration references: account_ids.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72931,7 +72937,7 @@
         "placement": "Supported: Logical Node for the managed inspector2_enabler declaration. Terraform resource for enabling Amazon Inspector resource scans.",
         "ownership": "Not applicable: The managed inspector2_enabler declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Scan categories and finding filters are not subnet assignments.",
-        "references": "Missing: Resolve configured account IDs independently of scan resource types. An enabled category cannot identify workloads.",
+        "references": "Supported: Verified configuration references: account_ids.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit vulnerability findings and matching resource inventory from inspector2_enabler summaries.",
         "officialDocumentation": "website/docs/r/inspector2_enabler.html.markdown",
@@ -72960,7 +72966,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed ResourceEnabler. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73016,10 +73024,10 @@
       }
     },
     "aws_inspector2_member_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve the configured member account separately from the returned administrator account.",
+      "gap": "#1478 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73031,7 +73039,7 @@
         "placement": "Supported: Logical Association for the managed inspector2_member_association declaration. Terraform resource for managing an Amazon Inspector Member Association.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Scan categories and finding filters are not subnet assignments.",
-        "references": "Missing: Resolve the configured member account separately from the returned administrator account.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit vulnerability findings and matching resource inventory from inspector2_member_association summaries.",
         "officialDocumentation": "website/docs/r/inspector2_member_association.html.markdown",
@@ -73054,7 +73062,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceMemberAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}

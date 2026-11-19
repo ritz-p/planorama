@@ -524,3 +524,7 @@ GuardDuty helpers reference the configured regional detector ID. Member feature 
 ## Verify GuardDuty publishing and malware protection resources (#1477)
 
 Publishing configurations resolve their detector, S3 destination and KMS key separately. Malware protection plans verify the IAM role and explicit protected bucket. Object prefixes and scan results do not produce resource relationships.
+
+## Verify Inspector assessment and enrollment references (#1478)
+
+Classic assessment templates resolve the target and explicitly subscribed SNS topics. Inspector2 enrollment identifies configured Organizations accounts, independently of scan categories or observed membership status.

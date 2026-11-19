@@ -130,6 +130,7 @@ mod identity_center_instance;
 pub(crate) mod identitystore;
 pub(crate) mod imagebuilder;
 pub(crate) mod imagebuilder_distribution;
+pub(crate) mod inspector_assessments;
 pub(crate) mod instance_launch;
 pub(crate) mod ipam;
 pub(crate) mod kendra;
