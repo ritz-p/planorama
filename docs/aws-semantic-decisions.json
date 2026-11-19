@@ -18200,10 +18200,10 @@
       }
     },
     "aws_qbusiness_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 801,
-      "gap": "#724 reviewed: Missing: Logical hosted Q application merits independent-card review. Missing: IAM role, Identity Center instance and symmetric KMS key references; computed identity_center_application_arn cannot manufacture a managed SSO application. Follow-up #801. Deferred: encryption mode needs symmetric-key and unknown handling; attachment content and display descriptions excluded.",
+      "gap": "#724 reviewed: #801 implements independent application placement and scoped IAM, Identity Center and symmetric KMS references. See docs/aws-ai.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -18216,11 +18216,11 @@
           "identity_center_application_arn",
           "encryption_configuration.kms_key_id"
         ],
-        "placement": "Missing: Logical hosted Q application merits independent-card review.",
+        "placement": "Supported: independent regional Spatial application card.",
         "ownership": "Not applicable: independent aws_qbusiness_application configuration; no verified embedded owner in runtime.",
         "network": "Not applicable: reviewed aws_qbusiness_application fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: IAM role, Identity Center instance and symmetric KMS key references; computed identity_center_application_arn cannot manufacture a managed SSO application.",
-        "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
+        "references": "Supported: explicit IAM role ARN, singleton IAM Identity Center lookup and known symmetric KMS key identifier. The computed Identity Center application ARN does not identify a managed endpoint.",
+        "scope": "Supported: retain verified provider account and region for the regional application; configured ARNs do not infer account or region.",
         "summaries": "Deferred: encryption mode needs symmetric-key and unknown handling; attachment content and display descriptions excluded.",
         "officialDocumentation": "website/docs/r/qbusiness_application.html.markdown",
         "shapes": {
@@ -18243,7 +18243,11 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/qbusiness.rs",
+          "tests/unit/semantic/qbusiness.rs"
+        ]
       }
     },
     "aws_quicksight_account_settings": {

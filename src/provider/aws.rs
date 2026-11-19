@@ -144,6 +144,7 @@ pub(crate) mod prefix_list_entries;
 pub(crate) mod private_ca_references;
 mod privatelink;
 pub(crate) mod profiles;
+pub(crate) mod qbusiness;
 pub(crate) mod query_logs;
 pub(crate) mod quicksight;
 pub(crate) mod rds_auxiliary;

@@ -259,3 +259,23 @@ Private workteams and explicit Cognito pool, client and group references require
 |  | `member_definition.cognito_member_definition.client_id` | `aws_cognito_user_pool_client` (`id`) |
 |  | `member_definition.cognito_member_definition.user_group` | `aws_cognito_user_group` (`name`) |
 |  | `notification_configuration.notification_topic_arn` | `aws_sns_topic` (`arn`) |
+
+## Amazon Q Business
+
+The application has an independent regional card. Explicit references under
+compatible AWS provider bindings support the following inputs.
+
+| Configured input | Verified endpoint output |
+| --- | --- |
+| `iam_service_role_arn` | `aws_iam_role.arn` |
+| `identity_center_instance_arn` | A matching singleton `data.aws_ssoadmin_instances.arns` lookup |
+| `encryption_configuration.kms_key_id` | `aws_kms_key` or `aws_kms_replica_key` `arn`, `key_id` or `id`, or `aws_kms_external_key` `arn` or `id` |
+
+The encryption configuration must be a singleton list and the managed key's
+known key spec must be `SYMMETRIC_DEFAULT`. An incomplete lookup or an unknown
+key spec leaves ordinary Terraform provenance where available. Computed
+`identity_center_application_arn` does not establish a managed application.
+Filtered targets remain unavailable.
+
+See the [SVG](../examples/qbusiness-application.svg) and
+[offline HTML](../examples/qbusiness-application.html).
