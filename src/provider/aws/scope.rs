@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::local_gateways::resource(resource)
         && !super::site_vpn::resource(resource)
         && !super::template_launch::resource(resource)
         && !super::instance_launch::resource(resource)
@@ -455,6 +456,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 "aws_ssoadmin_instances"
                     | "aws_outposts_outpost"
                     | "aws_ec2_transit_gateway_dx_gateway_attachment"
+                    | "aws_ec2_local_gateway"
+                    | "aws_ec2_local_gateway_virtual_interface_group"
             ))
         || entity.waf_scope == Some(crate::model::WafScope::Regional)
         || matches!(

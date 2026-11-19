@@ -1,0 +1,215 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_carrier_gateway.sample0",
+      "mode": "managed",
+      "type": "aws_ec2_carrier_gateway",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_id": "vpc-local"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample1",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-local"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_local_gateway_route_table.sample2",
+      "mode": "managed",
+      "type": "aws_ec2_local_gateway_route_table",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "local_gateway_id": "lgw-1",
+          "local_gateway_route_table_id": "lgw-rtb-1"
+        }
+      }
+    },
+    {
+      "address": "data.aws_ec2_local_gateway.sample3",
+      "mode": "data",
+      "type": "aws_ec2_local_gateway",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "lgw-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_local_gateway_route_table_virtual_interface_group_association.sample4",
+      "mode": "managed",
+      "type": "aws_ec2_local_gateway_route_table_virtual_interface_group_association",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "local_gateway_route_table_id": "lgw-rtb-1",
+          "local_gateway_virtual_interface_group_id": "lgw-vif-1"
+        }
+      }
+    },
+    {
+      "address": "data.aws_ec2_local_gateway_virtual_interface_group.sample5",
+      "mode": "data",
+      "type": "aws_ec2_local_gateway_virtual_interface_group",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "lgw-vif-1"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_local_gateway_route_table_vpc_association.sample6",
+      "mode": "managed",
+      "type": "aws_ec2_local_gateway_route_table_vpc_association",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_id": "vpc-local"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_carrier_gateway.sample0",
+          "mode": "managed",
+          "type": "aws_ec2_carrier_gateway",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample1",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_local_gateway_route_table.sample2",
+          "mode": "managed",
+          "type": "aws_ec2_local_gateway_route_table",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "local_gateway_id": {
+              "references": [
+                "data.aws_ec2_local_gateway.sample3.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "data.aws_ec2_local_gateway.sample3",
+          "mode": "data",
+          "type": "aws_ec2_local_gateway",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_local_gateway_route_table_virtual_interface_group_association.sample4",
+          "mode": "managed",
+          "type": "aws_ec2_local_gateway_route_table_virtual_interface_group_association",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "local_gateway_route_table_id": {
+              "references": [
+                "aws_ec2_local_gateway_route_table.sample2.local_gateway_route_table_id"
+              ]
+            },
+            "local_gateway_virtual_interface_group_id": {
+              "references": [
+                "data.aws_ec2_local_gateway_virtual_interface_group.sample5.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "data.aws_ec2_local_gateway_virtual_interface_group.sample5",
+          "mode": "data",
+          "type": "aws_ec2_local_gateway_virtual_interface_group",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_local_gateway_route_table_vpc_association.sample6",
+          "mode": "managed",
+          "type": "aws_ec2_local_gateway_route_table_vpc_association",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample1.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

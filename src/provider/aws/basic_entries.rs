@@ -555,7 +555,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_ec2_availability_zone_group", "Amazon EC2", Node, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_capacity_block_reservation", "Amazon EC2", Controller, Logical, Regional, Some(ResourceIcon::Ec2)),
     entry!("aws_ec2_capacity_reservation", "Amazon EC2", Controller, Logical, Regional, Some(ResourceIcon::Ec2)),
-    entry!("aws_ec2_carrier_gateway", "Amazon VPC", Connector, Logical, Regional, Some(ResourceIcon::Vpc)),
+    entry!("aws_ec2_carrier_gateway", "Amazon VPC", Connector, Spatial, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_ec2_client_vpn_authorization_rule", "Amazon VPC", Policy, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_ec2_client_vpn_endpoint", "Amazon VPC", Connector, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_ec2_client_vpn_network_association", "Amazon VPC", Association, Logical, Regional, Some(ResourceIcon::Vpc)),

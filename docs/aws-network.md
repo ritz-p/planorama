@@ -1065,3 +1065,7 @@ resource contracts.
 ## Site-to-site VPN topology (#1439)
 
 Customer gateways, virtual private gateways, VPN connections and concentrators have independent regional cards. A connection selects one gateway mode and links enabled tunnel and BGP log destinations. Static routes require a static connection. VPC placement uses a single verified inline or standalone attachment, and propagation requires the route table and gateway to share a VPC.
+
+## Carrier and local gateway references (#1440)
+
+Carrier gateways attach to a verified VPC. Local routes and associations use the local route table’s specific ID output, while local gateways and virtual interface groups use the separate data-source contracts. A destination CIDR supplies no VPC evidence.
