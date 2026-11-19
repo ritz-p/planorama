@@ -36894,10 +36894,10 @@
       }
     },
     "aws_ec2_network_insights_access_scope": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 892,
-      "gap": "#710 audit: Missing: explicit allowlisted resource ARNs within path statements; resource_types are selectors, never enumerated members. Follow-up #892.",
+      "gap": "#710 audit: #892 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36911,7 +36911,7 @@
         "placement": "Supported: retain Node / Logical default for aws_ec2_network_insights_access_scope; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: aws_ec2_network_insights_access_scope remains independently tracked configuration; references alone do not prove embedded ownership.",
         "network": "Intentionally unsupported: analysis selectors are not network containment or observed paths.",
-        "references": "Missing: explicit allowlisted resource ARNs within path statements; resource_types are selectors, never enumerated members.",
+        "references": "Supported: Explicit typed ARN sets within supported resource statements.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_ec2_network_insights_access_scope is reviewed for identity and navigation only. Selected match_paths.source.resource_statement.resources, match_paths.source.resource_statement.resource_types, match_paths.destination.resource_statement.resources fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_network_insights_access_scope.html.markdown",
@@ -36973,16 +36973,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/network_insights.rs",
+          "tests/unit/semantic/network_insights.rs"
         ],
         "managedDataContract": "No same-name data registration in pinned schema; managed semantics are not inferred for data mode."
       }
     },
     "aws_ec2_network_insights_analysis": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 892,
-      "gap": "#710 audit: Missing: analysis-to-path identity and complete filter_in_arns navigation; path_found/status do not establish current reachability. Follow-up #892.",
+      "gap": "#710 audit: #892 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -36994,9 +36996,9 @@
           "status"
         ],
         "placement": "Supported: retain Node / Logical default for aws_ec2_network_insights_analysis; basic classification is not dedicated semantics.",
-        "ownership": "Missing: verified analysis helper for the configured path; outputs are historical observations.",
+        "ownership": "Supported: Verified path owner retains separate analysis identity.",
         "network": "Intentionally unsupported: computed forward/return components are not configured topology.",
-        "references": "Missing: analysis-to-path identity and complete filter_in_arns navigation; path_found/status do not establish current reachability.",
+        "references": "Supported: Explicit configured path and intermediate ARN sets.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_ec2_network_insights_analysis is reviewed for identity and navigation only. Selected network_insights_path_id, filter_in_arns, path_found fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_network_insights_analysis.html.markdown",
@@ -37037,16 +37039,18 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/network_insights.rs",
+          "tests/unit/semantic/network_insights.rs"
         ],
         "managedDataContract": "Separate data lookup: id (optional/computed), network_insights_analysis_id (optional/computed); filter is a lookup selector, not configured managed topology. Managed ownership/containment does not transfer to data mode."
       }
     },
     "aws_ec2_network_insights_path": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 892,
-      "gap": "#710 audit: Missing: source/destination ID-or-ARN with exact type allowlist; cross-account endpoints require ARNs. IP filters never reconstruct resources. Follow-up #892.",
+      "gap": "#710 audit: #892 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 710,
         "implementationCommit": "a874b24ecfe4f0361ac81dc5afcb87e6570cd1d3",
@@ -37061,7 +37065,7 @@
         "placement": "Supported: retain Node / Logical default for aws_ec2_network_insights_path; basic classification is not dedicated semantics.",
         "ownership": "Not applicable: aws_ec2_network_insights_path remains independently tracked configuration; references alone do not prove embedded ownership.",
         "network": "Intentionally unsupported: source/destination are analysis endpoints, not containment.",
-        "references": "Missing: source/destination ID-or-ARN with exact type allowlist; cross-account endpoints require ARNs. IP filters never reconstruct resources.",
+        "references": "Supported: Explicit supported source and destination ID or ARN, with cross-account ARN scope evidence.",
         "scope": "Partial: Regional (conditional) eligibility in scope.rs; basic fallback clears account. Known compatible provider/account/region and named-state evidence is required independently for new links; endpoint ownership does not manufacture scope.",
         "summaries": "Not applicable: aws_ec2_network_insights_path is reviewed for identity and navigation only. Selected source, destination, source_arn fields establish contracts, not raw-value badges. Any configuration summary requires a separately selected display use case and unknown/sensitive handling; policy effects and runtime health remain excluded.",
         "officialDocumentation": "website/docs/r/ec2_network_insights_path.html.markdown",
@@ -37103,7 +37107,9 @@
           "src/provider/aws/service_members.rs",
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
-          "docs/resource-support.md"
+          "docs/resource-support.md",
+          "src/provider/aws/network_insights.rs",
+          "tests/unit/semantic/network_insights.rs"
         ],
         "managedDataContract": "Separate data lookup: id (optional/computed), network_insights_path_id (optional/computed); filter is a lookup selector, not configured managed topology. Managed ownership/containment does not transfer to data mode."
       }

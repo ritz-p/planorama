@@ -125,6 +125,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_appmesh_virtual_node" => ("mesh_name", "App Mesh", "Mesh configuration"),
             "aws_appmesh_virtual_router" => ("mesh_name", "App Mesh", "Mesh configuration"),
             "aws_appmesh_virtual_service" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_ec2_network_insights_analysis" => (
+                "network_insights_path_id",
+                "Network insights path",
+                "Analyses",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

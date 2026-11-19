@@ -1,0 +1,161 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_network_interface.sample0",
+      "mode": "managed",
+      "type": "aws_network_interface",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "eni-fixture",
+          "arn": "arn:aws:ec2:us-east-1:123456789012:network-interface/eni-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_network_insights_path.sample1",
+      "mode": "managed",
+      "type": "aws_ec2_network_insights_path",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source": "eni-fixture",
+          "id": "nip-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_network_insights_analysis.sample2",
+      "mode": "managed",
+      "type": "aws_ec2_network_insights_analysis",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "network_insights_path_id": "nip-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_network_insights_access_scope.sample3",
+      "mode": "managed",
+      "type": "aws_ec2_network_insights_access_scope",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "match_paths": [
+            {
+              "source": [
+                {
+                  "resource_statement": [
+                    {
+                      "resources": [
+                        "arn:aws:ec2:us-east-1:123456789012:network-interface/eni-fixture"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_network_interface.sample0",
+          "mode": "managed",
+          "type": "aws_network_interface",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_network_insights_path.sample1",
+          "mode": "managed",
+          "type": "aws_ec2_network_insights_path",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": {
+              "references": [
+                "aws_network_interface.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_network_insights_analysis.sample2",
+          "mode": "managed",
+          "type": "aws_ec2_network_insights_analysis",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "network_insights_path_id": {
+              "references": [
+                "aws_ec2_network_insights_path.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_network_insights_access_scope.sample3",
+          "mode": "managed",
+          "type": "aws_ec2_network_insights_access_scope",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "match_paths": [
+              {
+                "source": [
+                  {
+                    "resource_statement": [
+                      {
+                        "resources": {
+                          "references": [
+                            "aws_network_interface.sample0.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
