@@ -46,6 +46,19 @@ pub(super) struct Evidence<'a> {
     pub values: &'a [(&'a Value, &'a Value)],
 }
 impl Evidence<'_> {
+    pub fn absent(&self, node: usize, path: &str) -> bool {
+        self.value(node, path).is_some_and(|v| {
+            v.is_null() || v.as_str() == Some("") || v.as_array().is_some_and(Vec::is_empty)
+        })
+    }
+    pub fn source_region(&self, target: usize, selector: &str, source: usize) -> bool {
+        self.text(target, selector)
+            .zip(scope::scope(&self.nodes[source]).and_then(|s| s.region))
+            .is_some_and(|(wanted, actual)| wanted == actual.0)
+            && scope::scope(&self.nodes[target])
+                .and_then(|s| s.region)
+                .is_some()
+    }
     pub fn value(&self, index: usize, path: &str) -> Option<&Value> {
         let (v, m) = self.values[index];
         nested_references::value(v, m, path)
@@ -109,7 +122,9 @@ pub(super) fn indexed(kind: &str, path: &str, lookup: Lookup) -> bool {
 fn global(kind: &str) -> bool {
     matches!(
         kind,
-        "aws_iam_instance_profile"
+        "aws_organizations_organization"
+            | "aws_organizations_organizational_unit"
+            | "aws_iam_instance_profile"
             | "aws_iam_role"
             | "aws_iam_user"
             | "aws_iam_policy"

@@ -732,3 +732,7 @@ link a configured customer KMS ARN in `KMS` mode. Creation templates and pull
 through cache rules link explicit custom IAM roles. Cache rules can link a
 Secrets Manager secret by ARN, and pull-time exclusions link an IAM role or
 user by ARN. Templates, credentials and prefixes retain independent identities.
+
+## Verify AMI provenance and sharing references (#1432)
+
+AMI registrations link explicit snapshot mappings. Copies use the source image region and the destination KMS key, and images created from an instance link that instance. Permission helpers retain their identities. An account grantee can qualify a cross-account copy when the plan independently proves both accounts and the grant on the exact image.

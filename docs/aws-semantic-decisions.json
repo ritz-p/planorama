@@ -65057,7 +65057,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1432,
-      "gap": "#1432 — Missing: link configured per-device EBS snapshot IDs. Computed root_snapshot_id does not establish ownership. Batch and launch-configuration consumers already accept AMI identities.",
+      "gap": "#709 audit: #1432 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65071,8 +65071,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ami.",
         "ownership": "Not applicable: Independent image available to multiple consumers.",
         "network": "Intentionally unsupported: No subnet follows from a backing snapshot.",
-        "references": "Missing: link configured per-device EBS snapshot IDs. Computed root_snapshot_id does not establish ownership. Batch and launch-configuration consumers already accept AMI identities.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "references": "Supported: Verified explicit ebs_block_device.snapshot_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude UEFI data and image manifests.",
         "officialDocumentation": "website/docs/r/ami.html.markdown",
         "shapes": {
@@ -65105,7 +65105,9 @@
           "src/provider/aws/batch_configuration.rs",
           "tests/unit/semantic/batch_configuration.rs",
           "src/provider/aws/autoscaling_network.rs",
-          "tests/unit/semantic/autoscaling_network.rs"
+          "tests/unit/semantic/autoscaling_network.rs",
+          "src/provider/aws/ec2_images.rs",
+          "tests/unit/semantic/ec2_images.rs"
         ],
         "managedDataContract": "Managed registration resourceAMI. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -65165,7 +65167,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1432,
-      "gap": "#1432 — Missing: match the source image in the explicit source region and the destination encryption key in the copy region. Require independent evidence for cross-account sharing.",
+      "gap": "#709 audit: #1432 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65180,8 +65182,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ami_copy.",
         "ownership": "Not applicable: Copy has its own image identity.",
         "network": "Intentionally unsupported: An Outpost destination does not identify a VPC.",
-        "references": "Missing: match the source image in the explicit source region and the destination encryption key in the copy region. Require independent evidence for cross-account sharing.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit source_ami_id, kms_key_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude copy progress and computed block devices.",
         "officialDocumentation": "website/docs/r/ami_copy.html.markdown",
         "shapes": {
@@ -65215,7 +65217,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/batch_configuration.rs",
-          "tests/unit/semantic/batch_configuration.rs"
+          "tests/unit/semantic/batch_configuration.rs",
+          "src/provider/aws/ec2_images.rs",
+          "tests/unit/semantic/ec2_images.rs"
         ],
         "managedDataContract": "Managed registration resourceAMICopy. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -65225,7 +65229,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1432,
-      "gap": "#1432 — Missing: link source_instance_id to a managed instance ID. Resulting snapshots are outputs of image creation.",
+      "gap": "#709 audit: #1432 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65238,8 +65242,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ami_from_instance.",
         "ownership": "Not applicable: Image survives its source instance.",
         "network": "Intentionally unsupported: Do not inherit the source instance subnet.",
-        "references": "Missing: link source_instance_id to a managed instance ID. Resulting snapshots are outputs of image creation.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit source_instance_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Reboot preference does not establish application consistency.",
         "officialDocumentation": "website/docs/r/ami_from_instance.html.markdown",
         "shapes": {
@@ -65265,17 +65269,19 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/batch_configuration.rs",
-          "tests/unit/semantic/batch_configuration.rs"
+          "tests/unit/semantic/batch_configuration.rs",
+          "src/provider/aws/ec2_images.rs",
+          "tests/unit/semantic/ec2_images.rs"
         ],
         "managedDataContract": "Managed registration resourceAMIFromInstance. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ami_launch_permission": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1432,
-      "gap": "#1432 — Missing: link the image and explicitly selected Organization or OU ARN. Account ID and public group are grantee selectors, never IAM principals inferred from strings.",
+      "gap": "#709 audit: #1432 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -65288,10 +65294,10 @@
           "organizational_unit_arn"
         ],
         "placement": "Supported: retain Logical Policy presentation for aws_ami_launch_permission.",
-        "ownership": "Missing: identify the owning image from image_id before grouping the grant; preserve the permission action.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Image permissions have no network boundary.",
-        "references": "Missing: link the image and explicitly selected Organization or OU ARN. Account ID and public group are grantee selectors, never IAM principals inferred from strings.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit image_id, organization_arn, organizational_unit_arn references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude effective access and organization membership expansion.",
         "officialDocumentation": "website/docs/r/ami_launch_permission.html.markdown",
         "shapes": {
@@ -65323,7 +65329,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_images.rs",
+          "tests/unit/semantic/ec2_images.rs"
         ],
         "managedDataContract": "Managed registration resourceAMILaunchPermission. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -66959,10 +66967,10 @@
       }
     },
     "aws_snapshot_create_volume_permission": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1432,
-      "gap": "#1432 — Missing: verify the selected snapshot ID. The numeric recipient is an AWS account selector, not an inferred IAM resource.",
+      "gap": "#709 audit: #1432 adds verified configuration references. See docs/aws-compute.md.",
       "review": {
         "issue": 709,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -66974,8 +66982,8 @@
         "placement": "Supported: retain Logical Policy presentation for aws_snapshot_create_volume_permission.",
         "ownership": "Not applicable: Grant is qualified by snapshot and recipient.",
         "network": "Intentionally unsupported: Permission does not place recipient resources.",
-        "references": "Missing: verify the selected snapshot ID. The numeric recipient is an AWS account selector, not an inferred IAM resource.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit snapshot_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude derived access and policy conclusions.",
         "officialDocumentation": "website/docs/r/snapshot_create_volume_permission.html.markdown",
         "shapes": {
@@ -66995,7 +67003,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ec2_images.rs",
+          "tests/unit/semantic/ec2_images.rs"
         ],
         "managedDataContract": "Managed registration resourceSnapshotCreateVolumePermission. No same-name data registration. No managed alias.",
         "dataContracts": {}
