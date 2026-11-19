@@ -111,3 +111,45 @@ fn configured_links_require_current_typed_evidence() {
         "disk_name"
     ));
 }
+
+#[test]
+fn cross_region_distribution_requires_verified_origin_account() {
+    let mut fixture: Value = serde_json::from_str(include_str!(
+        "../../fixtures/lightsail-configuration-plan.json"
+    ))
+    .unwrap();
+    let aws = &mut fixture["configuration"]["provider_config"];
+    aws["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]);
+    let mut origin = aws["aws"].clone();
+    origin["alias"] = json!("origin");
+    origin["expressions"]["region"] = json!({"constant_value":"us-west-2"});
+    aws["aws.origin"] = origin;
+    fixture["configuration"]["root_module"]["resources"][4]["provider_config_key"] =
+        json!("aws.origin");
+    fixture["resource_changes"][21]["change"]["after"]["origin"][0]["region_name"] =
+        json!("us-west-2");
+    let path = "origin.name";
+    let address = "aws_lightsail_distribution.sample21";
+    assert!(!verified(&fixture, address, path));
+    let verified_origin = |fixture: &Value| {
+        let plan = plan::evidence::tests::parse_fixture(&fixture.to_string()).unwrap();
+        let graph = semantic::transform(&plan);
+        let distribution = graph
+            .nodes
+            .iter()
+            .find(|node| node.address == address)
+            .unwrap();
+        distribution.references.iter().any(|reference| {
+            reference.attribute == path
+                && reference.complete
+                && !reference.dependency
+                && !reference.targets.is_empty()
+                && super::label(&distribution.resource_type, path) == Some(reference.label)
+        })
+    };
+    assert!(verified_origin(&fixture));
+    fixture["configuration"]["provider_config"]["aws.origin"]["expressions"]["assume_role"][0]["role_arn"]
+        ["constant_value"] = json!("arn:aws:iam::234567890123:role/Fixture");
+    assert!(!verified_origin(&fixture));
+}
