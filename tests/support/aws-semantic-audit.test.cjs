@@ -679,7 +679,7 @@ test('representative evidence includes nested network paths without asserting im
  const decisions=read('docs/aws-semantic-decisions.json').types;
  assert.equal(decisions.aws_apprunner_service.status,'Partial');
  assert.equal(decisions.aws_dynamodb_table.status,'Partial');
- assert.match(decisions.aws_dynamodb_table.gap,/NOT implemented/);
+ assert.match(decisions.aws_dynamodb_table.review.references,/configured import bucket.*explicit restore table/);
 });
 
 test('NoSQL audit covers its exact managed denominator with six dimensions and pinned contracts',()=>{

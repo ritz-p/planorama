@@ -1172,3 +1172,14 @@ Only the configured catalog, database, table, principal, registered location or 
 | `aws_lakeformation_resource_lf_tags` | `database.name`, `table.database_name`, `table_with_columns.database_name` | `aws_glue_catalog_database` (`name`) |
 |  | `table.name`, `table_with_columns.name` | `aws_glue_catalog_table` (`name`) |
 |  | `lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |
+
+## DynamoDB data movement
+
+Explicit configuration can link a table export to its source table ARN and
+S3 bucket name or ID. The export KMS path requires `s3_sse_algorithm = KMS`.
+Table imports can link the singleton `import_table.s3_bucket_source.bucket`
+to a managed S3 bucket by name or ID. An explicit bucket-owner selector must
+match verified endpoint account evidence. Restore source names and ARNs link
+only to the exact referenced table output in compatible provider scope.
+These links describe configured data movement and do not establish delivery
+status or containment.
