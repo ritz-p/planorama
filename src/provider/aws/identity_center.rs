@@ -59,7 +59,12 @@ fn scalar_shape(nodes: &[TerraformEntity], r: &AttributeReference, mode: EntityM
         && current(&nodes[r.sources[0]], mode)
 }
 
-fn compatible(nodes: &[TerraformEntity], target: usize, source: usize, global: bool) -> bool {
+pub(super) fn compatible(
+    nodes: &[TerraformEntity],
+    target: usize,
+    source: usize,
+    global: bool,
+) -> bool {
     let left = &nodes[target];
     let right = &nodes[source];
     super::eventbridge::bindings(
@@ -113,7 +118,7 @@ fn proof(nodes: &[TerraformEntity], r: &AttributeReference, evidence: &[(&Value,
     }
 }
 
-fn instance_bridge(
+pub(super) fn instance_bridge(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
     evidence: &[(&Value, &Value)],
