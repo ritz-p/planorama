@@ -64599,7 +64599,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1144,
-      "gap": "#726 audit: Missing: policy_store_id -> store.policy_store_id/id. Cognito pool.arn and complete client IDs require matching pool identity; OIDC issuer URL is not IAM provider identity. Missing: policy-store-owned identity_source helper with independent lifecycle. Implementation follow-up #1144. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: #1144 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -64611,9 +64611,9 @@
           "configuration.open_id_connect_configuration.issuer"
         ],
         "placement": "Supported: Identity / Unknown; Logical / Spatial (unresolved); Service(AmazonVerifiedPermissions) / Amazon Verified Permissions runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: policy-store-owned identity_source helper with independent lifecycle.",
+        "ownership": "Supported: Verified policy store owner preserves independent lifecycle.",
         "network": "Not applicable: aws_verifiedpermissions_identity_source is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: policy_store_id -> store.policy_store_id/id. Cognito pool.arn and complete client IDs require matching pool identity; OIDC issuer URL is not IAM provider identity.",
+        "references": "Supported: Explicit policy store identity and configured Cognito references. The OIDC issuer URL is not IAM provider identity.",
         "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional verifiedpermissions_identity_source summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/verifiedpermissions_identity_source.html.markdown",
@@ -64658,7 +64658,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/verifiedpermissions.rs",
+          "tests/unit/semantic/verifiedpermissions.rs"
         ]
       }
     },
@@ -64666,7 +64668,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1144,
-      "gap": "#726 audit: Missing: policy_store_id -> store.policy_store_id/id. template-linked policy_template_id -> template.policy_template_id with same policy_store_id; static Cedar statement and entity strings are not interpreted. Missing: policy-store-owned policy helper with independent lifecycle. Implementation follow-up #1144. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: #1144 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -64676,9 +64678,9 @@
           "definition.template_linked.policy_template_id"
         ],
         "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Service(AmazonVerifiedPermissions) / Amazon Verified Permissions runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: policy-store-owned policy helper with independent lifecycle.",
+        "ownership": "Supported: Verified policy store owner preserves independent lifecycle.",
         "network": "Not applicable: aws_verifiedpermissions_policy is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: policy_store_id -> store.policy_store_id/id. template-linked policy_template_id -> template.policy_template_id with same policy_store_id; static Cedar statement and entity strings are not interpreted.",
+        "references": "Supported: Explicit policy store identity and configured Cognito or same-store template references where applicable.",
         "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional verifiedpermissions_policy summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/verifiedpermissions_policy.html.markdown",
@@ -64708,7 +64710,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/verifiedpermissions.rs",
+          "tests/unit/semantic/verifiedpermissions.rs"
         ]
       }
     },
@@ -64716,7 +64720,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1144,
-      "gap": "#726 audit: Missing: policy_store_id -> store.policy_store_id/id. Cedar template statement is payload and excluded. Missing: policy-store-owned policy_template helper with independent lifecycle. Implementation follow-up #1144. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: #1144 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -64727,9 +64731,9 @@
           "statement"
         ],
         "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Service(AmazonVerifiedPermissions) / Amazon Verified Permissions runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: policy-store-owned policy_template helper with independent lifecycle.",
+        "ownership": "Supported: Verified policy store owner preserves independent lifecycle.",
         "network": "Not applicable: aws_verifiedpermissions_policy_template is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: policy_store_id -> store.policy_store_id/id. Cedar template statement is payload and excluded.",
+        "references": "Supported: Explicit policy store identity and configured Cognito or same-store template references where applicable.",
         "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional verifiedpermissions_policy_template summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/verifiedpermissions_policy_template.html.markdown",
@@ -64761,7 +64765,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/verifiedpermissions.rs",
+          "tests/unit/semantic/verifiedpermissions.rs"
         ]
       }
     },
@@ -64769,7 +64775,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1144,
-      "gap": "#726 audit: Missing: policy_store_id -> store.policy_store_id/id. Schema definition and computed namespaces are payloads, not resources. Missing: policy-store-owned schema helper with independent lifecycle. Implementation follow-up #1144. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#726 audit: #1144 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 726,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -64779,9 +64785,9 @@
           "definition"
         ],
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AmazonVerifiedPermissions) / Amazon Verified Permissions runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: policy-store-owned schema helper with independent lifecycle.",
+        "ownership": "Supported: Verified policy store owner preserves independent lifecycle.",
         "network": "Not applicable: aws_verifiedpermissions_schema is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: policy_store_id -> store.policy_store_id/id. Schema definition and computed namespaces are payloads, not resources.",
+        "references": "Supported: Explicit policy store identity and configured Cognito or same-store template references where applicable.",
         "scope": "Partial: scope from provider/resource-region evidence (IAM is Global; Roles Anywhere is Regional even without a region argument) in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional verifiedpermissions_schema summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/verifiedpermissions_schema.html.markdown",
@@ -64809,7 +64815,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/iam.rs",
           "tests/unit/semantic/iam.rs",
-          "tests/unit/semantic/identity_providers.rs"
+          "tests/unit/semantic/identity_providers.rs",
+          "src/provider/aws/verifiedpermissions.rs",
+          "tests/unit/semantic/verifiedpermissions.rs"
         ]
       }
     }

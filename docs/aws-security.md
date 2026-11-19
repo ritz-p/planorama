@@ -449,3 +449,12 @@ is a test-only example, not a CLI account-evidence bypass. Rendering that JSON
 alone deliberately shows no verified deployment link. Regenerate both example
 formats through the registered SVG generation script. Neither role ARNs nor
 credentials are copied into the output.
+
+## Verified Permissions configuration
+
+Identity sources, policies, templates and schemas link to an explicit policy
+store ID and keep their own Terraform actions. Template-linked policies
+require the same verified store on the policy and template. Cognito identity
+sources can link a pool ARN and a complete set of client IDs when every
+client belongs to the explicitly referenced pool. OIDC issuer strings and
+Cedar and schema contents do not identify managed endpoints.
