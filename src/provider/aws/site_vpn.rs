@@ -185,7 +185,7 @@ mod tests;
 
 fn gateway_vpc(e: &Evidence<'_>, gateway: usize) -> Option<usize> {
     let mut parents = std::collections::BTreeSet::new();
-    if !e.absent(gateway, "vpc_id") {
+    if e.has_argument(gateway, "vpc_id") {
         parents.insert(e.configured_endpoint(gateway, "vpc_id", "aws_vpc", &["id"])?);
     }
     for r in e.refs.iter().filter(|r| {
@@ -200,7 +200,8 @@ fn gateway_vpc(e: &Evidence<'_>, gateway: usize) -> Option<usize> {
         }
         parents.insert(e.configured_endpoint(r.target, "vpc_id", "aws_vpc", &["id"])?);
     }
-    (parents.len() == 1).then(|| parents.pop_first()).flatten()
+    let parent = parents.pop_first()?;
+    (parents.is_empty() && e.optional_vpc_matches(gateway, parent)).then_some(parent)
 }
 
 pub(super) fn present(raw: &Input, graph: &mut crate::model::Graph) {

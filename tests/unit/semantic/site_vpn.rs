@@ -79,3 +79,39 @@ fn configured_links_require_current_typed_evidence() {
         "customer_gateway_id"
     ));
 }
+
+#[test]
+fn standalone_attachment_proves_route_propagation_with_a_refreshed_gateway() {
+    let mut f: Value =
+        serde_json::from_str(include_str!("../../fixtures/site-vpn-plan.json")).unwrap();
+    f["configuration"]["root_module"]["resources"][2]["expressions"]
+        .as_object_mut()
+        .unwrap()
+        .remove("vpc_id");
+    for (kind, name, values, expressions) in [
+        (
+            "aws_route_table",
+            "rt",
+            json!({"id":"rtb-test","vpc_id":"vpc-test"}),
+            json!({"vpc_id":{"references":["aws_vpc.sample3.id"]}}),
+        ),
+        (
+            "aws_vpn_gateway_route_propagation",
+            "prop",
+            json!({"vpn_gateway_id":"vgw-test","route_table_id":"rtb-test"}),
+            json!({"vpn_gateway_id":{"references":["aws_vpn_gateway.sample2.id"]},"route_table_id":{"references":["aws_route_table.rt.id"]}}),
+        ),
+    ] {
+        f["resource_changes"].as_array_mut().unwrap().push(json!({"address":format!("{kind}.{name}"),"type":kind,"mode":"managed","name":name,"provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":values}}));
+        f["configuration"]["root_module"]["resources"].as_array_mut().unwrap().push(json!({"address":format!("{kind}.{name}"),"type":kind,"name":name,"mode":"managed","provider_config_key":"aws","expressions":expressions}));
+    }
+    for path in ["route_table_id", "vpn_gateway_id"] {
+        assert!(verified(&f, "aws_vpn_gateway_route_propagation.prop", path));
+    }
+    f["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("vpc-other");
+    assert!(!verified(
+        &f,
+        "aws_vpn_gateway_route_propagation.prop",
+        "route_table_id"
+    ));
+}

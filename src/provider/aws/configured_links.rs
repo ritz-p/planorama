@@ -107,6 +107,16 @@ impl Evidence<'_> {
         self.value(index, path)?.as_str().filter(|s| !s.is_empty())
     }
 
+    pub fn optional_vpc_matches(&self, node: usize, vpc: usize) -> bool {
+        if self.has_argument(node, "vpc_id") {
+            return self.configured_endpoint(node, "vpc_id", "aws_vpc", &["id"]) == Some(vpc);
+        }
+        self.absent(node, "vpc_id")
+            || self
+                .text(node, "vpc_id")
+                .is_some_and(|id| self.text(vpc, "id") == Some(id))
+    }
+
     pub fn same_endpoint(
         &self,
         a: usize,
