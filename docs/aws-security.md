@@ -483,3 +483,12 @@ An explicitly assigned alias key ARN can link to a matching current
 `aws_paymentcryptography_key.arn` in compatible provider scope. The alias
 keeps its own Terraform identity and action. An unassigned, unknown or
 unverified key leaves the alias independent.
+
+## Signer configuration
+
+Signing jobs link to an explicit managed profile name and the configured
+S3 source and destination bucket names. Profiles can link to a matching
+ACM certificate ARN in their singleton signing material block. A permission
+belongs to a verified profile and a configured profile version must equal the
+profile's known version. Object keys, principal strings and computed signed
+objects do not identify managed endpoints or effective permissions.

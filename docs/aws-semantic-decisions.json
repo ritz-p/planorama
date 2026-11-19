@@ -60857,7 +60857,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1136,
-      "gap": "#727 audit: Missing: profile_name -> profile.name and configured source/destination bucket names; source object version is not a runtime application. Not applicable: signing job keeps independent controller lifecycle; computed signed_object is not a new resource. Implementation follow-up #1136. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: #1136 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60872,7 +60872,7 @@
         "placement": "Supported: Controller / Unknown; Logical / Spatial (unresolved); Service(AWSSigner) / AWS Signer runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: signing job keeps independent controller lifecycle; computed signed_object is not a new resource.",
         "network": "Not applicable: aws_signer_signing_job is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: profile_name -> profile.name and configured source/destination bucket names; source object version is not a runtime application.",
+        "references": "Supported: Explicit profile name and source/destination bucket names.",
         "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional signer_signing_job summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/signer_signing_job.html.markdown",
@@ -60926,7 +60926,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/signer_configuration.rs",
+          "tests/unit/semantic/signer_configuration.rs"
         ]
       }
     },
@@ -60934,7 +60936,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1136,
-      "gap": "#727 audit: Missing: signing_material.certificate_arn -> ACM certificate.arn; version_arn differs from profile arn. Not applicable: profile is independent reusable configuration; signing parameters excluded. Implementation follow-up #1136. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: #1136 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60950,7 +60952,7 @@
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AWSSigner) / AWS Signer runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: profile is independent reusable configuration; signing parameters excluded.",
         "network": "Not applicable: aws_signer_signing_profile is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: signing_material.certificate_arn -> ACM certificate.arn; version_arn differs from profile arn.",
+        "references": "Supported: Explicit signing material ACM certificate ARN. Profile and version ARNs remain distinct.",
         "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional signer_signing_profile summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/signer_signing_profile.html.markdown",
@@ -61012,7 +61014,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/signer_configuration.rs",
+          "tests/unit/semantic/signer_configuration.rs"
         ]
       }
     },
@@ -61020,7 +61024,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1136,
-      "gap": "#727 audit: Missing: profile_name -> profile.name with optional exact version equality; account principal string alone is not identity ownership. Missing: profile-owned permission helper without effective access inference. Implementation follow-up #1136. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: #1136 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -61032,9 +61036,9 @@
           "action"
         ],
         "placement": "Supported: Policy / Unknown; Logical / Spatial (unresolved); Service(AWSSigner) / AWS Signer runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: profile-owned permission helper without effective access inference.",
+        "ownership": "Supported: Verified profile owner retains permission lifecycle.",
         "network": "Not applicable: aws_signer_signing_profile_permission is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: profile_name -> profile.name with optional exact version equality; account principal string alone is not identity ownership.",
+        "references": "Supported: Explicit profile name and optional verified version.",
         "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional signer_signing_profile_permission summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/signer_signing_profile_permission.html.markdown",
@@ -61067,7 +61071,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/signer_configuration.rs",
+          "tests/unit/semantic/signer_configuration.rs"
         ]
       }
     },

@@ -189,6 +189,7 @@ pub(crate) mod search_connections;
 pub(crate) mod secondary_network;
 pub(crate) mod secrets_manager;
 mod serverless_references;
+pub(crate) mod signer_configuration;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
