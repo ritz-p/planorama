@@ -508,3 +508,7 @@ Aggregation authorizations pair a grantee account with its authorized AWS region
 ## Verify AWS Config evaluation and remediation targets (#1473)
 
 Config rules reference Lambda evaluators only in custom Lambda mode. Remediation uses the Config rule name and a compatible SSM document name. Managed catalog identifiers and evaluation criteria stay independent of infrastructure.
+
+## Verify AWS Config recording and delivery references (#1474)
+
+Recorder status binds to a same-scope recorder by name. Recording roles, named delivery buckets, notification topics and encryption keys resolve independently. Delivery prefixes and conformance template URIs do not identify delivery targets.

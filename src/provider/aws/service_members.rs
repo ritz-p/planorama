@@ -259,6 +259,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("assessment_id", "Assessment", "Delegations")
             }
             "aws_auditmanager_assessment_report" => ("assessment_id", "Assessment", "Reports"),
+            "aws_config_configuration_recorder_status" => {
+                ("name", "Configuration recorder", "Recorder status")
+            }
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

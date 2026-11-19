@@ -71299,10 +71299,10 @@
       }
     },
     "aws_config_configuration_recorder": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Resolve its recorder IAM role. Recorded resource types select inventory.",
+      "gap": "#1474 — Verified configuration references: role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71315,7 +71315,7 @@
         "placement": "Supported: Logical Controller for the managed config_configuration_recorder declaration. Provides an AWS Config Configuration Recorder.",
         "ownership": "Not applicable: The managed config_configuration_recorder declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve its recorder IAM role. Recorded resource types select inventory.",
+        "references": "Supported: Verified configuration references: role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_configuration_recorder summaries.",
         "officialDocumentation": "website/docs/r/config_configuration_recorder.html.markdown",
@@ -71346,17 +71346,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationRecorder. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_configuration_recorder_status": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Bind enabled configuration to the same account/region recorder by name.",
+      "gap": "#1474 — Verified configuration references: name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71366,9 +71368,9 @@
           "is_enabled"
         ],
         "placement": "Supported: Logical Controller for the managed config_configuration_recorder_status declaration. Manages status of an AWS Config Configuration Recorder.",
-        "ownership": "Missing: use a verified name reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Bind enabled configuration to the same account/region recorder by name.",
+        "references": "Supported: Verified configuration references: name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_configuration_recorder_status summaries.",
         "officialDocumentation": "website/docs/r/config_configuration_recorder_status.html.markdown",
@@ -71391,17 +71393,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationRecorderStatus. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_conformance_pack": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Resolve the explicit delivery bucket; keep the template URI and delivery prefix separate.",
+      "gap": "#1474 — Verified configuration references: delivery_s3_bucket.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71414,7 +71418,7 @@
         "placement": "Supported: Logical Controller for the managed config_conformance_pack declaration. Manages a Config Conformance Pack",
         "ownership": "Not applicable: The managed config_conformance_pack declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the explicit delivery bucket; keep the template URI and delivery prefix separate.",
+        "references": "Supported: Verified configuration references: delivery_s3_bucket.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_conformance_pack summaries.",
         "officialDocumentation": "website/docs/r/config_conformance_pack.html.markdown",
@@ -71441,17 +71445,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceConformancePack. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_delivery_channel": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Independently verify bucket name, SNS topic ARN and KMS key ARN. The shared channel is not owned by a recorder.",
+      "gap": "#1474 — Verified configuration references: s3_bucket_name, sns_topic_arn, s3_kms_key_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71464,7 +71470,7 @@
         "placement": "Supported: Logical Controller for the managed config_delivery_channel declaration. Provides an AWS Config Delivery Channel.",
         "ownership": "Not applicable: The managed config_delivery_channel declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Independently verify bucket name, SNS topic ARN and KMS key ARN. The shared channel is not owned by a recorder.",
+        "references": "Supported: Verified configuration references: s3_bucket_name, sns_topic_arn, s3_kms_key_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_delivery_channel summaries.",
         "officialDocumentation": "website/docs/r/config_delivery_channel.html.markdown",
@@ -71491,17 +71497,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceDeliveryChannel. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_organization_conformance_pack": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Resolve the named delivery bucket while preserving organization exclusion scope. Template content is opaque.",
+      "gap": "#1474 — Verified configuration references: delivery_s3_bucket.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71514,7 +71522,7 @@
         "placement": "Supported: Logical Controller for the managed config_organization_conformance_pack declaration. Manages a Config Organization Conformance Pack",
         "ownership": "Not applicable: The managed config_organization_conformance_pack declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the named delivery bucket while preserving organization exclusion scope. Template content is opaque.",
+        "references": "Supported: Verified configuration references: delivery_s3_bucket.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_organization_conformance_pack summaries.",
         "officialDocumentation": "website/docs/r/config_organization_conformance_pack.html.markdown",
@@ -71544,7 +71552,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConformancePack. No same-name data source in 6.70.0.",
         "dataContracts": {}
