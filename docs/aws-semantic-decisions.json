@@ -26100,10 +26100,10 @@
       }
     },
     "aws_glue_data_catalog_encryption_settings": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 848,
-      "gap": "#722 reviewed: Missing: mode-gated KMS ARNs (despite _id field names) and IAM role; catalog_id may be cross-account and is not unique resource ownership. Follow-up #848.",
+      "gap": "#722 reviewed: Implemented #848. Explicit connection password key, catalog encryption key, catalog encryption role. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26119,7 +26119,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_glue_data_catalog_encryption_settings remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_glue_data_catalog_encryption_settings has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: mode-gated KMS ARNs (despite _id field names) and IAM role; catalog_id may be cross-account and is not unique resource ownership.",
+        "references": "Supported: Explicit connection password key, catalog encryption key, catalog encryption role.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: catalog_id/data_catalog_encryption_settings.connection_password_encryption.aws_kms_key_id identity navigation belongs to #848; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/glue_data_catalog_encryption_settings.html.markdown",
@@ -26544,10 +26544,10 @@
       }
     },
     "aws_glue_security_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 848,
-      "gap": "#722 reviewed: Missing: mode-gated KMS ARN references for CloudWatch/bookmarks/S3; shared security configuration not embedded in first consumer. Follow-up #848.",
+      "gap": "#722 reviewed: Implemented #848. Explicit security configuration key. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26564,7 +26564,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_glue_security_configuration remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_glue_security_configuration has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: mode-gated KMS ARN references for CloudWatch/bookmarks/S3; shared security configuration not embedded in first consumer.",
+        "references": "Supported: Explicit security configuration key.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: name/encryption_configuration.cloudwatch_encryption.cloudwatch_encryption_mode identity navigation belongs to #848; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/glue_security_configuration.html.markdown",

@@ -1131,3 +1131,13 @@ A scheduled target requires a table in the explicitly configured database. Datab
 |  | `kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
 |  | `notification_configuration.sns_configuration.topic_arn` | `aws_sns_topic` (`arn`) |
 |  | `error_report_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+
+### Glue catalog encryption
+
+A catalog or shared security configuration references a KMS key only for a matching encryption mode. The catalog encryption service role is specific to SSE-KMS-WITH-SERVICE-ROLE. An explicit foreign catalog ID remains a selector.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_glue_data_catalog_encryption_settings` | `data_catalog_encryption_settings.connection_password_encryption.aws_kms_key_id`, `data_catalog_encryption_settings.encryption_at_rest.sse_aws_kms_key_id` | `aws_kms_key` (`arn`) |
+|  | `data_catalog_encryption_settings.encryption_at_rest.catalog_encryption_service_role` | `aws_iam_role` (`arn`) |
+| `aws_glue_security_configuration` | `encryption_configuration.cloudwatch_encryption.kms_key_arn`, `encryption_configuration.job_bookmarks_encryption.kms_key_arn`, `encryption_configuration.s3_encryption.kms_key_arn` | `aws_kms_key` (`arn`) |

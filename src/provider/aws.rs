@@ -89,6 +89,7 @@ mod fsx;
 pub(crate) mod global_accelerator;
 mod glue;
 pub(crate) mod glue_catalog;
+pub(crate) mod glue_encryption;
 mod glue_network;
 pub(crate) mod glue_workloads;
 mod iam;
