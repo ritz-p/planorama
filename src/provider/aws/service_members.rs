@@ -265,6 +265,51 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_detective_organization_configuration" => {
                 ("graph_arn", "Detective graph", "Organization configuration")
             }
+            "aws_guardduty_detector_feature" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_filter" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_invite_accepter" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_ipset" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_member" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_member_detector_feature" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_organization_configuration" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_organization_configuration_feature" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_threatintelset" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

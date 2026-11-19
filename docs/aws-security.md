@@ -516,3 +516,7 @@ Recorder status binds to a same-scope recorder by name. Recording roles, named d
 ## Verify Detective graph relationships (#1475)
 
 Graph members and organization settings identify their graph by ARN. Invitation acceptance checks the graph administrator and region independently of the member. Explicit account references use the Organizations account ID.
+
+## Verify GuardDuty detector configuration and membership (#1476)
+
+GuardDuty helpers reference the configured regional detector ID. Member feature settings keep both the detector and member account. Administration, invitation and enrollment settings do not enumerate future members or expose finding filters and feeds.

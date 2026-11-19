@@ -1,0 +1,377 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_guardduty_detector_feature.sample0",
+      "mode": "managed",
+      "type": "aws_guardduty_detector_feature",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_detector.sample1",
+      "mode": "managed",
+      "type": "aws_guardduty_detector",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_filter.sample2",
+      "mode": "managed",
+      "type": "aws_guardduty_filter",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_invite_accepter.sample3",
+      "mode": "managed",
+      "type": "aws_guardduty_invite_accepter",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture",
+          "master_account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_ipset.sample4",
+      "mode": "managed",
+      "type": "aws_guardduty_ipset",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_member.sample5",
+      "mode": "managed",
+      "type": "aws_guardduty_member",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture",
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_member_detector_feature.sample6",
+      "mode": "managed",
+      "type": "aws_guardduty_member_detector_feature",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture",
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_organization_configuration.sample7",
+      "mode": "managed",
+      "type": "aws_guardduty_organization_configuration",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_organization_configuration_feature.sample8",
+      "mode": "managed",
+      "type": "aws_guardduty_organization_configuration_feature",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_threatintelset.sample9",
+      "mode": "managed",
+      "type": "aws_guardduty_threatintelset",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "detector_id": "guardduty_detector-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample10",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample10",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_guardduty_organization_admin_account.sample11",
+      "mode": "managed",
+      "type": "aws_guardduty_organization_admin_account",
+      "name": "sample11",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "admin_account_id": "123456789012"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_guardduty_detector_feature.sample0",
+          "mode": "managed",
+          "type": "aws_guardduty_detector_feature",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_detector.sample1",
+          "mode": "managed",
+          "type": "aws_guardduty_detector",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_guardduty_filter.sample2",
+          "mode": "managed",
+          "type": "aws_guardduty_filter",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_invite_accepter.sample3",
+          "mode": "managed",
+          "type": "aws_guardduty_invite_accepter",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            },
+            "master_account_id": {
+              "references": [
+                "aws_organizations_account.sample10.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_ipset.sample4",
+          "mode": "managed",
+          "type": "aws_guardduty_ipset",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_member.sample5",
+          "mode": "managed",
+          "type": "aws_guardduty_member",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            },
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample10.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_member_detector_feature.sample6",
+          "mode": "managed",
+          "type": "aws_guardduty_member_detector_feature",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            },
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample10.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_organization_configuration.sample7",
+          "mode": "managed",
+          "type": "aws_guardduty_organization_configuration",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_organization_configuration_feature.sample8",
+          "mode": "managed",
+          "type": "aws_guardduty_organization_configuration_feature",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_guardduty_threatintelset.sample9",
+          "mode": "managed",
+          "type": "aws_guardduty_threatintelset",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {
+            "detector_id": {
+              "references": [
+                "aws_guardduty_detector.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.sample10",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample10",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_guardduty_organization_admin_account.sample11",
+          "mode": "managed",
+          "type": "aws_guardduty_organization_admin_account",
+          "name": "sample11",
+          "provider_config_key": "aws",
+          "expressions": {
+            "admin_account_id": {
+              "references": [
+                "aws_organizations_account.sample10.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

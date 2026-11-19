@@ -72122,10 +72122,10 @@
       }
     },
     "aws_guardduty_detector_feature": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the regional detector ID. Feature name and configured status are scoped to that detector.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72136,9 +72136,9 @@
           "status"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_detector_feature declaration. Provides a resource to manage an Amazon GuardDuty detector feature",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the regional detector ID. Feature name and configured status are scoped to that detector.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_detector_feature summaries.",
         "officialDocumentation": "website/docs/r/guardduty_detector_feature.html.markdown",
@@ -72165,17 +72165,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceDetectorFeature. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_filter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Join the filter to the regional detector. Finding selectors never identify protected endpoints.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72186,9 +72188,9 @@
           "name"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_filter declaration. Provides a resource to manage a GuardDuty filter",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Join the filter to the regional detector. Finding selectors never identify protected endpoints.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_filter summaries.",
         "officialDocumentation": "website/docs/r/guardduty_filter.html.markdown",
@@ -72215,17 +72217,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceFilter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_invite_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the member's detector and administrator account separately, preserving the provider's legacy field name.",
+      "gap": "#1476 — Verified configuration references: detector_id, master_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72235,9 +72239,9 @@
           "master_account_id"
         ],
         "placement": "Supported: Logical Association for the managed guardduty_invite_accepter declaration. Provides a resource to accept a pending GuardDuty invite on creation, ensure the detector has the correct primary account on read, and disassociate with the primary account upon removal.",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the member's detector and administrator account separately, preserving the provider's legacy field name.",
+        "references": "Supported: Verified configuration references: detector_id, master_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_invite_accepter summaries.",
         "officialDocumentation": "website/docs/r/guardduty_invite_accepter.html.markdown",
@@ -72260,17 +72264,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceInviteAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_ipset": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Join the detector. A list location is a document URL and its entries cannot prove network containment.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72281,9 +72287,9 @@
           "format"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_ipset declaration. ",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Join the detector. A list location is a document URL and its entries cannot prove network containment.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_ipset summaries.",
         "officialDocumentation": "website/docs/r/guardduty_ipset.html.markdown",
@@ -72310,7 +72316,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceIPSet. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72364,10 +72372,10 @@
       }
     },
     "aws_guardduty_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Join detector and member account. Invitation messages and computed relationship status do not prove acceptance.",
+      "gap": "#1476 — Verified configuration references: detector_id, account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72378,9 +72386,9 @@
           "relationship_status"
         ],
         "placement": "Supported: Logical Association for the managed guardduty_member declaration. Provides a resource to manage a GuardDuty member",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Join detector and member account. Invitation messages and computed relationship status do not prove acceptance.",
+        "references": "Supported: Verified configuration references: detector_id, account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_member summaries.",
         "officialDocumentation": "website/docs/r/guardduty_member.html.markdown",
@@ -72407,17 +72415,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_member_detector_feature": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve detector and account together. Qualify the feature within that membership.",
+      "gap": "#1476 — Verified configuration references: detector_id, account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72428,9 +72438,9 @@
           "name"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_member_detector_feature declaration. Provides a resource to manage an Amazon GuardDuty member account detector feature",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve detector and account together. Qualify the feature within that membership.",
+        "references": "Supported: Verified configuration references: detector_id, account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_member_detector_feature summaries.",
         "officialDocumentation": "website/docs/r/guardduty_member_detector_feature.html.markdown",
@@ -72457,17 +72467,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed newMemberDetectorFeatureResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the designated administrator by account ID.",
+      "gap": "#1476 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72478,7 +72490,7 @@
         "placement": "Supported: Logical Node for the managed guardduty_organization_admin_account declaration. Manages a GuardDuty Organization Admin Account",
         "ownership": "Not applicable: The managed guardduty_organization_admin_account declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the designated administrator by account ID.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/guardduty_organization_admin_account.html.markdown",
@@ -72497,17 +72509,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_organization_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Bind configuration to its detector. Legacy datasources and enrollment defaults do not enumerate members.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72518,9 +72532,9 @@
           "datasources"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_organization_configuration declaration. Manages the GuardDuty Organization Configuration",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Bind configuration to its detector. Legacy datasources and enrollment defaults do not enumerate members.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_organization_configuration summaries.",
         "officialDocumentation": "website/docs/r/guardduty_organization_configuration.html.markdown",
@@ -72547,17 +72561,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_organization_configuration_feature": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the detector for a named organization feature. Future enrollment remains unspecified.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72568,9 +72584,9 @@
           "auto_enable"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_organization_configuration_feature declaration. Provides a resource to manage an Amazon GuardDuty organization configuration feature",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the detector for a named organization feature. Future enrollment remains unspecified.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_organization_configuration_feature summaries.",
         "officialDocumentation": "website/docs/r/guardduty_organization_configuration_feature.html.markdown",
@@ -72597,7 +72613,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConfigurationFeature. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72659,10 +72677,10 @@
       }
     },
     "aws_guardduty_threatintelset": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the owning detector. Feed URL and contents do not identify AWS workload endpoints.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72673,9 +72691,9 @@
           "format"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_threatintelset declaration. ",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the owning detector. Feed URL and contents do not identify AWS workload endpoints.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_threatintelset summaries.",
         "officialDocumentation": "website/docs/r/guardduty_threatintelset.html.markdown",
@@ -72702,7 +72720,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceThreatIntelSet. No same-name data source in 6.70.0.",
         "dataContracts": {}
