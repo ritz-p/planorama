@@ -74,19 +74,48 @@ fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
             } else {
                 "configuration.0.provider_identity.0.principal"
             };
-            if let Some(account) = value(v, mask, path)
-                .and_then(Value::as_str)
-                .and_then(AwsAccountScope::new)
-            {
+            if let Some(principal) = value(v, mask, path).and_then(Value::as_str).filter(|s| {
+                AwsAccountScope::new(s).is_some()
+                    || [".amazonaws.com", ".amazon.com"].iter().any(|suffix| {
+                        s.strip_suffix(suffix).is_some_and(|prefix| {
+                            !prefix.is_empty()
+                                && prefix.split('.').all(|part| {
+                                    !part.is_empty()
+                                        && part.bytes().all(|b| {
+                                            b.is_ascii_lowercase()
+                                                || b.is_ascii_digit()
+                                                || b == b'-'
+                                        })
+                                })
+                        })
+                    })
+            }) {
                 details.push((
                     if kind == "aws_securitylake_subscriber" {
                         "subscriber_identity.principal"
                     } else {
                         "configuration.provider_identity.principal"
                     },
-                    "Principal account",
-                    account.as_str().to_owned(),
+                    "AWS principal",
+                    principal.to_owned(),
                 ));
+            }
+            if kind == "aws_securitylake_custom_log_source" {
+                if let Some((name, version)) = value(v, mask, "source_name")
+                    .and_then(Value::as_str)
+                    .filter(|s| !s.is_empty())
+                    .zip(
+                        value(v, mask, "source_version")
+                            .and_then(Value::as_str)
+                            .filter(|s| !s.is_empty()),
+                    )
+                {
+                    details.push((
+                        "source_version",
+                        "Custom log source",
+                        format!("{name} / {version}"),
+                    ));
+                }
             }
         }
         "aws_securitylake_data_lake" => {
