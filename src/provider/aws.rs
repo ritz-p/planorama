@@ -2,6 +2,7 @@ pub(crate) mod accountaccess_configuration;
 pub(crate) mod agentcore_gateway;
 pub(crate) mod agentcore_runtime;
 pub(crate) mod agentcore_services;
+pub(crate) mod ai_service_configuration;
 mod aliases;
 mod analytics_databases;
 mod api_gateway;

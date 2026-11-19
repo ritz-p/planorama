@@ -314,3 +314,14 @@ stay independent of index ownership and do not set VPC placement.
 
 See the [SVG](../examples/kendra-index.svg) and
 [offline HTML](../examples/kendra-index.html).
+
+## Comprehend, Rekognition and Transcribe configuration
+
+Comprehend training roles and key references use exact managed endpoints.
+Training subnet and security-group context requires complete collections and a
+common proven VPC, and the trained model remains independent of that network.
+Rekognition stream processors link typed video input and IAM role. Face-search
+configuration links a Kinesis results stream and collection, while label
+configuration links an S3 bucket, SNS topic and configured encryption key.
+Transcribe language models link an explicit training data role ARN. Content,
+training URIs and observed runtime behavior remain outside the diagram.

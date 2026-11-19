@@ -33590,10 +33590,10 @@
       }
     },
     "aws_comprehend_document_classifier": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 881,
-      "gap": "Reviewed #725: document_classifier role and model/volume key links; version_name is part of model identity, not a separate child; S3 document contents excluded. #881. Training VPC context requires complete subnet/SG proof; no inference-runtime reachability. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 audit: #881 adds verified configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33606,10 +33606,10 @@
           "vpc_config.subnets",
           "vpc_config.security_group_ids"
         ],
-        "placement": "Supported: retain current Logical default for comprehend_document_classifier; independent configuration/data objects are not automatically spatial cards.",
+        "placement": "Supported: Logical model configuration with verified training context.",
         "ownership": "Not applicable: comprehend_document_classifier is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Training VPC context requires complete subnet/SG proof; no inference-runtime reachability. #881.",
-        "references": "Missing: document_classifier role and model/volume key links; version_name is part of model identity, not a separate child; S3 document contents excluded. #881.",
+        "references": "Supported: Explicit role and key references with complete training VPC evidence.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: language/mode could provide a bounded summary for comprehend_document_classifier; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/comprehend_document_classifier.html.markdown",
@@ -33664,15 +33664,17 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ai_service_configuration.rs",
+          "tests/unit/semantic/ai_service_configuration.rs"
         ]
       }
     },
     "aws_comprehend_entity_recognizer": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 881,
-      "gap": "Reviewed #725: entity_recognizer role and model/volume key links; version_name is part of model identity, not a separate child; S3 document contents excluded. #881. Training VPC context requires complete subnet/SG proof; no inference-runtime reachability. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 audit: #881 adds verified configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33685,10 +33687,10 @@
           "vpc_config.subnets",
           "vpc_config.security_group_ids"
         ],
-        "placement": "Supported: retain current Logical default for comprehend_entity_recognizer; independent configuration/data objects are not automatically spatial cards.",
+        "placement": "Supported: Logical model configuration with verified training context.",
         "ownership": "Not applicable: comprehend_entity_recognizer is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Training VPC context requires complete subnet/SG proof; no inference-runtime reachability. #881.",
-        "references": "Missing: entity_recognizer role and model/volume key links; version_name is part of model identity, not a separate child; S3 document contents excluded. #881.",
+        "references": "Supported: Explicit role and key references with complete training VPC evidence.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: language/mode could provide a bounded summary for comprehend_entity_recognizer; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/comprehend_entity_recognizer.html.markdown",
@@ -33743,7 +33745,9 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ai_service_configuration.rs",
+          "tests/unit/semantic/ai_service_configuration.rs"
         ]
       }
     },
@@ -33853,10 +33857,10 @@
       }
     },
     "aws_rekognition_stream_processor": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 881,
-      "gap": "Reviewed #725: Typed Kinesis video/data, S3, SNS, collection and role/key links; deprecated stream_processor_arn replaced by arn, not another identity. Labels/faces excluded. #881. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 audit: #881 adds verified configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -33870,10 +33874,10 @@
           "notification_channel.sns_topic_arn",
           "settings.face_search.collection_id"
         ],
-        "placement": "Missing: current Logical default hides an architecture-bearing service; review individual spatial presentation with verified relationships. #881.",
+        "placement": "Supported: Independent regional stream processor.",
         "ownership": "Not applicable: rekognition_stream_processor is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: rekognition_stream_processor has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Typed Kinesis video/data, S3, SNS, collection and role/key links; deprecated stream_processor_arn replaced by arn, not another identity. Labels/faces excluded. #881.",
+        "references": "Supported: Explicit IAM, Kinesis, S3, SNS, collection and KMS fields with modality checks.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: face-search versus connected-home mode could provide a bounded summary for rekognition_stream_processor; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/rekognition_stream_processor.html.markdown",
@@ -33931,7 +33935,9 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ai_service_configuration.rs",
+          "tests/unit/semantic/ai_service_configuration.rs"
         ]
       }
     },
@@ -36194,10 +36200,10 @@
       }
     },
     "aws_transcribe_language_model": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 881,
-      "gap": "Reviewed #725: Training data access role link; base_model_name selects service model, not another custom language model. S3 training/tuning URIs remain opaque. #881. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 audit: #881 adds verified configuration references. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -36210,7 +36216,7 @@
         "placement": "Supported: retain current Logical default for transcribe_language_model; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: transcribe_language_model is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: transcribe_language_model has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Training data access role link; base_model_name selects service model, not another custom language model. S3 training/tuning URIs remain opaque. #881.",
+        "references": "Supported: Explicit training-data role ARN; training and tuning URIs remain opaque.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: language code could provide a bounded summary for transcribe_language_model; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/transcribe_language_model.html.markdown",
@@ -36246,7 +36252,9 @@
           "src/provider/aws/containment.rs",
           "src/provider/aws/encryption.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/ai_service_configuration.rs",
+          "tests/unit/semantic/ai_service_configuration.rs"
         ]
       }
     },

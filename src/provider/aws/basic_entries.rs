@@ -1251,7 +1251,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_redshiftserverless_workgroup", "Amazon Redshift Serverless", Node, Spatial, Regional, Some(ResourceIcon::Redshift)),
     entry!("aws_rekognition_collection", "Amazon Rekognition", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonRekognition))),
     entry!("aws_rekognition_project", "Amazon Rekognition", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonRekognition))),
-    entry!("aws_rekognition_stream_processor", "Amazon Rekognition", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonRekognition))),
+    entry!("aws_rekognition_stream_processor", "Amazon Rekognition", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonRekognition))),
     entry!("aws_resiliencehub_resiliency_policy", "AWS Resilience Hub", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSResilienceHub))),
     entry!("aws_resiliencehubv2_assertion", "AWS Resilience Hub V2", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSResilienceHub))),
     entry!("aws_resiliencehubv2_input_source", "AWS Resilience Hub V2", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSResilienceHub))),
