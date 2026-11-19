@@ -176,7 +176,11 @@ fn organizations_grantees_can_be_managed_in_a_different_account() {
                 .references
                 .iter()
                 .any(|r| {
-                    r.attribute == field && r.complete && !r.dependency && !r.targets.is_empty()
+                    r.attribute == field
+                        && Some(r.label) == super::label("aws_ami_launch_permission", field)
+                        && r.complete
+                        && !r.dependency
+                        && !r.targets.is_empty()
                 })
         };
         assert!(valid(&f), "{field}");
