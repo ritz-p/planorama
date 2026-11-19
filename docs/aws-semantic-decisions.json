@@ -68135,10 +68135,10 @@
       }
     },
     "aws_ec2_transit_gateway_connect": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1442,
-      "gap": "#1442 — Missing: link the gateway and underlying transport VPC attachment by distinct IDs, require both to identify the same gateway. Return the Connect attachment ID for peers.",
+      "gap": "#711 audit: #1442 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68152,8 +68152,8 @@
         "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_connect.",
         "ownership": "Not applicable: Connect is a separate overlay attachment from its transport.",
         "network": "Intentionally unsupported: Underlying VPC attachment supplies transport, not subnet containment.",
-        "references": "Missing: link the gateway and underlying transport VPC attachment by distinct IDs, require both to identify the same gateway. Return the Connect attachment ID for peers.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_id, transport_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude inferred GRE tunnel state.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_connect.html.markdown",
         "shapes": {
@@ -68181,7 +68181,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_attachments.rs",
+          "tests/unit/semantic/transit_attachments.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayConnect. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -68211,7 +68213,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1442,
-      "gap": "#1442 — Missing: link only a Connect attachment ID. Network Manager may already reference the peer ARN; ordinary VPC attachment IDs are not Connect attachments.",
+      "gap": "#711 audit: #1442 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68223,10 +68225,10 @@
           "arn"
         ],
         "placement": "Supported: retain Logical Node presentation for aws_ec2_transit_gateway_connect_peer.",
-        "ownership": "Missing: identify each peer under its proven Connect attachment while retaining the Terraform peer identity.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Peer and inside addresses do not identify subnets or instances.",
-        "references": "Missing: link only a Connect attachment ID. Network Manager may already reference the peer ARN; ordinary VPC attachment IDs are not Connect attachments.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit BGP state and tunnel addresses.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_connect_peer.html.markdown",
         "shapes": {
@@ -68259,7 +68261,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/networkmanager.rs",
-          "tests/unit/semantic/networkmanager.rs"
+          "tests/unit/semantic/networkmanager.rs",
+          "src/provider/aws/transit_attachments.rs",
+          "tests/unit/semantic/transit_attachments.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayConnectPeer. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -68733,7 +68737,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1442,
-      "gap": "#1442 — Missing: verify requester and peer gateway ID independently, qualify the peer by region and account including provider default only when proved. Preserve Network Insights consumers.",
+      "gap": "#711 audit: #1442 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68748,8 +68752,8 @@
         "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_peering_attachment.",
         "ownership": "Not applicable: Cross-account peer is independently owned; acceptance has its own Terraform identity.",
         "network": "Intentionally unsupported: TGW peering spans networks and does not establish containment.",
-        "references": "Missing: verify requester and peer gateway ID independently, qualify the peer by region and account including provider default only when proved. Preserve Network Insights consumers.",
-        "scope": "Missing: peering attachment has no regional rule in scope.rs. Qualify the requester and peer separately using peer_account_id and peer_region; preserve verified caller account when present.",
+        "references": "Supported: Verified explicit transit_gateway_id, peer_transit_gateway_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit connectivity/acceptance conclusions from creation alone.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_peering_attachment.html.markdown",
         "shapes": {
@@ -68783,7 +68787,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/network_insights.rs",
-          "tests/unit/semantic/network_insights.rs"
+          "tests/unit/semantic/network_insights.rs",
+          "src/provider/aws/transit_attachments.rs",
+          "tests/unit/semantic/transit_attachments.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayPeeringAttachment. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -68806,10 +68812,10 @@
       }
     },
     "aws_ec2_transit_gateway_peering_attachment_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1442,
-      "gap": "#1442 — Missing: match the exact peering request ID on the accepting side with independently proven peer region/account. Returned gateway identifiers cannot replace the request reference.",
+      "gap": "#711 audit: #1442 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -68823,8 +68829,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_peering_attachment_accepter.",
         "ownership": "Not applicable: Acceptance adopts one side; do not coalesce Terraform nodes or transfer requester ownership.",
         "network": "Intentionally unsupported: Accepter cannot place either gateway in a VPC.",
-        "references": "Missing: match the exact peering request ID on the accepting side with independently proven peer region/account. Returned gateway identifiers cannot replace the request reference.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit live approval and connectivity status.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_peering_attachment_accepter.html.markdown",
         "shapes": {
@@ -68858,7 +68864,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_attachments.rs",
+          "tests/unit/semantic/transit_attachments.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayPeeringAttachmentAccepter. No same-name data registration. No managed alias.",
         "dataContracts": {}
@@ -69317,7 +69325,7 @@
       "status": "Partial",
       "priority": "P1",
       "issue": 1442,
-      "gap": "#1442 — Missing: verify TGW, VPC and every explicitly selected subnet on that VPC. Flow Logs already consume the attachment ID; association classification alone does not link its endpoints.",
+      "gap": "#711 audit: #1442 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69331,9 +69339,9 @@
         ],
         "placement": "Supported: retain Spatial Association presentation for aws_ec2_transit_gateway_vpc_attachment.",
         "ownership": "Not applicable: Attachment preserves distinct TGW and VPC owners.",
-        "network": "Missing: identify attachment subnets only with complete same-VPC evidence. Do not embed the TGW in any one attachment subnet.",
-        "references": "Missing: verify TGW, VPC and every explicitly selected subnet on that VPC. Flow Logs already consume the attachment ID; association classification alone does not link its endpoints.",
-        "scope": "Supported: regional when resource override or provider binding supplies the region. Account identity requires independent provider evidence.",
+        "network": "Supported: Attachment references require explicit VPC and complete same-VPC subnet evidence; the TGW remains independent.",
+        "references": "Supported: Verified explicit transit_gateway_id, vpc_id, subnet_ids references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit data-plane reachability and generated ENIs.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_vpc_attachment.html.markdown",
         "shapes": {
@@ -69370,7 +69378,9 @@
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/flow_logs.rs",
-          "tests/unit/semantic/flow_logs.rs"
+          "tests/unit/semantic/flow_logs.rs",
+          "src/provider/aws/transit_attachments.rs",
+          "tests/unit/semantic/transit_attachments.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayVPCAttachment. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -69393,10 +69403,10 @@
       }
     },
     "aws_ec2_transit_gateway_vpc_attachment_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1442,
-      "gap": "#1442 — Missing: match the accepted VPC attachment ID with independently proven requester and accepting TGW accounts. Computed subnet and VPC fields are observations.",
+      "gap": "#711 audit: #1442 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -69410,8 +69420,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_transit_gateway_vpc_attachment_accepter.",
         "ownership": "Not applicable: Adoption keeps requester and accepter actions distinct and independently filterable.",
         "network": "Intentionally unsupported: Accepter outputs do not place the TGW in the remote VPC.",
-        "references": "Missing: match the accepted VPC attachment ID with independently proven requester and accepting TGW accounts. Computed subnet and VPC fields are observations.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit transit_gateway_attachment_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit acceptance readiness.",
         "officialDocumentation": "website/docs/r/ec2_transit_gateway_vpc_attachment_accepter.html.markdown",
         "shapes": {
@@ -69442,7 +69452,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/transit_attachments.rs",
+          "tests/unit/semantic/transit_attachments.rs"
         ],
         "managedDataContract": "Managed registration resourceTransitGatewayVPCAttachmentAccepter. No same-name data registration. No managed alias.",
         "dataContracts": {}

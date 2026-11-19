@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::transit_attachments::resource(resource)
         && !super::client_vpn::resource(resource)
         && !super::local_gateways::resource(resource)
         && !super::site_vpn::resource(resource)
@@ -550,6 +551,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_route"
                 | "aws_vpc_endpoint"
                 | "aws_ec2_transit_gateway"
+                | "aws_ec2_transit_gateway_peering_attachment"
                 | "aws_ec2_transit_gateway_route_table"
                 | "aws_ec2_transit_gateway_route"
                 | "aws_lb"
