@@ -1,0 +1,143 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.sample0",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudhsm_v2_cluster.sample1",
+      "mode": "managed",
+      "type": "aws_cloudhsm_v2_cluster",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_id": "cluster-fixture",
+          "subnet_ids": [
+            "subnet-fixture"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample2",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudhsm_v2_hsm.sample3",
+      "mode": "managed",
+      "type": "aws_cloudhsm_v2_hsm",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_id": "cluster-fixture",
+          "subnet_id": "subnet-fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.sample0",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudhsm_v2_cluster.sample1",
+          "mode": "managed",
+          "type": "aws_cloudhsm_v2_cluster",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.sample2",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudhsm_v2_hsm.sample3",
+          "mode": "managed",
+          "type": "aws_cloudhsm_v2_hsm",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_id": {
+              "references": [
+                "aws_cloudhsm_v2_cluster.sample1.cluster_id"
+              ]
+            },
+            "subnet_id": {
+              "references": [
+                "aws_subnet.sample2.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

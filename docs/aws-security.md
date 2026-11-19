@@ -467,3 +467,12 @@ or group ID requires a typed and exclusive principal field plus explicit
 identity store evidence tied to the application's verified lookup.
 The role and principal remain independent of the application owner.
 Computed application or account identifiers supply no ownership or access proof.
+
+## CloudHSM configuration
+
+The cluster links to a complete set of explicit subnet IDs with a common
+verified VPC. Its VPC placement follows those subnet references. An HSM
+links to its cluster through the configured cluster ID and can link an
+explicit subnet whose proven VPC agrees with the cluster. Cluster ownership
+preserves each HSM action and identity. Computed VPC, security-group and
+network-interface identifiers do not create endpoints.

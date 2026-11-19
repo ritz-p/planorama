@@ -59120,7 +59120,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1132,
-      "gap": "#727 audit: Missing: complete subnet_ids -> subnet.id and independently matching VPC proof; computed SG/VPC outputs cannot synthesize nodes. Not applicable: independent cluster, source_backup_identifier is not a live cluster owner. Implementation follow-up #1132. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: #1132 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59135,7 +59135,7 @@
         "placement": "Supported: Node / Unknown; Spatial / Spatial (unresolved); Service(AWSCloudHSM) / AWS CloudHSM runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
         "ownership": "Not applicable: independent cluster, source_backup_identifier is not a live cluster owner.",
         "network": "Missing: complete explicit subnets and shared VPC proof, not inferred from computed vpc_id.",
-        "references": "Missing: complete subnet_ids -> subnet.id and independently matching VPC proof; computed SG/VPC outputs cannot synthesize nodes.",
+        "references": "Supported: Complete explicit subnet IDs with independently proven common VPC.",
         "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional cloudhsm_v2_cluster summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/cloudhsm_v2_cluster.html.markdown",
@@ -59192,7 +59192,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudhsm_configuration.rs",
+          "tests/unit/semantic/cloudhsm_configuration.rs"
         ]
       }
     },
@@ -59200,7 +59202,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1132,
-      "gap": "#727 audit: Missing: cluster_id -> cluster.cluster_id/id; optional subnet_id -> subnet.id with cluster consistency. Missing: HSM membership retains independently changed HSM identity; computed ENI never synthesized. Implementation follow-up #1132. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: #1132 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -59213,9 +59215,9 @@
           "hsm_id"
         ],
         "placement": "Supported: Node / Unknown; Spatial / Spatial (unresolved); Service(AWSCloudHSM) / AWS CloudHSM runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: HSM membership retains independently changed HSM identity; computed ENI never synthesized.",
+        "ownership": "Supported: Verified cluster owner retains independent HSM lifecycle.",
         "network": "Missing: configured subnet and cluster VPC agreement; AZ/IP equality is insufficient.",
-        "references": "Missing: cluster_id -> cluster.cluster_id/id; optional subnet_id -> subnet.id with cluster consistency.",
+        "references": "Supported: Explicit cluster ID and configured subnet with matching cluster VPC.",
         "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional cloudhsm_v2_hsm summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/cloudhsm_v2_hsm.html.markdown",
@@ -59252,7 +59254,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/cloudhsm_configuration.rs",
+          "tests/unit/semantic/cloudhsm_configuration.rs"
         ]
       }
     },

@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::cloudhsm_configuration::resource(resource)
         && !super::accountaccess_configuration::resource(resource)
         && !super::verifiedpermissions::resource(resource)
         && resource != "aws_verifiedpermissions_policy_store"

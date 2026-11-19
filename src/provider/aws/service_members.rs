@@ -143,6 +143,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Account Access application",
                 "Entitlements",
             ),
+            "aws_cloudhsm_v2_hsm" => ("cluster_id", "CloudHSM cluster", "HSMs"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
