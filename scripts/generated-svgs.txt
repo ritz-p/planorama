@@ -103,6 +103,7 @@ examples/redshift-serverless.svg
 examples/apprunner.svg
 examples/beanstalk-configuration.svg
 examples/qbusiness-application.svg
+examples/kendra-index.svg
 examples/opensearch-serverless.svg
 examples/batch.svg
 examples/networkfirewall.svg

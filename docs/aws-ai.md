@@ -279,3 +279,38 @@ Filtered targets remain unavailable.
 
 See the [SVG](../examples/qbusiness-application.svg) and
 [offline HTML](../examples/qbusiness-application.html).
+
+## Amazon Kendra
+
+An index has an independent regional card. A data source, experience, FAQ,
+query-suggestions block list or thesaurus stays Logical and links to its
+index when `index_id` matches an explicit `aws_kendra_index.id` reference.
+Each helper retains its own identity, action and coverage.
+
+| Configured input | Verified endpoint output |
+| --- | --- |
+| Index, data source, experience, FAQ, block list or thesaurus `role_arn` | `aws_iam_role.arn`; the data source must have a known non-`CUSTOM` type |
+| Index `server_side_encryption_configuration.kms_key_id` | Known symmetric KMS key with the same managed identifier contract as Q Business |
+| Index `user_token_configurations.jwt_token_type_configuration.secrets_manager_arn` | `aws_secretsmanager_secret.arn` when JWT `key_location` is `SECRET_MANAGER` |
+| Data source `configuration.s3_configuration.bucket_name` | `aws_s3_bucket.bucket` or `id` for legacy `S3` configuration |
+| Data source `custom_document_enrichment_configuration.role_arn` | `aws_iam_role.arn` |
+| Data source `custom_document_enrichment_configuration.{pre,post}_extraction_hook_configuration.lambda_arn` | `aws_lambda_function.arn` |
+| Data source `custom_document_enrichment_configuration.{pre,post}_extraction_hook_configuration.s3_bucket` | `aws_s3_bucket.bucket` or `id` |
+| Experience `configuration.content_source_configuration.data_source_ids` | `aws_kendra_data_source.data_source_id` |
+| Experience `configuration.content_source_configuration.faq_ids` | `aws_kendra_faq.faq_id` |
+| FAQ `s3_path.bucket`, block list or thesaurus `source_s3_path.bucket` | `aws_s3_bucket.bucket` |
+
+The symmetric-key check reads `customer_master_key_spec` on `aws_kms_key` or
+`key_spec` on replica and external keys. Nested configuration uses singleton
+lists. Each experience collection needs
+a complete set of known service IDs. Every listed resource must explicitly
+reference the same current index as the experience. Composite Terraform IDs,
+same-valued IDs from another index, and partially verified sets leave only
+Terraform provenance where available. Filtered targets remain unavailable.
+
+Template JSON, document keys, JWT signing-key URLs and crawler credentials
+do not produce managed endpoints. Hook functions, secrets, keys and buckets
+stay independent of index ownership and do not set VPC placement.
+
+See the [SVG](../examples/kendra-index.svg) and
+[offline HTML](../examples/kendra-index.html).
