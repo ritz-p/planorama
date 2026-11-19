@@ -69,3 +69,31 @@ fn configured_links_require_current_typed_evidence() {
         "configuration.cognito_user_pool_configuration.client_ids"
     ));
 }
+
+#[test]
+fn member_owner_preserves_known_provider_account() {
+    let parsed = plan::parse(include_str!(
+        "../../fixtures/verifiedpermissions-configuration-plan.json"
+    ))
+    .unwrap();
+    let graph = semantic::transform(&parsed);
+    let node = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == "aws_verifiedpermissions_policy.sample1")
+        .unwrap();
+    let owner = node.member_owner.as_ref().unwrap();
+    assert_eq!(
+        owner.target.address,
+        "aws_verifiedpermissions_policy_store.sample0"
+    );
+    assert_eq!(owner.section, "Policies");
+    assert_eq!(
+        node.entity
+            .scope
+            .as_ref()
+            .and_then(|scope| scope.account.as_ref())
+            .map(|account| account.as_str()),
+        Some("123456789012")
+    );
+}
