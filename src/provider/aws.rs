@@ -131,6 +131,7 @@ pub(crate) mod msk_delivery;
 mod nested_references;
 mod network;
 mod network_acl;
+pub(crate) mod network_insights;
 pub(crate) mod network_monitors;
 pub(crate) mod networkfirewall;
 pub(crate) mod networkfirewall_extended;

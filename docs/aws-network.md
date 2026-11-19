@@ -1042,3 +1042,22 @@ Compatible accounts, independently known endpoint regions, complete identities,
 unknown/sensitive masks, lifecycle and state boundaries are checked. Cross-account
 or incomplete evidence remains unresolved. Policy/segment/label contents, BGP,
 addresses and runtime routing are not interpreted or summarized.
+
+## Network Insights configuration
+
+Path inputs `source` and `destination` require exact managed Terraform outputs
+from the supported EC2 endpoint families. ID references require compatible
+account and region bindings. An explicit EC2 ARN can qualify an endpoint in
+another account when its region and account evidence agree. Computed
+`source_arn` and `destination_arn` do not establish references.
+
+An analysis links to a verified path ID and supported intermediate ARNs.
+Access scopes use complete ARN collections for source, destination and
+through-resource statements with compatible provider evidence. Resource
+types and addresses stay selectors. These links describe configuration and
+do not report current reachability or network containment.
+
+The endpoint and statement allowlists use the AWS
+[Reachability Analyzer](https://docs.aws.amazon.com/vpc/latest/reachability/how-reachability-analyzer-works.html)
+and [Network Access Analyzer](https://docs.aws.amazon.com/vpc/latest/network-access-analyzer/resource-statement.html)
+resource contracts.

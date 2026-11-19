@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"network-insights-configuration-plan","focus":"aws_ec2_network_insights_path.sample1","target":0,"mask":{"id":true}},
   {"fixture":"appmesh-configuration-plan","focus":"aws_appmesh_route.sample1","target":0,"mask":{"name":true}},
   {"fixture":"keyspaces-configuration-plan","focus":"aws_keyspaces_table.sample1","target":0,"mask":{"name":true}},
   {"fixture":"dynamodb-transfer-plan","focus":"aws_dynamodb_table_export.sample1","target":0,"mask":{"arn":true}},
