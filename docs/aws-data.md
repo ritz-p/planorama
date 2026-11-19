@@ -1186,9 +1186,11 @@ status or containment.
 
 ## Amazon Keyspaces configuration
 
-A keyspace has an independent regional card. A table retains its own identity
-and action while linking to the verified keyspace through
-`keyspace_name` → `aws_keyspaces_keyspace.name` or `id`.
+A keyspace has an independent regional card. A table can appear in the
+keyspace's Tables section through a verified `keyspace_name` reference to
+`aws_keyspaces_keyspace.name` or `id`. The embedded table retains its identity
+and action. Shared tables and tables with unresolved ownership remain in
+Logical Resources and retain any verified references.
 A singleton encryption configuration links `kms_key_identifier` to a managed
 KMS ARN when it selects `CUSTOMER_MANAGED_KMS_KEY`. Replication regions
 do not identify separate Terraform replicas or imply VPC membership.
