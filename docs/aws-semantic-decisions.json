@@ -23524,10 +23524,10 @@
       }
     },
     "aws_dlm_lifecycle_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 830,
-      "gap": "#720 reviewed: Missing: role ARN; destination-scoped copy KMS ARN; custom SSM document name/ARN (exclude AWS-owned sentinels). Tag selectors, regex snapshot events and target account lists do not establish protected-resource membership. Follow-up #830. Intentionally unsupported: tag selection, scripts and retention schedules cannot summarize actual snapshot coverage or successful execution.",
+      "gap": "#720 audit: #830 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -23545,7 +23545,7 @@
         "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: role ARN; destination-scoped copy KMS ARN; custom SSM document name/ARN (exclude AWS-owned sentinels). Tag selectors, regex snapshot events and target account lists do not establish protected-resource membership. Follow-up #830.",
+        "references": "Supported: Explicit execution role, custom Systems Manager document and destination-scoped copy KMS key.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Intentionally unsupported: tag selection, scripts and retention schedules cannot summarize actual snapshot coverage or successful execution.",
         "officialDocumentation": "website/docs/r/dlm_lifecycle_policy.html.markdown",
@@ -23603,14 +23603,18 @@
           "policy_details.schedule.create_rule.scripts.execution_handler": "required"
         },
         "managedData": "No same-name registered data source in pinned schema; managed contract only.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/recovery_configuration.rs",
+          "tests/unit/semantic/recovery_configuration.rs"
+        ]
       }
     },
     "aws_drs_replication_configuration_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 830,
-      "gap": "#720 reviewed: Missing: staging subnet ID, complete SG IDs and custom-mode KMS ARN. Defaults describe future replication servers, not existing managed EC2 instances. Follow-up #830. Deferred: DEFAULT/CUSTOM encryption and PUBLIC_IP/PRIVATE_IP routing need an explicitly plan-only summary contract; template settings do not establish live replication health.",
+      "gap": "#720 audit: #830 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -23624,10 +23628,10 @@
           "ebs_encryption_key_arn",
           "associate_default_security_group"
         ],
-        "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
+        "placement": "Supported: Staging context is attached to references; the template remains logical.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Missing: verified staging subnet/SG context in #830; retain logical template and never synthesize replication servers.",
-        "references": "Missing: staging subnet ID, complete SG IDs and custom-mode KMS ARN. Defaults describe future replication servers, not existing managed EC2 instances. Follow-up #830.",
+        "references": "Supported: Explicit subnet and complete configured security groups with common VPC proof, and custom-mode KMS ARN.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Deferred: DEFAULT/CUSTOM encryption and PUBLIC_IP/PRIVATE_IP routing need an explicitly plan-only summary contract; template settings do not establish live replication health.",
         "officialDocumentation": "website/docs/r/drs_replication_configuration_template.html.markdown",
@@ -23667,7 +23671,11 @@
           "associate_default_security_group": "required"
         },
         "managedData": "No same-name registered data source in pinned schema; managed contract only.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/recovery_configuration.rs",
+          "tests/unit/semantic/recovery_configuration.rs"
+        ]
       }
     },
     "aws_rbin_rule": {

@@ -159,6 +159,7 @@ pub(crate) mod query_logs;
 pub(crate) mod quicksight;
 pub(crate) mod rds_auxiliary;
 mod rds_proxy;
+pub(crate) mod recovery_configuration;
 mod redshift_cluster;
 mod redshift_endpoints;
 pub(crate) mod redshift_helpers;
