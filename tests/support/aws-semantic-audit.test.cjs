@@ -805,3 +805,18 @@ test('#728 distinguishes detector inputs, source selectors and service-produced 
   assert.match(review('inspector2_filter').references, /comparison operands/);
   assert.match(review('config_aggregate_authorization').scope, /^Missing:/);
 });
+
+test('#729 distinguishes Classic WAF scopes, WAFv2 endpoints and recovery control inputs', () => {
+  const decisions = auditedServiceTypes(729, [
+    'arcregionswitch', 'arczonalshift', 'fis', 'fms', 'resiliencehub', 'resiliencehubv2',
+    'route53recoverycontrolconfig', 'route53recoveryreadiness', 'shield', 'waf', 'wafregional', 'wafv2',
+  ], 67);
+  const review = type => decisions['aws_' + type].review;
+  assert.deepEqual(review('waf_rule').shapes['predicates.data_id'], ['set', 'string']);
+  assert.deepEqual(review('wafregional_rule').shapes['predicate.data_id'], ['set', 'string']);
+  assert.deepEqual(review('wafv2_web_acl_logging_configuration').shapes.log_destination_configs, [['set', 'string']]);
+  assert.equal(review('wafv2_web_acl_association').contracts.web_acl_arn, 'required');
+  assert.match(review('wafv2_web_acl_association').references, /#496/);
+  assert.match(review('route53recoverycontrolconfig_routing_control').references, /RECOVERY_CONTROL/);
+  assert.equal(review('resiliencehubv2_assertion').contracts.assertion_id, 'computed');
+});

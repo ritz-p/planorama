@@ -6996,22 +6996,227 @@
       }
     },
     "aws_wafv2_web_acl": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
+      "status": "Partial",
+      "priority": "P2",
       "issue": 496,
-      "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
+      "gap": "Preserve #496 inline group references, scoped CloudFront protection and regional associations. Resolve typed IP-set/regex-set references in structured statements without interpreting rule_json.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope",
+          "arn",
+          "rule.statement.rule_group_reference_statement.arn",
+          "rule.statement.ip_set_reference_statement.arn",
+          "rule.statement.regex_pattern_set_reference_statement.arn"
+        ],
+        "placement": "Supported: Spatial Policy for the managed wafv2_web_acl declaration. Creates a WAFv2 Web ACL resource.",
+        "ownership": "Not applicable: The managed wafv2_web_acl declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Partial: Preserve #496 inline group references, scoped CloudFront protection and regional associations. Resolve typed IP-set/regex-set references in structured statements without interpreting rule_json.",
+        "scope": "Supported: known CLOUDFRONT yields global scope; REGIONAL uses region evidence. Unknown scope stays unresolved.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_web_acl.html.markdown",
+        "shapes": {
+          "scope": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "rule.statement.rule_group_reference_statement.arn": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ],
+          "rule.statement.ip_set_reference_statement.arn": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ],
+          "rule.statement.regex_pattern_set_reference_statement.arn": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "scope": "required",
+          "arn": "computed",
+          "rule.statement.rule_group_reference_statement.arn": "required",
+          "rule.statement.ip_set_reference_statement.arn": "required",
+          "rule.statement.regex_pattern_set_reference_statement.arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/cloudfront_multitenant.rs",
+          "tests/unit/semantic/cloudfront_multitenant.rs"
+        ],
+        "managedDataContract": "Managed resourceWebACL. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "resource_arn": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "scope": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
     },
     "aws_wafv2_rule_group": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
+      "status": "Partial",
+      "priority": "P2",
       "issue": 496,
-      "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
+      "gap": "Existing #496 recognizes this group as a scoped ACL endpoint. Resolve the group's own typed IP-set and regex-set statement ARNs without interpreting rules_json.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope",
+          "arn",
+          "rule.statement.ip_set_reference_statement.arn",
+          "rule.statement.regex_pattern_set_reference_statement.arn"
+        ],
+        "placement": "Supported: Spatial Policy for the managed wafv2_rule_group declaration. Creates a WAFv2 rule group resource.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Partial: Existing #496 recognizes this group as a scoped ACL endpoint. Resolve the group's own typed IP-set and regex-set statement ARNs without interpreting rules_json.",
+        "scope": "Supported: known CLOUDFRONT yields global scope; REGIONAL uses region evidence. Unknown scope stays unresolved.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_rule_group summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_rule_group.html.markdown",
+        "shapes": {
+          "scope": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "rule.statement.ip_set_reference_statement.arn": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ],
+          "rule.statement.regex_pattern_set_reference_statement.arn": [
+            "set",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "scope": "required",
+          "arn": "computed",
+          "rule.statement.ip_set_reference_statement.arn": "required",
+          "rule.statement.regex_pattern_set_reference_statement.arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs"
+        ],
+        "managedDataContract": "Managed resourceRuleGroup. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "scope": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
     },
     "aws_wafv2_web_acl_association": {
-      "status": "Partial (bounded capabilities implemented)",
-      "priority": "P3",
+      "status": "Partial",
+      "priority": "P2",
       "issue": 496,
-      "gap": "Scope and protected-resource references implemented under strict evidence; rule/policy evaluation and runtime protection excluded."
+      "gap": "Existing #496 resolves a REGIONAL ACL and an application load balancer or REST API stage. Extend verified ARN matching to supported Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access targets.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "web_acl_arn"
+        ],
+        "placement": "Supported: Logical Association for the managed wafv2_web_acl_association declaration. Creates a WAFv2 Web ACL Association.",
+        "ownership": "Supported: association presentation requires verified, unambiguous ACL and protected endpoints; the ACL is independently reusable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Partial: Existing #496 resolves a REGIONAL ACL and an application load balancer or REST API stage. Extend verified ARN matching to supported Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access targets.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_association summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_web_acl_association.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "web_acl_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_arn": "required",
+          "web_acl_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/associations.rs",
+          "tests/unit/semantic/associations.rs"
+        ],
+        "managedDataContract": "Managed resourceWebACLAssociation. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
     },
     "aws_cloudwatch_event_bus": {
       "status": "Partial",
@@ -74443,6 +74648,3429 @@
           "tests/unit/resource_support.rs"
         ],
         "managedDataContract": "Managed newSubscriberNotificationResource. No same-name data source in 6.70.0. Deprecated managed attributes: endpoint_id.",
+        "dataContracts": {}
+      }
+    },
+    "aws_arcregionswitch_plan": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the plan execution role, configured alarms, routing controls and Lambda steps in their own account and region. Workflow definitions describe planned actions, not failover results.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "execution_role",
+          "regions",
+          "primary_region",
+          "associated_alarms.resource_identifier",
+          "associated_alarms.cross_account_role",
+          "workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn",
+          "workflow.step.custom_action_lambda_config.lambda.arn"
+        ],
+        "placement": "Supported: Logical Node for the managed arcregionswitch_plan declaration. Terraform resource for managing an Amazon ARC Region Switch Plan.",
+        "ownership": "Not applicable: The managed arcregionswitch_plan declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Amazon ARC (Application Recovery Controller) Region Switch control-plane configuration has no network placement contract for arcregionswitch_plan.",
+        "references": "Missing: Resolve the plan execution role, configured alarms, routing controls and Lambda steps in their own account and region. Workflow definitions describe planned actions, not failover results.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit workflow payloads and execution results from arcregionswitch_plan summaries.",
+        "officialDocumentation": "website/docs/r/arcregionswitch_plan.html.markdown",
+        "shapes": {
+          "execution_role": [
+            "string"
+          ],
+          "regions": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "primary_region": [
+            "string"
+          ],
+          "associated_alarms.resource_identifier": [
+            "set",
+            "string"
+          ],
+          "associated_alarms.cross_account_role": [
+            "set",
+            "string"
+          ],
+          "workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn": [
+            "list",
+            "list",
+            "list",
+            "set",
+            "list",
+            "string"
+          ],
+          "workflow.step.custom_action_lambda_config.lambda.arn": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "execution_role": "required",
+          "regions": "required",
+          "primary_region": "optional",
+          "associated_alarms.resource_identifier": "required",
+          "associated_alarms.cross_account_role": "optional",
+          "workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn": "required",
+          "workflow.step.custom_action_lambda_config.lambda.arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourcePlan. Separate same-name data lookup with its own selector contracts. Deprecated managed attributes: region.",
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_arczonalshift_autoshift_observer_notification_status": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional observer notification preference does not configure a notification target or protected endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "status"
+        ],
+        "placement": "Supported: Logical Controller for the managed arczonalshift_autoshift_observer_notification_status declaration. Manages the autoshift observer notification status for AWS Application Recovery Controller Zonal Shift.",
+        "ownership": "Not applicable: The managed arczonalshift_autoshift_observer_notification_status declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Amazon ARC (Application Recovery Controller) Zonal Shift control-plane configuration has no network placement contract for arczonalshift_autoshift_observer_notification_status.",
+        "references": "Intentionally unsupported: Regional observer notification preference does not configure a notification target or protected endpoint.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit alarm values and inferred availability from arczonalshift_autoshift_observer_notification_status summaries.",
+        "officialDocumentation": "website/docs/r/arczonalshift_autoshift_observer_notification_status.html.markdown",
+        "shapes": {
+          "status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "status": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAutoshiftObserverNotificationStatusResource. No same-name data source in 6.70.0. Deprecated managed attributes: id.",
+        "dataContracts": {}
+      }
+    },
+    "aws_arczonalshift_zonal_autoshift_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Identify the supported target and distinguish blocking alarms from outcome alarms. Their state does not describe current availability.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "blocking_alarms.alarm_identifier",
+          "outcome_alarms.alarm_identifier"
+        ],
+        "placement": "Supported: Logical Controller for the managed arczonalshift_zonal_autoshift_configuration declaration. Manages an AWS Application Recovery Controller Zonal Shift Zonal Autoshift Configuration.",
+        "ownership": "Not applicable: The managed arczonalshift_zonal_autoshift_configuration declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Amazon ARC (Application Recovery Controller) Zonal Shift control-plane configuration has no network placement contract for arczonalshift_zonal_autoshift_configuration.",
+        "references": "Missing: Identify the supported target and distinguish blocking alarms from outcome alarms. Their state does not describe current availability.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit alarm values and inferred availability from arczonalshift_zonal_autoshift_configuration summaries.",
+        "officialDocumentation": "website/docs/r/arczonalshift_zonal_autoshift_configuration.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "blocking_alarms.alarm_identifier": [
+            "list",
+            "string"
+          ],
+          "outcome_alarms.alarm_identifier": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_arn": "required",
+          "blocking_alarms.alarm_identifier": "required",
+          "outcome_alarms.alarm_identifier": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceZonalAutoshiftConfiguration. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_fis_experiment_template": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve explicit typed target ARNs, execution role, CloudWatch stop alarms, logging and report endpoints. Exclude dynamic filters, action parameters and inferred effects.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "target.resource_type",
+          "target.resource_arns",
+          "stop_condition.source",
+          "stop_condition.value",
+          "log_configuration.cloudwatch_logs_configuration.log_group_arn",
+          "log_configuration.s3_configuration.bucket_name",
+          "experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn",
+          "experiment_report_configuration.outputs.s3_configuration.bucket_name"
+        ],
+        "placement": "Supported: Logical Controller for the managed fis_experiment_template declaration. Provides an FIS Experiment Template.",
+        "ownership": "Not applicable: The managed fis_experiment_template declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
+        "references": "Missing: Resolve explicit typed target ARNs, execution role, CloudWatch stop alarms, logging and report endpoints. Exclude dynamic filters, action parameters and inferred effects.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_experiment_template summaries.",
+        "officialDocumentation": "website/docs/r/fis_experiment_template.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "target.resource_type": [
+            "set",
+            "string"
+          ],
+          "target.resource_arns": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "stop_condition.source": [
+            "set",
+            "string"
+          ],
+          "stop_condition.value": [
+            "set",
+            "string"
+          ],
+          "log_configuration.cloudwatch_logs_configuration.log_group_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "log_configuration.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "experiment_report_configuration.outputs.s3_configuration.bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "role_arn": "required",
+          "target.resource_type": "required",
+          "target.resource_arns": "optional",
+          "stop_condition.source": "required",
+          "stop_condition.value": "optional",
+          "log_configuration.cloudwatch_logs_configuration.log_group_arn": "required",
+          "log_configuration.s3_configuration.bucket_name": "required",
+          "experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn": "optional",
+          "experiment_report_configuration.outputs.s3_configuration.bucket_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceExperimentTemplate. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_fis_safety_lever_state": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "This regional lever configures a control-plane state. Its status and free-text reason identify no experiment template.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "state.status"
+        ],
+        "placement": "Supported: Logical Node for the managed fis_safety_lever_state declaration. Manages the state of an AWS FIS (Fault Injection Simulator) account safety lever.",
+        "ownership": "Not applicable: The managed fis_safety_lever_state declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
+        "references": "Intentionally unsupported: This regional lever configures a control-plane state. Its status and free-text reason identify no experiment template.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_safety_lever_state summaries.",
+        "officialDocumentation": "website/docs/r/fis_safety_lever_state.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "state.status": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "state.status": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSafetyLeverStateResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_fis_target_account_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the experiment template by ID and the optional role in the configured target account.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "experiment_template_id",
+          "account_id",
+          "role_arn"
+        ],
+        "placement": "Supported: Logical Controller for the managed fis_target_account_configuration declaration. Manages an AWS FIS (Fault Injection Simulator) Target Account Configuration.",
+        "ownership": "Missing: use a verified experiment_template_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
+        "references": "Missing: Resolve the experiment template by ID and the optional role in the configured target account.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_target_account_configuration summaries.",
+        "officialDocumentation": "website/docs/r/fis_target_account_configuration.html.markdown",
+        "shapes": {
+          "experiment_template_id": [
+            "string"
+          ],
+          "account_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "experiment_template_id": "required",
+          "account_id": "required",
+          "role_arn": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceTargetAccountConfiguration. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_fms_admin_account": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve an explicitly supplied delegated administrator. An omitted account ID is not evidence for another account node.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "account_id"
+        ],
+        "placement": "Supported: Logical Node for the managed fms_admin_account declaration. Provides a resource to associate/disassociate an AWS Firewall Manager administrator account",
+        "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
+        "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
+        "references": "Missing: Resolve an explicitly supplied delegated administrator. An omitted account ID is not evidence for another account node.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_admin_account summaries.",
+        "officialDocumentation": "website/docs/r/fms_admin_account.html.markdown",
+        "shapes": {
+          "account_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "account_id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceAdminAccount. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_fms_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve resource-set IDs and separately qualified account/OU include and exclude scopes. Treat managed_service_data as opaque.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_set_ids",
+          "include_map.account",
+          "include_map.orgunit",
+          "exclude_map.account",
+          "exclude_map.orgunit",
+          "security_service_policy_data.type"
+        ],
+        "placement": "Supported: Logical Policy for the managed fms_policy declaration. Provides a resource to create an AWS Firewall Manager policy",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
+        "references": "Missing: Resolve resource-set IDs and separately qualified account/OU include and exclude scopes. Treat managed_service_data as opaque.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_policy summaries.",
+        "officialDocumentation": "website/docs/r/fms_policy.html.markdown",
+        "shapes": {
+          "resource_set_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "include_map.account": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "include_map.orgunit": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "exclude_map.account": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "exclude_map.orgunit": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_service_policy_data.type": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_set_ids": "optional/computed",
+          "include_map.account": "optional",
+          "include_map.orgunit": "optional",
+          "exclude_map.account": "optional",
+          "exclude_map.orgunit": "optional",
+          "security_service_policy_data.type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourcePolicy. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_fms_resource_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "The set describes eligible types. No individual protected-resource identity is supplied by that list.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "resource_set.name",
+          "resource_set.resource_type_list"
+        ],
+        "placement": "Supported: Logical Node for the managed fms_resource_set declaration. Terraform resource for managing an AWS FMS (Firewall Manager) Resource Set.",
+        "ownership": "Not applicable: The managed fms_resource_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
+        "references": "Intentionally unsupported: The set describes eligible types. No individual protected-resource identity is supplied by that list.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_resource_set summaries.",
+        "officialDocumentation": "website/docs/r/fms_resource_set.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "resource_set.name": [
+            "list",
+            "string"
+          ],
+          "resource_set.resource_type_list": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "resource_set.name": "required",
+          "resource_set.resource_type_list": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceSetResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_resiliencehub_resiliency_policy": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Recovery objectives are policy targets. They do not identify protected resources or demonstrate recovery performance.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "tier",
+          "policy.az",
+          "policy.region"
+        ],
+        "placement": "Supported: Logical Policy for the managed resiliencehub_resiliency_policy declaration. Terraform resource for managing an AWS Resilience Hub Resiliency Policy.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: AWS Resilience Hub control-plane configuration has no network placement contract for resiliencehub_resiliency_policy.",
+        "references": "Intentionally unsupported: Recovery objectives are policy targets. They do not identify protected resources or demonstrate recovery performance.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit estimated costs and observed recovery performance from resiliencehub_resiliency_policy summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehub_resiliency_policy.html.markdown",
+        "shapes": {
+          "tier": [
+            "string"
+          ],
+          "policy.az": [
+            "list",
+            "list"
+          ],
+          "policy.region": [
+            "list",
+            "list"
+          ]
+        },
+        "contracts": {
+          "tier": "required",
+          "policy.az": "block",
+          "policy.region": "block"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResiliencyPolicyResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_resiliencehubv2_assertion": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the parent V2 service by ARN. The assertion text is opaque.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_arn",
+          "assertion_id"
+        ],
+        "placement": "Supported: Logical Node for the managed resiliencehubv2_assertion declaration. Terraform resource for managing an AWS Resilience Hub V2 Assertion.",
+        "ownership": "Missing: use a verified service_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_assertion.",
+        "references": "Missing: Resolve the parent V2 service by ARN. The assertion text is opaque.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_assertion summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_assertion.html.markdown",
+        "shapes": {
+          "service_arn": [
+            "string"
+          ],
+          "assertion_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "service_arn": "required",
+          "assertion_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAssertionResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_resiliencehubv2_input_source": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Join the service and explicitly selected CloudFormation stack or EKS cluster. Do not fetch state or design files or expand tag selections.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_arn",
+          "resource_configuration.cfn_stack_arn",
+          "resource_configuration.eks.cluster_arn",
+          "resource_configuration.tf_state_file_url",
+          "resource_configuration.design_file_s3_url"
+        ],
+        "placement": "Supported: Logical Node for the managed resiliencehubv2_input_source declaration. Terraform resource for managing an AWS Resilience Hub V2 Input Source.",
+        "ownership": "Missing: use a verified service_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_input_source.",
+        "references": "Missing: Join the service and explicitly selected CloudFormation stack or EKS cluster. Do not fetch state or design files or expand tag selections.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_input_source summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_input_source.html.markdown",
+        "shapes": {
+          "service_arn": [
+            "string"
+          ],
+          "resource_configuration.cfn_stack_arn": [
+            "list",
+            "string"
+          ],
+          "resource_configuration.eks.cluster_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "resource_configuration.tf_state_file_url": [
+            "list",
+            "string"
+          ],
+          "resource_configuration.design_file_s3_url": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "service_arn": "required",
+          "resource_configuration.cfn_stack_arn": "optional",
+          "resource_configuration.eks.cluster_arn": "required",
+          "resource_configuration.tf_state_file_url": "optional",
+          "resource_configuration.design_file_s3_url": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newInputSourceResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_resiliencehubv2_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the configured KMS key ARN. Shared access and recovery objectives do not identify service consumers.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id",
+          "arn",
+          "sharing_enabled"
+        ],
+        "placement": "Supported: Logical Policy for the managed resiliencehubv2_policy declaration. Terraform resource for managing an AWS Resilience Hub V2 Policy.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_policy.",
+        "references": "Missing: Resolve the configured KMS key ARN. Shared access and recovery objectives do not identify service consumers.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_policy summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_policy.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "sharing_enabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "kms_key_id": "optional",
+          "arn": "computed",
+          "sharing_enabled": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newPolicyResource. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_resiliencehubv2_service": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve policy, system, scoped journey IDs and IAM/KMS configuration independently. Regions restrict discovery and cannot enumerate discovered dependencies.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id",
+          "policy_arn",
+          "regions",
+          "associated_system.system_arn",
+          "associated_system.user_journey_ids",
+          "permission_model.invoker_role_name",
+          "permission_model.cross_account_role.cross_account_role_arn"
+        ],
+        "placement": "Supported: Logical Node for the managed resiliencehubv2_service declaration. Terraform resource for managing an AWS Resilience Hub V2 Service.",
+        "ownership": "Not applicable: The managed resiliencehubv2_service declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_service.",
+        "references": "Missing: Resolve policy, system, scoped journey IDs and IAM/KMS configuration independently. Regions restrict discovery and cannot enumerate discovered dependencies.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_service summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_service.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ],
+          "policy_arn": [
+            "string"
+          ],
+          "regions": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "associated_system.system_arn": [
+            "set",
+            "string"
+          ],
+          "associated_system.user_journey_ids": [
+            "set",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "permission_model.invoker_role_name": [
+            "list",
+            "string"
+          ],
+          "permission_model.cross_account_role.cross_account_role_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "kms_key_id": "optional",
+          "policy_arn": "optional",
+          "regions": "required",
+          "associated_system.system_arn": "required",
+          "associated_system.user_journey_ids": "optional",
+          "permission_model.invoker_role_name": "required",
+          "permission_model.cross_account_role.cross_account_role_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newServiceResource. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_resiliencehubv2_service_function": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the V2 service. Criticality is configuration, not an observation about availability.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_arn",
+          "service_function_id",
+          "criticality"
+        ],
+        "placement": "Supported: Logical Node for the managed resiliencehubv2_service_function declaration. Terraform resource for managing an AWS Resilience Hub V2 Service Function.",
+        "ownership": "Missing: use a verified service_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_service_function.",
+        "references": "Missing: Resolve the V2 service. Criticality is configuration, not an observation about availability.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_service_function summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_service_function.html.markdown",
+        "shapes": {
+          "service_arn": [
+            "string"
+          ],
+          "service_function_id": [
+            "string"
+          ],
+          "criticality": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "service_arn": "required",
+          "service_function_id": "computed",
+          "criticality": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newServiceFunctionResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_resiliencehubv2_system": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the configured KMS key. Returned OU and organization IDs are separate from configured membership.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_key_id",
+          "system_id",
+          "organization_id",
+          "ou_id"
+        ],
+        "placement": "Supported: Logical Node for the managed resiliencehubv2_system declaration. Terraform resource for managing an AWS Resilience Hub V2 System.",
+        "ownership": "Not applicable: The managed resiliencehubv2_system declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_system.",
+        "references": "Missing: Resolve the configured KMS key. Returned OU and organization IDs are separate from configured membership.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_system summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_system.html.markdown",
+        "shapes": {
+          "kms_key_id": [
+            "string"
+          ],
+          "system_id": [
+            "string"
+          ],
+          "organization_id": [
+            "string"
+          ],
+          "ou_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "kms_key_id": "optional",
+          "system_id": "computed",
+          "organization_id": "computed",
+          "ou_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSystemResource. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_resiliencehubv2_user_journey": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Join the system and policy by their distinct ARN types. The journey's own ID is an output.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "system_arn",
+          "policy_arn",
+          "user_journey_id"
+        ],
+        "placement": "Supported: Logical Node for the managed resiliencehubv2_user_journey declaration. Terraform resource for managing an AWS Resilience Hub V2 User Journey.",
+        "ownership": "Missing: use a verified system_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_user_journey.",
+        "references": "Missing: Join the system and policy by their distinct ARN types. The journey's own ID is an output.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_user_journey summaries.",
+        "officialDocumentation": "website/docs/r/resiliencehubv2_user_journey.html.markdown",
+        "shapes": {
+          "system_arn": [
+            "string"
+          ],
+          "policy_arn": [
+            "string"
+          ],
+          "user_journey_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "system_arn": "required",
+          "policy_arn": "optional",
+          "user_journey_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newUserJourneyResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoverycontrolconfig_cluster": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Cluster ARN is a reusable control-plane identity. Generated API endpoints and network_type do not identify subnets or AZs.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "cluster_endpoints",
+          "network_type"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoverycontrolconfig_cluster declaration. Provides an AWS Route 53 Recovery Control Config Cluster",
+        "ownership": "Not applicable: The managed route53recoverycontrolconfig_cluster declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Control Config control-plane configuration has no network placement contract for route53recoverycontrolconfig_cluster.",
+        "references": "Intentionally unsupported: Cluster ARN is a reusable control-plane identity. Generated API endpoints and network_type do not identify subnets or AZs.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit observed routing decisions and availability from route53recoverycontrolconfig_cluster summaries.",
+        "officialDocumentation": "website/docs/r/route53recoverycontrolconfig_cluster.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "cluster_endpoints": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "endpoint": "string",
+                  "region": "string"
+                }
+              ]
+            ]
+          ],
+          "network_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "cluster_endpoints": "computed",
+          "network_type": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCluster. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoverycontrolconfig_control_panel": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the explicitly selected cluster. A returned default-panel flag cannot identify a new managed cluster.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cluster_arn",
+          "arn",
+          "default_control_panel"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoverycontrolconfig_control_panel declaration. Provides an AWS Route 53 Recovery Control Config Control Panel",
+        "ownership": "Not applicable: The managed route53recoverycontrolconfig_control_panel declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Control Config control-plane configuration has no network placement contract for route53recoverycontrolconfig_control_panel.",
+        "references": "Missing: Resolve the explicitly selected cluster. A returned default-panel flag cannot identify a new managed cluster.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit observed routing decisions and availability from route53recoverycontrolconfig_control_panel summaries.",
+        "officialDocumentation": "website/docs/r/route53recoverycontrolconfig_control_panel.html.markdown",
+        "shapes": {
+          "cluster_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "default_control_panel": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "cluster_arn": "required",
+          "arn": "computed",
+          "default_control_panel": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceControlPanel. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoverycontrolconfig_routing_control": {
+      "status": "Partial",
+      "priority": "P2",
+      "gap": "Route 53 RECOVERY_CONTROL health checks already verify the routing control ARN. Resolve its own cluster and optional control panel; an omitted panel does not identify a declared default panel.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "cluster_arn",
+          "control_panel_arn"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoverycontrolconfig_routing_control declaration. Provides an AWS Route 53 Recovery Control Config Routing Control",
+        "ownership": "Not applicable: The managed route53recoverycontrolconfig_routing_control declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Control Config control-plane configuration has no network placement contract for route53recoverycontrolconfig_routing_control.",
+        "references": "Partial: Route 53 RECOVERY_CONTROL health checks already verify the routing control ARN. Resolve its own cluster and optional control panel; an omitted panel does not identify a declared default panel.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit observed routing decisions and availability from route53recoverycontrolconfig_routing_control summaries.",
+        "officialDocumentation": "website/docs/r/route53recoverycontrolconfig_routing_control.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "cluster_arn": [
+            "string"
+          ],
+          "control_panel_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "cluster_arn": "required",
+          "control_panel_arn": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/route53_health.rs",
+          "tests/unit/semantic/route53_health.rs"
+        ],
+        "managedDataContract": "Managed resourceRoutingControl. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoverycontrolconfig_safety_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Join the control panel and typed sets of routing control ARNs. Preserve asserted, gating and target roles without evaluating the rule.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "control_panel_arn",
+          "asserted_controls",
+          "gating_controls",
+          "target_controls",
+          "rule_config.type"
+        ],
+        "placement": "Supported: Logical Policy for the managed route53recoverycontrolconfig_safety_rule declaration. Provides an AWS Route 53 Recovery Control Config Safety Rule",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: AWS Route 53 Recovery Control Config control-plane configuration has no network placement contract for route53recoverycontrolconfig_safety_rule.",
+        "references": "Missing: Join the control panel and typed sets of routing control ARNs. Preserve asserted, gating and target roles without evaluating the rule.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit observed routing decisions and availability from route53recoverycontrolconfig_safety_rule summaries.",
+        "officialDocumentation": "website/docs/r/route53recoverycontrolconfig_safety_rule.html.markdown",
+        "shapes": {
+          "control_panel_arn": [
+            "string"
+          ],
+          "asserted_controls": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "gating_controls": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "target_controls": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "rule_config.type": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "control_panel_arn": "required",
+          "asserted_controls": "optional",
+          "gating_controls": "optional",
+          "target_controls": "optional",
+          "rule_config.type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSafetyRule. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoveryreadiness_cell": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve explicitly configured nested cell ARNs. Returned parent scopes are not inputs or evidence of workload ownership.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "cells",
+          "parent_readiness_scopes"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoveryreadiness_cell declaration. Provides an AWS Route 53 Recovery Readiness Cell",
+        "ownership": "Not applicable: The managed route53recoveryreadiness_cell declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_cell.",
+        "references": "Missing: Resolve explicitly configured nested cell ARNs. Returned parent scopes are not inputs or evidence of workload ownership.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_cell summaries.",
+        "officialDocumentation": "website/docs/r/route53recoveryreadiness_cell.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "cells": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "parent_readiness_scopes": [
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "cells": "optional",
+          "parent_readiness_scopes": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCell. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoveryreadiness_readiness_check": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the resource set by verified name in the same control-plane account. The association does not establish readiness.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_set_name",
+          "readiness_check_name"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoveryreadiness_readiness_check declaration. Provides an AWS Route 53 Recovery Readiness Readiness Check",
+        "ownership": "Not applicable: The managed route53recoveryreadiness_readiness_check declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_readiness_check.",
+        "references": "Missing: Resolve the resource set by verified name in the same control-plane account. The association does not establish readiness.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_readiness_check summaries.",
+        "officialDocumentation": "website/docs/r/route53recoveryreadiness_readiness_check.html.markdown",
+        "shapes": {
+          "resource_set_name": [
+            "string"
+          ],
+          "readiness_check_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_set_name": "required",
+          "readiness_check_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceReadinessCheck. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoveryreadiness_recovery_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Join configured cell ARNs as readiness scopes. A recovery group does not contain workload networks.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "cells",
+          "arn"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoveryreadiness_recovery_group declaration. Provides an AWS Route 53 Recovery Readiness Recovery Group",
+        "ownership": "Not applicable: The managed route53recoveryreadiness_recovery_group declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_recovery_group.",
+        "references": "Missing: Join configured cell ARNs as readiness scopes. A recovery group does not contain workload networks.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_recovery_group summaries.",
+        "officialDocumentation": "website/docs/r/route53recoveryreadiness_recovery_group.html.markdown",
+        "shapes": {
+          "cells": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "cells": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRecoveryGroup. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_route53recoveryreadiness_resource_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve type-compatible resource ARNs and explicit cell/group scopes per element. DNS target form uses its own hosted-zone and target contract.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_set_type",
+          "resources.resource_arn",
+          "resources.readiness_scopes",
+          "resources.dns_target_resource.hosted_zone_arn"
+        ],
+        "placement": "Supported: Logical Node for the managed route53recoveryreadiness_resource_set declaration. Provides an AWS Route 53 Recovery Readiness Resource Set",
+        "ownership": "Not applicable: The managed route53recoveryreadiness_resource_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_resource_set.",
+        "references": "Missing: Resolve type-compatible resource ARNs and explicit cell/group scopes per element. DNS target form uses its own hosted-zone and target contract.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_resource_set summaries.",
+        "officialDocumentation": "website/docs/r/route53recoveryreadiness_resource_set.html.markdown",
+        "shapes": {
+          "resource_set_type": [
+            "string"
+          ],
+          "resources.resource_arn": [
+            "list",
+            "string"
+          ],
+          "resources.readiness_scopes": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "resources.dns_target_resource.hosted_zone_arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_set_type": "required",
+          "resources.resource_arn": "optional",
+          "resources.readiness_scopes": "optional",
+          "resources.dns_target_resource.hosted_zone_arn": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceResourceSet. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_application_layer_automatic_response": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the protected resource ARN independently of the configured automatic response action.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "action"
+        ],
+        "placement": "Supported: Logical Node for the managed shield_application_layer_automatic_response declaration. Terraform resource for managing an AWS Shield Application Layer Automatic Response.",
+        "ownership": "Not applicable: The managed shield_application_layer_automatic_response declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Missing: Resolve the protected resource ARN independently of the configured automatic response action.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_application_layer_automatic_response summaries.",
+        "officialDocumentation": "website/docs/r/shield_application_layer_automatic_response.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "action": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_arn": "required",
+          "action": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newApplicationLayerAutomaticResponseResource. No same-name data source in 6.70.0. Deprecated managed attributes: id.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_drt_access_log_bucket_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the S3 log bucket and DRT role association ID. The association ID is not a role ARN.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "log_bucket",
+          "role_arn_association_id"
+        ],
+        "placement": "Supported: Logical Association for the managed shield_drt_access_log_bucket_association declaration. Terraform resource for managing an AWS Shield DRT Access Log Bucket Association.",
+        "ownership": "Not applicable: The managed shield_drt_access_log_bucket_association declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Missing: Resolve the S3 log bucket and DRT role association ID. The association ID is not a role ARN.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_drt_access_log_bucket_association summaries.",
+        "officialDocumentation": "website/docs/r/shield_drt_access_log_bucket_association.html.markdown",
+        "shapes": {
+          "log_bucket": [
+            "string"
+          ],
+          "role_arn_association_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "log_bucket": "required",
+          "role_arn_association_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newDRTAccessLogBucketAssociationResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_drt_access_role_arn_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the explicitly authorized DRT IAM role by ARN.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn"
+        ],
+        "placement": "Supported: Logical Association for the managed shield_drt_access_role_arn_association declaration. Terraform resource for managing an AWS Shield DRT Access Role ARN Association.",
+        "ownership": "Not applicable: The managed shield_drt_access_role_arn_association declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Missing: Resolve the explicitly authorized DRT IAM role by ARN.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_drt_access_role_arn_association summaries.",
+        "officialDocumentation": "website/docs/r/shield_drt_access_role_arn_association.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "role_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newDRTAccessRoleARNAssociationResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_proactive_engagement": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Proactive engagement configures subscription contact preferences. Contact records are private and cannot identify a managed principal.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "enabled",
+          "emergency_contact"
+        ],
+        "placement": "Supported: Logical Node for the managed shield_proactive_engagement declaration. Terraform resource for managing a AWS Shield Proactive Engagement.",
+        "ownership": "Not applicable: The managed shield_proactive_engagement declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Intentionally unsupported: Proactive engagement configures subscription contact preferences. Contact records are private and cannot identify a managed principal.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_proactive_engagement summaries.",
+        "officialDocumentation": "website/docs/r/shield_proactive_engagement.html.markdown",
+        "shapes": {
+          "enabled": [
+            "bool"
+          ],
+          "emergency_contact": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "enabled": "required",
+          "emergency_contact": "block"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newProactiveEngagementResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_protection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve a supported protected endpoint from the resource ARN. Keep the protection ARN distinct from its target.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "resource_arn",
+          "name"
+        ],
+        "placement": "Supported: Logical Node for the managed shield_protection declaration. Enables AWS Shield Advanced for a specific AWS resource.",
+        "ownership": "Not applicable: The managed shield_protection declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Missing: Resolve a supported protected endpoint from the resource ARN. Keep the protection ARN distinct from its target.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_protection summaries.",
+        "officialDocumentation": "website/docs/r/shield_protection.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "resource_arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "resource_arn": "required",
+          "name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceProtection. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "protection_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "resource_arn": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_shield_protection_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve individual member ARNs only for the ARBITRARY membership pattern. ALL or BY_RESOURCE_TYPE cannot enumerate protections.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "members",
+          "pattern",
+          "resource_type"
+        ],
+        "placement": "Supported: Logical Node for the managed shield_protection_group declaration. Creates a grouping of protected resources so they can be handled as a collective.",
+        "ownership": "Not applicable: The managed shield_protection_group declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Missing: Resolve individual member ARNs only for the ARBITRARY membership pattern. ALL or BY_RESOURCE_TYPE cannot enumerate protections.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_protection_group summaries.",
+        "officialDocumentation": "website/docs/r/shield_protection_group.html.markdown",
+        "shapes": {
+          "members": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "pattern": [
+            "string"
+          ],
+          "resource_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "members": "optional",
+          "pattern": "required",
+          "resource_type": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceProtectionGroup. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_protection_health_check_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the Route 53 health check ARN and Shield protection ID independently. Do not infer the health check outcome.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "health_check_arn",
+          "shield_protection_id"
+        ],
+        "placement": "Supported: Logical Association for the managed shield_protection_health_check_association declaration. Creates an association between a Route53 Health Check and a Shield Advanced protected resource.",
+        "ownership": "Not applicable: The managed shield_protection_health_check_association declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Missing: Resolve the Route 53 health check ARN and Shield protection ID independently. Do not infer the health check outcome.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_protection_health_check_association summaries.",
+        "officialDocumentation": "website/docs/r/shield_protection_health_check_association.html.markdown",
+        "shapes": {
+          "health_check_arn": [
+            "string"
+          ],
+          "shield_protection_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "health_check_arn": "required",
+          "shield_protection_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceProtectionHealthCheckAssociation. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_shield_subscription": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Account subscription renewal and destruction settings identify no particular protection or protected resource.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "auto_renew",
+          "skip_destroy"
+        ],
+        "placement": "Supported: Logical Controller for the managed shield_subscription declaration. Terraform resource for managing an AWS Shield Subscription.",
+        "ownership": "Not applicable: The managed shield_subscription declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: Protection of a resource does not place Shield in its network.",
+        "references": "Intentionally unsupported: Account subscription renewal and destruction settings identify no particular protection or protected resource.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_subscription summaries.",
+        "officialDocumentation": "website/docs/r/shield_subscription.html.markdown",
+        "shapes": {
+          "auto_renew": [
+            "string"
+          ],
+          "skip_destroy": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "auto_renew": "optional/computed",
+          "skip_destroy": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSubscriptionResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_byte_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: Byte comparisons select request content. Match strings and transformations supply no endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "byte_match_tuples.positional_constraint"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_byte_match_set declaration. Provides a AWS WAF Byte Match Set resource.",
+        "ownership": "Not applicable: The managed waf_byte_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: Byte comparisons select request content. Match strings and transformations supply no endpoint.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_byte_match_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_byte_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "byte_match_tuples.positional_constraint": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "byte_match_tuples.positional_constraint": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceByteMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_geo_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: Country constraints are request filters and cannot locate infrastructure.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "geo_match_constraint.type",
+          "geo_match_constraint.value"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_geo_match_set declaration. Provides a AWS WAF GeoMatchSet resource.",
+        "ownership": "Not applicable: The managed waf_geo_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: Country constraints are request filters and cannot locate infrastructure.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_geo_match_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_geo_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "geo_match_constraint.type": [
+            "set",
+            "string"
+          ],
+          "geo_match_constraint.value": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "geo_match_constraint.type": "required",
+          "geo_match_constraint.value": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceGeoMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_ipset": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: CIDR descriptors classify addresses. They cannot identify VPCs, subnets or workload ownership.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "ip_set_descriptors.type"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_ipset declaration. Provides a AWS WAF IPSet resource.",
+        "ownership": "Not applicable: The managed waf_ipset declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: CIDR descriptors classify addresses. They cannot identify VPCs, subnets or workload ownership.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_ipset summaries.",
+        "officialDocumentation": "website/docs/r/waf_ipset.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "ip_set_descriptors.type": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "ip_set_descriptors.type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceIPSet. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_waf_rate_based_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Global Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "predicates.type",
+          "predicates.data_id",
+          "rate_limit"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_rate_based_rule declaration. Provides a AWS WAF rule resource.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Global Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_rate_based_rule summaries.",
+        "officialDocumentation": "website/docs/r/waf_rate_based_rule.html.markdown",
+        "shapes": {
+          "predicates.type": [
+            "set",
+            "string"
+          ],
+          "predicates.data_id": [
+            "set",
+            "string"
+          ],
+          "rate_limit": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "predicates.type": "required",
+          "predicates.data_id": "required",
+          "rate_limit": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRateBasedRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_waf_regex_match_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Global Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "regex_match_tuple.regex_pattern_set_id"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_regex_match_set declaration. Provides a AWS WAF Regex Match Set resource.",
+        "ownership": "Not applicable: The managed waf_regex_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Global Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_regex_match_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_regex_match_set.html.markdown",
+        "shapes": {
+          "regex_match_tuple.regex_pattern_set_id": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "regex_match_tuple.regex_pattern_set_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRegexMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_regex_pattern_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: Reusable regex definitions have no outgoing resource contract. Expression contents stay opaque.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "regex_pattern_strings"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_regex_pattern_set declaration. Provides a AWS WAF Regex Pattern Set resource.",
+        "ownership": "Not applicable: The managed waf_regex_pattern_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: Reusable regex definitions have no outgoing resource contract. Expression contents stay opaque.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_regex_pattern_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_regex_pattern_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "regex_pattern_strings": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "regex_pattern_strings": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRegexPatternSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Global Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "predicates.type",
+          "predicates.data_id"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_rule declaration. Provides a AWS WAF rule resource.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Global Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_rule summaries.",
+        "officialDocumentation": "website/docs/r/waf_rule.html.markdown",
+        "shapes": {
+          "predicates.type": [
+            "set",
+            "string"
+          ],
+          "predicates.data_id": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "predicates.type": "required",
+          "predicates.data_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_waf_rule_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Global Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "activated_rule.rule_id",
+          "activated_rule.type"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_rule_group declaration. Provides a AWS WAF rule group resource.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Global Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_rule_group summaries.",
+        "officialDocumentation": "website/docs/r/waf_rule_group.html.markdown",
+        "shapes": {
+          "activated_rule.rule_id": [
+            "set",
+            "string"
+          ],
+          "activated_rule.type": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "activated_rule.rule_id": "required",
+          "activated_rule.type": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRuleGroup. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_size_constraint_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: Request-size constraints select content and do not identify AWS resources.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "size_constraints.comparison_operator",
+          "size_constraints.size"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_size_constraint_set declaration. The `aws_waf_size_constraint_set` resource provides an AWS WAF Size Constraint Set.",
+        "ownership": "Not applicable: The managed waf_size_constraint_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: Request-size constraints select content and do not identify AWS resources.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_size_constraint_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_size_constraint_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "size_constraints.comparison_operator": [
+            "set",
+            "string"
+          ],
+          "size_constraints.size": [
+            "set",
+            "number"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "size_constraints.comparison_operator": "required",
+          "size_constraints.size": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSizeConstraintSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_sql_injection_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: Request inspection tuples configure matching, with no infrastructure endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "sql_injection_match_tuples.text_transformation"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_sql_injection_match_set declaration. Provides a AWS WAF SQL Injection Match Set resource.",
+        "ownership": "Not applicable: The managed waf_sql_injection_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: Request inspection tuples configure matching, with no infrastructure endpoint.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_sql_injection_match_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_sql_injection_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "sql_injection_match_tuples.text_transformation": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "sql_injection_match_tuples.text_transformation": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSQLInjectionMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_waf_web_acl": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Global Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "rules.rule_id",
+          "rules.type",
+          "logging_configuration.log_destination"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_web_acl declaration. Provides a AWS WAF web access control group (ACL) resource.",
+        "ownership": "Not applicable: The managed waf_web_acl declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Global Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_web_acl summaries.",
+        "officialDocumentation": "website/docs/r/waf_web_acl.html.markdown",
+        "shapes": {
+          "rules.rule_id": [
+            "set",
+            "string"
+          ],
+          "rules.type": [
+            "set",
+            "string"
+          ],
+          "logging_configuration.log_destination": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "rules.rule_id": "required",
+          "rules.type": "optional",
+          "logging_configuration.log_destination": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebACL. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_waf_xss_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Global Classic: Request inspection and transformations declare no managed endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "xss_match_tuples.text_transformation"
+        ],
+        "placement": "Supported: Logical Policy for the managed waf_xss_match_set declaration. Provides a AWS WAF XssMatchSet resource.",
+        "ownership": "Not applicable: The managed waf_xss_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Global Classic: Request inspection and transformations declare no managed endpoint.",
+        "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_xss_match_set summaries.",
+        "officialDocumentation": "website/docs/r/waf_xss_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "xss_match_tuples.text_transformation": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "xss_match_tuples.text_transformation": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceXSSMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_byte_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: Byte comparisons select request content. Match strings and transformations supply no endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "byte_match_tuples.positional_constraint"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_byte_match_set declaration. Provides a AWS WAF Regional ByteMatchSet resource for use with ALB.",
+        "ownership": "Not applicable: The managed wafregional_byte_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: Byte comparisons select request content. Match strings and transformations supply no endpoint.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_byte_match_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_byte_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "byte_match_tuples.positional_constraint": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "byte_match_tuples.positional_constraint": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceByteMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_geo_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: Country constraints are request filters and cannot locate infrastructure.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "geo_match_constraint.type",
+          "geo_match_constraint.value"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_geo_match_set declaration. Provides a AWS WAF Regional Geo Match Set resource.",
+        "ownership": "Not applicable: The managed wafregional_geo_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: Country constraints are request filters and cannot locate infrastructure.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_geo_match_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_geo_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "geo_match_constraint.type": [
+            "set",
+            "string"
+          ],
+          "geo_match_constraint.value": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "geo_match_constraint.type": "required",
+          "geo_match_constraint.value": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceGeoMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_ipset": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: CIDR descriptors classify addresses. They cannot identify VPCs, subnets or workload ownership.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "ip_set_descriptor.type"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_ipset declaration. Provides a AWS WAF Regional IPSet resource for use with ALB.",
+        "ownership": "Not applicable: The managed wafregional_ipset declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: CIDR descriptors classify addresses. They cannot identify VPCs, subnets or workload ownership.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_ipset summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_ipset.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "ip_set_descriptor.type": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "ip_set_descriptor.type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceIPSet. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_wafregional_rate_based_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Regional Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "predicate.type",
+          "predicate.data_id",
+          "rate_limit"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_rate_based_rule declaration. Provides a AWS WAF Regional rate based rule resource.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Regional Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_rate_based_rule summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_rate_based_rule.html.markdown",
+        "shapes": {
+          "predicate.type": [
+            "set",
+            "string"
+          ],
+          "predicate.data_id": [
+            "set",
+            "string"
+          ],
+          "rate_limit": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "predicate.type": "required",
+          "predicate.data_id": "required",
+          "rate_limit": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRateBasedRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_wafregional_regex_match_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Regional Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "regex_match_tuple.regex_pattern_set_id"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_regex_match_set declaration. Provides a AWS WAF Regional Regex Match Set resource.",
+        "ownership": "Not applicable: The managed wafregional_regex_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Regional Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_regex_match_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_regex_match_set.html.markdown",
+        "shapes": {
+          "regex_match_tuple.regex_pattern_set_id": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "regex_match_tuple.regex_pattern_set_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRegexMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_regex_pattern_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: Reusable regex definitions have no outgoing resource contract. Expression contents stay opaque.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "regex_pattern_strings"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_regex_pattern_set declaration. Provides a AWS WAF Regional Regex Pattern Set resource.",
+        "ownership": "Not applicable: The managed wafregional_regex_pattern_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: Reusable regex definitions have no outgoing resource contract. Expression contents stay opaque.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_regex_pattern_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_regex_pattern_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "regex_pattern_strings": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "regex_pattern_strings": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRegexPatternSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Regional Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "predicate.type",
+          "predicate.data_id"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_rule declaration. Provides an AWS WAF Regional rule resource for use with ALB.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Regional Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_rule summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_rule.html.markdown",
+        "shapes": {
+          "predicate.type": [
+            "set",
+            "string"
+          ],
+          "predicate.data_id": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "predicate.type": "required",
+          "predicate.data_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_wafregional_rule_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Regional Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "activated_rule.rule_id",
+          "activated_rule.type"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_rule_group declaration. Provides a AWS WAF Regional Rule Group resource.",
+        "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Regional Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_rule_group summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_rule_group.html.markdown",
+        "shapes": {
+          "activated_rule.rule_id": [
+            "set",
+            "string"
+          ],
+          "activated_rule.type": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "activated_rule.rule_id": "required",
+          "activated_rule.type": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRuleGroup. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_size_constraint_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: Request-size constraints select content and do not identify AWS resources.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "size_constraints.comparison_operator",
+          "size_constraints.size"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_size_constraint_set declaration. Provides an AWS WAF Regional Size Constraint Set resource for use with ALB.",
+        "ownership": "Not applicable: The managed wafregional_size_constraint_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: Request-size constraints select content and do not identify AWS resources.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_size_constraint_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_size_constraint_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "size_constraints.comparison_operator": [
+            "set",
+            "string"
+          ],
+          "size_constraints.size": [
+            "set",
+            "number"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "size_constraints.comparison_operator": "required",
+          "size_constraints.size": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSizeConstraintSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_sql_injection_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: Request inspection tuples configure matching, with no infrastructure endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "sql_injection_match_tuple.text_transformation"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_sql_injection_match_set declaration. Provides a AWS WAF Regional SqlInjectionMatchSet resource for use with ALB.",
+        "ownership": "Not applicable: The managed wafregional_sql_injection_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: Request inspection tuples configure matching, with no infrastructure endpoint.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_sql_injection_match_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_sql_injection_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "sql_injection_match_tuple.text_transformation": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "sql_injection_match_tuple.text_transformation": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSQLInjectionMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_web_acl": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Regional Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "rule.rule_id",
+          "rule.type",
+          "logging_configuration.log_destination"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_web_acl declaration. Provides a AWS WAF Regional web access control group (ACL) resource for use with ALB.",
+        "ownership": "Not applicable: The managed wafregional_web_acl declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Regional Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_web_acl summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_web_acl.html.markdown",
+        "shapes": {
+          "rule.rule_id": [
+            "set",
+            "string"
+          ],
+          "rule.type": [
+            "set",
+            "string"
+          ],
+          "logging_configuration.log_destination": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "rule.rule_id": "required",
+          "rule.type": "optional",
+          "logging_configuration.log_destination": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebACL. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_wafregional_xss_match_set": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Regional Classic: Request inspection and transformations declare no managed endpoint.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "xss_match_tuple.text_transformation"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafregional_xss_match_set declaration. Provides an AWS WAF Regional XSS Match Set resource for use with ALB.",
+        "ownership": "Not applicable: The managed wafregional_xss_match_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Intentionally unsupported: Regional Classic: Request inspection and transformations declare no managed endpoint.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_xss_match_set summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_xss_match_set.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "xss_match_tuple.text_transformation": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "xss_match_tuple.text_transformation": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceXSSMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafregional_web_acl_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Regional Classic: Resolve a regional Classic ACL by ID and the supported protected endpoint by ARN. Require compatible regional evidence.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "web_acl_id",
+          "resource_arn"
+        ],
+        "placement": "Supported: Logical Association for the managed wafregional_web_acl_association declaration. Manages an association with WAF Regional Web ACL",
+        "ownership": "Not applicable: The managed wafregional_web_acl_association declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Regional Classic: Resolve a regional Classic ACL by ID and the supported protected endpoint by ARN. Require compatible regional evidence.",
+        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_web_acl_association summaries.",
+        "officialDocumentation": "website/docs/r/wafregional_web_acl_association.html.markdown",
+        "shapes": {
+          "web_acl_id": [
+            "string"
+          ],
+          "resource_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "web_acl_id": "required",
+          "resource_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebACLAssociation. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafv2_api_key": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve configured CLOUDFRONT or REGIONAL scope. Token domains are configuration, and the returned API key must not be displayed.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope",
+          "token_domains"
+        ],
+        "placement": "Supported: Logical Controller for the managed wafv2_api_key declaration. Provides a WAFv2 API Key resource.",
+        "ownership": "Not applicable: The managed wafv2_api_key declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Resolve configured CLOUDFRONT or REGIONAL scope. Token domains are configuration, and the returned API key must not be displayed.",
+        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_api_key summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_api_key.html.markdown",
+        "shapes": {
+          "scope": [
+            "string"
+          ],
+          "token_domains": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "scope": "required",
+          "token_domains": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAPIKeyResource. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafv2_ip_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve its explicit scope for verified statement references. Address lists are not topology.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope",
+          "arn",
+          "ip_address_version"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafv2_ip_set declaration. Provides an AWS WAFv2 IP Set resource.",
+        "ownership": "Not applicable: The managed wafv2_ip_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Resolve its explicit scope for verified statement references. Address lists are not topology.",
+        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_ip_set summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_ip_set.html.markdown",
+        "shapes": {
+          "scope": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "ip_address_version": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "scope": "required",
+          "arn": "computed",
+          "ip_address_version": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceIPSet. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "scope": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_wafv2_regex_pattern_set": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve its explicit scope for compatible statement references. Regex contents are excluded.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "scope",
+          "arn",
+          "regular_expression.regex_string"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafv2_regex_pattern_set declaration. Provides an AWS WAFv2 Regex Pattern Set resource.",
+        "ownership": "Not applicable: The managed wafv2_regex_pattern_set declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Resolve its explicit scope for compatible statement references. Regex contents are excluded.",
+        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_regex_pattern_set summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_regex_pattern_set.html.markdown",
+        "shapes": {
+          "scope": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "regular_expression.regex_string": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "scope": "required",
+          "arn": "computed",
+          "regular_expression.regex_string": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRegexPatternSet. Separate same-name data lookup with its own selector contracts.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "scope": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_wafv2_web_acl_logging_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the ACL and allowlisted Firehose, CloudWatch Logs or S3 destination ARN. Inherit verified ACL scope and enforce the logging destination contract.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "log_destination_configs"
+        ],
+        "placement": "Supported: Logical Controller for the managed wafv2_web_acl_logging_configuration declaration. Create a resource for WAFv2 Web ACL Logging Configuration.",
+        "ownership": "Not applicable: The managed wafv2_web_acl_logging_configuration declaration has no verified exclusive presentation owner.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Resolve the ACL and allowlisted Firehose, CloudWatch Logs or S3 destination ARN. Inherit verified ACL scope and enforce the logging destination contract.",
+        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_logging_configuration summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_web_acl_logging_configuration.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "log_destination_configs": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "resource_arn": "required",
+          "log_destination_configs": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebACLLoggingConfiguration. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafv2_web_acl_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the parent ACL and the structured per-rule statement ARNs. Inherit scope from the verified ACL.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "web_acl_arn",
+          "statement.rule_group_reference_statement.arn",
+          "statement.ip_set_reference_statement.arn",
+          "statement.regex_pattern_set_reference_statement.arn"
+        ],
+        "placement": "Supported: Logical Policy for the managed wafv2_web_acl_rule declaration. Manages an individual rule within a WAFv2 Web ACL.",
+        "ownership": "Missing: use a verified web_acl_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Resolve the parent ACL and the structured per-rule statement ARNs. Inherit scope from the verified ACL.",
+        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_rule summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_web_acl_rule.html.markdown",
+        "shapes": {
+          "web_acl_arn": [
+            "string"
+          ],
+          "statement.rule_group_reference_statement.arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "statement.ip_set_reference_statement.arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "statement.regex_pattern_set_reference_statement.arn": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "web_acl_arn": "required",
+          "statement.rule_group_reference_statement.arn": "required",
+          "statement.ip_set_reference_statement.arn": "required",
+          "statement.regex_pattern_set_reference_statement.arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceWebACLRule. No same-name data source in 6.70.0.",
+        "dataContracts": {}
+      }
+    },
+    "aws_wafv2_web_acl_rule_group_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "gap": "Resolve the ACL and customer rule-group ARN. A managed vendor/name/version tuple identifies a catalog entry, not a customer group.",
+      "review": {
+        "issue": 729,
+        "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "web_acl_arn",
+          "rule_group_reference.arn",
+          "managed_rule_group.name",
+          "managed_rule_group.vendor_name"
+        ],
+        "placement": "Supported: Logical Association for the managed wafv2_web_acl_rule_group_association declaration. Associates a WAFv2 Rule Group with a Web ACL by adding a rule that references the Rule Group.",
+        "ownership": "Missing: use a verified web_acl_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
+        "references": "Missing: Resolve the ACL and customer rule-group ARN. A managed vendor/name/version tuple identifies a catalog entry, not a customer group.",
+        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_rule_group_association summaries.",
+        "officialDocumentation": "website/docs/r/wafv2_web_acl_rule_group_association.html.markdown",
+        "shapes": {
+          "web_acl_arn": [
+            "string"
+          ],
+          "rule_group_reference.arn": [
+            "list",
+            "string"
+          ],
+          "managed_rule_group.name": [
+            "list",
+            "string"
+          ],
+          "managed_rule_group.vendor_name": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "web_acl_arn": "required",
+          "rule_group_reference.arn": "required",
+          "managed_rule_group.name": "required",
+          "managed_rule_group.vendor_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceWebACLRuleGroupAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     }
