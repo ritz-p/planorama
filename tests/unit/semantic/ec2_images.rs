@@ -128,3 +128,60 @@ fn a_matching_image_id_needs_a_single_current_explicit_source() {
         assert!(!verified(&changed, "aws_ami_copy.sample0", "source_ami_id"));
     }
 }
+
+#[test]
+fn organizations_grantees_can_be_managed_in_a_different_account() {
+    for (field, kind, path) in [
+        (
+            "organization_arn",
+            "aws_organizations_organization",
+            "organization/o-example",
+        ),
+        (
+            "organizational_unit_arn",
+            "aws_organizations_organizational_unit",
+            "ou/o-example/ou-a-example",
+        ),
+    ] {
+        let mut f: Value =
+            serde_json::from_str(include_str!("../../fixtures/ec2-images-plan.json")).unwrap();
+        let arn = format!("arn:aws:organizations::222222222222:{path}");
+        let address = format!("{kind}.grantee");
+        for (key, account) in [("aws", "111111111111"), ("aws.management", "222222222222")] {
+            let mut p = f["configuration"]["provider_config"]["aws"].clone();
+            if key != "aws" {
+                p["alias"] = json!("management");
+            }
+            p["expressions"]["assume_role"] = json!([{"role_arn":{"constant_value":format!("arn:aws:iam::{account}:role/Fixture")}}]);
+            f["configuration"]["provider_config"][key] = p;
+        }
+        f["resource_changes"][6]["change"]["after"]
+            .as_object_mut()
+            .unwrap()
+            .remove("account_id");
+        f["resource_changes"][6]["change"]["after"][field] = json!(arn);
+        f["resource_changes"].as_array_mut().unwrap().push(json!({"address":address,"type":kind,"mode":"managed","name":"grantee","provider_name":"registry.terraform.io/hashicorp/aws","change":{"actions":["create"],"after":{"arn":arn}}}));
+        let resources = f["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap();
+        resources[6]["expressions"][field] = json!({"references":[format!("{address}.arn")]});
+        resources.push(json!({"address":address,"type":kind,"name":"grantee","mode":"managed","provider_config_key":"aws.management","expressions":{}}));
+        let valid = |v: &Value| {
+            let plan = plan::evidence::tests::parse_fixture(&v.to_string()).unwrap();
+            semantic::transform(&plan)
+                .nodes
+                .iter()
+                .find(|n| n.address == "aws_ami_launch_permission.sample6")
+                .unwrap()
+                .references
+                .iter()
+                .any(|r| {
+                    r.attribute == field && r.complete && !r.dependency && !r.targets.is_empty()
+                })
+        };
+        assert!(valid(&f), "{field}");
+        f["configuration"]["provider_config"]["aws.management"]["expressions"]["assume_role"][0]
+            ["role_arn"]["constant_value"] = json!("arn:aws:iam::333333333333:role/Fixture");
+        assert!(!valid(&f), "{field} management account mismatch");
+    }
+}

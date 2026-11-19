@@ -50,13 +50,15 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_organizations_organization", &["arn"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_ami_launch_permission", "organizational_unit_arn") => Rule::new(
             "Grantee organizational unit",
             &[("aws_organizations_organizational_unit", &["arn"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_snapshot_create_volume_permission", "snapshot_id") => Rule::new(
             "Snapshot",
             &[
@@ -87,6 +89,23 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     rule(kind, path).map(|r| r.label)
 }
 pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
+    if raw.nodes[r.target].resource_type == "aws_ami_launch_permission"
+        && matches!(
+            r.attribute.as_str(),
+            "organization_arn" | "organizational_unit_arn"
+        )
+    {
+        return configured_links::bindings(raw, r, rule)
+            && r.sources.iter().all(|&s| {
+                raw.nodes[s]
+                    .provider_configuration
+                    .as_ref()
+                    .and_then(|p| p.account.as_ref())
+                    .is_none_or(|account| {
+                        Some(account) == r.service_reference_owner_account.as_ref()
+                    })
+            });
+    }
     configured_links::bindings(raw, r, rule)
         && (raw.nodes[r.target].resource_type != "aws_ami_copy"
             || r.attribute != "source_ami_id"
@@ -98,6 +117,19 @@ pub(super) fn annotate(
     values: &[(&Value, &Value)],
 ) {
     configured_links::annotate(nodes, refs, values, rule, qualifies);
+    for grantee in refs.iter_mut().filter(|r| {
+        r.service_reference_verified
+            && nodes[r.target].resource_type == "aws_ami_launch_permission"
+            && matches!(
+                r.attribute.as_str(),
+                "organization_arn" | "organizational_unit_arn"
+            )
+    }) {
+        grantee.service_reference_owner_account =
+            super::service_evidence::known(values, grantee.target, &grantee.attribute)
+                .and_then(|value| organization_account(value, &grantee.attribute));
+        grantee.service_reference_verified = grantee.service_reference_owner_account.is_some();
+    }
     for grant in refs.iter_mut().filter(|r| {
         r.service_reference_verified
             && matches!(
@@ -123,6 +155,25 @@ pub(super) fn annotate(
                 .and_then(crate::model::AwsAccountScope::new);
     }
 }
+fn organization_account(arn: &str, field: &str) -> Option<crate::model::AwsAccountScope> {
+    let parts: Vec<_> = arn.splitn(6, ':').collect();
+    let ["arn", partition, "organizations", "", account, resource] = parts.as_slice() else {
+        return None;
+    };
+    let path: Vec<_> = resource.split('/').collect();
+    let matches = match (field, path.as_slice()) {
+        ("organization_arn", ["organization", org]) => org.starts_with("o-") && org.len() > 2,
+        ("organizational_unit_arn", ["ou", org, unit]) => {
+            org.starts_with("o-") && org.len() > 2 && unit.starts_with("ou-") && unit.len() > 3
+        }
+        _ => false,
+    };
+    if partition.is_empty() || !matches {
+        return None;
+    }
+    crate::model::AwsAccountScope::new(account)
+}
+
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
     match r.attribute.as_str() {
         "source_ami_id" => e.source_region(r.target, "source_ami_region", source),
