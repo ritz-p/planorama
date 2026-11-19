@@ -15,6 +15,7 @@ mod relevance;
 mod remote;
 mod routes;
 mod states;
+#[cfg(test)]
 pub use states::parse_inputs;
 #[cfg(not(target_arch = "wasm32"))]
 pub(crate) use states::parse_inputs_with;

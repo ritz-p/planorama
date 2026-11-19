@@ -68,6 +68,27 @@ fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
                 }
             }
         }
+        "aws_securitylake_subscriber" | "aws_securitylake_custom_log_source" => {
+            let path = if kind == "aws_securitylake_subscriber" {
+                "subscriber_identity.0.principal"
+            } else {
+                "configuration.0.provider_identity.0.principal"
+            };
+            if let Some(account) = value(v, mask, path)
+                .and_then(Value::as_str)
+                .and_then(AwsAccountScope::new)
+            {
+                details.push((
+                    if kind == "aws_securitylake_subscriber" {
+                        "subscriber_identity.principal"
+                    } else {
+                        "configuration.provider_identity.principal"
+                    },
+                    "Principal account",
+                    account.as_str().to_owned(),
+                ));
+            }
+        }
         "aws_securitylake_data_lake" => {
             for i in 0..v["configuration"].as_array().map_or(0, Vec::len) {
                 let prefix = format!("configuration.{i}");
@@ -182,6 +203,23 @@ fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
                     "authorized_aws_region",
                     "Authorized aggregator",
                     format!("{} / {region}", account.as_str()),
+                ));
+            }
+        }
+        "aws_auditmanager_assessment_delegation" => {
+            if let Some((assessment, control)) = value(v, mask, "assessment_id")
+                .and_then(Value::as_str)
+                .filter(|v| !v.is_empty())
+                .zip(
+                    value(v, mask, "control_set_id")
+                        .and_then(Value::as_str)
+                        .filter(|v| !v.is_empty()),
+                )
+            {
+                details.push((
+                    "control_set_id",
+                    "Assessment control set",
+                    format!("{assessment} / {control}"),
                 ));
             }
         }
