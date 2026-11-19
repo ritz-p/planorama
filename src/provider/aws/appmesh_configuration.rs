@@ -139,9 +139,9 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
         e.configured_endpoint(child, "mesh_name", "aws_appmesh_mesh", &["name"])
             .filter(|&mesh| mesh_owner_matches(e, child, mesh))
     };
-    if !mesh(r.target)
+    if mesh(r.target)
         .zip(mesh(source))
-        .is_some_and(|(left, right)| left == right)
+        .is_none_or(|(left, right)| left != right)
     {
         return false;
     }
