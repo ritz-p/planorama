@@ -476,3 +476,10 @@ links to its cluster through the configured cluster ID and can link an
 explicit subnet whose proven VPC agrees with the cluster. Cluster ownership
 preserves each HSM action and identity. Computed VPC, security-group and
 network-interface identifiers do not create endpoints.
+
+## Payment Cryptography alias
+
+An explicitly assigned alias key ARN can link to a matching current
+`aws_paymentcryptography_key.arn` in compatible provider scope. The alias
+keeps its own Terraform identity and action. An unassigned, unknown or
+unverified key leaves the alias independent.

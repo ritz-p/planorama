@@ -147,6 +147,7 @@ pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
 mod osis;
+pub(crate) mod paymentcryptography_configuration;
 mod placement;
 pub(crate) mod prefix_list_entries;
 pub(crate) mod private_ca_references;

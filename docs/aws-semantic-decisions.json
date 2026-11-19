@@ -60636,7 +60636,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1134,
-      "gap": "#727 audit: Missing: optional key_arn -> paymentcryptography_key.arn; unassigned alias stays unresolved. Missing: alias member only with verified key, independent lifecycle retained. Implementation follow-up #1134. Existing completed capabilities remain bounded to their documented contracts.",
+      "gap": "#727 audit: #1134 adds verified configuration references. See docs/aws-security.md.",
       "review": {
         "issue": 727,
         "implementationCommit": "ccebb5f8972b59cd4603958cf849777ef4a2eafc",
@@ -60646,9 +60646,9 @@
           "key_arn"
         ],
         "placement": "Supported: Node / Unknown; Logical / Spatial (unresolved); Service(AWSPaymentCryptography) / AWS Payment Cryptography runtime defaults in classification.rs/basic_entries.rs; a card is not proof of complete semantics.",
-        "ownership": "Missing: alias member only with verified key, independent lifecycle retained.",
+        "ownership": "Supported: Verified key owner preserves alias lifecycle.",
         "network": "Not applicable: aws_paymentcryptography_key_alias is application/key/certificate configuration, not a VPC/subnet containment assertion.",
-        "references": "Missing: optional key_arn -> paymentcryptography_key.arn; unassigned alias stays unresolved.",
+        "references": "Supported: Optional explicit alias key ARN, matched to a managed Payment Cryptography key ARN.",
         "scope": "Partial: regional scope from provider/resource-region evidence in scope.rs; unsupported or unresolved bindings remain unknown. Basic-only fallback clears account; verified ownership never manufactures account/region.",
         "summaries": "Deferred: no additional paymentcryptography_key_alias summary until an explicit use case and allowlisted known-value contract are selected; retain existing display rules. No key material, credentials, policy/PEM/branding/user payloads or runtime health claims.",
         "officialDocumentation": "website/docs/r/paymentcryptography_key_alias.html.markdown",
@@ -60673,7 +60673,9 @@
           "src/provider/aws/service_references.rs",
           "src/provider/aws/service_members.rs",
           "tests/unit/semantic/service_references.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/paymentcryptography_configuration.rs",
+          "tests/unit/semantic/paymentcryptography_configuration.rs"
         ]
       }
     },
