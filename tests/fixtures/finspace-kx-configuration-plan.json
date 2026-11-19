@@ -1,0 +1,601 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_finspace_kx_environment.sample0",
+      "mode": "managed",
+      "type": "aws_finspace_kx_environment",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture",
+          "transit_gateway_configuration": [
+            {
+              "transit_gateway_id": "tgw-fixture"
+            }
+          ],
+          "id": "kx-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_cluster.sample1",
+      "mode": "managed",
+      "type": "aws_finspace_kx_cluster",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "RDB",
+          "availability_zone_id": "use1-az2",
+          "environment_id": "kx-fixture",
+          "vpc_configuration": [
+            {
+              "subnet_ids": [
+                "subnet-fixture"
+              ],
+              "security_group_ids": [
+                "sg-fixture"
+              ],
+              "vpc_id": "vpc-fixture"
+            }
+          ],
+          "execution_role": "arn:aws:iam::123456789012:role/fixture",
+          "database": [
+            {
+              "database_name": "fixture-db",
+              "dataview_name": "fixture-view"
+            }
+          ],
+          "scaling_group_configuration": [
+            {
+              "scaling_group_name": "fixture-scale"
+            }
+          ],
+          "savedown_storage_configuration": [
+            {
+              "volume_name": "fixture-volume"
+            }
+          ],
+          "tickerplant_log_configuration": [
+            {
+              "tickerplant_log_volumes": [
+                "fixture-volume",
+                "fixture-volume2"
+              ]
+            }
+          ],
+          "code": [
+            {
+              "s3_bucket": "fixture-bucket"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_database.sample2",
+      "mode": "managed",
+      "type": "aws_finspace_kx_database",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "environment_id": "kx-fixture",
+          "name": "fixture-db"
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_dataview.sample3",
+      "mode": "managed",
+      "type": "aws_finspace_kx_dataview",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "availability_zone_id": "use1-az2",
+          "environment_id": "kx-fixture",
+          "name": "fixture-view",
+          "database_name": "fixture-db",
+          "segment_configurations": [
+            {
+              "volume_name": "fixture-volume2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_scaling_group.sample4",
+      "mode": "managed",
+      "type": "aws_finspace_kx_scaling_group",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "environment_id": "kx-fixture",
+          "name": "fixture-scale"
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_user.sample5",
+      "mode": "managed",
+      "type": "aws_finspace_kx_user",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "environment_id": "kx-fixture",
+          "iam_role": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_volume.sample6",
+      "mode": "managed",
+      "type": "aws_finspace_kx_volume",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "availability_zones": [
+            "use1-az2"
+          ],
+          "environment_id": "kx-fixture",
+          "name": "fixture-volume"
+        }
+      }
+    },
+    {
+      "address": "aws_finspace_kx_volume.sample7",
+      "mode": "managed",
+      "type": "aws_finspace_kx_volume",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "availability_zones": [
+            "use1-az2"
+          ],
+          "environment_id": "kx-fixture",
+          "name": "fixture-volume2"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample8",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.sample9",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample10",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample10",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample11",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample11",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample12",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample12",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_transit_gateway.sample13",
+      "mode": "managed",
+      "type": "aws_ec2_transit_gateway",
+      "name": "sample13",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tgw-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample14",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample14",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_finspace_kx_environment.sample0",
+          "mode": "managed",
+          "type": "aws_finspace_kx_environment",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.sample14.arn"
+              ]
+            },
+            "transit_gateway_configuration": [
+              {
+                "transit_gateway_id": {
+                  "references": [
+                    "aws_ec2_transit_gateway.sample13.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_finspace_kx_cluster.sample1",
+          "mode": "managed",
+          "type": "aws_finspace_kx_cluster",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            },
+            "vpc_configuration": [
+              {
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.sample8.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.sample9.id"
+                  ]
+                },
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.sample10.id"
+                  ]
+                }
+              }
+            ],
+            "execution_role": {
+              "references": [
+                "aws_iam_role.sample11.arn"
+              ]
+            },
+            "database": [
+              {
+                "database_name": {
+                  "references": [
+                    "aws_finspace_kx_database.sample2.name"
+                  ]
+                },
+                "dataview_name": {
+                  "references": [
+                    "aws_finspace_kx_dataview.sample3.name"
+                  ]
+                }
+              }
+            ],
+            "scaling_group_configuration": [
+              {
+                "scaling_group_name": {
+                  "references": [
+                    "aws_finspace_kx_scaling_group.sample4.name"
+                  ]
+                }
+              }
+            ],
+            "savedown_storage_configuration": [
+              {
+                "volume_name": {
+                  "references": [
+                    "aws_finspace_kx_volume.sample6.name"
+                  ]
+                }
+              }
+            ],
+            "tickerplant_log_configuration": [
+              {
+                "tickerplant_log_volumes": {
+                  "references": [
+                    "aws_finspace_kx_volume.sample6.name",
+                    "aws_finspace_kx_volume.sample7.name"
+                  ]
+                }
+              }
+            ],
+            "code": [
+              {
+                "s3_bucket": {
+                  "references": [
+                    "aws_s3_bucket.sample12.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_finspace_kx_database.sample2",
+          "mode": "managed",
+          "type": "aws_finspace_kx_database",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_finspace_kx_dataview.sample3",
+          "mode": "managed",
+          "type": "aws_finspace_kx_dataview",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            },
+            "database_name": {
+              "references": [
+                "aws_finspace_kx_database.sample2.name"
+              ]
+            },
+            "segment_configurations": [
+              {
+                "volume_name": {
+                  "references": [
+                    "aws_finspace_kx_volume.sample7.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_finspace_kx_scaling_group.sample4",
+          "mode": "managed",
+          "type": "aws_finspace_kx_scaling_group",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_finspace_kx_user.sample5",
+          "mode": "managed",
+          "type": "aws_finspace_kx_user",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            },
+            "iam_role": {
+              "references": [
+                "aws_iam_role.sample11.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_finspace_kx_volume.sample6",
+          "mode": "managed",
+          "type": "aws_finspace_kx_volume",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_finspace_kx_volume.sample7",
+          "mode": "managed",
+          "type": "aws_finspace_kx_volume",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_finspace_kx_environment.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.sample8",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample10.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.sample9",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample10.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample10",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample10",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.sample11",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample11",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample12",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample12",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_transit_gateway.sample13",
+          "mode": "managed",
+          "type": "aws_ec2_transit_gateway",
+          "name": "sample13",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample14",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample14",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

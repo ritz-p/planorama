@@ -16863,10 +16863,10 @@
       }
     },
     "aws_finspace_kx_cluster": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Missing: Logical cluster merits independent-card review. Missing: environment navigation, not embedding of shared databases/volumes. Missing: verify vpc_configuration subnet/SG/VPC context for PrivateLink endpoint; docs misdescribe vpc_id as endpoint ID, source maps it to VpcId. Do not claim underlying service compute lives in customer subnet. Missing: environment ID, same-environment database/dataview/scaling-group/volume names, IAM execution role and code bucket. Cluster id is composite environment,name. Follow-up #803. Deferred: cluster type/AZ mode summary needs a bounded enum contract that distinguishes compute from PrivateLink placement; command arguments and code paths excluded.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16886,10 +16886,10 @@
           "tickerplant_log_configuration.tickerplant_log_volumes",
           "code.s3_bucket"
         ],
-        "placement": "Missing: Logical cluster merits independent-card review.",
+        "placement": "Supported: Independent regional cluster. Customer VPC references describe PrivateLink connectivity.",
         "ownership": "Missing: environment navigation, not embedding of shared databases/volumes.",
         "network": "Missing: verify vpc_configuration subnet/SG/VPC context for PrivateLink endpoint; docs misdescribe vpc_id as endpoint ID, source maps it to VpcId. Do not claim underlying service compute lives in customer subnet.",
-        "references": "Missing: environment ID, same-environment database/dataview/scaling-group/volume names, IAM execution role and code bucket. Cluster id is composite environment,name.",
+        "references": "Supported: Explicit environment, qualified workloads, role, code bucket and matching VPC endpoint context.",
         "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
         "summaries": "Deferred: cluster type/AZ mode summary needs a bounded enum contract that distinguishes compute from PrivateLink placement; command arguments and code paths excluded.",
         "officialDocumentation": "website/docs/r/finspace_kx_cluster.html.markdown",
@@ -16951,14 +16951,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_finspace_kx_database": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Missing: verified environment navigation; shared query database remains independent. Missing: environment_id -> environment.id; database name is environment-qualified, Terraform id is composite. Follow-up #803. Intentionally unsupported: database contents, changesets and timestamps.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -16971,7 +16975,7 @@
         "placement": "Supported: retain Logical aws_finspace_kx_database basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: verified environment navigation; shared query database remains independent.",
         "network": "Not applicable: reviewed aws_finspace_kx_database fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: environment_id -> environment.id; database name is environment-qualified, Terraform id is composite.",
+        "references": "Supported: Explicit environment ID; database names require environment qualification.",
         "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
         "summaries": "Intentionally unsupported: database contents, changesets and timestamps.",
         "officialDocumentation": "website/docs/r/finspace_kx_database.html.markdown",
@@ -16985,14 +16989,18 @@
           "name": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_finspace_kx_dataview": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Missing: database navigation requires environment agreement. Missing: environment, same-environment database name and complete volume references with compatible AZ; db_paths/changeset strings are not managed objects. Follow-up #803. Intentionally unsupported: db_paths, changesets and read/write data contents.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17008,7 +17016,7 @@
         "placement": "Supported: retain Logical aws_finspace_kx_dataview basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: database navigation requires environment agreement.",
         "network": "Not applicable: reviewed aws_finspace_kx_dataview fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: environment, same-environment database name and complete volume references with compatible AZ; db_paths/changeset strings are not managed objects.",
+        "references": "Supported: Explicit environment and database plus complete same-environment, same-zone volume evidence.",
         "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
         "summaries": "Intentionally unsupported: db_paths, changesets and read/write data contents.",
         "officialDocumentation": "website/docs/r/finspace_kx_dataview.html.markdown",
@@ -17032,14 +17040,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_finspace_kx_environment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Missing: Logical environment merits independent architecture review; not automatically a network container. Intentionally unsupported: service-managed environment is not contained by customer TGW; cluster endpoint networking is separate. Missing: KMS key and TGW ID references; routable CIDR and custom DNS IP/name do not identify subnets or resolver resources. Follow-up #803. Deferred: encryption-key mode needs key-ID normalization and unknown handling; custom DNS and ACL content excluded.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17052,10 +17064,10 @@
           "transit_gateway_configuration.routable_cidr_space",
           "infrastructure_account_id"
         ],
-        "placement": "Missing: Logical environment merits independent architecture review; not automatically a network container.",
+        "placement": "Supported: Independent regional environment card without transit gateway containment.",
         "ownership": "Not applicable: independent aws_finspace_kx_environment configuration; no verified embedded owner in runtime.",
         "network": "Intentionally unsupported: service-managed environment is not contained by customer TGW; cluster endpoint networking is separate.",
-        "references": "Missing: KMS key and TGW ID references; routable CIDR and custom DNS IP/name do not identify subnets or resolver resources.",
+        "references": "Supported: Explicit KMS and transit gateway references.",
         "scope": "Partial: Regional eligibility; computed infrastructure_account_id describes service infrastructure, not customer resource ownership.",
         "summaries": "Deferred: encryption-key mode needs key-ID normalization and unknown handling; custom DNS and ACL content excluded.",
         "officialDocumentation": "website/docs/r/finspace_kx_environment.html.markdown",
@@ -17080,14 +17092,18 @@
           "infrastructure_account_id": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_finspace_kx_scaling_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Not applicable: shared scaling capacity remains independent. Missing: environment_id -> environment.id; computed clusters cannot synthesize membership; cluster scaling_group_name is the configured direction. Follow-up #803. Deferred: host type/capacity requires bounded allowlist; status cannot predict performance.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17102,7 +17118,7 @@
         "placement": "Supported: retain Logical aws_finspace_kx_scaling_group basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared scaling capacity remains independent.",
         "network": "Not applicable: reviewed aws_finspace_kx_scaling_group fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: environment_id -> environment.id; computed clusters cannot synthesize membership; cluster scaling_group_name is the configured direction.",
+        "references": "Supported: Explicit environment ID and incoming qualified capacity references.",
         "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
         "summaries": "Deferred: host type/capacity requires bounded allowlist; status cannot predict performance.",
         "officialDocumentation": "website/docs/r/finspace_kx_scaling_group.html.markdown",
@@ -17125,14 +17141,18 @@
               "string"
             ]
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_finspace_kx_user": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Missing: environment navigation, not IAM role ownership. Missing: environment ID and iam_role -> IAM role.arn; user name is environment-qualified. Follow-up #803. Intentionally unsupported: user identity details and effective permissions.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17146,7 +17166,7 @@
         "placement": "Supported: retain Logical aws_finspace_kx_user basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Missing: environment navigation, not IAM role ownership.",
         "network": "Not applicable: reviewed aws_finspace_kx_user fields provide no configured subnet containment; service references do not propagate network placement.",
-        "references": "Missing: environment ID and iam_role -> IAM role.arn; user name is environment-qualified.",
+        "references": "Supported: Explicit environment ID and IAM role ARN.",
         "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
         "summaries": "Intentionally unsupported: user identity details and effective permissions.",
         "officialDocumentation": "website/docs/r/finspace_kx_user.html.markdown",
@@ -17163,14 +17183,18 @@
           "iam_role": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_finspace_kx_volume": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 803,
-      "gap": "#724 reviewed: Not applicable: shared volume is not embedded in one cluster. Not applicable: availability-zone IDs do not identify a subnet or EC2 volume. Missing: environment_id -> environment.id; computed attached_clusters is not configured membership. Follow-up #803. Deferred: NAS type/size requires storage-specific allowlist; attached cluster status excluded.",
+      "gap": "#724 audit: #803 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 724,
         "implementationCommit": "09b71007288ddc6a7d8662e750acc39278f64ba6",
@@ -17185,7 +17209,7 @@
         "placement": "Supported: retain Logical aws_finspace_kx_volume basic presentation (basic_entries.rs and runtime support matrix); configuration/association objects do not need independent spatial cards.",
         "ownership": "Not applicable: shared volume is not embedded in one cluster.",
         "network": "Not applicable: availability-zone IDs do not identify a subnet or EC2 volume.",
-        "references": "Missing: environment_id -> environment.id; computed attached_clusters is not configured membership.",
+        "references": "Supported: Explicit environment ID and incoming qualified volume references.",
         "scope": "Partial: Regional eligibility in scope.rs; basic account remains unresolved. Known provider/resource region is conditional, not ARN or owner inference.",
         "summaries": "Deferred: NAS type/size requires storage-specific allowlist; attached cluster status excluded.",
         "officialDocumentation": "website/docs/r/finspace_kx_volume.html.markdown",
@@ -17218,7 +17242,11 @@
               ]
             ]
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/finspace_kx_configuration.rs",
+          "tests/unit/semantic/finspace_kx_configuration.rs"
+        ]
       }
     },
     "aws_kendra_data_source": {
