@@ -25143,10 +25143,10 @@
       }
     },
     "aws_transfer_workflow": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 836,
-      "gap": "#720 reviewed: Missing: type-gated Lambda target ARN and EFS ID/S3 bucket name for both steps and exception steps. Runtime previous/original file expressions, object keys, paths and PGP material are not resource endpoints. Follow-up #836. Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
+      "gap": "#720 audit: #836 adds verified configuration references. See docs/aws-storage.md.",
       "review": {
         "issue": 720,
         "implementationCommit": "514c17316e596fbbd0a8c7aa4942a91e3462e09d",
@@ -25170,7 +25170,7 @@
         "placement": "Supported: retain Logical default in classification.rs/basic_entries.rs and runtime resource-support.md; configuration/reference object without automatic card promotion.",
         "ownership": "Not applicable: independent resource or shared reference endpoint; configured consumers do not establish exclusive embedded ownership.",
         "network": "Not applicable: reviewed fields configure service relationships or data selection, not a customer-subnet attachment; no network inheritance from referenced endpoints.",
-        "references": "Missing: type-gated Lambda target ARN and EFS ID/S3 bucket name for both steps and exception steps. Runtime previous/original file expressions, object keys, paths and PGP material are not resource endpoints. Follow-up #836.",
+        "references": "Supported: Typed Lambda custom step targets and exclusive copy/decrypt EFS or bucket destinations in ordinary and exception steps.",
         "scope": "Partial: Regional conditional eligibility in scope.rs; known resource/provider region and nonconflicting binding required. Basic fallback clears account evidence; referenced destination scope cannot relocate this resource.",
         "summaries": "Intentionally unsupported: key/certificate bodies, host fingerprints, home directories, branding and workflow file expressions are not summaries; protocol/mode labels require a separate plan-only allowlist before display.",
         "officialDocumentation": "website/docs/r/transfer_workflow.html.markdown",
@@ -25273,7 +25273,11 @@
           "on_exception_steps.decrypt_step_details.destination_file_location.s3_file_location.bucket": "optional"
         },
         "managedData": "No same-name registered data source in pinned schema; managed contract only.",
-        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts."
+        "aliases": "No runtime canonical alias in aliases.rs; similarly named service resources remain distinct contracts.",
+        "implementationEvidence": [
+          "src/provider/aws/transfer_workflow_configuration.rs",
+          "tests/unit/semantic/transfer_workflow_configuration.rs"
+        ]
       }
     },
     "aws_athena_capacity_reservation": {

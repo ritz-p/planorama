@@ -206,6 +206,7 @@ pub(crate) mod transfer_as2;
 pub(crate) mod transfer_identity;
 pub(crate) mod transfer_server;
 pub(crate) mod transfer_webapp;
+pub(crate) mod transfer_workflow_configuration;
 pub(crate) mod verifiedpermissions;
 pub(crate) mod vpclattice;
 pub(crate) mod xray_encryption;
