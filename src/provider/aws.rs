@@ -92,6 +92,7 @@ pub(crate) mod encryption;
 mod eventbridge;
 mod firehose;
 pub(crate) mod firehose_sources;
+pub(crate) mod flink_configuration;
 pub(crate) mod flow_logs;
 mod fsx;
 pub(crate) mod global_accelerator;
@@ -450,6 +451,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     sagemaker_studio::present(&raw, &mut graph);
     sagemaker_jobs::present(&raw, &mut graph);
     cloudhsm_configuration::present(&raw, &mut graph);
+    flink_configuration::present(&raw, &mut graph);
     mwaa_configuration::present(&raw, &mut graph);
     sagemaker_workforce::present(&raw, &mut graph);
     msk_connect::present(&raw, &mut graph);

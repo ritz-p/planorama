@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::flink_configuration::resource(resource)
         && !super::mwaa_configuration::resource(resource)
         && !super::transfer_workflow_configuration::resource(resource)
         && resource != "aws_lightsail_disk"
