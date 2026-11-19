@@ -163,6 +163,9 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 }
 pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     configured_links::bindings(raw, r, rule)
+        && (raw.nodes[r.target].resource_type != "aws_lightsail_distribution"
+            || r.attribute != "origin.name"
+            || configured_links::destination_in_same_account(raw, r))
 }
 pub(super) fn annotate(
     nodes: &[TerraformEntity],
@@ -178,8 +181,8 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
     match (consumer.resource_type.as_str(), r.attribute.as_str()) {
         ("aws_lightsail_distribution", "origin.name") => {
             if region(consumer).is_none_or(|region| region.0 != "us-east-1")
-                || !region(endpoint).is_some_and(|region| {
-                    e.text(r.target, "origin.0.region_name") == Some(region.0.as_str())
+                || region(endpoint).is_none_or(|region| {
+                    e.text(r.target, "origin.0.region_name") != Some(region.0.as_str())
                 })
             {
                 return false;
@@ -191,22 +194,8 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
                 "aws_lightsail_container_service" => "ContainerService",
                 _ => return false,
             };
-            if e.text(r.target, "origin.0.resource_type")
-                .is_some_and(|actual| actual != kind)
-            {
-                return false;
-            }
-            consumer
-                .provider_configuration
-                .as_ref()
-                .zip(endpoint.provider_configuration.as_ref())
-                .is_some_and(|(left, right)| {
-                    left == right
-                        || left
-                            .account
-                            .as_ref()
-                            .is_some_and(|account| right.account.as_ref() == Some(account))
-                })
+            e.text(r.target, "origin.0.resource_type")
+                .is_none_or(|actual| actual == kind)
         }
         ("aws_lightsail_distribution", "certificate_name")
         | ("aws_lightsail_domain_entry", "domain_name") => {
