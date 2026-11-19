@@ -72,34 +72,25 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
-        ("aws_instance", "network_interface.network_interface_id") => Rule::new(
+        ("aws_instance", "network_interface.network_interface_id") => Rule::scalar_set(
             "Launch network interface",
             &[("aws_network_interface", &["id"])],
-            false,
-            &["network_interface"],
         ),
-        ("aws_instance", "secondary_network_interface.secondary_subnet_id") => Rule::new(
+        ("aws_instance", "secondary_network_interface.secondary_subnet_id") => Rule::scalar_set(
             "Secondary subnet",
             &[("aws_ec2_secondary_subnet", &["secondary_subnet_id"])],
-            false,
-            &["secondary_network_interface"],
         ),
-        ("aws_instance", "ebs_block_device.snapshot_id") => Rule::new(
+        ("aws_instance", "ebs_block_device.snapshot_id") => Rule::scalar_set(
             "Device snapshot",
             &[
                 ("aws_ebs_snapshot", &["id"]),
                 ("aws_ebs_snapshot_copy", &["id"]),
                 ("aws_ebs_snapshot_import", &["id"]),
             ],
-            false,
-            &["ebs_block_device"],
         ),
-        ("aws_instance", "ebs_block_device.kms_key_id") => Rule::new(
-            "Device encryption key",
-            &[("aws_kms_key", &["arn"])],
-            false,
-            &["ebs_block_device"],
-        ),
+        ("aws_instance", "ebs_block_device.kms_key_id") => {
+            Rule::scalar_set("Device encryption key", &[("aws_kms_key", &["arn"])])
+        }
         ("aws_instance", "root_block_device.kms_key_id") => Rule::new(
             "Root encryption key",
             &[("aws_kms_key", &["arn"])],

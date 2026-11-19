@@ -275,11 +275,11 @@ pub(super) fn annotate(
                                 && (!identity || identity::qualifies(nodes, evidence, r, s, path))
                         },
                         (
-                            if identity {
+                            super::nested_references::NestedBlocks::Indexed(if identity {
                                 &["key_registration"]
                             } else {
                                 content::COLLECTIONS
-                            },
+                            }),
                             decode,
                             crate::model::EntityMode::Managed,
                         ),
