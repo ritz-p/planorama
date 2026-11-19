@@ -73687,10 +73687,10 @@
       }
     },
     "aws_securityhub_aggregator_v2": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Represent the V2 home region and configured linking mode/regions. Preserve implicit future regions without enumerating them.",
+      "gap": "#1480 — Explicit region selections and linking mode are represented separately from resource deployment scope.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73703,7 +73703,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_aggregator_v2 declaration. Manages a Security Hub V2 cross-region finding aggregator.",
         "ownership": "Not applicable: The managed securityhub_aggregator_v2 declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_aggregator_v2.",
-        "references": "Missing: Represent the V2 home region and configured linking mode/regions. Preserve implicit future regions without enumerating them.",
+        "references": "Supported: Explicit region selections and linking mode are represented separately from resource deployment scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_aggregator_v2 summaries.",
         "officialDocumentation": "website/docs/r/securityhub_aggregator_v2.html.markdown",
@@ -73733,7 +73733,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "src/provider/aws/scope_selections.rs"
         ],
         "managedDataContract": "Managed newAggregatorV2Resource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73837,10 +73839,10 @@
       }
     },
     "aws_securityhub_configuration_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Distinguish catalog standard ARNs from configured subscriptions and associate this policy only via verified policy IDs.",
+      "gap": "#1480 — A verified policy ID identifies the managed policy. Standard ARNs remain catalog identifiers.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73852,7 +73854,7 @@
         "placement": "Supported: Logical Policy for the managed securityhub_configuration_policy declaration. Provides a resource to manage Security Hub configuration policy",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_configuration_policy.",
-        "references": "Missing: Distinguish catalog standard ARNs from configured subscriptions and associate this policy only via verified policy IDs.",
+        "references": "Supported: A verified policy ID identifies the managed policy. Standard ARNs remain catalog identifiers.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_configuration_policy summaries.",
         "officialDocumentation": "website/docs/r/securityhub_configuration_policy.html.markdown",
@@ -73880,17 +73882,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "src/provider/aws/scope_selections.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationPolicy. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_configuration_policy_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the policy and type-disambiguated account, OU or root. SELF_MANAGED_SECURITY_HUB is a sentinel.",
+      "gap": "#1480 — Verified configuration references: policy_id, target_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73902,7 +73906,7 @@
         "placement": "Supported: Logical Association for the managed securityhub_configuration_policy_association declaration. Provides a resource to associate Security Hub configuration policy to a target.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_configuration_policy_association.",
-        "references": "Missing: Resolve the policy and type-disambiguated account, OU or root. SELF_MANAGED_SECURITY_HUB is a sentinel.",
+        "references": "Supported: Verified configuration references: policy_id, target_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_configuration_policy_association summaries.",
         "officialDocumentation": "website/docs/r/securityhub_configuration_policy_association.html.markdown",
@@ -73925,7 +73929,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationPolicyAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -74023,10 +74029,10 @@
       }
     },
     "aws_securityhub_finding_aggregator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Represent only explicitly linked regions under the configured linking mode. Distinguish the original finding aggregator from V2.",
+      "gap": "#1480 — Explicit region selections and linking mode are represented separately from resource deployment scope.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74038,7 +74044,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_finding_aggregator declaration. Manages a Security Hub finding aggregator",
         "ownership": "Not applicable: The managed securityhub_finding_aggregator declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_finding_aggregator.",
-        "references": "Missing: Represent only explicitly linked regions under the configured linking mode. Distinguish the original finding aggregator from V2.",
+        "references": "Supported: Explicit region selections and linking mode are represented separately from resource deployment scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_finding_aggregator summaries.",
         "officialDocumentation": "website/docs/r/securityhub_finding_aggregator.html.markdown",
@@ -74064,7 +74070,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "src/provider/aws/scope_selections.rs"
         ],
         "managedDataContract": "Managed resourceFindingAggregator. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -74120,10 +74128,10 @@
       }
     },
     "aws_securityhub_invite_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the configured administrator account. The invitation identifier is an output.",
+      "gap": "#1480 — Verified configuration references: master_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74135,7 +74143,7 @@
         "placement": "Supported: Logical Association for the managed securityhub_invite_accepter declaration. Accepts a Security Hub invitation.",
         "ownership": "Not applicable: The managed securityhub_invite_accepter declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_invite_accepter.",
-        "references": "Missing: Resolve the configured administrator account. The invitation identifier is an output.",
+        "references": "Supported: Verified configuration references: master_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_invite_accepter summaries.",
         "officialDocumentation": "website/docs/r/securityhub_invite_accepter.html.markdown",
@@ -74158,17 +74166,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceInviteAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the member account and retain the configured invite flag separately from observed membership.",
+      "gap": "#1480 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74181,7 +74191,7 @@
         "placement": "Supported: Logical Association for the managed securityhub_member declaration. Provides a Security Hub member resource.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_member.",
-        "references": "Missing: Resolve the member account and retain the configured invite flag separately from observed membership.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_member summaries.",
         "officialDocumentation": "website/docs/r/securityhub_member.html.markdown",
@@ -74208,17 +74218,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the explicitly selected organization administrator.",
+      "gap": "#1480 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74229,7 +74241,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_organization_admin_account declaration. Manages a Security Hub administrator account for an organization.",
         "ownership": "Not applicable: The managed securityhub_organization_admin_account declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_organization_admin_account.",
-        "references": "Missing: Resolve the explicitly selected organization administrator.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/securityhub_organization_admin_account.html.markdown",
@@ -74248,7 +74260,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}

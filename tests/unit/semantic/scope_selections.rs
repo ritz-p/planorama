@@ -28,3 +28,20 @@ fn aggregator_preserves_each_account_and_region_tuple() {
         1
     );
 }
+
+#[test]
+fn linked_regions_keep_their_mode_and_home_region() {
+    let v = json!({"aggregation_region":"us-east-1","region_linking_mode":"ALL_REGIONS_EXCEPT_SPECIFIED","linked_regions":["us-west-2"]});
+    let s = selections("aws_securityhub_aggregator_v2", &v, &Value::Null);
+    assert!(s.iter().any(|row| row.2 == "us-east-1"));
+    assert!(s.iter().any(|row| row.2 == "all except us-west-2"));
+    assert_eq!(
+        selections(
+            "aws_securityhub_aggregator_v2",
+            &v,
+            &json!({"linked_regions":true})
+        )
+        .len(),
+        1
+    );
+}

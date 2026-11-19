@@ -532,3 +532,7 @@ Classic assessment templates resolve the target and explicitly subscribed SNS to
 ## Verify Macie classification and membership references (#1479)
 
 Macie classification jobs resolve named buckets within the account declared on each bucket definition and match custom identifier IDs independently. Export buckets and encryption keys have separate contracts. Criteria, regular expressions and invitation contents stay opaque.
+
+## Verify Security Hub central policy and aggregation scope (#1480)
+
+Security Hub policy associations distinguish customer policies, the self-managed sentinel, member accounts, OUs and organization roots. Aggregators show their linking mode and explicit regions. Catalog standards do not become subscription endpoints.

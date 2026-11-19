@@ -28,6 +28,46 @@ type Details = Vec<(&'static str, &'static str, String)>;
 fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
     let mut details = Vec::new();
     match kind {
+        "aws_securityhub_aggregator_v2" | "aws_securityhub_finding_aggregator" => {
+            let v2 = kind == "aws_securityhub_aggregator_v2";
+            let (mode, regions) = if v2 {
+                ("region_linking_mode", "linked_regions")
+            } else {
+                ("linking_mode", "specified_regions")
+            };
+            if let Some(home) = value(v, mask, "aggregation_region")
+                .and_then(Value::as_str)
+                .and_then(region)
+                .filter(|_| v2)
+            {
+                details.push(("aggregation_region", "Aggregation region", home.to_owned()));
+            }
+            if let Some((mode, regions)) = value(v, mask, mode)
+                .and_then(Value::as_str)
+                .zip(strings(v, mask, regions, |s| region(s).is_some()))
+            {
+                let selection = match mode {
+                    "ALL_REGIONS" if regions.is_empty() => Some("all regions".to_owned()),
+                    "NO_REGIONS" if !v2 && regions.is_empty() => Some("no regions".to_owned()),
+                    "ALL_REGIONS_EXCEPT_SPECIFIED" if !regions.is_empty() => {
+                        Some(format!("all except {}", regions.join(", ")))
+                    }
+                    "SPECIFIED_REGIONS" if !regions.is_empty() => Some(regions.join(", ")),
+                    _ => None,
+                };
+                if let Some(selection) = selection {
+                    details.push((
+                        if v2 {
+                            "linked_regions"
+                        } else {
+                            "specified_regions"
+                        },
+                        "Linked regions",
+                        selection,
+                    ));
+                }
+            }
+        }
         "aws_config_configuration_aggregator" => {
             for block in [
                 "account_aggregation_source",
