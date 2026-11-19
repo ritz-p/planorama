@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::site_vpn::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::template_launch::label(resource, attribute) {
         return Some(label);
     }
@@ -1130,6 +1133,7 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::site_vpn::annotate(nodes, references, evidence);
     super::template_launch::annotate(nodes, references, evidence);
     super::instance_launch::annotate(nodes, references, evidence);
     super::ec2_fleets::annotate(nodes, references, evidence);
@@ -1218,6 +1222,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::site_vpn::bindings(raw, reference)
         && super::template_launch::bindings(raw, reference)
         && super::instance_launch::bindings(raw, reference)
         && super::ec2_fleets::bindings(raw, reference)
@@ -1945,6 +1950,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::site_vpn::indexed(&node.resource_type, &reference.attribute)
             || super::template_launch::indexed(&node.resource_type, &reference.attribute)
             || super::instance_launch::indexed(&node.resource_type, &reference.attribute)
             || super::ec2_fleets::indexed(&node.resource_type, &reference.attribute)

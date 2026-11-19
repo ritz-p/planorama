@@ -72,6 +72,7 @@ fn placement_available(
     if matches!(
         node.resource_type.as_str(),
         "aws_redshift_cluster"
+            | "aws_vpn_gateway"
             | "aws_kinesisanalyticsv2_application"
             | "aws_mwaa_environment"
             | "aws_imagebuilder_infrastructure_configuration"

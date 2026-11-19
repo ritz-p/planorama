@@ -207,6 +207,7 @@ pub(crate) mod secondary_network;
 pub(crate) mod secrets_manager;
 mod serverless_references;
 pub(crate) mod signer_configuration;
+pub(crate) mod site_vpn;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/step_functions.rs"]
 mod step_functions_tests;
@@ -446,6 +447,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     cognito::present(&raw, &mut graph);
     agentcore_runtime::present(&raw, &mut graph);
     datazone_environments::present(&raw, &mut graph);
+    site_vpn::present(&raw, &mut graph);
     routes::present(&raw, &mut graph);
     members::present(&raw, &mut graph);
     monitoring::present(&raw, &mut graph);
