@@ -1,0 +1,342 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ecrpublic_repository.sample0",
+      "mode": "managed",
+      "type": "aws_ecrpublic_repository",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "repository_name": "fixture-repository"
+        }
+      }
+    },
+    {
+      "address": "aws_ecrpublic_repository_policy.sample1",
+      "mode": "managed",
+      "type": "aws_ecrpublic_repository_policy",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "repository_name": "fixture-repository"
+        }
+      }
+    },
+    {
+      "address": "aws_ecr_repository.sample2",
+      "mode": "managed",
+      "type": "aws_ecr_repository",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "encryption_configuration": [
+            {
+              "encryption_type": "KMS",
+              "kms_key": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ecr_repository_creation_template.sample3",
+      "mode": "managed",
+      "type": "aws_ecr_repository_creation_template",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "encryption_configuration": [
+            {
+              "encryption_type": "KMS",
+              "kms_key": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+            }
+          ],
+          "custom_role_arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ecr_pull_through_cache_rule.sample4",
+      "mode": "managed",
+      "type": "aws_ecr_pull_through_cache_rule",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "credential_arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ecr-pullthroughcache/fixture",
+          "custom_role_arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ecr_pull_time_update_exclusion.sample5",
+      "mode": "managed",
+      "type": "aws_ecr_pull_time_update_exclusion",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "principal_arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample6",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample7",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.sample8",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:123456789012:secret:ecr-pullthroughcache/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_user.sample9",
+      "mode": "managed",
+      "type": "aws_iam_user",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:user/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ecr_pull_time_update_exclusion.sample10",
+      "mode": "managed",
+      "type": "aws_ecr_pull_time_update_exclusion",
+      "name": "sample10",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "principal_arn": "arn:aws:iam::123456789012:user/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ecrpublic_repository.sample0",
+          "mode": "managed",
+          "type": "aws_ecrpublic_repository",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecrpublic_repository_policy.sample1",
+          "mode": "managed",
+          "type": "aws_ecrpublic_repository_policy",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "repository_name": {
+              "references": [
+                "aws_ecrpublic_repository.sample0.repository_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecr_repository.sample2",
+          "mode": "managed",
+          "type": "aws_ecr_repository",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_configuration": [
+              {
+                "kms_key": {
+                  "references": [
+                    "aws_kms_key.sample6.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ecr_repository_creation_template.sample3",
+          "mode": "managed",
+          "type": "aws_ecr_repository_creation_template",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_configuration": [
+              {
+                "kms_key": {
+                  "references": [
+                    "aws_kms_key.sample6.arn"
+                  ]
+                }
+              }
+            ],
+            "custom_role_arn": {
+              "references": [
+                "aws_iam_role.sample7.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecr_pull_through_cache_rule.sample4",
+          "mode": "managed",
+          "type": "aws_ecr_pull_through_cache_rule",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "credential_arn": {
+              "references": [
+                "aws_secretsmanager_secret.sample8.arn"
+              ]
+            },
+            "custom_role_arn": {
+              "references": [
+                "aws_iam_role.sample7.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ecr_pull_time_update_exclusion.sample5",
+          "mode": "managed",
+          "type": "aws_ecr_pull_time_update_exclusion",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "principal_arn": {
+              "references": [
+                "aws_iam_role.sample7.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.sample6",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.sample7",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.sample8",
+          "mode": "managed",
+          "type": "aws_secretsmanager_secret",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_user.sample9",
+          "mode": "managed",
+          "type": "aws_iam_user",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecr_pull_time_update_exclusion.sample10",
+          "mode": "managed",
+          "type": "aws_ecr_pull_time_update_exclusion",
+          "name": "sample10",
+          "provider_config_key": "aws",
+          "expressions": {
+            "principal_arn": {
+              "references": [
+                "aws_iam_user.sample9.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

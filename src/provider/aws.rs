@@ -77,6 +77,7 @@ pub(crate) mod dms_serverless;
 pub(crate) mod dsql;
 mod dynamodb;
 pub(crate) mod dynamodb_transfer;
+pub(crate) mod ecr_configuration;
 mod ecs_capacity;
 mod ecs_workloads;
 mod efs;
