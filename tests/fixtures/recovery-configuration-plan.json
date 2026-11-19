@@ -1,0 +1,367 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_dlm_lifecycle_policy.sample0",
+      "mode": "managed",
+      "type": "aws_dlm_lifecycle_policy",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_details": [
+            {
+              "policy_type": "EBS_SNAPSHOT_MANAGEMENT",
+              "schedule": [
+                {
+                  "cross_region_copy_rule": [
+                    {
+                      "target": "us-east-1",
+                      "encrypted": true,
+                      "cmk_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+                    }
+                  ],
+                  "create_rule": [
+                    {
+                      "scripts": [
+                        {
+                          "execution_handler": "FixtureDocument"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "execution_role_arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_drs_replication_configuration_template.sample1",
+      "mode": "managed",
+      "type": "aws_drs_replication_configuration_template",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "ebs_encryption": "CUSTOM",
+          "staging_area_subnet_id": "subnet-fixture",
+          "replication_servers_security_groups_ids": [
+            "sg-fixture"
+          ],
+          "ebs_encryption_key_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample3",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_document.sample4",
+      "mode": "managed",
+      "type": "aws_ssm_document",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "FixtureDocument"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample5",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.sample6",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-fixture",
+          "vpc_id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample7",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_dlm_lifecycle_policy.sample8",
+      "mode": "managed",
+      "type": "aws_dlm_lifecycle_policy",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_details": [
+            {
+              "policy_type": "EVENT_BASED_POLICY",
+              "action": [
+                {
+                  "cross_region_copy": [
+                    {
+                      "target": "us-east-1",
+                      "encryption_configuration": [
+                        {
+                          "encrypted": true,
+                          "cmk_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dlm_lifecycle_policy.sample0",
+          "mode": "managed",
+          "type": "aws_dlm_lifecycle_policy",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "policy_details": [
+              {
+                "schedule": [
+                  {
+                    "cross_region_copy_rule": [
+                      {
+                        "cmk_arn": {
+                          "references": [
+                            "aws_kms_key.sample3.arn"
+                          ]
+                        }
+                      }
+                    ],
+                    "create_rule": [
+                      {
+                        "scripts": [
+                          {
+                            "execution_handler": {
+                              "references": [
+                                "aws_ssm_document.sample4.name"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_drs_replication_configuration_template.sample1",
+          "mode": "managed",
+          "type": "aws_drs_replication_configuration_template",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "staging_area_subnet_id": {
+              "references": [
+                "aws_subnet.sample5.id"
+              ]
+            },
+            "replication_servers_security_groups_ids": {
+              "references": [
+                "aws_security_group.sample6.id"
+              ]
+            },
+            "ebs_encryption_key_arn": {
+              "references": [
+                "aws_kms_key.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.sample2",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample3",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_document.sample4",
+          "mode": "managed",
+          "type": "aws_ssm_document",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.sample5",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample7.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.sample6",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample7.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample7",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dlm_lifecycle_policy.sample8",
+          "mode": "managed",
+          "type": "aws_dlm_lifecycle_policy",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy_details": [
+              {
+                "action": [
+                  {
+                    "cross_region_copy": [
+                      {
+                        "encryption_configuration": [
+                          {
+                            "cmk_arn": {
+                              "references": [
+                                "aws_kms_key.sample3.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_paymentcryptography_key.sample0",
+      "mode": "managed",
+      "type": "aws_paymentcryptography_key",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:payment-cryptography:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_paymentcryptography_key_alias.sample1",
+      "mode": "managed",
+      "type": "aws_paymentcryptography_key_alias",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_arn": "arn:aws:payment-cryptography:us-east-1:123456789012:key/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_paymentcryptography_key.sample0",
+          "mode": "managed",
+          "type": "aws_paymentcryptography_key",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_paymentcryptography_key_alias.sample1",
+          "mode": "managed",
+          "type": "aws_paymentcryptography_key_alias",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_arn": {
+              "references": [
+                "aws_paymentcryptography_key.sample0.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

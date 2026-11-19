@@ -6,6 +6,38 @@ use serde_json::Value;
 #[path = "../../../tests/unit/semantic/elbv2.rs"]
 mod tests;
 
+pub(super) fn scalar<'a>(value: &'a Value, mask: &Value, key: &str) -> Option<&'a str> {
+    if !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_))
+        || !matches!(&mask[key], Value::Null | Value::Bool(false))
+    {
+        return None;
+    }
+    value[key].as_str().filter(|s| !s.is_empty())
+}
+
+pub(super) fn rows<'a>(
+    value: &'a Value,
+    mask: &'a Value,
+    key: &str,
+) -> Option<Vec<(&'a Value, &'a Value)>> {
+    if !matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_)) {
+        return None;
+    }
+    let values = value[key].as_array().filter(|v| !v.is_empty())?;
+    let masks = match &mask[key] {
+        Value::Null | Value::Bool(false) => None,
+        Value::Array(m) if m.len() == values.len() => Some(m),
+        _ => return None,
+    };
+    Some(
+        values
+            .iter()
+            .enumerate()
+            .map(|(i, v)| (v, masks.map_or(&Value::Null, |m| &m[i])))
+            .collect(),
+    )
+}
+
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     match (super::aliases::canonical(resource), attribute) {
         ("aws_lb_target_group_attachment", "target_group_arn") => Some("Attachment target group"),

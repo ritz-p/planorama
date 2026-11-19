@@ -449,3 +449,46 @@ is a test-only example, not a CLI account-evidence bypass. Rendering that JSON
 alone deliberately shows no verified deployment link. Regenerate both example
 formats through the registered SVG generation script. Neither role ARNs nor
 credentials are copied into the output.
+
+## Verified Permissions configuration
+
+Identity sources, policies, templates and schemas link to an explicit policy
+store ID and keep their own Terraform actions. Template-linked policies
+require the same verified store on the policy and template. Cognito identity
+sources can link a pool ARN and a complete set of client IDs when every
+client belongs to the explicitly referenced pool. OIDC issuer strings and
+Cedar and schema contents do not identify managed endpoints.
+
+## Account Access configuration
+
+Applications link to an explicit singleton Identity Center instance lookup.
+Entitlements link to the configured application ARN and IAM role ARN. A user
+or group ID requires a typed and exclusive principal field plus explicit
+identity store evidence tied to the application's verified lookup.
+The role and principal remain independent of the application owner.
+Computed application or account identifiers supply no ownership or access proof.
+
+## CloudHSM configuration
+
+The cluster links to a complete set of explicit subnet IDs with a common
+verified VPC. Its VPC placement follows those subnet references. An HSM
+links to its cluster through the configured cluster ID and can link an
+explicit subnet whose proven VPC agrees with the cluster. Cluster ownership
+preserves each HSM action and identity. Computed VPC, security-group and
+network-interface identifiers do not create endpoints.
+
+## Payment Cryptography alias
+
+An explicitly assigned alias key ARN can link to a matching current
+`aws_paymentcryptography_key.arn` in compatible provider scope. The alias
+keeps its own Terraform identity and action. An unassigned, unknown or
+unverified key leaves the alias independent.
+
+## Signer configuration
+
+Signing jobs link to an explicit managed profile name and the configured
+S3 source and destination bucket names. Profiles can link to a matching
+ACM certificate ARN in their singleton signing material block. A permission
+belongs to a verified profile and a configured profile version must equal the
+profile's known version. Object keys, principal strings and computed signed
+objects do not identify managed endpoints or effective permissions.

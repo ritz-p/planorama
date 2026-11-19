@@ -62,6 +62,7 @@ pub enum ArchitectureEntityKind {
 
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ArchitectureEntity {
+    pub pool_origins: Vec<PoolOrigin>,
     pub cloudflare_scope: Option<CloudflareScope>,
     pub deployment_target: Option<DeploymentScope>,
     pub represented_account: Option<super::AwsAccountScope>,
@@ -80,6 +81,12 @@ pub struct DeploymentScope {
 }
 
 #[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
+pub struct PoolOrigin {
+    pub enabled: Option<bool>,
+    pub weight: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct CloudflareScope {
     pub account: Option<String>,
     pub zone: Option<String>,
@@ -88,6 +95,7 @@ pub struct CloudflareScope {
 impl ArchitectureEntity {
     pub fn terraform(source: TerraformEntityId) -> Self {
         Self {
+            pool_origins: Vec::new(),
             cloudflare_scope: None,
             represented_account: None,
             deployment_target: None,
@@ -101,6 +109,7 @@ impl ArchitectureEntity {
         provenance.sort();
         provenance.dedup();
         Self {
+            pool_origins: Vec::new(),
             cloudflare_scope: None,
             represented_account: None,
             deployment_target: None,

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
 <title>Planorama viewer</title>
-<style>/* VIEWER_CSS */</style>
+<style>__PLANORAMA_VIEWER_CSS__</style>
 </head>
 <body>
 <header><strong>Planorama</strong><button id="selection-back" type="button" aria-label="Back to previous selection" disabled>Back</button><button id="selection-forward" type="button" aria-label="Forward to next selection" disabled>Forward</button><button id="clear" type="button">Clear selection</button><button id="zoom-out" type="button" aria-label="Zoom out">−</button><button id="zoom-in" type="button" aria-label="Zoom in">+</button><button id="fit" type="button">Fit to view</button><output id="zoom-level" aria-live="polite"></output></header>
@@ -74,15 +74,15 @@
 </section>
 </aside>
 <section id="viewport" tabindex="0" aria-label="Diagram. Arrow keys pan; plus and minus zoom; F fits the view; Escape clears selection.">
-<!-- DIAGRAM -->
+__PLANORAMA_DIAGRAM__
 </section>
 </main>
 <noscript>Enable JavaScript for search and navigation. The diagram is included below.</noscript>
-<script id="viewer-data" type="application/json"><!-- VIEWER_DATA --></script>
+<script id="viewer-data" type="application/json">__PLANORAMA_VIEWER_DATA__</script>
 <script id="viewer-generation" type="application/json">null</script>
-<script id="viewer-provider-data" type="application/json"><!-- VIEWER_PROVIDER_DATA --></script>
-<!-- VIEWER_DIAGNOSTICS -->
-<!-- VIEWER_SEMANTIC_DIAGNOSTICS -->
-<script>/* VIEWER_JS */</script>
+<script id="viewer-provider-data" type="application/json">__PLANORAMA_VIEWER_PROVIDER_DATA__</script>
+__PLANORAMA_VIEWER_DIAGNOSTICS__
+__PLANORAMA_VIEWER_SEMANTIC_DIAGNOSTICS__
+<script>__PLANORAMA_VIEWER_JS__</script>
 </body>
 </html>

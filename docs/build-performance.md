@@ -27,9 +27,9 @@ Run `docker compose exec -T dev sh scripts/benchmark-linker.sh` from the reposit
 root. The script uses an isolated `/tmp/planorama-linker-benchmark-target`, cleans
 it between linkers and at completion, disables incremental compilation and compiler
 wrappers, and retains measurements under `output/linker-benchmark`.
-The script copies tracked source into a temporary directory without Git metadata,
-isolating it from working-tree edits and generated reports. Build provenance is
-unavailable in that copy; the current build script still runs on every build.
+The script copies the current working-tree contents of tracked files into a temporary
+directory without Git metadata. Local edits are included, so use a clean checkout
+when measuring a specific revision. The copy has no build revision.
 Cold means an empty target/profile with downloaded dependencies already available;
 warm means an immediate unchanged build using that target. This does not measure
 network or image construction time. Test compilation uses all targets/features;

@@ -6,6 +6,16 @@ use serde_json::Value;
 #[path = "../../../tests/unit/semantic/kms_references.rs"]
 mod tests;
 
+pub(super) fn symmetric_key(kind: &str, value: &Value, mask: &Value) -> bool {
+    let field = match kind {
+        "aws_kms_key" => "customer_master_key_spec",
+        "aws_kms_replica_key" | "aws_kms_external_key" => "key_spec",
+        _ => return false,
+    };
+    super::nested_references::value(value, mask, field).and_then(Value::as_str)
+        == Some("SYMMETRIC_DEFAULT")
+}
+
 pub(super) fn key_outputs(kind: &str) -> &'static [&'static str] {
     match kind {
         "aws_kms_key" | "aws_kms_replica_key" | "aws_kms_replica_external_key" => {

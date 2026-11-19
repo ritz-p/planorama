@@ -1042,3 +1042,54 @@ Compatible accounts, independently known endpoint regions, complete identities,
 unknown/sensitive masks, lifecycle and state boundaries are checked. Cross-account
 or incomplete evidence remains unresolved. Policy/segment/label contents, BGP,
 addresses and runtime routing are not interpreted or summarized.
+
+## Network Insights configuration
+
+Path inputs `source` and `destination` require exact managed Terraform outputs
+from the supported EC2 endpoint families. ID references require compatible
+account and region bindings. An explicit EC2 ARN can qualify an endpoint in
+another account when its region and account evidence agree. Computed
+`source_arn` and `destination_arn` do not establish references.
+
+An analysis links to a verified path ID and supported intermediate ARNs.
+Access scopes use complete ARN collections for source, destination and
+through-resource statements with compatible provider evidence. Resource
+types and addresses stay selectors. These links describe configuration and
+do not report current reachability or network containment.
+
+The endpoint and statement allowlists use the AWS
+[Reachability Analyzer](https://docs.aws.amazon.com/vpc/latest/reachability/how-reachability-analyzer-works.html)
+and [Network Access Analyzer](https://docs.aws.amazon.com/vpc/latest/network-access-analyzer/resource-statement.html)
+resource contracts.
+
+## Site-to-site VPN topology (#1439)
+
+Customer gateways, virtual private gateways, VPN connections and concentrators have independent regional cards. A connection selects one gateway mode and links enabled tunnel and BGP log destinations. Static routes require a static connection. VPC placement uses a single verified inline or standalone attachment, and propagation requires the route table and gateway to share a VPC.
+
+## Carrier and local gateway references (#1440)
+
+Carrier gateways attach to a verified VPC. Local routes and associations use the local route table’s specific ID output, while local gateways and virtual interface groups use the separate data-source contracts. A destination CIDR supplies no VPC evidence.
+
+## Client VPN endpoint configuration (#1441)
+
+VPC and Transit Gateway modes select separate endpoint networks. Authentication options link only their selected provider type, while Lambda and log delivery require enabled options. A VPC route links a subnet through a matching endpoint association. A TGW route does not manufacture a managed attachment from its computed ID.
+
+## Transit Gateway attachments and acceptance (#1442)
+
+VPC attachments retain the hub, VPC and complete same-VPC subnet selection. Connect requires a transport attachment for the same gateway, and peers select a Connect attachment. A peering request qualifies its peer with the selected region and account. Accepters keep a separate identity and must match the provider binding of the accepting gateway.
+
+## Transit Gateway route and propagation evidence (#1443)
+
+Transit route tables identify their own gateway. Default association and default propagation remain independent changes. Route and prefix-list targets require a known forwarding mode and an attachment for the same gateway. A blackhole route retains its table relationship. Original default IDs, destination CIDRs and learned routes supply no endpoints.
+
+## Transit policy and metering configuration (#1444)
+
+Policy entries distinguish their policy table from their target route table. Metering policies identify the gateway and a complete set of middlebox attachments. Entry source and destination IDs are checked against their optional attachment-type selectors and the owning gateway. Traffic selectors, rule numbers and charging modes do not identify additional resources.
+
+## Transit multicast associations and ENIs (#1445)
+
+A multicast association must identify the domain, a VPC attachment on its gateway, and a subnet in that attachment’s complete VPC subnet selection. Group members and group sources remain separate registrations even when the domain, interface and multicast address match.
+
+## Verified Access service configuration (#1446)
+
+Verified Access instances and application endpoints have separate regional identities. Groups link their instance and endpoints use the group-specific ID. Each endpoint type selects its own options. Network placement requires a common VPC established by configured subnets or the selected ENI and any configured security groups. Customer-managed keys and log destinations require enabled options. S3 delivery can cross accounts only with a verified bucket owner.

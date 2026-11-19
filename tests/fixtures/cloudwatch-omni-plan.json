@@ -1,0 +1,240 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_cloudwatchomni_domain.sample0",
+      "mode": "managed",
+      "type": "aws_cloudwatchomni_domain",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_id": "fixture-domain",
+          "identity_providers": [
+            "IAM"
+          ],
+          "arn": "arn:aws:cloudwatch:us-west-2:123456789012:domain/fixture-domain"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatchomni_space.sample1",
+      "mode": "managed",
+      "type": "aws_cloudwatchomni_space",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_id": "fixture-domain",
+          "space_id": "fixture-space",
+          "data_access_role_arn": "arn:aws:iam::123456789012:role/omni",
+          "encryption_configuration": [
+            {
+              "encryption_strategy": "CUSTOMER_MANAGED",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/omni"
+            }
+          ],
+          "space_arn": "arn:aws:cloudwatch:us-east-1:123456789012:space/fixture-space"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatchomni_access_profile.sample2",
+      "mode": "managed",
+      "type": "aws_cloudwatchomni_access_profile",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "space_id": "fixture-space",
+          "profile_id": "fixture-profile"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatchomni_access_grant.sample3",
+      "mode": "managed",
+      "type": "aws_cloudwatchomni_access_grant",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain_id": "fixture-domain",
+          "space_id": "fixture-space",
+          "principal": [
+            {
+              "principal_type": "ACCESS_PROFILE",
+              "principal_id": "fixture-profile"
+            }
+          ],
+          "grant_id": "fixture-grant",
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:access-grant/fixture-grant"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample4",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/omni"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample5",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/omni"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudwatchomni_domain.sample0",
+          "mode": "managed",
+          "type": "aws_cloudwatchomni_domain",
+          "name": "sample0",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatchomni_space.sample1",
+          "mode": "managed",
+          "type": "aws_cloudwatchomni_space",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_id": {
+              "references": [
+                "aws_cloudwatchomni_domain.sample0.domain_id"
+              ]
+            },
+            "data_access_role_arn": {
+              "references": [
+                "aws_iam_role.sample4.arn"
+              ]
+            },
+            "encryption_configuration": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.sample5.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudwatchomni_access_profile.sample2",
+          "mode": "managed",
+          "type": "aws_cloudwatchomni_access_profile",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "space_id": {
+              "references": [
+                "aws_cloudwatchomni_space.sample1.space_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatchomni_access_grant.sample3",
+          "mode": "managed",
+          "type": "aws_cloudwatchomni_access_grant",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_id": {
+              "references": [
+                "aws_cloudwatchomni_domain.sample0.domain_id"
+              ]
+            },
+            "space_id": {
+              "references": [
+                "aws_cloudwatchomni_space.sample1.space_id"
+              ]
+            },
+            "principal": [
+              {
+                "principal_id": {
+                  "references": [
+                    "aws_cloudwatchomni_access_profile.sample2.profile_id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample4",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample5",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

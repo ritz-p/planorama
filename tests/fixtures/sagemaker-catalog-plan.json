@@ -1,0 +1,174 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.tracking",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "tracking",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/service"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_mlflow_tracking_server.server",
+      "mode": "managed",
+      "type": "aws_sagemaker_mlflow_tracking_server",
+      "name": "server",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "tracking_server_name": "metrics",
+          "role_arn": "arn:aws:iam::123456789012:role/service"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_model_card.model",
+      "mode": "managed",
+      "type": "aws_sagemaker_model_card",
+      "name": "model",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "model_card_name": "sample"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_model_card_export_job.export",
+      "mode": "managed",
+      "type": "aws_sagemaker_model_card_export_job",
+      "name": "export",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "model_card_name": "sample"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_device_fleet.devices",
+      "mode": "managed",
+      "type": "aws_sagemaker_device_fleet",
+      "name": "devices",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "device_fleet_name": "fleet",
+          "role_arn": "arn:aws:iam::123456789012:role/service"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_device.device",
+      "mode": "managed",
+      "type": "aws_sagemaker_device",
+      "name": "device",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "device_fleet_name": "fleet"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.tracking",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_mlflow_tracking_server.server",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.tracking.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_model_card.model",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_model_card_export_job.export",
+          "provider_config_key": "aws",
+          "expressions": {
+            "model_card_name": {
+              "references": [
+                "aws_sagemaker_model_card.model.model_card_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_device_fleet.devices",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.tracking.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_device.device",
+          "provider_config_key": "aws",
+          "expressions": {
+            "device_fleet_name": {
+              "references": [
+                "aws_sagemaker_device_fleet.devices.device_fleet_name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

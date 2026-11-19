@@ -17,7 +17,10 @@ on:
       - 'tests/fixtures/cloudflare-captured/**'
       - 'scripts/aws-inventory.cjs'
       - 'scripts/aws-inventory-diff.cjs'
+      - 'scripts/provider-schema-diff.cjs'
       - 'scripts/aws-semantic-audit.cjs'
+      - 'scripts/dms-fixtures.cjs'
+      - 'tests/fixtures/dms-*'
       - 'tests/support/aws-semantic-audit.test.cjs'
       - 'tests/support/verify-aws-semantic-contracts.cjs'
       - 'docs/aws-semantic-*'
@@ -60,6 +63,7 @@ jobs:
           node --test tests/support/aws-inventory.test.cjs
           node --test tests/support/aws-inventory-diff.test.cjs
           node scripts/aws-semantic-audit.cjs --check
+          node scripts/dms-fixtures.cjs --check
           node --test tests/support/aws-semantic-audit.test.cjs
       - name: Check Cloudflare inventory and generated contracts
         run: |

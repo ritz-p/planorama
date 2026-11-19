@@ -1,0 +1,441 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_transfer_workflow.sample0",
+      "mode": "managed",
+      "type": "aws_transfer_workflow",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "steps": [
+            {
+              "type": "CUSTOM",
+              "custom_step_details": [
+                {
+                  "target": "arn:aws:lambda:us-east-1:123456789012:function:fixture"
+                }
+              ]
+            },
+            {
+              "type": "COPY",
+              "copy_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "efs_file_location": [
+                        {
+                          "file_system_id": "fs-fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "COPY",
+              "copy_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "s3_file_location": [
+                        {
+                          "bucket": "fixture-bucket"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "DECRYPT",
+              "decrypt_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "efs_file_location": [
+                        {
+                          "file_system_id": "fs-fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "DECRYPT",
+              "decrypt_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "s3_file_location": [
+                        {
+                          "bucket": "fixture-bucket"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "on_exception_steps": [
+            {
+              "type": "CUSTOM",
+              "custom_step_details": [
+                {
+                  "target": "arn:aws:lambda:us-east-1:123456789012:function:fixture"
+                }
+              ]
+            },
+            {
+              "type": "COPY",
+              "copy_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "efs_file_location": [
+                        {
+                          "file_system_id": "fs-fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "COPY",
+              "copy_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "s3_file_location": [
+                        {
+                          "bucket": "fixture-bucket"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "DECRYPT",
+              "decrypt_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "efs_file_location": [
+                        {
+                          "file_system_id": "fs-fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "DECRYPT",
+              "decrypt_step_details": [
+                {
+                  "destination_file_location": [
+                    {
+                      "s3_file_location": [
+                        {
+                          "bucket": "fixture-bucket"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.sample1",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_efs_file_system.sample2",
+      "mode": "managed",
+      "type": "aws_efs_file_system",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample3",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-bucket"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_transfer_workflow.sample0",
+          "mode": "managed",
+          "type": "aws_transfer_workflow",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "steps": [
+              {
+                "custom_step_details": [
+                  {
+                    "target": {
+                      "references": [
+                        "aws_lambda_function.sample1.arn"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "copy_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "efs_file_location": [
+                          {
+                            "file_system_id": {
+                              "references": [
+                                "aws_efs_file_system.sample2.id"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "copy_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "s3_file_location": [
+                          {
+                            "bucket": {
+                              "references": [
+                                "aws_s3_bucket.sample3.bucket"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "decrypt_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "efs_file_location": [
+                          {
+                            "file_system_id": {
+                              "references": [
+                                "aws_efs_file_system.sample2.id"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "decrypt_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "s3_file_location": [
+                          {
+                            "bucket": {
+                              "references": [
+                                "aws_s3_bucket.sample3.bucket"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "on_exception_steps": [
+              {
+                "custom_step_details": [
+                  {
+                    "target": {
+                      "references": [
+                        "aws_lambda_function.sample1.arn"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "copy_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "efs_file_location": [
+                          {
+                            "file_system_id": {
+                              "references": [
+                                "aws_efs_file_system.sample2.id"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "copy_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "s3_file_location": [
+                          {
+                            "bucket": {
+                              "references": [
+                                "aws_s3_bucket.sample3.bucket"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "decrypt_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "efs_file_location": [
+                          {
+                            "file_system_id": {
+                              "references": [
+                                "aws_efs_file_system.sample2.id"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "decrypt_step_details": [
+                  {
+                    "destination_file_location": [
+                      {
+                        "s3_file_location": [
+                          {
+                            "bucket": {
+                              "references": [
+                                "aws_s3_bucket.sample3.bucket"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_lambda_function.sample1",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_efs_file_system.sample2",
+          "mode": "managed",
+          "type": "aws_efs_file_system",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample3",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

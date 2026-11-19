@@ -21,6 +21,39 @@ pub enum RelationshipProvenance {
     },
 }
 
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum RelationshipEvidence {
+    ConfiguredValue,
+    Resource,
+    Reference,
+}
+
+impl RelationshipEvidence {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::ConfiguredValue => "configured-value",
+            Self::Resource => "resource",
+            Self::Reference => "reference",
+        }
+    }
+    pub fn confidence(self) -> Option<&'static str> {
+        match self {
+            Self::ConfiguredValue => Some("typed-configured-value"),
+            Self::Resource | Self::Reference => None,
+        }
+    }
+}
+
+impl RelationshipProvenance {
+    pub fn evidence(&self) -> RelationshipEvidence {
+        match self {
+            Self::ConfiguredValue { .. } => RelationshipEvidence::ConfiguredValue,
+            Self::Resource { .. } => RelationshipEvidence::Resource,
+            Self::Reference { .. } => RelationshipEvidence::Reference,
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ResourceDeployment {
     pub scope: Option<super::architecture::DeploymentScope>,

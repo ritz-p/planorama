@@ -284,40 +284,56 @@ The AWS 5.100.0 schema and official [Cluster](https://registry.terraform.io/prov
 and [Parameter Group](https://registry.terraform.io/providers/hashicorp/aws/5.100.0/docs/resources/redshift_parameter_group)
 contracts define these scalar names and set-valued ID collections.
 
-## Athena Workgroup and Data Catalog
+## Athena workgroups, catalogs and queries
 
-Exact AWS `aws_athena_workgroup` and `aws_athena_data_catalog` are independent
-regional spatial Nodes with the Amazon Athena service label. Neither is a
-presentation owner of the other. Their own deployment region comes
-from the verified provider binding; a catalog's parameters do not relocate it to
-the region/account of a backend. Missing or unresolved region overrides remain
-unknown. Managed/data resources keep separate identities and coverage entries.
+Workgroups and data catalogs are independent regional cards. Their region follows
+the verified provider binding. An unresolved region override remains unknown.
+A named query or prepared statement appears under its workgroup when an explicit
+reference verifies the owner in the same scope. Each retains its own Terraform
+identity, action and coverage entry. A named query can also link to its verified
+Athena database.
 
-Explicit Workgroup configuration references, including S3 output-location and
-KMS encryption-key expressions, remain ordinary Terraform `References` and
-dependencies. They do not assert query execution, effective encryption, access or
-runtime use. Unknown planned values do not erase structurally explicit Terraform
-provenance. Dynamic, missing and ambiguous references use shared diagnostics;
-filtered targets become Unavailable. Foreign providers and unsupported exact types
-keep generic presentation and ordinary references.
+The table lists inputs that can produce dedicated configuration references.
+These require explicit Terraform references and matching known values with
+compatible provider scope.
 
-No dedicated association is inferred between Workgroups and Data Catalogs, or
-between a Data Catalog and a Glue Database merely present in the same input.
-Literal output URIs, matching names and Catalog parameters never create links.
-Query bodies/history, Catalog parameter values and arbitrary attributes are not
-rendered. Named queries, prepared statements and runtime query graphs are outside
-the initial scope. Current configuration does not prove historical use for
-deleted/deposed objects; their lifecycle and Terraform provenance remain visible.
+- Workgroup result settings show `Query result bucket` and `Query output key`
+  for verified customer-managed results. The key requires `SSE_KMS` or
+  `CSE_KMS`. A configured expected bucket owner must match the verified bucket
+  account. Managed results, logging and Identity Center links require their
+  respective settings to be enabled. Identity Center also requires a verified
+  singleton lookup.
+- A `LAMBDA` catalog accepts the complete `function` map or the
+  `metadata-function` and `record-function` pair. Both roles can reference the
+  same Lambda. A `HIVE` catalog accepts `metadata-function`. Parameter values
+  and SQL bodies are omitted from the output.
+- Literal URIs, matching names and nearby Glue databases do not supply reference
+  evidence. Unverified configuration can retain ordinary Terraform provenance.
+  Filtered targets appear as Unavailable. Configuration references describe the
+  plan and do not establish runtime query execution, access or effective
+  encryption. Deleted and deposed resources retain their lifecycle and
+  provenance.
 
-AWS Provider 5.100.0 official
-[Workgroup](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/athena_workgroup.html.markdown)
-and [Data Catalog](https://github.com/hashicorp/terraform-provider-aws/blob/v5.100.0/website/docs/r/athena_data_catalog.html.markdown)
-definitions, installed schemas and a Terraform 1.9.8 offline plan confirm the
-nested configuration and map-expression shapes. The synthetic
-[fixture](../tests/fixtures/athena-plan.json), [SVG](../examples/athena.svg) and
-[offline HTML](../examples/athena.html) contrast explicit S3/KMS references with
-literal-only settings, multiple indexed instances and independent Athena/Glue
-catalogs.
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_athena_data_catalog` | `parameters` | `aws_lambda_function` (`arn`) |
+| `aws_athena_database` | `bucket` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `workgroup` | `aws_athena_workgroup` (`name`) |
+|  | `encryption_configuration.kms_key` | `aws_kms_key` (`arn`, `key_id`) |
+| `aws_athena_named_query` | `workgroup` | `aws_athena_workgroup` (`name`) |
+|  | `database` | `aws_athena_database` (`name`) |
+| `aws_athena_prepared_statement` | `workgroup` | `aws_athena_workgroup` (`name`) |
+| `aws_athena_workgroup` | `configuration.execution_role` | `aws_iam_role` (`arn`) |
+|  | `configuration.identity_center_configuration.identity_center_instance_arn` | `aws_ssoadmin_instances` (`arns`) |
+|  | `configuration.customer_content_encryption_configuration.kms_key`, `configuration.managed_query_results_configuration.encryption_configuration.kms_key`, `configuration.result_configuration.encryption_configuration.kms_key_arn`, `configuration.monitoring_configuration.s3_logging_configuration.kms_key`, `configuration.monitoring_configuration.managed_logging_configuration.kms_key` | `aws_kms_key` (`arn`) |
+|  | `configuration.result_configuration.output_location`, `configuration.monitoring_configuration.s3_logging_configuration.log_location` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `configuration.monitoring_configuration.cloud_watch_logging_configuration.log_group` | `aws_cloudwatch_log_group` (`name`) |
+
+The [Athena example fixture](../tests/fixtures/athena-plan.json) and its
+[SVG](../examples/athena.svg) and [offline HTML](../examples/athena.html) show
+explicit and literal-only configurations. The
+[query configuration fixture](../tests/fixtures/athena-queries-plan.json)
+covers catalog and query references.
 
 ## Glue Catalog, Crawler and Job
 
@@ -1021,3 +1037,214 @@ The source contracts are `website/docs/r/glue_{crawler,job,ml_transform,trigger,
 classifier,connection,security_configuration,workflow}.html.markdown` and their
 corresponding `internal/service/glue/*.go` files at the pinned revision. Runtime
 support defaults use `scripts/update-resource-support.sh aws_glue_`.
+
+### DocumentDB Elastic and Neptune Analytics (#766)
+
+Elastic clusters use direct subnet and security group ID sets. Neptune private graph endpoints reference a graph by its Terraform `id`, and have their own VPC, subnets and configured security groups. Placement requires complete subnet and security group references to a common VPC. For a private endpoint its explicit VPC must agree. The graph keeps its regional placement. The Neptune API does not return endpoint security groups, so these references describe configuration. Graphs and Elastic clusters can reference a managed KMS key by ARN.
+
+### Aurora DSQL (#767)
+
+Cluster policies and peerings resolve their local cluster by `identifier`. A cluster's configured `multi_region_properties.clusters` and a peering's `clusters` resolve managed clusters by ARN across regions when the account, partition, resource identifier and effective regions agree. The witness region is configuration. Cluster encryption accepts an explicit KMS key ARN. The AWS-owned key sentinel keeps the default presentation.
+
+### QuickSight connections and data sources
+
+A VPC connection verifies `role_arn` against an IAM role ARN and the complete
+`subnet_ids` and `security_group_ids` sets against managed IDs. Both sets must
+prove the same managed VPC before the connection has VPC context. Consumers
+retain their own scope. Resolver IPs do not identify Route 53 resources.
+
+A data source accepts singleton blocks for `vpc_connection_properties.vpc_connection_arn`
+and the mutually exclusive `credentials.copy_source_arn` or `credentials.secret_arn`.
+The targets are the matching connection, data source or Secrets Manager ARN.
+Within the selected `parameters` block, ATHENA accepts `athena.work_group`
+(workgroup name) and `athena.role_arn`. RDS accepts `rds.instance_id` (DB instance
+identifier), REDSHIFT accepts `redshift.cluster_id` (cluster identifier), and S3
+accepts `s3.manifest_file_location.bucket` (bucket or ID) and `s3.role_arn`.
+AMAZON_ELASTICSEARCH accepts `amazon_elasticsearch.domain` against an Elasticsearch
+domain name. The pinned provider has no OpenSearch parameter block or managed IoT
+Analytics dataset. Missing, masked, incompatible or literal-only evidence leaves
+the typed link unverified. Credentials and connection strings remain private.
+
+### QuickSight content navigation
+
+Analysis and dashboard references use `theme_arn`, `source_entity.source_template.arn`,
+its `data_set_references.data_set_arn` substitutions, or
+`definition.data_set_identifiers_declarations.data_set_arn`. Templates select one
+source analysis or template and verify all configured source-analysis dataset
+substitutions. These fields match the target ARN. A template ARN with a version
+suffix also requires that version on the target. A template alias matches
+`template_id` and `template_version_number` against the same template.
+
+Dataset data-source ARNs are scoped to each physical table's custom SQL,
+relational or S3 source. Logical table `source.data_set_arn` and row-level
+permission dataset `arn` point to independent datasets. Local table-map keys
+and SQL text do not identify resources.
+
+Folder parent links reject cycles. Membership uses the folder's `folder_id`
+and the selected member's `analysis_id`, `dashboard_id` or `data_set_id`.
+Ingestions and refresh schedules use the dataset ID. Base themes use the theme
+ID. Literal IDs, built-in themes and composite Terraform IDs remain unresolved.
+
+### QuickSight identity and key registration
+
+Groups and users link to a managed namespace by `namespace`. Group and role
+membership and user permissions compare user/group names within the same known
+namespace, account and region. Custom permissions use `custom_permissions_name`.
+IAM policy assignments accept the policy ARN and complete `identities.group` and
+`identities.user` sets. QuickSight roles are service enums; membership and policy
+references describe configuration.
+
+An IAM user registration requires `identity_type = IAM` and an explicit IAM
+user or role ARN. A session-qualified role requires agreement between the role
+name, session name and registered user name. Key registrations verify each
+`key_registration.key_arn` against a KMS key. Account subscriptions accept the
+Directory Service ID for ACTIVE_DIRECTORY or a single explicitly referenced
+Identity Center instance ARN for IAM_IDENTITY_CENTER. Identity store enums,
+effective access and encryption of individual datasets are outside these links.
+
+### Timestream for InfluxDB
+
+Clusters and instances keep separate cards. Complete subnet and security-group references must share a VPC before placement. Only an enabled log delivery configuration can link an S3 bucket.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_timestreaminfluxdb_db_cluster` | `vpc_subnet_ids` | `aws_subnet` (`id`) |
+|  | `vpc_security_group_ids` | `aws_security_group` (`id`) |
+|  | `log_delivery_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+| `aws_timestreaminfluxdb_db_instance` | `vpc_subnet_ids` | `aws_subnet` (`id`) |
+|  | `vpc_security_group_ids` | `aws_security_group` (`id`) |
+|  | `log_delivery_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+
+### Timestream tables and scheduled queries
+
+A scheduled target requires a table in the explicitly configured database. Database and table cards retain their identities. Rejected-data KMS keys require SSE_KMS. SQL and computed run summaries supply no evidence.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_timestreamwrite_database` | `kms_key_id` | `aws_kms_key` (`arn`) |
+| `aws_timestreamwrite_table` | `database_name` | `aws_timestreamwrite_database` (`database_name`, `id`) |
+|  | `magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+|  | `magnetic_store_write_properties.magnetic_store_rejected_data_location.s3_configuration.kms_key_id` | `aws_kms_key` (`arn`) |
+| `aws_timestreamquery_scheduled_query` | `target_configuration.timestream_configuration.database_name` | `aws_timestreamwrite_database` (`database_name`, `id`) |
+|  | `target_configuration.timestream_configuration.table_name` | `aws_timestreamwrite_table` (`table_name`) |
+|  | `execution_role_arn` | `aws_iam_role` (`arn`) |
+|  | `kms_key_id` | `aws_kms_key` (`arn`, `key_id`) |
+|  | `notification_configuration.sns_configuration.topic_arn` | `aws_sns_topic` (`arn`) |
+|  | `error_report_configuration.s3_configuration.bucket_name` | `aws_s3_bucket` (`bucket`, `id`) |
+
+### Glue catalog encryption
+
+A catalog or shared security configuration references a KMS key only for a matching encryption mode. The catalog encryption service role is specific to SSE-KMS-WITH-SERVICE-ROLE. An explicit foreign catalog ID remains a selector.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_glue_data_catalog_encryption_settings` | `data_catalog_encryption_settings.connection_password_encryption.aws_kms_key_id`, `data_catalog_encryption_settings.encryption_at_rest.sse_aws_kms_key_id` | `aws_kms_key` (`arn`) |
+|  | `data_catalog_encryption_settings.encryption_at_rest.catalog_encryption_service_role` | `aws_iam_role` (`arn`) |
+| `aws_glue_security_configuration` | `encryption_configuration.cloudwatch_encryption.kms_key_arn`, `encryption_configuration.job_bookmarks_encryption.kms_key_arn`, `encryption_configuration.s3_encryption.kms_key_arn` | `aws_kms_key` (`arn`) |
+
+### Lake Formation catalog and principal selectors
+
+Only the configured catalog, database, table, principal, registered location or tag is considered. Table names and tag keys require matching catalog identity. A table wildcard, tag policy or filter expression never expands into resources. A data cells filter can be grouped with its verified table.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_lakeformation_data_cells_filter` | `table_data.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `table_data.database_name` | `aws_glue_catalog_database` (`name`) |
+| `aws_lakeformation_identity_center_configuration` | `instance_arn` | `aws_ssoadmin_instances` (`arns`) |
+| `aws_lakeformation_data_lake_settings` | `admins`, `read_only_admins` | `aws_iam_role` (`arn`) or `aws_iam_user` (`arn`) |
+| `aws_lakeformation_lf_tag_expression` | `expression.tag_key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_resource` | `arn` | `aws_s3_bucket` (`arn`) or `aws_glue_connection` (`arn`) |
+|  | `role_arn` | `aws_iam_role` (`arn`) |
+| `aws_lakeformation_permissions` | `principal` | `aws_iam_role` (`arn`) or `aws_iam_user` (`arn`) |
+|  | `data_location.arn` | `aws_lakeformation_resource` (`arn`) |
+|  | `database.name`, `table.database_name`, `table_with_columns.database_name`, `data_cells_filter.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `table.name`, `table_with_columns.name`, `data_cells_filter.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `lf_tag.key`, `lf_tag_policy.expression.key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_opt_in` | `principal.data_lake_principal_identifier` | `aws_iam_role` (`arn`) or `aws_iam_user` (`arn`) |
+|  | `resource_data.data_location.resource_arn` | `aws_lakeformation_resource` (`arn`) |
+|  | `resource_data.lf_tag_expression.name`, `resource_data.lf_tag_policy.expression_name` | `aws_lakeformation_lf_tag_expression` (`name`) |
+|  | `resource_data.database.name`, `resource_data.table.database_name`, `resource_data.table_with_columns.database_name`, `resource_data.data_cells_filter.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `resource_data.table.name`, `resource_data.table_with_columns.name`, `resource_data.data_cells_filter.table_name` | `aws_glue_catalog_table` (`name`) |
+|  | `resource_data.lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_resource_lf_tag` | `database.name`, `table.database_name`, `table_with_columns.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `table.name`, `table_with_columns.name` | `aws_glue_catalog_table` (`name`) |
+|  | `lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |
+| `aws_lakeformation_resource_lf_tags` | `database.name`, `table.database_name`, `table_with_columns.database_name` | `aws_glue_catalog_database` (`name`) |
+|  | `table.name`, `table_with_columns.name` | `aws_glue_catalog_table` (`name`) |
+|  | `lf_tag.key` | `aws_lakeformation_lf_tag` (`key`) |
+
+## DynamoDB data movement
+
+Explicit configuration can link a table export to its source table ARN and
+S3 bucket name or ID. The export KMS path requires `s3_sse_algorithm = KMS`.
+Table imports can link the singleton `import_table.s3_bucket_source.bucket`
+to a managed S3 bucket by name or ID. An explicit bucket-owner selector must
+match verified endpoint account evidence. Restore source names and ARNs link
+only to the exact referenced table output in compatible provider scope.
+These links describe configured data movement and do not establish delivery
+status or containment.
+
+## Amazon Keyspaces configuration
+
+A keyspace has an independent regional card. A table can appear in the
+keyspace's Tables section through a verified `keyspace_name` reference to
+`aws_keyspaces_keyspace.name` or `id`. The embedded table retains its identity
+and action. Shared tables and tables with unresolved ownership remain in
+Logical Resources and retain any verified references.
+A singleton encryption configuration links `kms_key_identifier` to a managed
+KMS ARN when it selects `CUSTOMER_MANAGED_KMS_KEY`. Replication regions
+do not identify separate Terraform replicas or imply VPC membership.
+
+## Managed Airflow configuration
+
+An MWAA environment links its configured execution role, S3 artifact bucket ARN
+and customer KMS key ARN. A common verified VPC is required for placement from
+complete configured subnet and security-group references. An environment without
+this evidence retains a regional card. Scripts, DAG paths, managed log groups
+and workers are outside these references.
+
+## Managed Flink configuration
+
+A Flink application links its execution role and its S3 code bucket when using
+`ZIPFILE`. Complete configured subnet and security-group references with a common
+VPC establish application placement. An explicit configured snapshot name link
+preserves the snapshot's logical identity. SQL, code and property-map contents,
+worker inference, restore activity and service-managed encryption are excluded.
+
+## Clean Rooms configuration
+
+A collaboration has an independent regional card. A membership links the
+configured collaboration ID when the collaboration ARN proves its creator
+account and region, and the membership keeps its own account and lifecycle.
+Configured result role and bucket names link typed resources. A configured table
+requires explicit Glue database and table name references and a verified common
+catalog account. Invitations and query settings do not establish ownership.
+
+## Data Exchange revision configuration
+
+A dataset has an independent card. Revisions and revision-assets resources
+link their explicit dataset ID and retain independent Terraform identities.
+S3 access and import asset blocks require the matching dataset type and a
+single configured asset variant. S3 snapshot revision export links a bucket
+and uses an explicit KMS ARN only in `aws:kms` mode. Computed access points,
+object keys and signed URLs do not create resources.
+
+## Data Pipeline definitions
+
+A Data Pipeline has an independent card. A definition with a verified
+`pipeline_id` appears under its pipeline and preserves its own identity and
+lifecycle. Object fields and internal `ref_value` entries stay opaque.
+
+## FinSpace KX configuration
+
+KX environments and clusters have independent regional cards. Environment
+references link KMS keys and transit gateways. Workloads link an explicit
+environment ID, and database, dataview, scaling-group and volume names require
+agreement on the referenced environment. A cluster's dataview also requires the
+same verified database. Dataview volumes require matching availability zones.
+IAM role and code bucket links use their exact configured identities.
+
+Complete subnet and security-group collections must agree with the explicitly
+referenced VPC. That context describes a PrivateLink endpoint without placing
+service compute inside the customer network. Computed capacity and cluster
+lists, CIDRs, DNS values and code or object paths remain opaque.

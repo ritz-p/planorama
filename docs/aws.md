@@ -7,6 +7,7 @@ AWS の共通契約とサービス別の証拠条件の正本です。型ごと�
 共通契約は [役割と data](#resource-roles-and-data)、[deployment scope](#deployment-scopes)、[包含](#containment)、[SG 接続](#security-group-attachments)、[Association](#association-resources) です。サービス固有の型・値・scope・lifecycle 条件を合わせて確認してください。共通ルールから未記載のサービス対応を推測しないでください。
 
 - [Compute and containers](aws-compute.md)
+- [AI and machine learning](aws-ai.md)
 - [Network and edge](aws-network.md)
 - [Databases and analytics](aws-data.md)
 - [Storage and backup](aws-storage.md)
@@ -886,6 +887,41 @@ values and compatible provider/account/region/state evidence. Sensitive and
 unknown values retain fallback. Dockerfiles, YAML, parameters, user data, policies
 and generated instance/image outputs are neither interpreted nor displayed.
 
+## DMS endpoint references (#863)
+
+`aws_dms_endpoint` and `aws_dms_s3_endpoint` retain independent Logical identities.
+Replication tasks accept either exact managed `endpoint_arn` output with a known
+matching `source`/`target` discriminator. They do not alias the two resource types.
+Provider/account/region, current managed lifecycle, explicit unique provenance,
+matching known nonsensitive values and complete reference collections are required.
+
+Contracts are pinned to AWS Provider 6.70.0 commit
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`, `internal/service/dms/{endpoint,s3_endpoint}.go`
+and their resource schemas/docs:
+
+- `certificate_arn` selects DMS certificate `certificate_arn`, never ACM.
+  Root `kms_key_arn` selects KMS key `arn` for connection parameters, including
+  the deprecated but distinct S3 endpoint connection-key input.
+- Endpoint `secrets_manager_arn` selects Secrets Manager `arn`, `id` or `name`
+  by exact equality; partial ARN guessing is excluded. The paired access role
+  selects IAM `arn`. The source factory enables these for Aurora/MySQL/MariaDB,
+  Aurora PostgreSQL/Postgres, MongoDB, Oracle, Redshift, SQL Server/Babelfish,
+  Sybase and DB2/DB2-zOS. Other engine variants retain fallback.
+- `service_access_role` selects IAM `arn` only for a DynamoDB target.
+  Target Kinesis singleton `kinesis_settings` selects stream `arn` and role `arn`.
+- Target Redshift singleton `redshift_settings` selects S3 `bucket`/`id`,
+  IAM role `arn`, and KMS key `arn`/`key_id`/`id` only with known `SSE_KMS`.
+- S3 endpoints select bucket `bucket`/`id` and IAM role `arn`. A configured
+  `expected_bucket_owner` must match independent endpoint account evidence.
+  `server_side_encryption_kms_key_id` accepts key `arn` only for target `SSE_KMS`;
+  source encryption settings do not establish that target contract.
+
+These associations never inherit remote network containment or claim delivery.
+Unknown/sensitive, malformed, ambiguous, filtered or historical evidence retains
+fallback. Hosts, brokers, database strings, SQL, credentials, certificate material,
+table mappings and connection payloads remain opaque. The deterministic synthetic
+fixture is reproduced with `node scripts/dms-fixtures.cjs`; `--check` verifies it.
+
 ## Image Builder distribution and lifecycle references (#814)
 
 Distribution configurations verify complete per-entry references to KMS key ARNs,
@@ -1352,3 +1388,187 @@ are global within the account. Nested shape checks do not inspect opaque payload
 unknown/sensitive identity or discriminator values still fail. Unverified selectors
 retain normal reference/dependency fallback. No records, prompts, scores, policies,
 credentials, namespace contents or runtime reachability are summarized.
+
+## DMS event and instance auxiliary references (#864)
+
+Contracts use Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/dms/{event_subscription,replication_instance}.go` and the pinned
+schema. Event subscriptions remain independent Logical configuration; replication
+instances retain their existing individual Spatial default and #699 network
+proof. Event sources, secret storage and IAM roles do not supply containment.
+
+| Configured input | Shape and required managed output |
+| --- | --- |
+| Event `sns_topic_arn` | Required string → SNS Topic `arn` |
+| Event `source_ids` | Optional set of strings → complete matching Instance `replication_instance_id` set with required `source_type=replication-instance`, or Task `replication_task_id` set with `source_type=replication-task`; ARNs and generic IDs are not substitutes |
+| Instance `kms_key_arn` | Optional/computed string → KMS Key `arn`, only when explicitly configured |
+| Instance `kerberos_authentication_settings.key_cache_secret_iam_arn` | Optional singleton list, required string leaf → IAM Role `arn` |
+| Instance `kerberos_authentication_settings.key_cache_secret_id` | Same singleton list, required string leaf → Secrets Manager Secret `arn` / `id` / `name` by exact value |
+
+Every link requires complete unique explicit references to current managed AWS
+resources, known non-sensitive matching input/output values and independent
+compatible provider/account/region/state evidence. IAM role scope is global within
+the compatible account. Missing/empty event source collections remain selectors;
+no resource list is inferred. A bad source set does not invalidate an independently
+proven SNS topic. Unknown, sensitive, partial, duplicate, wrong-type, filtered,
+foreign-provider, deleted/deposed and ambiguous evidence retains fallback.
+
+The Kerberos configuration's required `krb5_file_contents` stays opaque; its
+payload or sensitivity does not prove or invalidate separately known secret/role
+leaves. No credentials, SQL, runtime health or network policy is interpreted.
+Independent actions and exactly-once resource coverage are retained, including
+filtered and named states. See [SVG](../examples/dms-events.svg), sourced from
+`tests/fixtures/dms-events-plan.json`.
+
+## DMS migration configuration references (#865)
+
+Provider/source pin is AWS 6.70.0,
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/dms/{instance_profile,data_provider,migration_project}.go`.
+DMS instance profiles, data providers and migration projects retain their
+independent Logical identities and actions. A DMS profile is not an IAM instance
+profile, a data provider is not a managed database, and project membership does
+not establish exclusive ownership or VPC containment.
+
+| Source input | Pinned shape and managed output |
+| --- | --- |
+| Profile `subnet_group_identifier` | Optional/computed string → DMS Replication Subnet Group `id` |
+| Profile `vpc_security_group_ids` | Optional/computed string set → complete Security Group `id` set |
+| Profile `kms_key_arn` | Optional/computed string → KMS Key `arn`, explicitly configured |
+| Project `instance_profile_arn` | Required string → DMS Instance Profile `arn` |
+| Project `source_data_provider_descriptor.data_provider_arn` / `target_data_provider_descriptor.data_provider_arn` | Required lists with at least one descriptor and required string leaf → DMS Data Provider `arn`; complete separately indexed collections |
+| Either descriptor `secrets_manager_access_role_arn` / `secrets_manager_secret_id` | Optional string leaves → IAM Role `arn` / Secrets Manager Secret `arn`, `id` or `name` by exact known value |
+| Project `schema_conversion_application_attributes.s3_bucket_role_arn` | Optional singleton list and optional string leaf → IAM Role `arn`; `s3_bucket_path` is opaque and does not identify a bucket |
+
+Profile network context requires **both** a complete subnet-group reference and
+complete explicit SG set. The group must have complete explicit managed subnet
+IDs; every subnet and SG must explicitly reference the same current managed VPC
+with matching values and independently compatible scope. Incomplete, duplicate,
+unknown, absent, mixed-VPC or incompatible evidence retains fallback for the
+profile network paths; an independently proven KMS reference is unaffected.
+This is reusable migration **context**, not profile or project subnet containment.
+`availability_zone` alone cannot select subnets. Referencing a profile ARN does
+not transfer its network context to a migration project.
+
+Data provider `engine` is required, `virtual` is optional/computed boolean, and
+`settings` is a required singleton list. Exactly one singleton settings branch
+must match the known engine. Unknown or populated alternative branches prevent
+verification; no recursive string scanning is used. All selected reference leaves
+below are optional strings. Virtual/nonvirtual providers retain the same distinct
+DMS identity; connection names, ports and database strings never prove database
+ownership or availability.
+
+| Engine | Selected `settings` branch | Verified fields |
+| --- | --- | --- |
+| `docdb` | `doc_db_settings` | `certificate_arn` |
+| `db2` | `ibm_db2_luw_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `db2-zos` | `ibm_db2_zos_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `mariadb` | `maria_db_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `sqlserver` | `microsoft_sql_server_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `mongodb` | `mongo_db_settings` | `certificate_arn` |
+| `mysql`, `aurora` | `mysql_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `oracle` | `oracle_settings` | `certificate_arn`, `s3_access_role_arn`, `secrets_manager_oracle_asm_access_role_arn`, `secrets_manager_oracle_asm_secret_id`, `secrets_manager_security_db_encryption_access_role_arn`, `secrets_manager_security_db_encryption_secret_id` |
+| `postgres`, `aurora-postgresql` | `postgresql_settings` | `certificate_arn`, `s3_access_role_arn` |
+| `redshift` | `redshift_settings` | `s3_access_role_arn` |
+| `sybase` | `sybase_ase_settings` | `certificate_arn` |
+
+`certificate_arn` requires DMS Certificate `certificate_arn`, never ACM. Access
+roles require IAM Role `arn`. Oracle secret IDs require exact Secrets Manager
+Secret `arn` / `id` / `name`. Unlisted engine/field combinations remain unsupported.
+S3 paths, broker/server names, SQL/transformation payloads, credentials and runtime
+health remain opaque; no bucket is guessed from a URI or path.
+
+Unique complete explicit current managed AWS evidence, matching known nonsensitive
+values and independently compatible provider/account/region/named-state identity
+are required. Shared profiles/providers/keys/roles/secrets remain reusable;
+filtered, missing, data, foreign-provider, deleted/deposed and ambiguous evidence
+falls back with independent actions and exactly-once coverage. See
+[SVG](../examples/dms-migration.svg), sourced from
+`tests/fixtures/dms-migration-plan.json`.
+
+## DMS serverless replication (#866)
+
+`aws_dms_replication_config` has its own Spatial workload card, distinct from
+provisioned replication instances/tasks and from reusable migration profiles.
+No provisioned instance is synthesized. Its configured source/target endpoint
+references never make those shared endpoints children of the workload.
+
+Contracts use pinned Provider 6.70.0 source
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`,
+`internal/service/dms/replication_config.go` and the pinned schema:
+
+| Configured input | Shape and required managed output |
+| --- | --- |
+| `source_endpoint_arn` / `target_endpoint_arn` | Required strings → DMS Endpoint or dedicated DMS S3 Endpoint `endpoint_arn`, with known matching `source` / `target` endpoint type |
+| `compute_config.replication_subnet_group_id` | Required singleton `compute_config` list and **required** string leaf → DMS Replication Subnet Group `id`; the schema's required flag takes precedence over optional wording in Provider docs |
+| `compute_config.vpc_security_group_ids` | Same singleton list, optional/computed string set → complete Security Group `id` set |
+| `compute_config.kms_key_id` | Same singleton list, optional/computed string → KMS Key `arn` only; despite its name, the pinned source validates ARN, not key ID or alias |
+
+The required `replication_type` must be known `full-load`, `cdc` or
+`full-load-and-cdc`. Computed fields without explicit Terraform references do not
+prove configuration. Workload ARN/identifier remain its independent identity;
+no runtime replication, start status, table mappings, SQL, capacity inference,
+connection payload or policy interpretation is performed.
+
+VPC placement requires both complete explicit subnet-group and SG references,
+complete managed subnet membership inside the group, and matching explicit
+`vpc_id` references from every subnet and SG to exactly one current managed VPC.
+Each endpoint and parent retains independently compatible provider/account/region
+and named-state evidence. Own proven provider account scope is preserved; remote
+endpoint or key references cannot supply it. Parent proof is shared with #865's
+context verifier, but only the serverless workload receives containment.
+Availability zone, DNS strings and computed defaults cannot select subnets.
+
+Unknown, partial, duplicated, mixed-VPC, incompatible, absent or filtered network
+evidence retains an uncontained regional Spatial card; independently proven
+source/target/KMS references remain usable. Invalid endpoint direction or key
+proof does not invalidate independent network placement. Deleted/deposed, data,
+foreign-provider and ambiguous endpoints remain unresolved. Resource actions and
+exactly-once coverage are preserved across filtered/named states. See
+[SVG](../examples/dms-serverless.svg), sourced from
+`tests/fixtures/dms-serverless-plan.json`. Generate current defaults with
+`sh scripts/update-resource-support.sh aws_dms_`.
+
+## Redshift workload, catalog and Serverless helpers
+
+### Redshift workload helpers (#853)
+
+Event subscriptions resolve `sns_topic_arn` and a complete `source_ids` set qualified by `source_type`. Supported sources are cluster identifiers, parameter group names, snapshot identifiers and scheduled action names. An omitted set retains selector scope. Logging and usage-limit helpers use `cluster_identifier` for ownership. S3 logging resolves the configured bucket name in S3 mode. CloudWatch export names stay opaque.
+
+A partner's `account_id` must match the cluster's independently known provider account. Scheduled actions resolve the IAM role ARN and the cluster identifier from exactly one pause, resize or resume block. Data API statements resolve one of cluster identifier or workgroup name and an optional Secrets Manager ARN. SQL, database names, schedules and quota amounts do not establish additional relationships. Unproven helpers retain independent identity and coverage.
+
+### Redshift catalog and resource policies (#854)
+
+IDC applications resolve the configured IAM role and the optional singleton trusted token issuer in the same Identity Center instance. Provider 6.70.0 exposes instance discovery through a data source and has no managed instance resource. The instance ARN qualifies the issuer without promoting discovery results to managed owners.
+
+Integrations resolve an S3 bucket or DynamoDB table ARN, a provisioned cluster's `cluster_namespace_arn` or a serverless namespace ARN, and an explicitly referenced KMS key. Namespace registrations use the selected namespace type, a cluster identifier or the serverless namespace name/UUID and workgroup name. The DataCatalog selector adds no Glue endpoint.
+
+Consumer associations resolve only an explicit namespace ARN. Whole-account and region selectors do not enumerate namespaces. The provider has no managed datashare resource. Redshift resource policies may belong to provisioned or serverless namespaces. The serverless API also supports snapshot sharing and workgroup endpoint authorization. The configured owner retains its own scope and the policy body stays opaque.
+
+### Redshift Serverless namespace and workgroup helpers (#855)
+
+A namespace retains its logical identity. Its configured IAM role set requires complete evidence for every role ARN. The default IAM role is a separate scalar reference. Data encryption takes a KMS key ARN. Password-secret encryption accepts a key identifier or key ARN. Optional/computed values without configuration evidence remain unresolved. These relationships do not assign a namespace to the workgroup's VPC.
+
+A custom domain association uses its configured workgroup name and ACM certificate ARN. A matching DNS name alone supplies no Route 53 evidence. A serverless usage limit belongs to the workgroup identified by its ARN when `usage_type` is `serverless-compute` or `cross-region-datasharing`. The amount describes configured quota. Helpers without a proven owner remain individually visible.
+
+Application Insights links to an explicitly referenced resource group when resource-group
+grouping applies and to its configured OpsItem SNS topic. Evidently features and launches
+link to a verified project, and launch features must belong to that project. Launch segments are regional.
+Evidently delivery links resolve the configured log group and bucket. Internet Monitor
+requires a complete collection of explicitly referenced VPC, Network Load Balancer,
+CloudFront distribution or WorkSpaces directory ARNs and verifies the configured S3
+measurement log bucket separately. Incomplete evidence retains Terraform provenance.
+
+CloudWatch log S3 table integration sources link to their configured integration ARN.
+Integrations link to their IAM role and to a KMS key when `aws:kms` is selected.
+Centralization rules require the destination account and the destination or backup
+region to agree with referenced ARN evidence. Data source and organization selectors
+and the service-generated table bucket do not establish managed endpoints.
+
+CloudWatch Omni spaces link to an explicitly referenced domain in the same account,
+including a domain in another region. Access profiles link to their verified space
+and grants verify the domain and space together. Principal type determines whether a
+grant can link to an IAM role, IAM user, or a profile of that space. Space encryption
+links require `CUSTOMER_MANAGED` and a Domain Identity Center link requires an
+explicit singleton lookup and `IDC` configuration.

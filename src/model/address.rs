@@ -19,37 +19,19 @@ pub struct ResourceAddress<'a> {
 
 impl Node {
     pub fn resource_address(&self) -> ResourceAddress<'_> {
-        ResourceAddress {
-            terraform_address: &self.address,
-            module_path: match self.module.as_str() {
-                "root" => ModulePath::Root,
-                module => ModulePath::Child(module),
-            },
-        }
+        ResourceAddress::new(&self.address, &self.module)
     }
 }
 
 impl TerraformEntityId {
     pub(crate) fn resource_address(&self) -> ResourceAddress<'_> {
-        ResourceAddress {
-            terraform_address: &self.address,
-            module_path: match module_of(&self.address) {
-                "root" => ModulePath::Root,
-                module => ModulePath::Child(module),
-            },
-        }
+        ResourceAddress::new(&self.address, module_of(&self.address))
     }
 }
 
 impl EdgeChange {
     pub(crate) fn resource_address(&self) -> ResourceAddress<'_> {
-        ResourceAddress {
-            terraform_address: &self.address,
-            module_path: match module_of(&self.address) {
-                "root" => ModulePath::Root,
-                module => ModulePath::Child(module),
-            },
-        }
+        ResourceAddress::new(&self.address, module_of(&self.address))
     }
 
     pub fn local_address(&self) -> &str {
@@ -58,6 +40,16 @@ impl EdgeChange {
 }
 
 impl<'a> ResourceAddress<'a> {
+    pub(crate) fn new(terraform_address: &'a str, module: &'a str) -> Self {
+        Self {
+            terraform_address,
+            module_path: match module {
+                "root" => ModulePath::Root,
+                child => ModulePath::Child(child),
+            },
+        }
+    }
+
     pub(crate) fn formatted(self, qualified: bool) -> Cow<'a, str> {
         if qualified {
             self.qualified()
@@ -89,31 +81,31 @@ impl<'a> ResourceAddress<'a> {
     }
 }
 
-pub(crate) fn module_of(address: &str) -> &str {
-    let mut boundary = 0;
+pub(crate) fn address_parts(address: &str) -> impl Iterator<Item = &str> {
     let (mut depth, mut quoted, mut escaped) = (0usize, false, false);
-    let mut parts = Vec::new();
-    for (i, c) in address.char_indices() {
+    address.split(move |c| {
         match (escaped, quoted, c) {
             (true, _, _) => escaped = false,
             (_, true, '\\') => escaped = true,
             (_, _, '"') if depth > 0 => quoted = !quoted,
             (_, false, '[') => depth += 1,
             (_, false, ']') => depth = depth.saturating_sub(1),
-            (_, false, '.') if depth == 0 => {
-                parts.push((boundary, i));
-                boundary = i + 1;
-            }
+            (_, false, '.') if depth == 0 => return true,
             _ => {}
         }
+        false
+    })
+}
+
+pub(crate) fn module_of(address: &str) -> &str {
+    let mut parts = address_parts(address);
+    let mut end = 0;
+    while parts.next() == Some("module") {
+        let Some(child) = parts.next() else { break };
+        if end > 0 {
+            end += 1;
+        }
+        end += "module.".len() + child.len();
     }
-    parts.push((boundary, address.len()));
-    let mut count = 0;
-    while count + 1 < parts.len() && &address[parts[count].0..parts[count].1] == "module" {
-        count += 2;
-    }
-    match count {
-        0 => "root",
-        _ => &address[..parts[count - 1].1],
-    }
+    if end == 0 { "root" } else { &address[..end] }
 }

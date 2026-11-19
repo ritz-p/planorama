@@ -66,11 +66,10 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
     run('unzip', ['-oq', archive, '-d', binDir]);
   }
   for (const item of cases) {
-    if (item.cores && !item.cores.includes(version)) continue;
     assert.match(item.name, /^[a-z][a-z0-9-]*$/);
     const cwd = path.join(work, version, item.name);
     const destination = path.join(fixtures, version, item.name);
-    const extra = path.join(fixtures, 'inputs', `${item.input || (item.name === 'aws5' || item.name === 'aws6' ? 'aws' : item.name)}.tf`);
+    const extra = item.input && path.join(fixtures, 'inputs', item.input + '.tf');
     const inputs = sourceInputs(path.join(root, item.source), extra, version, item.provider);
     if (phase === 'prepare') {
       recreateInputs(work, cwd, inputs);
@@ -107,7 +106,7 @@ for (const [version, checksum] of Object.entries(matrix.terraform)) {
         assert.match(fs.readFileSync(path.join(destination, '.terraform.lock.hcl'), 'utf8'),
           new RegExp(`version\\s*=\\s*"${item.provider.replaceAll('.', '\\.')}"`));
       }
-      if (item.name === 'aws5' || item.name === 'aws6' || item.name === 'aws670') {
+      if (item.source === 'tests/fixtures/aws-captured') {
         assert.equal(plan.resource_changes.length, 9);
         const resources = plan.configuration.root_module.resources;
         assert.deepEqual(resources.find(resource => resource.type === 'aws_ecs_task_definition')

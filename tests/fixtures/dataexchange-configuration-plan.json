@@ -1,0 +1,368 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_dataexchange_data_set.sample0",
+      "mode": "managed",
+      "type": "aws_dataexchange_data_set",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "asset_type": "S3_DATA_ACCESS",
+          "id": "dataset-access"
+        }
+      }
+    },
+    {
+      "address": "aws_dataexchange_data_set.sample1",
+      "mode": "managed",
+      "type": "aws_dataexchange_data_set",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "asset_type": "S3_SNAPSHOT",
+          "id": "dataset-snapshot"
+        }
+      }
+    },
+    {
+      "address": "aws_dataexchange_revision.sample2",
+      "mode": "managed",
+      "type": "aws_dataexchange_revision",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "data_set_id": "dataset-access"
+        }
+      }
+    },
+    {
+      "address": "aws_dataexchange_revision_assets.sample3",
+      "mode": "managed",
+      "type": "aws_dataexchange_revision_assets",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "data_set_id": "dataset-access",
+          "asset": [
+            {
+              "create_s3_data_access_from_s3_bucket": [
+                {
+                  "asset_source": [
+                    {
+                      "bucket": "fixture-bucket",
+                      "kms_keys_to_grant": [
+                        {
+                          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dataexchange_revision_assets.sample4",
+      "mode": "managed",
+      "type": "aws_dataexchange_revision_assets",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "data_set_id": "dataset-snapshot",
+          "asset": [
+            {
+              "import_assets_from_s3": [
+                {
+                  "asset_source": [
+                    {
+                      "bucket": "fixture-bucket"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dataexchange_event_action.sample5",
+      "mode": "managed",
+      "type": "aws_dataexchange_event_action",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "action": [
+            {
+              "export_revision_to_s3": [
+                {
+                  "encryption": [
+                    {
+                      "type": "aws:kms",
+                      "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+                    }
+                  ],
+                  "revision_destination": [
+                    {
+                      "bucket": "fixture-bucket"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "event": [
+            {
+              "revision_published": [
+                {
+                  "data_set_id": "dataset-snapshot"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample6",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-bucket"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample7",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_dataexchange_data_set.sample0",
+          "mode": "managed",
+          "type": "aws_dataexchange_data_set",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dataexchange_data_set.sample1",
+          "mode": "managed",
+          "type": "aws_dataexchange_data_set",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dataexchange_revision.sample2",
+          "mode": "managed",
+          "type": "aws_dataexchange_revision",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "data_set_id": {
+              "references": [
+                "aws_dataexchange_data_set.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dataexchange_revision_assets.sample3",
+          "mode": "managed",
+          "type": "aws_dataexchange_revision_assets",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "data_set_id": {
+              "references": [
+                "aws_dataexchange_data_set.sample0.id"
+              ]
+            },
+            "asset": [
+              {
+                "create_s3_data_access_from_s3_bucket": [
+                  {
+                    "asset_source": [
+                      {
+                        "bucket": {
+                          "references": [
+                            "aws_s3_bucket.sample6.bucket"
+                          ]
+                        },
+                        "kms_keys_to_grant": [
+                          {
+                            "kms_key_arn": {
+                              "references": [
+                                "aws_kms_key.sample7.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dataexchange_revision_assets.sample4",
+          "mode": "managed",
+          "type": "aws_dataexchange_revision_assets",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "data_set_id": {
+              "references": [
+                "aws_dataexchange_data_set.sample1.id"
+              ]
+            },
+            "asset": [
+              {
+                "import_assets_from_s3": [
+                  {
+                    "asset_source": [
+                      {
+                        "bucket": {
+                          "references": [
+                            "aws_s3_bucket.sample6.bucket"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dataexchange_event_action.sample5",
+          "mode": "managed",
+          "type": "aws_dataexchange_event_action",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "event": [
+              {
+                "revision_published": [
+                  {
+                    "data_set_id": {
+                      "references": [
+                        "aws_dataexchange_data_set.sample1.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "action": [
+              {
+                "export_revision_to_s3": [
+                  {
+                    "revision_destination": [
+                      {
+                        "bucket": {
+                          "references": [
+                            "aws_s3_bucket.sample6.bucket"
+                          ]
+                        }
+                      }
+                    ],
+                    "encryption": [
+                      {
+                        "kms_key_arn": {
+                          "references": [
+                            "aws_kms_key.sample7.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample6",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample7",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

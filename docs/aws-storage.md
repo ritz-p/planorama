@@ -4,6 +4,55 @@
 
 ## S3 bucket configuration
 
+### Access Grants (#978)
+
+`aws_s3control_access_grant.access_grants_location_id` accepts only the exact
+`aws_s3control_access_grants_location.access_grants_location_id` output, never a
+composite Terraform `id` or an `access_grant_id`. Location `iam_role_arn` accepts
+an explicit current managed IAM Role `arn`. Grant `grantee` is a singleton list:
+only known `grantee_type = IAM` enables `grantee_identifier` references to IAM Role
+or User `arn` outputs with the corresponding ARN resource type. Directory users
+and groups are never treated as IAM identities, even if an identifier happens to
+match. These contracts use Provider 6.70.0 at
+`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`.
+
+Known equal non-sensitive values, explicit unique instances, current managed AWS
+types, compatible provider accounts and independent regional scope are required;
+IAM is global and does not need a regional match. Optional `account_id` qualifiers
+need proven provider account evidence; location references also require a matching
+location account. JSON provider role settings alone do not prove that account.
+Unknown, sensitive, ambiguous, filtered, deleted/deposed or incompatible endpoints
+retain unresolved fallback and independent state-qualified identity/action/coverage.
+Locations and grants remain Logical resources; neither IAM references nor location
+IDs establish ownership or containment. `location_scope` is an S3 URI/wildcard,
+not proof of a managed bucket. No URI/policy interpretation, grantee payload,
+effective permission, runtime health or additional safety summary is emitted.
+See [SVG example](../examples/s3-grants.svg); generate HTML with
+`cargo run --locked -- tests/fixtures/s3-grants-plan.json --format html -o output/s3-grants.html`.
+
+### Multi-Region Access Points (#979)
+
+MRAPs, policies and routes retain independent Logical identities, actions and
+coverage. Provider 6.70.0 (`5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f`)
+defines `details` as a singleton list and `details.region` / `route` as sets.
+Complete explicit bucket references to current managed `aws_s3_bucket.id` or
+`bucket` outputs require unique known matching names and compatible provider
+accounts. Set entries are matched by value, independently of evaluated ordering;
+unknown/sensitive entries or unproven owner constraints invalidate the collection.
+Optional `bucket_account_id` must match proven bucket provider account evidence.
+Computed `details.region.region` never supplies bucket placement or provider scope.
+
+Policy `details.name` requires an exact MRAP `name`, matching known `account_id`
+and proven provider account. Routes `mrap` uses exact MRAP `arn`; per-route bucket
+references additionally require the configured region to match the bucket's
+independent scope and a known traffic dial in 0–100. Zero remains a configured
+reference. Traffic dial does not establish reachability, health or active traffic.
+No policy JSON, computed endpoint, ownership or network containment is inferred.
+Missing, filtered, wrong-provider/type/mode, deleted/deposed, ambiguous or masked
+endpoints retain unresolved fallback; named states remain independent. See
+[SVG example](../examples/s3-mrap.svg). Generate HTML from the same fixture with
+`cargo run --locked -- tests/fixtures/s3-mrap-plan.json --format html -o output/s3-mrap.html`.
+
 ### Access points and Outposts (#977)
 
 Access points distinguish ordinary bucket `id`/`bucket` names from Outposts bucket
@@ -386,3 +435,97 @@ The pinned [Backup plan schema/source](https://github.com/hashicorp/terraform-pr
 Known output values must equal the complete set of explicitly referenced compatible current managed endpoints. Repeated uses of one endpoint and set reordering are allowed; this proves plan-level references, not positional rule-to-rule relationships. Missing fields in collection ancestry, mixed literals, unknown masks, ambiguous identical outputs, incomplete provenance, deleted/deposed endpoints and incompatible scopes retain fallback. Optional paths present in only part of a rule collection remain conservative fallback.
 
 Ordinary vault targets use compatible local provider scope; scanner roles use the global IAM account contract. Copy ARNs must match each destination's independently configured region. A single known destination account is required across the copy collection. Same-provider copies can use that common binding; cross-region aliases additionally require independent matching account evidence. Cross-account copies remain fallback. No plan containment, recovery guarantee or runtime copy status is inferred. See the [fixture](../tests/fixtures/backup-plan-rules-plan.json).
+
+## Backup report delivery (#822)
+
+Pinned Provider 6.70.0 [report-plan schema/source](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/internal/service/backup/report_plan.go)
+uses singleton lists for `report_delivery_channel` and `report_setting`, with a
+set of strings for optional `framework_arns`. Delivery bucket names require an
+explicit current managed S3 Bucket `id`/`bucket`; complete framework collections
+require exact managed Backup Framework `arn` outputs. Every configured block and
+collection must match known non-sensitive values, unique explicit instances and
+compatible independent provider/account/region evidence. Missing, unknown,
+incomplete, ambiguous, deleted/deposed, data or incompatible endpoints retain
+unresolved fallback. Filters retain source identity and exactly-once coverage.
+Report plans and shared endpoints stay independent Logical resources; bucket
+references do not create containment. Account, OU and region reporting selectors
+never relocate the report plan or enumerate Organizations objects. Prefixes,
+report payloads, deployment status and runtime compliance are not interpreted.
+See [SVG](../examples/backup-report.svg); generate HTML from
+`tests/fixtures/backup-report-plan.json` with `--format html`.
+
+## Backup restore testing (#823)
+
+Provider 6.70.0 defines `recovery_point_selection` as a required singleton list;
+`include_vaults` is a required string set and `exclude_vaults` an optional/computed
+set. Complete explicit include references to standard or air-gapped vault `arn`
+outputs are verified only with known disjoint exclusions. Wildcard includes,
+wildcard/overlapping/unknown exclusions and incomplete collections retain
+unresolved fallback for the whole include collection; no recovery-point nodes or
+operational selection claims are inferred from algorithms or point types.
+
+Restore selection `restore_testing_plan_name` requires exact plan `name` and
+`iam_role_arn` exact global IAM Role `arn`. A verified plan owns the selection's
+presentation while preserving its identity, action, coverage and filtered fallback.
+Optional/computed `protected_resource_arns` requires complete concrete explicit
+ARNs, known `protected_resource_type` and absent conditions. The allowlist covers
+EC2 Instance, EBS Volume, EFS, RDS Instance, Aurora Cluster (known Aurora engine),
+DocumentDB Cluster, Neptune Cluster, DynamoDB Table, S3 Bucket and Lustre/Windows/
+ONTAP/OpenZFS filesystem endpoints, each only for its matching Backup resource type.
+Other types and condition selectors remain fallback. No condition or restore
+metadata map is interpreted as network placement. Shared roles/vaults/resources
+remain independent; provider/account/region, lifecycle, mode and named-state
+boundaries must all match. No payload, mount path, recovery guarantee or runtime
+health is displayed. See [SVG](../examples/backup-restore.svg); HTML uses the same
+`tests/fixtures/backup-restore-plan.json` with `--format html`.
+
+## Storage Gateway configuration
+
+Gateways use independent regional cards. Local storage, volumes and shares
+can link to their verified gateway while retaining separate Terraform identities
+and actions. Windows filesystem associations link to the gateway and filesystem
+independently. Host IDs, interface IPs and local disk identifiers supply no
+network placement or EBS ownership.
+
+Verified fields include gateway log group ARN, helpers' gateway ARN, volume
+snapshot ID or cached recovery volume ARN, file-share bucket or access-point
+ARN, IAM role ARN, and audit log destination ARN. Windows associations accept
+an FSx Windows ARN and a CloudWatch Logs or S3 audit ARN. KMS references require
+known enabled encryption. Prefixed storage locations retain ordinary Terraform
+provenance unless an exact managed output matches.
+
+## FSx Lustre backup and logging
+
+The configured `backup_id` links to a matching explicit `aws_fsx_backup.id`.
+`log_configuration.destination` links to a matching CloudWatch Logs ARN
+when the singleton block selects a supported enabled level and the log
+group name starts with `/aws/fsx`. Unverified evidence retains Terraform
+provenance where available. Network placement and filesystem encryption
+have separate evidence rules.
+
+## DLM and Elastic Disaster Recovery configuration
+
+DLM resolves an explicit IAM execution role and a customer Systems Manager
+script document by name or ARN. Snapshot, AMI and event copy rules link a
+configured KMS ARN only when the key matches the destination region and proven
+account scope. DRS links its staging subnet and complete security-group list
+when their configured VPC evidence agrees. Its encryption key requires `CUSTOM`
+mode. The replication template remains a logical configuration resource.
+
+## Transfer Family workflow steps
+
+Ordinary and exception steps link a configured Lambda ARN for `CUSTOM`, or an
+explicit EFS file system ID or S3 bucket name for `COPY` and `DECRYPT`. Each
+reference must belong to the matching step and use a single destination kind.
+Workflow paths, runtime file expressions and PGP inputs remain opaque.
+
+## Glacier vault configuration
+
+A Glacier vault is independent regional archival storage. A configured
+notification can link an SNS topic ARN, and a vault lock can link the vault's
+explicit name. The lock retains its own identity and action. Vault and lock
+policies remain opaque.
+
+## Verify EBS volume and snapshot provenance (#1433)
+
+Snapshots and volume copies retain independent identities. Snapshot copies qualify the source region and sharing grant. Import links require an explicit S3 bucket, IAM role or encryption key. Restore settings link the selected snapshot, and the regional default key does not create volume relationships.

@@ -139,3 +139,55 @@ provider evidence の追加検証は [専用手順](docs/provider-evidence.md#pr
 - [ネイティブ CLI の公開・再実行手順](docs/releases.md#開発者向け公開手順)
 
 ブランチ・PR・レビューの進め方は [AGENTS.md](AGENTS.md#ブランチ運用) に従います。
+
+### Terraform samples with AWS Emulator
+
+On Linux amd64 (WSL 2 Ubuntu 26.04 or the Linux development container), run
+`sh scripts/aws-emulator/prepare.sh` to install the checksum-pinned Terraform
+1.9.8, AWS Provider 6.70.0 and AWS Emulator 1.0.508 under `output/`.
+Run `sh scripts/aws-emulator/generate.sh` to create private saved plans, plan
+JSON, SVG and HTML under the printed output directory. The four phases are
+create, post-apply refreshed no-op, proposed update and destroy. Local state
+and per-run emulator credentials are discarded. Use `PLANORAMA_BIN` for an
+existing CLI and `PLANORAMA_EMULATOR_TOOLS` for a prepared tools directory.
+
+Capture requires Linux user/network namespaces or a container already running
+with `--network none` and loopback up. Prepare tools and build the CLI before
+entering an offline container. Required OS commands include iproute2, util-linux,
+curl, dpkg-deb and unzip. The generator uses a local provider mirror and the
+emulator's generated TLS CA and credentials. Keep all saved plans local.
+
+The standard containment diagram uses `examples/aws-emulator/containment/main.tf`.
+Run `sh scripts/aws-emulator/generate.sh containment`, then pass the resulting
+`create.json` to `node scripts/aws-emulator/create-snapshot.cjs` and redirect it
+to `examples/aws-emulator/containment/create.json`. The snapshot omits the
+top-level plan timestamp and sorts the unordered `relevant_attributes` entries
+by resource and attribute path. Run `sh scripts/update-examples.sh` to render it.
+The local export retains the original JSON and binary for every phase.
+The compact `tests/fixtures/containment-plan.json` supports tests that mutate
+individual actions and reference evidence. The Terraform-only module and remote
+state examples in `examples/terraform/` continue to use their offline flow.
+
+### Capture checks and API coverage
+
+The Terraform emulator samples workflow checks a fresh containment create plan
+and its SVG on relevant PRs. Manually dispatch it for the queue and containment
+apply/refresh/destroy runs and the large fixture projection. Locally, set
+`PLANORAMA_BIN` to the built CLI and run `sh scripts/aws-emulator/check-samples.sh pr`
+or prepare the large tools and use `full`. The raw binary and show output stay
+in the private workspace. CI does not upload them.
+
+| Sample | Exercised emulator operations | Evidence compared |
+|---|---|---|
+| Queue, provider 6.70.0 | STS validation and SQS create, get attributes and delete | Four saved-plan actions and the ARN after refresh |
+| Containment, provider 6.70.0 | EC2 VPC and subnet create/read/delete, instance run/describe/terminate in us-east-1a | Complete create JSON and SVG, post-apply ID equality |
+| Large, provider 5.100.0 | Create/read/delete the seed VPC and security group, read those resources, images and STS identity | Full real create plan and byte-exact separate stress projection |
+
+Check the [pinned emulator release coverage](https://github.com/aws/aws-emulator/releases/tag/v1.0.508)
+before adding APIs. A 501, unimplemented waiter or inconsistent read fails the
+capture. Record the operation and phase before choosing an offline Terraform
+create plan when only configuration or unknown values are required. Keep a
+minimal synthetic fixture for historical actions, missing evidence or multiple
+account identities that neither path can establish. Never substitute synthetic
+IDs into a native capture. Comparison failures require reviewing actual changes
+to the HCL, provider output and SVG.

@@ -5,6 +5,26 @@ use super::{
 };
 use crate::model::{AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 
+pub(super) fn pool_origins(
+    value: Evidence<'_>,
+) -> Result<Vec<crate::model::architecture::PoolOrigin>> {
+    collect(value.at("origins")?.rows()?.into_iter().map(|row| {
+        let enabled = row.at("enabled")?;
+        let weight = row.at("weight")?;
+        enabled.scalar()?;
+        weight.scalar()?;
+        if !(enabled.value.is_null() || enabled.value.is_boolean())
+            || !(weight.value.is_null() || weight.value.is_number())
+        {
+            return Err(Failure::InvalidValue);
+        }
+        Ok(crate::model::architecture::PoolOrigin {
+            enabled: enabled.value.as_bool(),
+            weight: weight.value.as_number().map(ToString::to_string),
+        })
+    }))
+}
+
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
     match (kind, path) {
         ("cloudflare_load_balancer", "default_pools") => Some("Default pools"),
@@ -53,9 +73,7 @@ fn targets<'a>(node: &TerraformEntity, path: &str, value: Evidence<'a>) -> Resul
         ("cloudflare_load_balancer_monitor_group", "members") => {
             field.clear()?;
             let ids = collect(field.rows()?.into_iter().map(|row| row.text("monitor_id")))?;
-            if ids.iter().collect::<std::collections::BTreeSet<_>>().len() != ids.len() {
-                return Err(Failure::IncompleteCollection);
-            }
+            proof::unique(&ids)?;
             Ok(ids
                 .into_iter()
                 .map(|id| target(id, "cloudflare_load_balancer_monitor", "id"))

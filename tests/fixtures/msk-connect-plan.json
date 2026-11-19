@@ -1,0 +1,181 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.row0",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "row0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::plugins"
+        }
+      }
+    },
+    {
+      "address": "aws_mskconnect_custom_plugin.row1",
+      "mode": "managed",
+      "type": "aws_mskconnect_custom_plugin",
+      "name": "row1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafkaconnect:us-east-1:123456789012:custom-plugin/sample",
+          "latest_revision": 3,
+          "location": [
+            {
+              "s3": [
+                {
+                  "bucket_arn": "arn:aws:s3:::plugins"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_mskconnect_worker_configuration.row2",
+      "mode": "managed",
+      "type": "aws_mskconnect_worker_configuration",
+      "name": "row2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kafkaconnect:us-east-1:123456789012:worker-configuration/worker",
+          "latest_revision": 2
+        }
+      }
+    },
+    {
+      "address": "aws_mskconnect_connector.row3",
+      "mode": "managed",
+      "type": "aws_mskconnect_connector",
+      "name": "row3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "plugin": [
+            {
+              "custom_plugin": [
+                {
+                  "arn": "arn:aws:kafkaconnect:us-east-1:123456789012:custom-plugin/sample",
+                  "revision": 3
+                }
+              ]
+            }
+          ],
+          "worker_configuration": [
+            {
+              "arn": "arn:aws:kafkaconnect:us-east-1:123456789012:worker-configuration/worker",
+              "revision": 2
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.row0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_mskconnect_custom_plugin.row1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "location": [
+              {
+                "s3": [
+                  {
+                    "bucket_arn": {
+                      "references": [
+                        "aws_s3_bucket.row0.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_mskconnect_worker_configuration.row2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_mskconnect_connector.row3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "plugin": [
+              {
+                "custom_plugin": [
+                  {
+                    "arn": {
+                      "references": [
+                        "aws_mskconnect_custom_plugin.row1.arn"
+                      ]
+                    },
+                    "revision": {
+                      "references": [
+                        "aws_mskconnect_custom_plugin.row1.latest_revision"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "worker_configuration": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_mskconnect_worker_configuration.row2.arn"
+                  ]
+                },
+                "revision": {
+                  "references": [
+                    "aws_mskconnect_worker_configuration.row2.latest_revision"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

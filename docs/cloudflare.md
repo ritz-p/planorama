@@ -29,6 +29,33 @@ When updating the pin, update the version/revision together in the acquisition
 and inventory scripts, regenerate the inventory, and check changed contracts
 before changing classifications or reference rules.
 
+### Audit a candidate provider release
+
+From the repository root, select an exact candidate version and capture the
+report. Terraform initializes isolated directories for both versions and reads
+their schemas. The audit uses the installed provider selections and the current
+Cloudflare support matrix. It requires no account credentials or plan/state.
+
+```sh
+mkdir -p output
+sh scripts/audit-cloudflare-provider.sh 5.29.0 > output/cloudflare-5.29.0-diff.json
+```
+
+Review `counts` and `records` separately for managed resources and data sources.
+Each record contains structural JSON Pointer changes, the existing classification,
+conditional references and endpoint contract when available. The audit verifies
+the pinned schema fingerprint and requires complete matrix coverage. It compares
+schema versions, flags, types, nested attributes and nested blocks, ignoring
+description prose. Classify new types and review removals, changed scope paths,
+reference inputs and changes on endpoint types.
+
+Endpoint flags identify types that supply a reference target. Confirm ID and
+alias semantics against the candidate's provider source, official
+documentation and captured Terraform plans before changing a runtime contract.
+The audit writes the report to stdout and refreshes the disposable support matrix
+under `output/`. The pinned inventory and renderer change only through a separate
+reviewed edit.
+
 ## Capability levels
 
 - **Basic**: known type and mode, provider label, conservative Spatial/Logical
@@ -251,6 +278,66 @@ unique current identities and a known matching account:
   `id`/`name`, and legacy script `id`/`script_name` must agree before aliases
   can be used.
 
+A `workflow` binding verifies a unique Workflow in the same account using
+`workflow_name`. Returned `name` and `id` must agree when used. A managed
+Workflow can supply its configured name while the computed names are unknown.
+Binding class and script qualifiers, when present, must match the Workflow.
+A managed Workflow can also explicitly reference its defining Worker's name
+through `script_name`. Its version ID and instance statistics do not identify
+a Worker version or prove execution.
+
+Worker AI Search bindings identify an instance by account, namespace and instance ID,
+or a namespace by account and name. An omitted binding namespace selects `default`.
+An instance can reference a token ID, an AI Gateway ID or an explicitly typed R2
+bucket with matching jurisdiction. Vectorize has a Worker binding discriminator
+but no index resource or data source in v5.28.1.
+
+A managed AI Search instance can reference its namespace by name when its own
+provider configuration pins v5.29.0 exactly. In v5.28.1 the namespace is
+read-only. An absent or ranged constraint leaves the relationship unresolved.
+
+A Worker Pipelines binding can reference a stream ID. R2 and catalog sinks can
+reference the target bucket when both account IDs and the bucket jurisdiction
+agree. R2 Data Catalog uses a bucket name in the default jurisdiction. Pipeline
+tables are computed; SQL, stream URLs and credentials do not identify endpoints.
+
+Worker mTLS bindings reference account certificates. Hostname certificate authority
+associations require proven zone ownership in the certificate account. Hostname-level
+Authenticated Origin Pulls configurations reference hostname certificates in the same
+zone; a null enable setting voids the association. API Shield operation settings use
+a zone-scoped operation ID. These relationships record configuration. Certificate
+contents, private keys and observed TLS or validation results are excluded.
+
+A Turnstile widget can reference its managing account. Its sitekey identifies
+the widget within the provider. Allowed domains, Waiting Room challenge modes
+and application code provide no typed Worker or Pages integration in v5.28.1.
+Widget secrets and sitekeys are omitted from the diagram.
+
+Configured log tail Workers use `tail_consumers[].name` on Worker resources
+and `tail_consumers[].service` on Workers scripts. The latter requires absent
+environment and dispatch namespace qualifiers. Logpush jobs and ownership
+challenges can reference either an account or a zone. Dataset names,
+observability destination strings, ownership tokens and destination URLs
+provide no typed delivery endpoint or evidence that logs were received.
+
+Managed load-balancer pools show origin entries in Terraform list order. Each
+row reports configured enablement and any known weight. Origin names, hosts,
+addresses and headers are omitted. A masked collection, enablement or weight
+suppresses the rows. Origin rows are internal configuration and do not identify
+independent resources or report health or traffic.
+
+A managed AI Gateway dynamic route can identify its gateway through an explicit
+`gateway_id` reference to a same-account `cloudflare_ai_gateway.id`. The
+Workers AI `ai` binding has no gateway identity in v5.28.1. Model names, URLs,
+Worker code, route elements and deployment results do not establish gateway use.
+
+An external `durable_object_namespace` binding with a known class and an explicit
+Worker name reference appears under **Durable Object scripts**. Environment and
+dispatch namespace must be absent. Local classes, namespace IDs, migrations and
+placement provide no external script identity. A Service binding to the same script
+in the same expression makes the role ambiguous. The graph represents the defining
+script and does not enumerate namespaces or running objects.
+
 This is partial support: unrelated bindings, deployment settings, script code,
 secret values and database contents are neither interpreted nor retained.
 D1 bindings require the configured `id`; a conflicting known `database_id`
@@ -286,6 +373,12 @@ Each configured consumer uses a separate Queue, following the service's
 Managed Queues are spatial resources; consumers remain independent logical
 resources with their own actions. Neither is contained in a Worker.
 
+- A managed R2 event notification can explicitly reference a bucket by
+  `bucket_name` and a destination Queue by `queue_id`. Each field uses its own
+  proof. The bucket must match account, name and jurisdiction; the Queue must
+  match account and both ID aliases. Its Worker consumer is a separate Queue
+  consumer configuration. Rules, prefixes, delivery order and runtime delivery
+  do not supply endpoint identity.
 - Producer bindings use `type = queue` and `queue_name`, accepting only a
   Queue's `queue_name` output. Queue IDs cannot substitute for names.
 - Consumer `queue_id` accepts `cloudflare_queue.id` or `queue_id`; both

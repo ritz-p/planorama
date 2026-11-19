@@ -219,6 +219,88 @@ fn matrix() -> String {
                     });
                     notes.push(if resource_type == "aws_datasync_agent" {
                         "Independent architecture card; verified task-interface VPC context does not locate the physical host".into()
+                    } else if super::qbusiness::resource(canonical) {
+                        "Independent regional card with verified IAM, Identity Center and encryption references".into()
+                    } else if canonical == "aws_kendra_index" {
+                        "Independent regional index with verified IAM, encryption and JWT secret references".into()
+                    } else if super::kendra::resource(canonical) {
+                        "Logical helper with verified index navigation and typed configuration references".into()
+                    } else if super::storagegateway::resource(canonical) {
+                        "Configured gateway and storage references require verified endpoint evidence".into()
+                    } else if super::lustre_sources::resource(canonical) {
+                        "Explicit Lustre backup and enabled log destination references".into()
+                    } else if super::dynamodb_transfer::resource(canonical) {
+                        "Verified historical export, import and restore references".into()
+                    } else if super::keyspaces_configuration::resource(canonical) {
+                        "Table keyspace and encryption references require verified endpoint evidence".into()
+                    } else if super::appmesh_configuration::resource(canonical) {
+                        "Mesh membership and configured routing require verified same-mesh evidence".into()
+                    } else if super::network_insights::resource(canonical) {
+                        "Typed configured analysis endpoints and selectors preserve independent scope".into()
+                    } else if super::verifiedpermissions::resource(canonical) {
+                        "Verified policy store ownership and typed Cognito or template links".into()
+                    } else if super::accountaccess_configuration::resource(canonical) {
+                        "Verified application ownership and independently scoped principal references".into()
+                    } else if super::cloudhsm_configuration::resource(canonical) {
+                        "Verified cluster ownership, subnet references and common VPC placement".into()
+                    } else if super::paymentcryptography_configuration::resource(canonical) {
+                        "Explicit key ARN navigation with independent alias lifecycle".into()
+                    } else if super::signer_configuration::resource(canonical) {
+                        "Configured signing profile, bucket and certificate references".into()
+                    } else if super::batch_configuration::resource(canonical) {
+                        "Explicit mode-gated Batch service, EKS and EC2 configuration references".into()
+                    } else if super::recovery_configuration::resource(canonical) {
+                        "DLM execution and destination-scoped copy references and verified DRS staging context".into()
+                    } else if super::lightsail_configuration::resource(canonical) {
+                        "Verified Lightsail attachments, service ownership, certificate and distribution endpoints".into()
+                    } else if super::transfer_workflow_configuration::resource(canonical) {
+                        "Type-gated Transfer workflow and exception step destinations".into()
+                    } else if super::mwaa_configuration::resource(canonical) {
+                        "Airflow environment card with verified IAM, artifacts, KMS and VPC references".into()
+                    } else if super::flink_configuration::resource(canonical) {
+                        "Verified Flink application roles, artifacts, VPC and logical snapshot references".into()
+                    } else if super::glacier_configuration::resource(canonical) {
+                        "Independent Glacier vault card with SNS notification and vault lock references".into()
+                    } else if super::ecr_configuration::resource(canonical) {
+                        "Regional ECR Public card and verified private registry configuration references".into()
+                    } else if super::cleanrooms_configuration::resource(canonical) {
+                        "Independent collaboration, creator-qualified memberships, result destinations and account-qualified Glue tables".into()
+                    } else if super::dataexchange_configuration::resource(canonical) {
+                        "Dataset-qualified revisions and typed Data Exchange asset and export configuration".into()
+                    } else if super::datapipeline_configuration::resource(canonical) {
+                        "Independent pipeline cards and explicit pipeline definition ownership".into()
+                    } else if super::ai_service_configuration::resource(canonical) {
+                        "Typed Comprehend training, Rekognition modality and Transcribe role references".into()
+                    } else if super::finspace_kx_configuration::resource(canonical) {
+                        "Independent KX environment and cluster cards with qualified workload and endpoint configuration".into()
+                    } else if super::ec2_images::resource(canonical) {
+                        "Verified AMI provenance, destination encryption and scoped permission targets".into()
+                    } else if super::ebs_provenance::resource(canonical) {
+                        "Explicit EBS source, encryption and import dependencies".into()
+                    } else if super::ec2_capacity::resource(canonical) {
+                        "Independent dedicated hosts and typed Outpost and placement group references".into()
+                    } else if super::ec2_fleets::resource(canonical) {
+                        "Mode-specific fleet template, launch specification, Spot and delivery targets".into()
+                    } else if super::instance_launch::resource(canonical) {
+                        "Typed instance image, profile, template, placement, interfaces and block-device inputs".into()
+                    } else if super::template_launch::resource(canonical) {
+                        "Verified template image, placement, interface and block-device selectors".into()
+                    } else if super::site_vpn::resource(canonical) {
+                        "Regional VPN gateways, tunnels as configuration, and verified attachment context".into()
+                    } else if super::local_gateways::resource(canonical) {
+                        "VPC placement for carrier gateways and verified local routing table, VIF group and VPC endpoints".into()
+                    } else if super::client_vpn::resource(canonical) {
+                        "Mode-qualified Client VPN authentication, delivery, endpoint and associated subnet configuration".into()
+                    } else if super::transit_attachments::resource(canonical) {
+                        "Qualified TGW peer, transport, VPC and accepting account relationships".into()
+                    } else if super::transit_routes::resource(canonical) {
+                        "Common-gateway route tables and attachments with blackhole-aware route targets".into()
+                    } else if super::transit_policies::resource(canonical) {
+                        "Scoped policy tables, target route tables and type-qualified metering attachments".into()
+                    } else if super::transit_multicast::resource(canonical) {
+                        "Three-ended multicast domain association proof and direction-specific member and source ENIs".into()
+                    } else if super::verified_access::resource(canonical) {
+                        "Explicit Verified Access ownership, endpoint modes, common VPC context and enabled delivery branches".into()
                     } else if paths.iter().any(|path| path.ends_with("/cloudfront_observability.rs") || path.ends_with("/cloudfront_security.rs") || path.ends_with("/cloudfront_functions.rs") || path.ends_with("/cloudfront.rs") || path.ends_with("/cloudfront_vpc_origin.rs") || path.ends_with("/elbv2_cognito.rs") || path.ends_with("/eni.rs") || path.ends_with("/peering.rs") || path.ends_with("/security_group_rules.rs") || path.ends_with("/network_acl.rs") || path.ends_with("/flow_logs.rs") || path.ends_with("/lambda.rs") || path.ends_with("/lambda_config.rs") || path.ends_with("/lambda_events.rs") || path.ends_with("/dynamodb.rs") || path.ends_with("/elasticache.rs") || path.ends_with("/memorydb.rs") || path.ends_with("/dax.rs") || path.ends_with("/eventbridge.rs") || path.ends_with("/streaming.rs") || path.ends_with("/databases.rs") || path.ends_with("/apprunner.rs") || path.ends_with("/opensearch_serverless.rs") || path.ends_with("/serverless_references.rs") || path.ends_with("/osis.rs") || path.ends_with("/glue_catalog.rs") || path.ends_with("/glue_network.rs") || path.ends_with("/glue_workloads.rs") || path.ends_with("/private_ca_references.rs") || path.ends_with("/rolesanywhere.rs") || path.ends_with("/redshift_cluster.rs") || path.ends_with("/redshift_snapshots.rs") || path.ends_with("/redshift_endpoints.rs") || path.ends_with("/imagebuilder.rs") || path.ends_with("/imagebuilder_distribution.rs")
         || path.ends_with("/networkfirewall_extended.rs") || path.ends_with("/network_monitors.rs") || path.ends_with("/directory_service.rs") || path.ends_with("/cognito.rs") || path.ends_with("/datazone.rs") || path.ends_with("/agentcore_services.rs") || path.ends_with("/agentcore_gateway.rs") || path.ends_with("/agentcore_runtime.rs") || path.ends_with("/datazone_access.rs") || path.ends_with("/datazone_environments.rs") || path.ends_with("/transfer_identity.rs") || path.ends_with("/transfer_as2.rs") || path.ends_with("/transfer_webapp.rs") || path.ends_with("/networkfirewall.rs") || path.ends_with("/batch.rs") || path.ends_with("/appsync_domains.rs") || path.ends_with("/appsync_events.rs") || path.ends_with("/search.rs") || path.ends_with("/search_connections.rs") || path.ends_with("/cloudfront_multitenant.rs") || path.ends_with("/global_accelerator.rs") || path.ends_with("/kms.rs") || path.ends_with("/s3vectors.rs") || path.ends_with("/s3tables.rs") || path.ends_with("/s3files.rs") || path.ends_with("/vpclattice.rs") || path.ends_with("/direct_connect.rs") || path.contains("/direct_connect/") || path.ends_with("/rds_auxiliary.rs") || path.ends_with("/classic_elb.rs") || path.ends_with("/networkmanager.rs") || path.ends_with("/cloudwan.rs") || path.ends_with("/oam.rs") || path.ends_with("/transfer_server.rs") || path.ends_with("/xray_encryption.rs") || path.ends_with("/synthetics.rs") || path.ends_with("/rum.rs") || path.ends_with("/route53_dnssec.rs") || path.ends_with("/route53_health.rs") || path.ends_with("/secrets_manager.rs") || path.ends_with("/lambda_core.rs") || path.ends_with("/identity_center.rs") || path.ends_with("/identitystore.rs") || path.ends_with("/iam_credentials.rs") || path.ends_with("/iam_policies.rs") || path.ends_with("/microvms.rs") || path.ends_with("/lambda_capacity.rs") || path.ends_with("/route_server.rs") || path.ends_with("/secondary_network.rs") || path.ends_with("/traffic_mirror.rs") || path.ends_with("/ipam.rs") || path.ends_with("/prefix_list_entries.rs") || path.ends_with("/kinesis_owners.rs") || path.ends_with("/messaging_policies.rs") || path.ends_with("/backup_plan.rs") || path.ends_with("/backup_vaults.rs") || path.ends_with("/vpc_controls.rs") || path.ends_with("/efs_evidence.rs") || path.ends_with("/fsx.rs") || path.ends_with("/fsx_network.rs") || path.ends_with("/fsx_children.rs") || path.ends_with("/datasync.rs") || path.ends_with("/autoscaling_network.rs") || path.ends_with("/sagemaker.rs") || path.contains("/api_gateway/")) {
                         "Basic role and presentation retained; dedicated references require verified evidence".into()

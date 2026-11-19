@@ -1,0 +1,441 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "complete": true,
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.key",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/example",
+          "key_id": "example",
+          "id": "example"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.role",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/dms",
+          "name": "dms"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.credentials",
+      "mode": "managed",
+      "type": "aws_secretsmanager_secret",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:database-abcdef",
+          "id": "arn:aws:secretsmanager:us-east-1:111111111111:secret:database-abcdef",
+          "name": "database",
+          "description": "PRIVATE_SECRET_DESCRIPTION"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_certificate.certificate",
+      "mode": "managed",
+      "type": "aws_dms_certificate",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:example",
+          "certificate_id": "certificate",
+          "certificate_pem": "PRIVATE_CERTIFICATE"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.storage",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "migration-storage",
+          "id": "migration-storage",
+          "arn": "arn:aws:s3:::migration-storage"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_stream.stream",
+      "mode": "managed",
+      "type": "aws_kinesis_stream",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kinesis:us-east-1:111111111111:stream/changes",
+          "name": "changes"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.source",
+      "mode": "managed",
+      "type": "aws_dms_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_id": "source",
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:source",
+          "endpoint_type": "source",
+          "engine_name": "mysql",
+          "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:example",
+          "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/example",
+          "secrets_manager_arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:database-abcdef",
+          "secrets_manager_access_role_arn": "arn:aws:iam::111111111111:role/dms",
+          "extra_connection_attributes": "PRIVATE_CONNECTION"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.stream",
+      "mode": "managed",
+      "type": "aws_dms_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_id": "stream",
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:stream",
+          "endpoint_type": "target",
+          "engine_name": "kinesis",
+          "kinesis_settings": [
+            {
+              "stream_arn": "arn:aws:kinesis:us-east-1:111111111111:stream/changes",
+              "service_access_role_arn": "arn:aws:iam::111111111111:role/dms"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.warehouse",
+      "mode": "managed",
+      "type": "aws_dms_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_id": "warehouse",
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:warehouse",
+          "endpoint_type": "target",
+          "engine_name": "redshift",
+          "redshift_settings": [
+            {
+              "bucket_name": "migration-storage",
+              "service_access_role_arn": "arn:aws:iam::111111111111:role/dms",
+              "encryption_mode": "SSE_KMS",
+              "server_side_encryption_kms_key_id": "example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_s3_endpoint.storage",
+      "mode": "managed",
+      "type": "aws_dms_s3_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_id": "storage",
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:storage",
+          "endpoint_type": "target",
+          "bucket_name": "migration-storage",
+          "service_access_role_arn": "arn:aws:iam::111111111111:role/dms",
+          "encryption_mode": "SSE_KMS",
+          "server_side_encryption_kms_key_id": "arn:aws:kms:us-east-1:111111111111:key/example",
+          "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/example",
+          "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:example",
+          "external_table_definition": "PRIVATE_TABLE"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_endpoint.dynamodb",
+      "mode": "managed",
+      "type": "aws_dms_endpoint",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "endpoint_id": "dynamodb",
+          "endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:dynamodb",
+          "endpoint_type": "target",
+          "engine_name": "dynamodb",
+          "service_access_role": "arn:aws:iam::111111111111:role/dms"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_task.migration",
+      "mode": "managed",
+      "type": "aws_dms_replication_task",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "replication_task_id": "migration",
+          "source_endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:source",
+          "target_endpoint_arn": "arn:aws:dms:us-east-1:111111111111:endpoint:storage",
+          "table_mappings": "PRIVATE_MAPPINGS"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.key",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "key",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.role",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "role",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.credentials",
+          "mode": "managed",
+          "type": "aws_secretsmanager_secret",
+          "name": "credentials",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_certificate.certificate",
+          "mode": "managed",
+          "type": "aws_dms_certificate",
+          "name": "certificate",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.storage",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "storage",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesis_stream.stream",
+          "mode": "managed",
+          "type": "aws_kinesis_stream",
+          "name": "stream",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_endpoint.source",
+          "mode": "managed",
+          "type": "aws_dms_endpoint",
+          "name": "source",
+          "provider_config_key": "aws",
+          "expressions": {
+            "certificate_arn": {
+              "references": [
+                "aws_dms_certificate.certificate.certificate_arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.key.arn"
+              ]
+            },
+            "secrets_manager_arn": {
+              "references": [
+                "aws_secretsmanager_secret.credentials.arn"
+              ]
+            },
+            "secrets_manager_access_role_arn": {
+              "references": [
+                "aws_iam_role.role.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_endpoint.stream",
+          "mode": "managed",
+          "type": "aws_dms_endpoint",
+          "name": "stream",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kinesis_settings": [
+              {
+                "stream_arn": {
+                  "references": [
+                    "aws_kinesis_stream.stream.arn"
+                  ]
+                },
+                "service_access_role_arn": {
+                  "references": [
+                    "aws_iam_role.role.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_endpoint.warehouse",
+          "mode": "managed",
+          "type": "aws_dms_endpoint",
+          "name": "warehouse",
+          "provider_config_key": "aws",
+          "expressions": {
+            "redshift_settings": [
+              {
+                "bucket_name": {
+                  "references": [
+                    "aws_s3_bucket.storage.bucket"
+                  ]
+                },
+                "service_access_role_arn": {
+                  "references": [
+                    "aws_iam_role.role.arn"
+                  ]
+                },
+                "server_side_encryption_kms_key_id": {
+                  "references": [
+                    "aws_kms_key.key.key_id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_s3_endpoint.storage",
+          "mode": "managed",
+          "type": "aws_dms_s3_endpoint",
+          "name": "storage",
+          "provider_config_key": "aws",
+          "expressions": {
+            "bucket_name": {
+              "references": [
+                "aws_s3_bucket.storage.bucket"
+              ]
+            },
+            "service_access_role_arn": {
+              "references": [
+                "aws_iam_role.role.arn"
+              ]
+            },
+            "server_side_encryption_kms_key_id": {
+              "references": [
+                "aws_kms_key.key.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.key.arn"
+              ]
+            },
+            "certificate_arn": {
+              "references": [
+                "aws_dms_certificate.certificate.certificate_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_endpoint.dynamodb",
+          "mode": "managed",
+          "type": "aws_dms_endpoint",
+          "name": "dynamodb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_access_role": {
+              "references": [
+                "aws_iam_role.role.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_replication_task.migration",
+          "mode": "managed",
+          "type": "aws_dms_replication_task",
+          "name": "migration",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source_endpoint_arn": {
+              "references": [
+                "aws_dms_endpoint.source.endpoint_arn"
+              ]
+            },
+            "target_endpoint_arn": {
+              "references": [
+                "aws_dms_s3_endpoint.storage.endpoint_arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

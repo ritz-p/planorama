@@ -6,6 +6,14 @@ fn fixture() -> Value {
 }
 fn verified(v: &Value, index: usize, path: &str) -> bool {
     let graph = semantic::transform(&plan::parse(&v.to_string()).unwrap());
+    verified_in(&graph, v, index, path)
+}
+fn verified_in(
+    graph: &crate::model::ArchitectureGraph,
+    v: &Value,
+    index: usize,
+    path: &str,
+) -> bool {
     graph
         .nodes
         .iter()
@@ -31,6 +39,7 @@ fn verified(v: &Value, index: usize, path: &str) -> bool {
 #[test]
 fn application_storage_and_version_contracts_are_explicit() {
     let v = fixture();
+    let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
     for (index, path) in [
         (6, "worker_id"),
         (6, "bindings"),
@@ -42,9 +51,8 @@ fn application_storage_and_version_contracts_are_explicit() {
         (11, "deployment_configs"),
         (12, "project_name"),
     ] {
-        assert!(verified(&v, index, path), "{index}/{path}");
+        assert!(verified_in(&graph, &v, index, path), "{index}/{path}");
     }
-    let graph = semantic::transform(&plan::parse(FIXTURE).unwrap());
     assert_eq!(graph.nodes.len(), 18);
     assert!(!format!("{graph:?}").contains("PRIVATE_"));
     assert!(

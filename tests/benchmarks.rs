@@ -134,3 +134,51 @@ fn generator_is_repeatable_and_dense_adds_relationships() {
     assert_eq!(dense.nodes.len(), 40);
     assert!(dense.edges.len() > sparse.edges.len() * 3);
 }
+
+#[test]
+#[ignore = "semantic input benchmark; run explicitly in release mode"]
+fn semantic_input() {
+    let repeats: usize = std::env::var("PLANORAMA_BENCH_REPEATS")
+        .unwrap_or_else(|_| "20".into())
+        .parse()
+        .unwrap();
+    assert!(repeats > 0);
+    let mut inputs = Vec::new();
+    for count in [40, 1000, 5000] {
+        for dense in [false, true] {
+            inputs.push((
+                format!("{}-{count}", if dense { "dense" } else { "sparse" }),
+                generate(count, dense),
+            ));
+        }
+    }
+    inputs.push((
+        "terraform-large".into(),
+        include_str!("../examples/terraform-large/plan.json").into(),
+    ));
+    if let Ok(selected) = std::env::var("PLANORAMA_BENCH_CASE") {
+        inputs.retain(|(name, _)| name == &selected);
+        assert!(!inputs.is_empty());
+    }
+    println!("case,nodes,attributes,dependencies,run,base_graph_us,graph_fnv1a");
+    for (name, input) in inputs {
+        let plan = crate::plan::parse(&input).unwrap();
+        std::hint::black_box(crate::semantic::input::base_graph(&plan));
+        for run in 0..repeats {
+            let start = Instant::now();
+            let graph = crate::semantic::input::base_graph(std::hint::black_box(&plan));
+            let elapsed = start.elapsed().as_secs_f64() * 1_000_000.0;
+            let hash = format!("{graph:?}")
+                .bytes()
+                .fold(0xcbf29ce484222325u64, |h, b| {
+                    (h ^ u64::from(b)).wrapping_mul(0x100000001b3)
+                });
+            println!(
+                "{name},{},{},{},{run},{elapsed:.3},{hash:016x}",
+                plan.nodes.len(),
+                plan.attributes.len(),
+                plan.graph_references.len()
+            );
+        }
+    }
+}

@@ -16,29 +16,8 @@ pub(super) fn static_address(address: &str) -> String {
     result
 }
 
-pub(super) fn module_of(address: &str) -> String {
-    crate::model::module_of(address).to_owned()
-}
-
 pub(super) fn parts(address: &str) -> Vec<&str> {
-    let (mut start, mut depth, mut quoted, mut escaped) = (0, 0usize, false, false);
-    let mut result = Vec::new();
-    for (i, c) in address.char_indices() {
-        match (escaped, quoted, c) {
-            (true, _, _) => escaped = false,
-            (_, true, '\\') => escaped = true,
-            (_, _, '"') if depth > 0 => quoted = !quoted,
-            (_, false, '[') => depth += 1,
-            (_, false, ']') => depth = depth.saturating_sub(1),
-            (_, false, '.') if depth == 0 => {
-                result.push(&address[start..i]);
-                start = i + 1;
-            }
-            _ => {}
-        }
-    }
-    result.push(&address[start..]);
-    result
+    crate::model::address_parts(address).collect()
 }
 
 fn name(part: &str) -> &str {

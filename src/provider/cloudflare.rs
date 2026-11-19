@@ -82,9 +82,13 @@ pub(crate) fn service_name(resource: &str, mode: EntityMode) -> Option<&'static 
         | "cloudflare_workers_route"
         | "cloudflare_workers_custom_domain" => "Cloudflare Workers",
         "cloudflare_pages_project" | "cloudflare_pages_domain" => "Cloudflare Pages",
-        "cloudflare_r2_bucket" => "Cloudflare R2",
+        "cloudflare_r2_bucket" | "cloudflare_r2_bucket_event_notification" => "Cloudflare R2",
         "cloudflare_workers_kv_namespace" => "Cloudflare KV",
         "cloudflare_d1_database" => "Cloudflare D1",
+        "cloudflare_ai_gateway" | "cloudflare_ai_gateway_dynamic_routing" => {
+            "Cloudflare AI Gateway"
+        }
+        "cloudflare_turnstile_widget" => "Cloudflare Turnstile",
         "cloudflare_hyperdrive_config" => "Cloudflare Hyperdrive",
         "cloudflare_queue"
         | "cloudflare_queue_consumer"
@@ -117,7 +121,7 @@ fn known_id(value: &Value, mask: &Value, path: &[&str]) -> Option<String> {
     }
     value
         .as_str()
-        .filter(|v| v.len() == 32 && v.bytes().all(|b| b.is_ascii_hexdigit()))
+        .and_then(evidence::scope_id)
         .map(str::to_owned)
 }
 
@@ -139,6 +143,13 @@ pub(crate) fn annotate(
         };
         if account_path.is_empty() && zone_path.is_empty() {
             continue;
+        }
+        if node.resource_type == "cloudflare_load_balancer_pool"
+            && node.mode == EntityMode::Managed
+            && proof::current(node)
+            && evidence.id("account_id").is_ok()
+        {
+            node.pool_origins = edge::pool_origins(*evidence).unwrap_or_default();
         }
         node.cloudflare_scope = Some(CloudflareScope {
             account: known_id(value, mask, account_path),

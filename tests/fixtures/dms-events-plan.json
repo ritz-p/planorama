@@ -1,0 +1,336 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/dms"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.kerberos",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/dms-kerberos"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.kerberos",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:cache-abcdef",
+          "id": "arn:aws:secretsmanager:us-east-1:111111111111:secret:cache-abcdef",
+          "name": "cache"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.events",
+      "type": "aws_sns_topic",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:111111111111:dms-events"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_instance.first",
+      "type": "aws_dms_replication_instance",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "replication_instance_id": "instance-first",
+          "replication_instance_arn": "arn:aws:dms:us-east-1:111111111111:rep:first",
+          "kerberos_authentication_settings": [
+            {
+              "krb5_file_contents": "PRIVATE_KRB5_CONFIG",
+              "key_cache_secret_iam_arn": "arn:aws:iam::111111111111:role/dms-kerberos",
+              "key_cache_secret_id": "cache"
+            }
+          ],
+          "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/dms"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_instance.second",
+      "type": "aws_dms_replication_instance",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "replication_instance_id": "instance-second",
+          "replication_instance_arn": "arn:aws:dms:us-east-1:111111111111:rep:second",
+          "kerberos_authentication_settings": [
+            {
+              "krb5_file_contents": "PRIVATE_KRB5_CONFIG",
+              "key_cache_secret_iam_arn": "arn:aws:iam::111111111111:role/dms-kerberos",
+              "key_cache_secret_id": "cache"
+            }
+          ],
+          "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/dms"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_task.first",
+      "type": "aws_dms_replication_task",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "replication_task_id": "task-first",
+          "replication_task_arn": "arn:aws:dms:us-east-1:111111111111:task:first",
+          "table_mappings": "PRIVATE_SQL_MAPPINGS"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_task.second",
+      "type": "aws_dms_replication_task",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "replication_task_id": "task-second",
+          "replication_task_arn": "arn:aws:dms:us-east-1:111111111111:task:second",
+          "table_mappings": "PRIVATE_SQL_MAPPINGS"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_event_subscription.instances",
+      "type": "aws_dms_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_type": "replication-instance",
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:dms-events",
+          "source_ids": [
+            "instance-first",
+            "instance-second"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_event_subscription.tasks",
+      "type": "aws_dms_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_type": "replication-task",
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:dms-events",
+          "source_ids": [
+            "task-first",
+            "task-second"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_event_subscription.all",
+      "type": "aws_dms_event_subscription",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "source_type": "replication-instance",
+          "sns_topic_arn": "arn:aws:sns:us-east-1:111111111111:dms-events"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.kerberos",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.kerberos",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.events",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_replication_instance.first",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            },
+            "kerberos_authentication_settings": [
+              {
+                "key_cache_secret_iam_arn": {
+                  "references": [
+                    "aws_iam_role.kerberos.arn"
+                  ]
+                },
+                "key_cache_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.kerberos.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_replication_instance.second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            },
+            "kerberos_authentication_settings": [
+              {
+                "key_cache_secret_iam_arn": {
+                  "references": [
+                    "aws_iam_role.kerberos.arn"
+                  ]
+                },
+                "key_cache_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.kerberos.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_replication_task.first",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_replication_task.second",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_event_subscription.instances",
+          "provider_config_key": "aws",
+          "expressions": {
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "source_ids": {
+              "references": [
+                "aws_dms_replication_instance.first.replication_instance_id",
+                "aws_dms_replication_instance.second.replication_instance_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_event_subscription.tasks",
+          "provider_config_key": "aws",
+          "expressions": {
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            },
+            "source_ids": {
+              "references": [
+                "aws_dms_replication_task.first.replication_task_id",
+                "aws_dms_replication_task.second.replication_task_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_event_subscription.all",
+          "provider_config_key": "aws",
+          "expressions": {
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.events.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

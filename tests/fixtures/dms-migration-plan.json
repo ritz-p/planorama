@@ -1,0 +1,1115 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.main",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:111111111111:key/dms"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.migration",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/migration"
+        }
+      }
+    },
+    {
+      "address": "aws_secretsmanager_secret.migration",
+      "type": "aws_secretsmanager_secret",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:secretsmanager:us-east-1:111111111111:secret:migration-abcdef",
+          "id": "arn:aws:secretsmanager:us-east-1:111111111111:secret:migration-abcdef",
+          "name": "migration"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_certificate.main",
+      "type": "aws_dms_certificate",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+          "certificate_pem": "PRIVATE_CERTIFICATE"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.main",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-migration"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.other",
+      "type": "aws_vpc",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "vpc-other"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.first",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-0",
+          "vpc_id": "vpc-migration"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.second",
+      "type": "aws_subnet",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "subnet-1",
+          "vpc_id": "vpc-migration"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.migration",
+      "type": "aws_security_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "sg-migration",
+          "vpc_id": "vpc-migration"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_replication_subnet_group.main",
+      "type": "aws_dms_replication_subnet_group",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "id": "migration-subnets",
+          "subnet_ids": [
+            "subnet-0",
+            "subnet-1"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_instance_profile.main",
+      "type": "aws_dms_instance_profile",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:instance-profile:main",
+          "availability_zone": "us-east-1a",
+          "subnet_group_identifier": "migration-subnets",
+          "vpc_security_group_ids": [
+            "sg-migration"
+          ],
+          "kms_key_arn": "arn:aws:kms:us-east-1:111111111111:key/dms"
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.docdb",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:docdb",
+          "engine": "docdb",
+          "virtual": false,
+          "settings": [
+            {
+              "doc_db_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.db2",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:db2",
+          "engine": "db2",
+          "virtual": false,
+          "settings": [
+            {
+              "ibm_db2_luw_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.db2_zos",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:db2-zos",
+          "engine": "db2-zos",
+          "virtual": false,
+          "settings": [
+            {
+              "ibm_db2_zos_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.mariadb",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:mariadb",
+          "engine": "mariadb",
+          "virtual": false,
+          "settings": [
+            {
+              "maria_db_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.sqlserver",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:sqlserver",
+          "engine": "sqlserver",
+          "virtual": false,
+          "settings": [
+            {
+              "microsoft_sql_server_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.mongodb",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:mongodb",
+          "engine": "mongodb",
+          "virtual": false,
+          "settings": [
+            {
+              "mongo_db_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.mysql",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:mysql",
+          "engine": "mysql",
+          "virtual": false,
+          "settings": [
+            {
+              "mysql_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.aurora",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:aurora",
+          "engine": "aurora",
+          "virtual": false,
+          "settings": [
+            {
+              "mysql_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.oracle",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:oracle",
+          "engine": "oracle",
+          "virtual": true,
+          "settings": [
+            {
+              "oracle_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+                  "secrets_manager_oracle_asm_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+                  "secrets_manager_oracle_asm_secret_id": "migration",
+                  "secrets_manager_security_db_encryption_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+                  "secrets_manager_security_db_encryption_secret_id": "migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.postgres",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:postgres",
+          "engine": "postgres",
+          "virtual": false,
+          "settings": [
+            {
+              "postgresql_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.aurora_postgresql",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:aurora-postgresql",
+          "engine": "aurora-postgresql",
+          "virtual": false,
+          "settings": [
+            {
+              "postgresql_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.redshift",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:redshift",
+          "engine": "redshift",
+          "virtual": false,
+          "settings": [
+            {
+              "redshift_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "s3_access_role_arn": "arn:aws:iam::111111111111:role/migration"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_data_provider.sybase",
+      "type": "aws_dms_data_provider",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:data-provider:sybase",
+          "engine": "sybase",
+          "virtual": false,
+          "settings": [
+            {
+              "sybase_ase_settings": [
+                {
+                  "server_name": "PRIVATE_SERVER",
+                  "database_name": "PRIVATE_DATABASE",
+                  "ssl_mode": "verify-full",
+                  "certificate_arn": "arn:aws:dms:us-east-1:111111111111:cert:main"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dms_migration_project.main",
+      "type": "aws_dms_migration_project",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:dms:us-east-1:111111111111:migration-project:main",
+          "transformation_rules": "PRIVATE_RULES",
+          "schema_conversion_application_attributes": [
+            {
+              "s3_bucket_path": "s3://PRIVATE_MIGRATION_OUTPUT/opaque",
+              "s3_bucket_role_arn": "arn:aws:iam::111111111111:role/migration"
+            }
+          ],
+          "instance_profile_arn": "arn:aws:dms:us-east-1:111111111111:instance-profile:main",
+          "source_data_provider_descriptor": [
+            {
+              "data_provider_arn": "arn:aws:dms:us-east-1:111111111111:data-provider:docdb",
+              "secrets_manager_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+              "secrets_manager_secret_id": "migration"
+            },
+            {
+              "data_provider_arn": "arn:aws:dms:us-east-1:111111111111:data-provider:db2",
+              "secrets_manager_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+              "secrets_manager_secret_id": "migration"
+            }
+          ],
+          "target_data_provider_descriptor": [
+            {
+              "data_provider_arn": "arn:aws:dms:us-east-1:111111111111:data-provider:redshift",
+              "secrets_manager_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+              "secrets_manager_secret_id": "migration"
+            },
+            {
+              "data_provider_arn": "arn:aws:dms:us-east-1:111111111111:data-provider:sybase",
+              "secrets_manager_access_role_arn": "arn:aws:iam::111111111111:role/migration",
+              "secrets_manager_secret_id": "migration"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.migration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_secretsmanager_secret.migration",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dms_certificate.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.first",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.second",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.migration",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_replication_subnet_group.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_ids": {
+              "references": [
+                "aws_subnet.first.id",
+                "aws_subnet.second.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_instance_profile.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_group_identifier": {
+              "references": [
+                "aws_dms_replication_subnet_group.main.id"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.migration.id"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.main.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.docdb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "doc_db_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.db2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "ibm_db2_luw_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.db2_zos",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "ibm_db2_zos_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.mariadb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "maria_db_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.sqlserver",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "microsoft_sql_server_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.mongodb",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "mongo_db_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.mysql",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "mysql_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.aurora",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "mysql_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.oracle",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "oracle_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    },
+                    "secrets_manager_oracle_asm_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    },
+                    "secrets_manager_oracle_asm_secret_id": {
+                      "references": [
+                        "aws_secretsmanager_secret.migration.name"
+                      ]
+                    },
+                    "secrets_manager_security_db_encryption_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    },
+                    "secrets_manager_security_db_encryption_secret_id": {
+                      "references": [
+                        "aws_secretsmanager_secret.migration.name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.postgres",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "postgresql_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.aurora_postgresql",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "postgresql_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    },
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.redshift",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "redshift_settings": [
+                  {
+                    "s3_access_role_arn": {
+                      "references": [
+                        "aws_iam_role.migration.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_data_provider.sybase",
+          "provider_config_key": "aws",
+          "expressions": {
+            "settings": [
+              {
+                "sybase_ase_settings": [
+                  {
+                    "certificate_arn": {
+                      "references": [
+                        "aws_dms_certificate.main.certificate_arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dms_migration_project.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "instance_profile_arn": {
+              "references": [
+                "aws_dms_instance_profile.main.arn"
+              ]
+            },
+            "schema_conversion_application_attributes": [
+              {
+                "s3_bucket_role_arn": {
+                  "references": [
+                    "aws_iam_role.migration.arn"
+                  ]
+                }
+              }
+            ],
+            "source_data_provider_descriptor": [
+              {
+                "data_provider_arn": {
+                  "references": [
+                    "aws_dms_data_provider.docdb.arn"
+                  ]
+                },
+                "secrets_manager_access_role_arn": {
+                  "references": [
+                    "aws_iam_role.migration.arn"
+                  ]
+                },
+                "secrets_manager_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.migration.name"
+                  ]
+                }
+              },
+              {
+                "data_provider_arn": {
+                  "references": [
+                    "aws_dms_data_provider.db2.arn"
+                  ]
+                },
+                "secrets_manager_access_role_arn": {
+                  "references": [
+                    "aws_iam_role.migration.arn"
+                  ]
+                },
+                "secrets_manager_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.migration.name"
+                  ]
+                }
+              }
+            ],
+            "target_data_provider_descriptor": [
+              {
+                "data_provider_arn": {
+                  "references": [
+                    "aws_dms_data_provider.redshift.arn"
+                  ]
+                },
+                "secrets_manager_access_role_arn": {
+                  "references": [
+                    "aws_iam_role.migration.arn"
+                  ]
+                },
+                "secrets_manager_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.migration.name"
+                  ]
+                }
+              },
+              {
+                "data_provider_arn": {
+                  "references": [
+                    "aws_dms_data_provider.sybase.arn"
+                  ]
+                },
+                "secrets_manager_access_role_arn": {
+                  "references": [
+                    "aws_iam_role.migration.arn"
+                  ]
+                },
+                "secrets_manager_secret_id": {
+                  "references": [
+                    "aws_secretsmanager_secret.migration.name"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

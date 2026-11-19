@@ -22,9 +22,6 @@ equal addresses in separate states never share a DOM target.
 Logical-resource grouping is local to each state. Equal provider/type/mode keys
 in different states do not merge their groups or member identities.
 
-Output references must be complete; bare collections and ambiguous selectors do
-not establish cross-state relationships. See [output resolution](outputs.md).
-
 Embedded Route cards keep state-qualified identities and reference links.
 Cross-state paths involving them attach to their owning Route Table border;
 `data-source-port` and `data-target-port` identify the spatial attachment cards.
@@ -118,3 +115,17 @@ Cloudflare Account/Zone selectors apply across loaded states; combine them with
 `--cloudflare-groups` administrative index is built separately for each state and
 provider configuration. Equal scope IDs do not merge state, alias or lifecycle
 identities. See [the scope selection contract](cloudflare.md#account--zone-selection-and-administrative-index).
+
+## Output provenance
+
+Each parsed state's `outputs` preserves root output names, source resource addresses, completeness and diagnostic categories. Configuration expressions are resolved through the existing local, input and module-output aliases. Output values, sensitive values and backend configuration are not retained. Literal-only outputs have no sources; dynamic or ambiguous instance selection never chooses an arbitrary source. Multi-resource expressions preserve all known sources. Incomplete results must not be used as cross-state relationships. `--diagnostics` reports unresolved output provenance under `output.NAME` and, for named inputs, its state ID.
+
+Whole-module values follow exported outputs only, excluding unrelated internal
+resources. Field/index selection from flattened aliases remains incomplete because
+the expression metadata does not identify which aggregate field supplied the value.
+Bare instance-collection traversals also remain conservative even with only one
+current instance: Terraform may serialize a selector as a separate reference.
+Independently exact resource traversals remain available alongside these unknowns.
+Explicit full splats (`test.pool[*].id`, including splatted module instances)
+retain all selected sources. Only explicitly splatted dimensions permit multiple
+matches; an unspecified or dynamic selector in another dimension remains ambiguous.

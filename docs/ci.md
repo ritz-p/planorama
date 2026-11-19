@@ -38,6 +38,22 @@ contract. Keep new targets assigned to a suite; do not infer coverage from names
 A failed suite does not cancel the other. CI retains cargo test; revisit runner
 choice only when workload distribution warrants a new measurement.
 
+The standard PR critical path has a 600-second design budget. Allow 60 seconds
+for runner setup and caches, 240 for compilation, 285 for tests and 15 for
+aggregation. Independent format, lint and browser jobs run alongside Rust.
+The PR suites build and test in one Cargo invocation per package. Explicit
+dispatched validation retains the separate compile step for its status contract.
+Inspect the suite summary for Cargo build and test times and the compiler-cache
+step for hits and misses.
+
+The weekly or manual **PR timing report** samples completed first-attempt PR
+revisions with Rust and browser runs, including format and lint when present.
+It measures from the earliest workflow start to the last successful job finish.
+Job execution and wait from workflow start are separate fields (dependent jobs
+also wait for prerequisites). Its JSON artifact includes per-step timings and
+excluded run IDs. Three successive samples over budget raise a warning. Keep
+conditional generation, layout, release and offline analysis on their own checks.
+
 ## Layout quality comparison (#390)
 
 **Layout quality** runs manually or on PRs with the `layout-quality` label,
@@ -125,9 +141,20 @@ Optional `source_sha` must be a full lowercase commit SHA; checkout verifies it.
 gh workflow run spacing_calibration.yml --ref main -f source_sha="$(git rev-parse HEAD)"
 ```
 
-The `spacing-calibration-<SHA>` artifact retains JSON and nine SVGs for 14 days.
-[Local calibration](../examples/terraform-large/spacing-calibration.md) compares
-budgets without changing maintained examples. Timings are observations, not gates.
+Run the same comparison locally from the repository root:
+
+```sh
+docker compose exec -T -e PLANORAMA_SPACING_REPORT_DIR=output/spacing-calibration dev cargo test --locked --lib budget_calibration -- --ignored --nocapture
+```
+
+The test runs the current routing algorithm with the old numerical limits (2 sweeps,
+6 attempts, 64 px growth), the [current limits](routing.md), and doubled limits on
+the same initial geometry. It covers the large Terraform fixture, dense parallel
+corridors, and protected junctions. Compare attempts, accepted expansions, residual
+spacing deficits, canvas dimensions and per-edge bends, length and backtracking in
+`spacing-calibration.json`. Inspect the three SVG variants for each fixture.
+CI retains the JSON and nine SVGs in `spacing-calibration-<SHA>` for 14 days.
+Timings are observational. Recalibrate when workloads or routing policy change.
 
 ## When generation runs
 
@@ -274,3 +301,50 @@ The seven-day artifact excludes input/generated content. Compare complete job
 durations as well as phase timing: setup/cache transfers add costs. Isolate target
 and compiler-cache directories for controlled cold/warm comparisons; do not compare
 cold full tests against warm focused tests as if scope were their only difference.
+
+## Native Rust test coverage
+
+Install the pinned tool with `cargo install --locked cargo-llvm-cov --version 0.6.21`
+and add `llvm-tools-preview` to the repository Rust toolchain. Run
+`sh scripts/rust-coverage.sh` in the development environment, or pass `html`
+for the source browser. The manual **Rust coverage** workflow retains the LLVM
+JSON and optional HTML for seven days. Read the file/region records under
+`output/rust-coverage/` when deciding whether an untested behavior needs a case.
+
+Measurement uses the normal non-ignored library, binary, integration and example
+targets with all features, including `large_example`. The report excludes test
+and example source from the denominator. Browser JS/Wasm execution, deferred
+routing benchmarks and opt-in saved-plan/tool runs have their own checks.
+Stable Rust supplies line and region counts here. Branch instrumentation requires
+an unstable toolchain. No percentage gates the PR suite.
+Line and region counts come from stable Rust's LLVM source coverage. Branch
+coverage requires a different toolchain. A covered line does not establish
+that both outcomes of a proof or scope check were exercised.
+
+## Reference and provider properties
+
+The native library suite runs three reference and proof properties with 24 cases
+each, seed 1372, and small keys and resource sets. Budget one second of test
+execution on a warm build. To replay a failure, use the printed minimized input
+and run the same test with its seed, for example
+`PROPTEST_RNG_SEED=1372 cargo test --locked --all-features --lib reference_properties`.
+Use `PROPTEST_CASES=256` with an explicit seed for a larger local run. Keep a
+minimized case as a regression when it exposes a distinct product bug.
+
+## Targeted Rust mutation tests
+
+Install `cargo-mutants` 25.3.1 with `cargo install --locked cargo-mutants --version 25.3.1`.
+From the development environment, run `sh scripts/rust-mutants.sh` manually.
+The pilot changes one instance-key predicate, one Cloudflare provider-binding
+predicate, and one AWS certificate scope predicate in a temporary source copy.
+It runs the unmodified baseline first and uses the same reference and provider
+library tests for each mutation. The run has a 20-minute limit, with seven
+minutes for each build and 90 seconds for each test phase.
+
+Inspect `output/rust-mutants/mutants.out/outcomes.json` and its per-mutant logs.
+For a survivor, confirm the selected tests exercise the affected path and that
+the replacement changes observable behavior. Classify equivalent mutations,
+build failures and timeouts separately. Expand the pilot only if a new,
+non-equivalent survivor identifies a distinct assertion gap within the budget.
+Stop expanding when the results duplicate existing regressions or only produce
+equivalent, unbuildable or timed-out mutants.

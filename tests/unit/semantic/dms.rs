@@ -127,7 +127,7 @@ fn dms_references_require_exact_outputs_values_scope_and_current_managed_identit
                     v["resource_changes"][source]["change"]["after_unknown"] = json!({output:true})
                 }
                 "wrong-type" => {
-                    v["resource_changes"][source]["type"] = json!("aws_dms_s3_endpoint")
+                    v["resource_changes"][source]["type"] = json!("aws_dms_certificate")
                 }
                 "deleted" => v["resource_changes"][source]["change"]["actions"] = json!(["delete"]),
                 "deposed" => v["resource_changes"][source]["deposed"] = json!("old"),

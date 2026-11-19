@@ -1,0 +1,215 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.runner",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "runner",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/service"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_algorithm.training",
+      "mode": "managed",
+      "type": "aws_sagemaker_algorithm",
+      "name": "training",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "algorithm_name": "trainer"
+        }
+      }
+    },
+    {
+      "address": "aws_efs_file_system.training",
+      "mode": "managed",
+      "type": "aws_efs_file_system",
+      "name": "training",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fs-one"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_training_job.job",
+      "mode": "managed",
+      "type": "aws_sagemaker_training_job",
+      "name": "job",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "training_job_name": "job",
+          "role_arn": "arn:aws:iam::123456789012:role/service",
+          "algorithm_specification": [
+            {
+              "algorithm_name": "trainer"
+            }
+          ],
+          "input_data_config": [
+            {
+              "data_source": [
+                {
+                  "file_system_data_source": [
+                    {
+                      "file_system_id": "fs-one",
+                      "file_system_type": "EFS"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_data_quality_job_definition.q",
+      "mode": "managed",
+      "type": "aws_sagemaker_data_quality_job_definition",
+      "name": "q",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "definition"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_monitoring_schedule.s",
+      "mode": "managed",
+      "type": "aws_sagemaker_monitoring_schedule",
+      "name": "s",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "monitoring_schedule_config": [
+            {
+              "monitoring_type": "DataQuality",
+              "monitoring_job_definition_name": "definition"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.runner",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_algorithm.training",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_efs_file_system.training",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_training_job.job",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.runner.arn"
+              ]
+            },
+            "algorithm_specification": [
+              {
+                "algorithm_name": {
+                  "references": [
+                    "aws_sagemaker_algorithm.training.algorithm_name"
+                  ]
+                }
+              }
+            ],
+            "input_data_config": [
+              {
+                "data_source": [
+                  {
+                    "file_system_data_source": [
+                      {
+                        "file_system_id": {
+                          "references": [
+                            "aws_efs_file_system.training.id"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_sagemaker_data_quality_job_definition.q",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_monitoring_schedule.s",
+          "provider_config_key": "aws",
+          "expressions": {
+            "monitoring_schedule_config": [
+              {
+                "monitoring_job_definition_name": {
+                  "references": [
+                    "aws_sagemaker_data_quality_job_definition.q.name"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

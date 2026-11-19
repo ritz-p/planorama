@@ -1,0 +1,194 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_storagegateway_gateway.sample0",
+      "mode": "managed",
+      "type": "aws_storagegateway_gateway",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:storagegateway:us-east-1:123456789012:gateway/sgw-fixture",
+          "cloudwatch_log_group_arn": "arn:aws:logs:us-east-1:123456789012:log-group:fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_storagegateway_nfs_file_share.sample1",
+      "mode": "managed",
+      "type": "aws_storagegateway_nfs_file_share",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "gateway_arn": "arn:aws:storagegateway:us-east-1:123456789012:gateway/sgw-fixture",
+          "location_arn": "arn:aws:s3:::fixture-gateway",
+          "kms_encrypted": true,
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample2",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:s3:::fixture-gateway"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample3",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.sample4",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_storagegateway_cache.sample5",
+      "mode": "managed",
+      "type": "aws_storagegateway_cache",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "gateway_arn": "arn:aws:storagegateway:us-east-1:123456789012:gateway/sgw-fixture",
+          "disk_id": "PRIVATE_DISK_ID"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_storagegateway_gateway.sample0",
+          "mode": "managed",
+          "type": "aws_storagegateway_gateway",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cloudwatch_log_group_arn": {
+              "references": [
+                "aws_cloudwatch_log_group.sample4.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_storagegateway_nfs_file_share.sample1",
+          "mode": "managed",
+          "type": "aws_storagegateway_nfs_file_share",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_arn": {
+              "references": [
+                "aws_storagegateway_gateway.sample0.arn"
+              ]
+            },
+            "location_arn": {
+              "references": [
+                "aws_s3_bucket.sample2.arn"
+              ]
+            },
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample2",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample3",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.sample4",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_storagegateway_cache.sample5",
+          "mode": "managed",
+          "type": "aws_storagegateway_cache",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "gateway_arn": {
+              "references": [
+                "aws_storagegateway_gateway.sample0.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

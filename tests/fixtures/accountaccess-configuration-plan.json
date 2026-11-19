@@ -1,0 +1,223 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_accountaccess_application.sample0",
+      "mode": "managed",
+      "type": "aws_accountaccess_application",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:accountaccess:us-east-1:123456789012:application/fixture",
+          "identity_source": [
+            {
+              "identity_center": [
+                {
+                  "instance_arn": "arn:aws:sso:::instance/ssoins-0123456789abcdef"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_accountaccess_entitlement.sample1",
+      "mode": "managed",
+      "type": "aws_accountaccess_entitlement",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_arn": "arn:aws:accountaccess:us-east-1:123456789012:application/fixture",
+          "entitlement": [
+            {
+              "principal_role": [
+                {
+                  "role_arn": "arn:aws:iam::234567890123:role/fixture",
+                  "principal": [
+                    {
+                      "identity_center": [
+                        {
+                          "user_id": "fixture-user"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::234567890123:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "data.aws_ssoadmin_instances.sample3",
+      "mode": "data",
+      "type": "aws_ssoadmin_instances",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arns": [
+            "arn:aws:sso:::instance/ssoins-0123456789abcdef"
+          ],
+          "identity_store_ids": [
+            "d-1234567890"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_identitystore_user.sample4",
+      "mode": "managed",
+      "type": "aws_identitystore_user",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_id": "fixture-user",
+          "identity_store_id": "d-1234567890"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_accountaccess_application.sample0",
+          "mode": "managed",
+          "type": "aws_accountaccess_application",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_source": [
+              {
+                "identity_center": [
+                  {
+                    "instance_arn": {
+                      "references": [
+                        "data.aws_ssoadmin_instances.sample3.arns"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_accountaccess_entitlement.sample1",
+          "mode": "managed",
+          "type": "aws_accountaccess_entitlement",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_arn": {
+              "references": [
+                "aws_accountaccess_application.sample0.arn"
+              ]
+            },
+            "entitlement": [
+              {
+                "principal_role": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.sample2.arn"
+                      ]
+                    },
+                    "principal": [
+                      {
+                        "identity_center": [
+                          {
+                            "user_id": {
+                              "references": [
+                                "aws_identitystore_user.sample4.user_id"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample2",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "data.aws_ssoadmin_instances.sample3",
+          "mode": "data",
+          "type": "aws_ssoadmin_instances",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_identitystore_user.sample4",
+          "mode": "managed",
+          "type": "aws_identitystore_user",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identity_store_id": {
+              "references": [
+                "data.aws_ssoadmin_instances.sample3.identity_store_ids"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

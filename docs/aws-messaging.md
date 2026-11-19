@@ -662,3 +662,38 @@ subnet attachment. Key id contains key material; neither it, api_key_id nor key
 is parsed or displayed. Type SDL/JSON definitions create no resources or edges.
 Caching behavior and type format summaries remain outside the bounded contract.
 See [tests](../tests/unit/semantic/appsync_helpers.rs).
+
+### MSK Connect
+
+The connector belongs to a VPC only when all configured subnets and security groups agree. Configurations and plugins require their explicit revision output on the same instance. Bootstrap servers, connector settings and logs supply no cluster identity.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_mskconnect_connector` | `kafka_cluster.apache_kafka_cluster.vpc.subnets` | `aws_subnet` (`id`) |
+|  | `kafka_cluster.apache_kafka_cluster.vpc.security_groups` | `aws_security_group` (`id`) |
+|  | `service_execution_role_arn` | `aws_iam_role` (`arn`) |
+|  | `plugin.custom_plugin.arn` | `aws_mskconnect_custom_plugin` (`arn`) |
+|  | `worker_configuration.arn` | `aws_mskconnect_worker_configuration` (`arn`) |
+| `aws_mskconnect_custom_plugin` | `location.s3.bucket_arn` | `aws_s3_bucket` (`arn`) |
+
+### MSK channels, topics and policies
+
+A channel topic must reference the same managed cluster as the channel. Only the selected destination block supplies bucket or role evidence. Topic and policy configuration remains opaque.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_msk_topic` | `cluster_arn` | `aws_msk_cluster` (`arn`) or `aws_msk_serverless_cluster` (`arn`) |
+| `aws_msk_cluster_policy` | `cluster_arn` | `aws_msk_cluster` (`arn`) or `aws_msk_serverless_cluster` (`arn`) |
+| `aws_msk_channel` | `cluster_arn` | `aws_msk_cluster` (`arn`) |
+|  | `topic_configuration.topic_arn` | `aws_msk_topic` (`arn`) |
+|  | `s3_destination.service_execution_role_arn`, `iceberg_destination.service_execution_role_arn` | `aws_iam_role` (`arn`) |
+|  | `s3_destination.dead_letter_queue_s3.bucket_arn`, `iceberg_destination.dead_letter_queue_s3.bucket_arn`, `s3_destination.storage.bucket_arn` | `aws_s3_bucket` (`arn`) |
+
+### Firehose sources and delivery roles
+
+The MSK source requires an exclusive configured source. Extended S3 delivery and backup roles follow the same destination and backup-mode checks as the corresponding buckets. Streams keep their own regional placement.
+
+| Terraform resource | Configured input | Accepted endpoint outputs |
+| --- | --- | --- |
+| `aws_kinesis_firehose_delivery_stream` | `msk_source_configuration.msk_cluster_arn` | `aws_msk_cluster` (`arn`) or `aws_msk_serverless_cluster` (`arn`) |
+|  | `msk_source_configuration.authentication_configuration.role_arn`, `kinesis_source_configuration.role_arn`, `extended_s3_configuration.role_arn`, `extended_s3_configuration.s3_backup_configuration.role_arn` | `aws_iam_role` (`arn`) |

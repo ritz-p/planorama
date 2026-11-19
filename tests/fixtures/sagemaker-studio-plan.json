@@ -1,0 +1,197 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_iam_role.studio",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "studio",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/studio"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_image.img",
+      "mode": "managed",
+      "type": "aws_sagemaker_image",
+      "name": "img",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sagemaker:us-east-1:123456789012:image/x",
+          "image_name": "x",
+          "role_arn": "arn:aws:iam::123456789012:role/studio"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_image_version.v",
+      "mode": "managed",
+      "type": "aws_sagemaker_image_version",
+      "name": "v",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "image_name": "x"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_domain.d",
+      "mode": "managed",
+      "type": "aws_sagemaker_domain",
+      "name": "d",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "d-one"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_user_profile.u",
+      "mode": "managed",
+      "type": "aws_sagemaker_user_profile",
+      "name": "u",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "user_profile_name": "reader",
+          "domain_id": "d-one"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_app.ui",
+      "mode": "managed",
+      "type": "aws_sagemaker_app",
+      "name": "ui",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "app_name": "default",
+          "app_type": "JupyterServer",
+          "domain_id": "d-one",
+          "user_profile_name": "reader",
+          "resource_spec": [
+            {
+              "sagemaker_image_arn": "arn:aws:sagemaker:us-east-1:123456789012:image/x"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_iam_role.studio",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_image.img",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.studio.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_image_version.v",
+          "provider_config_key": "aws",
+          "expressions": {
+            "image_name": {
+              "references": [
+                "aws_sagemaker_image.img.image_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_domain.d",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sagemaker_user_profile.u",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_id": {
+              "references": [
+                "aws_sagemaker_domain.d.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_app.ui",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain_id": {
+              "references": [
+                "aws_sagemaker_domain.d.id"
+              ]
+            },
+            "user_profile_name": {
+              "references": [
+                "aws_sagemaker_user_profile.u.user_profile_name"
+              ]
+            },
+            "resource_spec": [
+              {
+                "sagemaker_image_arn": {
+                  "references": [
+                    "aws_sagemaker_image.img.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

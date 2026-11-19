@@ -1,10 +1,10 @@
 use crate::model::{Action, AttributeReference, EntityMode, TerraformEntity};
 use serde_json::Value;
-use std::collections::BTreeSet;
+use std::collections::{BTreeMap, BTreeSet};
 
-fn current(node: &TerraformEntity) -> bool {
+fn current(node: &TerraformEntity, mode: EntityMode) -> bool {
     node.provider.is_aws()
-        && node.mode == EntityMode::Managed
+        && node.mode == mode
         && node.action != Action::Delete
         && node.deposed_key.is_none()
 }
@@ -118,6 +118,18 @@ pub(super) fn verify(
     verify_collections(nodes, refs, evidence, r, fields, valid, &[])
 }
 
+pub(super) fn leaf_values<'a>(_: &str, actual: &'a Value) -> Option<BTreeSet<&'a str>> {
+    Some(if let Some(values) = actual.as_array() {
+        let values: BTreeSet<_> = values.iter().map(Value::as_str).collect::<Option<_>>()?;
+        if values.len() != actual.as_array()?.len() {
+            return None;
+        }
+        values
+    } else {
+        [actual.as_str()?].into()
+    })
+}
+
 pub(super) fn verify_collections(
     nodes: &[TerraformEntity],
     refs: &[AttributeReference],
@@ -127,8 +139,128 @@ pub(super) fn verify_collections(
     valid: impl Fn(usize, &str) -> bool,
     collections: &[&str],
 ) -> Option<()> {
+    verify_values(
+        nodes,
+        refs,
+        evidence,
+        r,
+        fields,
+        valid,
+        (
+            NestedBlocks::Indexed(collections),
+            leaf_values,
+            EntityMode::Managed,
+        ),
+    )
+}
+
+#[derive(Clone, Copy)]
+pub(super) enum NestedBlocks<'a> {
+    Indexed(&'a [&'a str]),
+    ScalarSet,
+}
+
+fn endpoint_value<'a>(
+    reference: &AttributeReference,
+    source: usize,
+    evidence: &[(&'a Value, &Value)],
+    outputs: &[&str],
+) -> Option<&'a str> {
+    let attrs = reference.source_attributes_by_instance.get(&source)?;
+    let output = attrs.first()?;
+    if attrs.len() != 1 || !outputs.contains(&output.as_str()) {
+        return None;
+    }
+    super::service_evidence::known(evidence, source, output)
+}
+
+fn verify_scalar_set(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+    fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
+    valid: impl Fn(usize, &str) -> bool,
+    mode: EntityMode,
+) -> Option<()> {
+    let (block_name, field) = r.attribute.split_once('.')?;
+    let (v, mask) = evidence[r.target];
+    if !block(v, mask, block_name, usize::MAX) {
+        return None;
+    }
+    let count = v[block_name].as_array()?.len();
+    let path = |index| format!("{block_name}.{index}.{field}");
+    let mut expected = BTreeMap::new();
+    for index in 0..count {
+        let attribute = path(index);
+        let mut matches = refs
+            .iter()
+            .filter(|leaf| leaf.target == r.target && leaf.attribute == attribute);
+        let Some(leaf) = matches.next() else { continue };
+        if matches.next().is_some() || leaf.indexed_block_lengths != [count] {
+            return None;
+        }
+        if leaf.root_constant_null {
+            continue;
+        }
+        let [source] = *leaf.sources.as_slice() else {
+            return None;
+        };
+        let endpoint = &nodes[source];
+        if !leaf.complete
+            || !leaf.instances_explicit
+            || !leaf.issues.is_empty()
+            || source == r.target
+            || !current(endpoint, mode)
+        {
+            return None;
+        }
+        let outputs = fields(
+            &nodes[r.target].resource_type,
+            &r.attribute,
+            super::aliases::entity_type(endpoint),
+        );
+        let id = endpoint_value(leaf, source, evidence, outputs)?;
+        let (owner, occurrences) = expected.entry(id).or_insert((source, 0usize));
+        if *owner != source {
+            return None;
+        }
+        *occurrences += 1;
+    }
+    if expected.is_empty()
+        || expected.values().map(|(s, _)| *s).collect::<BTreeSet<_>>()
+            != r.sources.iter().copied().collect()
+    {
+        return None;
+    }
+    for index in 0..count {
+        let attribute = path(index);
+        let actual = value(v, mask, &attribute)?;
+        if actual.is_null() {
+            continue;
+        }
+        let (source, remaining) = expected.get_mut(actual.as_str()?)?;
+        *remaining = remaining.checked_sub(1)?;
+        if !valid(*source, &attribute) {
+            return None;
+        }
+    }
+    expected.values().all(|(_, n)| *n == 0).then_some(())
+}
+
+pub(super) type DecodeLeaf = for<'a> fn(&str, &'a Value) -> Option<BTreeSet<&'a str>>;
+
+pub(super) fn verify_values(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+    fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
+    valid: impl Fn(usize, &str) -> bool,
+    (blocks, decode, endpoint_mode): (NestedBlocks, DecodeLeaf, EntityMode),
+) -> Option<()> {
     let node = &nodes[r.target];
-    if !current(node) || !r.issues.is_empty() || !r.instances_explicit {
+    if !current(node, EntityMode::Managed) || !r.issues.is_empty() || !r.instances_explicit {
         return None;
     }
     if refs
@@ -139,6 +271,9 @@ pub(super) fn verify_collections(
     {
         return None;
     }
+    let NestedBlocks::Indexed(collections) = blocks else {
+        return verify_scalar_set(nodes, refs, evidence, r, fields, valid, endpoint_mode);
+    };
     let (value, mask) = evidence[r.target];
     let mut leaves = Vec::new();
     rows(
@@ -170,22 +305,14 @@ pub(super) fn verify_collections(
         if !reference.complete || !reference.instances_explicit || !reference.issues.is_empty() {
             return None;
         }
-        let actual: BTreeSet<_> = if let Some(values) = actual.as_array() {
-            let values: BTreeSet<_> = values.iter().map(Value::as_str).collect::<Option<_>>()?;
-            if values.len() != actual.as_array()?.len() {
-                return None;
-            }
-            values
-        } else {
-            [actual.as_str()?].into()
-        };
+        let actual = decode(&r.attribute, actual)?;
         if actual.is_empty() || actual.contains("") {
             return None;
         }
         let mut expected = BTreeSet::new();
         for &source in &reference.sources {
             let endpoint = &nodes[source];
-            if source == r.target || !current(endpoint) || !valid(source, &path) {
+            if source == r.target || !current(endpoint, endpoint_mode) || !valid(source, &path) {
                 return None;
             }
             let outputs = fields(
@@ -193,15 +320,7 @@ pub(super) fn verify_collections(
                 &r.attribute,
                 super::aliases::entity_type(endpoint),
             );
-            let attrs = reference.source_attributes_by_instance.get(&source)?;
-            let outputs_by_instance = attrs.iter().collect::<Vec<_>>();
-            let [output] = outputs_by_instance.as_slice() else {
-                return None;
-            };
-            if !outputs.contains(&output.as_str()) {
-                return None;
-            }
-            let expected_value = super::service_evidence::known(evidence, source, output)?;
+            let expected_value = endpoint_value(reference, source, evidence, outputs)?;
             if !expected.insert(expected_value) {
                 return None;
             }
@@ -248,16 +367,25 @@ pub(super) fn value<'a>(value: &'a Value, mask: &Value, path: &str) -> Option<&'
 }
 
 pub(super) fn singleton(value: &Value, mask: &Value, path: &str) -> bool {
+    block(value, mask, path, 1)
+}
+
+pub(super) fn block(value: &Value, mask: &Value, path: &str, maximum: usize) -> bool {
     let Some((value, mask)) = at(value, mask, path) else {
         return false;
     };
-    value
-        .as_array()
-        .is_some_and(|a| a.len() == 1 && a[0].is_object())
-        && (matches!(mask, Value::Null | Value::Bool(false))
-            || mask.as_array().is_some_and(|a| {
-                a.len() == 1 && matches!(a[0], Value::Null | Value::Bool(false) | Value::Object(_))
-            }))
+    value.as_array().is_some_and(|values| {
+        !values.is_empty()
+            && values.len() <= maximum
+            && values.iter().all(Value::is_object)
+            && (matches!(mask, Value::Null | Value::Bool(false))
+                || mask.as_array().is_some_and(|masks| {
+                    masks.len() == values.len()
+                        && masks.iter().all(|m| {
+                            matches!(m, Value::Null | Value::Bool(false) | Value::Object(_))
+                        })
+                }))
+    })
 }
 
 fn known_leaf(value: &Value, mask: &Value) -> bool {

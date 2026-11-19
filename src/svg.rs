@@ -444,12 +444,9 @@ fn render_with_index(
         .relationships
         .iter()
         .filter(|r| {
-            r.provenance.iter().any(|p| {
-                matches!(
-                    p,
-                    crate::model::RelationshipProvenance::ConfiguredValue { .. }
-                )
-            })
+            r.provenance
+                .iter()
+                .any(|p| p.evidence() == crate::model::RelationshipEvidence::ConfiguredValue)
         })
         .map(|r| (&r.from, &r.to, r.kind))
         .collect();
@@ -475,7 +472,12 @@ fn render_with_index(
             .map(|change| operations::attributes(&change.metadata))
             .unwrap_or_default();
         if value_match {
-            operation.push_str(" data-evidence=\"configured-value\"");
+            write!(
+                operation,
+                " data-evidence=\"{}\"",
+                crate::model::RelationshipEvidence::ConfiguredValue.as_str()
+            )
+            .unwrap();
         }
         let previous = edge
             .change

@@ -34,8 +34,33 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_transfer_web_app_customization" => {
                 ("web_app_id", "Web app owner", "Customization")
             }
+            kind if super::redshift_helpers::owner(kind).is_some() => {
+                super::redshift_helpers::owner(kind).unwrap()
+            }
             kind if super::redshift_snapshots::owner(kind).is_some() => {
                 super::redshift_snapshots::owner(kind).unwrap()
+            }
+            "aws_emr_instance_fleet"
+            | "aws_emr_instance_group"
+            | "aws_emr_managed_scaling_policy" => {
+                if raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target != index && r.sources.contains(&index))
+                {
+                    continue;
+                }
+                ("cluster_id", "EMR cluster", "Cluster configuration")
+            }
+            "aws_emr_studio_session_mapping" => {
+                if raw
+                    .attributes
+                    .iter()
+                    .any(|r| r.target != index && r.sources.contains(&index))
+                {
+                    continue;
+                }
+                ("studio_id", "EMR Studio", "Session mappings")
             }
             "aws_redshift_endpoint_authorization" => (
                 "cluster_identifier",
@@ -50,6 +75,192 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("certificate_authority_arn", "Permission CA", "Permissions")
             }
             "aws_acmpca_policy" => ("resource_arn", "Policy CA", "Policies"),
+            "aws_sagemaker_model_card_export_job" => {
+                ("model_card_name", "Exported model card", "Export jobs")
+            }
+            "aws_sagemaker_model_package_group_policy" => (
+                "model_package_group_name",
+                "Model package group",
+                "Policies",
+            ),
+            "aws_sagemaker_hub_content_reference" => {
+                ("hub_name", "Private hub", "Public content references")
+            }
+            "aws_sagemaker_device" => ("device_fleet_name", "Device fleet", "Fleet devices"),
+            "aws_sagemaker_workteam" => {
+                ("workforce_name", "Private workforce", "Private workteams")
+            }
+            "aws_cloudwatchomni_space" => ("domain_id", "Omni domain", "Spaces"),
+            "aws_cloudwatchomni_access_profile" => ("space_id", "Omni space", "Access profiles"),
+            "aws_evidently_feature" => ("project", "Evidently project", "Features"),
+            "aws_kendra_data_source" => ("index_id", "Kendra index", "Data sources"),
+            "aws_kendra_experience" => ("index_id", "Kendra index", "Experiences"),
+            "aws_kendra_faq" => ("index_id", "Kendra index", "FAQs"),
+            "aws_kendra_query_suggestions_block_list" => {
+                ("index_id", "Kendra index", "Query suggestions block lists")
+            }
+            "aws_kendra_thesaurus" => ("index_id", "Kendra index", "Thesauri"),
+            "aws_storagegateway_cache" => ("gateway_arn", "Storage Gateway", "Local storage"),
+            "aws_storagegateway_upload_buffer" => {
+                ("gateway_arn", "Storage Gateway", "Local storage")
+            }
+            "aws_storagegateway_working_storage" => {
+                ("gateway_arn", "Storage Gateway", "Local storage")
+            }
+            "aws_storagegateway_cached_iscsi_volume" => {
+                ("gateway_arn", "Storage Gateway", "Volumes")
+            }
+            "aws_storagegateway_stored_iscsi_volume" => {
+                ("gateway_arn", "Storage Gateway", "Volumes")
+            }
+            "aws_storagegateway_nfs_file_share" => {
+                ("gateway_arn", "Storage Gateway", "File shares")
+            }
+            "aws_storagegateway_smb_file_share" => {
+                ("gateway_arn", "Storage Gateway", "File shares")
+            }
+            "aws_appmesh_gateway_route" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_route" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_gateway" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_node" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_router" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_service" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_ec2_network_insights_analysis" => (
+                "network_insights_path_id",
+                "Network insights path",
+                "Analyses",
+            ),
+            "aws_verifiedpermissions_identity_source" => {
+                ("policy_store_id", "Policy store", "Identity sources")
+            }
+            "aws_verifiedpermissions_policy" => ("policy_store_id", "Policy store", "Policies"),
+            "aws_verifiedpermissions_policy_template" => {
+                ("policy_store_id", "Policy store", "Templates")
+            }
+            "aws_verifiedpermissions_schema" => ("policy_store_id", "Policy store", "Schemas"),
+            "aws_accountaccess_entitlement" => (
+                "application_arn",
+                "Account Access application",
+                "Entitlements",
+            ),
+            "aws_cloudhsm_v2_hsm" => ("cluster_id", "CloudHSM cluster", "HSMs"),
+            "aws_paymentcryptography_key_alias" => {
+                ("key_arn", "Payment Cryptography key", "Aliases")
+            }
+            "aws_signer_signing_profile_permission" => {
+                ("profile_name", "Signing profile", "Permissions")
+            }
+            "aws_lightsail_disk_attachment" => ("disk_name", "Lightsail disk", "Attachments"),
+            "aws_lightsail_static_ip_attachment" => ("static_ip_name", "Static IP", "Attachments"),
+            "aws_lightsail_lb_attachment" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_bucket_resource_access" => {
+                ("bucket_name", "Lightsail bucket", "Bucket configuration")
+            }
+            "aws_lightsail_bucket_access_key" => {
+                ("bucket_name", "Lightsail bucket", "Bucket configuration")
+            }
+            "aws_lightsail_instance_public_ports" => {
+                ("instance_name", "Lightsail instance", "Public ports")
+            }
+            "aws_lightsail_container_service_deployment_version" => {
+                ("service_name", "Container service", "Deployments")
+            }
+            "aws_lightsail_lb_certificate" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_lb_certificate_attachment" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_lb_https_redirection_policy" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_lb_stickiness_policy" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_domain_entry" => ("domain_name", "Lightsail domain", "DNS records"),
+            "aws_dataexchange_revision" => ("data_set_id", "Dataset", "Revisions"),
+            "aws_dataexchange_revision_assets" => ("data_set_id", "Dataset", "Revisions"),
+            "aws_datapipeline_pipeline_definition" => {
+                ("pipeline_id", "Data Pipeline", "Definitions")
+            }
+            "aws_ami_launch_permission" => ("image_id", "Image", "Launch permissions"),
+            "aws_ec2_instance_state" => ("instance_id", "Managed instance", "State management"),
+            "aws_vpn_connection_route" => (
+                "vpn_connection_id",
+                "Static VPN connection",
+                "Static routes",
+            ),
+            "aws_ec2_local_gateway_route" => (
+                "local_gateway_route_table_id",
+                "Local route table",
+                "Local routes",
+            ),
+            "aws_ec2_client_vpn_authorization_rule" => (
+                "client_vpn_endpoint_id",
+                "Client VPN endpoint",
+                "Authorization rules",
+            ),
+            "aws_ec2_client_vpn_route" => (
+                "client_vpn_endpoint_id",
+                "Client VPN endpoint",
+                "Client routes",
+            ),
+            "aws_ec2_transit_gateway_connect_peer" => (
+                "transit_gateway_attachment_id",
+                "Connect attachment",
+                "Connect peers",
+            ),
+            "aws_ec2_transit_gateway_route" => (
+                "transit_gateway_route_table_id",
+                "Transit route table",
+                "Routes",
+            ),
+            "aws_ec2_transit_gateway_prefix_list_reference" => (
+                "transit_gateway_route_table_id",
+                "Transit route table",
+                "Prefix list routes",
+            ),
+            "aws_ec2_transit_gateway_metering_policy_entry" => (
+                "transit_gateway_metering_policy_id",
+                "Metering policy",
+                "Metering entries",
+            ),
+            "aws_ec2_transit_gateway_policy_table_entry" => (
+                "transit_gateway_policy_table_id",
+                "Transit policy table",
+                "Policy entries",
+            ),
+            "aws_verifiedaccess_group" => (
+                "verifiedaccess_instance_id",
+                "Verified Access instance",
+                "Access groups",
+            ),
+            "aws_verifiedaccess_instance_logging_configuration" => (
+                "verifiedaccess_instance_id",
+                "Verified Access instance",
+                "Log delivery",
+            ),
+            "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
+            "aws_athena_prepared_statement" => {
+                ("workgroup", "Query workgroup", "Prepared statements")
+            }
+            "aws_lakeformation_data_cells_filter" => (
+                "table_data.table_name",
+                "Filtered table",
+                "Data cells filters",
+            ),
             "aws_glue_trigger" => ("workflow_name", "Trigger workflow", "Triggers"),
             kind if super::glue_catalog::owner(kind).is_some() => {
                 if kind == "aws_glue_schema"
@@ -287,6 +498,30 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_vpc_peering_connection_options" => {
                 ("vpc_peering_connection_id", "Peering connection", "Options")
             }
+            "aws_bedrockagent_agent_action_group"
+            | "aws_bedrockagent_agent_alias"
+            | "aws_bedrockagent_agent_collaborator"
+            | "aws_bedrockagent_agent_knowledge_base_association" => {
+                ("agent_id", "Bedrock agent owner", "Agent configuration")
+            }
+            "aws_bedrockagent_data_source" => (
+                "knowledge_base_id",
+                "Bedrock knowledge base",
+                "Data sources",
+            ),
+            "aws_bedrock_guardrail_version" => {
+                ("guardrail_arn", "Version guardrail", "Guardrail versions")
+            }
+            "aws_bedrock_enforced_guardrail_configuration" => (
+                "guardrail_arn",
+                "Enforced guardrail",
+                "Enforced configurations",
+            ),
+            "aws_backup_restore_testing_selection" => (
+                "restore_testing_plan_name",
+                "Restore testing plan owner",
+                "Restore testing selections",
+            ),
             "aws_route53_records_exclusive" => ("zone_id", "Hosted zone", "Record management"),
             "aws_appsync_channel_namespace" => {
                 ("api_id", "Namespace Event API", "Channel namespaces")
@@ -331,13 +566,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("key_id", "Configured KMS key", "Key configuration")
             }
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
-            "aws_glue_catalog_table" => {
+            "aws_keyspaces_table" | "aws_glue_catalog_table" => {
                 if raw.attributes.iter().any(|reference| {
                     reference.target != index && reference.sources.contains(&index)
                 }) {
                     continue;
                 }
-                ("database_name", "Catalog database", "Tables")
+                if node.resource_type == "aws_keyspaces_table" {
+                    ("keyspace_name", "Keyspace", "Tables")
+                } else {
+                    ("database_name", "Catalog database", "Tables")
+                }
             }
             "aws_acm_certificate" => {
                 if raw.attributes.iter().any(|reference| {
@@ -378,11 +617,47 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if ((matches!(
             node.resource_type.as_str(),
             "aws_globalaccelerator_listener"
+                | "aws_emr_instance_fleet"
+                | "aws_emr_instance_group"
+                | "aws_emr_managed_scaling_policy"
+                | "aws_emr_studio_session_mapping"
                 | "aws_globalaccelerator_custom_routing_listener"
                 | "aws_vpc_route_server_peer"
                 | "aws_flow_log"
                 | "aws_cloudfront_monitoring_subscription"
-        ) || super::ipam::owner(&node.resource_type).is_some())
+                | "aws_keyspaces_table"
+        ) || super::ipam::owner(&node.resource_type).is_some()
+            || matches!(node.resource_type.as_str(), "aws_ami_launch_permission")
+            || matches!(node.resource_type.as_str(), "aws_ec2_instance_state")
+            || matches!(node.resource_type.as_str(), "aws_vpn_connection_route")
+            || matches!(node.resource_type.as_str(), "aws_ec2_local_gateway_route")
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_client_vpn_authorization_rule" | "aws_ec2_client_vpn_route"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_transit_gateway_connect_peer"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_transit_gateway_route" | "aws_ec2_transit_gateway_prefix_list_reference"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_ec2_transit_gateway_metering_policy_entry"
+                    | "aws_ec2_transit_gateway_policy_table_entry"
+            )
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_verifiedaccess_group" | "aws_verifiedaccess_instance_logging_configuration"
+            )
+            || super::lightsail_configuration::owner_member(&node.resource_type)
+            || node.resource_type == "aws_datapipeline_pipeline_definition"
+            || matches!(
+                node.resource_type.as_str(),
+                "aws_dataexchange_revision" | "aws_dataexchange_revision_assets"
+            ))
             && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
             || node.resource_type == "aws_appsync_channel_namespace"
             || super::search::helper(&node.resource_type)

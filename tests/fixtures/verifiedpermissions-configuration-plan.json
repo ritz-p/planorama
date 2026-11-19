@@ -1,0 +1,247 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_verifiedpermissions_policy_store.sample0",
+      "mode": "managed",
+      "type": "aws_verifiedpermissions_policy_store",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_store_id": "fixture-store"
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedpermissions_policy.sample1",
+      "mode": "managed",
+      "type": "aws_verifiedpermissions_policy",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_store_id": "fixture-store",
+          "definition": [
+            {
+              "template_linked": [
+                {
+                  "policy_template_id": "fixture-template"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedpermissions_policy_template.sample2",
+      "mode": "managed",
+      "type": "aws_verifiedpermissions_policy_template",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_store_id": "fixture-store",
+          "policy_template_id": "fixture-template"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool.sample3",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_fixture",
+          "id": "us-east-1_fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool_client.sample4",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool_client",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "client",
+          "user_pool_id": "us-east-1_fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_verifiedpermissions_identity_source.sample5",
+      "mode": "managed",
+      "type": "aws_verifiedpermissions_identity_source",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_store_id": "fixture-store",
+          "configuration": [
+            {
+              "cognito_user_pool_configuration": [
+                {
+                  "user_pool_arn": "arn:aws:cognito-idp:us-east-1:123456789012:userpool/us-east-1_fixture",
+                  "client_ids": [
+                    "client"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_verifiedpermissions_policy_store.sample0",
+          "mode": "managed",
+          "type": "aws_verifiedpermissions_policy_store",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_verifiedpermissions_policy.sample1",
+          "mode": "managed",
+          "type": "aws_verifiedpermissions_policy",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy_store_id": {
+              "references": [
+                "aws_verifiedpermissions_policy_store.sample0.policy_store_id"
+              ]
+            },
+            "definition": [
+              {
+                "template_linked": [
+                  {
+                    "policy_template_id": {
+                      "references": [
+                        "aws_verifiedpermissions_policy_template.sample2.policy_template_id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_verifiedpermissions_policy_template.sample2",
+          "mode": "managed",
+          "type": "aws_verifiedpermissions_policy_template",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy_store_id": {
+              "references": [
+                "aws_verifiedpermissions_policy_store.sample0.policy_store_id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cognito_user_pool.sample3",
+          "mode": "managed",
+          "type": "aws_cognito_user_pool",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cognito_user_pool_client.sample4",
+          "mode": "managed",
+          "type": "aws_cognito_user_pool_client",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.sample3.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_verifiedpermissions_identity_source.sample5",
+          "mode": "managed",
+          "type": "aws_verifiedpermissions_identity_source",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy_store_id": {
+              "references": [
+                "aws_verifiedpermissions_policy_store.sample0.policy_store_id"
+              ]
+            },
+            "configuration": [
+              {
+                "cognito_user_pool_configuration": [
+                  {
+                    "user_pool_arn": {
+                      "references": [
+                        "aws_cognito_user_pool.sample3.arn"
+                      ]
+                    },
+                    "client_ids": {
+                      "references": [
+                        "aws_cognito_user_pool_client.sample4.id"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

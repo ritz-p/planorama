@@ -64,16 +64,6 @@ with results. Run on an otherwise idle machine; repeat manually if a distributio
 is needed. These observations do not guarantee performance, and CI checks report
 structure and byte equality rather than timing thresholds.
 
-One smoke measurement on 2026-10-16 used Docker Desktop Linux, Rust 1.85.1,
-release mode, `23a58b6` plus the #430 instrumentation, and the large HTML command
-above (output `/tmp/issue-430-large.html`). The input SHA-256 was
-`0767ce05f828ac12e8aadeab8f7b13cced41b07cb20db9d03f463d204cfe91a8`.
-It reported 50 input resources, 40 selected nodes, 79 edges and 379,882 output
-bytes: total 30,986.755 ms, layout/routing 30,968.665 ms, parsing 5.166 ms and
-composition 3.427 ms. Other validation processes were active, so this single
-sample only demonstrates identifying the dominant stage; it is not an idle-machine
-baseline, an overhead comparison or a performance guarantee.
-
 ## Synthetic benchmark harness
 
 Run `docker compose exec -T dev cargo test --release --locked benchmarks::pipeline -- --ignored --nocapture`
@@ -104,6 +94,18 @@ test in release mode for per-state layout time, dimensions, crossings, shared
 path lengths, bends and visible-border overlap. It complements the bounded-degree
 scale generator above; ordinary CI does not run its expensive measurements.
 
-The separate [spacing calibration](../examples/terraform-large/spacing-calibration.md)
+The separate [spacing calibration](ci.md#on-demand-spacing-calibration)
 runs through the manual CI workflow and compares old/default/doubled refinement budgets.
 It records bounded-pass work and per-edge shape without shortest-route searches.
+
+### Semantic input reference grouping
+
+Run `cargo test --release --locked benchmarks::semantic_input -- --ignored --nocapture`
+in the prepared Docker/WSL environment to measure base-graph construction separately
+from parsing and layout. The benchmark uses the same sparse/dense generator at
+40, 1,000 and 5,000 resources and the Terraform large fixture. Set
+`PLANORAMA_BENCH_CASE=dense-1000` to select a case and
+`PLANORAMA_BENCH_REPEATS=20` to control repetitions. An untimed warmup precedes each
+case. Graph fingerprints include order, labels, completeness and provenance;
+compare with the same compiler/build options. Formatting fingerprints and dropping
+graphs happen outside the timed interval. There are no timing assertions.

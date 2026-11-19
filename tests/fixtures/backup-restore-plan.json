@@ -1,0 +1,168 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_backup_vault.primary",
+      "type": "aws_backup_vault",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "name": "primary",
+          "arn": "arn:aws:backup:us-east-1:111111111111:backup-vault:primary"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.restore",
+      "type": "aws_iam_role",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::111111111111:role/restore"
+        }
+      }
+    },
+    {
+      "address": "aws_efs_file_system.protected",
+      "type": "aws_efs_file_system",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "update"
+        ],
+        "after": {
+          "id": "fs-protected",
+          "arn": "arn:aws:elasticfilesystem:us-east-1:111111111111:file-system/fs-protected"
+        }
+      }
+    },
+    {
+      "address": "aws_backup_restore_testing_plan.main",
+      "type": "aws_backup_restore_testing_plan",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "restore_test",
+          "arn": "arn:aws:backup:us-east-1:111111111111:restore-testing-plan:restore_test",
+          "recovery_point_selection": [
+            {
+              "algorithm": "LATEST_WITHIN_WINDOW",
+              "include_vaults": [
+                "arn:aws:backup:us-east-1:111111111111:backup-vault:primary"
+              ],
+              "exclude_vaults": [],
+              "recovery_point_types": [
+                "SNAPSHOT"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_backup_restore_testing_selection.main",
+      "type": "aws_backup_restore_testing_selection",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "protected_selection",
+          "restore_testing_plan_name": "restore_test",
+          "iam_role_arn": "arn:aws:iam::111111111111:role/restore",
+          "protected_resource_type": "EFS",
+          "protected_resource_arns": [
+            "arn:aws:elasticfilesystem:us-east-1:111111111111:file-system/fs-protected"
+          ],
+          "protected_resource_conditions": [],
+          "restore_metadata_overrides": {
+            "subnet_id": "PRIVATE_RESTORE_SUBNET"
+          }
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_backup_vault.primary",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.restore",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_efs_file_system.protected",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_backup_restore_testing_plan.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "recovery_point_selection": [
+              {
+                "include_vaults": {
+                  "references": [
+                    "aws_backup_vault.primary.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_backup_restore_testing_selection.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "restore_testing_plan_name": {
+              "references": [
+                "aws_backup_restore_testing_plan.main.name"
+              ]
+            },
+            "iam_role_arn": {
+              "references": [
+                "aws_iam_role.restore.arn"
+              ]
+            },
+            "protected_resource_arns": {
+              "references": [
+                "aws_efs_file_system.protected.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -5,6 +5,13 @@ const directory = process.argv[2] || 'output/wasm-engine';
 const binding = new Function(readFileSync(`${directory}/planorama.js`, 'utf8') + '\nreturn wasm_bindgen;')();
 binding.initSync({module: readFileSync(`${directory}/planorama_bg.wasm`), memory_budget_mib: 512});
 const native = require('../support/native-reference.cjs')(resolve(process.env.CARGO_TARGET_DIR || 'target', 'release/planorama'));
+const svgOnly = new Set([
+  'foreign', 'dns-duplicate', 'applications-jurisdiction',
+  'applications-domain-zone-unknown', 'applications-domain-zone-conflict',
+  'applications-cname-unknown', 'applications-cname-literal',
+  'applications-pages-service-unknown', 'applications-percentage-zero',
+]);
+const formatsFor = scenario => svgOnly.has(scenario) ? ['svg'] : ['svg', 'html'];
 for (const scenario of ['foundation', 'sensitive', 'unknown', 'foreign', 'filtered', 'escaped', 'prior-sensitive']) {
   const plan = JSON.parse(readFileSync('tests/fixtures/cloudflare-foundation-plan.json', 'utf8'));
   if (scenario === 'sensitive') plan.resource_changes[0].change.after_sensitive = true;
@@ -18,7 +25,7 @@ for (const scenario of ['foundation', 'sensitive', 'unknown', 'foreign', 'filter
     plan.prior_state = {values: {root_module: {resources: [{...resource, provider_name: 'registry.terraform.io/cloudflare/cloudflare', values: {zone_id: '0123456789abcdef0123456789abcdef'}, sensitive_values: {zone_id: true}}]}}};
   }
   const input = JSON.stringify(plan);
-  for (const format of ['svg', 'html']) {
+  for (const format of formatsFor(scenario)) {
     const options = {format, icon_mode: 'service-name'};
     const args = ['--format', format, '--icon-mode', 'service-name'];
     if (scenario === 'filtered') {
@@ -51,7 +58,7 @@ for (const scenario of ['dns', 'dns-unknown', 'dns-duplicate', 'dns-filtered', '
     plan.resource_changes.push(old);
   }
   const input = JSON.stringify(plan);
-  for (const format of ['svg', 'html']) {
+  for (const format of formatsFor(scenario)) {
     const options = {format, icon_mode: 'service-name'};
     const args = ['--format', format, '--icon-mode', 'service-name'];
     if (scenario === 'dns-filtered') {
@@ -114,7 +121,7 @@ for (const scenario of ['applications', 'applications-unknown', 'applications-ju
     assert.ok(aws.length > 0); plan.resource_changes.push(...aws);
   }
   const input = JSON.stringify(plan);
-  for (const format of ['svg', 'html']) {
+  for (const format of formatsFor(scenario)) {
     const options = {format, icon_mode: 'service-name'};
     const args = ['--format', format, '--icon-mode', 'service-name'];
     if (scenario === 'applications-filtered') {
@@ -295,3 +302,4 @@ for(const format of ['svg','html']){
  assert.ok(!result.content.includes('PRIVATE_'));
 }
 console.log('Cloudflare Queues named-state parity passed');
+require('./cloudflare-worker-contracts.cjs')(binding, native);

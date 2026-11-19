@@ -4,10 +4,8 @@ mod generator;
 #[test]
 fn multi_account_inputs_and_committed_topology_are_current() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let inputs = generator::generate(
-        &crate::generator::generate(&root.join("examples/terraform-large")).unwrap(),
-    )
-    .unwrap();
+    let inputs =
+        generator::generate(include_str!("../../examples/terraform-large/plan.json")).unwrap();
     let mut count = 0;
     for (state, generated) in inputs {
         assert_eq!(
@@ -53,10 +51,8 @@ fn multi_account_inputs_and_committed_topology_are_current() {
 #[ignore = "large combined rendering snapshot; run explicitly with --release"]
 fn multi_account_example_reproduces_inputs_svg_and_html_with_state_scoped_identity() {
     let root = std::path::Path::new(env!("CARGO_MANIFEST_DIR"));
-    let inputs = generator::generate(
-        &crate::generator::generate(&root.join("examples/terraform-large")).unwrap(),
-    )
-    .unwrap();
+    let inputs =
+        generator::generate(include_str!("../../examples/terraform-large/plan.json")).unwrap();
     let mut command = std::process::Command::new(env!("CARGO_BIN_EXE_planorama"));
     let mut count = 0;
     for (state, input) in &inputs {

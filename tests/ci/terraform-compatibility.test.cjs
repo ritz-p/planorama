@@ -48,6 +48,8 @@ test('source digest tracks nested HCL, file deletion, extra HCL and local state'
   const extraChanged = fingerprint();
   fs.writeFileSync(path.join(source, 'shared-state.json'), '{"outputs":{"id":"fixture"}}');
   assert.notEqual(fingerprint(), extraChanged);
+  fs.unlinkSync(extra);
+  assert.throws(fingerprint, { code: 'ENOENT' });
 });
 
 test('source digest is stable across line endings and directory enumeration order', t => {

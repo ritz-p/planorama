@@ -65,12 +65,14 @@ for (const suite of ['pr', 'full']) {
     assert.equal(result.status, 0, result.stderr);
     const builds = commands.filter(line => line.startsWith('cargo build '));
     assert.equal(builds.length, 2);
+    assert.ok(commands.includes('node tests/browser/wasm-service-audits-node.cjs'));
     assert.ok(builds.every(line => line.includes('--no-default-features')));
     assert.equal(commands.filter(line => line.startsWith('wasm-bindgen --target')).length, 1);
     assert.equal(commands.filter(line => line.startsWith('node scripts/prepare-wasm-memory.cjs')).length, 1);
     assert.equal(artifacts['planorama.js'], 'bindings\nadapter\n');
     assert.ok(commands.includes('node tests/browser/wasm.cjs'));
     assert.ok(commands.includes('node tests/browser/wasm-engine.cjs'));
+    assert.ok(commands.includes('node tests/browser/wasm-dms-node.cjs'));
     assert.equal(commands.some(line => line.startsWith('cargo test ')), suite === 'full');
   });
 }

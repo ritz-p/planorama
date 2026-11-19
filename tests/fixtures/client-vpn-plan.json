@@ -1,0 +1,243 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ec2_client_vpn_endpoint.sample0",
+      "mode": "managed",
+      "type": "aws_ec2_client_vpn_endpoint",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "authentication_options": [
+            {
+              "type": "certificate-authentication",
+              "root_certificate_chain_arn": "arn:aws:acm:us-east-1:123456789012:certificate/test"
+            }
+          ],
+          "vpc_id": "vpc-vpn",
+          "id": "cvpn-test"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample1",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-vpn"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.sample2",
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/test"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_client_vpn_network_association.sample3",
+      "mode": "managed",
+      "type": "aws_ec2_client_vpn_network_association",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "client_vpn_endpoint_id": "cvpn-test",
+          "subnet_id": "subnet-test"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.sample4",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-test",
+          "vpc_id": "vpc-vpn"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_client_vpn_route.sample5",
+      "mode": "managed",
+      "type": "aws_ec2_client_vpn_route",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "client_vpn_endpoint_id": "cvpn-test",
+          "target_vpc_subnet_id": "subnet-test"
+        }
+      }
+    },
+    {
+      "address": "aws_ec2_client_vpn_authorization_rule.sample6",
+      "mode": "managed",
+      "type": "aws_ec2_client_vpn_authorization_rule",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "client_vpn_endpoint_id": "cvpn-test"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ec2_client_vpn_endpoint.sample0",
+          "mode": "managed",
+          "type": "aws_ec2_client_vpn_endpoint",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample1.id"
+              ]
+            },
+            "authentication_options": [
+              {
+                "root_certificate_chain_arn": {
+                  "references": [
+                    "aws_acm_certificate.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_vpc.sample1",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acm_certificate.sample2",
+          "mode": "managed",
+          "type": "aws_acm_certificate",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ec2_client_vpn_network_association.sample3",
+          "mode": "managed",
+          "type": "aws_ec2_client_vpn_network_association",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "client_vpn_endpoint_id": {
+              "references": [
+                "aws_ec2_client_vpn_endpoint.sample0.id"
+              ]
+            },
+            "subnet_id": {
+              "references": [
+                "aws_subnet.sample4.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.sample4",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_client_vpn_route.sample5",
+          "mode": "managed",
+          "type": "aws_ec2_client_vpn_route",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "client_vpn_endpoint_id": {
+              "references": [
+                "aws_ec2_client_vpn_endpoint.sample0.id"
+              ]
+            },
+            "target_vpc_subnet_id": {
+              "references": [
+                "aws_subnet.sample4.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ec2_client_vpn_authorization_rule.sample6",
+          "mode": "managed",
+          "type": "aws_ec2_client_vpn_authorization_rule",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "client_vpn_endpoint_id": {
+              "references": [
+                "aws_ec2_client_vpn_endpoint.sample0.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

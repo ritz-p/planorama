@@ -61,7 +61,6 @@ fn access_points_distinguish_bucket_names_and_outposts_arns() {
         if field == "name" {
             v["resource_changes"][0]["change"]["after"]["account_id"] = json!("111111111111");
             v["resource_changes"][1]["change"]["after"]["account_id"] = json!("111111111111");
-            // JSON-only provider accounts cannot verify an account-qualified name.
             assert!(!proven(&v, field));
             continue;
         }

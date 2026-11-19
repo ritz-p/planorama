@@ -1,0 +1,246 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpn_connection.sample0",
+      "mode": "managed",
+      "type": "aws_vpn_connection",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "static_routes_only": true,
+          "tunnel1_log_options": [
+            {
+              "cloudwatch_log_options": [
+                {
+                  "log_enabled": true,
+                  "log_group_arn": "arn:aws:logs:us-east-1:123456789012:log-group:example"
+                }
+              ]
+            }
+          ],
+          "customer_gateway_id": "cgw-test",
+          "vpn_gateway_id": "vgw-test",
+          "id": "vpn-test"
+        }
+      }
+    },
+    {
+      "address": "aws_customer_gateway.sample1",
+      "mode": "managed",
+      "type": "aws_customer_gateway",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "cgw-test"
+        }
+      }
+    },
+    {
+      "address": "aws_vpn_gateway.sample2",
+      "mode": "managed",
+      "type": "aws_vpn_gateway",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vgw-test",
+          "vpc_id": "vpc-test"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.sample3",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-test"
+        }
+      }
+    },
+    {
+      "address": "aws_vpn_connection_route.sample4",
+      "mode": "managed",
+      "type": "aws_vpn_connection_route",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpn_connection_id": "vpn-test"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.sample5",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:example"
+        }
+      }
+    },
+    {
+      "address": "aws_vpn_gateway_attachment.sample6",
+      "mode": "managed",
+      "type": "aws_vpn_gateway_attachment",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpn_gateway_id": "vgw-test",
+          "vpc_id": "vpc-test"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpn_connection.sample0",
+          "mode": "managed",
+          "type": "aws_vpn_connection",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "customer_gateway_id": {
+              "references": [
+                "aws_customer_gateway.sample1.id"
+              ]
+            },
+            "vpn_gateway_id": {
+              "references": [
+                "aws_vpn_gateway.sample2.id"
+              ]
+            },
+            "tunnel1_log_options": [
+              {
+                "cloudwatch_log_options": [
+                  {
+                    "log_group_arn": {
+                      "references": [
+                        "aws_cloudwatch_log_group.sample5.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_customer_gateway.sample1",
+          "mode": "managed",
+          "type": "aws_customer_gateway",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpn_gateway.sample2",
+          "mode": "managed",
+          "type": "aws_vpn_gateway",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample3.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.sample3",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpn_connection_route.sample4",
+          "mode": "managed",
+          "type": "aws_vpn_connection_route",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpn_connection_id": {
+              "references": [
+                "aws_vpn_connection.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_group.sample5",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpn_gateway_attachment.sample6",
+          "mode": "managed",
+          "type": "aws_vpn_gateway_attachment",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpn_gateway_id": {
+              "references": [
+                "aws_vpn_gateway.sample2.id"
+              ]
+            },
+            "vpc_id": {
+              "references": [
+                "aws_vpc.sample3.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

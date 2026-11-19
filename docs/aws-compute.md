@@ -194,7 +194,7 @@ retained for these three managed types; ARN strings do not invent account identi
 
 Service URLs, image identifiers, environment variables/secrets, credentials and
 runtime status are not rendered. Relationships do not imply network reachability.
-Configuration/domain references remain #776. See the maintained
+See the maintained
 [SVG](../examples/apprunner.svg) and [HTML](../examples/apprunner.html).
 
 Verified against AWS Provider 6.70.0 commit
@@ -204,6 +204,46 @@ Verified against AWS Provider 6.70.0 commit
 [ingress connection](https://github.com/hashicorp/terraform-provider-aws/blob/5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f/website/docs/r/apprunner_vpc_ingress_connection.html.markdown).
 The schema uses sets for connector subnet/SG collections. The synthetic fixture
 models known planned values; it does not claim an applied AWS deployment.
+
+### App Runner configuration and domain links
+
+| Configured input | Verified endpoint |
+| --- | --- |
+| Service or default scaling selection | Auto scaling configuration version by full revision ARN |
+| Service instance role | IAM role ARN |
+| Private ECR image source access role | IAM role ARN |
+| Code source connection | App Runner connection ARN |
+| Enabled service observability configuration | Observability configuration by full ARN |
+| Deployment or custom domain service | App Runner service ARN |
+
+The configuration links use explicit, current managed Terraform references and
+known matching values under compatible provider bindings. Unknown or conflicting
+source modes leave repository authentication unverified. Shared configurations
+remain independently selectable. Deployment and custom-domain links point to
+the service while preserving their own identity and action. Domain names and
+computed DNS or certificate records do not establish managed endpoints.
+
+## Elastic Beanstalk
+
+Environments have independent regional cards. Applications, versions and
+configuration templates are Logical and retain their own actions and coverage.
+
+| Configured input | Verified endpoint |
+| --- | --- |
+| Version, configuration template or environment application | Application name |
+| Environment version label | Version name with the same verified application |
+| Environment template name | Template name with the same verified application |
+| Version source bucket | Managed S3 bucket name or ID |
+| Application version lifecycle role | IAM role ARN |
+
+Application identity requires an explicit reference to the same current,
+managed Terraform application on both sides of a version or template link.
+Matching names alone do not verify a link. Missing or masked inputs preserve
+Terraform provenance where available, and filtered targets remain unavailable.
+Option settings, platform identifiers and computed instance, load balancer or
+Auto Scaling outputs establish neither managed endpoints nor VPC containment.
+See the maintained [SVG](../examples/beanstalk-configuration.svg) and
+[offline HTML](../examples/beanstalk-configuration.html).
 
 ## ECR repositories
 
@@ -631,3 +671,84 @@ Filtered endpoints and named states never borrow evidence. Attributes-map IP/por
 values, generated hosted zones, DNS health and deprecated custom health-check
 configuration are excluded. See [fixture](../tests/fixtures/cloud-map-plan.json)
 and [tests](../tests/unit/semantic/cloud_map.rs).
+
+### EMR clusters (#841)
+
+Cluster placement uses one configured EC2 subnet form and complete security group evidence for the same VPC. Additional security groups are comma-separated IDs. Instance profiles, service and scaling roles, security configurations, log keys, S3 log buckets and custom AMIs retain their own identities. A fleet, instance group or managed scaling policy can appear under its cluster when its cluster ID is verified and the helper has no external consumer. Instance specifications do not create EC2 resources.
+
+### EMR Studio (#842)
+
+Studios resolve VPC, subnet and security group IDs, service and SSO-only user role ARNs, the encryption key and S3 backup bucket. Unshared mappings resolve the Studio and their IAM session policy. Placement requires the explicit VPC and every configured subnet, engine group and workspace group to agree. A session mapping can appear with its Studio. Identity Store user and group names alone do not establish a store-qualified identity.
+
+### EMR on EKS (#843)
+
+Virtual clusters resolve EKS registrations by cluster name and the EKS provider type. Reusable job templates resolve key and execution role ARNs, CloudWatch log group names and S3 log destinations. An EKS registration leaves the virtual cluster independently placed. Kubernetes namespaces and template parameters do not identify AWS resources. Job templates can be reused across virtual clusters.
+
+### EMR Serverless (#844)
+
+Applications resolve complete subnet and security group sets to a common VPC. Enabled CloudWatch and managed persistence configurations resolve their log keys. The S3 monitoring block resolves its bucket and key. Both network sets must resolve for placement. A missing network block leaves the application regional. CloudWatch log groups require enabled logging. Key and bucket references are restricted to their configured monitoring destination.
+
+## App Mesh configuration
+
+Mesh membership uses the explicit mesh name and matching owner account
+evidence where supplied. Routes link to their virtual router or gateway and
+to same-mesh targets through their selected protocol specification. Weighted
+targets and virtual-node backends require complete row-level references.
+Virtual services link to their exclusively configured virtual node or router.
+Mesh and configuration resources remain Logical. These references do not
+establish VPC containment or effective routing.
+
+## AWS Batch compute configuration
+
+Explicit `service_role` and `eks_configuration.eks_cluster_arn` can link an IAM
+role and an EKS cluster for supported managed or unmanaged compute environments.
+For managed EC2 or Spot, `compute_resources.instance_role` links an IAM
+instance profile ARN, `launch_template` links an explicit ID or name, and the
+EC2 image override links an AMI ID. The deprecated image ID links an AMI when
+image overrides are absent. `spot_iam_fleet_role` applies to Spot only. These
+references preserve the compute environment's independent placement and the
+existing network and queue rules.
+
+## Lightsail attachments and distribution configuration
+
+Disk, static-IP and load-balancer attachments link typed Lightsail resources by
+name. Bucket access, instance ports, container deployments and load-balancer
+configuration have explicit service owners. A load-balancer certificate is
+qualified by its load balancer. General Lightsail certificates, key pairs and
+DNS records use their respective name contracts. Network endpoints remain
+independent of the helper lifecycle.
+
+Distributions have independent cards and use the `us-east-1` Lightsail control
+region. An explicit Lightsail origin must match `origin.region_name`, with
+independent account evidence for a different provider binding. DNS names and
+addresses do not create endpoints. Static IPs, domains and databases retain
+independent cards without VPC or subnet inference.
+
+## ECR repository and registry configuration
+
+An ECR Public repository has an independent card. Its policy links the exact
+`repository_name` in `us-east-1`. Private repositories and creation templates
+link a configured customer KMS ARN in `KMS` mode. Creation templates and pull
+through cache rules link explicit custom IAM roles. Cache rules can link a
+Secrets Manager secret by ARN, and pull-time exclusions link an IAM role or
+user by ARN. Templates, credentials and prefixes retain independent identities.
+
+## Verify AMI provenance and sharing references (#1432)
+
+AMI registrations link explicit snapshot mappings. Copies use the source image region and the destination KMS key, and images created from an instance link that instance. Permission helpers retain their identities. An account grantee can qualify a cross-account copy when the plan independently proves both accounts and the grant on the exact image.
+
+## Dedicated hosts and capacity reservations (#1434)
+
+Dedicated hosts remain independent cards. Hosts and reservations can identify an Outpost through the regional data source ARN. Reservations link placement groups by ARN. An Availability Zone or instance family supplies no subnet containment.
+
+## EC2 Fleet and Spot launch choices (#1435)
+
+Fleets link launch templates by the selected ID or name and keep override subnets as launch choices. Spot Fleet distinguishes direct specifications from templates, classic load balancer names from target group ARNs, and fleet roles from instance profiles. Spot requests remain separate from fulfilled instances. Datafeed subscriptions link only the explicit destination bucket.
+
+## Configured instance launch references (#1436)
+
+Instance launch references distinguish AMI IDs, profile and key names, template IDs or names, dedicated host IDs, placement group names or IDs and explicit reservations. Interface and block-device inputs retain their own typed references. A state helper identifies its instance without asserting an observed power state. Inline device definitions do not synthesize volumes.
+
+## Launch template inputs (#1437)
+
+Launch templates link explicit AMI, key pair, profile, placement, reservation and license inputs. Interface security groups must agree with the configured selection mode. Device encryption accepts the provider’s string-valued enabled flag. Subnets describe launch choices and do not place a reusable template inside a VPC.

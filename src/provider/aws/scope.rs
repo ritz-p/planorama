@@ -42,18 +42,100 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     if basic.is_some()
         && !matches!(
             resource,
+            "aws_emr_studio"
+                | "aws_emr_studio_session_mapping"
+                | "aws_emrcontainers_virtual_cluster"
+                | "aws_emrcontainers_job_template"
+                | "aws_emrserverless_application"
+                | "aws_emr_cluster"
+                | "aws_emr_instance_group"
+                | "aws_emr_instance_fleet"
+                | "aws_emr_managed_scaling_policy"
+                | "aws_dsql_cluster"
+                | "aws_dsql_cluster_peering"
+                | "aws_dsql_cluster_policy"
+                | "aws_docdbelastic_cluster"
+                | "aws_neptunegraph_graph"
+                | "aws_neptunegraph_private_graph_endpoint"
+        )
+        && !super::dms_serverless::resource(resource)
+        && !super::dms_references::resource(resource)
+        && !matches!(
+            resource,
             "aws_redshift_endpoint_access" | "aws_redshift_endpoint_authorization"
         )
         && !super::agentcore_services::resource(resource)
         && !super::agentcore_gateway::resource(resource)
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
+        && !super::cloudwatch_omni::resource(resource)
+        && resource != "aws_verifiedaccess_instance"
+        && !super::verified_access::resource(resource)
+        && !super::transit_multicast::resource(resource)
+        && !super::transit_policies::resource(resource)
+        && !super::transit_routes::resource(resource)
+        && !super::transit_attachments::resource(resource)
+        && !super::client_vpn::resource(resource)
+        && !super::local_gateways::resource(resource)
+        && !super::site_vpn::resource(resource)
+        && !super::template_launch::resource(resource)
+        && !super::instance_launch::resource(resource)
+        && !super::ec2_fleets::resource(resource)
+        && !super::ec2_capacity::resource(resource)
+        && !super::ebs_provenance::resource(resource)
+        && !super::ec2_images::resource(resource)
+        && resource != "aws_finspace_kx_environment"
+        && !super::finspace_kx_configuration::resource(resource)
+        && !super::ai_service_configuration::resource(resource)
+        && resource != "aws_datapipeline_pipeline"
+        && !super::datapipeline_configuration::resource(resource)
+        && resource != "aws_dataexchange_data_set"
+        && !super::dataexchange_configuration::resource(resource)
+        && resource != "aws_cleanrooms_collaboration"
+        && !super::cleanrooms_configuration::resource(resource)
+        && resource != "aws_ecrpublic_repository"
+        && !super::ecr_configuration::resource(resource)
+        && !super::glacier_configuration::resource(resource)
+        && !super::flink_configuration::resource(resource)
+        && !super::mwaa_configuration::resource(resource)
+        && !super::transfer_workflow_configuration::resource(resource)
+        && resource != "aws_lightsail_disk"
+        && resource != "aws_lightsail_static_ip"
+        && resource != "aws_lightsail_lb"
+        && resource != "aws_lightsail_bucket"
+        && resource != "aws_lightsail_domain"
+        && !super::lightsail_configuration::resource(resource)
+        && !super::recovery_configuration::resource(resource)
+        && !super::batch_configuration::resource(resource)
+        && !super::signer_configuration::resource(resource)
+        && !super::paymentcryptography_configuration::resource(resource)
+        && resource != "aws_paymentcryptography_key"
+        && !super::cloudhsm_configuration::resource(resource)
+        && !super::accountaccess_configuration::resource(resource)
+        && !super::verifiedpermissions::resource(resource)
+        && resource != "aws_verifiedpermissions_policy_store"
+        && !super::network_insights::resource(resource)
+        && !super::appmesh_configuration::resource(resource)
+        && resource != "aws_appmesh_mesh"
+        && !super::keyspaces_configuration::resource(resource)
+        && resource != "aws_keyspaces_keyspace"
+        && !super::dynamodb_transfer::resource(resource)
+        && !super::storagegateway::resource(resource)
+        && !super::qbusiness::resource(resource)
+        && !super::kendra::resource(resource)
+        && !super::apprunner_configuration::resource(resource)
+        && !super::beanstalk_configuration::resource(resource)
+        && !matches!(
+            resource,
+            "aws_athena_named_query" | "aws_athena_prepared_statement"
+        )
         && !super::cognito::resource(resource)
         && !super::directory_service::resource(resource)
         && !super::network_monitors::resource(resource)
         && !super::networkfirewall_extended::resource(resource)
         && !super::imagebuilder_distribution::resource(resource)
         && !super::imagebuilder::resource(resource)
+        && !super::redshift_helpers::resource(resource)
         && !super::redshift_snapshots::resource(resource)
         && !super::kms::resource(resource)
         && !super::s3vectors::resource(resource)
@@ -375,7 +457,15 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     let region = if global {
         None
     } else if basic.is_some_and(|entry| entry.scope == super::basic::Scope::Regional)
-        || (entity.mode == EntityMode::Data && resource == "aws_ssoadmin_instances")
+        || (entity.mode == EntityMode::Data
+            && matches!(
+                resource,
+                "aws_ssoadmin_instances"
+                    | "aws_outposts_outpost"
+                    | "aws_ec2_transit_gateway_dx_gateway_attachment"
+                    | "aws_ec2_local_gateway"
+                    | "aws_ec2_local_gateway_virtual_interface_group"
+            ))
         || entity.waf_scope == Some(crate::model::WafScope::Regional)
         || matches!(
             resource,
@@ -466,6 +556,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
                 | "aws_route"
                 | "aws_vpc_endpoint"
                 | "aws_ec2_transit_gateway"
+                | "aws_ec2_transit_gateway_peering_attachment"
                 | "aws_ec2_transit_gateway_route_table"
                 | "aws_ec2_transit_gateway_route"
                 | "aws_lb"

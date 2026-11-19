@@ -11,6 +11,10 @@ pub(crate) struct Evidence<'a> {
     pub sensitive: &'a Value,
 }
 
+pub(super) fn scope_id(id: &str) -> Option<&str> {
+    (id.len() == 32 && id.bytes().all(|byte| byte.is_ascii_hexdigit())).then_some(id)
+}
+
 impl<'a> Evidence<'a> {
     fn failure(self) -> Failure {
         fn marked(mask: &Value) -> bool {
@@ -40,6 +44,14 @@ impl<'a> Evidence<'a> {
         matches!(self.mask, Value::Null | Value::Bool(false))
             .then_some(())
             .ok_or_else(|| self.failure())
+    }
+
+    pub(super) fn require_null(self) -> Result<()> {
+        self.scalar()?;
+        self.value
+            .is_null()
+            .then_some(())
+            .ok_or(Failure::UnsupportedContract)
     }
 
     pub(super) fn at(self, path: &str) -> Result<Self> {
@@ -90,11 +102,8 @@ impl<'a> Evidence<'a> {
     }
 
     pub(super) fn id(self, path: &str) -> Result<&'a str> {
-        self.text(path).and_then(|id| {
-            (id.len() == 32 && id.bytes().all(|b| b.is_ascii_hexdigit()))
-                .then_some(id)
-                .ok_or(Failure::InvalidValue)
-        })
+        self.text(path)
+            .and_then(|id| scope_id(id).ok_or(Failure::InvalidValue))
     }
 
     pub(super) fn rows(self) -> Result<Vec<Self>> {

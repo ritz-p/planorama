@@ -270,7 +270,11 @@ pub(super) fn annotate(
             .iter()
             .map(|&source| {
                 let endpoint = &nodes[source];
-                if !current(endpoint) || endpoint.resource_type != kind {
+                if !current(endpoint)
+                    || !(endpoint.resource_type == kind
+                        || (kind == "aws_dms_endpoint"
+                            && endpoint.resource_type == "aws_dms_s3_endpoint"))
+                {
                     return None;
                 }
                 let configuration = matches!(

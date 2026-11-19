@@ -3,7 +3,7 @@ use super::{
     evidence::{Result, collect},
     proof,
 };
-use crate::model::{Action, AttributeReference, CloudflareFailure as Failure, TerraformEntity};
+use crate::model::{AttributeReference, CloudflareFailure as Failure, TerraformEntity};
 
 fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static str)> {
     match (kind, path) {
@@ -12,6 +12,21 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
         }
         (
             "cloudflare_dns_record"
+            | "cloudflare_logpush_job"
+            | "cloudflare_logpush_ownership_challenge"
+            | "cloudflare_logpull_retention"
+            | "cloudflare_certificate_pack"
+            | "cloudflare_client_certificate"
+            | "cloudflare_authenticated_origin_pulls"
+            | "cloudflare_authenticated_origin_pulls_certificate"
+            | "cloudflare_authenticated_origin_pulls_hostname_certificate"
+            | "cloudflare_authenticated_origin_pulls_settings"
+            | "cloudflare_api_shield"
+            | "cloudflare_api_shield_schema"
+            | "cloudflare_api_shield_schema_validation_settings"
+            | "cloudflare_api_shield_operation"
+            | "cloudflare_api_shield_operation_schema_validation_settings"
+            | "cloudflare_certificate_authorities_hostname_associations"
             | "cloudflare_zone_dnssec"
             | "cloudflare_load_balancer"
             | "cloudflare_ruleset"
@@ -28,6 +43,10 @@ fn contract(kind: &str, path: &str) -> Option<(&'static [&'static str], &'static
             | "cloudflare_load_balancer_monitor_group"
             | "cloudflare_ruleset"
             | "cloudflare_list"
+            | "cloudflare_logpush_job"
+            | "cloudflare_logpush_ownership_challenge"
+            | "cloudflare_turnstile_widget"
+            | "cloudflare_mtls_certificate"
             | "cloudflare_worker"
             | "cloudflare_worker_version"
             | "cloudflare_workers_script"
@@ -65,6 +84,8 @@ fn scope_valid(node: &TerraformEntity, evidence: Evidence<'_>) -> Result<()> {
     if !matches!(
         node.resource_type.as_str(),
         "cloudflare_ruleset"
+            | "cloudflare_logpush_job"
+            | "cloudflare_logpush_ownership_challenge"
             | "cloudflare_zero_trust_access_application"
             | "cloudflare_zero_trust_access_identity_provider"
     ) {
@@ -83,13 +104,6 @@ fn scope_valid(node: &TerraformEntity, evidence: Evidence<'_>) -> Result<()> {
     (presence[0] != presence[1])
         .then_some(())
         .ok_or(Failure::ScopeUnavailable)
-}
-
-fn current(node: &TerraformEntity) -> bool {
-    node.provider.is_cloudflare()
-        && node.deposed_key.is_none()
-        && node.action != Action::Delete
-        && node.metadata.state_removal.is_none()
 }
 
 fn verify(
@@ -154,7 +168,7 @@ fn verify(
         .iter()
         .enumerate()
         .filter(|(index, node)| {
-            current(node)
+            proof::active(node)
                 && node.resource_type == kind
                 && evidence[*index].id("id").ok() == Some(expected)
         })

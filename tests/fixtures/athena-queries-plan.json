@@ -1,0 +1,234 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.sample0",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/sample"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample1",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "results"
+        }
+      }
+    },
+    {
+      "address": "aws_athena_workgroup.sample2",
+      "mode": "managed",
+      "type": "aws_athena_workgroup",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "analytics",
+          "configuration": [
+            {
+              "result_configuration": [
+                {
+                  "output_location": "s3://results/query/"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_athena_database.sample3",
+      "mode": "managed",
+      "type": "aws_athena_database",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "history",
+          "workgroup": "analytics",
+          "encryption_configuration": [
+            {
+              "encryption_option": "SSE_KMS",
+              "kms_key": "arn:aws:kms:us-east-1:123456789012:key/sample"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_athena_named_query.sample4",
+      "mode": "managed",
+      "type": "aws_athena_named_query",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "database": "history",
+          "workgroup": "analytics"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.sample5",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_athena_data_catalog.sample6",
+      "mode": "managed",
+      "type": "aws_athena_data_catalog",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "LAMBDA",
+          "parameters": {
+            "function": "arn:aws:lambda:us-east-1:123456789012:function:catalog"
+          }
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_athena_workgroup.sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "configuration": [
+              {
+                "result_configuration": [
+                  {
+                    "output_location": {
+                      "references": [
+                        "aws_s3_bucket.sample1.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_athena_database.sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workgroup": {
+              "references": [
+                "aws_athena_workgroup.sample2.name"
+              ]
+            },
+            "encryption_configuration": [
+              {
+                "kms_key": {
+                  "references": [
+                    "aws_kms_key.sample0.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_athena_named_query.sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workgroup": {
+              "references": [
+                "aws_athena_workgroup.sample2.name"
+              ]
+            },
+            "database": {
+              "references": [
+                "aws_athena_database.sample3.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lambda_function.sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_athena_data_catalog.sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "parameters": {
+              "references": [
+                "aws_lambda_function.sample5.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

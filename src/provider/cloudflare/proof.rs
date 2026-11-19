@@ -3,12 +3,27 @@ use crate::model::{Action, AttributeReference, CloudflareFailure as Failure, Ter
 use serde_json::Value;
 use std::collections::BTreeSet;
 
-pub(super) fn current(node: &TerraformEntity) -> bool {
+pub(super) fn active(node: &TerraformEntity) -> bool {
     node.provider.is_cloudflare()
-        && super::known(&node.resource_type, node.mode)
         && node.deposed_key.is_none()
         && node.action != Action::Delete
         && node.metadata.state_removal.is_none()
+}
+
+pub(super) fn current(node: &TerraformEntity) -> bool {
+    active(node) && super::known(&node.resource_type, node.mode)
+}
+
+pub(super) fn known_configuration_matches(a: &TerraformEntity, b: &TerraformEntity) -> bool {
+    a.provider_configuration
+        .as_ref()
+        .is_some_and(|configuration| Some(configuration) == b.provider_configuration.as_ref())
+}
+
+pub(super) fn unique<T: Ord>(values: &[T]) -> Result<()> {
+    (values.iter().collect::<BTreeSet<_>>().len() == values.len())
+        .then_some(())
+        .ok_or(Failure::IncompleteCollection)
 }
 
 pub(super) fn endpoint(node: &TerraformEntity) -> Result<()> {
@@ -98,7 +113,6 @@ pub(super) fn verify(
                 .then_some(())
                 .ok_or(Failure::IdentityMismatch)
         };
-        // Rejected candidates are expected; only explicit sources explain a failed match.
         let mut candidates = (0..nodes.len()).filter(|&index| matches(index).is_ok());
         let Some(source) = candidates.next() else {
             return Err(r
@@ -162,3 +176,7 @@ pub(super) fn record(r: &mut AttributeReference, result: Result<()>) {
     r.service_reference_verified = result.is_ok();
     r.cloudflare_failure = result.err();
 }
+
+#[cfg(test)]
+#[path = "../../../tests/unit/cloudflare_proof.rs"]
+mod tests;

@@ -5,6 +5,16 @@ use std::fmt::Write;
 fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
     match kind {
         "cloudflare_account" => "Administration ID",
+        "cloudflare_mtls_certificate" => "Account-scoped mTLS certificate ID",
+        "cloudflare_authenticated_origin_pulls_hostname_certificate" => {
+            "Zone-scoped hostname certificate ID"
+        }
+        "cloudflare_api_shield_operation" => "Zone-scoped matching id/operation_id",
+        "cloudflare_pipeline_stream" => "Account-scoped stream ID",
+        "cloudflare_ai_search_instance" => "Account, namespace and instance ID",
+        "cloudflare_ai_search_namespace" => "Account-scoped namespace name",
+        "cloudflare_ai_search_token" => "Account-scoped token ID",
+        "cloudflare_ai_gateway" => "Account-scoped Gateway ID",
         "cloudflare_hyperdrive_config" => "Account-scoped Hyperdrive ID",
         "cloudflare_zone" if mode == EntityMode::Data => "Known matching id/zone_id",
         "cloudflare_zone" => "Zone ID",
@@ -13,6 +23,7 @@ fn endpoint(kind: &str, mode: EntityMode) -> &'static str {
         | "cloudflare_load_balancer_monitor_group" => "Account-scoped ID",
         "cloudflare_ruleset" => "ID with matching account and zone",
         "cloudflare_list" => "Redirect list name and kind, matching account",
+        "cloudflare_workflow" => "Account-scoped Workflow name",
         "cloudflare_worker" => "Account-scoped Worker ID or name (distinct outputs)",
         "cloudflare_worker_version" if mode == EntityMode::Managed => {
             "Version ID and explicitly proven Worker owner"
@@ -148,17 +159,20 @@ fn generated_capabilities_cover_inventory_modes_without_claiming_full_api_suppor
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
-    assert!(!data.contains("Storage, service, queue and Hyperdrive bindings"));
+    assert!(!data.contains("Worker bindings"));
     assert!(data.contains("id/script_name"));
-    assert!(workers.lines().any(|line| line.contains("| managed |")
-        && line.contains("Storage, service, queue and Hyperdrive bindings")));
+    assert!(
+        workers
+            .lines()
+            .any(|line| line.contains("| managed |") && line.contains("Worker bindings"))
+    );
     let versions = matrix("cloudflare_worker_version");
     let data = versions
         .lines()
         .find(|line| line.contains("| data |"))
         .unwrap();
     assert!(!data.contains("Version ID and explicitly proven Worker owner"));
-    assert!(!data.contains("Storage, service, queue and Hyperdrive bindings"));
+    assert!(!data.contains("Worker bindings"));
 }
 
 #[test]

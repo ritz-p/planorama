@@ -41,7 +41,7 @@ fn graph(count: usize, edges: Vec<(usize, usize)>) -> Graph {
     }
 }
 
-fn check_geometry(graph: &Graph) {
+fn check_geometry(graph: &Graph) -> Layout<'_> {
     let layout = Layout::new(graph);
     for (i, a) in layout.positions.iter().enumerate() {
         assert!(a.x + NODE_WIDTH <= layout.width && a.y + NODE_HEIGHT <= layout.height);
@@ -75,6 +75,7 @@ fn check_geometry(graph: &Graph) {
             }
         }
     }
+    layout
 }
 
 #[test]
@@ -91,8 +92,7 @@ fn sweeps_uncross_reversed_dependencies() {
 fn bundled_stars_avoid_cards_and_keep_individual_svg_relationships() {
     for edges in [vec![(0, 1), (0, 2), (0, 3)], vec![(0, 3), (1, 3), (2, 3)]] {
         let graph = graph(4, edges);
-        check_geometry(&graph);
-        let layout = Layout::new(&graph);
+        let layout = check_geometry(&graph);
         let svg = crate::svg::render(&graph, &layout);
         assert_eq!(
             svg.lines()
@@ -123,10 +123,9 @@ fn bundling_sample_preserves_both_stages_of_dependencies() {
     );
     assert_eq!(graph.nodes.len(), 5);
     assert_eq!(graph.edges.len(), 6);
-    let layout = Layout::new(&graph);
+    let layout = check_geometry(&graph);
     assert_eq!(layout.paths.len(), 6);
     assert!(!layout.junctions.is_empty());
-    check_geometry(&graph);
 }
 
 #[test]
@@ -137,7 +136,7 @@ fn virtual_nodes_do_not_become_resources_or_visible_edges() {
         .iter()
         .map(|node| node.address.clone())
         .collect();
-    let layout = Layout::new(&graph);
+    let layout = check_geometry(&graph);
     assert_eq!(layout.positions.len(), graph.nodes.len());
     assert_eq!(layout.paths.len(), graph.edges.len());
     let svg = crate::svg::render(&graph, &layout);
@@ -157,7 +156,6 @@ fn virtual_nodes_do_not_become_resources_or_visible_edges() {
             .collect::<Vec<_>>()
     );
     assert_eq!(svg, crate::svg::render(&graph, &Layout::new(&graph)));
-    check_geometry(&graph);
 }
 
 #[test]
@@ -198,8 +196,7 @@ fn dense_graph_quality_metrics_are_deterministic() {
         .chain((4..8).flat_map(|a| (8..12).map(move |b| (a, b))))
         .collect();
     let graph = graph(12, edges);
-    check_geometry(&graph);
-    let layout = Layout::new(&graph);
+    let layout = check_geometry(&graph);
     assert_eq!(
         layout.paths,
         Layout::new(&graph).paths,
@@ -234,8 +231,7 @@ fn dense_bipartite_graph_expands_gutters_without_crossing_cards() {
         16,
         (0..8).flat_map(|a| (8..16).map(move |b| (a, b))).collect(),
     );
-    check_geometry(&graph);
-    let layout = Layout::new(&graph);
+    let layout = check_geometry(&graph);
     assert!(layout.positions[8].x - layout.positions[0].x > 420);
     assert_eq!(layout.paths, Layout::new(&graph).paths);
 }

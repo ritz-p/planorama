@@ -15,17 +15,35 @@ fn reference_target(target: &crate::model::ReferenceTarget) -> serde_json::Value
     value
 }
 
+fn relationship_provenance(source: &RelationshipProvenance) -> serde_json::Value {
+    let mut value = match source {
+        RelationshipProvenance::Resource { source, change, .. } => {
+            serde_json::json!({"address":source.address, "deposed_key":source.deposed_key, "action":super::label(change.action), "operation":super::operations::label(change.action,&change.metadata), "metadata":super::operations::metadata(&change.metadata), "previous_address":change.previous_address})
+        }
+        RelationshipProvenance::ConfiguredValue {
+            from,
+            to,
+            attribute,
+        } => serde_json::json!({"attribute":attribute,"from":from.address,"to":to.address}),
+        RelationshipProvenance::Reference { from, to } => {
+            serde_json::json!({"from":from.address, "from_deposed_key":from.deposed_key, "to":to.address, "to_deposed_key":to.deposed_key})
+        }
+    };
+    let evidence = source.evidence();
+    value["kind"] = evidence.as_str().into();
+    if let Some(confidence) = evidence.confidence() {
+        value["confidence"] = confidence.into();
+    }
+    value
+}
+
 pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
     let entities: Vec<_> = graph.entities().map(|entity| {
         let sources: Vec<_> = entity.provenance.iter().map(|source| serde_json::json!({"address":source.address,"deposed_key":source.deposed_key})).collect();
         serde_json::json!({"id":entity.id.as_str(), "kind":match entity.kind { ArchitectureEntityKind::Terraform => "terraform", ArchitectureEntityKind::Synthetic => "synthetic" }, "sources": sources})
     }).collect();
     let relationships: Vec<_> = graph.relationships.iter().map(|relationship| {
-        let provenance: Vec<_> = relationship.provenance.iter().map(|source| match source {
-            RelationshipProvenance::Resource { source, change, .. } => serde_json::json!({"kind":"resource", "address":source.address, "deposed_key":source.deposed_key, "action":super::label(change.action), "operation":super::operations::label(change.action,&change.metadata), "metadata":super::operations::metadata(&change.metadata), "previous_address":change.previous_address}),
-            RelationshipProvenance::ConfiguredValue { from, to, attribute } => serde_json::json!({"kind":"configured-value", "confidence":"typed-configured-value", "attribute":attribute,"from":from.address,"to":to.address}),
-            RelationshipProvenance::Reference { from, to } => serde_json::json!({"kind":"reference", "from":from.address, "from_deposed_key":from.deposed_key, "to":to.address, "to_deposed_key":to.deposed_key}),
-        }).collect();
+        let provenance: Vec<_> = relationship.provenance.iter().map(relationship_provenance).collect();
         serde_json::json!({"from":relationship.from.as_str(), "to":relationship.to.as_str(), "kind":format!("{:?}",relationship.kind).to_lowercase(), "directionality":relationship.directionality().as_str(), "inferred":relationship.inferred, "provenance":provenance})
     }).collect();
     let references: Vec<_> = graph.nodes.iter().flat_map(|node| node.references.iter().map(move |reference| {
@@ -74,3 +92,7 @@ pub(super) fn metadata(graph: &Graph, content: super::Content) -> String {
         super::escape(&serde_json::Value::Array(relationships).to_string())
     )
 }
+
+#[cfg(test)]
+#[path = "../../tests/unit/svg/provenance.rs"]
+mod tests;

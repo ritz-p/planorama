@@ -1,0 +1,213 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_signer_signing_profile.sample0",
+      "mode": "managed",
+      "type": "aws_signer_signing_profile",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "fixture_profile",
+          "version": "fixture-version",
+          "signing_material": [
+            {
+              "certificate_arn": "arn:aws:acm:us-east-1:123456789012:certificate/fixture"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_signer_signing_profile_permission.sample1",
+      "mode": "managed",
+      "type": "aws_signer_signing_profile_permission",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "profile_name": "fixture_profile",
+          "profile_version": "fixture-version"
+        }
+      }
+    },
+    {
+      "address": "aws_acm_certificate.sample2",
+      "mode": "managed",
+      "type": "aws_acm_certificate",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm:us-east-1:123456789012:certificate/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_signer_signing_job.sample3",
+      "mode": "managed",
+      "type": "aws_signer_signing_job",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "profile_name": "fixture_profile",
+          "source": [
+            {
+              "s3": [
+                {
+                  "bucket": "fixture-bucket",
+                  "key": "PRIVATE_SOURCE"
+                }
+              ]
+            }
+          ],
+          "destination": [
+            {
+              "s3": [
+                {
+                  "bucket": "fixture-bucket",
+                  "prefix": "PRIVATE_DESTINATION"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample4",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "fixture-bucket"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_signer_signing_profile.sample0",
+          "mode": "managed",
+          "type": "aws_signer_signing_profile",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "signing_material": [
+              {
+                "certificate_arn": {
+                  "references": [
+                    "aws_acm_certificate.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_signer_signing_profile_permission.sample1",
+          "mode": "managed",
+          "type": "aws_signer_signing_profile_permission",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "profile_name": {
+              "references": [
+                "aws_signer_signing_profile.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_acm_certificate.sample2",
+          "mode": "managed",
+          "type": "aws_acm_certificate",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_signer_signing_job.sample3",
+          "mode": "managed",
+          "type": "aws_signer_signing_job",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "profile_name": {
+              "references": [
+                "aws_signer_signing_profile.sample0.name"
+              ]
+            },
+            "source": [
+              {
+                "s3": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.sample4.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "destination": [
+              {
+                "s3": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.sample4.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample4",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

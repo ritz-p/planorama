@@ -1,0 +1,189 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.db",
+      "type": "aws_kms_key",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/00000000-1111-2222-3333-444444444444"
+        }
+      }
+    },
+    {
+      "address": "aws_dsql_cluster.local",
+      "type": "aws_dsql_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "local",
+          "arn": "arn:aws:dsql:us-east-1:123456789012:cluster/local",
+          "kms_encryption_key": "arn:aws:kms:us-east-1:123456789012:key/00000000-1111-2222-3333-444444444444",
+          "multi_region_properties": [
+            {
+              "clusters": [
+                "arn:aws:dsql:us-west-2:123456789012:cluster/remote"
+              ],
+              "witness_region": "us-east-2"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dsql_cluster.remote",
+      "type": "aws_dsql_cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "remote",
+          "arn": "arn:aws:dsql:us-west-2:123456789012:cluster/remote",
+          "kms_encryption_key": "AWS_OWNED_KMS_KEY"
+        }
+      }
+    },
+    {
+      "address": "aws_dsql_cluster_peering.main",
+      "type": "aws_dsql_cluster_peering",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "local",
+          "clusters": [
+            "arn:aws:dsql:us-west-2:123456789012:cluster/remote"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_dsql_cluster_policy.main",
+      "type": "aws_dsql_cluster_policy",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "identifier": "local"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "6.70.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "version_constraint": "6.70.0",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Test"
+              }
+            }
+          ]
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.db",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dsql_cluster.local",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_encryption_key": {
+              "references": [
+                "aws_kms_key.db.arn"
+              ]
+            },
+            "multi_region_properties": [
+              {
+                "clusters": {
+                  "references": [
+                    "aws_dsql_cluster.remote.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_dsql_cluster.remote",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dsql_cluster_peering.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identifier": {
+              "references": [
+                "aws_dsql_cluster.local.identifier"
+              ]
+            },
+            "clusters": {
+              "references": [
+                "aws_dsql_cluster.remote.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_dsql_cluster_policy.main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "identifier": {
+              "references": [
+                "aws_dsql_cluster.local.identifier"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

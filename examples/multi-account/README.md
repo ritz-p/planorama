@@ -6,8 +6,8 @@ has no real saved-plan archive. Both rendered examples therefore leave every
 account unknown. Visible role ARNs in JSON cannot prove that Terraform did not
 omit another dynamic role; see [provider evidence](../../docs/provider-evidence.md).
 
-The source of truth is [generator.rs](generator.rs), which extends the existing
-[large fixture generator](../terraform-large/generator.rs). Planned IDs and ARNs
+The source of truth is [generator.rs](generator.rs), which extends the checked
+[large stress input](../terraform-large/plan.json). Planned IDs and ARNs
 are fabricated equality evidence. No AWS credentials, cloud APIs or Terraform are
 needed to regenerate this fixture after Rust dependencies are available.
 
@@ -61,12 +61,8 @@ validates the actual saved-plan CLI using a local STS fixture.
 ## Measurements and limitations
 
 Use the measurement script above for current geometry, path and byte counts.
-For optional timings, run
-`benchmarks::multi_account::baseline` with `--release -- --ignored --nocapture`.
-For normal SVG/HTML generation, `--timings` reports per-stage and per-state costs
-without running a benchmark; see the [CLI measurement commands](../../docs/benchmarks.md#cli-stage-timings).
-Layout costs depend on the machine; no timing threshold is imposed. Long paths
-and crowded corridors remain possible.
+The [benchmark guide](../../docs/benchmarks.md#synthetic-benchmark-harness) covers the
+opt-in multi-account benchmark and [CLI stage timings](../../docs/benchmarks.md#cli-stage-timings).
 
 Both measurement and screenshot tools use Node.js and the development image's
 Chromium/ChromeDriver. `node tests/support/capture_multi_account.cjs` writes four
@@ -74,5 +70,4 @@ crops under `output/multi-account-review`; its account crop uses the whole state
 when account evidence is absent.
 
 The concentrated [routing stress fixture](../../tests/fixtures/routing-stress/account-high-fanin.json)
-is excluded from routine rendering because of its cost. Spacing calibration is in
-[spacing calibration](../terraform-large/spacing-calibration.md).
+is excluded from routine rendering because of its cost. See [spacing calibration](../../docs/ci.md#on-demand-spacing-calibration) for the separate budget comparison.

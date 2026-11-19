@@ -1,0 +1,147 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.sample0",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture",
+          "customer_master_key_spec": "SYMMETRIC_DEFAULT"
+        }
+      }
+    },
+    {
+      "address": "aws_qbusiness_application.sample1",
+      "mode": "managed",
+      "type": "aws_qbusiness_application",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:qbusiness:us-east-1:123456789012:application/fixture",
+          "id": "fixture",
+          "iam_service_role_arn": "arn:aws:iam::123456789012:role/qbusiness",
+          "identity_center_instance_arn": "arn:aws:sso:::instance/ssoins-0123456789abcdef",
+          "identity_center_application_arn": "arn:aws:sso::123456789012:application/ssoins-0123456789abcdef/apl-0123456789abcdef",
+          "encryption_configuration": [
+            {
+              "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample2",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/qbusiness"
+        }
+      }
+    },
+    {
+      "address": "data.aws_ssoadmin_instances.sample3",
+      "mode": "data",
+      "type": "aws_ssoadmin_instances",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "read"
+        ],
+        "after": {
+          "arns": [
+            "arn:aws:sso:::instance/ssoins-0123456789abcdef"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.sample0",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_qbusiness_application.sample1",
+          "mode": "managed",
+          "type": "aws_qbusiness_application",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "iam_service_role_arn": {
+              "references": [
+                "aws_iam_role.sample2.arn"
+              ]
+            },
+            "identity_center_instance_arn": {
+              "references": [
+                "data.aws_ssoadmin_instances.sample3.arns"
+              ]
+            },
+            "encryption_configuration": [
+              {
+                "kms_key_id": {
+                  "references": [
+                    "aws_kms_key.sample0.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample2",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "data.aws_ssoadmin_instances.sample3",
+          "mode": "data",
+          "type": "aws_ssoadmin_instances",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

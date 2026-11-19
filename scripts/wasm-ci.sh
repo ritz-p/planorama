@@ -26,6 +26,7 @@ measure distributions-build sh scripts/build-wasm-distributions.sh
 for file in planorama.js planorama_bg.wasm memory-capabilities.json; do
     cmp "output/browser/pkg/$file" "output/wasm-engine/$file"
 done
+measure service-audits-parity node tests/browser/wasm-service-audits-node.cjs
 measure cloudflare-parity node tests/browser/wasm-cloudflare-node.cjs
 measure cloudflare-recovery node tests/browser/wasm-cloudflare-recovery.cjs
 measure cloudflare-selection node tests/browser/wasm-cloudflare-selection.cjs
@@ -33,6 +34,7 @@ measure cloudflare-selection-viewer node tests/browser/cloudflare-selection.cjs
 measure cloudflare-recovery-viewer node tests/browser/cloudflare-recovery.cjs
 measure anonymization-parity node tests/browser/wasm-anonymization.cjs
 measure anonymization-audit node tests/browser/anonymization.cjs
+measure dms-parity node tests/browser/wasm-dms-node.cjs
 measure browser-memory node tests/browser/memory.cjs output/browser/pkg
 measure browser-summary node tests/browser/input-summary.cjs output/browser/pkg
 measure browser-tests node tests/browser/wasm.cjs

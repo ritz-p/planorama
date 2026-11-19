@@ -53,6 +53,18 @@ fn resource_lines(node: &Node, address_format: super::AddressFormat) -> Vec<(Str
     if let Some(target) = crate::view::scope::target(node) {
         lines.push((target, false));
     }
+    for (index, origin) in node.entity.pool_origins.iter().enumerate() {
+        let state = match origin.enabled {
+            Some(true) => "enabled",
+            Some(false) => "disabled",
+            None => "enablement unspecified",
+        };
+        let mut line = format!("Origin {}: {state}", index + 1);
+        if let Some(weight) = &origin.weight {
+            write!(line, " · weight {weight}").unwrap();
+        }
+        lines.push((line, false));
+    }
     match node.role {
         crate::model::ResourceRole::Identity => lines.push(("identity".into(), false)),
         crate::model::ResourceRole::Policy => lines.push(("policy".into(), false)),

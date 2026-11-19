@@ -10,6 +10,18 @@ use serde_json::Value;
 pub(super) mod tests;
 
 pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
+    if let Some(label) = super::dms_serverless::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::dms_migration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::dms_events::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::dms_references::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::agentcore_services::label(resource, attribute) {
         return Some(label);
     }
@@ -46,7 +58,19 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::imagebuilder::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::dsql::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::emr::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::analytics_databases::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::redshift_endpoints::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::redshift_helpers::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::redshift_snapshots::label(resource, attribute) {
@@ -157,6 +181,192 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::efs_evidence::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::bedrock_agents::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::bedrock_models::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::backup_restore::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::quicksight::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::sagemaker_studio::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::sagemaker_jobs::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::sagemaker_catalog::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::sagemaker_workforce::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::msk_connect::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::msk_delivery::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::firehose_sources::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::timestream_influx::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::timestream_queries::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::athena_queries::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::glue_encryption::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::verified_access::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::transit_multicast::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::transit_policies::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::transit_routes::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::transit_attachments::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::client_vpn::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::local_gateways::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::site_vpn::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::template_launch::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::instance_launch::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ec2_fleets::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ec2_capacity::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ebs_provenance::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ec2_images::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::finspace_kx_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ai_service_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::datapipeline_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::dataexchange_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cleanrooms_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::ecr_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::glacier_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::flink_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::mwaa_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::transfer_workflow_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::lightsail_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::recovery_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::batch_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::signer_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::paymentcryptography_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudhsm_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::accountaccess_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::verifiedpermissions::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::network_insights::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::appmesh_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::keyspaces_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::dynamodb_transfer::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::lustre_sources::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::storagegateway::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::kendra::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::qbusiness::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::beanstalk_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::apprunner_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::cloudwatch_omni::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::observability_logs::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::observability_monitors::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::lakeformation_selectors::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::backup_reports::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::backup_plan::label(resource, attribute) {
         return Some(label);
     }
@@ -215,6 +425,12 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
         return Some(label);
     }
     if let Some(label) = super::profiles::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3_grants::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::s3_mrap::label(resource, attribute) {
         return Some(label);
     }
     if let Some(label) = super::s3_access::label(resource, attribute) {
@@ -863,6 +1079,7 @@ pub(crate) fn annotate(
         }
     }
     super::s3_exports::annotate(nodes, references, evidence);
+    super::s3_grants::annotate(nodes, references, evidence);
     super::observability::annotate(nodes, references, evidence);
     super::scraper::annotate(nodes, references, evidence);
     super::streaming::annotate(nodes, references, evidence);
@@ -879,6 +1096,10 @@ pub(crate) fn annotate(
     super::sagemaker::annotate(nodes, references, evidence);
     super::opensearch_serverless::annotate(nodes, references, evidence);
     super::serverless_references::annotate(nodes, references, evidence);
+    super::dms_serverless::annotate(nodes, references, evidence);
+    super::dms_migration::annotate(nodes, references, evidence);
+    super::dms_events::annotate(nodes, references, evidence);
+    super::dms_references::annotate(nodes, references, evidence);
     super::osis::annotate(nodes, references, evidence);
     super::glue_catalog::annotate(nodes, references, evidence);
     super::glue_network::annotate(nodes, references, evidence);
@@ -886,7 +1107,11 @@ pub(crate) fn annotate(
     super::private_ca_references::annotate(nodes, references, evidence);
     super::rolesanywhere::annotate(nodes, references, evidence);
     super::redshift_cluster::annotate(nodes, references, evidence);
+    super::redshift_helpers::annotate(nodes, references, evidence);
     super::redshift_snapshots::annotate(nodes, references, evidence);
+    super::dsql::annotate(nodes, references, evidence);
+    super::emr::annotate(nodes, references, evidence);
+    super::analytics_databases::annotate(nodes, references, evidence);
     super::redshift_endpoints::annotate(nodes, references, evidence);
     super::transfer_identity::annotate(nodes, references, evidence);
     super::transfer_as2::annotate(nodes, references, evidence);
@@ -917,6 +1142,68 @@ pub(crate) fn annotate(
     super::api_usage::annotate(nodes, references, evidence);
     super::efs_evidence::annotate(nodes, references, evidence);
     super::backup_plan::annotate(nodes, references, evidence);
+    super::quicksight::annotate(nodes, references, evidence);
+    super::sagemaker_studio::annotate(nodes, references, evidence);
+    super::sagemaker_jobs::annotate(nodes, references, evidence);
+    super::sagemaker_catalog::annotate(nodes, references, evidence);
+    super::sagemaker_workforce::annotate(nodes, references, evidence);
+    super::msk_connect::annotate(nodes, references, evidence);
+    super::msk_delivery::annotate(nodes, references, evidence);
+    super::firehose_sources::annotate(nodes, references, evidence);
+    super::timestream_influx::annotate(nodes, references, evidence);
+    super::timestream_queries::annotate(nodes, references, evidence);
+    super::athena_queries::annotate(nodes, references, evidence);
+    super::glue_encryption::annotate(nodes, references, evidence);
+    super::verified_access::annotate(nodes, references, evidence);
+    super::transit_multicast::annotate(nodes, references, evidence);
+    super::transit_policies::annotate(nodes, references, evidence);
+    super::transit_routes::annotate(nodes, references, evidence);
+    super::transit_attachments::annotate(nodes, references, evidence);
+    super::client_vpn::annotate(nodes, references, evidence);
+    super::local_gateways::annotate(nodes, references, evidence);
+    super::site_vpn::annotate(nodes, references, evidence);
+    super::template_launch::annotate(nodes, references, evidence);
+    super::instance_launch::annotate(nodes, references, evidence);
+    super::ec2_fleets::annotate(nodes, references, evidence);
+    super::ec2_capacity::annotate(nodes, references, evidence);
+    super::ebs_provenance::annotate(nodes, references, evidence);
+    super::ec2_images::annotate(nodes, references, evidence);
+    super::finspace_kx_configuration::annotate(nodes, references, evidence);
+    super::ai_service_configuration::annotate(nodes, references, evidence);
+    super::datapipeline_configuration::annotate(nodes, references, evidence);
+    super::dataexchange_configuration::annotate(nodes, references, evidence);
+    super::cleanrooms_configuration::annotate(nodes, references, evidence);
+    super::ecr_configuration::annotate(nodes, references, evidence);
+    super::glacier_configuration::annotate(nodes, references, evidence);
+    super::flink_configuration::annotate(nodes, references, evidence);
+    super::mwaa_configuration::annotate(nodes, references, evidence);
+    super::transfer_workflow_configuration::annotate(nodes, references, evidence);
+    super::lightsail_configuration::annotate(nodes, references, evidence);
+    super::recovery_configuration::annotate(nodes, references, evidence);
+    super::batch_configuration::annotate(nodes, references, evidence);
+    super::signer_configuration::annotate(nodes, references, evidence);
+    super::paymentcryptography_configuration::annotate(nodes, references, evidence);
+    super::cloudhsm_configuration::annotate(nodes, references, evidence);
+    super::accountaccess_configuration::annotate(nodes, references, evidence);
+    super::verifiedpermissions::annotate(nodes, references, evidence);
+    super::network_insights::annotate(nodes, references, evidence);
+    super::appmesh_configuration::annotate(nodes, references, evidence);
+    super::keyspaces_configuration::annotate(nodes, references, evidence);
+    super::dynamodb_transfer::annotate(nodes, references, evidence);
+    super::lustre_sources::annotate(nodes, references, evidence);
+    super::storagegateway::annotate(nodes, references, evidence);
+    super::kendra::annotate(nodes, references, evidence);
+    super::qbusiness::annotate(nodes, references, evidence);
+    super::beanstalk_configuration::annotate(nodes, references, evidence);
+    super::apprunner_configuration::annotate(nodes, references, evidence);
+    super::cloudwatch_omni::annotate(nodes, references, evidence);
+    super::observability_logs::annotate(nodes, references, evidence);
+    super::observability_monitors::annotate(nodes, references, evidence);
+    super::lakeformation_selectors::annotate(nodes, references, evidence);
+    super::backup_reports::annotate(nodes, references, evidence);
+    super::backup_restore::annotate(nodes, references, evidence);
+    super::bedrock_agents::annotate(nodes, references, evidence);
+    super::bedrock_models::annotate(nodes, references, evidence);
     super::backup_vaults::annotate(nodes, references, evidence);
     super::vpc_controls::annotate(nodes, references, evidence);
     super::scaling::annotate(nodes, references, evidence);
@@ -939,13 +1226,85 @@ pub(crate) fn annotate(
 
 pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
     reference.service_reference_verified
+        && super::s3_grants::bindings(raw, reference)
+        && super::s3_mrap::bindings(raw, reference)
+        && super::dms_serverless::bindings(raw, reference)
+        && super::dms_migration::bindings(raw, reference)
+        && super::dms_events::bindings(raw, reference)
+        && super::dms_references::bindings(raw, reference)
         && super::glue_catalog::bindings(raw, reference)
         && super::glue_network::bindings(raw, reference)
         && super::glue_workloads::bindings(raw, reference)
+        && super::bedrock_agents::bindings(raw, reference)
+        && super::bedrock_models::bindings(raw, reference)
+        && super::backup_restore::bindings(raw, reference)
+        && super::quicksight::bindings(raw, reference)
+        && super::sagemaker_studio::bindings(raw, reference)
+        && super::sagemaker_jobs::bindings(raw, reference)
+        && super::sagemaker_catalog::bindings(raw, reference)
+        && super::sagemaker_workforce::bindings(raw, reference)
+        && super::msk_connect::bindings(raw, reference)
+        && super::msk_delivery::bindings(raw, reference)
+        && super::firehose_sources::bindings(raw, reference)
+        && super::timestream_influx::bindings(raw, reference)
+        && super::timestream_queries::bindings(raw, reference)
+        && super::athena_queries::bindings(raw, reference)
+        && super::glue_encryption::bindings(raw, reference)
+        && super::verified_access::bindings(raw, reference)
+        && super::transit_multicast::bindings(raw, reference)
+        && super::transit_policies::bindings(raw, reference)
+        && super::transit_routes::bindings(raw, reference)
+        && super::transit_attachments::bindings(raw, reference)
+        && super::client_vpn::bindings(raw, reference)
+        && super::local_gateways::bindings(raw, reference)
+        && super::site_vpn::bindings(raw, reference)
+        && super::template_launch::bindings(raw, reference)
+        && super::instance_launch::bindings(raw, reference)
+        && super::ec2_fleets::bindings(raw, reference)
+        && super::ec2_capacity::bindings(raw, reference)
+        && super::ebs_provenance::bindings(raw, reference)
+        && super::ec2_images::bindings(raw, reference)
+        && super::finspace_kx_configuration::bindings(raw, reference)
+        && super::ai_service_configuration::bindings(raw, reference)
+        && super::datapipeline_configuration::bindings(raw, reference)
+        && super::dataexchange_configuration::bindings(raw, reference)
+        && super::cleanrooms_configuration::bindings(raw, reference)
+        && super::ecr_configuration::bindings(raw, reference)
+        && super::glacier_configuration::bindings(raw, reference)
+        && super::flink_configuration::bindings(raw, reference)
+        && super::mwaa_configuration::bindings(raw, reference)
+        && super::transfer_workflow_configuration::bindings(raw, reference)
+        && super::lightsail_configuration::bindings(raw, reference)
+        && super::recovery_configuration::bindings(raw, reference)
+        && super::batch_configuration::bindings(raw, reference)
+        && super::signer_configuration::bindings(raw, reference)
+        && super::paymentcryptography_configuration::bindings(raw, reference)
+        && super::cloudhsm_configuration::bindings(raw, reference)
+        && super::accountaccess_configuration::bindings(raw, reference)
+        && super::verifiedpermissions::bindings(raw, reference)
+        && super::network_insights::bindings(raw, reference)
+        && super::appmesh_configuration::bindings(raw, reference)
+        && super::keyspaces_configuration::bindings(raw, reference)
+        && super::dynamodb_transfer::bindings(raw, reference)
+        && super::lustre_sources::bindings(raw, reference)
+        && super::storagegateway::bindings(raw, reference)
+        && super::kendra::bindings(raw, reference)
+        && super::qbusiness::bindings(raw, reference)
+        && super::beanstalk_configuration::bindings(raw, reference)
+        && super::apprunner_configuration::bindings(raw, reference)
+        && super::cloudwatch_omni::bindings(raw, reference)
+        && super::observability_logs::bindings(raw, reference)
+        && super::observability_monitors::bindings(raw, reference)
+        && super::lakeformation_selectors::bindings(raw, reference)
+        && super::backup_reports::bindings(raw, reference)
         && super::private_ca_references::bindings(raw, reference)
         && super::rolesanywhere::bindings(raw, reference)
         && super::redshift_cluster::bindings(raw, reference)
+        && super::redshift_helpers::bindings(raw, reference)
         && super::redshift_snapshots::bindings(raw, reference)
+        && super::dsql::bindings(raw, reference)
+        && super::emr::bindings(raw, reference)
+        && super::analytics_databases::bindings(raw, reference)
         && super::redshift_endpoints::bindings(raw, reference)
         && super::transfer_identity::bindings(raw, reference)
         && super::transfer_as2::bindings(raw, reference)
@@ -1581,7 +1940,15 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         if !node.provider.is_aws() {
             continue;
         }
-        if super::agentcore_services::indexed(&node.resource_type, &reference.attribute)
+        if super::emr::indexed(&node.resource_type, &reference.attribute)
+            || (node.resource_type == "aws_dsql_cluster"
+                && reference.attribute == "multi_region_properties.0.clusters")
+            || super::dms_serverless::indexed(&node.resource_type, &reference.attribute)
+            || super::dms_migration::indexed(&node.resource_type, &reference.attribute)
+            || super::redshift_helpers::indexed(&node.resource_type, &reference.attribute)
+            || super::dms_events::indexed(&node.resource_type, &reference.attribute)
+            || super::dms_references::indexed(&node.resource_type, &reference.attribute)
+            || super::agentcore_services::indexed(&node.resource_type, &reference.attribute)
             || super::agentcore_gateway::indexed(&node.resource_type, &reference.attribute)
             || super::agentcore_runtime::indexed(&node.resource_type, &reference.attribute)
             || super::datazone::indexed(&node.resource_type, &reference.attribute)
@@ -1602,6 +1969,78 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::secrets_manager::indexed(&node.resource_type, &reference.attribute)
             || super::route53_records::indexed(&node.resource_type, &reference.attribute)
             || super::appsync::indexed(&node.resource_type, &reference.attribute)
+            || super::s3_mrap::indexed(&node.resource_type, &reference.attribute)
+            || super::bedrock_agents::indexed(&node.resource_type, &reference.attribute)
+            || super::bedrock_models::indexed(&node.resource_type, &reference.attribute)
+            || super::backup_restore::indexed(&node.resource_type, &reference.attribute)
+            || super::quicksight::indexed(&node.resource_type, &reference.attribute)
+            || super::sagemaker_studio::indexed(&node.resource_type, &reference.attribute)
+            || super::sagemaker_jobs::indexed(&node.resource_type, &reference.attribute)
+            || super::sagemaker_catalog::indexed(&node.resource_type, &reference.attribute)
+            || super::sagemaker_workforce::indexed(&node.resource_type, &reference.attribute)
+            || super::msk_connect::indexed(&node.resource_type, &reference.attribute)
+            || super::msk_delivery::indexed(&node.resource_type, &reference.attribute)
+            || super::firehose_sources::indexed(&node.resource_type, &reference.attribute)
+            || super::timestream_influx::indexed(&node.resource_type, &reference.attribute)
+            || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
+            || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
+            || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::verified_access::indexed(&node.resource_type, &reference.attribute)
+            || super::transit_multicast::indexed(&node.resource_type, &reference.attribute)
+            || super::transit_policies::indexed(&node.resource_type, &reference.attribute)
+            || super::transit_routes::indexed(&node.resource_type, &reference.attribute)
+            || super::transit_attachments::indexed(&node.resource_type, &reference.attribute)
+            || super::client_vpn::indexed(&node.resource_type, &reference.attribute)
+            || super::local_gateways::indexed(&node.resource_type, &reference.attribute)
+            || super::site_vpn::indexed(&node.resource_type, &reference.attribute)
+            || super::template_launch::indexed(&node.resource_type, &reference.attribute)
+            || super::instance_launch::indexed(&node.resource_type, &reference.attribute)
+            || super::ec2_fleets::indexed(&node.resource_type, &reference.attribute)
+            || super::ec2_capacity::indexed(&node.resource_type, &reference.attribute)
+            || super::ebs_provenance::indexed(&node.resource_type, &reference.attribute)
+            || super::ec2_images::indexed(&node.resource_type, &reference.attribute)
+            || super::finspace_kx_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::ai_service_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::datapipeline_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::dataexchange_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::cleanrooms_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::ecr_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::glacier_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::flink_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::mwaa_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::transfer_workflow_configuration::indexed(
+                &node.resource_type,
+                &reference.attribute,
+            )
+            || super::lightsail_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::recovery_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::batch_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::signer_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::paymentcryptography_configuration::indexed(
+                &node.resource_type,
+                &reference.attribute,
+            )
+            || super::cloudhsm_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::accountaccess_configuration::indexed(
+                &node.resource_type,
+                &reference.attribute,
+            )
+            || super::verifiedpermissions::indexed(&node.resource_type, &reference.attribute)
+            || super::network_insights::indexed(&node.resource_type, &reference.attribute)
+            || super::appmesh_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::keyspaces_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::dynamodb_transfer::indexed(&node.resource_type, &reference.attribute)
+            || super::lustre_sources::indexed(&node.resource_type, &reference.attribute)
+            || super::storagegateway::indexed(&node.resource_type, &reference.attribute)
+            || super::kendra::indexed(&node.resource_type, &reference.attribute)
+            || super::qbusiness::indexed(&node.resource_type, &reference.attribute)
+            || super::beanstalk_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::apprunner_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::cloudwatch_omni::indexed(&node.resource_type, &reference.attribute)
+            || super::observability_logs::indexed(&node.resource_type, &reference.attribute)
+            || super::observability_monitors::indexed(&node.resource_type, &reference.attribute)
+            || super::lakeformation_selectors::indexed(&node.resource_type, &reference.attribute)
+            || super::backup_reports::indexed(&node.resource_type, &reference.attribute)
             || super::s3_access::indexed(&node.resource_type, &reference.attribute)
             || super::resolver::indexed(&node.resource_type, &reference.attribute)
             || super::route53::indexed(&node.resource_type, &reference.attribute)
@@ -1622,7 +2061,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
         };
         let verified = verified(raw, reference);
         if !verified
-            && super::ecs_workloads::label(&node.resource_type, &reference.attribute).is_some()
+            && (super::ecs_workloads::label(&node.resource_type, &reference.attribute).is_some()
+                || node.resource_type == "aws_launch_template"
+                || (node.resource_type == "aws_instance"
+                    && matches!(reference.attribute.as_str(), "ami" | "iam_instance_profile")))
         {
             continue;
         }
