@@ -71,7 +71,15 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         return false;
     };
     let parts: Vec<_> = arn.splitn(6, ':').collect();
-    let ["arn", _, "detective", region, account, graph] = parts.as_slice() else {
+    let [
+        "arn",
+        "aws" | "aws-cn" | "aws-us-gov",
+        "detective",
+        region,
+        account,
+        graph,
+    ] = parts.as_slice()
+    else {
         return false;
     };
     let scope = |i| super::scope(&e.nodes[i]);
@@ -82,10 +90,16 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         && scope(r.target)
             .and_then(|s| s.region)
             .is_some_and(|v| v.0 == *region)
-        && scope(source)
-            .and_then(|s| s.account)
+        && e.nodes[source]
+            .provider_configuration
+            .as_ref()
+            .and_then(|p| p.account.as_ref())
             .is_some_and(|v| v.as_str() == *account)
-        && scope(r.target).and_then(|s| s.account).is_some()
+        && e.nodes[r.target]
+            .provider_configuration
+            .as_ref()
+            .and_then(|p| p.account.as_ref())
+            .is_some()
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/detective_graphs.rs"]
