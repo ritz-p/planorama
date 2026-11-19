@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::ai_service_configuration::resource(resource)
         && resource != "aws_datapipeline_pipeline"
         && !super::datapipeline_configuration::resource(resource)
         && resource != "aws_dataexchange_data_set"
