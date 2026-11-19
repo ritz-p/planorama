@@ -114,6 +114,7 @@ mod messaging;
 pub(crate) mod messaging_policies;
 pub(crate) mod microvms;
 mod monitoring;
+pub(crate) mod msk_connect;
 mod nested_references;
 mod network;
 mod network_acl;
@@ -419,6 +420,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     sagemaker_studio::present(&raw, &mut graph);
     sagemaker_jobs::present(&raw, &mut graph);
     sagemaker_workforce::present(&raw, &mut graph);
+    msk_connect::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);

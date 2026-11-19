@@ -9670,10 +9670,10 @@
       }
     },
     "aws_mskconnect_connector": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 750,
-      "gap": "Missing: plugin/worker ARN+revision and role #750. Deferred log references until enabled-destination contract; bootstrap_servers cannot identify an MSK cluster. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 reviewed: Implemented #750. Explicit connector subnets, connector security groups, connector execution role, configured plugin revision, worker configuration revision. See docs/aws-messaging.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9690,7 +9690,7 @@
         "placement": "Missing: review independent connector card #750; currently Logical.",
         "ownership": "Not applicable: independent service/configuration identity; no verified embedding contract.",
         "network": "Missing: connector network proof #750, not ownership of external Kafka.",
-        "references": "Missing: plugin/worker ARN+revision and role #750. Deferred log references until enabled-destination contract; bootstrap_servers cannot identify an MSK cluster.",
+        "references": "Supported: Explicit connector subnets, connector security groups, connector execution role, configured plugin revision, worker configuration revision.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: connector_configuration, credentials and bootstrap addresses.",
         "officialDocumentation": "website/docs/r/mskconnect_connector.html.markdown",
@@ -9738,10 +9738,10 @@
       }
     },
     "aws_mskconnect_custom_plugin": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 750,
-      "gap": "Missing: S3 artifact bucket and inbound revision proof #750; object key is not an independent resource. See #721 per-dimension review in aws-semantic-decisions.json.",
+      "gap": "#721 reviewed: Implemented #750. Explicit plugin source bucket. See docs/aws-messaging.md.",
       "review": {
         "issue": 721,
         "implementationCommit": "de2686ced20f383ee48ec65b1354b643e2fe659c",
@@ -9754,7 +9754,7 @@
         "placement": "Supported: retain Logical presentation for this independent aws_mskconnect_custom_plugin identity.",
         "ownership": "Not applicable: shared plugin remains logical and independent.",
         "network": "Not applicable: service configuration does not establish VPC containment.",
-        "references": "Missing: S3 artifact bucket and inbound revision proof #750; object key is not an independent resource.",
+        "references": "Supported: Explicit plugin source bucket.",
         "scope": "Partial: Regional (conditional) eligibility, not inferred account ownership. Basic fallback clears account; managed region requires provider/static override evidence. Unknown, historical and data identities retain their own fallback; no ARN-derived scope.",
         "summaries": "Intentionally unsupported: plugin content/object keys; content-type summary deferred until artifact inventory use case.",
         "officialDocumentation": "website/docs/r/mskconnect_custom_plugin.html.markdown",
