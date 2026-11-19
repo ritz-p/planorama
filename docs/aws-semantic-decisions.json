@@ -53966,7 +53966,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 985,
-      "gap": "#730 audit: Missing: resource-group name and optional SNS ARN; ACCOUNT grouping does not prove every resource belongs to an application. Follow-up #985. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Resource group name with compatible grouping and optional OpsItem SNS ARN. Implemented in #985.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -53979,7 +53979,7 @@
         "placement": "Supported: retain Logical Node default for aws_applicationinsights_application; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_applicationinsights_application identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_applicationinsights_application has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: resource-group name and optional SNS ARN; ACCOUNT grouping does not prove every resource belongs to an application. Follow-up #985.",
+        "references": "Supported: Resource group name with compatible grouping and optional OpsItem SNS ARN.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_applicationinsights_application configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/applicationinsights_application.html.markdown",
@@ -54013,7 +54013,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_monitors.rs",
+          "tests/unit/semantic/observability_monitors.rs"
         ]
       }
     },
@@ -55961,7 +55963,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 985,
-      "gap": "#730 audit: Missing: project name/ARN qualification; feature variation values and entity overrides excluded. Follow-up #985. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Explicit Evidently project name or ARN. Implemented in #985.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -55972,9 +55974,9 @@
           "arn"
         ],
         "placement": "Supported: retain Logical Controller default for aws_evidently_feature; configuration/monitor identity remains independently selectable without automatic card promotion.",
-        "ownership": "Missing: verified project owner for feature identity; variation blocks are not separately managed children.",
+        "ownership": "Supported: Verified project owns the feature identity.",
         "network": "Not applicable: aws_evidently_feature has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: project name/ARN qualification; feature variation values and entity overrides excluded. Follow-up #985.",
+        "references": "Supported: Explicit Evidently project name or ARN.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_evidently_feature configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/evidently_feature.html.markdown",
@@ -56008,7 +56010,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_monitors.rs",
+          "tests/unit/semantic/observability_monitors.rs"
         ]
       }
     },
@@ -56016,7 +56020,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 985,
-      "gap": "#730 audit: Missing: project name/ARN, project-qualified feature names and segment name/ARN; group variation and traffic weights are not resources. Follow-up #985. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Project, project-qualified features and regional segments. Implemented in #985.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56030,7 +56034,7 @@
         "placement": "Supported: retain Logical Node default for aws_evidently_launch; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_evidently_launch identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_evidently_launch has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: project name/ARN, project-qualified feature names and segment name/ARN; group variation and traffic weights are not resources. Follow-up #985.",
+        "references": "Supported: Project, project-qualified features and regional segments.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_evidently_launch configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/evidently_launch.html.markdown",
@@ -56072,7 +56076,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_monitors.rs",
+          "tests/unit/semantic/observability_monitors.rs"
         ]
       }
     },
@@ -56080,7 +56086,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 985,
-      "gap": "#730 audit: Missing: optional log-group name and S3 bucket name; prefix is not an object. Follow-up #985. Deferred: retain Logical project grouping while typed delivery and child navigation are added; revisit independent card only for a dedicated experiment overview. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Configured log group and S3 bucket names. Implemented in #985.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56094,7 +56100,7 @@
         "placement": "Deferred: retain Logical project grouping while typed delivery and child navigation are added; revisit independent card only for a dedicated experiment overview.",
         "ownership": "Not applicable: retain independent aws_evidently_project identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_evidently_project has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: optional log-group name and S3 bucket name; prefix is not an object. Follow-up #985.",
+        "references": "Supported: Configured log group and S3 bucket names.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_evidently_project configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/evidently_project.html.markdown",
@@ -56136,7 +56142,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_monitors.rs",
+          "tests/unit/semantic/observability_monitors.rs"
         ]
       }
     },
@@ -56648,7 +56656,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 985,
-      "gap": "#730 audit: Missing: complete supported monitored-resource ARN set and S3 bucket name; configured monitoring is not measured health or ownership. Follow-up #985. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Complete explicitly referenced VPC, network load balancer, CloudFront distribution and WorkSpaces directory ARN sets and the configured S3 bucket. Implemented in #985.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56661,7 +56669,7 @@
         "placement": "Supported: retain Logical Node default for aws_internetmonitor_monitor; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_internetmonitor_monitor identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_internetmonitor_monitor has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: complete supported monitored-resource ARN set and S3 bucket name; configured monitoring is not measured health or ownership. Follow-up #985.",
+        "references": "Supported: Complete explicitly referenced VPC, network load balancer, CloudFront distribution and WorkSpaces directory ARN sets and the configured S3 bucket.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_internetmonitor_monitor configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/internetmonitor_monitor.html.markdown",
@@ -56700,7 +56708,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_monitors.rs",
+          "tests/unit/semantic/observability_monitors.rs"
         ],
         "sourceContracts": {
           "internet_measurements_log_delivery.s3_config.bucket_name": {

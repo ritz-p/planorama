@@ -1551,3 +1551,11 @@ Consumer associations resolve only an explicit namespace ARN. Whole-account and 
 A namespace retains its logical identity. Its configured IAM role set requires complete evidence for every role ARN. The default IAM role is a separate scalar reference. Data encryption takes a KMS key ARN. Password-secret encryption accepts a key identifier or key ARN. Optional/computed values without configuration evidence remain unresolved. These relationships do not assign a namespace to the workgroup's VPC.
 
 A custom domain association uses its configured workgroup name and ACM certificate ARN. A matching DNS name alone supplies no Route 53 evidence. A serverless usage limit belongs to the workgroup identified by its ARN when `usage_type` is `serverless-compute` or `cross-region-datasharing`. The amount describes configured quota. Helpers without a proven owner remain individually visible.
+
+Application Insights links to an explicitly referenced resource group when resource-group
+grouping applies and to its configured OpsItem SNS topic. Evidently features and launches
+link to a verified project, and launch features must belong to that project. Launch segments are regional.
+Evidently delivery links resolve the configured log group and bucket. Internet Monitor
+requires a complete collection of explicitly referenced VPC, Network Load Balancer,
+CloudFront distribution or WorkSpaces directory ARNs and verifies the configured S3
+measurement log bucket separately. Incomplete evidence retains Terraform provenance.
