@@ -952,6 +952,15 @@ fn indexed_scalar<'a>(
         .flatten()
 }
 
+pub(crate) fn annotate_provider_accounts(
+    nodes: &[TerraformEntity],
+    references: &mut [AttributeReference],
+    evidence: &[(&Value, &Value)],
+) {
+    super::macie_classification::annotate(nodes, references, evidence);
+    super::detective_graphs::annotate(nodes, references, evidence);
+}
+
 pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     references: &mut [AttributeReference],
@@ -1196,11 +1205,9 @@ pub(crate) fn annotate(
     super::security_lake::annotate(nodes, references, evidence);
     super::securityhub_integrations::annotate(nodes, references, evidence);
     super::securityhub_organization::annotate(nodes, references, evidence);
-    super::macie_classification::annotate(nodes, references, evidence);
     super::inspector_assessments::annotate(nodes, references, evidence);
     super::guardduty_destinations::annotate(nodes, references, evidence);
     super::guardduty_members::annotate(nodes, references, evidence);
-    super::detective_graphs::annotate(nodes, references, evidence);
     super::config_delivery::annotate(nodes, references, evidence);
     super::config_rules::annotate(nodes, references, evidence);
     super::config_aggregation::annotate(nodes, references, evidence);
