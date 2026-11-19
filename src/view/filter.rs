@@ -71,7 +71,8 @@ fn placement_available(
     let node = &graph.nodes[child];
     if matches!(
         node.resource_type.as_str(),
-        "aws_redshift_cluster"
+        "aws_verifiedaccess_endpoint"
+            | "aws_redshift_cluster"
             | "aws_vpn_gateway"
             | "aws_kinesisanalyticsv2_application"
             | "aws_mwaa_environment"

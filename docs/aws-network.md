@@ -1089,3 +1089,7 @@ Policy entries distinguish their policy table from their target route table. Met
 ## Transit multicast associations and ENIs (#1445)
 
 A multicast association must identify the domain, a VPC attachment on its gateway, and a subnet in that attachment’s complete VPC subnet selection. Group members and group sources remain separate registrations even when the domain, interface and multicast address match.
+
+## Verified Access service configuration (#1446)
+
+Verified Access instances and application endpoints have separate regional identities. Groups link their instance and endpoints use the group-specific ID. Each endpoint type selects its own options. Network placement requires a common VPC established by configured subnets or the selected ENI and any configured security groups. Customer-managed keys and log destinations require enabled options. S3 delivery can cross accounts only with a verified bucket owner.
