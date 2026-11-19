@@ -130,6 +130,14 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Network insights path",
                 "Analyses",
             ),
+            "aws_verifiedpermissions_identity_source" => {
+                ("policy_store_id", "Policy store", "Identity sources")
+            }
+            "aws_verifiedpermissions_policy" => ("policy_store_id", "Policy store", "Policies"),
+            "aws_verifiedpermissions_policy_template" => {
+                ("policy_store_id", "Policy store", "Templates")
+            }
+            "aws_verifiedpermissions_schema" => ("policy_store_id", "Policy store", "Schemas"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
