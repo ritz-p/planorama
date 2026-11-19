@@ -1219,3 +1219,12 @@ account and region, and the membership keeps its own account and lifecycle.
 Configured result role and bucket names link typed resources. A configured table
 requires explicit Glue database and table name references and a verified common
 catalog account. Invitations and query settings do not establish ownership.
+
+## Data Exchange revision configuration
+
+A dataset has an independent card. Revisions and revision-assets resources
+link their explicit dataset ID and retain independent Terraform identities.
+S3 access and import asset blocks require the matching dataset type and a
+single configured asset variant. S3 snapshot revision export links a bucket
+and uses an explicit KMS ARN only in `aws:kms` mode. Computed access points,
+object keys and signed URLs do not create resources.

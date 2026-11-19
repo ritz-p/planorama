@@ -29138,10 +29138,10 @@
       }
     },
     "aws_dataexchange_data_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 858,
-      "gap": "#723 reviewed: Not applicable: dataset has no configured backing resource field; asset_type is a discriminator, not endpoint evidence. Follow-up #858.",
+      "gap": "#723 audit: #858 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29151,10 +29151,10 @@
           "arn",
           "asset_type"
         ],
-        "placement": "Missing: Logical dataset is an independent data-product identity; review Spatial presentation with revisions.",
+        "placement": "Supported: Independent regional dataset card.",
         "ownership": "Not applicable: aws_dataexchange_data_set remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_dataexchange_data_set has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Not applicable: dataset has no configured backing resource field; asset_type is a discriminator, not endpoint evidence.",
+        "references": "Supported: Receives explicit dataset ID references.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: id/arn identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dataexchange_data_set.html.markdown",
@@ -29173,14 +29173,18 @@
           "id": "optional/computed",
           "arn": "computed",
           "asset_type": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dataexchange_configuration.rs",
+          "tests/unit/semantic/dataexchange_configuration.rs"
+        ]
       }
     },
     "aws_dataexchange_revision": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 858,
-      "gap": "#723 reviewed: Missing: dataset ID owner; revision_id is revision identity, Terraform id combines dataset and revision despite documentation describing dataset ID. Follow-up #858.",
+      "gap": "#723 audit: #858 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29191,9 +29195,9 @@
           "arn"
         ],
         "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
-        "ownership": "Missing: dataset-qualified revision helper; preserve independent revision identity.",
+        "ownership": "Supported: Verified dataset owner preserves revision identity and action.",
         "network": "Not applicable: aws_dataexchange_revision has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: dataset ID owner; revision_id is revision identity, Terraform id combines dataset and revision despite documentation describing dataset ID.",
+        "references": "Supported: Explicit dataset ID. Terraform id combines dataset and revision identities.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: data_set_id/revision_id identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dataexchange_revision.html.markdown",
@@ -29212,14 +29216,18 @@
           "data_set_id": "required",
           "revision_id": "computed",
           "arn": "computed"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dataexchange_configuration.rs",
+          "tests/unit/semantic/dataexchange_configuration.rs"
+        ]
       }
     },
     "aws_dataexchange_revision_assets": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 858,
-      "gap": "#723 reviewed: Missing: dataset ID and type-gated S3 bucket/KMS references in asset set; this creates a revision, not attachment to aws_dataexchange_revision. Computed access points do not create Terraform children. Signed URL/files remain opaque. Follow-up #858.",
+      "gap": "#723 audit: #858 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29232,9 +29240,9 @@
           "asset.import_assets_from_s3.asset_source.bucket"
         ],
         "placement": "Supported: retain Logical Node default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
-        "ownership": "Missing: dataset-qualified revision/asset identity; embedded asset blocks are not separately managed resources.",
+        "ownership": "Supported: Verified dataset owner preserves the revision and its asset configuration as one resource.",
         "network": "Not applicable: aws_dataexchange_revision_assets has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: dataset ID and type-gated S3 bucket/KMS references in asset set; this creates a revision, not attachment to aws_dataexchange_revision. Computed access points do not create Terraform children. Signed URL/files remain opaque.",
+        "references": "Supported: Explicit dataset ID and typed asset buckets or customer KMS ARN.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: id/data_set_id identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dataexchange_revision_assets.html.markdown",
@@ -29271,14 +29279,18 @@
           "asset.create_s3_data_access_from_s3_bucket.asset_source.bucket": "required",
           "asset.create_s3_data_access_from_s3_bucket.asset_source.kms_keys_to_grant.kms_key_arn": "required",
           "asset.import_assets_from_s3.asset_source.bucket": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dataexchange_configuration.rs",
+          "tests/unit/semantic/dataexchange_configuration.rs"
+        ]
       }
     },
     "aws_dataexchange_event_action": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 858,
-      "gap": "#723 reviewed: Missing: dataset ID, S3 bucket and encryption-mode-gated KMS ARN. Event configuration is not observed publication/delivery; key patterns excluded. Follow-up #858.",
+      "gap": "#723 audit: #858 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29292,7 +29304,7 @@
         "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
         "ownership": "Not applicable: aws_dataexchange_event_action remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_dataexchange_event_action has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: dataset ID, S3 bucket and encryption-mode-gated KMS ARN. Event configuration is not observed publication/delivery; key patterns excluded.",
+        "references": "Supported: Explicit publication dataset ID and export destination, plus KMS ARN in aws:kms mode.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: event.revision_published.data_set_id/action.export_revision_to_s3.revision_destination.bucket identity navigation belongs to #858; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/dataexchange_event_action.html.markdown",
@@ -29326,7 +29338,11 @@
           "action.export_revision_to_s3.revision_destination.bucket": "required",
           "action.export_revision_to_s3.encryption.type": "optional",
           "action.export_revision_to_s3.encryption.kms_key_arn": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/dataexchange_configuration.rs",
+          "tests/unit/semantic/dataexchange_configuration.rs"
+        ]
       }
     },
     "aws_datapipeline_pipeline": {

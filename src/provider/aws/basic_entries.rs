@@ -407,7 +407,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_customer_gateway", "Amazon VPC", Connector, Logical, Regional, Some(ResourceIcon::Vpc)),
     entry!("aws_customerprofiles_domain", "Amazon Connect Customer Profiles", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonConnect))),
     entry!("aws_customerprofiles_profile", "Amazon Connect Customer Profiles", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonConnect))),
-    entry!("aws_dataexchange_data_set", "AWS Data Exchange", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
+    entry!("aws_dataexchange_data_set", "AWS Data Exchange", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
     entry!("aws_dataexchange_event_action", "AWS Data Exchange", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
     entry!("aws_dataexchange_revision", "AWS Data Exchange", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
     entry!("aws_dataexchange_revision_assets", "AWS Data Exchange", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSDataExchange))),
