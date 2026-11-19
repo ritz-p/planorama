@@ -82,4 +82,82 @@ fn member_owner_preserves_known_provider_account() {
             .map(|account| account.as_str()),
         Some("123456789012")
     );
+
+    let address = "aws_keyspaces_table.sample1";
+    for options in [
+        crate::view::Options::default(),
+        crate::view::Options {
+            focus: Some(address.into()),
+            depth: Some(0),
+            ..Default::default()
+        },
+    ] {
+        let selected = crate::view::single(&graph, &options).unwrap();
+        let svg = crate::svg::render(&selected, &crate::layout::Layout::new(&selected));
+        let doc = roxmltree::Document::parse(&svg).unwrap();
+        let mut tables = doc
+            .descendants()
+            .filter(|element| element.attribute("data-terraform-address") == Some(address));
+        let table = tables.next().unwrap();
+        assert!(tables.next().is_none());
+        if options.focus.is_none() {
+            assert_eq!(table.attribute("data-embedded-member"), Some("true"));
+            assert_eq!(
+                table.attribute("data-member-owner"),
+                Some(owner.target.address.as_str())
+            );
+            let section = table
+                .ancestors()
+                .find(|element| element.attribute("data-cluster-members") == Some("true"))
+                .unwrap();
+            assert!(
+                section
+                    .children()
+                    .any(|element| element.text() == Some("Tables"))
+            );
+        } else {
+            assert_eq!(selected.coverage.selected.resources, 1);
+            assert_eq!(table.attribute("data-embedded-member"), None);
+        }
+    }
+}
+
+#[test]
+fn shared_table_retains_its_keyspace_reference_without_embedding() {
+    let mut fixture: Value = serde_json::from_str(include_str!(
+        "../../fixtures/keyspaces-configuration-plan.json"
+    ))
+    .unwrap();
+    fixture["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address": "terraform_data.consumer",
+            "mode": "managed",
+            "type": "terraform_data",
+            "name": "consumer",
+            "provider_name": "terraform.io/builtin/terraform",
+            "change": {"actions": ["create"], "after": {"input": "fixture"}}
+        }));
+    fixture["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address": "terraform_data.consumer",
+            "expressions": {"input": {"references": ["aws_keyspaces_table.sample1.id"]}}
+        }));
+    let address = "aws_keyspaces_table.sample1";
+    assert!(verified(&fixture, address, "keyspace_name"));
+    let parsed = plan::parse(&fixture.to_string()).unwrap();
+    let graph = semantic::transform(&parsed);
+    let table = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == address)
+        .unwrap();
+    assert_eq!(
+        crate::view::presentation::effective(&graph, table),
+        crate::view::presentation::Effective::Logical
+    );
+    assert!(table.member_owner.is_none());
 }
