@@ -55107,7 +55107,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 990,
-      "gap": "#730 audit: Missing: Observability Admin integration ARN; source name/type may be wildcard and cannot identify a managed log group. Follow-up #990. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Verified integration ARN. Wildcard or literal data source selectors retain their own identity. Implemented in #990.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -55120,7 +55120,7 @@
         "placement": "Supported: retain Logical Controller default for aws_cloudwatch_log_s3_table_integration_source; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_cloudwatch_log_s3_table_integration_source identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_cloudwatch_log_s3_table_integration_source has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: Observability Admin integration ARN; source name/type may be wildcard and cannot identify a managed log group. Follow-up #990.",
+        "references": "Supported: Verified integration ARN. Wildcard or literal data source selectors retain their own identity.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_cloudwatch_log_s3_table_integration_source configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/cloudwatch_log_s3_table_integration_source.html.markdown",
@@ -55156,7 +55156,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_logs.rs",
+          "tests/unit/semantic/observability_logs.rs"
         ]
       }
     },
@@ -56942,7 +56944,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 990,
-      "gap": "#730 audit: Missing: destination/backup KMS and tag-propagation role ARNs with independently proven destination account/region. Organization/filter expressions and generated log-group patterns do not create managed endpoints. Follow-up #990. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: The configured destination account and destination or backup region qualify KMS keys and the tag propagation role. Organization and source selectors do not prove an endpoint. Implemented in #990.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -56959,7 +56961,7 @@
         "placement": "Supported: retain Logical Policy default for aws_observabilityadmin_centralization_rule_for_organization; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_observabilityadmin_centralization_rule_for_organization identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_observabilityadmin_centralization_rule_for_organization has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: destination/backup KMS and tag-propagation role ARNs with independently proven destination account/region. Organization/filter expressions and generated log-group patterns do not create managed endpoints. Follow-up #990.",
+        "references": "Supported: The configured destination account and destination or backup region qualify KMS keys and the tag propagation role. Organization and source selectors do not prove an endpoint.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_observabilityadmin_centralization_rule_for_organization configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/observabilityadmin_centralization_rule_for_organization.html.markdown",
@@ -57032,7 +57034,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_logs.rs",
+          "tests/unit/semantic/observability_logs.rs"
         ]
       }
     },
@@ -57040,7 +57044,7 @@
       "status": "Basic-only",
       "priority": "P2",
       "issue": 990,
-      "gap": "#730 audit: Missing: role ARN and aws:kms-gated key ARN; destination_table_bucket_arn is service-generated, not configured managed S3 Tables ownership. Follow-up #990. See per-dimension evidence in aws-semantic-decisions.json.",
+      "gap": "#730 audit: Explicit integration role and KMS key when aws:kms is selected. The computed destination table bucket remains service-generated. Implemented in #990.",
       "review": {
         "issue": 730,
         "implementationCommit": "00bf0c990596acc196f37c10baf11d2b379c7eaa",
@@ -57055,7 +57059,7 @@
         "placement": "Supported: retain Logical Controller default for aws_observabilityadmin_s3_table_integration; configuration/monitor identity remains independently selectable without automatic card promotion.",
         "ownership": "Not applicable: retain independent aws_observabilityadmin_s3_table_integration identity/action; shared monitoring/configuration references do not establish exclusive ownership.",
         "network": "Not applicable: aws_observabilityadmin_s3_table_integration has no configured subnet containment contract; monitored resources and destinations do not supply network parents.",
-        "references": "Missing: role ARN and aws:kms-gated key ARN; destination_table_bucket_arn is service-generated, not configured managed S3 Tables ownership. Follow-up #990.",
+        "references": "Supported: Explicit integration role and KMS key when aws:kms is selected. The computed destination table bucket remains service-generated.",
         "scope": "Partial: Regional (conditional) runtime eligibility in scope.rs; basic fallback clears account; identifiers do not automatically establish resource account ownership. Targets retain independent provider/region/named-state identity.",
         "summaries": "Deferred: aws_observabilityadmin_s3_table_integration configured modes require an explicit enum/boolean allowlist and unknown/absent tests before display; revisit alongside its dedicated configuration view. Runtime results, queries and payloads are excluded.",
         "officialDocumentation": "website/docs/r/observabilityadmin_s3_table_integration.html.markdown",
@@ -57099,7 +57103,9 @@
           "src/plan/collections.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/monitoring.rs",
-          "tests/unit/purpose_placement.rs"
+          "tests/unit/purpose_placement.rs",
+          "src/provider/aws/observability_logs.rs",
+          "tests/unit/semantic/observability_logs.rs"
         ]
       }
     },

@@ -1559,3 +1559,9 @@ Evidently delivery links resolve the configured log group and bucket. Internet M
 requires a complete collection of explicitly referenced VPC, Network Load Balancer,
 CloudFront distribution or WorkSpaces directory ARNs and verifies the configured S3
 measurement log bucket separately. Incomplete evidence retains Terraform provenance.
+
+CloudWatch log S3 table integration sources link to their configured integration ARN.
+Integrations link to their IAM role and to a KMS key when `aws:kms` is selected.
+Centralization rules require the destination account and the destination or backup
+region to agree with referenced ARN evidence. Data source and organization selectors
+and the service-generated table bucket do not establish managed endpoints.

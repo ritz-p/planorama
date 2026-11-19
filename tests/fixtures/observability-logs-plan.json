@@ -1,0 +1,268 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_kms_key.sample0",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_observabilityadmin_s3_table_integration.sample1",
+      "mode": "managed",
+      "type": "aws_observabilityadmin_s3_table_integration",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:observabilityadmin:us-east-1:123456789012:s3-table-integration/fixture",
+          "role_arn": "arn:aws:iam::123456789012:role/fixture",
+          "encryption": [
+            {
+              "sse_algorithm": "aws:kms",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/fixture"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_s3_table_integration_source.sample2",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_s3_table_integration_source",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "integration_arn": "arn:aws:observabilityadmin:us-east-1:123456789012:s3-table-integration/fixture",
+          "data_source": [
+            {
+              "name": "*",
+              "type": "*"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample3",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample4",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_observabilityadmin_centralization_rule_for_organization.sample5",
+      "mode": "managed",
+      "type": "aws_observabilityadmin_centralization_rule_for_organization",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule": [
+            {
+              "destination": [
+                {
+                  "account": "123456789012",
+                  "region": "us-west-2",
+                  "destination_logs_configuration": [
+                    {
+                      "logs_encryption_configuration": [
+                        {
+                          "encryption_strategy": "CUSTOMER_MANAGED",
+                          "kms_key_arn": "arn:aws:kms:us-west-2:123456789012:key/fixture"
+                        }
+                      ],
+                      "tag_propagation_configuration": [
+                        {
+                          "destination_role_arn": "arn:aws:iam::123456789012:role/fixture"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "source": [
+                {
+                  "regions": [
+                    "us-east-1"
+                  ],
+                  "scope": "OrganizationId = 'o-fixture'"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          }
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_kms_key.sample0",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_observabilityadmin_s3_table_integration.sample1",
+          "mode": "managed",
+          "type": "aws_observabilityadmin_s3_table_integration",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample4.arn"
+              ]
+            },
+            "encryption": [
+              {
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.sample0.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudwatch_log_s3_table_integration_source.sample2",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_s3_table_integration_source",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "integration_arn": {
+              "references": [
+                "aws_observabilityadmin_s3_table_integration.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.sample3",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample3",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.sample4",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_observabilityadmin_centralization_rule_for_organization.sample5",
+          "mode": "managed",
+          "type": "aws_observabilityadmin_centralization_rule_for_organization",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": [
+              {
+                "destination": [
+                  {
+                    "destination_logs_configuration": [
+                      {
+                        "logs_encryption_configuration": [
+                          {
+                            "kms_key_arn": {
+                              "references": [
+                                "aws_kms_key.sample3.arn"
+                              ]
+                            }
+                          }
+                        ],
+                        "tag_propagation_configuration": [
+                          {
+                            "destination_role_arn": {
+                              "references": [
+                                "aws_iam_role.sample4.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
