@@ -1,6 +1,30 @@
 use crate::{plan, semantic};
 use serde_json::{Value, json};
 
+#[test]
+fn legacy_image_requires_each_override_to_be_known_absent() {
+    let mut fixture: Value =
+        serde_json::from_str(include_str!("../../fixtures/batch-configuration-plan.json")).unwrap();
+    let change = &mut fixture["resource_changes"][8]["change"];
+    change["after"]["compute_resources"][0]["ec2_configuration"] =
+        json!([{"image_id_override": null}]);
+    change["after_unknown"] = json!({"compute_resources": [{"ec2_configuration": [{}]}]});
+    let address = "aws_batch_compute_environment.sample8";
+    let path = "compute_resources.image_id";
+    assert!(verified(&fixture, address, path));
+
+    let change = &mut fixture["resource_changes"][8]["change"];
+    change["after_unknown"]["compute_resources"][0]["ec2_configuration"][0]["image_id_override"] =
+        json!(true);
+    assert!(!verified(&fixture, address, path));
+
+    let change = &mut fixture["resource_changes"][8]["change"];
+    change["after_unknown"]["compute_resources"][0]["ec2_configuration"][0] = json!({});
+    change["after"]["compute_resources"][0]["ec2_configuration"][0]["image_id_override"] =
+        json!("ami-override");
+    assert!(!verified(&fixture, address, path));
+}
+
 fn verified(value: &Value, address: &str, path: &str) -> bool {
     let parsed = plan::parse(&value.to_string()).unwrap();
     let graph = semantic::transform(&parsed);
