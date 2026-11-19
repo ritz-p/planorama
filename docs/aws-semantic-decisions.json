@@ -29346,10 +29346,10 @@
       }
     },
     "aws_datapipeline_pipeline": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 859,
-      "gap": "#723 reviewed: Not applicable: pipeline has no outgoing managed resource fields; id is pipeline ID despite client-certificate wording in docs. Follow-up #859.",
+      "gap": "#723 audit: #859 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29358,10 +29358,10 @@
           "id",
           "name"
         ],
-        "placement": "Missing: Logical pipeline is an independent workflow endpoint; review architecture presentation with its definition.",
+        "placement": "Supported: Independent pipeline card.",
         "ownership": "Not applicable: aws_datapipeline_pipeline remains independently represented; shared endpoints do not establish exclusive embedded ownership.",
         "network": "Not applicable: aws_datapipeline_pipeline has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Not applicable: pipeline has no outgoing managed resource fields; id is pipeline ID despite client-certificate wording in docs.",
+        "references": "Supported: Receives explicit pipeline ID references.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: id/name identity navigation belongs to #859; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/datapipeline_pipeline.html.markdown",
@@ -29376,14 +29376,18 @@
         "contracts": {
           "id": "optional/computed",
           "name": "required"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/datapipeline_configuration.rs",
+          "tests/unit/semantic/datapipeline_configuration.rs"
+        ]
       }
     },
     "aws_datapipeline_pipeline_definition": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 859,
-      "gap": "#723 reviewed: Missing: pipeline_id ownership only. pipeline_object.field.ref_value identifies internal pipeline objects, not Terraform resources; string_value/parameters/scripts remain opaque. Follow-up #859.",
+      "gap": "#723 audit: #859 adds verified configuration references. See docs/aws-data.md.",
       "review": {
         "issue": 723,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -29394,9 +29398,9 @@
           "pipeline_object.field.ref_value"
         ],
         "placement": "Supported: retain Logical Controller default (basic_entries.rs/classification.rs/runtime matrix); basic presentation does not establish semantics.",
-        "ownership": "Missing: verified pipeline definition helper with separate lifecycle.",
+        "ownership": "Supported: Verified pipeline owner preserves the definition identity and lifecycle.",
         "network": "Not applicable: aws_datapipeline_pipeline_definition has no customer-subnet placement contract; typed service references do not inherit endpoint network.",
-        "references": "Missing: pipeline_id ownership only. pipeline_object.field.ref_value identifies internal pipeline objects, not Terraform resources; string_value/parameters/scripts remain opaque.",
+        "references": "Supported: Pipeline ID is the configured owner. Field ref_value identifies internal pipeline objects.",
         "scope": "Partial: Regional (conditional) in scope.rs; basic fallback clears account. Known effective provider/resource region and independent account/state proof required; target IDs do not manufacture scope.",
         "summaries": "Deferred: pipeline_id/pipeline_object.id identity navigation belongs to #859; extra summaries need explicit known/unknown allowlist in that contract. Payloads, policy effects and observed runtime state remain excluded.",
         "officialDocumentation": "website/docs/r/datapipeline_pipeline_definition.html.markdown",
@@ -29418,7 +29422,11 @@
           "pipeline_id": "required",
           "pipeline_object.id": "required",
           "pipeline_object.field.ref_value": "optional"
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/datapipeline_configuration.rs",
+          "tests/unit/semantic/datapipeline_configuration.rs"
+        ]
       }
     },
     "aws_datazone_domain": {

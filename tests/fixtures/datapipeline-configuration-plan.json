@@ -1,0 +1,104 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_datapipeline_pipeline.sample0",
+      "mode": "managed",
+      "type": "aws_datapipeline_pipeline",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "df-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_datapipeline_pipeline_definition.sample1",
+      "mode": "managed",
+      "type": "aws_datapipeline_pipeline_definition",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "pipeline_id": "df-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_datapipeline_pipeline_definition.sample2",
+      "mode": "managed",
+      "type": "aws_datapipeline_pipeline_definition",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "pipeline_id": "df-fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_datapipeline_pipeline.sample0",
+          "mode": "managed",
+          "type": "aws_datapipeline_pipeline",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_datapipeline_pipeline_definition.sample1",
+          "mode": "managed",
+          "type": "aws_datapipeline_pipeline_definition",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "pipeline_id": {
+              "references": [
+                "aws_datapipeline_pipeline.sample0.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_datapipeline_pipeline_definition.sample2",
+          "mode": "managed",
+          "type": "aws_datapipeline_pipeline_definition",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "pipeline_id": {
+              "references": [
+                "aws_datapipeline_pipeline.sample0.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
