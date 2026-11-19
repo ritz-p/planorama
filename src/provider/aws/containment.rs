@@ -17,6 +17,7 @@ pub(super) fn direct_rule(resource_type: &str) -> Option<(&'static str, &'static
         | "aws_network_acl"
         | "aws_lb_target_group"
         | "aws_internet_gateway"
+        | "aws_ec2_client_vpn_endpoint"
         | "aws_ec2_carrier_gateway"
         | "aws_egress_only_internet_gateway" => Some(("vpc_id", "aws_vpc")),
         "aws_network_interface"
@@ -94,7 +95,8 @@ pub(super) fn infer(raw: &Input) -> Graph {
         }
         if matches!(
             child.resource_type.as_str(),
-            "aws_ec2_carrier_gateway"
+            "aws_ec2_client_vpn_endpoint"
+                | "aws_ec2_carrier_gateway"
                 | "aws_network_interface"
                 | "aws_ec2_instance_connect_endpoint"
                 | "aws_s3outposts_endpoint"

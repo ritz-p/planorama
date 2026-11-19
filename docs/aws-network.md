@@ -1069,3 +1069,7 @@ Customer gateways, virtual private gateways, VPN connections and concentrators h
 ## Carrier and local gateway references (#1440)
 
 Carrier gateways attach to a verified VPC. Local routes and associations use the local route table’s specific ID output, while local gateways and virtual interface groups use the separate data-source contracts. A destination CIDR supplies no VPC evidence.
+
+## Client VPN endpoint configuration (#1441)
+
+VPC and Transit Gateway modes select separate endpoint networks. Authentication options link only their selected provider type, while Lambda and log delivery require enabled options. A VPC route links a subnet through a matching endpoint association. A TGW route does not manufacture a managed attachment from its computed ID.

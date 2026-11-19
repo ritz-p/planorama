@@ -67503,10 +67503,10 @@
       }
     },
     "aws_ec2_client_vpn_authorization_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1441,
-      "gap": "#1441 — Missing: link the endpoint by ID. access_group_id is an external identity-group selector; authorize_all_groups is a distinct mode.",
+      "gap": "#711 audit: #1441 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67518,10 +67518,10 @@
           "authorize_all_groups"
         ],
         "placement": "Supported: retain Logical Policy presentation for aws_ec2_client_vpn_authorization_rule.",
-        "ownership": "Missing: present authorization under the uniquely proven endpoint and preserve the rule action.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Authorized CIDR is not a subnet selector.",
-        "references": "Missing: link the endpoint by ID. access_group_id is an external identity-group selector; authorize_all_groups is a distinct mode.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit client_vpn_endpoint_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Exclude access decisions and expansion of directory groups.",
         "officialDocumentation": "website/docs/r/ec2_client_vpn_authorization_rule.html.markdown",
         "shapes": {
@@ -67549,17 +67549,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/client_vpn.rs",
+          "tests/unit/semantic/client_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceClientVPNAuthorizationRule. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_client_vpn_endpoint": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1441,
-      "gap": "#1441 — Missing: verify server certificate, authentication-mode-specific directory, ACM or SAML inputs, enabled Lambda client hook and enabled log group/qualified stream. VPC and transit-gateway configuration branches conflict.",
+      "gap": "#711 audit: #1441 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67581,11 +67583,11 @@
           "connection_log_options.cloudwatch_log_group",
           "connection_log_options.cloudwatch_log_stream"
         ],
-        "placement": "Missing: current Logical Connector; show client access endpoint with exclusive VPC or transit configuration from independently proven scope.",
+        "placement": "Supported: Independent regional spatial card.",
         "ownership": "Not applicable: Endpoint independently owns client configuration helpers; authentication providers remain shared.",
-        "network": "Missing: use explicit VPC ID and matching security group set only in VPC mode. Transit Gateway mode links its TGW, never inferred subnets from the client CIDR or AZs.",
-        "references": "Missing: verify server certificate, authentication-mode-specific directory, ACM or SAML inputs, enabled Lambda client hook and enabled log group/qualified stream. VPC and transit-gateway configuration branches conflict.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "network": "Supported: Explicit VPC and any configured security groups must have matching VPC evidence. TGW mode never creates VPC containment.",
+        "references": "Supported: Verified explicit server_certificate_arn, vpc_id, security_group_ids, transit_gateway_configuration.transit_gateway_id, authentication_options.root_certificate_chain_arn, authentication_options.active_directory_id, authentication_options.saml_provider_arn, authentication_options.self_service_saml_provider_arn, client_connect_options.lambda_function_arn, connection_log_options.cloudwatch_log_group, connection_log_options.cloudwatch_log_stream references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit client addresses, banners, session status and authentication results.",
         "officialDocumentation": "website/docs/r/ec2_client_vpn_endpoint.html.markdown",
         "shapes": {
@@ -67672,7 +67674,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/client_vpn.rs",
+          "tests/unit/semantic/client_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceClientVPNEndpoint. Separate same-name lookup; configurable data attributes are listed separately, with blocks filter. No managed alias.",
         "dataContracts": {
@@ -67699,10 +67703,10 @@
       }
     },
     "aws_ec2_client_vpn_network_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1441,
-      "gap": "#1441 — Missing: associate the explicit endpoint and target subnet only in compatible VPC mode. Computed vpc_id is not the input selector.",
+      "gap": "#711 audit: #1441 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67716,8 +67720,8 @@
         "placement": "Supported: retain Logical Association presentation for aws_ec2_client_vpn_network_association.",
         "ownership": "Not applicable: Two endpoints; avoid hiding shared subnet or double counting association.",
         "network": "Intentionally unsupported: Subnet is a target network. Multiple associations do not place the VPN in one subnet.",
-        "references": "Missing: associate the explicit endpoint and target subnet only in compatible VPC mode. Computed vpc_id is not the input selector.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit client_vpn_endpoint_id, subnet_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit connection readiness.",
         "officialDocumentation": "website/docs/r/ec2_client_vpn_network_association.html.markdown",
         "shapes": {
@@ -67745,17 +67749,19 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/client_vpn.rs",
+          "tests/unit/semantic/client_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceClientVPNNetworkAssociation. No same-name data registration. No managed alias.",
         "dataContracts": {}
       }
     },
     "aws_ec2_client_vpn_route": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P1",
       "issue": 1441,
-      "gap": "#1441 — Missing: link endpoint plus explicit associated subnet in VPC mode. In TGW mode the attachment ID is computed; do not treat it as a route target input.",
+      "gap": "#711 audit: #1441 adds verified configuration references. See docs/aws-network.md.",
       "review": {
         "issue": 711,
         "implementationCommit": "d85b0d2830effdbd7b16daf916e8dad1dfa5cc83",
@@ -67767,10 +67773,10 @@
           "transit_gateway_attachment_id"
         ],
         "placement": "Supported: retain Logical Connector presentation for aws_ec2_client_vpn_route.",
-        "ownership": "Missing: qualify the route by its endpoint and keep the route change visible.",
+        "ownership": "Supported: Retains the helper identity and action with its uniquely verified owner.",
         "network": "Intentionally unsupported: Route destination is a CIDR, not containment.",
-        "references": "Missing: link endpoint plus explicit associated subnet in VPC mode. In TGW mode the attachment ID is computed; do not treat it as a route target input.",
-        "scope": "Partial: regional basic scope accepts an explicit resource region or bound provider region on a current object. Basic fallback clears account evidence; cross-account relationships require independent endpoint verification.",
+        "references": "Supported: Verified explicit client_vpn_endpoint_id, target_vpc_subnet_id references with current matching endpoint values.",
+        "scope": "Supported: uses independent provider account and region evidence for the relationship.",
         "summaries": "Intentionally unsupported: Omit reachability and route-selection claims.",
         "officialDocumentation": "website/docs/r/ec2_client_vpn_route.html.markdown",
         "shapes": {
@@ -67798,7 +67804,9 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/client_vpn.rs",
+          "tests/unit/semantic/client_vpn.rs"
         ],
         "managedDataContract": "Managed registration resourceClientVPNRoute. No same-name data registration. No managed alias.",
         "dataContracts": {}
