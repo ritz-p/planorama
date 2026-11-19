@@ -32,7 +32,8 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             ],
             true,
             &["target"],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_fis_experiment_template", "stop_condition.value") => Rule::new(
             "Experiment stop alarm",
             &[
@@ -121,45 +122,96 @@ pub(super) fn annotate(
 ) {
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
+fn target_scope(e: &Evidence<'_>, template: usize, source: usize) -> bool {
+    let owner = &e.nodes[template];
+    let endpoint = &e.nodes[source];
+    let region = super::scope(owner).and_then(|scope| scope.region);
+    let endpoint_region = super::scope(endpoint).and_then(|scope| scope.region);
+    let global = endpoint.resource_type == "aws_iam_role";
+    if super::eventbridge::bindings(
+        owner.provider_configuration.as_ref(),
+        endpoint.provider_configuration.as_ref(),
+        region.as_ref(),
+        endpoint_region.as_ref(),
+        global,
+    ) {
+        return true;
+    }
+    let Some((owner_account, endpoint_account)) = owner
+        .provider_configuration
+        .as_ref()
+        .and_then(|p| p.account.as_ref())
+        .zip(
+            endpoint
+                .provider_configuration
+                .as_ref()
+                .and_then(|p| p.account.as_ref()),
+        )
+    else {
+        return false;
+    };
+    if owner_account == endpoint_account
+        || region.is_none()
+        || (!global && region != endpoint_region)
+        || e.text(template, "experiment_options.0.account_targeting") != Some("multi-account")
+    {
+        return false;
+    }
+    let mut configurations = e.nodes.iter().enumerate().filter(|(index, node)| {
+        node.resource_type == "aws_fis_target_account_configuration"
+            && e.text(*index, "account_id") == Some(endpoint_account.as_str())
+            && e.configured_endpoint(
+                *index,
+                "experiment_template_id",
+                "aws_fis_experiment_template",
+                &["id"],
+            ) == Some(template)
+    });
+    configurations.next().is_some() && configurations.next().is_none()
+}
+
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
     match r.attribute.as_str() {
-        "target.resource_arns" => path
-            .rsplit_once('.')
-            .filter(|(p, _)| {
-                ["filter", "resource_tag"]
-                    .iter()
-                    .all(|field| e.absent(r.target, &format!("{p}.{field}")))
-            })
-            .and_then(|(p, _)| e.text(r.target, &format!("{p}.resource_type")))
-            .is_some_and(|kind| {
-                matches!(
-                    (kind, e.nodes[source].resource_type.as_str()),
-                    ("aws:dsql:cluster", "aws_dsql_cluster")
-                        | (
-                            "aws:memorydb:multi-region-cluster",
-                            "aws_memorydb_multi_region_cluster"
+        "target.resource_arns" => {
+            target_scope(e, r.target, source)
+                && path
+                    .rsplit_once('.')
+                    .filter(|(p, _)| {
+                        ["filter", "resource_tag"]
+                            .iter()
+                            .all(|field| e.absent(r.target, &format!("{p}.{field}")))
+                    })
+                    .and_then(|(p, _)| e.text(r.target, &format!("{p}.resource_type")))
+                    .is_some_and(|kind| {
+                        matches!(
+                            (kind, e.nodes[source].resource_type.as_str()),
+                            ("aws:dsql:cluster", "aws_dsql_cluster")
+                                | (
+                                    "aws:memorydb:multi-region-cluster",
+                                    "aws_memorydb_multi_region_cluster"
+                                )
+                                | ("aws:ec2:instance", "aws_instance")
+                                | ("aws:ec2:subnet", "aws_subnet")
+                                | ("aws:ec2:ebs-volume", "aws_ebs_volume")
+                                | ("aws:ecs:cluster", "aws_ecs_cluster")
+                                | ("aws:ec2:autoscaling-group", "aws_autoscaling_group")
+                                | ("aws:ec2:transit-gateway", "aws_ec2_transit_gateway")
+                                | ("aws:ec2:vpc-endpoint", "aws_vpc_endpoint")
+                                | ("aws:eks:nodegroup", "aws_eks_node_group")
+                                | ("aws:kinesis:stream", "aws_kinesis_stream")
+                                | ("aws:eks:cluster", "aws_eks_cluster")
+                                | ("aws:rds:cluster", "aws_rds_cluster")
+                                | ("aws:rds:db", "aws_db_instance")
+                                | ("aws:lambda:function", "aws_lambda_function")
+                                | (
+                                    "aws:elasticache:replicationgroup",
+                                    "aws_elasticache_replication_group"
+                                )
+                                | ("aws:iam:role", "aws_iam_role")
+                                | ("aws:s3:bucket", "aws_s3_bucket")
                         )
-                        | ("aws:ec2:instance", "aws_instance")
-                        | ("aws:ec2:subnet", "aws_subnet")
-                        | ("aws:ec2:ebs-volume", "aws_ebs_volume")
-                        | ("aws:ecs:cluster", "aws_ecs_cluster")
-                        | ("aws:ec2:autoscaling-group", "aws_autoscaling_group")
-                        | ("aws:ec2:transit-gateway", "aws_ec2_transit_gateway")
-                        | ("aws:ec2:vpc-endpoint", "aws_vpc_endpoint")
-                        | ("aws:eks:nodegroup", "aws_eks_node_group")
-                        | ("aws:kinesis:stream", "aws_kinesis_stream")
-                        | ("aws:eks:cluster", "aws_eks_cluster")
-                        | ("aws:rds:cluster", "aws_rds_cluster")
-                        | ("aws:rds:db", "aws_db_instance")
-                        | ("aws:lambda:function", "aws_lambda_function")
-                        | (
-                            "aws:elasticache:replicationgroup",
-                            "aws_elasticache_replication_group"
-                        )
-                        | ("aws:iam:role", "aws_iam_role")
-                        | ("aws:s3:bucket", "aws_s3_bucket")
-                )
-            }),
+                    })
+        }
         "stop_condition.value" => path.rsplit_once('.').is_some_and(|(p, _)| {
             e.text(r.target, &format!("{p}.source")) == Some("aws:cloudwatch:alarm")
         }),
