@@ -47,7 +47,7 @@ fn configured_links_require_current_typed_evidence() {
 
 #[test]
 fn member_owner_preserves_known_provider_account() {
-    let parsed = plan::parse(include_str!(
+    let parsed = plan::evidence::tests::parse_fixture(include_str!(
         "../../fixtures/paymentcryptography-configuration-plan.json"
     ))
     .unwrap();
