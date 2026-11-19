@@ -1165,7 +1165,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_prometheus_workspace", "Amazon Managed Service for Prometheus", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
     entry!("aws_prometheus_workspace_configuration", "Amazon Managed Service for Prometheus", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonManagedServiceforPrometheus))),
     entry!("aws_proxy_protocol_policy", "Elastic Load Balancing", Policy, Logical, Regional, Some(ResourceIcon::LoadBalancer)),
-    entry!("aws_qbusiness_application", "Amazon Q Business", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonQ))),
+    entry!("aws_qbusiness_application", "Amazon Q Business", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonQ))),
     entry!("aws_qldb_ledger", "Amazon Quantum Ledger Database", Node, Logical, Regional, None),
     entry!("aws_qldb_stream", "Amazon Quantum Ledger Database", Node, Logical, Regional, None),
     entry!("aws_quicksight_account_settings", "Amazon QuickSight", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonQuick))),
