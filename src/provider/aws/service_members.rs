@@ -318,6 +318,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_securitylake_subscriber_notification" => {
                 ("subscriber_id", "Security Lake subscriber", "Notifications")
             }
+            "aws_fis_target_account_configuration" => (
+                "experiment_template_id",
+                "Experiment template",
+                "Target accounts",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

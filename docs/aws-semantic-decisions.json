@@ -75014,10 +75014,10 @@
       }
     },
     "aws_fis_experiment_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1484,
-      "gap": "#1484 — Resolve explicit typed target ARNs, execution role, CloudWatch stop alarms, logging and report endpoints. Exclude dynamic filters, action parameters and inferred effects.",
+      "gap": "#1484 — Verified configuration references: role_arn, target.resource_arns, stop_condition.value, log_configuration.cloudwatch_logs_configuration.log_group_arn, log_configuration.s3_configuration.bucket_name, experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn, experiment_report_configuration.outputs.s3_configuration.bucket_name.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75036,7 +75036,7 @@
         "placement": "Supported: Logical Controller for the managed fis_experiment_template declaration. Provides an FIS Experiment Template.",
         "ownership": "Not applicable: The managed fis_experiment_template declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
-        "references": "Missing: Resolve explicit typed target ARNs, execution role, CloudWatch stop alarms, logging and report endpoints. Exclude dynamic filters, action parameters and inferred effects.",
+        "references": "Supported: Verified configuration references: role_arn, target.resource_arns, stop_condition.value, log_configuration.cloudwatch_logs_configuration.log_group_arn, log_configuration.s3_configuration.bucket_name, experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn, experiment_report_configuration.outputs.s3_configuration.bucket_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_experiment_template summaries.",
         "officialDocumentation": "website/docs/r/fis_experiment_template.html.markdown",
@@ -75104,7 +75104,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/fis_configuration.rs",
+          "tests/unit/semantic/fis_configuration.rs"
         ],
         "managedDataContract": "Managed resourceExperimentTemplate. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -75156,10 +75158,10 @@
       }
     },
     "aws_fis_target_account_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1484,
-      "gap": "#1484 — Resolve the experiment template by ID and the optional role in the configured target account.",
+      "gap": "#1484 — Verified configuration references: experiment_template_id, account_id, role_arn.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75170,9 +75172,9 @@
           "role_arn"
         ],
         "placement": "Supported: Logical Controller for the managed fis_target_account_configuration declaration. Manages an AWS FIS (Fault Injection Simulator) Target Account Configuration.",
-        "ownership": "Missing: use a verified experiment_template_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
-        "references": "Missing: Resolve the experiment template by ID and the optional role in the configured target account.",
+        "references": "Supported: Verified configuration references: experiment_template_id, account_id, role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_target_account_configuration summaries.",
         "officialDocumentation": "website/docs/r/fis_target_account_configuration.html.markdown",
@@ -75199,7 +75201,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/fis_configuration.rs",
+          "tests/unit/semantic/fis_configuration.rs"
         ],
         "managedDataContract": "Managed newResourceTargetAccountConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}

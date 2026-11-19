@@ -110,6 +110,7 @@ mod eventbridge;
 pub(crate) mod finspace_kx_configuration;
 mod firehose;
 pub(crate) mod firehose_sources;
+pub(crate) mod fis_configuration;
 pub(crate) mod flink_configuration;
 pub(crate) mod flow_logs;
 mod fsx;

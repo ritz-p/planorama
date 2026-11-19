@@ -548,3 +548,7 @@ Lake configuration retains each region and its replication destinations. Encrypt
 ## Verify ARC recovery plan and zonal shift references (#1483)
 
 Region Switch plans verify their execution role, alarm and workflow references against endpoint identities and the configured regions. Cross-account targets require matching role evidence. Zonal shift separates the protected resource and the blocking and outcome CloudWatch alarms.
+
+## Verify explicit FIS template and account references (#1484)
+
+FIS templates identify the execution role, explicit typed target ARNs, CloudWatch stop alarms, logging and report destinations. Target account configurations verify the template ID and the role in the specified account. Resource filters and action parameters remain opaque.
