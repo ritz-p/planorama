@@ -12,6 +12,7 @@ const cases = [
   {fixture: "quicksight-identity-plan", focus: "aws_quicksight_group_membership.g", target: 3, mask: {member_name: true}},
   {fixture: "quicksight-content-plan", focus: "aws_quicksight_dashboard.d", target: 3, mask: {source_entity: true}},
   {fixture: "quicksight-connection-plan", focus: "aws_quicksight_vpc_connection.one", target: 6, mask: {parameters: true}},
+  {"fixture":"sagemaker-training-jobs-plan","focus":"aws_sagemaker_training_job.job","target":3,"mask":{"input_data_config":true}},
   {"fixture":"sagemaker-studio-plan","focus":"aws_sagemaker_app.ui","target":5,"mask":{"resource_spec":true}},
   {"fixture":"emr-serverless-plan","focus":"aws_emrserverless_application.main","target":7,"mask":{"network_configuration":true}},
   {"fixture":"emr-containers-plan","focus":"aws_emrcontainers_virtual_cluster.main","target":5,"mask":{"container_provider":true}},

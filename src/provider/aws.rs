@@ -157,6 +157,7 @@ pub(crate) mod s3files;
 pub(crate) mod s3tables;
 pub(crate) mod s3vectors;
 mod sagemaker;
+pub(crate) mod sagemaker_jobs;
 pub(crate) mod sagemaker_studio;
 mod scaling;
 mod scraper;
@@ -414,6 +415,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     emr::present(&raw, &mut graph);
     quicksight::present(&raw, &mut graph);
     sagemaker_studio::present(&raw, &mut graph);
+    sagemaker_jobs::present(&raw, &mut graph);
     analytics_databases::present(&raw, &mut graph);
     lambda_core::present(&raw, &mut graph);
     lambda_capacity::present(&raw, &mut graph);
