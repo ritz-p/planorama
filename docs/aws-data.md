@@ -1210,3 +1210,12 @@ A Flink application links its execution role and its S3 code bucket when using
 VPC establish application placement. An explicit configured snapshot name link
 preserves the snapshot's logical identity. SQL, code and property-map contents,
 worker inference, restore activity and service-managed encryption are excluded.
+
+## Clean Rooms configuration
+
+A collaboration has an independent regional card. A membership links the
+configured collaboration ID when the collaboration ARN proves its creator
+account and region, and the membership keeps its own account and lifecycle.
+Configured result role and bucket names link typed resources. A configured table
+requires explicit Glue database and table name references and a verified common
+catalog account. Invitations and query settings do not establish ownership.

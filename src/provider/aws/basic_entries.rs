@@ -234,7 +234,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_chimesdkvoice_sip_media_application", "Amazon Chime SDK", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonChimeSDK))),
     entry!("aws_chimesdkvoice_sip_rule", "Amazon Chime SDK", Policy, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonChimeSDK))),
     entry!("aws_chimesdkvoice_voice_profile_domain", "Amazon Chime SDK", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AmazonChimeSDK))),
-    entry!("aws_cleanrooms_collaboration", "AWS Clean Rooms", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSCleanRooms))),
+    entry!("aws_cleanrooms_collaboration", "AWS Clean Rooms", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSCleanRooms))),
     entry!("aws_cleanrooms_configured_table", "AWS Clean Rooms", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSCleanRooms))),
     entry!("aws_cleanrooms_membership", "AWS Clean Rooms", Association, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSCleanRooms))),
     entry!("aws_cloud9_environment_ec2", "AWS Cloud9", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSCloud9))),
