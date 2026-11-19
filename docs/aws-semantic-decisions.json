@@ -34214,10 +34214,10 @@
       }
     },
     "aws_sagemaker_flow_definition": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 880,
-      "gap": "Reviewed #725: Human UI/workteam/role references; AWS public workforce ARN is external. Human-loop request source is a service enum, not a Rekognition resource. #880. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #880. Explicit human review role, human task ui, review workteam. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34231,7 +34231,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_flow_definition; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_flow_definition is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Not applicable: sagemaker_flow_definition has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Human UI/workteam/role references; AWS public workforce ARN is external. Human-loop request source is a service enum, not a Rekognition resource. #880.",
+        "references": "Supported: Explicit human review role, human task ui, review workteam.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: human task count could provide a bounded summary for sagemaker_flow_definition; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_flow_definition.html.markdown",
@@ -34674,10 +34674,10 @@
       }
     },
     "aws_sagemaker_labeling_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 880,
-      "gap": "Reviewed #725: Workteam/UI/Lambda/role/SNS/key references; AWS-owned algorithms and workers stay external. #880. Automated-labeling resource-config VPC context, not worker location. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #880. Explicit labeling role, labeling workteam, pre-task lambda, consolidation lambda, labeling task ui, labeling topic, labeling key, labeling job security groups, labeling job subnets. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -34692,7 +34692,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_labeling_job; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_labeling_job is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Automated-labeling resource-config VPC context, not worker location. #880.",
-        "references": "Missing: Workteam/UI/Lambda/role/SNS/key references; AWS-owned algorithms and workers stay external. #880.",
+        "references": "Supported: Explicit labeling role, labeling workteam, pre-task lambda, consolidation lambda, labeling task ui, labeling topic, labeling key, labeling job security groups, labeling job subnets.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: input kind could provide a bounded summary for sagemaker_labeling_job; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_labeling_job.html.markdown",
@@ -35697,10 +35697,10 @@
       }
     },
     "aws_sagemaker_workforce": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 880,
-      "gap": "Reviewed #725: Cognito pool/client pair links; OIDC issuer/client/secret not Terraform identity. Computed vpc_endpoint_id is not an owned managed endpoint. #880. Workforce VPC/subnet/SG context, not worker IP location. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #880. Explicit workforce user pool, workforce pool client, workforce vpc, workforce subnets, workforce security groups. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35717,7 +35717,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_workforce; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Not applicable: sagemaker_workforce is independent or reusable; consumer references and generated outputs do not establish exclusive embedded ownership.",
         "network": "Missing: Workforce VPC/subnet/SG context, not worker IP location. #880.",
-        "references": "Missing: Cognito pool/client pair links; OIDC issuer/client/secret not Terraform identity. Computed vpc_endpoint_id is not an owned managed endpoint. #880.",
+        "references": "Supported: Explicit workforce user pool, workforce pool client, workforce vpc, workforce subnets, workforce security groups.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: Cognito versus OIDC could provide a bounded summary for sagemaker_workforce; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_workforce.html.markdown",
@@ -35784,10 +35784,10 @@
       }
     },
     "aws_sagemaker_workteam": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 880,
-      "gap": "Reviewed #725: Workforce/Cognito pool-client-group/SNS links; OIDC group strings and presign IP policy do not establish network containment. #880. Workforce owner candidate; public teams are external. Six dimensions, pinned field shapes and input/output contracts in review decisions.",
+      "gap": "#725 reviewed: Implemented #880. Explicit private workforce, member user pool, member pool client, member pool group, workteam notifications. See docs/aws-ai.md.",
       "review": {
         "issue": 725,
         "implementationCommit": "f5c320438d8abf81de31c884bbd03dde5369773e",
@@ -35803,7 +35803,7 @@
         "placement": "Supported: retain current Logical default for sagemaker_workteam; independent configuration/data objects are not automatically spatial cards.",
         "ownership": "Missing: Workforce owner candidate; public teams are external. #880.",
         "network": "Not applicable: sagemaker_workteam has no reviewed customer-VPC placement contract; destination references, URLs and policy conditions do not supply containment.",
-        "references": "Missing: Workforce/Cognito pool-client-group/SNS links; OIDC group strings and presign IP policy do not establish network containment. #880.",
+        "references": "Supported: Explicit private workforce, member user pool, member pool client, member pool group, workteam notifications.",
         "scope": "Partial: Regional eligibility from scope.rs/basic_entries.rs; ResourceRegionDefault. Explicit provider/resource region and compatible binding required; basic fallback clears account, references do not manufacture account or global scope.",
         "summaries": "Deferred: identity provider kind could provide a bounded summary for sagemaker_workteam; current summary allowlists have no entry. Revisit with a documented enum/boolean/count allowlist and unknown-value/privacy tests; no prompts, secrets, payloads or runtime health.",
         "officialDocumentation": "website/docs/r/sagemaker_workteam.html.markdown",

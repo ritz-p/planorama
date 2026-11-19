@@ -1,0 +1,177 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_cognito_user_pool.users",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool",
+      "name": "users",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "us-east-1_one"
+        }
+      }
+    },
+    {
+      "address": "aws_cognito_user_pool_client.client",
+      "mode": "managed",
+      "type": "aws_cognito_user_pool_client",
+      "name": "client",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "client",
+          "user_pool_id": "us-east-1_one"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_workforce.private",
+      "mode": "managed",
+      "type": "aws_sagemaker_workforce",
+      "name": "private",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workforce_name": "private",
+          "cognito_config": [
+            {
+              "user_pool": "us-east-1_one",
+              "client_id": "client"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_workteam.team",
+      "mode": "managed",
+      "type": "aws_sagemaker_workteam",
+      "name": "team",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "workforce_name": "private",
+          "arn": "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/team"
+        }
+      }
+    },
+    {
+      "address": "aws_sagemaker_flow_definition.flow",
+      "mode": "managed",
+      "type": "aws_sagemaker_flow_definition",
+      "name": "flow",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "human_loop_config": [
+            {
+              "workteam_arn": "arn:aws:sagemaker:us-east-1:123456789012:workteam/private-crowd/team"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cognito_user_pool.users",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cognito_user_pool_client.client",
+          "provider_config_key": "aws",
+          "expressions": {
+            "user_pool_id": {
+              "references": [
+                "aws_cognito_user_pool.users.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_workforce.private",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cognito_config": [
+              {
+                "user_pool": {
+                  "references": [
+                    "aws_cognito_user_pool.users.id"
+                  ]
+                },
+                "client_id": {
+                  "references": [
+                    "aws_cognito_user_pool_client.client.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_sagemaker_workteam.team",
+          "provider_config_key": "aws",
+          "expressions": {
+            "workforce_name": {
+              "references": [
+                "aws_sagemaker_workforce.private.workforce_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sagemaker_flow_definition.flow",
+          "provider_config_key": "aws",
+          "expressions": {
+            "human_loop_config": [
+              {
+                "workteam_arn": {
+                  "references": [
+                    "aws_sagemaker_workteam.team.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
