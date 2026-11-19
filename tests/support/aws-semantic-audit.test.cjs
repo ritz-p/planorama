@@ -717,3 +717,26 @@ test('streaming audit covers its exact managed denominator and preserves bounded
  assert.match(decisions.aws_sns_topic_subscription.review.references,/SQS\/Lambda/);
  assert.match(decisions.aws_sqs_queue.review.summaries,/Supported:.*#601/);
 });
+
+test('#709 distinguishes image provenance, launch selectors and EBS attachment evidence', () => {
+  const decisions = read('docs/aws-semantic-decisions.json').types;
+  const audited = Object.entries(decisions).filter(([, entry]) => entry.review?.issue === 709);
+  assert.equal(audited.length, 34);
+  const inventory = read('tests/fixtures/aws-inventory/6.70.0.json');
+  for (const [type, { review, issue }] of audited) {
+    const resource = inventory.resources.find(entry => entry.type === type);
+    assert.equal(resource.service, 'ec2', type);
+    assert.equal(review.officialDocumentation, resource.documentation);
+    assert.equal(review.providerCommit, inventory.commit);
+    assert.deepEqual(Object.keys(review.contracts), review.fields);
+    assert.deepEqual(Object.keys(review.shapes), review.fields);
+    if (dimensions.some(key => review[key].includes('Missing:'))) {
+      assert.ok(Number.isInteger(issue), type);
+    }
+  }
+  assert.deepEqual(decisions.aws_ami.review.shapes['ebs_block_device.snapshot_id'], ['set', 'string']);
+  assert.equal(decisions.aws_ebs_snapshot.review.contracts.kms_key_id, 'computed');
+  assert.equal(decisions.aws_ebs_snapshot_copy.review.contracts.source_region, 'required');
+  assert.equal(decisions.aws_spot_instance_request.review.contracts.spot_instance_id, 'computed');
+  assert.equal(decisions.aws_volume_attachment.issue, 498);
+});
