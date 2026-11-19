@@ -1,4 +1,4 @@
-use crate::model::{AwsAccountScope, ProviderIdentity, TerraformPlan};
+use crate::model::{AwsAccountScope, ProviderIdentity, TerraformEntity};
 use serde_json::{Value, json};
 use std::collections::{BTreeMap, BTreeSet};
 use std::io::{Cursor, Read};
@@ -238,8 +238,8 @@ impl Evidence {
         Ok(Self(accounts, provider_version.to_owned()))
     }
 
-    pub(crate) fn apply(&self, plan: &mut TerraformPlan) {
-        for node in &mut plan.nodes {
+    pub(crate) fn apply(&self, nodes: &mut [TerraformEntity]) {
+        for node in nodes {
             if node.deposed_key.is_some() || !node.provider.is_aws() {
                 continue;
             }

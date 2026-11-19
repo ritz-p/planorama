@@ -45,25 +45,14 @@ pub(super) fn run(
             })
         })
         .collect::<Result<Vec<_>, String>>()?;
-    let evidence = inputs
-        .iter()
-        .map(|input| {
-            provider_plan
-                .load(Some(&input.state_id), &input.plan_json)
-                .map(|evidence| (input.state_id.clone(), evidence))
-                .map_err(|error| format!("state {:?}: {error}", input.state_id.as_str()))
+    let plans = plan::parse_inputs_with(inputs, |id, json| {
+        let evidence = provider_plan.load(Some(id), json)?;
+        plan::parse_with_provider_bindings(json, filter.cloudflare_value_matches, |nodes| {
+            if let Some(evidence) = evidence {
+                evidence.apply(nodes);
+            }
         })
-        .collect::<Result<BTreeMap<_, _>, _>>()?;
-    let mut plans = if filter.cloudflare_value_matches {
-        plan::parse_inputs_with_value_matches(inputs, true)?
-    } else {
-        plan::parse_inputs(inputs)?
-    };
-    for (id, raw) in &mut plans.states {
-        if let Some(Some(evidence)) = evidence.get(id) {
-            evidence.apply(raw);
-        }
-    }
+    })?;
     let cross = semantic::cross_state::resolve(&plans, mappings);
     if diagnostics {
         let mut stderr = io::stderr().lock();
