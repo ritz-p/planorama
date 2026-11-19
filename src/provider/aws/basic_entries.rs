@@ -653,7 +653,7 @@ pub(in crate::provider::aws) const ENTRIES: &[Basic] = &[
     entry!("aws_elastic_beanstalk_application", "AWS Elastic Beanstalk", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSElasticBeanstalk))),
     entry!("aws_elastic_beanstalk_application_version", "AWS Elastic Beanstalk", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSElasticBeanstalk))),
     entry!("aws_elastic_beanstalk_configuration_template", "AWS Elastic Beanstalk", Controller, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSElasticBeanstalk))),
-    entry!("aws_elastic_beanstalk_environment", "AWS Elastic Beanstalk", Node, Logical, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSElasticBeanstalk))),
+    entry!("aws_elastic_beanstalk_environment", "AWS Elastic Beanstalk", Node, Spatial, Regional, Some(ResourceIcon::Service(crate::icons::ServiceIcon::AWSElasticBeanstalk))),
     entry!("aws_elasticache_cluster", "Amazon ElastiCache", Node, Logical, Regional, Some(ResourceIcon::Cache)),
     entry!("aws_elasticache_global_replication_group", "Amazon ElastiCache", Node, Logical, Global, Some(ResourceIcon::Cache)),
     entry!("aws_elasticache_parameter_group", "Amazon ElastiCache", Policy, Logical, Regional, Some(ResourceIcon::Cache)),

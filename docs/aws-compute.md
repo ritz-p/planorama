@@ -223,6 +223,28 @@ remain independently selectable. Deployment and custom-domain links point to
 the service while preserving their own identity and action. Domain names and
 computed DNS or certificate records do not establish managed endpoints.
 
+## Elastic Beanstalk
+
+Environments have independent regional cards. Applications, versions and
+configuration templates are Logical and retain their own actions and coverage.
+
+| Configured input | Verified endpoint |
+| --- | --- |
+| Version, configuration template or environment application | Application name |
+| Environment version label | Version name with the same verified application |
+| Environment template name | Template name with the same verified application |
+| Version source bucket | Managed S3 bucket name or ID |
+| Application version lifecycle role | IAM role ARN |
+
+Application identity requires an explicit reference to the same current,
+managed Terraform application on both sides of a version or template link.
+Matching names alone do not verify a link. Missing or masked inputs preserve
+Terraform provenance where available, and filtered targets remain unavailable.
+Option settings, platform identifiers and computed instance, load balancer or
+Auto Scaling outputs establish neither managed endpoints nor VPC containment.
+See the maintained [SVG](../examples/beanstalk-configuration.svg) and
+[offline HTML](../examples/beanstalk-configuration.html).
+
 ## ECR repositories
 
 `aws_ecr_repository` is a regional spatial card. `aws_ecr_repository_policy`

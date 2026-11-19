@@ -13688,10 +13688,10 @@
       }
     },
     "aws_elastic_beanstalk_application": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 781,
-      "gap": "#713 reviewed: Missing: lifecycle service-role ARN and inbound application membership #781.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: version lifecycle limits do not establish deployed versions.",
+      "gap": "#713 audit: #781 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13704,7 +13704,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: lifecycle service-role ARN and inbound application membership #781.",
+        "references": "Supported: Application version lifecycle role ARN and inbound explicit application-name references.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: version lifecycle limits do not establish deployed versions.",
         "officialDocumentation": "website/docs/r/elastic_beanstalk_application.html.markdown",
@@ -13719,14 +13719,18 @@
             "list",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/beanstalk_configuration.rs",
+          "tests/unit/semantic/beanstalk_configuration.rs"
+        ]
       }
     },
     "aws_elastic_beanstalk_application_version": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 781,
-      "gap": "#713 reviewed: Missing: application name and source bucket #781; key identifies artifact, not managed application owner.  Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment. Intentionally unsupported: bundle paths/content and processing status.",
+      "gap": "#713 audit: #781 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13740,7 +13744,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Not applicable: no subnet/VPC input in this resource contract; service membership does not establish network containment.",
-        "references": "Missing: application name and source bucket #781; key identifies artifact, not managed application owner.",
+        "references": "Supported: Application name and configured source bucket. Source bundle keys are excluded.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: bundle paths/content and processing status.",
         "officialDocumentation": "website/docs/r/elastic_beanstalk_application_version.html.markdown",
@@ -13757,14 +13761,18 @@
           "key": [
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/beanstalk_configuration.rs",
+          "tests/unit/semantic/beanstalk_configuration.rs"
+        ]
       }
     },
     "aws_elastic_beanstalk_configuration_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 781,
-      "gap": "#713 reviewed: Missing: application navigation #781. Deferred: environment_id cloning until historical source identity contract, no inherited topology.  Deferred: settings encode opaque namespace/name/value tuples; revisit only with explicit network option/CSV reference proof. Intentionally unsupported: arbitrary option values may contain credentials.",
+      "gap": "#713 audit: #781 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13780,7 +13788,7 @@
         "placement": "Supported: retain Logical default from classification.rs/basic_entries.rs and runtime support matrix; basic presentation is not complete semantics.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Deferred: settings encode opaque namespace/name/value tuples; revisit only with explicit network option/CSV reference proof.",
-        "references": "Missing: application navigation #781. Deferred: environment_id cloning until historical source identity contract, no inherited topology.",
+        "references": "Supported: Configured application name. Deferred: cloning links through environment_id.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: arbitrary option values may contain credentials.",
         "officialDocumentation": "website/docs/r/elastic_beanstalk_configuration_template.html.markdown",
@@ -13806,14 +13814,18 @@
             "set",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/beanstalk_configuration.rs",
+          "tests/unit/semantic/beanstalk_configuration.rs"
+        ]
       }
     },
     "aws_elastic_beanstalk_environment": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 781,
-      "gap": "#713 reviewed: Missing: application and same-application version/template navigation #781; solution/platform strings are not managed endpoints. Missing: currently Logical; review independent Spatial environment #781 while keeping app/configuration logical. Deferred: exact setting namespace/option and complete value/reference proof required; computed ASG/ELB/instances do not synthesize network. Intentionally unsupported: settings, CNAME and runtime environment health.",
+      "gap": "#713 audit: #781 implements configuration navigation. See docs/aws-compute.md.",
       "review": {
         "issue": 713,
         "implementationCommit": "f30289f73269a8a348818dd6e2a8bc44c22f22aa",
@@ -13827,10 +13839,10 @@
           "setting.name",
           "setting.value"
         ],
-        "placement": "Missing: currently Logical; review independent Spatial environment #781 while keeping app/configuration logical.",
+        "placement": "Supported: The environment has an independent regional Spatial card. The application, versions and templates stay Logical.",
         "ownership": "Not applicable: independent shared configuration; consumer references do not establish embedded ownership.",
         "network": "Deferred: exact setting namespace/option and complete value/reference proof required; computed ASG/ELB/instances do not synthesize network.",
-        "references": "Missing: application and same-application version/template navigation #781; solution/platform strings are not managed endpoints.",
+        "references": "Supported: Application name and explicit version or template in that same application. Platform strings and opaque settings do not identify managed endpoints.",
         "scope": "Partial: Regional conditional eligibility (scope.rs); basic fallback clears account. Require known provider/resource region, compatible binding and state identity; membership does not manufacture scope.",
         "summaries": "Intentionally unsupported: settings, CNAME and runtime environment health.",
         "officialDocumentation": "website/docs/r/elastic_beanstalk_environment.html.markdown",
@@ -13859,7 +13871,11 @@
             "set",
             "string"
           ]
-        }
+        },
+        "implementationEvidence": [
+          "src/provider/aws/beanstalk_configuration.rs",
+          "tests/unit/semantic/beanstalk_configuration.rs"
+        ]
       }
     },
     "aws_service_discovery_http_namespace": {
