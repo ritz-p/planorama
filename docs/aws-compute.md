@@ -708,3 +708,18 @@ EC2 image override links an AMI ID. The deprecated image ID links an AMI when
 image overrides are absent. `spot_iam_fleet_role` applies to Spot only. These
 references preserve the compute environment's independent placement and the
 existing network and queue rules.
+
+## Lightsail attachments and distribution configuration
+
+Disk, static-IP and load-balancer attachments link typed Lightsail resources by
+name. Bucket access, instance ports, container deployments and load-balancer
+configuration have explicit service owners. A load-balancer certificate is
+qualified by its load balancer. General Lightsail certificates, key pairs and
+DNS records use their respective name contracts. Network endpoints remain
+independent of the helper lifecycle.
+
+Distributions have independent cards and use the `us-east-1` Lightsail control
+region. An explicit Lightsail origin must match `origin.region_name`, with
+independent account evidence for a different provider binding. DNS names and
+addresses do not create endpoints. Static IPs, domains and databases retain
+independent cards without VPC or subnet inference.

@@ -69,6 +69,12 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && resource != "aws_lightsail_disk"
+        && resource != "aws_lightsail_static_ip"
+        && resource != "aws_lightsail_lb"
+        && resource != "aws_lightsail_bucket"
+        && resource != "aws_lightsail_domain"
+        && !super::lightsail_configuration::resource(resource)
         && !super::recovery_configuration::resource(resource)
         && !super::batch_configuration::resource(resource)
         && !super::signer_configuration::resource(resource)

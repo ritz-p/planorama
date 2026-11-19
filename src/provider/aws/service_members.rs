@@ -150,6 +150,46 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_signer_signing_profile_permission" => {
                 ("profile_name", "Signing profile", "Permissions")
             }
+            "aws_lightsail_disk_attachment" => ("disk_name", "Lightsail disk", "Attachments"),
+            "aws_lightsail_static_ip_attachment" => ("static_ip_name", "Static IP", "Attachments"),
+            "aws_lightsail_lb_attachment" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_bucket_resource_access" => {
+                ("bucket_name", "Lightsail bucket", "Bucket configuration")
+            }
+            "aws_lightsail_bucket_access_key" => {
+                ("bucket_name", "Lightsail bucket", "Bucket configuration")
+            }
+            "aws_lightsail_instance_public_ports" => {
+                ("instance_name", "Lightsail instance", "Public ports")
+            }
+            "aws_lightsail_container_service_deployment_version" => {
+                ("service_name", "Container service", "Deployments")
+            }
+            "aws_lightsail_lb_certificate" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_lb_certificate_attachment" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_lb_https_redirection_policy" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_lb_stickiness_policy" => (
+                "lb_name",
+                "Lightsail load balancer",
+                "Load balancer configuration",
+            ),
+            "aws_lightsail_domain_entry" => ("domain_name", "Lightsail domain", "DNS records"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -524,7 +564,8 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 | "aws_flow_log"
                 | "aws_cloudfront_monitoring_subscription"
                 | "aws_keyspaces_table"
-        ) || super::ipam::owner(&node.resource_type).is_some())
+        ) || super::ipam::owner(&node.resource_type).is_some()
+            || super::lightsail_configuration::owner_member(&node.resource_type))
             && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
             || node.resource_type == "aws_appsync_channel_namespace"
             || super::search::helper(&node.resource_type)
