@@ -120,6 +120,12 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("gateway_arn", "Storage Gateway", "File shares")
             }
             "aws_keyspaces_table" => ("keyspace_name", "Keyspace", "Tables"),
+            "aws_appmesh_gateway_route" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_route" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_gateway" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_node" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_router" => ("mesh_name", "App Mesh", "Mesh configuration"),
+            "aws_appmesh_virtual_service" => ("mesh_name", "App Mesh", "Mesh configuration"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
