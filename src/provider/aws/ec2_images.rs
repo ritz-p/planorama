@@ -106,6 +106,18 @@ pub(super) fn annotate(
                     | ("aws_snapshot_create_volume_permission", "snapshot_id")
             )
     }) {
+        if nodes[grant.target].resource_type == "aws_ami_launch_permission" {
+            let (value, mask) = values[grant.target];
+            if ["group", "organization_arn", "organizational_unit_arn"]
+                .iter()
+                .any(|field| {
+                    !super::nested_references::value(value, mask, field)
+                        .is_some_and(|v| v.is_null() || v.as_str() == Some(""))
+                })
+            {
+                continue;
+            }
+        }
         grant.service_reference_owner_account =
             super::service_evidence::known(values, grant.target, "account_id")
                 .and_then(crate::model::AwsAccountScope::new);

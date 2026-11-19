@@ -95,6 +95,36 @@ fn copying_a_shared_image_requires_the_source_account_grant() {
             .any(|r| r.label == "Source image" && r.complete && !r.dependency)
     };
     assert!(has_source(&fixture));
+    for field in ["group", "organization_arn", "organizational_unit_arn"] {
+        let mut ambiguous = fixture.clone();
+        ambiguous["resource_changes"][6]["change"]["after_unknown"][field] = json!(true);
+        assert!(!has_source(&ambiguous));
+        ambiguous["resource_changes"][6]["change"]["after_unknown"][field] = json!(false);
+        ambiguous["resource_changes"][6]["change"]["after"][field] = json!("another-grantee");
+        assert!(!has_source(&ambiguous));
+    }
+
     fixture["resource_changes"][6]["change"]["after"]["account_id"] = json!("333333333333");
     assert!(!has_source(&fixture));
+}
+
+#[test]
+fn a_matching_image_id_needs_a_single_current_explicit_source() {
+    let plan: Value =
+        serde_json::from_str(include_str!("../../fixtures/ec2-images-plan.json")).unwrap();
+    for selector in [
+        json!({"constant_value":"ami-fixture"}),
+        json!({"references":["aws_ami.sample1.id","var.other"]}),
+        json!({"references":["aws_ami.sample1.name"]}),
+    ] {
+        let mut changed = plan.clone();
+        changed["configuration"]["root_module"]["resources"][0]["expressions"]["source_ami_id"] =
+            selector;
+        assert!(!verified(&changed, "aws_ami_copy.sample0", "source_ami_id"));
+    }
+    for mask in ["after_unknown", "after_sensitive"] {
+        let mut changed = plan.clone();
+        changed["resource_changes"][1]["change"][mask]["id"] = json!(true);
+        assert!(!verified(&changed, "aws_ami_copy.sample0", "source_ami_id"));
+    }
 }
