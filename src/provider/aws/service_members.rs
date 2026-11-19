@@ -148,6 +148,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_paymentcryptography_key_alias" => {
                 ("key_arn", "Payment Cryptography key", "Aliases")
             }
+            "aws_signer_signing_profile_permission" => {
+                ("profile_name", "Signing profile", "Permissions")
+            }
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
