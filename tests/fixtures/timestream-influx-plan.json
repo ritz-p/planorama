@@ -1,0 +1,240 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_s3_bucket.row0",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "row0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "metrics"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.row1",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "row1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-a"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.row2",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "row2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-a",
+          "vpc_id": "vpc-a"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.row3",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "row3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-a",
+          "vpc_id": "vpc-a"
+        }
+      }
+    },
+    {
+      "address": "aws_timestreaminfluxdb_db_cluster.row4",
+      "mode": "managed",
+      "type": "aws_timestreaminfluxdb_db_cluster",
+      "name": "row4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_subnet_ids": [
+            "subnet-a"
+          ],
+          "vpc_security_group_ids": [
+            "sg-a"
+          ],
+          "log_delivery_configuration": [
+            {
+              "s3_configuration": [
+                {
+                  "bucket_name": "metrics",
+                  "enabled": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_timestreaminfluxdb_db_instance.row5",
+      "mode": "managed",
+      "type": "aws_timestreaminfluxdb_db_instance",
+      "name": "row5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_subnet_ids": [
+            "subnet-a"
+          ],
+          "vpc_security_group_ids": [
+            "sg-a"
+          ],
+          "log_delivery_configuration": [
+            {
+              "s3_configuration": [
+                {
+                  "bucket_name": "metrics",
+                  "enabled": true
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_s3_bucket.row0",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.row1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.row2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.row1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.row3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.row1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_timestreaminfluxdb_db_cluster.row4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_subnet_ids": {
+              "references": [
+                "aws_subnet.row2.id"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.row3.id"
+              ]
+            },
+            "log_delivery_configuration": [
+              {
+                "s3_configuration": [
+                  {
+                    "bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.row0.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_timestreaminfluxdb_db_instance.row5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_subnet_ids": {
+              "references": [
+                "aws_subnet.row2.id"
+              ]
+            },
+            "vpc_security_group_ids": {
+              "references": [
+                "aws_security_group.row3.id"
+              ]
+            },
+            "log_delivery_configuration": [
+              {
+                "s3_configuration": [
+                  {
+                    "bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.row0.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}
