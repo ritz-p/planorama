@@ -71,12 +71,16 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::cloudwatch_omni::resource(resource)
         && !super::signer_configuration::resource(resource)
         && !super::paymentcryptography_configuration::resource(resource)
+        && resource != "aws_paymentcryptography_key"
         && !super::cloudhsm_configuration::resource(resource)
         && !super::accountaccess_configuration::resource(resource)
         && !super::verifiedpermissions::resource(resource)
+        && resource != "aws_verifiedpermissions_policy_store"
         && !super::network_insights::resource(resource)
         && !super::appmesh_configuration::resource(resource)
+        && resource != "aws_appmesh_mesh"
         && !super::keyspaces_configuration::resource(resource)
+        && resource != "aws_keyspaces_keyspace"
         && !super::dynamodb_transfer::resource(resource)
         && !super::storagegateway::resource(resource)
         && !super::qbusiness::resource(resource)

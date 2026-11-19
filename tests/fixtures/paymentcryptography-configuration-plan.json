@@ -41,6 +41,11 @@
         "expressions": {
           "region": {
             "constant_value": "us-east-1"
+          },
+          "allowed_account_ids": {
+            "constant_value": [
+              "123456789012"
+            ]
           }
         }
       }
