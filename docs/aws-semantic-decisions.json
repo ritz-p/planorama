@@ -72325,10 +72325,10 @@
       }
     },
     "aws_guardduty_malware_protection_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1477,
-      "gap": "#1477 — Resolve the execution role and configured S3 bucket. Exclude object keys and scan outcomes.",
+      "gap": "#1477 — Verified configuration references: role, protected_resource.s3_bucket.bucket_name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72340,7 +72340,7 @@
         "placement": "Supported: Logical Node for the managed guardduty_malware_protection_plan declaration. Provides a resource to manage a GuardDuty Malware Protection Plan",
         "ownership": "Not applicable: The managed guardduty_malware_protection_plan declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the execution role and configured S3 bucket. Exclude object keys and scan outcomes.",
+        "references": "Supported: Verified configuration references: role, protected_resource.s3_bucket.bucket_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_malware_protection_plan summaries.",
         "officialDocumentation": "website/docs/r/guardduty_malware_protection_plan.html.markdown",
@@ -72365,7 +72365,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_destinations.rs",
+          "tests/unit/semantic/guardduty_destinations.rs"
         ],
         "managedDataContract": "Managed newMalwareProtectionPlanResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72622,10 +72624,10 @@
       }
     },
     "aws_guardduty_publishing_destination": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1477,
-      "gap": "#1477 — Resolve detector, type-compatible S3 destination and encryption key independently.",
+      "gap": "#1477 — Verified configuration references: detector_id, destination_arn, kms_key_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72637,9 +72639,9 @@
           "kms_key_arn"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_publishing_destination declaration. ",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve detector, type-compatible S3 destination and encryption key independently.",
+        "references": "Supported: Verified configuration references: detector_id, destination_arn, kms_key_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_publishing_destination summaries.",
         "officialDocumentation": "website/docs/r/guardduty_publishing_destination.html.markdown",
@@ -72670,7 +72672,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_destinations.rs",
+          "tests/unit/semantic/guardduty_destinations.rs"
         ],
         "managedDataContract": "Managed resourcePublishingDestination. No same-name data source in 6.70.0.",
         "dataContracts": {}

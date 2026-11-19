@@ -520,3 +520,7 @@ Graph members and organization settings identify their graph by ARN. Invitation 
 ## Verify GuardDuty detector configuration and membership (#1476)
 
 GuardDuty helpers reference the configured regional detector ID. Member feature settings keep both the detector and member account. Administration, invitation and enrollment settings do not enumerate future members or expose finding filters and feeds.
+
+## Verify GuardDuty publishing and malware protection resources (#1477)
+
+Publishing configurations resolve their detector, S3 destination and KMS key separately. Malware protection plans verify the IAM role and explicit protected bucket. Object prefixes and scan results do not produce resource relationships.

@@ -310,6 +310,11 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "GuardDuty detector",
                 "Detector configuration",
             ),
+            "aws_guardduty_publishing_destination" => (
+                "detector_id",
+                "Publishing detector",
+                "Publishing destinations",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

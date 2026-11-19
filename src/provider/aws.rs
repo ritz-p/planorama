@@ -119,6 +119,7 @@ pub(crate) mod glue_catalog;
 pub(crate) mod glue_encryption;
 mod glue_network;
 pub(crate) mod glue_workloads;
+pub(crate) mod guardduty_destinations;
 pub(crate) mod guardduty_members;
 mod iam;
 pub(crate) mod iam_credentials;
