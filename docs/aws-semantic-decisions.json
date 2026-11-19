@@ -26784,10 +26784,10 @@
       }
     },
     "aws_lakeformation_data_cells_filter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: complete catalog/database/table tuple; filter names are table-qualified, not global. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit filtered table, filter database. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26801,7 +26801,7 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Missing: verified table filter helper; column/row expressions remain opaque.",
         "network": "Not applicable: aws_lakeformation_data_cells_filter has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: complete catalog/database/table tuple; filter names are table-qualified, not global.",
+        "references": "Supported: Explicit filtered table, filter database.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: table_data.table_catalog_id/table_data.database_name identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_data_cells_filter.html.markdown",
@@ -26832,10 +26832,10 @@
       }
     },
     "aws_lakeformation_data_lake_settings": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: explicitly referenced IAM user/role ARNs in complete admin sets; special IAM_ALLOWED_PRINCIPALS and account selectors cannot identify managed principals. Default permission effects remain uninterpreted. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit configured lake administrators. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26850,7 +26850,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_lakeformation_data_lake_settings remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_lakeformation_data_lake_settings has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: explicitly referenced IAM user/role ARNs in complete admin sets; special IAM_ALLOWED_PRINCIPALS and account selectors cannot identify managed principals. Default permission effects remain uninterpreted.",
+        "references": "Supported: Explicit configured lake administrators.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: catalog_id/admins identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_data_lake_settings.html.markdown",
@@ -26889,10 +26889,10 @@
       }
     },
     "aws_lakeformation_identity_center_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: explicit Identity Center instance ARN; computed application_arn/resource_share do not create owned Terraform children. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit identity center instance. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26906,7 +26906,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_lakeformation_identity_center_configuration remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_lakeformation_identity_center_configuration has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: explicit Identity Center instance ARN; computed application_arn/resource_share do not create owned Terraform children.",
+        "references": "Supported: Explicit identity center instance.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: catalog_id/instance_arn identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_identity_center_configuration.html.markdown",
@@ -26974,10 +26974,10 @@
       }
     },
     "aws_lakeformation_lf_tag_expression": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: complete catalog-qualified LF tag keys; selector values do not expand to matched databases/tables. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit catalog tag. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -26991,7 +26991,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_lakeformation_lf_tag_expression remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_lakeformation_lf_tag_expression has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: complete catalog-qualified LF tag keys; selector values do not expand to matched databases/tables.",
+        "references": "Supported: Explicit catalog tag.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: catalog_id/name identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_lf_tag_expression.html.markdown",
@@ -27023,10 +27023,10 @@
       }
     },
     "aws_lakeformation_opt_in": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: typed principal and exact catalog-qualified resource selectors; wildcard/LF policy expansion and Cedar condition effects excluded. Do not merge its lifecycle with permissions. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit configured principal, registered location, catalog tag expression, catalog database, catalog table, table database, catalog tag, filter database, filtered table, named tag policy expression. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27046,7 +27046,7 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_lakeformation_opt_in remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_lakeformation_opt_in has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: typed principal and exact catalog-qualified resource selectors; wildcard/LF policy expansion and Cedar condition effects excluded. Do not merge its lifecycle with permissions.",
+        "references": "Supported: Explicit configured principal, registered location, catalog tag expression, catalog database, catalog table, table database, catalog tag, filter database, filtered table, named tag policy expression.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: principal.data_lake_principal_identifier/resource_data.database.catalog_id identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_opt_in.html.markdown",
@@ -27116,10 +27116,10 @@
       }
     },
     "aws_lakeformation_permissions": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: typed explicit principal/resource configuration links, never effective authorization. IAM_ALLOWED_PRINCIPALS, account IDs, OUs, wildcard tables and LF expressions need distinct non-resource fallbacks. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit configured principal, registered location, catalog database, catalog table, table database, catalog tag, filter database, filtered table, policy tag key. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27148,7 +27148,7 @@
         "placement": "Supported: retain Logical Policy default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_lakeformation_permissions remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_lakeformation_permissions has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: typed explicit principal/resource configuration links, never effective authorization. IAM_ALLOWED_PRINCIPALS, account IDs, OUs, wildcard tables and LF expressions need distinct non-resource fallbacks.",
+        "references": "Supported: Explicit configured principal, registered location, catalog database, catalog table, table database, catalog tag, filter database, filtered table, policy tag key.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: principal/catalog_id identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_permissions.html.markdown",
@@ -27251,10 +27251,10 @@
       }
     },
     "aws_lakeformation_resource": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: mode-gated registered S3 location/Glue connection ARN and explicit IAM role ARN. S3 prefix is not a bucket alias; computed service-linked role does not prove configured reference. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit registered resource, registration role. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27268,7 +27268,7 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: aws_lakeformation_resource remains an independent resource; references to reusable configuration or external endpoints do not prove exclusive embedded ownership.",
         "network": "Not applicable: aws_lakeformation_resource has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: mode-gated registered S3 location/Glue connection ARN and explicit IAM role ARN. S3 prefix is not a bucket alias; computed service-linked role does not prove configured reference.",
+        "references": "Supported: Explicit registered resource, registration role.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: role_arn/use_service_linked_role identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_resource.html.markdown",
@@ -27295,10 +27295,10 @@
       }
     },
     "aws_lakeformation_resource_lf_tag": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: catalog-qualified resource/tag association; singular lf_tag is list and plural is set, not verified aliases. No tag matching to discover other resources. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit catalog database, catalog table, table database, catalog tag. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27318,7 +27318,7 @@
         "placement": "Supported: retain Logical Controller default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: association joins shared catalog/tag resources; do not embed under arbitrary side.",
         "network": "Not applicable: aws_lakeformation_resource_lf_tag has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: catalog-qualified resource/tag association; singular lf_tag is list and plural is set, not verified aliases. No tag matching to discover other resources.",
+        "references": "Supported: Explicit catalog database, catalog table, table database, catalog tag.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: catalog_id/database.catalog_id identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_resource_lf_tag.html.markdown",
@@ -27378,10 +27378,10 @@
       }
     },
     "aws_lakeformation_resource_lf_tags": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 849,
-      "gap": "#722 reviewed: Missing: catalog-qualified resource/tag association; singular lf_tag is list and plural is set, not verified aliases. No tag matching to discover other resources. Follow-up #849.",
+      "gap": "#722 reviewed: Implemented #849. Explicit catalog database, catalog table, table database, catalog tag. See docs/aws-data.md.",
       "review": {
         "issue": 722,
         "implementationCommit": "c50d830c5737a51a362708b71f67e6c407884dbe",
@@ -27401,7 +27401,7 @@
         "placement": "Supported: retain Logical Node default from classification.rs/basic_entries.rs and runtime support matrix; no automatic card promotion.",
         "ownership": "Not applicable: association joins shared catalog/tag resources; do not embed under arbitrary side.",
         "network": "Not applicable: aws_lakeformation_resource_lf_tags has no configured customer-subnet placement contract; service/catalog relationships do not inherit a target VPC.",
-        "references": "Missing: catalog-qualified resource/tag association; singular lf_tag is list and plural is set, not verified aliases. No tag matching to discover other resources.",
+        "references": "Supported: Explicit catalog database, catalog table, table database, catalog tag.",
         "scope": "Partial: Regional (conditional); scope.rs clears account rather than guessing resource ownership. Require known effective region and independent provider/state evidence; target/catalog/account selectors never relocate this resource.",
         "summaries": "Deferred: catalog_id/database.catalog_id identity navigation belongs to #849; additional summaries wait for a known/unknown allowlist in that contract. Payloads, policy effects and runtime health are excluded.",
         "officialDocumentation": "website/docs/r/lakeformation_resource_lf_tags.html.markdown",
