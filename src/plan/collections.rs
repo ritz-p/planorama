@@ -135,6 +135,7 @@ pub(super) fn annotate(
     nodes: &mut [TerraformEntity],
     references: &mut [AttributeReference],
     recover: bool,
+    bind: impl FnOnce(&mut [TerraformEntity]),
 ) -> Vec<crate::model::ConfiguredValueMatch> {
     let mut values = BTreeMap::new();
     let mut prior = BTreeMap::new();
@@ -319,7 +320,7 @@ pub(super) fn annotate(
     } else {
         Vec::new()
     };
-    for reference in references {
+    for reference in references.iter_mut() {
         let consumer = &nodes[reference.target];
         let evidence = if consumer.provider.is_aws()
             && matches!(
@@ -499,5 +500,12 @@ pub(super) fn annotate(
             reference.collection_ids_complete = expected == observed;
         }
     }
+    crate::provider::aws::encryption::enrich(plan, nodes, references);
+    bind(nodes);
+    crate::provider::aws::service_references::annotate_provider_accounts(
+        nodes,
+        references,
+        &elbv2_evidence,
+    );
     recovered
 }
