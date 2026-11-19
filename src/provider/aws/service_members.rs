@@ -119,7 +119,6 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_storagegateway_smb_file_share" => {
                 ("gateway_arn", "Storage Gateway", "File shares")
             }
-            "aws_keyspaces_table" => ("keyspace_name", "Keyspace", "Tables"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")
@@ -434,13 +433,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 ("key_id", "Configured KMS key", "Key configuration")
             }
             "aws_secretsmanager_secret_version" => ("secret_id", "Version secret", "Versions"),
-            "aws_glue_catalog_table" => {
+            "aws_keyspaces_table" | "aws_glue_catalog_table" => {
                 if raw.attributes.iter().any(|reference| {
                     reference.target != index && reference.sources.contains(&index)
                 }) {
                     continue;
                 }
-                ("database_name", "Catalog database", "Tables")
+                if node.resource_type == "aws_keyspaces_table" {
+                    ("keyspace_name", "Keyspace", "Tables")
+                } else {
+                    ("database_name", "Catalog database", "Tables")
+                }
             }
             "aws_acm_certificate" => {
                 if raw.attributes.iter().any(|reference| {
@@ -489,6 +492,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 | "aws_vpc_route_server_peer"
                 | "aws_flow_log"
                 | "aws_cloudfront_monitoring_subscription"
+                | "aws_keyspaces_table"
         ) || super::ipam::owner(&node.resource_type).is_some())
             && raw.nodes[*owner].placement == crate::model::Placement::Spatial)
             || node.resource_type == "aws_appsync_channel_namespace"
