@@ -83,6 +83,7 @@ mod dynamodb;
 pub(crate) mod dynamodb_transfer;
 pub(crate) mod ebs_provenance;
 pub(crate) mod ec2_capacity;
+pub(crate) mod ec2_fleets;
 pub(crate) mod ec2_images;
 pub(crate) mod ecr_configuration;
 mod ecs_capacity;
