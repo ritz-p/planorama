@@ -74504,10 +74504,10 @@
       }
     },
     "aws_securitylake_aws_log_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Retain the account/region-qualified AWS source tuple. A catalog log source does not prove producing workloads.",
+      "gap": "#1482 — Verified configuration references: source.accounts.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74520,7 +74520,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_aws_log_source declaration. Terraform resource for managing an Amazon Security Lake AWS Log Source.",
         "ownership": "Not applicable: The managed securitylake_aws_log_source declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Retain the account/region-qualified AWS source tuple. A catalog log source does not prove producing workloads.",
+        "references": "Supported: Verified configuration references: source.accounts.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_aws_log_source summaries.",
         "officialDocumentation": "website/docs/r/securitylake_aws_log_source.html.markdown",
@@ -74556,17 +74556,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newAWSLogSourceResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_custom_log_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Resolve the crawler IAM role. Preserve source name/version and provider identity without exposing external IDs.",
+      "gap": "#1482 — Verified configuration references: configuration.crawler_configuration.role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74580,7 +74582,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_custom_log_source declaration. Terraform resource for managing an AWS Security Lake Custom Log Source.",
         "ownership": "Not applicable: The managed securitylake_custom_log_source declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Resolve the crawler IAM role. Preserve source name/version and provider identity without exposing external IDs.",
+        "references": "Supported: Verified configuration references: configuration.crawler_configuration.role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_custom_log_source summaries.",
         "officialDocumentation": "website/docs/r/securitylake_custom_log_source.html.markdown",
@@ -74615,17 +74617,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newCustomLogSourceResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_data_lake": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Represent each configured lake region, replication role, encryption key and metastore role. The lake bucket ARN is a service output.",
+      "gap": "#1482 — Verified configuration references: configuration.encryption_configuration, configuration.replication_configuration.role_arn, meta_store_manager_role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74641,7 +74645,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_data_lake declaration. Terraform resource for managing an AWS Security Lake Data Lake.",
         "ownership": "Not applicable: The managed securitylake_data_lake declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Represent each configured lake region, replication role, encryption key and metastore role. The lake bucket ARN is a service output.",
+        "references": "Supported: Verified configuration references: configuration.encryption_configuration, configuration.replication_configuration.role_arn, meta_store_manager_role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_data_lake summaries.",
         "officialDocumentation": "website/docs/r/securitylake_data_lake.html.markdown",
@@ -74697,17 +74701,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newDataLakeResource. No same-name data source in 6.70.0. Deprecated managed attributes: id.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_subscriber": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Resolve custom sources by name/version in scope. Separate subscriber principal from returned bucket and role.",
+      "gap": "#1482 — Verified configuration references: source.custom_log_source_resource.source_name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74722,7 +74728,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_subscriber declaration. Terraform resource for managing an AWS Security Lake Subscriber.",
         "ownership": "Not applicable: The managed securitylake_subscriber declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Resolve custom sources by name/version in scope. Separate subscriber principal from returned bucket and role.",
+        "references": "Supported: Verified configuration references: source.custom_log_source_resource.source_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_subscriber summaries.",
         "officialDocumentation": "website/docs/r/securitylake_subscriber.html.markdown",
@@ -74762,17 +74768,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newSubscriberResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_subscriber_notification": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Resolve the subscriber and HTTPS notification role when configured. Exclude tokens, authorization headers and generated endpoints.",
+      "gap": "#1482 — Verified configuration references: subscriber_id, configuration.https_notification_configuration.target_role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74782,9 +74790,9 @@
           "configuration.https_notification_configuration.target_role_arn"
         ],
         "placement": "Supported: Logical Controller for the managed securitylake_subscriber_notification declaration. Terraform resource for managing an AWS Security Lake Subscriber Notification.",
-        "ownership": "Missing: use a verified subscriber_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Resolve the subscriber and HTTPS notification role when configured. Exclude tokens, authorization headers and generated endpoints.",
+        "references": "Supported: Verified configuration references: subscriber_id, configuration.https_notification_configuration.target_role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_subscriber_notification summaries.",
         "officialDocumentation": "website/docs/r/securitylake_subscriber_notification.html.markdown",
@@ -74809,7 +74817,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newSubscriberNotificationResource. No same-name data source in 6.70.0. Deprecated managed attributes: endpoint_id.",
         "dataContracts": {}

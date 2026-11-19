@@ -315,6 +315,9 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Publishing detector",
                 "Publishing destinations",
             ),
+            "aws_securitylake_subscriber_notification" => {
+                ("subscriber_id", "Security Lake subscriber", "Notifications")
+            }
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

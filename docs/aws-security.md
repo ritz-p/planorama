@@ -540,3 +540,7 @@ Security Hub policy associations distinguish customer policies, the self-managed
 ## Verify Security Hub V2 integration references (#1481)
 
 Only the external integration action resolves its configured connector. Connectors resolve their encryption key and the ServiceNow secret ARN. Credentials, finding mutations and OCSF queries are omitted.
+
+## Verify Security Lake sources, replication and subscribers (#1482)
+
+Lake configuration retains each region and its replication destinations. Encryption keys, crawler, metastore and replication roles, custom source names and versions, and subscriber notifications resolve through their own configured fields. Generated roles, credentials and external IDs are excluded.

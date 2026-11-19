@@ -68,6 +68,72 @@ fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
                 }
             }
         }
+        "aws_securitylake_data_lake" => {
+            for i in 0..v["configuration"].as_array().map_or(0, Vec::len) {
+                let prefix = format!("configuration.{i}");
+                if let Some(home) = value(v, mask, &format!("{prefix}.region"))
+                    .and_then(Value::as_str)
+                    .and_then(region)
+                {
+                    details.push(("configuration.region", "Lake region", home.to_owned()));
+                    if let Some(regions) = strings(
+                        v,
+                        mask,
+                        &format!("{prefix}.replication_configuration.0.regions"),
+                        |s| region(s).is_some(),
+                    )
+                    .filter(|r| !r.is_empty())
+                    {
+                        details.push((
+                            "configuration.replication_configuration.regions",
+                            "Replication regions",
+                            format!("{home} to {}", regions.join(", ")),
+                        ));
+                    }
+                }
+            }
+        }
+        "aws_securitylake_aws_log_source" => {
+            for i in 0..v["source"].as_array().map_or(0, Vec::len) {
+                let p = format!("source.{i}");
+                let Some(name) = value(v, mask, &format!("{p}.source_name"))
+                    .and_then(Value::as_str)
+                    .filter(|s| {
+                        matches!(
+                            *s,
+                            "ROUTE53"
+                                | "VPC_FLOW"
+                                | "SH_FINDINGS"
+                                | "CLOUD_TRAIL_MGMT"
+                                | "LAMBDA_EXECUTION"
+                                | "S3_DATA"
+                                | "EKS_AUDIT"
+                                | "WAF"
+                        )
+                    })
+                else {
+                    continue;
+                };
+                if let Some((regions, accounts)) =
+                    strings(v, mask, &format!("{p}.regions"), |s| region(s).is_some())
+                        .zip(strings(v, mask, &format!("{p}.accounts"), |s| {
+                            AwsAccountScope::new(s).is_some()
+                        }))
+                        .filter(|(r, _)| !r.is_empty())
+                {
+                    let accounts = if accounts.is_empty() {
+                        "all lake accounts".to_owned()
+                    } else {
+                        accounts.join(", ")
+                    };
+                    details.push((
+                        "source",
+                        "AWS log source",
+                        format!("{name} / {accounts} / {}", regions.join(", ")),
+                    ));
+                }
+            }
+        }
         "aws_config_configuration_aggregator" => {
             for block in [
                 "account_aggregation_source",

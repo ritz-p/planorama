@@ -45,3 +45,16 @@ fn linked_regions_keep_their_mode_and_home_region() {
         1
     );
 }
+
+#[test]
+fn lake_regions_and_catalog_log_sources_remain_separate() {
+    let v = json!({"configuration":[{"region":"us-east-1","replication_configuration":[{"regions":["us-west-2"]}]},{"region":"eu-west-1"}]});
+    let s = selections("aws_securitylake_data_lake", &v, &Value::Null);
+    assert!(s.iter().any(|row| row.2 == "us-east-1 to us-west-2"));
+    assert!(s.iter().any(|row| row.2 == "eu-west-1"));
+    let src = json!({"source":[{"source_name":"ROUTE53","regions":["us-east-1"]}]});
+    assert_eq!(
+        selections("aws_securitylake_aws_log_source", &src, &Value::Null)[0].2,
+        "ROUTE53 / all lake accounts / us-east-1"
+    );
+}
