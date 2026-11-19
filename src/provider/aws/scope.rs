@@ -70,6 +70,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
         && !super::appmesh_configuration::resource(resource)
+        && resource != "aws_appmesh_mesh"
         && !super::keyspaces_configuration::resource(resource)
         && !super::dynamodb_transfer::resource(resource)
         && !super::storagegateway::resource(resource)
