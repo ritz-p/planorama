@@ -77,13 +77,41 @@ pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
 }
 pub(super) fn bindings(raw: &Input, r: &AttributeReference) -> bool {
     configured_links::bindings(raw, r, rule)
+        && (raw.nodes[r.target].resource_type != "aws_dlm_lifecycle_policy"
+            || !copy_key(&r.attribute)
+            || r.service_reference_owner_account.is_some()
+                && configured_links::destination_in_same_account(raw, r))
+}
+fn copy_key(path: &str) -> bool {
+    matches!(
+        path,
+        "policy_details.schedule.cross_region_copy_rule.cmk_arn"
+            | "policy_details.action.cross_region_copy.encryption_configuration.cmk_arn"
+    )
 }
 pub(super) fn annotate(
     nodes: &[TerraformEntity],
     refs: &mut [AttributeReference],
     values: &[(&Value, &Value)],
 ) {
-    configured_links::annotate(nodes, refs, values, rule, qualifies)
+    configured_links::annotate(nodes, refs, values, rule, qualifies);
+    for r in refs.iter_mut().filter(|r| {
+        r.service_reference_verified
+            && copy_key(&r.attribute)
+            && nodes[r.target].resource_type == "aws_dlm_lifecycle_policy"
+    }) {
+        let accounts = r
+            .sources
+            .iter()
+            .map(|&source| {
+                let arn = super::service_evidence::known(values, source, "arn")?;
+                crate::model::AwsAccountScope::new(arn.split(':').nth(4)?)
+            })
+            .collect::<Option<std::collections::BTreeSet<_>>>();
+        r.service_reference_owner_account = accounts
+            .filter(|accounts| accounts.len() == 1)
+            .and_then(|mut accounts| accounts.pop_first());
+    }
 }
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
     match r.attribute.as_str() {
@@ -194,25 +222,12 @@ fn destination_matches(
     } else {
         destination == region
     };
-    let consumer = &e.nodes[r.target];
-    let endpoint = &e.nodes[source];
-    let account_matches = |node: &TerraformEntity| {
-        node.provider_configuration
-            .as_ref()
-            .and_then(|provider| provider.account.as_ref())
-            .is_some_and(|scope| scope.as_str() == account)
-    };
     destination_matches
         && key.strip_prefix("key/").is_some_and(|key| !key.is_empty())
-        && super::scope::scope(endpoint)
+        && crate::model::AwsAccountScope::new(account).is_some()
+        && super::scope::scope(&e.nodes[source])
             .and_then(|scope| scope.region)
             .is_some_and(|scope| scope.0 == region)
-        && (account_matches(consumer) && account_matches(endpoint)
-            || consumer
-                .provider_configuration
-                .as_ref()
-                .zip(endpoint.provider_configuration.as_ref())
-                .is_some_and(|(left, right)| left == right && left.account.is_none()))
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/recovery_configuration.rs"]
