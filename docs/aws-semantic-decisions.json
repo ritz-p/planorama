@@ -82213,10 +82213,10 @@
       }
     },
     "aws_controltower_baseline": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1542,
-      "gap": "#1542 — Resolve target_identifier to a verified OU ARN. baseline_identifier identifies a service baseline, not the enabled-baseline declaration or an operation.",
+      "gap": "#1542 — Verify the target OU ARN in the administering account. Catalog identifiers and operation IDs remain metadata.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82230,7 +82230,7 @@
         "placement": "Supported: managed Logical Node for controltower_baseline. Terraform resource for managing an AWS Control Tower Baseline.",
         "ownership": "Not applicable: AWS Control Tower controltower_baseline remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: controltower_baseline declares no VPC/subnet assignment; the configured baseline_identifier does not establish network containment.",
-        "references": "Missing: Resolve target_identifier to a verified OU ARN. baseline_identifier identifies a service baseline, not the enabled-baseline declaration or an operation.",
+        "references": "Supported: Verify the target OU ARN in the administering account. Catalog identifiers and operation IDs remain metadata.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit landing zone manifests and parameter payloads from controltower_baseline summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/controltower_baseline.html.markdown",
@@ -82261,7 +82261,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newResourceBaseline. No same-name data source in the pinned schema.",
         "dataContracts": {},
@@ -82274,10 +82276,10 @@
       }
     },
     "aws_controltower_control": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1542,
-      "gap": "#1542 — Match the target OU ARN; catalog control identifiers and the service-created enabled control ARN are distinct identities.",
+      "gap": "#1542 — Verify the target OU ARN in the administering account. The catalog and enabled control identifiers describe different objects.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82290,7 +82292,7 @@
         "placement": "Supported: managed Logical Node for controltower_control. Allows the application of pre-defined controls to organizational units.",
         "ownership": "Not applicable: AWS Control Tower controltower_control remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: controltower_control declares no VPC/subnet assignment; the configured control_identifier does not establish network containment.",
-        "references": "Missing: Match the target OU ARN; catalog control identifiers and the service-created enabled control ARN are distinct identities.",
+        "references": "Supported: Verify the target OU ARN in the administering account. The catalog and enabled control identifiers describe different objects.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit landing zone manifests and parameter payloads from controltower_control summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/controltower_control.html.markdown",
@@ -82317,7 +82319,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceControl. No same-name data source in the pinned schema.",
         "dataContracts": {}

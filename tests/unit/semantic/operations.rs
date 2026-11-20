@@ -55,3 +55,30 @@ fn cloudtrail_verifies_topic_name_and_event_store_key() {
         Some("Trail notification topic")
     ));
 }
+
+#[test]
+fn controltower_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/controltower-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_controltower_baseline.workloads", "target_identifier"),
+            ("aws_controltower_control.workloads", "target_identifier"),
+        ],
+        ("aws_organizations_organizational_unit.workloads", "arn"),
+    );
+    assert!(label("aws_controltower_baseline", "baseline_identifier").is_none());
+    assert!(label("aws_controltower_baseline", "operation_identifier").is_none());
+    assert!(label("aws_controltower_control", "control_identifier").is_none());
+    assert!(label("aws_controltower_control", "arn").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_controltower_baseline.workloads",
+        "target_identifier",
+        "aws_organizations_organizational_unit.workloads",
+        "Control Tower target OU",
+        false,
+    );
+}
