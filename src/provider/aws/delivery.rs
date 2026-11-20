@@ -108,7 +108,7 @@ fn codeartifact_qualifies(e: &Evidence<'_>, reference: &AttributeReference, sour
     let left = &e.nodes[consumer];
     let right = &e.nodes[source];
     let region = |node: &TerraformEntity| scope(node).and_then(|s| s.region);
-    if !region(left).zip(region(right)).is_some_and(|(a, b)| a == b) {
+    if region(left).zip(region(right)).is_none_or(|(a, b)| a != b) {
         return false;
     }
     let account = |node: usize| {
