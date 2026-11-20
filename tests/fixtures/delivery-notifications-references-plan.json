@@ -1,0 +1,231 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codecommit_repository.delivery",
+      "mode": "managed",
+      "type": "aws_codecommit_repository",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "repository_name": "delivery",
+          "arn": "arn:aws:codecommit:us-east-1:123456789012:delivery"
+        }
+      }
+    },
+    {
+      "address": "aws_codecommit_trigger.delivery",
+      "mode": "managed",
+      "type": "aws_codecommit_trigger",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "repository_name": "delivery",
+          "trigger": [
+            {
+              "destination_arn": "arn:aws:sns:us-east-1:123456789012:notifications"
+            },
+            {
+              "destination_arn": "arn:aws:lambda:us-east-1:123456789012:function:notifications"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codestarnotifications_notification_rule.delivery",
+      "mode": "managed",
+      "type": "aws_codestarnotifications_notification_rule",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource": "arn:aws:codecommit:us-east-1:123456789012:delivery",
+          "target": [
+            {
+              "type": "SNS",
+              "address": "arn:aws:sns:us-east-1:123456789012:notifications"
+            },
+            {
+              "type": "AWSChatbotSlack",
+              "address": "arn:aws:chatbot::123456789012:chat-configuration/slack-channel/alerts"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.delivery",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:notifications"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.delivery",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:notifications"
+        }
+      }
+    },
+    {
+      "address": "aws_chatbot_slack_channel_configuration.delivery",
+      "mode": "managed",
+      "type": "aws_chatbot_slack_channel_configuration",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:chatbot::123456789012:chat-configuration/slack-channel/alerts"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codecommit_repository.delivery",
+          "mode": "managed",
+          "type": "aws_codecommit_repository",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_codecommit_trigger.delivery",
+          "mode": "managed",
+          "type": "aws_codecommit_trigger",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {
+            "repository_name": {
+              "references": [
+                "aws_codecommit_repository.delivery.repository_name"
+              ]
+            },
+            "trigger": [
+              {
+                "destination_arn": {
+                  "references": [
+                    "aws_sns_topic.delivery.arn"
+                  ]
+                }
+              },
+              {
+                "destination_arn": {
+                  "references": [
+                    "aws_lambda_function.delivery.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codestarnotifications_notification_rule.delivery",
+          "mode": "managed",
+          "type": "aws_codestarnotifications_notification_rule",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource": {
+              "references": [
+                "aws_codecommit_repository.delivery.arn"
+              ]
+            },
+            "target": [
+              {
+                "address": {
+                  "references": [
+                    "aws_sns_topic.delivery.arn"
+                  ]
+                }
+              },
+              {
+                "address": {
+                  "references": [
+                    "aws_chatbot_slack_channel_configuration.delivery.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_sns_topic.delivery",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.delivery",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_chatbot_slack_channel_configuration.delivery",
+          "mode": "managed",
+          "type": "aws_chatbot_slack_channel_configuration",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
