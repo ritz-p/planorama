@@ -63,7 +63,7 @@ pub(crate) mod cognito;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
-mod communications;
+pub(crate) mod communications;
 mod components;
 pub(crate) mod config_aggregation;
 pub(crate) mod config_delivery;

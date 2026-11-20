@@ -109,3 +109,77 @@ fn communications_codestar_matches_the_provider_chat_output() {
         assert!(!check(&wrong));
     }
 }
+
+#[test]
+fn communications_voice_connector_placement_and_unordered_members() {
+    let mut fixture = plan(&[
+        (
+            "aws_chime_voice_connector.west",
+            json!({"id":"west","aws_region":"us-west-2","arn":"arn:aws:chime:us-west-2:123456789012:vc/west"}),
+            json!({}),
+        ),
+        (
+            "aws_chime_voice_connector.east",
+            json!({"id":"east","arn":"arn:aws:chime:us-east-1:123456789012:vc/east"}),
+            json!({}),
+        ),
+        (
+            "aws_chime_voice_connector_group.both",
+            json!({"connector":[{"voice_connector_id":"east","priority":2},{"voice_connector_id":"west","priority":1}]}),
+            json!({
+                "connector":[{"voice_connector_id":{"references":["aws_chime_voice_connector.west.id"]}},{"voice_connector_id":{"references":["aws_chime_voice_connector.east.id"]}}]
+            }),
+        ),
+        (
+            "aws_chime_voice_connector_termination_credentials.auth",
+            json!({"voice_connector_id":"west","credentials":[{"username":"PRIVATE_CREDENTIAL","password":"PRIVATE_PASSWORD"}]}),
+            json!({
+                "voice_connector_id":{"references":["aws_chime_voice_connector.west.id"]}
+            }),
+        ),
+    ]);
+    let west = "aws_chime_voice_connector.west";
+    let credentials = "aws_chime_voice_connector_termination_credentials.auth";
+    let group = "aws_chime_voice_connector_group.both";
+    let parsed = graph(&fixture);
+    let node = |address| parsed.nodes.iter().find(|n| n.address == address).unwrap();
+    assert_eq!(
+        node(west)
+            .entity
+            .scope
+            .as_ref()
+            .unwrap()
+            .region
+            .as_ref()
+            .unwrap()
+            .0,
+        "us-west-2"
+    );
+    assert_eq!(
+        node(credentials).member_owner.as_ref().unwrap().attribute,
+        "voice_connector_id"
+    );
+    assert!(verified(
+        &parsed,
+        group,
+        "connector.voice_connector_id",
+        label(super::VOICE_GROUP, "connector.voice_connector_id")
+    ));
+    fixture["resource_changes"][0]["change"]["after"]["aws_region"] = json!("us-east-1");
+    let parsed = graph(&fixture);
+    assert!(!verified(
+        &parsed,
+        group,
+        "connector.voice_connector_id",
+        label(super::VOICE_GROUP, "connector.voice_connector_id")
+    ));
+    assert!(
+        parsed
+            .nodes
+            .iter()
+            .find(|n| n.address == credentials)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+}
