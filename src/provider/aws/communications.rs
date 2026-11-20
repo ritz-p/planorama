@@ -47,6 +47,7 @@ fn instance_child(kind: &str) -> bool {
             | QUEUE
             | QUICK
             | ROUTING
+            | PHONE_FLOW
     )
 }
 
@@ -67,6 +68,8 @@ const PHONE: &str = "aws_connect_phone_number";
 const QUEUE_ID: Outputs = &[(QUEUE, &["queue_id"])];
 const FLOW_ID: Outputs = &[(FLOW, &["contact_flow_id"])];
 const PHONE_ID: Outputs = &[(PHONE, &["id"])];
+
+const PHONE_FLOW: &str = "aws_connect_phone_number_contact_flow_association";
 
 fn voice_configuration(kind: &str) -> bool {
     matches!(
@@ -224,6 +227,11 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             scalar("Connect default outbound queue", QUEUE_ID)
         }
         (ROUTING, "queue_configs.queue_id") => Rule::scalar_set("Connect routing queues", QUEUE_ID),
+        (PHONE, "target_arn") => {
+            scalar("Connect phone number claim target", &[(CONNECT, &["arn"])])
+        }
+        (PHONE_FLOW, "phone_number_id") => scalar("Connect associated phone number", PHONE_ID),
+        (PHONE_FLOW, "contact_flow_id") => scalar("Connect associated contact flow", FLOW_ID),
         _ => return None,
     })
 }
@@ -345,6 +353,13 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     .is_some_and(|region| region.0 == wanted)
             });
     }
+    if e.nodes[target].resource_type == PHONE_FLOW {
+        let number = endpoint(e, target, "phone_number_id", PHONE, "id");
+        let flow = endpoint(e, target, "contact_flow_id", FLOW, "contact_flow_id");
+        return number.zip(flow).is_some_and(|(number, flow)| {
+            same_instance(e, target, number) && same_instance(e, target, flow)
+        });
+    }
     if r.attribute == "instance_id" && instance_child(&e.nodes[target].resource_type) {
         return true;
     }
@@ -363,6 +378,9 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     ) {
         return same_instance(e, target, source)
             && (e.nodes[target].resource_type != QUICK || quick_connect_shape(e, target, path));
+    }
+    if e.nodes[target].resource_type == PHONE && r.attribute == "target_arn" {
+        return connect_instance_arn(e, source);
     }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),

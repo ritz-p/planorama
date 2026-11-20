@@ -89156,7 +89156,7 @@
       }
     },
     "aws_connect_phone_number": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1602,
       "gap": "#1602 — Verify an explicit compatible Connect instance target ARN. The returned phone number and allocation status do not identify a contact flow or a live route.",
@@ -89176,7 +89176,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Phone Number.",
         "ownership": "Not applicable: The claimed number stays independently addressable and may have distinct contact-flow assignments.",
         "network": "Not applicable: Phone allocation does not establish network placement.",
-        "references": "Missing: Verify an explicit compatible Connect instance target ARN. The returned phone number and allocation status do not identify a contact flow or a live route.",
+        "references": "Supported: Verify an explicit compatible Connect instance target ARN. The returned phone number and allocation status do not identify a contact flow or a live route.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Country and phone type describe allocation, not AWS region. Check the configured target's scope.",
         "summaries": "Intentionally unsupported: omit phone numbers, prefixes and allocation status. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_phone_number.html.markdown",
@@ -89227,14 +89227,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourcePhoneNumber. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_connect_phone_number_contact_flow_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1602,
       "gap": "#1602 — Verify configured instance, phone-number ID and flow ID together. Confirm the number's claimed target and the flow's instance before associating them.",
@@ -89250,7 +89252,7 @@
         "placement": "Supported: managed Logical Association with the Amazon Connect service label. Associates a flow with a phone number claimed to an Amazon Connect instance.",
         "ownership": "Not applicable: Leave both endpoints independent and present only the association.",
         "network": "Not applicable: Call routing does not establish VPC placement.",
-        "references": "Missing: Verify configured instance, phone-number ID and flow ID together. Confirm the number's claimed target and the flow's instance before associating them.",
+        "references": "Supported: Verify configured instance, phone-number ID and flow ID together. Confirm the number's claimed target and the flow's instance before associating them.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require the same verified instance and compatible account and region evidence for both endpoints.",
         "summaries": "Intentionally unsupported: omit phone numbers and call reachability. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_phone_number_contact_flow_association.html.markdown",
@@ -89276,7 +89278,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed newPhoneNumberContactFlowAssociationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
