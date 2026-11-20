@@ -250,3 +250,52 @@ fn communications_media_insights_respects_selector_and_streaming_switches() {
         label(super::STREAMING, "voice_connector_id")
     ));
 }
+
+#[test]
+fn communications_chime_cdr_and_profile_key_require_explicit_settings() {
+    let arn = "arn:aws:kms:us-east-1:123456789012:key/test";
+    let mut fixture = plan(&[
+        (
+            "aws_s3_bucket.records",
+            json!({"bucket":"chime-records"}),
+            json!({}),
+        ),
+        ("aws_kms_key.profile", json!({"arn":arn}), json!({})),
+        (
+            "aws_chimesdkvoice_global_settings.main",
+            json!({"voice_connector":[{"cdr_bucket":"chime-records"}]}),
+            json!({
+                "voice_connector":[{"cdr_bucket":{"references":["aws_s3_bucket.records.bucket"]}}]
+            }),
+        ),
+        (
+            "aws_chimesdkvoice_voice_profile_domain.main",
+            json!({"server_side_encryption_configuration":[{"kms_key_arn":arn}]}),
+            json!({
+                "server_side_encryption_configuration":[{"kms_key_arn":{"references":["aws_kms_key.profile.arn"]}}]
+            }),
+        ),
+    ]);
+    let global = "aws_chimesdkvoice_global_settings.main";
+    let profile = "aws_chimesdkvoice_voice_profile_domain.main";
+    assert!(verified(
+        &graph(&fixture),
+        global,
+        super::CDR,
+        label(super::VOICE_GLOBAL, super::CDR)
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        profile,
+        super::PROFILE_KEY,
+        label(super::PROFILE_DOMAIN, super::PROFILE_KEY)
+    ));
+    fixture["resource_changes"][3]["change"]["after_unknown"] =
+        json!({"server_side_encryption_configuration":true});
+    assert!(!verified(
+        &graph(&fixture),
+        profile,
+        super::PROFILE_KEY,
+        label(super::PROFILE_DOMAIN, super::PROFILE_KEY)
+    ));
+}
