@@ -146,6 +146,32 @@ fn license_manager_verifies_configured_endpoints() {
 }
 
 #[test]
+fn ram_verifies_global_core_network_in_both_associations() {
+    let fixture = include_str!("../../fixtures/ram-references-plan.json");
+    for (address, path, label) in [
+        (
+            "aws_ram_resource_association.core",
+            "resource_arn",
+            "Shared resource",
+        ),
+        (
+            "aws_ram_resource_share_associations_exclusive.acl",
+            "resource_arns",
+            "Shared resources",
+        ),
+    ] {
+        check_provider_alias(
+            fixture,
+            address,
+            path,
+            "aws_networkmanager_core_network.shared",
+            label,
+            false,
+        );
+    }
+}
+
+#[test]
 fn ram_verifies_configured_endpoints() {
     let fixture = include_str!("../../fixtures/ram-references-plan.json");
     check(

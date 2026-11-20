@@ -104,7 +104,8 @@
           "resource_share_arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example-exclusive",
           "resource_arns": [
             "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-example",
-            "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/example"
+            "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/example",
+            "arn:aws:networkmanager::123456789012:core-network/core-network-0123456789abcdef0"
           ],
           "principals": [
             "arn:aws:iam::210987654321:role/Shared"
@@ -190,6 +191,37 @@
         ],
         "after": {
           "id": "210987654321"
+        }
+      }
+    },
+    {
+      "address": "aws_ram_resource_association.core",
+      "mode": "managed",
+      "type": "aws_ram_resource_association",
+      "name": "core",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_share_arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example",
+          "resource_arn": "arn:aws:networkmanager::123456789012:core-network/core-network-0123456789abcdef0"
+        }
+      }
+    },
+    {
+      "address": "aws_networkmanager_core_network.shared",
+      "type": "aws_networkmanager_core_network",
+      "name": "shared",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:networkmanager::123456789012:core-network/core-network-0123456789abcdef0"
         }
       }
     }
@@ -321,7 +353,8 @@
             "resource_arns": {
               "references": [
                 "aws_subnet.shared.arn",
-                "aws_acmpca_certificate_authority.shared.arn"
+                "aws_acmpca_certificate_authority.shared.arn",
+                "aws_networkmanager_core_network.shared.arn"
               ]
             },
             "principals": {
@@ -373,6 +406,33 @@
           "mode": "managed",
           "type": "aws_organizations_account",
           "name": "recipient",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ram_resource_association.core",
+          "mode": "managed",
+          "type": "aws_ram_resource_association",
+          "name": "core",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_share_arn": {
+              "references": [
+                "aws_ram_resource_share.standard.arn"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_networkmanager_core_network.shared.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_networkmanager_core_network.shared",
+          "type": "aws_networkmanager_core_network",
+          "name": "shared",
+          "mode": "managed",
           "provider_config_key": "aws",
           "expressions": {}
         }
