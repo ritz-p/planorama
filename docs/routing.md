@@ -384,6 +384,9 @@ length and backtracking bound candidates in the updated endpoint/obstacle
 geometry, with 128px of length slack for the entire pass. This linear reference
 update permits necessary endpoint separation and obstacle growth without an
 expensive shortest-path comparison or accumulating detour allowances.
+When two long runs adjacent to distinct ports on the same side of a node have
+touching or overlapping strokes, each route gets a fixed backtracking allowance
+equal to the initial centerline spacing deficit (at most 16px).
 A short offset is measured
 relative to its neighboring legs, not treated as universally invalid near a port.
 Exact overlap cannot increase on rerouted edges. Whole-route clarity takes priority
