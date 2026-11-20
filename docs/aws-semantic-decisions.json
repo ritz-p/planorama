@@ -85869,10 +85869,10 @@
       }
     },
     "aws_amplify_app": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1583,
-      "gap": "#1583 — #1493 already verifies its ARN as a WAFv2 association target. Verify the configured build service and SSR compute IAM role ARNs separately, without inferring which code paths invoke either role.",
+      "gap": "#1583 — Verify separately configured build service and SSR compute IAM role ARNs and preserve the WAFv2 association contract from #1493.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -85886,7 +85886,7 @@
         "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify App resource.",
         "ownership": "Not applicable: The app is independently addressable. Service and compute roles can be shared.",
         "network": "Not applicable: A platform discriminator and IAM roles do not configure VPC attachment.",
-        "references": "Partial: #1493 already verifies its ARN as a WAFv2 association target. Verify the configured build service and SSR compute IAM role ARNs separately, without inferring which code paths invoke either role.",
+        "references": "Supported: Verify separately configured build service and SSR compute IAM role ARNs and preserve the WAFv2 association contract from #1493.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The app remains regional even when a CloudFront-scope ACL protects its ARN.",
         "summaries": "Intentionally unsupported: omit repository credentials, build specifications and environment variables. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/amplify_app.html.markdown",
@@ -85918,17 +85918,19 @@
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/waf.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceApp. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_amplify_backend_environment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1583,
-      "gap": "#1583 — Verify the exact app ID. The returned or optional deployment artifact locator and stack name do not identify a verified managed bucket or stack. Qualify environment ownership by a unique app and environment ARN. Preserve the declaration on uncertain ownership.",
+      "gap": "#1583 — Verify the configured app ID against the backend environment ARN and name. Deployment artifacts and stack names do not establish additional endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -85941,9 +85943,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify Backend Environment resource.",
-        "ownership": "Missing: Qualify environment ownership by a unique app and environment ARN. Preserve the declaration on uncertain ownership.",
+        "ownership": "Supported: Present under the verified Amplify app when the environment ARN qualifies its ownership.",
         "network": "Not applicable: Backend environment identity does not prove VPC placement of its CloudFormation resources.",
-        "references": "Missing: Verify the exact app ID. The returned or optional deployment artifact locator and stack name do not identify a verified managed bucket or stack.",
+        "references": "Supported: Verify the configured app ID against the backend environment ARN and name. Deployment artifacts and stack names do not establish additional endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Resolve the regional app in the environment's provider scope.",
         "summaries": "Intentionally unsupported: omit artifact locations and backend stack contents. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/amplify_backend_environment.html.markdown",
@@ -85977,17 +85979,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceBackendEnvironment. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_amplify_branch": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1583,
-      "gap": "#1583 — Verify the configured app ID and backend environment ARN in the same app. Computed associated resources and pull request source and destination names do not give architectural endpoints. Resolve ownership by the qualified app. Keep reusable backend environments independently addressable.",
+      "gap": "#1583 — Verify the configured app ID and same-app backend environment ARN. Associated resources and pull request branch outputs do not establish further endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86002,9 +86006,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify Branch resource.",
-        "ownership": "Missing: Resolve ownership by the qualified app. Keep reusable backend environments independently addressable.",
+        "ownership": "Supported: Present under the verified app and preserve an independent identity for the backend environment.",
         "network": "Not applicable: Branch configuration does not configure a subnet or VPC.",
-        "references": "Missing: Verify the configured app ID and backend environment ARN in the same app. Computed associated resources and pull request source and destination names do not give architectural endpoints.",
+        "references": "Supported: Verify the configured app ID and same-app backend environment ARN. Associated resources and pull request branch outputs do not establish further endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Branch names are only unique within the regional app.",
         "summaries": "Intentionally unsupported: omit repository content, credentials and environment values. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/amplify_branch.html.markdown",
@@ -86049,7 +86053,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceBranch. No same-name data source in the pinned schema.",
         "dataContracts": {}
