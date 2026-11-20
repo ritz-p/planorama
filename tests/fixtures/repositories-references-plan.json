@@ -1,0 +1,201 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codecommit_approval_rule_template_association.review",
+      "mode": "managed",
+      "type": "aws_codecommit_approval_rule_template_association",
+      "name": "review",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "approval_rule_template_name": "review",
+          "repository_name": "repo"
+        }
+      }
+    },
+    {
+      "address": "aws_codecommit_approval_rule_template.review",
+      "mode": "managed",
+      "type": "aws_codecommit_approval_rule_template",
+      "name": "review",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "review"
+        }
+      }
+    },
+    {
+      "address": "aws_codecommit_repository.repo",
+      "mode": "managed",
+      "type": "aws_codecommit_repository",
+      "name": "repo",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "repository_name": "repo",
+          "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_codegurureviewer_repository_association.review",
+      "mode": "managed",
+      "type": "aws_codegurureviewer_repository_association",
+      "name": "review",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_key_details": [
+            {
+              "encryption_option": "CUSTOMER_MANAGED_CMK",
+              "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+            }
+          ],
+          "repository": [
+            {
+              "codecommit": [
+                {
+                  "name": "repo"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.repo",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "repo",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codecommit_approval_rule_template_association.review",
+          "mode": "managed",
+          "type": "aws_codecommit_approval_rule_template_association",
+          "name": "review",
+          "provider_config_key": "aws",
+          "expressions": {
+            "approval_rule_template_name": {
+              "references": [
+                "aws_codecommit_approval_rule_template.review.name"
+              ]
+            },
+            "repository_name": {
+              "references": [
+                "aws_codecommit_repository.repo.repository_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codecommit_approval_rule_template.review",
+          "mode": "managed",
+          "type": "aws_codecommit_approval_rule_template",
+          "name": "review",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_codecommit_repository.repo",
+          "mode": "managed",
+          "type": "aws_codecommit_repository",
+          "name": "repo",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_id": {
+              "references": [
+                "aws_kms_key.repo.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codegurureviewer_repository_association.review",
+          "mode": "managed",
+          "type": "aws_codegurureviewer_repository_association",
+          "name": "review",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_details": [
+              {
+                "kms_key_id": {
+                  "references": [
+                    "aws_kms_key.repo.arn"
+                  ]
+                }
+              }
+            ],
+            "repository": [
+              {
+                "codecommit": [
+                  {
+                    "name": {
+                      "references": [
+                        "aws_codecommit_repository.repo.repository_name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kms_key.repo",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "repo",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

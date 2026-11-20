@@ -1,0 +1,231 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_fms_admin_account.sample0",
+      "mode": "managed",
+      "type": "aws_fms_admin_account",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample1",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_fms_policy.sample2",
+      "mode": "managed",
+      "type": "aws_fms_policy",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_set_ids": [
+            "fms_resource_set-fixture"
+          ],
+          "include_map": [
+            {
+              "account": [
+                "123456789012"
+              ],
+              "orgunit": [
+                "ou-abcd-12345678"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_fms_resource_set.sample3",
+      "mode": "managed",
+      "type": "aws_fms_resource_set",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "fms_resource_set-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_organizational_unit.sample4",
+      "mode": "managed",
+      "type": "aws_organizations_organizational_unit",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ou-abcd-12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_fms_policy.excluded",
+      "mode": "managed",
+      "type": "aws_fms_policy",
+      "name": "excluded",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_set_ids": [
+            "fms_resource_set-fixture"
+          ],
+          "exclude_map": [
+            {
+              "account": [
+                "123456789012"
+              ],
+              "orgunit": [
+                "ou-abcd-12345678"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_fms_admin_account.sample0",
+          "mode": "managed",
+          "type": "aws_fms_admin_account",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.sample1",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fms_policy.sample2",
+          "mode": "managed",
+          "type": "aws_fms_policy",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_set_ids": {
+              "references": [
+                "aws_fms_resource_set.sample3.id"
+              ]
+            },
+            "include_map": [
+              {
+                "account": {
+                  "references": [
+                    "aws_organizations_account.sample1.id"
+                  ]
+                },
+                "orgunit": {
+                  "references": [
+                    "aws_organizations_organizational_unit.sample4.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_fms_resource_set.sample3",
+          "mode": "managed",
+          "type": "aws_fms_resource_set",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_organizational_unit.sample4",
+          "mode": "managed",
+          "type": "aws_organizations_organizational_unit",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fms_policy.excluded",
+          "mode": "managed",
+          "type": "aws_fms_policy",
+          "name": "excluded",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_set_ids": {
+              "references": [
+                "aws_fms_resource_set.sample3.id"
+              ]
+            },
+            "exclude_map": [
+              {
+                "account": {
+                  "references": [
+                    "aws_organizations_account.sample1.id"
+                  ]
+                },
+                "orgunit": {
+                  "references": [
+                    "aws_organizations_organizational_unit.sample4.id"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

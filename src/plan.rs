@@ -15,8 +15,10 @@ mod relevance;
 mod remote;
 mod routes;
 mod states;
+#[cfg(test)]
 pub use states::parse_inputs;
-pub(crate) use states::parse_inputs_with_value_matches;
+#[cfg(not(target_arch = "wasm32"))]
+pub(crate) use states::parse_inputs_with;
 #[cfg(test)]
 #[path = "../tests/unit/plan.rs"]
 mod tests;
@@ -36,6 +38,14 @@ pub(crate) fn parse(json: &str) -> Result<TerraformPlan, String> {
 }
 
 pub(crate) fn parse_with_value_matches(json: &str, recover: bool) -> Result<TerraformPlan, String> {
+    parse_with_provider_bindings(json, recover, |_| {})
+}
+
+pub(crate) fn parse_with_provider_bindings(
+    json: &str,
+    recover: bool,
+    bind: impl FnOnce(&mut [TerraformEntity]),
+) -> Result<TerraformPlan, String> {
     let _timing = crate::timing::span("terraform_parse_resolve", &[("input_bytes", json.len())]);
     let plan: Value = serde_json::from_str(json.trim_start_matches('\u{feff}'))
         .map_err(|e| format!("invalid JSON: {e}"))?;
@@ -114,8 +124,7 @@ pub(crate) fn parse_with_value_matches(json: &str, recover: bool) -> Result<Terr
         false,
     );
     let configured_value_matches =
-        collections::annotate(&plan, &mut nodes, &mut attributes, recover);
-    crate::provider::aws::encryption::enrich(&plan, &mut nodes, &mut attributes);
+        collections::annotate(&plan, &mut nodes, &mut attributes, recover, bind);
     let graph_references = attributes::collect(
         &plan["configuration"]["root_module"],
         &nodes,

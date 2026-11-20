@@ -10,6 +10,9 @@ pub(crate) struct Row<'a> {
 
 impl Row<'_> {
     pub(crate) fn label(&self, available: bool, qualified: bool) -> String {
+        if let crate::model::ReferenceKind::ConfiguredScope(value) = &self.reference.kind {
+            return format!("{}: {value}", self.reference.label);
+        }
         if self.reference.kind == crate::model::ReferenceKind::Information {
             return self.reference.label.into();
         }
@@ -97,7 +100,11 @@ fn verified(reference: &ResourceReference) -> bool {
 pub(crate) fn rows(node: &Node) -> Vec<Row<'_>> {
     let mut rows = Vec::new();
     for reference in &node.references {
-        if reference.kind == crate::model::ReferenceKind::Information {
+        if matches!(
+            reference.kind,
+            crate::model::ReferenceKind::Information
+                | crate::model::ReferenceKind::ConfiguredScope(_)
+        ) {
             rows.push(Row {
                 reference,
                 target: None,

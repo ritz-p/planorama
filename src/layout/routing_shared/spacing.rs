@@ -331,6 +331,7 @@ async fn refine_with_budget_step(
     crate::work::checkpoint().await;
     let original = (layout.width, layout.height);
     let baseline: Vec<_> = layout.paths.iter().map(|p| Shape::measure(p)).collect();
+    let slack = quality::terminal_lane_slack(graph, &layout.paths);
     let mut reference = layout.paths.clone();
     let mut stats = Statistics::default();
     let mut history = std::collections::BTreeSet::new();
@@ -350,7 +351,7 @@ async fn refine_with_budget_step(
                 && queued.insert(corridor.key())
         });
         plan::reserve_urgent(&mut corridors, budget.attempts - stats.attempts);
-        let current_baseline = quality::translated_baseline(&baseline, &reference);
+        let current_baseline = quality::translated_baseline(&baseline, &reference, &slack);
         let mut changed = false;
         for corridor in corridors {
             crate::work::checkpoint().await;
@@ -385,7 +386,8 @@ async fn refine_with_budget_step(
                 }
             }
             planned.allocate(layout);
-            let planned_baseline = quality::translated_baseline(&baseline, &planned_reference);
+            let planned_baseline =
+                quality::translated_baseline(&baseline, &planned_reference, &slack);
             if reroute::apply_step(
                 graph,
                 layout,

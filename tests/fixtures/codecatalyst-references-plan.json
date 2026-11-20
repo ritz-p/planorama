@@ -1,0 +1,131 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codecatalyst_dev_environment.editor",
+      "mode": "managed",
+      "type": "aws_codecatalyst_dev_environment",
+      "name": "editor",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "space_name": "studio",
+          "project_name": "delivery",
+          "repositories": [
+            {
+              "repository_name": "app",
+              "branch_name": "main"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codecatalyst_project.delivery",
+      "mode": "managed",
+      "type": "aws_codecatalyst_project",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "space_name": "studio",
+          "name": "delivery",
+          "display_name": "Delivery"
+        }
+      }
+    },
+    {
+      "address": "aws_codecatalyst_source_repository.app",
+      "mode": "managed",
+      "type": "aws_codecatalyst_source_repository",
+      "name": "app",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "space_name": "studio",
+          "project_name": "delivery",
+          "name": "app"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codecatalyst_dev_environment.editor",
+          "mode": "managed",
+          "type": "aws_codecatalyst_dev_environment",
+          "name": "editor",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project_name": {
+              "references": [
+                "aws_codecatalyst_project.delivery.name"
+              ]
+            },
+            "repositories": [
+              {
+                "repository_name": {
+                  "references": [
+                    "aws_codecatalyst_source_repository.app.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codecatalyst_project.delivery",
+          "mode": "managed",
+          "type": "aws_codecatalyst_project",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_codecatalyst_source_repository.app",
+          "mode": "managed",
+          "type": "aws_codecatalyst_source_repository",
+          "name": "app",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project_name": {
+              "references": [
+                "aws_codecatalyst_project.delivery.name"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

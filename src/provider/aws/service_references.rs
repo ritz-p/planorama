@@ -226,6 +226,81 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::waf_destinations::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::waf_statements::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::waf_classic::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::shield::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::arc_readiness::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::arc_routing_control::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::resilience_hub::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::operations::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::delivery::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::firewall_manager::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::fis_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::arc_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::security_lake::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::securityhub_integrations::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::securityhub_organization::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::macie_classification::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::inspector_assessments::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::guardduty_destinations::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::guardduty_members::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::detective_graphs::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::config_delivery::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::config_rules::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::config_aggregation::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::audit_manager::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::access_analyzer::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::verified_access::label(resource, attribute) {
         return Some(label);
     }
@@ -913,6 +988,27 @@ fn indexed_scalar<'a>(
         .flatten()
 }
 
+pub(crate) fn annotate_provider_accounts(
+    nodes: &[TerraformEntity],
+    references: &mut [AttributeReference],
+    evidence: &[(&Value, &Value)],
+) {
+    super::operations::annotate(nodes, references, evidence);
+    super::delivery::annotate(nodes, references, evidence);
+    super::macie_classification::annotate(nodes, references, evidence);
+    super::arc_configuration::annotate(nodes, references, evidence);
+    super::fis_configuration::annotate(nodes, references, evidence);
+    super::resilience_hub::annotate(nodes, references, evidence);
+    super::arc_routing_control::annotate(nodes, references, evidence);
+    super::arc_readiness::annotate(nodes, references, evidence);
+    super::shield::annotate(nodes, references, evidence);
+    super::waf_classic::annotate(nodes, references, evidence);
+    super::waf_statements::annotate(nodes, references, evidence);
+    super::waf::annotate_associations(nodes, references, evidence);
+    super::waf_destinations::annotate(nodes, references, evidence);
+    super::detective_graphs::annotate(nodes, references, evidence);
+}
+
 pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     references: &mut [AttributeReference],
@@ -1007,8 +1103,7 @@ pub(crate) fn annotate(
                             actual.and_then(|arn| arn.strip_suffix(":*")) == Some(target)
                         })))
         });
-        reference.service_reference_verified &=
-            super::waf::verify_scope(nodes, reference, evidence);
+        reference.service_reference_verified &= super::waf::verify_scope(nodes, reference);
         reference.service_reference_verified &= super::dynamodb::verify(nodes, reference, evidence);
         if super::s3::object(&node.resource_type) {
             reference.service_reference_verified &=
@@ -1154,6 +1249,18 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::firewall_manager::annotate(nodes, references, evidence);
+    super::security_lake::annotate(nodes, references, evidence);
+    super::securityhub_integrations::annotate(nodes, references, evidence);
+    super::securityhub_organization::annotate(nodes, references, evidence);
+    super::inspector_assessments::annotate(nodes, references, evidence);
+    super::guardduty_destinations::annotate(nodes, references, evidence);
+    super::guardduty_members::annotate(nodes, references, evidence);
+    super::config_delivery::annotate(nodes, references, evidence);
+    super::config_rules::annotate(nodes, references, evidence);
+    super::config_aggregation::annotate(nodes, references, evidence);
+    super::audit_manager::annotate(nodes, references, evidence);
+    super::access_analyzer::annotate(nodes, references, evidence);
     super::verified_access::annotate(nodes, references, evidence);
     super::transit_multicast::annotate(nodes, references, evidence);
     super::transit_policies::annotate(nodes, references, evidence);
@@ -1250,6 +1357,31 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::waf_destinations::bindings(raw, reference)
+        && super::waf_statements::bindings(raw, reference)
+        && super::waf_classic::bindings(raw, reference)
+        && super::shield::bindings(raw, reference)
+        && super::arc_readiness::bindings(raw, reference)
+        && super::arc_routing_control::bindings(raw, reference)
+        && super::resilience_hub::bindings(raw, reference)
+        && super::operations::bindings(raw, reference)
+        && super::delivery::bindings(raw, reference)
+        && super::firewall_manager::bindings(raw, reference)
+        && super::fis_configuration::bindings(raw, reference)
+        && super::arc_configuration::bindings(raw, reference)
+        && super::security_lake::bindings(raw, reference)
+        && super::securityhub_integrations::bindings(raw, reference)
+        && super::securityhub_organization::bindings(raw, reference)
+        && super::macie_classification::bindings(raw, reference)
+        && super::inspector_assessments::bindings(raw, reference)
+        && super::guardduty_destinations::bindings(raw, reference)
+        && super::guardduty_members::bindings(raw, reference)
+        && super::detective_graphs::bindings(raw, reference)
+        && super::config_delivery::bindings(raw, reference)
+        && super::config_rules::bindings(raw, reference)
+        && super::config_aggregation::bindings(raw, reference)
+        && super::audit_manager::bindings(raw, reference)
+        && super::access_analyzer::bindings(raw, reference)
         && super::verified_access::bindings(raw, reference)
         && super::transit_multicast::bindings(raw, reference)
         && super::transit_policies::bindings(raw, reference)
@@ -1985,6 +2117,31 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::waf_destinations::indexed(&node.resource_type, &reference.attribute)
+            || super::waf_statements::indexed(&node.resource_type, &reference.attribute)
+            || super::waf_classic::indexed(&node.resource_type, &reference.attribute)
+            || super::shield::indexed(&node.resource_type, &reference.attribute)
+            || super::arc_readiness::indexed(&node.resource_type, &reference.attribute)
+            || super::arc_routing_control::indexed(&node.resource_type, &reference.attribute)
+            || super::resilience_hub::indexed(&node.resource_type, &reference.attribute)
+            || super::operations::indexed(&node.resource_type, &reference.attribute)
+            || super::delivery::indexed(&node.resource_type, &reference.attribute)
+            || super::firewall_manager::indexed(&node.resource_type, &reference.attribute)
+            || super::fis_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::arc_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::security_lake::indexed(&node.resource_type, &reference.attribute)
+            || super::securityhub_integrations::indexed(&node.resource_type, &reference.attribute)
+            || super::securityhub_organization::indexed(&node.resource_type, &reference.attribute)
+            || super::macie_classification::indexed(&node.resource_type, &reference.attribute)
+            || super::inspector_assessments::indexed(&node.resource_type, &reference.attribute)
+            || super::guardduty_destinations::indexed(&node.resource_type, &reference.attribute)
+            || super::guardduty_members::indexed(&node.resource_type, &reference.attribute)
+            || super::detective_graphs::indexed(&node.resource_type, &reference.attribute)
+            || super::config_delivery::indexed(&node.resource_type, &reference.attribute)
+            || super::config_rules::indexed(&node.resource_type, &reference.attribute)
+            || super::config_aggregation::indexed(&node.resource_type, &reference.attribute)
+            || super::audit_manager::indexed(&node.resource_type, &reference.attribute)
+            || super::access_analyzer::indexed(&node.resource_type, &reference.attribute)
             || super::verified_access::indexed(&node.resource_type, &reference.attribute)
             || super::transit_multicast::indexed(&node.resource_type, &reference.attribute)
             || super::transit_policies::indexed(&node.resource_type, &reference.attribute)
@@ -2098,6 +2255,23 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                         "aws_iam_group_membership" | "aws_iam_user_group_membership"
                     )) {
                     crate::model::ReferenceKind::Membership
+                } else if verified
+                    && matches!(
+                        (node.resource_type.as_str(), reference.attribute.as_str()),
+                        (
+                            "aws_securityhub_configuration_policy_association",
+                            "target_id"
+                        ) | ("aws_organizations_tag", "resource_id")
+                    )
+                {
+                    reference
+                        .source_attributes
+                        .iter()
+                        .find_map(|path| super::organizations::root_index(path))
+                        .map_or(
+                            crate::model::ReferenceKind::Configured,
+                            crate::model::ReferenceKind::OrganizationRoot,
+                        )
                 } else {
                     crate::model::ReferenceKind::Configured
                 },

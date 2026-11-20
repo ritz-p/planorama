@@ -130,15 +130,49 @@ pub(super) fn improves(
                 < cost(&proximity_before, length_before, before_borders))
 }
 
-pub(super) fn translated_baseline(original: &[Shape], reference: &[Vec<Point>]) -> Vec<Shape> {
+pub(super) fn terminal_lane_slack(graph: &Graph, paths: &[Vec<Point>]) -> Vec<usize> {
+    let mut slack = vec![0; paths.len()];
+    let stroke = |s: Segment| crate::view::geometry::relationship_stroke(graph.edges[s.edge].kind);
+    for (a, b, _) in pairs(graph, paths, PREFERRED - 1) {
+        let distance = a.coordinate.abs_diff(b.coordinate);
+        if distance * 8 > stroke(a) + stroke(b) {
+            continue;
+        }
+        let edge_a = &graph.edges[a.edge];
+        let edge_b = &graph.edges[b.edge];
+        let path_a = &paths[a.edge];
+        let path_b = &paths[b.edge];
+        let distinct_ports = |end| {
+            let port_a = terminal(path_a, end);
+            let port_b = terminal(path_b, end);
+            port_a.side == port_b.side && port_a.point != port_b.point
+        };
+        let at_source = edge_a.from == edge_b.from && a.index == 1 && b.index == 1;
+        let at_target =
+            edge_a.to == edge_b.to && a.index + 3 == path_a.len() && b.index + 3 == path_b.len();
+        if (at_source && distinct_ports(0)) || (at_target && distinct_ports(1)) {
+            for edge in [a.edge, b.edge] {
+                slack[edge] = slack[edge].max(PREFERRED - distance);
+            }
+        }
+    }
+    slack
+}
+
+pub(super) fn translated_baseline(
+    original: &[Shape],
+    reference: &[Vec<Point>],
+    slack: &[usize],
+) -> Vec<Shape> {
     original
         .iter()
         .zip(reference)
-        .map(|(&original, path)| {
+        .zip(slack)
+        .map(|((&original, path), slack)| {
             let geometry = Shape::measure(path);
             Shape {
                 length: geometry.length,
-                backtracking: geometry.backtracking,
+                backtracking: geometry.backtracking + slack,
                 ..original
             }
         })

@@ -69,6 +69,35 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::waf_destinations::resource(resource)
+        && !super::waf_statements::resource(resource)
+        && !super::waf_classic::resource(resource)
+        && !super::shield::resource(resource)
+        && !super::arc_readiness::resource(resource)
+        && !super::arc_routing_control::resource(resource)
+        && !super::waf::explicit_scope(resource)
+        && !super::resilience_hub::resource(resource)
+        && !super::delivery::resource(resource)
+        && !super::firewall_manager::resource(resource)
+        && !super::fis_configuration::resource(resource)
+        && !super::arc_configuration::resource(resource)
+        && !super::security_lake::resource(resource)
+        && !super::securityhub_integrations::resource(resource)
+        && resource != "aws_securityhub_configuration_policy"
+        && !super::securityhub_organization::resource(resource)
+        && !super::macie_classification::resource(resource)
+        && !super::inspector_assessments::resource(resource)
+        && !super::guardduty_destinations::resource(resource)
+        && resource != "aws_guardduty_detector"
+        && !super::guardduty_members::resource(resource)
+        && resource != "aws_detective_graph"
+        && !super::detective_graphs::resource(resource)
+        && !super::config_delivery::resource(resource)
+        && !super::config_rules::resource(resource)
+        && !super::config_aggregation::resource(resource)
+        && !super::audit_manager::resource(resource)
+        && resource != "aws_accessanalyzer_analyzer"
+        && !super::access_analyzer::resource(resource)
         && resource != "aws_verifiedaccess_instance"
         && !super::verified_access::resource(resource)
         && !super::transit_multicast::resource(resource)
@@ -449,7 +478,12 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     }
     if matches!(
         resource,
-        "aws_glue_catalog_database" | "aws_glue_catalog_table" | "aws_acmpca_certificate"
+        "aws_glue_catalog_database"
+            | "aws_glue_catalog_table"
+            | "aws_acmpca_certificate"
+            | "aws_cloudcontrolapi_resource"
+            | "aws_cloudformation_stack_instances"
+            | "aws_cloudformation_stack_set_instance"
     ) || (resource == "aws_acmpca_certificate_authority" && entity.mode == EntityMode::Data)
     {
         account = None;

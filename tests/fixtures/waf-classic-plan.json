@@ -1,0 +1,617 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_waf_rule.sample0",
+      "mode": "managed",
+      "type": "aws_waf_rule",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "predicates": [
+            {
+              "type": "ByteMatch",
+              "data_id": "waf_byte_match_set-example"
+            }
+          ],
+          "id": "waf_rule-example"
+        }
+      }
+    },
+    {
+      "address": "aws_waf_byte_match_set.sample1",
+      "mode": "managed",
+      "type": "aws_waf_byte_match_set",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "waf_byte_match_set-example"
+        }
+      }
+    },
+    {
+      "address": "aws_waf_rate_based_rule.sample2",
+      "mode": "managed",
+      "type": "aws_waf_rate_based_rule",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "predicates": [
+            {
+              "type": "ByteMatch",
+              "data_id": "waf_byte_match_set-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_waf_regex_match_set.sample3",
+      "mode": "managed",
+      "type": "aws_waf_regex_match_set",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "regex_match_tuple": [
+            {
+              "regex_pattern_set_id": "waf_regex_pattern_set-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_waf_regex_pattern_set.sample4",
+      "mode": "managed",
+      "type": "aws_waf_regex_pattern_set",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "waf_regex_pattern_set-example"
+        }
+      }
+    },
+    {
+      "address": "aws_waf_rule_group.sample5",
+      "mode": "managed",
+      "type": "aws_waf_rule_group",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "activated_rule": [
+            {
+              "priority": 1,
+              "type": "REGULAR",
+              "rule_id": "waf_rule-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_waf_web_acl.sample6",
+      "mode": "managed",
+      "type": "aws_waf_web_acl",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rules": [
+            {
+              "priority": 1,
+              "type": "REGULAR",
+              "rule_id": "waf_rule-example"
+            }
+          ],
+          "logging_configuration": [
+            {
+              "log_destination": "arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-classic"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.sample7",
+      "mode": "managed",
+      "type": "aws_kinesis_firehose_delivery_stream",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-classic"
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_rule.sample8",
+      "mode": "managed",
+      "type": "aws_wafregional_rule",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "predicate": [
+            {
+              "type": "ByteMatch",
+              "data_id": "wafregional_byte_match_set-example"
+            }
+          ],
+          "id": "wafregional_rule-example"
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_byte_match_set.sample9",
+      "mode": "managed",
+      "type": "aws_wafregional_byte_match_set",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "wafregional_byte_match_set-example"
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_rate_based_rule.sample10",
+      "mode": "managed",
+      "type": "aws_wafregional_rate_based_rule",
+      "name": "sample10",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "predicate": [
+            {
+              "type": "ByteMatch",
+              "data_id": "wafregional_byte_match_set-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_regex_match_set.sample11",
+      "mode": "managed",
+      "type": "aws_wafregional_regex_match_set",
+      "name": "sample11",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "regex_match_tuple": [
+            {
+              "regex_pattern_set_id": "wafregional_regex_pattern_set-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_regex_pattern_set.sample12",
+      "mode": "managed",
+      "type": "aws_wafregional_regex_pattern_set",
+      "name": "sample12",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "wafregional_regex_pattern_set-example"
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_rule_group.sample13",
+      "mode": "managed",
+      "type": "aws_wafregional_rule_group",
+      "name": "sample13",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "activated_rule": [
+            {
+              "priority": 1,
+              "type": "REGULAR",
+              "rule_id": "wafregional_rule-example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_web_acl.sample14",
+      "mode": "managed",
+      "type": "aws_wafregional_web_acl",
+      "name": "sample14",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "rule": [
+            {
+              "priority": 1,
+              "type": "REGULAR",
+              "rule_id": "wafregional_rule-example"
+            }
+          ],
+          "logging_configuration": [
+            {
+              "log_destination": "arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-classic"
+            }
+          ],
+          "id": "wafregional_web_acl-example"
+        }
+      }
+    },
+    {
+      "address": "aws_wafregional_web_acl_association.sample15",
+      "mode": "managed",
+      "type": "aws_wafregional_web_acl_association",
+      "name": "sample15",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_id": "wafregional_web_acl-example",
+          "resource_arn": "arn:aws:lb:us-east-1:123456789012:resource/lb"
+        }
+      }
+    },
+    {
+      "address": "aws_lb.sample16",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "sample16",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_type": "application",
+          "arn": "arn:aws:lb:us-east-1:123456789012:resource/lb"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Plan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_waf_rule.sample0",
+          "mode": "managed",
+          "type": "aws_waf_rule",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "predicates": [
+              {
+                "data_id": {
+                  "references": [
+                    "aws_waf_byte_match_set.sample1.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_waf_byte_match_set.sample1",
+          "mode": "managed",
+          "type": "aws_waf_byte_match_set",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_waf_rate_based_rule.sample2",
+          "mode": "managed",
+          "type": "aws_waf_rate_based_rule",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "predicates": [
+              {
+                "data_id": {
+                  "references": [
+                    "aws_waf_byte_match_set.sample1.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_waf_regex_match_set.sample3",
+          "mode": "managed",
+          "type": "aws_waf_regex_match_set",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "regex_match_tuple": [
+              {
+                "regex_pattern_set_id": {
+                  "references": [
+                    "aws_waf_regex_pattern_set.sample4.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_waf_regex_pattern_set.sample4",
+          "mode": "managed",
+          "type": "aws_waf_regex_pattern_set",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_waf_rule_group.sample5",
+          "mode": "managed",
+          "type": "aws_waf_rule_group",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "activated_rule": [
+              {
+                "rule_id": {
+                  "references": [
+                    "aws_waf_rule.sample0.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_waf_web_acl.sample6",
+          "mode": "managed",
+          "type": "aws_waf_web_acl",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rules": [
+              {
+                "rule_id": {
+                  "references": [
+                    "aws_waf_rule.sample0.id"
+                  ]
+                }
+              }
+            ],
+            "logging_configuration": [
+              {
+                "log_destination": {
+                  "references": [
+                    "aws_kinesis_firehose_delivery_stream.sample7.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kinesis_firehose_delivery_stream.sample7",
+          "mode": "managed",
+          "type": "aws_kinesis_firehose_delivery_stream",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafregional_rule.sample8",
+          "mode": "managed",
+          "type": "aws_wafregional_rule",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "predicate": [
+              {
+                "data_id": {
+                  "references": [
+                    "aws_wafregional_byte_match_set.sample9.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafregional_byte_match_set.sample9",
+          "mode": "managed",
+          "type": "aws_wafregional_byte_match_set",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafregional_rate_based_rule.sample10",
+          "mode": "managed",
+          "type": "aws_wafregional_rate_based_rule",
+          "name": "sample10",
+          "provider_config_key": "aws",
+          "expressions": {
+            "predicate": [
+              {
+                "data_id": {
+                  "references": [
+                    "aws_wafregional_byte_match_set.sample9.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafregional_regex_match_set.sample11",
+          "mode": "managed",
+          "type": "aws_wafregional_regex_match_set",
+          "name": "sample11",
+          "provider_config_key": "aws",
+          "expressions": {
+            "regex_match_tuple": [
+              {
+                "regex_pattern_set_id": {
+                  "references": [
+                    "aws_wafregional_regex_pattern_set.sample12.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafregional_regex_pattern_set.sample12",
+          "mode": "managed",
+          "type": "aws_wafregional_regex_pattern_set",
+          "name": "sample12",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafregional_rule_group.sample13",
+          "mode": "managed",
+          "type": "aws_wafregional_rule_group",
+          "name": "sample13",
+          "provider_config_key": "aws",
+          "expressions": {
+            "activated_rule": [
+              {
+                "rule_id": {
+                  "references": [
+                    "aws_wafregional_rule.sample8.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafregional_web_acl.sample14",
+          "mode": "managed",
+          "type": "aws_wafregional_web_acl",
+          "name": "sample14",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": [
+              {
+                "rule_id": {
+                  "references": [
+                    "aws_wafregional_rule.sample8.id"
+                  ]
+                }
+              }
+            ],
+            "logging_configuration": [
+              {
+                "log_destination": {
+                  "references": [
+                    "aws_kinesis_firehose_delivery_stream.sample7.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafregional_web_acl_association.sample15",
+          "mode": "managed",
+          "type": "aws_wafregional_web_acl_association",
+          "name": "sample15",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_id": {
+              "references": [
+                "aws_wafregional_web_acl.sample14.id"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_lb.sample16.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb.sample16",
+          "mode": "managed",
+          "type": "aws_lb",
+          "name": "sample16",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

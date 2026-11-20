@@ -252,6 +252,77 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                 "Verified Access instance",
                 "Log delivery",
             ),
+            "aws_accessanalyzer_archive_rule" => {
+                ("analyzer_name", "Archive rule analyzer", "Archive rules")
+            }
+            "aws_auditmanager_assessment_delegation" => {
+                ("assessment_id", "Assessment", "Delegations")
+            }
+            "aws_auditmanager_assessment_report" => ("assessment_id", "Assessment", "Reports"),
+            "aws_config_configuration_recorder_status" => {
+                ("name", "Configuration recorder", "Recorder status")
+            }
+            "aws_detective_organization_configuration" => {
+                ("graph_arn", "Detective graph", "Organization configuration")
+            }
+            "aws_guardduty_detector_feature" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_filter" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_invite_accepter" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_ipset" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_member" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_member_detector_feature" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_organization_configuration" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_organization_configuration_feature" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_threatintelset" => (
+                "detector_id",
+                "GuardDuty detector",
+                "Detector configuration",
+            ),
+            "aws_guardduty_publishing_destination" => (
+                "detector_id",
+                "Publishing detector",
+                "Publishing destinations",
+            ),
+            "aws_securitylake_subscriber_notification" => {
+                ("subscriber_id", "Security Lake subscriber", "Notifications")
+            }
+            "aws_fis_target_account_configuration" => (
+                "experiment_template_id",
+                "Experiment template",
+                "Target accounts",
+            ),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

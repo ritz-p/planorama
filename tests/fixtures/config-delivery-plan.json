@@ -1,0 +1,273 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_config_configuration_recorder.sample0",
+      "mode": "managed",
+      "type": "aws_config_configuration_recorder",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "role_arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role",
+          "name": "config_configuration_recorder-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample1",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+        }
+      }
+    },
+    {
+      "address": "aws_config_configuration_recorder_status.sample2",
+      "mode": "managed",
+      "type": "aws_config_configuration_recorder_status",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "config_configuration_recorder-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_config_conformance_pack.sample3",
+      "mode": "managed",
+      "type": "aws_config_conformance_pack",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "delivery_s3_bucket": "s3_bucket-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample4",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "s3_bucket-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_config_organization_conformance_pack.sample5",
+      "mode": "managed",
+      "type": "aws_config_organization_conformance_pack",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "delivery_s3_bucket": "s3_bucket-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_config_delivery_channel.sample6",
+      "mode": "managed",
+      "type": "aws_config_delivery_channel",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "s3_bucket_name": "s3_bucket-fixture",
+          "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:resource/sns_topic",
+          "s3_kms_key_arn": "arn:aws:kms:us-east-1:123456789012:resource/kms_key"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.sample7",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:resource/sns_topic"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample8",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:resource/kms_key"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_config_configuration_recorder.sample0",
+          "mode": "managed",
+          "type": "aws_config_configuration_recorder",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.sample1",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_config_configuration_recorder_status.sample2",
+          "mode": "managed",
+          "type": "aws_config_configuration_recorder_status",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "references": [
+                "aws_config_configuration_recorder.sample0.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_config_conformance_pack.sample3",
+          "mode": "managed",
+          "type": "aws_config_conformance_pack",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "delivery_s3_bucket": {
+              "references": [
+                "aws_s3_bucket.sample4.bucket"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample4",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_config_organization_conformance_pack.sample5",
+          "mode": "managed",
+          "type": "aws_config_organization_conformance_pack",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "delivery_s3_bucket": {
+              "references": [
+                "aws_s3_bucket.sample4.bucket"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_config_delivery_channel.sample6",
+          "mode": "managed",
+          "type": "aws_config_delivery_channel",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "s3_bucket_name": {
+              "references": [
+                "aws_s3_bucket.sample4.bucket"
+              ]
+            },
+            "sns_topic_arn": {
+              "references": [
+                "aws_sns_topic.sample7.arn"
+              ]
+            },
+            "s3_kms_key_arn": {
+              "references": [
+                "aws_kms_key.sample8.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_sns_topic.sample7",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.sample8",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

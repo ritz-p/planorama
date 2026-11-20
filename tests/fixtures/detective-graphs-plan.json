@@ -1,0 +1,198 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_detective_invitation_accepter.sample0",
+      "mode": "managed",
+      "type": "aws_detective_invitation_accepter",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "graph_arn": "arn:aws:detective:us-east-1:123456789012:graph:1234567890abcdef1234567890abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_detective_graph.sample1",
+      "mode": "managed",
+      "type": "aws_detective_graph",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "graph_arn": "arn:aws:detective:us-east-1:123456789012:graph:1234567890abcdef1234567890abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_detective_member.sample2",
+      "mode": "managed",
+      "type": "aws_detective_member",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "graph_arn": "arn:aws:detective:us-east-1:123456789012:graph:1234567890abcdef1234567890abcdef",
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_detective_organization_configuration.sample3",
+      "mode": "managed",
+      "type": "aws_detective_organization_configuration",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "graph_arn": "arn:aws:detective:us-east-1:123456789012:graph:1234567890abcdef1234567890abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample4",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_detective_organization_admin_account.sample5",
+      "mode": "managed",
+      "type": "aws_detective_organization_admin_account",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_detective_invitation_accepter.sample0",
+          "mode": "managed",
+          "type": "aws_detective_invitation_accepter",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "graph_arn": {
+              "references": [
+                "aws_detective_graph.sample1.graph_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_detective_graph.sample1",
+          "mode": "managed",
+          "type": "aws_detective_graph",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_detective_member.sample2",
+          "mode": "managed",
+          "type": "aws_detective_member",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "graph_arn": {
+              "references": [
+                "aws_detective_graph.sample1.graph_arn"
+              ]
+            },
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample4.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_detective_organization_configuration.sample3",
+          "mode": "managed",
+          "type": "aws_detective_organization_configuration",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "graph_arn": {
+              "references": [
+                "aws_detective_graph.sample1.graph_arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.sample4",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_detective_organization_admin_account.sample5",
+          "mode": "managed",
+          "type": "aws_detective_organization_admin_account",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample4.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

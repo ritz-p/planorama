@@ -1,0 +1,118 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_controltower_baseline.workloads",
+      "mode": "managed",
+      "type": "aws_controltower_baseline",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_identifier": "arn:aws:organizations::123456789012:ou/o-abcd123456/ou-root-abcd1234",
+          "baseline_identifier": "arn:aws:controltower:us-east-1::baseline/EXAMPLE",
+          "baseline_version": "4.0",
+          "operation_identifier": "example"
+        }
+      }
+    },
+    {
+      "address": "aws_controltower_control.workloads",
+      "mode": "managed",
+      "type": "aws_controltower_control",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_identifier": "arn:aws:organizations::123456789012:ou/o-abcd123456/ou-root-abcd1234",
+          "control_identifier": "arn:aws:controlcatalog:::control/example",
+          "arn": "arn:aws:controltower:us-east-1:123456789012:enabledcontrol/example"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_organizational_unit.workloads",
+      "mode": "managed",
+      "type": "aws_organizations_organizational_unit",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Workloads",
+          "arn": "arn:aws:organizations::123456789012:ou/o-abcd123456/ou-root-abcd1234",
+          "id": "ou-root-abcd1234"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_controltower_baseline.workloads",
+          "mode": "managed",
+          "type": "aws_controltower_baseline",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_identifier": {
+              "references": [
+                "aws_organizations_organizational_unit.workloads.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_controltower_control.workloads",
+          "mode": "managed",
+          "type": "aws_controltower_control",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_identifier": {
+              "references": [
+                "aws_organizations_organizational_unit.workloads.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_organizational_unit.workloads",
+          "mode": "managed",
+          "type": "aws_organizations_organizational_unit",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

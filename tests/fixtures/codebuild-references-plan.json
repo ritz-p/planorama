@@ -1,0 +1,533 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codebuild_project.build",
+      "mode": "managed",
+      "type": "aws_codebuild_project",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "example",
+          "arn": "arn:aws:codebuild:us-east-1:123456789012:project/example",
+          "service_role": "arn:aws:iam::123456789012:role/CodeBuild",
+          "encryption_key": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa",
+          "environment": [
+            {
+              "fleet": [
+                {
+                  "fleet_arn": "arn:aws:codebuild:us-east-1:123456789012:fleet/example"
+                }
+              ]
+            }
+          ],
+          "vpc_config": [
+            {
+              "vpc_id": "vpc-0123",
+              "subnets": [
+                "subnet-0123"
+              ],
+              "security_group_ids": [
+                "sg-0123"
+              ]
+            }
+          ],
+          "artifacts": [
+            {
+              "location": "build-artifacts",
+              "type": "S3"
+            }
+          ],
+          "secondary_artifacts": [
+            {
+              "location": "build-artifacts",
+              "type": "S3"
+            }
+          ],
+          "logs_config": [
+            {
+              "cloudwatch_logs": [
+                {
+                  "status": "ENABLED",
+                  "group_name": "/build/logs"
+                }
+              ],
+              "s3_logs": [
+                {
+                  "status": "ENABLED",
+                  "location": "build-artifacts"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codebuild_fleet.build",
+      "mode": "managed",
+      "type": "aws_codebuild_fleet",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:codebuild:us-east-1:123456789012:fleet/example",
+          "fleet_service_role": "arn:aws:iam::123456789012:role/CodeBuild",
+          "vpc_config": [
+            {
+              "vpc_id": "vpc-0123",
+              "subnets": [
+                "subnet-0123"
+              ],
+              "security_group_ids": [
+                "sg-0123"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codebuild_report_group.build",
+      "mode": "managed",
+      "type": "aws_codebuild_report_group",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:codebuild:us-east-1:123456789012:report-group/example",
+          "export_config": [
+            {
+              "type": "S3",
+              "s3_destination": [
+                {
+                  "bucket": "build-artifacts",
+                  "encryption_key": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codebuild_resource_policy.build",
+      "mode": "managed",
+      "type": "aws_codebuild_resource_policy",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:codebuild:us-east-1:123456789012:report-group/example"
+        }
+      }
+    },
+    {
+      "address": "aws_codebuild_webhook.build",
+      "mode": "managed",
+      "type": "aws_codebuild_webhook",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "project_name": "example"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.build",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.build",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/CodeBuild"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.artifacts",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "artifacts",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "build-artifacts"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.build",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/build/logs"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.build",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.build",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-0123",
+          "vpc_id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.build",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "build",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-0123",
+          "vpc_id": "vpc-0123"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codebuild_project.build",
+          "mode": "managed",
+          "type": "aws_codebuild_project",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "service_role": {
+              "references": [
+                "aws_iam_role.build.arn"
+              ]
+            },
+            "encryption_key": {
+              "references": [
+                "aws_kms_key.build.arn"
+              ]
+            },
+            "environment": [
+              {
+                "fleet": [
+                  {
+                    "fleet_arn": {
+                      "references": [
+                        "aws_codebuild_fleet.build.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "vpc_config": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.build.id"
+                  ]
+                },
+                "subnets": {
+                  "references": [
+                    "aws_subnet.build.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.build.id"
+                  ]
+                }
+              }
+            ],
+            "artifacts": [
+              {
+                "location": {
+                  "references": [
+                    "aws_s3_bucket.artifacts.bucket"
+                  ]
+                }
+              }
+            ],
+            "secondary_artifacts": [
+              {
+                "location": {
+                  "references": [
+                    "aws_s3_bucket.artifacts.bucket"
+                  ]
+                }
+              }
+            ],
+            "logs_config": [
+              {
+                "cloudwatch_logs": [
+                  {
+                    "group_name": {
+                      "references": [
+                        "aws_cloudwatch_log_group.build.name"
+                      ]
+                    }
+                  }
+                ],
+                "s3_logs": [
+                  {
+                    "location": {
+                      "references": [
+                        "aws_s3_bucket.artifacts.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codebuild_fleet.build",
+          "mode": "managed",
+          "type": "aws_codebuild_fleet",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "fleet_service_role": {
+              "references": [
+                "aws_iam_role.build.arn"
+              ]
+            },
+            "vpc_config": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.build.id"
+                  ]
+                },
+                "subnets": {
+                  "references": [
+                    "aws_subnet.build.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.build.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codebuild_report_group.build",
+          "mode": "managed",
+          "type": "aws_codebuild_report_group",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "export_config": [
+              {
+                "s3_destination": [
+                  {
+                    "bucket": {
+                      "references": [
+                        "aws_s3_bucket.artifacts.bucket"
+                      ]
+                    },
+                    "encryption_key": {
+                      "references": [
+                        "aws_kms_key.build.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codebuild_resource_policy.build",
+          "mode": "managed",
+          "type": "aws_codebuild_resource_policy",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_codebuild_report_group.build.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codebuild_webhook.build",
+          "mode": "managed",
+          "type": "aws_codebuild_webhook",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project_name": {
+              "references": [
+                "aws_codebuild_project.build.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.build",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.build",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.artifacts",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "artifacts",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.build",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_vpc.build",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.build",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.build.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.build",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "build",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.build.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

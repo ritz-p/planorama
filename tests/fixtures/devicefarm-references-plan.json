@@ -1,0 +1,276 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_devicefarm_device_pool.test",
+      "mode": "managed",
+      "type": "aws_devicefarm_device_pool",
+      "name": "test",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "project_arn": "arn:aws:devicefarm:us-east-1:123456789012:project:aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_devicefarm_network_profile.test",
+      "mode": "managed",
+      "type": "aws_devicefarm_network_profile",
+      "name": "test",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "project_arn": "arn:aws:devicefarm:us-east-1:123456789012:project:aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_devicefarm_upload.test",
+      "mode": "managed",
+      "type": "aws_devicefarm_upload",
+      "name": "test",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "project_arn": "arn:aws:devicefarm:us-east-1:123456789012:project:aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_devicefarm_project.test",
+      "mode": "managed",
+      "type": "aws_devicefarm_project",
+      "name": "test",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:devicefarm:us-east-1:123456789012:project:aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_devicefarm_test_grid_project.test",
+      "mode": "managed",
+      "type": "aws_devicefarm_test_grid_project",
+      "name": "test",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "vpc_config": [
+            {
+              "vpc_id": "vpc-0123",
+              "subnet_ids": [
+                "subnet-0123"
+              ],
+              "security_group_ids": [
+                "sg-0123"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.grid",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "grid",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.grid",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "grid",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-0123",
+          "vpc_id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.grid",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "grid",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-0123",
+          "vpc_id": "vpc-0123"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_devicefarm_device_pool.test",
+          "mode": "managed",
+          "type": "aws_devicefarm_device_pool",
+          "name": "test",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project_arn": {
+              "references": [
+                "aws_devicefarm_project.test.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_devicefarm_network_profile.test",
+          "mode": "managed",
+          "type": "aws_devicefarm_network_profile",
+          "name": "test",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project_arn": {
+              "references": [
+                "aws_devicefarm_project.test.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_devicefarm_upload.test",
+          "mode": "managed",
+          "type": "aws_devicefarm_upload",
+          "name": "test",
+          "provider_config_key": "aws",
+          "expressions": {
+            "project_arn": {
+              "references": [
+                "aws_devicefarm_project.test.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_devicefarm_project.test",
+          "mode": "managed",
+          "type": "aws_devicefarm_project",
+          "name": "test",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_devicefarm_test_grid_project.test",
+          "mode": "managed",
+          "type": "aws_devicefarm_test_grid_project",
+          "name": "test",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_config": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.grid.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.grid.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.grid.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_vpc.grid",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "grid",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.grid",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "grid",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.grid.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.grid",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "grid",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.grid.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

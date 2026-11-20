@@ -1,0 +1,316 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_servicecatalog_provisioned_product.id",
+      "mode": "managed",
+      "type": "aws_servicecatalog_provisioned_product",
+      "name": "id",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "product_id": "prod-123",
+          "provisioning_artifact_id": "pa-123",
+          "notification_arns": [
+            "arn:aws:sns:us-east-1:123456789012:provisioned"
+          ],
+          "outputs": [
+            {
+              "key": "unrelated",
+              "value": "example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_provisioned_product.name",
+      "mode": "managed",
+      "type": "aws_servicecatalog_provisioned_product",
+      "name": "name",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "product_id": "prod-123",
+          "product_name": "main",
+          "provisioning_artifact_name": "v1",
+          "provisioning_artifact_id": "pa-123"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_provisioning_artifact.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_provisioning_artifact",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "product_id": "prod-123",
+          "provisioning_artifact_id": "pa-123",
+          "name": "v1",
+          "template_url": "https://example.com/template"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_service_action.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_service_action",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "definition": [
+            {
+              "type": "SSM_AUTOMATION",
+              "name": "Runbook",
+              "version": "1",
+              "assume_role": "arn:aws:iam::123456789012:role/Automation"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_product.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_product",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "prod-123",
+          "name": "main"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_product.other",
+      "mode": "managed",
+      "type": "aws_servicecatalog_product",
+      "name": "other",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "prod-456",
+          "name": "other"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.provisioned",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "provisioned",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:provisioned"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_document.main",
+      "mode": "managed",
+      "type": "aws_ssm_document",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Runbook"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.main",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Automation"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_servicecatalog_provisioned_product.id",
+          "mode": "managed",
+          "type": "aws_servicecatalog_provisioned_product",
+          "name": "id",
+          "provider_config_key": "aws",
+          "expressions": {
+            "product_id": {
+              "references": [
+                "aws_servicecatalog_product.main.id"
+              ]
+            },
+            "provisioning_artifact_id": {
+              "references": [
+                "aws_servicecatalog_provisioning_artifact.main.provisioning_artifact_id"
+              ]
+            },
+            "notification_arns": {
+              "references": [
+                "aws_sns_topic.provisioned.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_provisioned_product.name",
+          "mode": "managed",
+          "type": "aws_servicecatalog_provisioned_product",
+          "name": "name",
+          "provider_config_key": "aws",
+          "expressions": {
+            "product_name": {
+              "references": [
+                "aws_servicecatalog_product.main.name"
+              ]
+            },
+            "provisioning_artifact_name": {
+              "references": [
+                "aws_servicecatalog_provisioning_artifact.main.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_provisioning_artifact.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_provisioning_artifact",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "product_id": {
+              "references": [
+                "aws_servicecatalog_product.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_service_action.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_service_action",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "definition": [
+              {
+                "type": {
+                  "constant_value": "SSM_AUTOMATION"
+                },
+                "name": {
+                  "references": [
+                    "aws_ssm_document.main.name"
+                  ]
+                },
+                "version": {
+                  "constant_value": "1"
+                },
+                "assume_role": {
+                  "references": [
+                    "aws_iam_role.main.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_servicecatalog_product.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_product",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_servicecatalog_product.other",
+          "mode": "managed",
+          "type": "aws_servicecatalog_product",
+          "name": "other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.provisioned",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "provisioned",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_document.main",
+          "mode": "managed",
+          "type": "aws_ssm_document",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.main",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

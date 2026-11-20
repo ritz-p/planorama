@@ -16,10 +16,8 @@ pub fn collect(plan: &crate::model::TerraformPlan) -> Vec<Diagnostic> {
     found.extend(super::networkfirewall::diagnostics(raw));
     for node in &plan.nodes {
         if node.provider.is_aws()
-            && matches!(
-                crate::provider::aws::aliases::entity_type(node),
-                "aws_wafv2_web_acl" | "aws_wafv2_rule_group"
-            )
+            && node.mode == EntityMode::Managed
+            && super::waf::explicit_scope(&node.resource_type)
             && node.waf_scope.is_none()
         {
             found.insert(Diagnostic {

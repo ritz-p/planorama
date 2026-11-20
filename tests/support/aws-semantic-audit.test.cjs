@@ -807,7 +807,7 @@ test('#728 distinguishes detector inputs, source selectors and service-produced 
   assert.equal(review('securitylake_subscriber').contracts.role_arn, 'computed');
   assert.equal(review('securityhub_member').contracts.account_id, 'required');
   assert.match(review('inspector2_filter').references, /comparison operands/);
-  assert.match(review('config_aggregate_authorization').scope, /^Missing:/);
+  assert.match(review('config_aggregate_authorization').scope, /independently of local deployment scope/);
 });
 
 test('#729 distinguishes Classic WAF scopes, WAFv2 endpoints and recovery control inputs', () => {
@@ -823,4 +823,33 @@ test('#729 distinguishes Classic WAF scopes, WAFv2 endpoints and recovery contro
   assert.match(review('wafv2_web_acl_association').references, /#496/);
   assert.match(review('route53recoverycontrolconfig_routing_control').references, /RECOVERY_CONTROL/);
   assert.equal(review('resiliencehubv2_assertion').contracts.assertion_id, 'computed');
+});
+
+test('#731 distinguishes configured delivery endpoints from service outputs', () => {
+  const decisions = auditedServiceTypes(731, [
+    'cloud9', 'codeartifact', 'codebuild', 'codecatalyst', 'codecommit', 'codeconnections',
+    'codestarnotifications', 'codestarconnections', 'codepipeline', 'deploy',
+    'codeguruprofiler', 'codegurureviewer', 'devopsagent', 'devopsguru', 'devicefarm',
+  ], 43);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('codeartifact_domain').contracts.s3_bucket_arn, 'computed');
+  assert.equal(review('codegurureviewer_repository_association').contracts.connection_arn, 'computed');
+  assert.deepEqual(review('codebuild_project').shapes['environment.fleet.fleet_arn'], ['list', 'list', 'string']);
+  assert.equal(review('codepipeline_webhook').contracts.target_action, 'required');
+  assert.match(review('devicefarm_network_profile').references, /network simulation/);
+});
+
+test('#732 separates delegated targets, document payloads and cross-region inputs', () => {
+  const decisions = auditedServiceTypes(732, [
+    'account', 'cloudcontrol', 'cloudformation', 'cloudtrail', 'controltower', 'licensemanager',
+    'organizations', 'ram', 'resourceexplorer2', 'resourcegroups', 'servicecatalog',
+    'servicecatalogappregistry', 'servicequotas', 'ssm', 'ssmcontacts', 'ssmincidents', 'ssmquicksetup',
+  ], 78);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('licensemanager_grant').contracts.home_region, 'computed');
+  assert.equal(review('cloudtrail').contracts.sns_topic_arn, 'computed');
+  assert.equal(review('cloudtrail').contracts.sns_topic_name, 'optional');
+  assert.deepEqual(review('ram_resource_share_associations_exclusive').shapes.sources, [['set', 'string']]);
+  assert.ok(review('ssmincidents_replication_set').fields.includes('regions.kms_key_arn'));
+  assert.equal(review('ssmquicksetup_configuration_manager').contracts['configuration_definition.local_deployment_administration_role_arn'], 'optional');
 });

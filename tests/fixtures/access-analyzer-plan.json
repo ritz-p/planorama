@@ -1,0 +1,75 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_accessanalyzer_archive_rule.sample0",
+      "mode": "managed",
+      "type": "aws_accessanalyzer_archive_rule",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "analyzer_name": "accessanalyzer_analyzer-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_accessanalyzer_analyzer.sample1",
+      "mode": "managed",
+      "type": "aws_accessanalyzer_analyzer",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "analyzer_name": "accessanalyzer_analyzer-fixture"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_accessanalyzer_archive_rule.sample0",
+          "mode": "managed",
+          "type": "aws_accessanalyzer_archive_rule",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "analyzer_name": {
+              "references": [
+                "aws_accessanalyzer_analyzer.sample1.analyzer_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_accessanalyzer_analyzer.sample1",
+          "mode": "managed",
+          "type": "aws_accessanalyzer_analyzer",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

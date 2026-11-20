@@ -1,0 +1,321 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codepipeline.delivery",
+      "mode": "managed",
+      "type": "aws_codepipeline",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "delivery",
+          "role_arn": "arn:aws:iam::123456789012:role/Pipeline",
+          "artifact_store": [
+            {
+              "type": "S3",
+              "region": "us-west-2",
+              "location": "western-artifacts",
+              "encryption_key": [
+                {
+                  "type": "KMS",
+                  "id": "arn:aws:kms:us-west-2:123456789012:key/bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb"
+                }
+              ]
+            },
+            {
+              "type": "S3",
+              "location": "delivery-artifacts",
+              "encryption_key": [
+                {
+                  "type": "KMS",
+                  "id": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+                }
+              ],
+              "region": "us-east-1"
+            }
+          ],
+          "stage": [
+            {
+              "name": "Source",
+              "action": [
+                {
+                  "name": "Checkout",
+                  "category": "Source",
+                  "role_arn": "arn:aws:iam::123456789012:role/Pipeline",
+                  "configuration": {
+                    "OAuthToken": "SYNTHETIC-TOKEN"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "after_sensitive": {
+          "stage": [
+            {
+              "action": [
+                {
+                  "configuration": {
+                    "OAuthToken": true
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codepipeline_webhook.delivery",
+      "mode": "managed",
+      "type": "aws_codepipeline_webhook",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target_pipeline": "delivery",
+          "target_action": "Checkout"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.pipeline",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "pipeline",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Pipeline"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.pipeline",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "pipeline",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.artifacts",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "artifacts",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "delivery-artifacts"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.west",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "west",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/bbbbbbbb-bbbb-4bbb-bbbb-bbbbbbbbbbbb"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.west",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "west",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "western-artifacts"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      },
+      "aws.west": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        },
+        "alias": "west"
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codepipeline.delivery",
+          "mode": "managed",
+          "type": "aws_codepipeline",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.pipeline.arn"
+              ]
+            },
+            "artifact_store": [
+              {
+                "location": {
+                  "references": [
+                    "aws_s3_bucket.artifacts.bucket"
+                  ]
+                },
+                "encryption_key": [
+                  {
+                    "id": {
+                      "references": [
+                        "aws_kms_key.pipeline.arn"
+                      ]
+                    }
+                  }
+                ]
+              },
+              {
+                "location": {
+                  "references": [
+                    "aws_s3_bucket.west.bucket"
+                  ]
+                },
+                "encryption_key": [
+                  {
+                    "id": {
+                      "references": [
+                        "aws_kms_key.west.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "stage": [
+              {
+                "action": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.pipeline.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codepipeline_webhook.delivery",
+          "mode": "managed",
+          "type": "aws_codepipeline_webhook",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {
+            "target_pipeline": {
+              "references": [
+                "aws_codepipeline.delivery.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.pipeline",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "pipeline",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.pipeline",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "pipeline",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.artifacts",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "artifacts",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.west",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.west",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "west",
+          "provider_config_key": "aws.west",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

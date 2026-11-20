@@ -11,6 +11,7 @@ pub struct TerraformEntity {
     pub pool_origins: Vec<super::architecture::PoolOrigin>,
     pub configurable_search_namespace: bool,
     pub cloudflare_scope: Option<super::architecture::CloudflareScope>,
+    pub configured_scopes: Vec<(&'static str, &'static str, String)>,
     pub encryption: Option<&'static str>,
     pub represented_account: Option<super::AwsAccountScope>,
     pub organization_policy_type: Option<&'static str>,

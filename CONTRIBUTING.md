@@ -76,6 +76,13 @@ docker run --rm --mount type=bind,source=.,target=/workspace --env CARGO_TARGET_
 CI は [standard / large の2 suite](docs/ci.md#parallel-rust-test-suites) の成功を `Tests` に集約します。
 通常実行で ignore する大型回帰は [Routing regressions](docs/ci.md#deferred-routing-regressions-253) を参照してください。
 
+#1465 の経路短縮候補の選択規則を変更したときは、リポジトリのルートで Lean 4.19.0 の証明を検査し、Rust と Lean で同じ候補列を検証します。
+
+```sh
+lean -DwarningAsError=true --run tests/experiments/shortcuts/Selection.lean tests/experiments/shortcuts/cases.txt
+cargo test --locked --lib routing_shared::shortcuts::tests::selection
+```
+
 入力・表示設定変更による配置の変動を測定する任意の開発コマンドは
 [Layout stability](docs/layout-stability.md) を参照してください。
 

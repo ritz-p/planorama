@@ -1,0 +1,382 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_fis_experiment_template.sample0",
+      "mode": "managed",
+      "type": "aws_fis_experiment_template",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "target": [
+            {
+              "resource_type": "aws:ec2:instance",
+              "resource_arns": [
+                "arn:aws:ec2:us-east-1:123456789012:instance/i-0123456789abcdef0"
+              ]
+            }
+          ],
+          "stop_condition": [
+            {
+              "source": "aws:cloudwatch:alarm",
+              "value": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:fixture"
+            }
+          ],
+          "role_arn": "arn:aws:iam::123456789012:role/fis",
+          "log_configuration": [
+            {
+              "cloudwatch_logs_configuration": [
+                {
+                  "log_group_arn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fis/fixture"
+                }
+              ],
+              "s3_configuration": [
+                {
+                  "bucket_name": "s3_bucket-fixture"
+                }
+              ]
+            }
+          ],
+          "experiment_report_configuration": [
+            {
+              "data_sources": [
+                {
+                  "cloudwatch_dashboard": [
+                    {
+                      "dashboard_arn": "arn:aws:cloudwatch::123456789012:dashboard/fixture"
+                    }
+                  ]
+                }
+              ],
+              "outputs": [
+                {
+                  "s3_configuration": [
+                    {
+                      "bucket_name": "s3_bucket-fixture"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "id": "fis_experiment_template-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample1",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/fis"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.sample2",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:instance/i-0123456789abcdef0"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.sample3",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:alarm:fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.sample4",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:logs:us-east-1:123456789012:log-group:/aws/fis/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample5",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "s3_bucket-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_dashboard.sample6",
+      "mode": "managed",
+      "type": "aws_cloudwatch_dashboard",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "dashboard_arn": "arn:aws:cloudwatch::123456789012:dashboard/fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_fis_target_account_configuration.sample7",
+      "mode": "managed",
+      "type": "aws_fis_target_account_configuration",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "experiment_template_id": "fis_experiment_template-fixture",
+          "account_id": "123456789012",
+          "role_arn": "arn:aws:iam::123456789012:role/fis"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample8",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_fis_experiment_template.sample0",
+          "mode": "managed",
+          "type": "aws_fis_experiment_template",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample1.arn"
+              ]
+            },
+            "target": [
+              {
+                "resource_arns": {
+                  "references": [
+                    "aws_instance.sample2.arn"
+                  ]
+                }
+              }
+            ],
+            "stop_condition": [
+              {
+                "value": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.sample3.arn"
+                  ]
+                }
+              }
+            ],
+            "log_configuration": [
+              {
+                "cloudwatch_logs_configuration": [
+                  {
+                    "log_group_arn": {
+                      "references": [
+                        "aws_cloudwatch_log_group.sample4.arn"
+                      ]
+                    }
+                  }
+                ],
+                "s3_configuration": [
+                  {
+                    "bucket_name": {
+                      "references": [
+                        "aws_s3_bucket.sample5.bucket"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "experiment_report_configuration": [
+              {
+                "data_sources": [
+                  {
+                    "cloudwatch_dashboard": [
+                      {
+                        "dashboard_arn": {
+                          "references": [
+                            "aws_cloudwatch_dashboard.sample6.dashboard_arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "outputs": [
+                  {
+                    "s3_configuration": [
+                      {
+                        "bucket_name": {
+                          "references": [
+                            "aws_s3_bucket.sample5.bucket"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample1",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_instance.sample2",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_metric_alarm.sample3",
+          "mode": "managed",
+          "type": "aws_cloudwatch_metric_alarm",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.sample4",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.sample5",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_dashboard.sample6",
+          "mode": "managed",
+          "type": "aws_cloudwatch_dashboard",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_fis_target_account_configuration.sample7",
+          "mode": "managed",
+          "type": "aws_fis_target_account_configuration",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "experiment_template_id": {
+              "references": [
+                "aws_fis_experiment_template.sample0.id"
+              ]
+            },
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample8.id"
+              ]
+            },
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.sample8",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

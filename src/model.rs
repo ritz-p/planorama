@@ -94,11 +94,12 @@ pub struct ResourceReference {
     pub issues: std::collections::BTreeSet<DiagnosticReason>,
 }
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Clone, Debug, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ReferenceKind {
     DeploymentScope,
     DeploymentMember,
     Information,
+    ConfiguredScope(String),
     PolicyAttachment,
     Configured,
     Membership,

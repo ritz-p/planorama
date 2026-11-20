@@ -964,3 +964,61 @@ fn separate_runs_on_one_track_keep_their_urgency_and_attempt_identity() {
     plan::reserve_urgent(&mut reserved, 1);
     assert_eq!(reserved[0].key(), second.key());
 }
+
+#[test]
+fn separates_overlapping_runs_at_distinct_ports_on_one_card() {
+    for incoming in [false, true] {
+        let mut graph = graph();
+        graph.nodes.truncate(4);
+        graph.relationships.clear();
+        graph.edges = vec![Edge::from((0, 1)), Edge::from((0, 2))];
+        let frame = |x, y, width, height| Bounds {
+            origin: Point { x, y },
+            width,
+            height,
+        };
+        let bounds = vec![
+            frame(100, 200, 160, 80),
+            frame(800, 280, 100, 80),
+            frame(800, 400, 100, 80),
+            frame(300, 197, 240, 260),
+        ];
+        let route = |points: &[(usize, usize)]| {
+            points
+                .iter()
+                .map(|&(x, y)| Point { x, y })
+                .collect::<Vec<_>>()
+        };
+        let mut layout = Layout {
+            scopes: vec![],
+            header_heights: bounds.iter().map(|b| b.height).collect(),
+            positions: bounds.iter().map(|b| b.origin).collect(),
+            bounds,
+            containers: vec![],
+            containment: ContainmentTree::new(&graph),
+            width: 1000,
+            height: 750,
+            bands: vec![],
+            paths: vec![
+                route(&[(140, 200), (140, 184), (730, 184), (730, 320), (800, 320)]),
+                route(&[(220, 200), (220, 183), (600, 183), (600, 440), (800, 440)]),
+            ],
+            junctions: vec![],
+        };
+        if incoming {
+            for (edge, path) in graph.edges.iter_mut().zip(&mut layout.paths) {
+                std::mem::swap(&mut edge.from, &mut edge.to);
+                path.reverse();
+            }
+        }
+        let original = layout.paths.clone();
+        assert_eq!(measure(&graph, &layout.paths).minimum, Some(1));
+        refine(&graph, &mut layout);
+        assert_eq!(measure(&graph, &layout.paths).deficit, 0);
+        for (before, after) in original.iter().zip(&layout.paths) {
+            assert_eq!(terminal(before, 0), terminal(after, 0));
+            assert_eq!(terminal(before, 1), terminal(after, 1));
+            assert!(after.len() <= before.len());
+        }
+    }
+}

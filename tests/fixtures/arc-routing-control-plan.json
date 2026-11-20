@@ -1,0 +1,201 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_route53recoverycontrolconfig_control_panel.sample0",
+      "mode": "managed",
+      "type": "aws_route53recoverycontrolconfig_control_panel",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_arn": "arn:aws:route53-recovery-control::123456789012:cluster/c",
+          "arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/p"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoverycontrolconfig_cluster.sample1",
+      "mode": "managed",
+      "type": "aws_route53recoverycontrolconfig_cluster",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:route53-recovery-control::123456789012:cluster/c"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoverycontrolconfig_routing_control.sample2",
+      "mode": "managed",
+      "type": "aws_route53recoverycontrolconfig_routing_control",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cluster_arn": "arn:aws:route53-recovery-control::123456789012:cluster/c",
+          "control_panel_arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/p",
+          "arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/p/routingcontrol/r"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoverycontrolconfig_safety_rule.sample3",
+      "mode": "managed",
+      "type": "aws_route53recoverycontrolconfig_safety_rule",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "control_panel_arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/p",
+          "gating_controls": [
+            "arn:aws:route53-recovery-control::123456789012:controlpanel/p/routingcontrol/r"
+          ],
+          "target_controls": [
+            "arn:aws:route53-recovery-control::123456789012:controlpanel/p/routingcontrol/r"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoverycontrolconfig_safety_rule.assertion",
+      "mode": "managed",
+      "type": "aws_route53recoverycontrolconfig_safety_rule",
+      "name": "assertion",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "control_panel_arn": "arn:aws:route53-recovery-control::123456789012:controlpanel/p",
+          "asserted_controls": [
+            "arn:aws:route53-recovery-control::123456789012:controlpanel/p/routingcontrol/r"
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Plan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_route53recoverycontrolconfig_control_panel.sample0",
+          "mode": "managed",
+          "type": "aws_route53recoverycontrolconfig_control_panel",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_route53recoverycontrolconfig_cluster.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53recoverycontrolconfig_cluster.sample1",
+          "mode": "managed",
+          "type": "aws_route53recoverycontrolconfig_cluster",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53recoverycontrolconfig_routing_control.sample2",
+          "mode": "managed",
+          "type": "aws_route53recoverycontrolconfig_routing_control",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster_arn": {
+              "references": [
+                "aws_route53recoverycontrolconfig_cluster.sample1.arn"
+              ]
+            },
+            "control_panel_arn": {
+              "references": [
+                "aws_route53recoverycontrolconfig_control_panel.sample0.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53recoverycontrolconfig_safety_rule.sample3",
+          "mode": "managed",
+          "type": "aws_route53recoverycontrolconfig_safety_rule",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "control_panel_arn": {
+              "references": [
+                "aws_route53recoverycontrolconfig_control_panel.sample0.arn"
+              ]
+            },
+            "gating_controls": {
+              "references": [
+                "aws_route53recoverycontrolconfig_routing_control.sample2.arn"
+              ]
+            },
+            "target_controls": {
+              "references": [
+                "aws_route53recoverycontrolconfig_routing_control.sample2.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53recoverycontrolconfig_safety_rule.assertion",
+          "mode": "managed",
+          "type": "aws_route53recoverycontrolconfig_safety_rule",
+          "name": "assertion",
+          "provider_config_key": "aws",
+          "expressions": {
+            "control_panel_arn": {
+              "references": [
+                "aws_route53recoverycontrolconfig_control_panel.sample0.arn"
+              ]
+            },
+            "asserted_controls": {
+              "references": [
+                "aws_route53recoverycontrolconfig_routing_control.sample2.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

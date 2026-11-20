@@ -1,0 +1,331 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_route53recoveryreadiness_readiness_check.sample0",
+      "mode": "managed",
+      "type": "aws_route53recoveryreadiness_readiness_check",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_set_name": "route53recoveryreadiness_resource_set-example"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoveryreadiness_resource_set.sample1",
+      "mode": "managed",
+      "type": "aws_route53recoveryreadiness_resource_set",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_set_type": "AWS::CloudWatch::Alarm",
+          "resource_set_name": "route53recoveryreadiness_resource_set-example",
+          "resources": [
+            {
+              "resource_arn": "arn:aws:cloudwatch:us-east-1:123456789012:resource/cloudwatch_metric_alarm",
+              "readiness_scopes": [
+                "arn:aws:route53-recovery-readiness::123456789012:cell/parent"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoveryreadiness_cell.sample2",
+      "mode": "managed",
+      "type": "aws_route53recoveryreadiness_cell",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:route53-recovery-readiness::123456789012:cell/parent",
+          "cells": [
+            "arn:aws:route53-recovery-readiness::123456789012:cell/east"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoveryreadiness_recovery_group.sample3",
+      "mode": "managed",
+      "type": "aws_route53recoveryreadiness_recovery_group",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "cells": [
+            "arn:aws:route53-recovery-readiness::123456789012:cell/parent"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_metric_alarm.sample4",
+      "mode": "managed",
+      "type": "aws_cloudwatch_metric_alarm",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:cloudwatch:us-east-1:123456789012:resource/cloudwatch_metric_alarm"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_zone.sample5",
+      "mode": "managed",
+      "type": "aws_route53_zone",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "zone_id": "ZONE"
+        }
+      }
+    },
+    {
+      "address": "aws_lb.sample6",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_type": "network",
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/app/12345"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoveryreadiness_cell.child",
+      "mode": "managed",
+      "type": "aws_route53recoveryreadiness_cell",
+      "name": "child",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:route53-recovery-readiness::123456789012:cell/east"
+        }
+      }
+    },
+    {
+      "address": "aws_route53recoveryreadiness_resource_set.dns",
+      "mode": "managed",
+      "type": "aws_route53recoveryreadiness_resource_set",
+      "name": "dns",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_set_type": "AWS::Route53RecoveryReadiness::DNSTargetResource",
+          "resource_set_name": "route53recoveryreadiness_resource_set-example",
+          "resources": [
+            {
+              "dns_target_resource": [
+                {
+                  "hosted_zone_arn": "arn:aws:route53::123456789012:hostedzone/ZONE",
+                  "target_resource": [
+                    {
+                      "nlb_resource": [
+                        {
+                          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/net/app/12345"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Plan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_route53recoveryreadiness_readiness_check.sample0",
+          "mode": "managed",
+          "type": "aws_route53recoveryreadiness_readiness_check",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_set_name": {
+              "references": [
+                "aws_route53recoveryreadiness_resource_set.sample1.resource_set_name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53recoveryreadiness_resource_set.sample1",
+          "mode": "managed",
+          "type": "aws_route53recoveryreadiness_resource_set",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resources": [
+              {
+                "resource_arn": {
+                  "references": [
+                    "aws_cloudwatch_metric_alarm.sample4.arn"
+                  ]
+                },
+                "readiness_scopes": {
+                  "references": [
+                    "aws_route53recoveryreadiness_cell.sample2.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_route53recoveryreadiness_cell.sample2",
+          "mode": "managed",
+          "type": "aws_route53recoveryreadiness_cell",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cells": {
+              "references": [
+                "aws_route53recoveryreadiness_cell.child.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53recoveryreadiness_recovery_group.sample3",
+          "mode": "managed",
+          "type": "aws_route53recoveryreadiness_recovery_group",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cells": {
+              "references": [
+                "aws_route53recoveryreadiness_cell.sample2.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudwatch_metric_alarm.sample4",
+          "mode": "managed",
+          "type": "aws_cloudwatch_metric_alarm",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53_zone.sample5",
+          "mode": "managed",
+          "type": "aws_route53_zone",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb.sample6",
+          "mode": "managed",
+          "type": "aws_lb",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53recoveryreadiness_cell.child",
+          "mode": "managed",
+          "type": "aws_route53recoveryreadiness_cell",
+          "name": "child",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_route53recoveryreadiness_resource_set.dns",
+          "mode": "managed",
+          "type": "aws_route53recoveryreadiness_resource_set",
+          "name": "dns",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resources": [
+              {
+                "dns_target_resource": [
+                  {
+                    "hosted_zone_arn": {
+                      "references": [
+                        "aws_route53_zone.sample5.zone_id"
+                      ]
+                    },
+                    "target_resource": [
+                      {
+                        "nlb_resource": [
+                          {
+                            "arn": {
+                              "references": [
+                                "aws_lb.sample6.arn"
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

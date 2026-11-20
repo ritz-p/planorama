@@ -1,0 +1,40 @@
+#[test]
+fn configured_links_require_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/security-lake-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_securitylake_aws_log_source.sample0", "source.accounts"),
+            (
+                "aws_securitylake_custom_log_source.sample2",
+                "configuration.crawler_configuration.role_arn",
+            ),
+            (
+                "aws_securitylake_data_lake.sample4",
+                "configuration.encryption_configuration",
+            ),
+            (
+                "aws_securitylake_data_lake.sample4",
+                "configuration.replication_configuration.role_arn",
+            ),
+            (
+                "aws_securitylake_data_lake.sample4",
+                "meta_store_manager_role_arn",
+            ),
+            (
+                "aws_securitylake_subscriber.sample6",
+                "source.custom_log_source_resource.source_name",
+            ),
+            (
+                "aws_securitylake_subscriber_notification.sample7",
+                "subscriber_id",
+            ),
+            (
+                "aws_securitylake_subscriber_notification.sample7",
+                "configuration.https_notification_configuration.target_role_arn",
+            ),
+        ],
+        ("aws_organizations_account.sample1", "id"),
+    );
+}

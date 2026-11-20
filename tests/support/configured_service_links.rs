@@ -1,0 +1,171 @@
+use crate::model::TerraformPlan;
+use serde_json::{Value, json};
+
+pub(crate) fn verified(
+    graph: &crate::model::Graph,
+    address: &str,
+    path: &str,
+    label: Option<&str>,
+) -> bool {
+    let node = graph.nodes.iter().find(|n| n.address == address).unwrap();
+    node.references.iter().any(|r| {
+        r.attribute == path
+            && r.complete
+            && !r.dependency
+            && !r.targets.is_empty()
+            && Some(r.label) == label
+    })
+}
+
+pub(crate) fn check(
+    json: &str,
+    parse: fn(&str) -> Result<TerraformPlan, String>,
+    label: fn(&str, &str) -> Option<&'static str>,
+    paths: &[(&str, &str)],
+    endpoint: (&str, &str),
+) {
+    let fixture: Value = serde_json::from_str(json).unwrap();
+    let verified = |value: &Value, address: &str, path: &str| {
+        let graph = crate::semantic::transform(&parse(&value.to_string()).unwrap());
+        verified(
+            &graph,
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    for &(address, path) in paths {
+        assert!(verified(&fixture, address, path), "{address}/{path}");
+        for mask in ["after_sensitive", "after_unknown"] {
+            let mut changed = fixture.clone();
+            change(&mut changed, address)["change"][mask] = json!(true);
+            assert!(
+                !verified(&changed, address, path),
+                "{address}/{path}: {mask}"
+            );
+        }
+    }
+    let (consumer, path) = paths[0];
+    let (source, field) = endpoint;
+    for (key, v) in [
+        ("actions", json!(["delete"])),
+        ("after_sensitive", json!(true)),
+    ] {
+        let mut changed = fixture.clone();
+        change(&mut changed, source)["change"][key] = v;
+        assert!(!verified(&changed, consumer, path), "{source} {key}");
+    }
+    let mut wrong_mode = fixture.clone();
+    change(&mut wrong_mode, source)["mode"] = json!("data");
+    assert!(!verified(&wrong_mode, consumer, path));
+    let mut deposed = fixture.clone();
+    change(&mut deposed, source)["deposed"] = json!("old");
+    assert!(!verified(&deposed, consumer, path));
+    let mut mismatched = fixture.clone();
+    change(&mut mismatched, source)["change"]["after"][field] = json!("different");
+    assert!(!verified(&mismatched, consumer, path));
+    let mut replacing = fixture;
+    let row = change(&mut replacing, source);
+    row["change"]["actions"] = json!(["delete", "create"]);
+    row["change"]["after_unknown"] = json!({field: true});
+    assert!(!verified(&replacing, consumer, path));
+}
+
+fn change<'a>(fixture: &'a mut Value, address: &str) -> &'a mut Value {
+    fixture["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .iter_mut()
+        .find(|row| row["address"] == address)
+        .unwrap()
+}
+
+pub(crate) fn organization_targets(
+    json: &str,
+    label: fn(&str, &str) -> Option<&'static str>,
+    paths: &[(&str, &str)],
+) {
+    let mut fixture: Value = serde_json::from_str(json).unwrap();
+    let cfg = &mut fixture["configuration"];
+    cfg["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::999999999999:role/Delegated"}}]);
+    cfg["provider_config"]["aws.management"] = cfg["provider_config"]["aws"].clone();
+    cfg["provider_config"]["aws.management"]["alias"] = json!("management");
+    cfg["provider_config"]["aws.management"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::210987654321:role/Management"}}]);
+    for resource in cfg["root_module"]["resources"].as_array_mut().unwrap() {
+        if resource["type"]
+            .as_str()
+            .unwrap()
+            .starts_with("aws_organizations_")
+        {
+            resource["provider_config_key"] = json!("aws.management");
+        }
+    }
+    for expected in [true, false] {
+        let parsed = crate::plan::evidence::tests::parse_fixture(&fixture.to_string()).unwrap();
+        let graph = crate::semantic::transform(&parsed);
+        for &(address, path) in paths {
+            assert_eq!(
+                verified(
+                    &graph,
+                    address,
+                    path,
+                    label(address.split('.').next().unwrap(), path)
+                ),
+                expected,
+                "{address}/{path}"
+            );
+        }
+        for resource in fixture["resource_changes"].as_array_mut().unwrap() {
+            if resource["type"]
+                .as_str()
+                .unwrap()
+                .starts_with("aws_organizations_")
+            {
+                resource["change"]["after_unknown"] = json!({"id":true});
+            }
+        }
+    }
+}
+
+pub(crate) fn check_provider_alias(
+    json: &str,
+    consumer: &str,
+    path: &str,
+    source: &str,
+    label: &'static str,
+    regional: bool,
+) {
+    let fixture: Value = serde_json::from_str(json).unwrap();
+    for (account, region, expected) in [
+        ("123456789012", "us-east-1", true),
+        ("987654321098", "us-east-1", false),
+        ("123456789012", "us-west-2", !regional),
+    ] {
+        let mut value = fixture.clone();
+        let config = &mut value["configuration"];
+        let mut other = config["provider_config"]["aws"].clone();
+        other["alias"] = json!("other");
+        other["expressions"]["region"] = json!({"constant_value":region});
+        other["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":format!("arn:aws:iam::{account}:role/Other")}}]);
+        config["provider_config"]["aws.other"] = other;
+        let resources = config["root_module"]["resources"].as_array_mut().unwrap();
+        resources
+            .iter_mut()
+            .find(|r| r["address"] == source)
+            .unwrap()["provider_config_key"] = json!("aws.other");
+        let parsed = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+        assert_eq!(
+            verified(
+                &crate::semantic::transform(&parsed),
+                consumer,
+                path,
+                Some(label)
+            ),
+            expected,
+            "{account}/{region}"
+        );
+    }
+}
