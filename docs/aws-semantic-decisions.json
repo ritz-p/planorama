@@ -78380,6 +78380,2601 @@
         "managedDataContract": "Managed newResourceWebACLRuleGroupAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
+    },
+    "aws_cloud9_environment_ec2": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1526,
+      "gap": "#1526 — Resolve a configured subnet for the EC2 environment and an explicit IAM owner separately. The service-created instance is not a declared EC2 child.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "subnet_id",
+          "owner_arn",
+          "instance_type",
+          "type"
+        ],
+        "placement": "Supported: managed Logical Node for cloud9_environment_ec2. Provides a Cloud9 EC2 Development Environment.",
+        "ownership": "Not applicable: AWS Cloud9 cloud9_environment_ec2 remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Missing: verify subnet_id for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
+        "references": "Missing: Resolve a configured subnet for the EC2 environment and an explicit IAM owner separately. The service-created instance is not a declared EC2 child.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit membership identities and environment access details from cloud9_environment_ec2 summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/cloud9_environment_ec2.html.markdown",
+        "shapes": {
+          "subnet_id": [
+            "string"
+          ],
+          "owner_arn": [
+            "string"
+          ],
+          "instance_type": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "subnet_id": "optional",
+          "owner_arn": "optional/computed",
+          "instance_type": "required",
+          "type": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceEnvironmentEC2. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_cloud9_environment_membership": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1526,
+      "gap": "#1526 — Represent membership between one verified environment and the IAM user; the computed user_id cannot establish a second endpoint.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "environment_id",
+          "user_arn",
+          "permissions",
+          "user_id"
+        ],
+        "placement": "Supported: managed Logical Association for cloud9_environment_membership. Provides an environment member to an AWS Cloud9 development environment.",
+        "ownership": "Missing: verify environment_id before attaching cloud9_environment_membership to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: cloud9_environment_membership declares no VPC/subnet assignment; the configured environment_id does not establish network containment.",
+        "references": "Missing: Represent membership between one verified environment and the IAM user; the computed user_id cannot establish a second endpoint.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit membership identities and environment access details from cloud9_environment_membership summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/cloud9_environment_membership.html.markdown",
+        "shapes": {
+          "environment_id": [
+            "string"
+          ],
+          "user_arn": [
+            "string"
+          ],
+          "permissions": [
+            "string"
+          ],
+          "user_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "environment_id": "required",
+          "user_arn": "required",
+          "permissions": "required",
+          "user_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceEnvironmentMembership. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeartifact_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1527,
+      "gap": "#1527 — Associate the configured KMS key with the domain; the computed service storage bucket ARN is not a customer-owned bucket assignment.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain",
+          "encryption_key",
+          "owner",
+          "s3_bucket_arn"
+        ],
+        "placement": "Supported: managed Logical Node for codeartifact_domain. Provides a CodeArtifact Domain resource.",
+        "ownership": "Not applicable: AWS CodeArtifact codeartifact_domain remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codeartifact_domain declares no VPC/subnet assignment; the configured domain does not establish network containment.",
+        "references": "Missing: Associate the configured KMS key with the domain; the computed service storage bucket ARN is not a customer-owned bucket assignment.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_domain summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeartifact_domain.html.markdown",
+        "shapes": {
+          "domain": [
+            "string"
+          ],
+          "encryption_key": [
+            "string"
+          ],
+          "owner": [
+            "string"
+          ],
+          "s3_bucket_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain": "required",
+          "encryption_key": "optional/computed",
+          "owner": "computed",
+          "s3_bucket_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDomain. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeartifact_domain_permissions_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1527,
+      "gap": "#1527 — Identify the domain by name and owner account; keep policy content opaque and distinguish the computed resource ARN.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain",
+          "domain_owner",
+          "policy_document",
+          "resource_arn"
+        ],
+        "placement": "Supported: managed Logical Policy for codeartifact_domain_permissions_policy. Provides a CodeArtifact Domain Permissions Policy resource.",
+        "ownership": "Missing: verify domain + domain_owner before attaching codeartifact_domain_permissions_policy to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codeartifact_domain_permissions_policy declares no VPC/subnet assignment; the configured domain does not establish network containment.",
+        "references": "Missing: Identify the domain by name and owner account; keep policy content opaque and distinguish the computed resource ARN.",
+        "scope": "Supported: regional service scope requires deployment evidence. domain_owner qualifies the target domain.",
+        "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_domain_permissions_policy summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeartifact_domain_permissions_policy.html.markdown",
+        "shapes": {
+          "domain": [
+            "string"
+          ],
+          "domain_owner": [
+            "string"
+          ],
+          "policy_document": [
+            "string"
+          ],
+          "resource_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain": "required",
+          "domain_owner": "optional/computed",
+          "policy_document": "optional/computed",
+          "resource_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDomainPermissionsPolicy. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeartifact_repository": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1527,
+      "gap": "#1527 — Resolve the owning domain and same-domain upstream repositories independently. External package connection names are service catalog values.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain",
+          "domain_owner",
+          "repository",
+          "upstream.repository_name",
+          "external_connections.external_connection_name"
+        ],
+        "placement": "Supported: managed Logical Node for codeartifact_repository. Provides a CodeArtifact Repository resource.",
+        "ownership": "Missing: verify domain + domain_owner before attaching codeartifact_repository to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codeartifact_repository declares no VPC/subnet assignment; the configured domain does not establish network containment.",
+        "references": "Missing: Resolve the owning domain and same-domain upstream repositories independently. External package connection names are service catalog values.",
+        "scope": "Supported: regional service scope requires deployment evidence. domain_owner qualifies the domain; a foreign account requires matching evidence.",
+        "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_repository summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeartifact_repository.html.markdown",
+        "shapes": {
+          "domain": [
+            "string"
+          ],
+          "domain_owner": [
+            "string"
+          ],
+          "repository": [
+            "string"
+          ],
+          "upstream.repository_name": [
+            "list",
+            "string"
+          ],
+          "external_connections.external_connection_name": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain": "required",
+          "domain_owner": "optional/computed",
+          "repository": "required",
+          "upstream.repository_name": "required",
+          "external_connections.external_connection_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRepository. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeartifact_repository_permissions_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1527,
+      "gap": "#1527 — Bind to one repository qualified by domain and owner; a repository name alone is not unique.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain",
+          "domain_owner",
+          "repository",
+          "resource_arn",
+          "policy_document"
+        ],
+        "placement": "Supported: managed Logical Policy for codeartifact_repository_permissions_policy. Provides a CodeArtifact Repository Permissions Policy resource.",
+        "ownership": "Missing: verify domain + domain_owner + repository before attaching codeartifact_repository_permissions_policy to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codeartifact_repository_permissions_policy declares no VPC/subnet assignment; the configured domain does not establish network containment.",
+        "references": "Missing: Bind to one repository qualified by domain and owner; a repository name alone is not unique.",
+        "scope": "Supported: regional service scope requires deployment evidence. domain_owner qualifies the target domain and repository.",
+        "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_repository_permissions_policy summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeartifact_repository_permissions_policy.html.markdown",
+        "shapes": {
+          "domain": [
+            "string"
+          ],
+          "domain_owner": [
+            "string"
+          ],
+          "repository": [
+            "string"
+          ],
+          "resource_arn": [
+            "string"
+          ],
+          "policy_document": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain": "required",
+          "domain_owner": "optional/computed",
+          "repository": "required",
+          "resource_arn": "computed",
+          "policy_document": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRepositoryPermissionsPolicy. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codebuild_fleet": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1528,
+      "gap": "#1528 — Resolve fleet role and configured network endpoints. Neither the fleet nor its projects own the subnets.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "fleet_service_role",
+          "vpc_config.vpc_id",
+          "vpc_config.subnets",
+          "vpc_config.security_group_ids",
+          "compute_type"
+        ],
+        "placement": "Supported: managed Spatial Node for codebuild_fleet. Provides a CodeBuild Fleet Resource.",
+        "ownership": "Not applicable: AWS CodeBuild codebuild_fleet remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Missing: verify vpc_config.vpc_id, vpc_config.subnets, vpc_config.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
+        "references": "Missing: Resolve fleet role and configured network endpoints. Neither the fleet nor its projects own the subnets.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_fleet summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codebuild_fleet.html.markdown",
+        "shapes": {
+          "fleet_service_role": [
+            "string"
+          ],
+          "vpc_config.vpc_id": [
+            "list",
+            "string"
+          ],
+          "vpc_config.subnets": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_config.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "compute_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "fleet_service_role": "optional",
+          "vpc_config.vpc_id": "required",
+          "vpc_config.subnets": "required",
+          "vpc_config.security_group_ids": "required",
+          "compute_type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceFleet. Same-name data lookup has separate selectors.",
+        "dataContracts": {
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_codebuild_project": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1528,
+      "gap": "#1528 — Resolve project role, compatible KMS identity, fleet, network and type-qualified artifact/log destinations. Do not interpret buildspec, source credentials or environment variables.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "service_role",
+          "encryption_key",
+          "environment.fleet.fleet_arn",
+          "vpc_config.vpc_id",
+          "vpc_config.subnets",
+          "vpc_config.security_group_ids",
+          "artifacts.type",
+          "artifacts.location",
+          "logs_config.cloudwatch_logs.group_name"
+        ],
+        "placement": "Supported: managed Spatial Node for codebuild_project. Provides a CodeBuild Project resource.",
+        "ownership": "Not applicable: AWS CodeBuild codebuild_project remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Missing: verify vpc_config.vpc_id, vpc_config.subnets, vpc_config.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
+        "references": "Missing: Resolve project role, compatible KMS identity, fleet, network and type-qualified artifact/log destinations. Do not interpret buildspec, source credentials or environment variables.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_project summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codebuild_project.html.markdown",
+        "shapes": {
+          "service_role": [
+            "string"
+          ],
+          "encryption_key": [
+            "string"
+          ],
+          "environment.fleet.fleet_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "vpc_config.vpc_id": [
+            "list",
+            "string"
+          ],
+          "vpc_config.subnets": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_config.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "artifacts.type": [
+            "list",
+            "string"
+          ],
+          "artifacts.location": [
+            "list",
+            "string"
+          ],
+          "logs_config.cloudwatch_logs.group_name": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "service_role": "required",
+          "encryption_key": "optional/computed",
+          "environment.fleet.fleet_arn": "optional",
+          "vpc_config.vpc_id": "required",
+          "vpc_config.subnets": "required",
+          "vpc_config.security_group_ids": "required",
+          "artifacts.type": "required",
+          "artifacts.location": "optional",
+          "logs_config.cloudwatch_logs.group_name": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceProject. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codebuild_report_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1528,
+      "gap": "#1528 — Identify the configured S3 export bucket and key only for a compatible export type; report contents and service-produced artifacts remain opaque.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "type",
+          "export_config.type",
+          "export_config.s3_destination.bucket",
+          "export_config.s3_destination.encryption_key"
+        ],
+        "placement": "Supported: managed Logical Node for codebuild_report_group. Provides a CodeBuild Report Group resource.",
+        "ownership": "Not applicable: AWS CodeBuild codebuild_report_group remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codebuild_report_group declares no VPC/subnet assignment; the configured type does not establish network containment.",
+        "references": "Missing: Identify the configured S3 export bucket and key only for a compatible export type; report contents and service-produced artifacts remain opaque.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_report_group summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codebuild_report_group.html.markdown",
+        "shapes": {
+          "type": [
+            "string"
+          ],
+          "export_config.type": [
+            "list",
+            "string"
+          ],
+          "export_config.s3_destination.bucket": [
+            "list",
+            "list",
+            "string"
+          ],
+          "export_config.s3_destination.encryption_key": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "type": "required",
+          "export_config.type": "required",
+          "export_config.s3_destination.bucket": "required",
+          "export_config.s3_destination.encryption_key": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceReportGroup. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codebuild_resource_policy": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1528,
+      "gap": "#1528 — Bind the policy to an eligible, verified CodeBuild resource ARN. Policy statements do not establish principals or additional endpoints.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_arn",
+          "policy"
+        ],
+        "placement": "Supported: managed Logical Policy for codebuild_resource_policy. Provides a CodeBuild Resource Policy resource.",
+        "ownership": "Not applicable: AWS CodeBuild codebuild_resource_policy remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codebuild_resource_policy declares no VPC/subnet assignment; the configured resource_arn does not establish network containment.",
+        "references": "Missing: Bind the policy to an eligible, verified CodeBuild resource ARN. Policy statements do not establish principals or additional endpoints.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_resource_policy summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codebuild_resource_policy.html.markdown",
+        "shapes": {
+          "resource_arn": [
+            "string"
+          ],
+          "policy": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_arn": "required",
+          "policy": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceResourcePolicy. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codebuild_source_credential": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "A regional credential registration describes authentication to a server class; no project identity is configured. Omit the token and username.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "server_type",
+          "auth_type",
+          "token"
+        ],
+        "placement": "Supported: managed Logical Node for codebuild_source_credential. Provides a CodeBuild Source Credential resource.",
+        "ownership": "Not applicable: AWS CodeBuild codebuild_source_credential remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codebuild_source_credential declares no VPC/subnet assignment; the configured server_type does not establish network containment.",
+        "references": "Intentionally unsupported: A regional credential registration describes authentication to a server class; no project identity is configured. Omit the token and username.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_source_credential summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codebuild_source_credential.html.markdown",
+        "shapes": {
+          "server_type": [
+            "string"
+          ],
+          "auth_type": [
+            "string"
+          ],
+          "token": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "server_type": "required",
+          "auth_type": "required",
+          "token": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSourceCredential. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codebuild_webhook": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1528,
+      "gap": "#1528 — Bind a webhook to its named project; external callback URLs, filters and secrets do not identify managed source repositories.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "project_name",
+          "build_type",
+          "manual_creation",
+          "payload_url"
+        ],
+        "placement": "Supported: managed Logical Node for codebuild_webhook. Provides a CodeBuild Webhook resource.",
+        "ownership": "Missing: verify project_name before attaching codebuild_webhook to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codebuild_webhook declares no VPC/subnet assignment; the configured project_name does not establish network containment.",
+        "references": "Missing: Bind a webhook to its named project; external callback URLs, filters and secrets do not identify managed source repositories.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_webhook summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codebuild_webhook.html.markdown",
+        "shapes": {
+          "project_name": [
+            "string"
+          ],
+          "build_type": [
+            "string"
+          ],
+          "manual_creation": [
+            "bool"
+          ],
+          "payload_url": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "project_name": "required",
+          "build_type": "optional",
+          "manual_creation": "optional",
+          "payload_url": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebhook. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codecatalyst_dev_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1529,
+      "gap": "#1529 — Resolve project and repository names within the declared space/project pair; branch names and IDE settings are not resource identities.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "space_name",
+          "project_name",
+          "repositories.repository_name",
+          "repositories.branch_name",
+          "instance_type"
+        ],
+        "placement": "Supported: managed Logical Node for codecatalyst_dev_environment. Terraform resource for managing an AWS CodeCatalyst Devenvironment.",
+        "ownership": "Missing: verify space_name + project_name before attaching codecatalyst_dev_environment to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codecatalyst_dev_environment declares no VPC/subnet assignment; the configured space_name does not establish network containment.",
+        "references": "Missing: Resolve project and repository names within the declared space/project pair; branch names and IDE settings are not resource identities.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit IDE configuration and branch contents from codecatalyst_dev_environment summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecatalyst_dev_environment.html.markdown",
+        "shapes": {
+          "space_name": [
+            "string"
+          ],
+          "project_name": [
+            "string"
+          ],
+          "repositories.repository_name": [
+            "list",
+            "string"
+          ],
+          "repositories.branch_name": [
+            "list",
+            "string"
+          ],
+          "instance_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "space_name": "required",
+          "project_name": "required",
+          "repositories.repository_name": "required",
+          "repositories.branch_name": "optional",
+          "instance_type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceDevEnvironment. Same-name data lookup has separate selectors and blocks repositories.",
+        "dataContracts": {
+          "alias": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "creator_id": {
+            "shape": "string",
+            "contract": "optional"
+          },
+          "env_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "project_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "space_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_codecatalyst_project": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Keep the project as a named declaration. Space is an external namespace with no managed CodeCatalyst space registration; display_name is not the computed project name.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "space_name",
+          "display_name",
+          "name"
+        ],
+        "placement": "Supported: managed Logical Node for codecatalyst_project. Terraform resource for managing an AWS CodeCatalyst Project.",
+        "ownership": "Not applicable: AWS CodeCatalyst codecatalyst_project remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codecatalyst_project declares no VPC/subnet assignment; the configured space_name does not establish network containment.",
+        "references": "Intentionally unsupported: Keep the project as a named declaration. Space is an external namespace with no managed CodeCatalyst space registration; display_name is not the computed project name.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit IDE configuration and branch contents from codecatalyst_project summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecatalyst_project.html.markdown",
+        "shapes": {
+          "space_name": [
+            "string"
+          ],
+          "display_name": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "space_name": "required",
+          "display_name": "required",
+          "name": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceProject. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codecatalyst_source_repository": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1529,
+      "gap": "#1529 — Verify the owning CodeCatalyst project by space and project name. Repository names are scoped to that project.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "space_name",
+          "project_name",
+          "name"
+        ],
+        "placement": "Supported: managed Logical Node for codecatalyst_source_repository. Terraform resource for managing an AWS CodeCatalyst Source Repository.",
+        "ownership": "Missing: verify space_name + project_name before attaching codecatalyst_source_repository to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codecatalyst_source_repository declares no VPC/subnet assignment; the configured space_name does not establish network containment.",
+        "references": "Missing: Verify the owning CodeCatalyst project by space and project name. Repository names are scoped to that project.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit IDE configuration and branch contents from codecatalyst_source_repository summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecatalyst_source_repository.html.markdown",
+        "shapes": {
+          "space_name": [
+            "string"
+          ],
+          "project_name": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "space_name": "required",
+          "project_name": "required",
+          "name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceSourceRepository. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codecommit_approval_rule_template": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Retain the reusable approval template independently. The template has no repository target until an association is configured; omit rule content.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "approval_rule_template_id",
+          "content"
+        ],
+        "placement": "Supported: managed Logical Policy for codecommit_approval_rule_template. Provides a CodeCommit Approval Rule Template Resource.",
+        "ownership": "Not applicable: AWS CodeCommit codecommit_approval_rule_template remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codecommit_approval_rule_template declares no VPC/subnet assignment; the configured name does not establish network containment.",
+        "references": "Intentionally unsupported: Retain the reusable approval template independently. The template has no repository target until an association is configured; omit rule content.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_approval_rule_template summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecommit_approval_rule_template.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "approval_rule_template_id": [
+            "string"
+          ],
+          "content": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "approval_rule_template_id": "computed",
+          "content": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceApprovalRuleTemplate. Same-name data lookup has separate selectors.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_codecommit_approval_rule_template_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1530,
+      "gap": "#1530 — Verify both template and repository names against their respective declarations; attaching a reusable template does not transfer ownership.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "approval_rule_template_name",
+          "repository_name"
+        ],
+        "placement": "Supported: managed Logical Association for codecommit_approval_rule_template_association. Associates a CodeCommit Approval Rule Template with a Repository.",
+        "ownership": "Not applicable: AWS CodeCommit codecommit_approval_rule_template_association remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codecommit_approval_rule_template_association declares no VPC/subnet assignment; the configured approval_rule_template_name does not establish network containment.",
+        "references": "Missing: Verify both template and repository names against their respective declarations; attaching a reusable template does not transfer ownership.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_approval_rule_template_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecommit_approval_rule_template_association.html.markdown",
+        "shapes": {
+          "approval_rule_template_name": [
+            "string"
+          ],
+          "repository_name": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "approval_rule_template_name": "required",
+          "repository_name": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceApprovalRuleTemplateAssociation. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codecommit_repository": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1530,
+      "gap": "#1530 — Resolve the configured KMS key. The repository ID is an output and a branch name is not a managed resource.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository_name",
+          "repository_id",
+          "kms_key_id",
+          "default_branch"
+        ],
+        "placement": "Supported: managed Logical Node for codecommit_repository. Provides a CodeCommit Repository Resource.",
+        "ownership": "Not applicable: AWS CodeCommit codecommit_repository remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codecommit_repository declares no VPC/subnet assignment; the configured repository_name does not establish network containment.",
+        "references": "Missing: Resolve the configured KMS key. The repository ID is an output and a branch name is not a managed resource.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_repository summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecommit_repository.html.markdown",
+        "shapes": {
+          "repository_name": [
+            "string"
+          ],
+          "repository_id": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "default_branch": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "repository_name": "required",
+          "repository_id": "computed",
+          "kms_key_id": "optional/computed",
+          "default_branch": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRepository. Same-name data lookup has separate selectors.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "repository_name": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_codecommit_trigger": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1534,
+      "gap": "#1534 — Associate the selected repository with each typed SNS or Lambda trigger destination. Event and branch filters do not prove event delivery.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository_name",
+          "trigger.destination_arn",
+          "trigger.events"
+        ],
+        "placement": "Supported: managed Logical Node for codecommit_trigger. Provides a CodeCommit Trigger Resource.",
+        "ownership": "Missing: verify repository_name before attaching codecommit_trigger to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codecommit_trigger declares no VPC/subnet assignment; the configured repository_name does not establish network containment.",
+        "references": "Missing: Associate the selected repository with each typed SNS or Lambda trigger destination. Event and branch filters do not prove event delivery.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_trigger summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codecommit_trigger.html.markdown",
+        "shapes": {
+          "repository_name": [
+            "string"
+          ],
+          "trigger.destination_arn": [
+            "set",
+            "string"
+          ],
+          "trigger.events": [
+            "set",
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "repository_name": "required",
+          "trigger.destination_arn": "required",
+          "trigger.events": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceTrigger. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeconnections_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1531,
+      "gap": "#1531 — Resolve the configured CodeConnections host when present. Do not infer a host from provider_type or from connection status.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "host_arn",
+          "provider_type",
+          "arn",
+          "connection_status"
+        ],
+        "placement": "Supported: managed Logical Node for codeconnections_connection. Terraform resource for managing an AWS CodeConnections Connection.",
+        "ownership": "Not applicable: AWS CodeConnections codeconnections_connection remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codeconnections_connection declares no VPC/subnet assignment; the configured host_arn does not establish network containment.",
+        "references": "Missing: Resolve the configured CodeConnections host when present. Do not infer a host from provider_type or from connection status.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codeconnections_connection summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeconnections_connection.html.markdown",
+        "shapes": {
+          "host_arn": [
+            "string"
+          ],
+          "provider_type": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "host_arn": "optional",
+          "provider_type": "optional/computed",
+          "arn": "computed",
+          "connection_status": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newConnectionResource. No same-name data source in the pinned schema. Deprecated attributes: id. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeconnections_host": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1531,
+      "gap": "#1531 — Verify the configured VPC, subnets and security groups. Exclude TLS certificates and provider endpoint URLs.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_configuration.vpc_id",
+          "vpc_configuration.subnet_ids",
+          "vpc_configuration.security_group_ids",
+          "provider_type"
+        ],
+        "placement": "Supported: managed Logical Node for codeconnections_host. Terraform resource for managing an AWS CodeConnections Host.",
+        "ownership": "Not applicable: AWS CodeConnections codeconnections_host remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Missing: verify vpc_configuration.vpc_id, vpc_configuration.subnet_ids, vpc_configuration.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
+        "references": "Missing: Verify the configured VPC, subnets and security groups. Exclude TLS certificates and provider endpoint URLs.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codeconnections_host summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeconnections_host.html.markdown",
+        "shapes": {
+          "vpc_configuration.vpc_id": [
+            "list",
+            "string"
+          ],
+          "vpc_configuration.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_configuration.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "provider_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_configuration.vpc_id": "required",
+          "vpc_configuration.subnet_ids": "required",
+          "vpc_configuration.security_group_ids": "required",
+          "provider_type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newHostResource. No same-name data source in the pinned schema. Deprecated attributes: id. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codedeploy_app": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Retain the application independently; compute platform selects a deployment model and computed GitHub linkage does not name a managed repository.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "compute_platform",
+          "application_id",
+          "linked_to_github"
+        ],
+        "placement": "Supported: managed Logical Node for codedeploy_app. Provides a CodeDeploy application.",
+        "ownership": "Not applicable: AWS CodeDeploy codedeploy_app remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codedeploy_app declares no VPC/subnet assignment; the configured name does not establish network containment.",
+        "references": "Intentionally unsupported: Retain the application independently; compute platform selects a deployment model and computed GitHub linkage does not name a managed repository.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit deployment payloads, tags and runtime deployment outcomes from codedeploy_app summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codedeploy_app.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "compute_platform": [
+            "string"
+          ],
+          "application_id": [
+            "string"
+          ],
+          "linked_to_github": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "compute_platform": "optional",
+          "application_id": "computed",
+          "linked_to_github": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceApp. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codedeploy_deployment_config": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "A reusable rollout policy specifies thresholds, not EC2/ECS targets. Bind it from a deployment group with an explicit configuration name.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "deployment_config_name",
+          "compute_platform",
+          "minimum_healthy_hosts.type",
+          "deployment_config_id"
+        ],
+        "placement": "Supported: managed Logical Controller for codedeploy_deployment_config. Provides a CodeDeploy deployment config.",
+        "ownership": "Not applicable: AWS CodeDeploy codedeploy_deployment_config remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codedeploy_deployment_config declares no VPC/subnet assignment; the configured deployment_config_name does not establish network containment.",
+        "references": "Intentionally unsupported: A reusable rollout policy specifies thresholds, not EC2/ECS targets. Bind it from a deployment group with an explicit configuration name.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit deployment payloads, tags and runtime deployment outcomes from codedeploy_deployment_config summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codedeploy_deployment_config.html.markdown",
+        "shapes": {
+          "deployment_config_name": [
+            "string"
+          ],
+          "compute_platform": [
+            "string"
+          ],
+          "minimum_healthy_hosts.type": [
+            "list",
+            "string"
+          ],
+          "deployment_config_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "deployment_config_name": "required",
+          "compute_platform": "optional",
+          "minimum_healthy_hosts.type": "optional",
+          "deployment_config_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDeploymentConfig. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codedeploy_deployment_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1532,
+      "gap": "#1532 — Resolve the application, custom deployment configuration, role, ASGs, cluster-qualified ECS service, load-balancer targets/listeners and notification ARN. Tags and built-in deployment configuration names are not managed endpoints.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_name",
+          "deployment_config_name",
+          "service_role_arn",
+          "autoscaling_groups",
+          "ecs_service.cluster_name",
+          "ecs_service.service_name",
+          "load_balancer_info.target_group_info.name",
+          "load_balancer_info.target_group_pair_info.prod_traffic_route.listener_arns",
+          "trigger_configuration.trigger_target_arn"
+        ],
+        "placement": "Supported: managed Logical Controller for codedeploy_deployment_group. Provides a CodeDeploy deployment group.",
+        "ownership": "Missing: verify app_name before attaching codedeploy_deployment_group to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codedeploy_deployment_group declares no VPC/subnet assignment; the configured app_name does not establish network containment.",
+        "references": "Missing: Resolve the application, custom deployment configuration, role, ASGs, cluster-qualified ECS service, load-balancer targets/listeners and notification ARN. Tags and built-in deployment configuration names are not managed endpoints.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit deployment payloads, tags and runtime deployment outcomes from codedeploy_deployment_group summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codedeploy_deployment_group.html.markdown",
+        "shapes": {
+          "app_name": [
+            "string"
+          ],
+          "deployment_config_name": [
+            "string"
+          ],
+          "service_role_arn": [
+            "string"
+          ],
+          "autoscaling_groups": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "ecs_service.cluster_name": [
+            "list",
+            "string"
+          ],
+          "ecs_service.service_name": [
+            "list",
+            "string"
+          ],
+          "load_balancer_info.target_group_info.name": [
+            "list",
+            "set",
+            "string"
+          ],
+          "load_balancer_info.target_group_pair_info.prod_traffic_route.listener_arns": [
+            "list",
+            "list",
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "trigger_configuration.trigger_target_arn": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_name": "required",
+          "deployment_config_name": "optional",
+          "service_role_arn": "required",
+          "autoscaling_groups": "optional",
+          "ecs_service.cluster_name": "required",
+          "ecs_service.service_name": "required",
+          "load_balancer_info.target_group_info.name": "optional",
+          "load_balancer_info.target_group_pair_info.prod_traffic_route.listener_arns": "required",
+          "trigger_configuration.trigger_target_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDeploymentGroup. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codeguruprofiler_profiling_group": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "A profiling group and its orchestration flag identify no configured compute target. Do not infer instrumented functions, instances or profiling data.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "compute_platform",
+          "agent_orchestration_config.profiling_enabled"
+        ],
+        "placement": "Supported: managed Logical Node for codeguruprofiler_profiling_group. Terraform resource for managing an AWS CodeGuru Profiler Profiling Group.",
+        "ownership": "Not applicable: AWS CodeGuru Profiler codeguruprofiler_profiling_group remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codeguruprofiler_profiling_group declares no VPC/subnet assignment; the configured name does not establish network containment.",
+        "references": "Intentionally unsupported: A profiling group and its orchestration flag identify no configured compute target. Do not infer instrumented functions, instances or profiling data.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit profile data and sampled stack traces from codeguruprofiler_profiling_group summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codeguruprofiler_profiling_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "compute_platform": [
+            "string"
+          ],
+          "agent_orchestration_config.profiling_enabled": [
+            "list",
+            "bool"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "compute_platform": "optional/computed",
+          "agent_orchestration_config.profiling_enabled": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newProfilingGroupResource. Same-name data lookup has separate selectors.",
+        "dataContracts": {
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_codegurureviewer_repository_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1530,
+      "gap": "#1530 — Resolve endpoints only from the selected repository variant and optional key. External repository names are not CodeCommit declarations; the top-level connection ARN is computed.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "repository.codecommit.name",
+          "repository.s3_bucket.bucket_name",
+          "repository.bitbucket.connection_arn",
+          "repository.github_enterprise_server.connection_arn",
+          "kms_key_details.kms_key_id",
+          "connection_arn"
+        ],
+        "placement": "Supported: managed Logical Association for codegurureviewer_repository_association. Terraform resource for managing an AWS CodeGuru Reviewer Repository Association.",
+        "ownership": "Not applicable: AWS CodeGuru Reviewer codegurureviewer_repository_association remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codegurureviewer_repository_association declares no VPC/subnet assignment; the configured repository.codecommit.name does not establish network containment.",
+        "references": "Missing: Resolve endpoints only from the selected repository variant and optional key. External repository names are not CodeCommit declarations; the top-level connection ARN is computed.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit review contents and external repository URLs from codegurureviewer_repository_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codegurureviewer_repository_association.html.markdown",
+        "shapes": {
+          "repository.codecommit.name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "repository.s3_bucket.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "repository.bitbucket.connection_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "repository.github_enterprise_server.connection_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "kms_key_details.kms_key_id": [
+            "list",
+            "string"
+          ],
+          "connection_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "repository.codecommit.name": "required",
+          "repository.s3_bucket.bucket_name": "required",
+          "repository.bitbucket.connection_arn": "required",
+          "repository.github_enterprise_server.connection_arn": "required",
+          "kms_key_details.kms_key_id": "optional",
+          "connection_arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRepositoryAssociation. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codepipeline": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1533,
+      "gap": "#1533 — Resolve pipeline/action roles and regional S3 artifact stores and keys; distinguish a stage-local action name from a resource name. Arbitrary action configurations and artifact names do not prove deployment endpoints.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "artifact_store.type",
+          "artifact_store.location",
+          "artifact_store.region",
+          "artifact_store.encryption_key.id",
+          "stage.action.name",
+          "stage.action.role_arn",
+          "stage.action.provider",
+          "stage.action.configuration"
+        ],
+        "placement": "Supported: managed Logical Node for codepipeline. Provides a CodePipeline",
+        "ownership": "Not applicable: AWS CodePipeline codepipeline remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codepipeline declares no VPC/subnet assignment; the configured role_arn does not establish network containment.",
+        "references": "Missing: Resolve pipeline/action roles and regional S3 artifact stores and keys; distinguish a stage-local action name from a resource name. Arbitrary action configurations and artifact names do not prove deployment endpoints.",
+        "scope": "Supported: regional service scope requires deployment evidence. Each artifact_store.region qualifies that store separately.",
+        "summaries": "Intentionally unsupported: omit action configuration maps, authentication secrets and artifact contents from codepipeline summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codepipeline.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "artifact_store.type": [
+            "set",
+            "string"
+          ],
+          "artifact_store.location": [
+            "set",
+            "string"
+          ],
+          "artifact_store.region": [
+            "set",
+            "string"
+          ],
+          "artifact_store.encryption_key.id": [
+            "set",
+            "list",
+            "string"
+          ],
+          "stage.action.name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "stage.action.role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "stage.action.provider": [
+            "list",
+            "list",
+            "string"
+          ],
+          "stage.action.configuration": [
+            "list",
+            "list",
+            [
+              "map",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "role_arn": "required",
+          "artifact_store.type": "required",
+          "artifact_store.location": "required",
+          "artifact_store.region": "optional",
+          "artifact_store.encryption_key.id": "required",
+          "stage.action.name": "required",
+          "stage.action.role_arn": "optional",
+          "stage.action.provider": "required",
+          "stage.action.configuration": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourcePipeline. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codepipeline_custom_action_type": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "The custom action contract is identified by category, provider and version. Input/output artifact counts and configuration-property descriptions are not managed endpoints.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "category",
+          "provider_name",
+          "version",
+          "owner"
+        ],
+        "placement": "Supported: managed Logical Controller for codepipeline_custom_action_type. Provides a CodePipeline CustomActionType.",
+        "ownership": "Not applicable: AWS CodePipeline codepipeline_custom_action_type remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codepipeline_custom_action_type declares no VPC/subnet assignment; the configured category does not establish network containment.",
+        "references": "Intentionally unsupported: The custom action contract is identified by category, provider and version. Input/output artifact counts and configuration-property descriptions are not managed endpoints.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit action configuration maps, authentication secrets and artifact contents from codepipeline_custom_action_type summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codepipeline_custom_action_type.html.markdown",
+        "shapes": {
+          "category": [
+            "string"
+          ],
+          "provider_name": [
+            "string"
+          ],
+          "version": [
+            "string"
+          ],
+          "owner": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "category": "required",
+          "provider_name": "required",
+          "version": "required",
+          "owner": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceCustomActionType. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codepipeline_webhook": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1533,
+      "gap": "#1533 — Link the verified pipeline and match an action name inside its stages; suppress webhook credentials, filters and callback URLs.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "target_pipeline",
+          "target_action",
+          "authentication"
+        ],
+        "placement": "Supported: managed Logical Node for codepipeline_webhook. Provides a CodePipeline Webhook",
+        "ownership": "Missing: verify target_pipeline before attaching codepipeline_webhook to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: codepipeline_webhook declares no VPC/subnet assignment; the configured target_pipeline does not establish network containment.",
+        "references": "Missing: Link the verified pipeline and match an action name inside its stages; suppress webhook credentials, filters and callback URLs.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit action configuration maps, authentication secrets and artifact contents from codepipeline_webhook summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codepipeline_webhook.html.markdown",
+        "shapes": {
+          "target_pipeline": [
+            "string"
+          ],
+          "target_action": [
+            "string"
+          ],
+          "authentication": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "target_pipeline": "required",
+          "target_action": "required",
+          "authentication": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebhook. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codestarconnections_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1531,
+      "gap": "#1531 — Resolve the legacy connection's configured host ARN; distinguish CodeStar and CodeConnections registrations and require unique identity across both namespaces.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "host_arn",
+          "provider_type",
+          "arn",
+          "connection_status"
+        ],
+        "placement": "Supported: managed Logical Node for codestarconnections_connection. Provides a CodeStar Connection",
+        "ownership": "Not applicable: AWS CodeStar Connections codestarconnections_connection remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codestarconnections_connection declares no VPC/subnet assignment; the configured host_arn does not establish network containment.",
+        "references": "Missing: Resolve the legacy connection's configured host ARN; distinguish CodeStar and CodeConnections registrations and require unique identity across both namespaces.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codestarconnections_connection summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codestarconnections_connection.html.markdown",
+        "shapes": {
+          "host_arn": [
+            "string"
+          ],
+          "provider_type": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "connection_status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "host_arn": "optional",
+          "provider_type": "optional/computed",
+          "arn": "computed",
+          "connection_status": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceConnection. Same-name data lookup has separate selectors. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
+        "dataContracts": {
+          "arn": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_codestarconnections_host": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1531,
+      "gap": "#1531 — Verify legacy host network endpoints using its own schema; similar modern host names alone do not establish an alias.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_configuration.vpc_id",
+          "vpc_configuration.subnet_ids",
+          "vpc_configuration.security_group_ids",
+          "provider_type"
+        ],
+        "placement": "Supported: managed Logical Node for codestarconnections_host. Provides a CodeStar Host",
+        "ownership": "Not applicable: AWS CodeStar Connections codestarconnections_host remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Missing: verify vpc_configuration.vpc_id, vpc_configuration.subnet_ids, vpc_configuration.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
+        "references": "Missing: Verify legacy host network endpoints using its own schema; similar modern host names alone do not establish an alias.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codestarconnections_host summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codestarconnections_host.html.markdown",
+        "shapes": {
+          "vpc_configuration.vpc_id": [
+            "list",
+            "string"
+          ],
+          "vpc_configuration.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_configuration.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "provider_type": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_configuration.vpc_id": "required",
+          "vpc_configuration.subnet_ids": "required",
+          "vpc_configuration.security_group_ids": "required",
+          "provider_type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceHost. No same-name data source in the pinned schema. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
+        "dataContracts": {}
+      }
+    },
+    "aws_codestarnotifications_notification_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1534,
+      "gap": "#1534 — Resolve the source ARN and type-qualified SNS or supported Chatbot target ARN. Notification event IDs are filters, not resource identities.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource",
+          "target.type",
+          "target.address",
+          "event_type_ids"
+        ],
+        "placement": "Supported: managed Logical Policy for codestarnotifications_notification_rule. Provides a CodeStar Notifications Rule",
+        "ownership": "Not applicable: AWS CodeStar Notifications codestarnotifications_notification_rule remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: codestarnotifications_notification_rule declares no VPC/subnet assignment; the configured resource does not establish network containment.",
+        "references": "Missing: Resolve the source ARN and type-qualified SNS or supported Chatbot target ARN. Notification event IDs are filters, not resource identities.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit notification payloads and event contents from codestarnotifications_notification_rule summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/codestarnotifications_notification_rule.html.markdown",
+        "shapes": {
+          "resource": [
+            "string"
+          ],
+          "target.type": [
+            "set",
+            "string"
+          ],
+          "target.address": [
+            "set",
+            "string"
+          ],
+          "event_type_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "resource": "required",
+          "target.type": "optional",
+          "target.address": "required",
+          "event_type_ids": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceNotificationRule. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devicefarm_device_pool": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1535,
+      "gap": "#1535 — Link a device pool to its project; dynamic device rules do not identify a managed physical device.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "project_arn",
+          "rule",
+          "max_devices"
+        ],
+        "placement": "Supported: managed Logical Node for devicefarm_device_pool. Provides a Devicefarm device_pool",
+        "ownership": "Missing: verify project_arn before attaching devicefarm_device_pool to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: devicefarm_device_pool declares no VPC/subnet assignment; the configured project_arn does not establish network containment.",
+        "references": "Missing: Link a device pool to its project; dynamic device rules do not identify a managed physical device.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_device_pool summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devicefarm_device_pool.html.markdown",
+        "shapes": {
+          "project_arn": [
+            "string"
+          ],
+          "rule": [
+            "set"
+          ],
+          "max_devices": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "project_arn": "required",
+          "rule": "block",
+          "max_devices": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDevicePool. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devicefarm_instance_profile": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Cleanup and reboot preferences describe a reusable test profile; no device or project ARN is configured.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "package_cleanup",
+          "reboot_after_use"
+        ],
+        "placement": "Supported: managed Logical Node for devicefarm_instance_profile. Provides a Devicefarm instance profile",
+        "ownership": "Not applicable: AWS Device Farm devicefarm_instance_profile remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devicefarm_instance_profile declares no VPC/subnet assignment; the configured name does not establish network containment.",
+        "references": "Intentionally unsupported: Cleanup and reboot preferences describe a reusable test profile; no device or project ARN is configured.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_instance_profile summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devicefarm_instance_profile.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "package_cleanup": [
+            "bool"
+          ],
+          "reboot_after_use": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "package_cleanup": "optional",
+          "reboot_after_use": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceInstanceProfile. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devicefarm_network_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1535,
+      "gap": "#1535 — Associate the network simulation profile with its project. Bandwidth and delay settings do not place devices in an AWS VPC.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "project_arn",
+          "type",
+          "uplink_bandwidth_bits",
+          "downlink_delay_ms"
+        ],
+        "placement": "Supported: managed Logical Node for devicefarm_network_profile. Provides a Devicefarm network profile",
+        "ownership": "Missing: verify project_arn before attaching devicefarm_network_profile to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: devicefarm_network_profile declares no VPC/subnet assignment; the configured project_arn does not establish network containment.",
+        "references": "Missing: Associate the network simulation profile with its project. Bandwidth and delay settings do not place devices in an AWS VPC.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_network_profile summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devicefarm_network_profile.html.markdown",
+        "shapes": {
+          "project_arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "uplink_bandwidth_bits": [
+            "number"
+          ],
+          "downlink_delay_ms": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "project_arn": "required",
+          "type": "optional",
+          "uplink_bandwidth_bits": "optional",
+          "downlink_delay_ms": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceNetworkProfile. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devicefarm_project": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Retain the independent project. Its timeout is not a run, device pool or upload; those declarations supply their own project ARN.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "default_job_timeout_minutes"
+        ],
+        "placement": "Supported: managed Logical Node for devicefarm_project. Provides a Devicefarm project",
+        "ownership": "Not applicable: AWS Device Farm devicefarm_project remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devicefarm_project declares no VPC/subnet assignment; the configured name does not establish network containment.",
+        "references": "Intentionally unsupported: Retain the independent project. Its timeout is not a run, device pool or upload; those declarations supply their own project ARN.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_project summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devicefarm_project.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "default_job_timeout_minutes": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed",
+          "default_job_timeout_minutes": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceProject. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devicefarm_test_grid_project": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1535,
+      "gap": "#1535 — Resolve the TestGrid project's explicit VPC, subnets and security groups; browser sessions and their runtime network paths are excluded.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "vpc_config.vpc_id",
+          "vpc_config.subnet_ids",
+          "vpc_config.security_group_ids",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node for devicefarm_test_grid_project. Provides a Devicefarm test_grid_project",
+        "ownership": "Not applicable: AWS Device Farm devicefarm_test_grid_project remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Missing: verify vpc_config.vpc_id, vpc_config.subnet_ids, vpc_config.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
+        "references": "Missing: Resolve the TestGrid project's explicit VPC, subnets and security groups; browser sessions and their runtime network paths are excluded.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_test_grid_project summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devicefarm_test_grid_project.html.markdown",
+        "shapes": {
+          "vpc_config.vpc_id": [
+            "list",
+            "string"
+          ],
+          "vpc_config.subnet_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "vpc_config.security_group_ids": [
+            "list",
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "vpc_config.vpc_id": "required",
+          "vpc_config.subnet_ids": "required",
+          "vpc_config.security_group_ids": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceTestGridProject. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devicefarm_upload": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1535,
+      "gap": "#1535 — Verify the project ARN on the upload declaration; the computed presigned upload URL is never a resource endpoint or safe summary.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "project_arn",
+          "type",
+          "arn",
+          "url"
+        ],
+        "placement": "Supported: managed Logical Node for devicefarm_upload. Provides a Devicefarm upload",
+        "ownership": "Missing: verify project_arn before attaching devicefarm_upload to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "network": "Not applicable: devicefarm_upload declares no VPC/subnet assignment; the configured project_arn does not establish network containment.",
+        "references": "Missing: Verify the project ARN on the upload declaration; the computed presigned upload URL is never a resource endpoint or safe summary.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_upload summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devicefarm_upload.html.markdown",
+        "shapes": {
+          "project_arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "url": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "project_arn": "required",
+          "type": "required",
+          "arn": "computed",
+          "url": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceUpload. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devopsagent_agent_space": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1536,
+      "gap": "#1536 — Resolve only the configured encryption key; an agent space ID or locale supplies no deployment topology.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "kms_key_arn",
+          "agent_space_id"
+        ],
+        "placement": "Supported: managed Logical Node for devopsagent_agent_space. Manages an AWS DevOps Agent Space.",
+        "ownership": "Not applicable: AWS DevOps Agent devopsagent_agent_space remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devopsagent_agent_space declares no VPC/subnet assignment; the configured name does not establish network containment.",
+        "references": "Missing: Resolve only the configured encryption key; an agent space ID or locale supplies no deployment topology.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit agent instructions and operational data from devopsagent_agent_space summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devopsagent_agent_space.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "agent_space_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "kms_key_arn": "optional",
+          "agent_space_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAgentSpaceResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devopsguru_event_sources_config": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "The Profiler event-source status is a service setting with no individual profiling group selector. Do not infer a group relationship.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "event_sources.amazon_code_guru_profiler.status"
+        ],
+        "placement": "Supported: managed Logical Controller for devopsguru_event_sources_config. Terraform resource for managing an AWS DevOps Guru Event Sources Config.",
+        "ownership": "Not applicable: AWS DevOps Guru devopsguru_event_sources_config remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devopsguru_event_sources_config declares no VPC/subnet assignment; the configured event_sources.amazon_code_guru_profiler.status does not establish network containment.",
+        "references": "Intentionally unsupported: The Profiler event-source status is a service setting with no individual profiling group selector. Do not infer a group relationship.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_event_sources_config summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devopsguru_event_sources_config.html.markdown",
+        "shapes": {
+          "event_sources.amazon_code_guru_profiler.status": [
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "event_sources.amazon_code_guru_profiler.status": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newEventSourcesConfigResource. No same-name data source in the pinned schema. Deprecated attributes: id.",
+        "dataContracts": {}
+      }
+    },
+    "aws_devopsguru_notification_channel": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1536,
+      "gap": "#1536 — Resolve the configured SNS notification topic; severity filters select notifications and do not identify resources.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "sns.topic_arn",
+          "filters"
+        ],
+        "placement": "Supported: managed Logical Controller for devopsguru_notification_channel. Terraform resource for managing an AWS DevOps Guru Notification Channel.",
+        "ownership": "Not applicable: AWS DevOps Guru devopsguru_notification_channel remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devopsguru_notification_channel declares no VPC/subnet assignment; the configured sns.topic_arn does not establish network containment.",
+        "references": "Missing: Resolve the configured SNS notification topic; severity filters select notifications and do not identify resources.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_notification_channel summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devopsguru_notification_channel.html.markdown",
+        "shapes": {
+          "sns.topic_arn": [
+            "list",
+            "string"
+          ],
+          "filters": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "sns.topic_arn": "required",
+          "filters": "block"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newNotificationChannelResource. Same-name data lookup has separate selectors and blocks filters, sns.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_devopsguru_resource_collection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1536,
+      "gap": "#1536 — Match individually configured stack names to verified CloudFormation stacks. Wildcards, tags and account-wide selection do not establish membership.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "type",
+          "cloudformation.stack_names"
+        ],
+        "placement": "Supported: managed Logical Node for devopsguru_resource_collection. Terraform resource for managing an AWS DevOps Guru Resource Collection.",
+        "ownership": "Not applicable: AWS DevOps Guru devopsguru_resource_collection remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devopsguru_resource_collection declares no VPC/subnet assignment; the configured type does not establish network containment.",
+        "references": "Missing: Match individually configured stack names to verified CloudFormation stacks. Wildcards, tags and account-wide selection do not establish membership.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_resource_collection summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devopsguru_resource_collection.html.markdown",
+        "shapes": {
+          "type": [
+            "string"
+          ],
+          "cloudformation.stack_names": [
+            "list",
+            [
+              "list",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "type": "required",
+          "cloudformation.stack_names": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newResourceCollectionResource. Same-name data lookup has separate selectors.",
+        "dataContracts": {
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "type": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_devopsguru_service_integration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1536,
+      "gap": "#1536 — Verify a customer-managed KMS key only for the matching encryption mode and enabled setting. OpsCenter or anomaly-detection switches do not identify endpoints.",
+      "review": {
+        "issue": 731,
+        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_server_side_encryption.type",
+          "kms_server_side_encryption.kms_key_id",
+          "kms_server_side_encryption.opt_in_status"
+        ],
+        "placement": "Supported: managed Logical Controller for devopsguru_service_integration. Terraform resource for managing an AWS DevOps Guru Service Integration.",
+        "ownership": "Not applicable: AWS DevOps Guru devopsguru_service_integration remains independently addressable; a reference or shared target does not justify embedding.",
+        "network": "Not applicable: devopsguru_service_integration declares no VPC/subnet assignment; the configured kms_server_side_encryption.type does not establish network containment.",
+        "references": "Missing: Verify a customer-managed KMS key only for the matching encryption mode and enabled setting. OpsCenter or anomaly-detection switches do not identify endpoints.",
+        "scope": "Supported: regional service scope requires deployment evidence.",
+        "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_service_integration summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
+        "officialDocumentation": "website/docs/r/devopsguru_service_integration.html.markdown",
+        "shapes": {
+          "kms_server_side_encryption.type": [
+            "list",
+            "string"
+          ],
+          "kms_server_side_encryption.kms_key_id": [
+            "list",
+            "string"
+          ],
+          "kms_server_side_encryption.opt_in_status": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "kms_server_side_encryption.type": "optional/computed",
+          "kms_server_side_encryption.kms_key_id": "optional/computed",
+          "kms_server_side_encryption.opt_in_status": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/basic.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newServiceIntegrationResource. No same-name data source in the pinned schema. Deprecated attributes: id.",
+        "dataContracts": {}
+      }
     }
   }
 }
