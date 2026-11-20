@@ -250,3 +250,120 @@ fn resource_groups_verifies_configured_endpoints() {
         true,
     );
 }
+
+#[test]
+fn service_catalog_budget_uses_effective_account() {
+    let fixture = include_str!("../../fixtures/service-catalog-associations-references-plan.json");
+    for (account_id, unknown, expected) in [
+        (Value::Null, false, true),
+        (json!("123456789012"), false, true),
+        (json!("210987654321"), false, false),
+        (json!("123456789012"), true, false),
+    ] {
+        let mut plan: Value = serde_json::from_str(fixture).unwrap();
+        let budget = plan["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|row| row["address"] == "aws_budgets_budget.main")
+            .unwrap();
+        budget["change"]["after"]["account_id"] = account_id;
+        budget["change"]["after_unknown"]["account_id"] = json!(unknown);
+        let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+        assert_eq!(
+            verified(
+                &graph,
+                "aws_servicecatalog_budget_resource_association.main",
+                "budget_name",
+                Some("Associated budget")
+            ),
+            expected
+        );
+    }
+}
+
+#[test]
+fn service_catalog_associations_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/service-catalog-associations-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_servicecatalog_constraint.main", "portfolio_id"),
+            ("aws_servicecatalog_constraint.main", "product_id"),
+            (
+                "aws_servicecatalog_budget_resource_association.main",
+                "budget_name",
+            ),
+            (
+                "aws_servicecatalog_budget_resource_association.main",
+                "resource_id",
+            ),
+            ("aws_servicecatalog_portfolio_share.main", "portfolio_id"),
+            ("aws_servicecatalog_portfolio_share.main", "principal_id"),
+            (
+                "aws_servicecatalog_principal_portfolio_association.main",
+                "portfolio_id",
+            ),
+            (
+                "aws_servicecatalog_principal_portfolio_association.main",
+                "principal_arn",
+            ),
+            (
+                "aws_servicecatalog_product_portfolio_association.main",
+                "portfolio_id",
+            ),
+            (
+                "aws_servicecatalog_product_portfolio_association.main",
+                "product_id",
+            ),
+            (
+                "aws_servicecatalog_product_portfolio_association.main",
+                "source_portfolio_id",
+            ),
+            (
+                "aws_servicecatalog_tag_option_resource_association.main",
+                "tag_option_id",
+            ),
+            (
+                "aws_servicecatalog_tag_option_resource_association.main",
+                "resource_id",
+            ),
+        ],
+        ("aws_servicecatalog_portfolio.main", "id"),
+    );
+    assert!(label("aws_servicecatalog_constraint", "parameters").is_none());
+    assert!(label("aws_servicecatalog_portfolio_share", "accepted").is_none());
+    assert!(
+        label(
+            "aws_servicecatalog_tag_option_resource_association",
+            "resource_arn"
+        )
+        .is_none()
+    );
+    check_provider_alias(
+        fixture,
+        "aws_servicecatalog_constraint.main",
+        "portfolio_id",
+        "aws_servicecatalog_portfolio.main",
+        "Service Catalog portfolio",
+        true,
+    );
+    let mut plan: Value = serde_json::from_str(fixture).unwrap();
+    plan["resource_changes"][2]["change"]["after"]["type"] = json!("ORGANIZATION");
+    plan["resource_changes"][3]["change"]["after"]["principal_type"] = json!("IAM_PATTERN");
+    let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+    assert!(!verified(
+        &graph,
+        "aws_servicecatalog_portfolio_share.main",
+        "principal_id",
+        Some("Portfolio share recipient")
+    ));
+    assert!(!verified(
+        &graph,
+        "aws_servicecatalog_principal_portfolio_association.main",
+        "principal_arn",
+        Some("Portfolio IAM principal")
+    ));
+}

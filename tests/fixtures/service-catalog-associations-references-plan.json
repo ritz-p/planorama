@@ -1,0 +1,419 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_servicecatalog_budget_resource_association.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_budget_resource_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "budget_name": "catalog",
+          "resource_id": "port-example"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_constraint.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_constraint",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "portfolio_id": "port-example",
+          "product_id": "prod-example",
+          "type": "LAUNCH",
+          "parameters": "{\"RoleArn\":\"arn:aws:iam::123456789012:role/Catalog\"}"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_portfolio_share.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_portfolio_share",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "portfolio_id": "port-example",
+          "principal_id": "210987654321",
+          "type": "ACCOUNT",
+          "accepted": true
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_principal_portfolio_association.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_principal_portfolio_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "portfolio_id": "port-example",
+          "principal_arn": "arn:aws:iam::123456789012:role/Catalog",
+          "principal_type": "IAM"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_product_portfolio_association.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_product_portfolio_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "portfolio_id": "port-example",
+          "product_id": "prod-example",
+          "source_portfolio_id": "port-source"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_tag_option_resource_association.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_tag_option_resource_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "tag_option_id": "tag-example",
+          "resource_id": "prod-example",
+          "resource_arn": "arn:aws:catalog:us-east-1:123456789012:product/prod-example"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_portfolio.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_portfolio",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "port-example"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_portfolio.source",
+      "mode": "managed",
+      "type": "aws_servicecatalog_portfolio",
+      "name": "source",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "port-source"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_product.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_product",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "prod-example"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalog_tag_option.main",
+      "mode": "managed",
+      "type": "aws_servicecatalog_tag_option",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "tag-example"
+        }
+      }
+    },
+    {
+      "address": "aws_budgets_budget.main",
+      "mode": "managed",
+      "type": "aws_budgets_budget",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.principal",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "principal",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Catalog"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.recipient",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "210987654321"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_servicecatalog_budget_resource_association.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_budget_resource_association",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "budget_name": {
+              "references": [
+                "aws_budgets_budget.main.name"
+              ]
+            },
+            "resource_id": {
+              "references": [
+                "aws_servicecatalog_portfolio.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_constraint.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_constraint",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "portfolio_id": {
+              "references": [
+                "aws_servicecatalog_portfolio.main.id"
+              ]
+            },
+            "product_id": {
+              "references": [
+                "aws_servicecatalog_product.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_portfolio_share.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_portfolio_share",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "portfolio_id": {
+              "references": [
+                "aws_servicecatalog_portfolio.main.id"
+              ]
+            },
+            "principal_id": {
+              "references": [
+                "aws_organizations_account.recipient.id"
+              ]
+            },
+            "type": {
+              "constant_value": "ACCOUNT"
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_principal_portfolio_association.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_principal_portfolio_association",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "portfolio_id": {
+              "references": [
+                "aws_servicecatalog_portfolio.main.id"
+              ]
+            },
+            "principal_arn": {
+              "references": [
+                "aws_iam_role.principal.arn"
+              ]
+            },
+            "principal_type": {
+              "constant_value": "IAM"
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_product_portfolio_association.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_product_portfolio_association",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "portfolio_id": {
+              "references": [
+                "aws_servicecatalog_portfolio.main.id"
+              ]
+            },
+            "product_id": {
+              "references": [
+                "aws_servicecatalog_product.main.id"
+              ]
+            },
+            "source_portfolio_id": {
+              "references": [
+                "aws_servicecatalog_portfolio.source.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_tag_option_resource_association.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_tag_option_resource_association",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "tag_option_id": {
+              "references": [
+                "aws_servicecatalog_tag_option.main.id"
+              ]
+            },
+            "resource_id": {
+              "references": [
+                "aws_servicecatalog_product.main.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalog_portfolio.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_portfolio",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_servicecatalog_portfolio.source",
+          "mode": "managed",
+          "type": "aws_servicecatalog_portfolio",
+          "name": "source",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_servicecatalog_product.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_product",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_servicecatalog_tag_option.main",
+          "mode": "managed",
+          "type": "aws_servicecatalog_tag_option",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_budgets_budget.main",
+          "mode": "managed",
+          "type": "aws_budgets_budget",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.principal",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "principal",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.recipient",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "recipient",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
