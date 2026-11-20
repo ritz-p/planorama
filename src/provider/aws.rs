@@ -80,6 +80,7 @@ pub(crate) mod datazone_access;
 pub(crate) mod datazone_environments;
 mod dax;
 mod default_network;
+pub(crate) mod delivery;
 pub(crate) mod detective_graphs;
 pub(super) mod diagnostics;
 pub(crate) mod direct_connect;

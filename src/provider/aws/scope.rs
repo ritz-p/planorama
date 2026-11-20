@@ -77,6 +77,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::arc_routing_control::resource(resource)
         && !super::waf::explicit_scope(resource)
         && !super::resilience_hub::resource(resource)
+        && !super::delivery::resource(resource)
         && !super::firewall_manager::resource(resource)
         && !super::fis_configuration::resource(resource)
         && !super::arc_configuration::resource(resource)

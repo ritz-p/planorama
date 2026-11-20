@@ -247,6 +247,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::resilience_hub::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::delivery::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::firewall_manager::label(resource, attribute) {
         return Some(label);
     }
@@ -987,6 +990,7 @@ pub(crate) fn annotate_provider_accounts(
     references: &mut [AttributeReference],
     evidence: &[(&Value, &Value)],
 ) {
+    super::delivery::annotate(nodes, references, evidence);
     super::macie_classification::annotate(nodes, references, evidence);
     super::arc_configuration::annotate(nodes, references, evidence);
     super::fis_configuration::annotate(nodes, references, evidence);
@@ -1356,6 +1360,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::arc_readiness::bindings(raw, reference)
         && super::arc_routing_control::bindings(raw, reference)
         && super::resilience_hub::bindings(raw, reference)
+        && super::delivery::bindings(raw, reference)
         && super::firewall_manager::bindings(raw, reference)
         && super::fis_configuration::bindings(raw, reference)
         && super::arc_configuration::bindings(raw, reference)
@@ -2114,6 +2119,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::arc_readiness::indexed(&node.resource_type, &reference.attribute)
             || super::arc_routing_control::indexed(&node.resource_type, &reference.attribute)
             || super::resilience_hub::indexed(&node.resource_type, &reference.attribute)
+            || super::delivery::indexed(&node.resource_type, &reference.attribute)
             || super::firewall_manager::indexed(&node.resource_type, &reference.attribute)
             || super::fis_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::arc_configuration::indexed(&node.resource_type, &reference.attribute)
