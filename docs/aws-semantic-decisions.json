@@ -82390,10 +82390,10 @@
       }
     },
     "aws_licensemanager_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1543,
-      "gap": "#1543 — Verify the configured license configuration and an explicitly supported target ARN. A license assignment is a relationship rather than containment.",
+      "gap": "#1543 — Verify the configured license configuration ARN and eligible EC2 AMI, instance or dedicated host ARN. Keep license assignments independent.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82405,7 +82405,7 @@
         "placement": "Supported: managed Logical Association for licensemanager_association. Provides a License Manager association resource.",
         "ownership": "Not applicable: AWS License Manager licensemanager_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: licensemanager_association declares no VPC/subnet assignment; the configured license_configuration_arn does not establish network containment.",
-        "references": "Missing: Verify the configured license configuration and an explicitly supported target ARN. A license assignment is a relationship rather than containment.",
+        "references": "Supported: Verify the configured license configuration ARN and eligible EC2 AMI, instance or dedicated host ARN. Keep license assignments independent.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit license rules, grant contents and entitlement/usage state from licensemanager_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/licensemanager_association.html.markdown",
@@ -82428,17 +82428,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_licensemanager_grant": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1543,
-      "gap": "#1543 — Resolve the account-root principal with verified account identity. A license ARN identifies a license, not a license configuration; allowed operations do not imply use.",
+      "gap": "#1543 — Verify the configured account-root principal by its account ID. License identity and allowed operations remain metadata.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82453,7 +82455,7 @@
         "placement": "Supported: managed Logical Node for licensemanager_grant. Provides a License Manager grant resource.",
         "ownership": "Not applicable: AWS License Manager licensemanager_grant remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: licensemanager_grant declares no VPC/subnet assignment; the configured license_arn does not establish network containment.",
-        "references": "Missing: Resolve the account-root principal with verified account identity. A license ARN identifies a license, not a license configuration; allowed operations do not imply use.",
+        "references": "Supported: Verify the configured account-root principal by its account ID. License identity and allowed operations remain metadata.",
         "scope": "Supported: runtime regional classification needs provider/deployment evidence. The schema exposes home_region as computed; preserve the distinction from the prose argument description and do not infer recipient deployment scope.",
         "summaries": "Intentionally unsupported: omit license rules, grant contents and entitlement/usage state from licensemanager_grant summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/licensemanager_grant.html.markdown",
@@ -82491,17 +82493,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceGrant. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_licensemanager_grant_accepter": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1543,
-      "gap": "#1543 — Match the configured grant ARN, preserving cross-account scope; returned license and recipient fields do not create another grant or prove acceptance.",
+      "gap": "#1543 — Verify the configured grant ARN in its home region across provider accounts. Returned license, principal and status are not additional endpoints.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82515,7 +82519,7 @@
         "placement": "Supported: managed Logical Association for licensemanager_grant_accepter. Accepts a License Manager grant resource.",
         "ownership": "Not applicable: AWS License Manager licensemanager_grant_accepter remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: licensemanager_grant_accepter declares no VPC/subnet assignment; the configured grant_arn does not establish network containment.",
-        "references": "Missing: Match the configured grant ARN, preserving cross-account scope; returned license and recipient fields do not create another grant or prove acceptance.",
+        "references": "Supported: Verify the configured grant ARN in its home region across provider accounts. Returned license, principal and status are not additional endpoints.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit license rules, grant contents and entitlement/usage state from licensemanager_grant_accepter summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/licensemanager_grant_accepter.html.markdown",
@@ -82546,7 +82550,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceGrantAccepter. No same-name data source in the pinned schema.",
         "dataContracts": {}

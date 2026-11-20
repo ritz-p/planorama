@@ -82,3 +82,34 @@ fn controltower_verifies_configured_endpoints() {
         false,
     );
 }
+
+#[test]
+fn license_manager_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/license-manager-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            (
+                "aws_licensemanager_association.host",
+                "license_configuration_arn",
+            ),
+            ("aws_licensemanager_association.host", "resource_arn"),
+            ("aws_licensemanager_grant.recipient", "principal"),
+            ("aws_licensemanager_grant_accepter.recipient", "grant_arn"),
+        ],
+        ("aws_licensemanager_license_configuration.cpu", "arn"),
+    );
+    assert!(label("aws_licensemanager_grant", "license_arn").is_none());
+    assert!(label("aws_licensemanager_grant_accepter", "principal").is_none());
+    assert!(label("aws_licensemanager_grant_accepter", "status").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_licensemanager_association.host",
+        "resource_arn",
+        "aws_instance.machine",
+        "License assignment target",
+        true,
+    );
+}

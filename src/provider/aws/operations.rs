@@ -32,6 +32,39 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_licensemanager_association", "license_configuration_arn") => Rule::new(
+            "License configuration",
+            &[("aws_licensemanager_license_configuration", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_licensemanager_association", "resource_arn") => Rule::new(
+            "License assignment target",
+            &[
+                ("aws_instance", &["arn"]),
+                ("aws_ec2_host", &["arn"]),
+                ("aws_ami", &["arn"]),
+                ("aws_ami_copy", &["arn"]),
+                ("aws_ami_from_instance", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_licensemanager_grant", "principal") => Rule::new(
+            "License grant recipient",
+            &[("aws_organizations_account", &["id"])],
+            false,
+            &[],
+        )
+        .with_explicit_destination()
+        .decoded(account_root),
+        ("aws_licensemanager_grant_accepter", "grant_arn") => Rule::new(
+            "Accepted license grant",
+            &[("aws_licensemanager_grant", &["arn"])],
+            false,
+            &[],
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }
@@ -67,6 +100,28 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     .and_then(|config| config.account.as_ref())
                     .is_none_or(|owner| owner.as_str() == account)
             }),
+        ("aws_licensemanager_association", "license_configuration_arn") => {
+            e.text(r.target, path).is_some_and(|v| {
+                arn_resource(v, "license-manager", "license-configuration:").is_some()
+            })
+        }
+        ("aws_licensemanager_association", "resource_arn") => {
+            let prefix = match e.nodes[source].resource_type.as_str() {
+                "aws_instance" => "instance/",
+                "aws_ec2_host" => "dedicated-host/",
+                _ => "image/",
+            };
+            e.text(r.target, path)
+                .is_some_and(|v| arn_resource(v, "ec2", prefix).is_some())
+        }
+        ("aws_licensemanager_grant_accepter", "grant_arn") => e
+            .text(r.target, path)
+            .and_then(|v| arn_resource(v, "license-manager", "grant:"))
+            .is_some_and(|(region, account, _)| {
+                endpoint_region(e, source, region)
+                    && endpoint_region(e, r.target, region)
+                    && endpoint_account(e, source, account)
+            }),
         _ => true,
     }
 }
@@ -100,6 +155,44 @@ fn organizations_ou_account(arn: &str) -> Option<&str> {
         }
         _ => None,
     }
+}
+
+fn account_root<'a>(_: &str, value: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
+    let (_, account, identity) = arn_resource(value.as_str()?, "iam", "root")?;
+    (identity.is_empty() && crate::model::AwsAccountScope::new(account).is_some())
+        .then(|| [account].into())
+}
+
+fn arn_resource<'a>(
+    value: &'a str,
+    service: &str,
+    prefix: &str,
+) -> Option<(&'a str, &'a str, &'a str)> {
+    let mut fields = value.splitn(6, ':');
+    if fields.next()? != "arn"
+        || !matches!(fields.next()?, "aws" | "aws-cn" | "aws-us-gov")
+        || fields.next()? != service
+    {
+        return None;
+    }
+    let region = fields.next()?;
+    let account = fields.next()?;
+    let identity = fields.next()?.strip_prefix(prefix)?;
+    Some((region, account, identity))
+}
+
+fn endpoint_account(e: &Evidence<'_>, node: usize, account: &str) -> bool {
+    e.nodes[node]
+        .provider_configuration
+        .as_ref()
+        .and_then(|config| config.account.as_ref())
+        .is_some_and(|owner| owner.as_str() == account)
+}
+
+fn endpoint_region(e: &Evidence<'_>, node: usize, region: &str) -> bool {
+    super::scope::scope(&e.nodes[node])
+        .and_then(|scope| scope.region)
+        .is_some_and(|effective| effective.0 == region)
 }
 
 #[cfg(test)]
