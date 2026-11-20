@@ -167,6 +167,23 @@ fn endpoint_value<'a>(
     outputs: &[&str],
 ) -> Option<&'a str> {
     let attrs = reference.source_attributes_by_instance.get(&source)?;
+    if outputs.contains(&"roots[].id") {
+        let mut indices = attrs
+            .iter()
+            .filter_map(|p| super::organizations::root_index(p));
+        let index = indices.next()?;
+        if indices.next().is_some()
+            || !attrs.iter().all(|p| {
+                super::organizations::root_index(p) == Some(index)
+                    || p == "roots"
+                    || p == &format!("roots[{index}]")
+            })
+        {
+            return None;
+        }
+        let (v, m) = evidence[source];
+        return value(v, m, &format!("roots.{index}.id"))?.as_str();
+    }
     let output = attrs.first()?;
     if attrs.len() != 1 || !outputs.contains(&output.as_str()) {
         return None;

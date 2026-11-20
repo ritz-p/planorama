@@ -1,0 +1,191 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_securityhub_configuration_policy_association.sample0",
+      "mode": "managed",
+      "type": "aws_securityhub_configuration_policy_association",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "policy_id": "securityhub_configuration_policy-fixture",
+          "target_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_securityhub_configuration_policy.sample1",
+      "mode": "managed",
+      "type": "aws_securityhub_configuration_policy",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "securityhub_configuration_policy-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample2",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_securityhub_invite_accepter.sample3",
+      "mode": "managed",
+      "type": "aws_securityhub_invite_accepter",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "master_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_securityhub_member.sample4",
+      "mode": "managed",
+      "type": "aws_securityhub_member",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_securityhub_organization_admin_account.sample5",
+      "mode": "managed",
+      "type": "aws_securityhub_organization_admin_account",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "admin_account_id": "123456789012"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_securityhub_configuration_policy_association.sample0",
+          "mode": "managed",
+          "type": "aws_securityhub_configuration_policy_association",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "policy_id": {
+              "references": [
+                "aws_securityhub_configuration_policy.sample1.id"
+              ]
+            },
+            "target_id": {
+              "references": [
+                "aws_organizations_account.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_securityhub_configuration_policy.sample1",
+          "mode": "managed",
+          "type": "aws_securityhub_configuration_policy",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.sample2",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_securityhub_invite_accepter.sample3",
+          "mode": "managed",
+          "type": "aws_securityhub_invite_accepter",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "master_id": {
+              "references": [
+                "aws_organizations_account.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_securityhub_member.sample4",
+          "mode": "managed",
+          "type": "aws_securityhub_member",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_securityhub_organization_admin_account.sample5",
+          "mode": "managed",
+          "type": "aws_securityhub_organization_admin_account",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {
+            "admin_account_id": {
+              "references": [
+                "aws_organizations_account.sample2.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,345 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_securitylake_aws_log_source.sample0",
+      "mode": "managed",
+      "type": "aws_securitylake_aws_log_source",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source": [
+            {
+              "regions": [
+                "us-east-1"
+              ],
+              "source_name": "ROUTE53",
+              "accounts": [
+                "123456789012"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample1",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_securitylake_custom_log_source.sample2",
+      "mode": "managed",
+      "type": "aws_securitylake_custom_log_source",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source_version": "1.0",
+          "configuration": [
+            {
+              "crawler_configuration": [
+                {
+                  "role_arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+                }
+              ]
+            }
+          ],
+          "source_name": "securitylake_custom_log_source-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample3",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+        }
+      }
+    },
+    {
+      "address": "aws_securitylake_data_lake.sample4",
+      "mode": "managed",
+      "type": "aws_securitylake_data_lake",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "configuration": [
+            {
+              "region": "us-east-1",
+              "replication_configuration": [
+                {
+                  "regions": [
+                    "us-west-2"
+                  ],
+                  "role_arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+                }
+              ],
+              "encryption_configuration": [
+                {
+                  "kms_key_id": "kms_key-fixture"
+                }
+              ]
+            }
+          ],
+          "meta_store_manager_role_arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.sample5",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "key_id": "kms_key-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_securitylake_subscriber.sample6",
+      "mode": "managed",
+      "type": "aws_securitylake_subscriber",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "source": [
+            {
+              "custom_log_source_resource": [
+                {
+                  "source_version": "1.0",
+                  "source_name": "securitylake_custom_log_source-fixture"
+                }
+              ]
+            }
+          ],
+          "id": "securitylake_subscriber-fixture"
+        }
+      }
+    },
+    {
+      "address": "aws_securitylake_subscriber_notification.sample7",
+      "mode": "managed",
+      "type": "aws_securitylake_subscriber_notification",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "subscriber_id": "securitylake_subscriber-fixture",
+          "configuration": [
+            {
+              "https_notification_configuration": [
+                {
+                  "target_role_arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_securitylake_aws_log_source.sample0",
+          "mode": "managed",
+          "type": "aws_securitylake_aws_log_source",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": [
+              {
+                "accounts": {
+                  "references": [
+                    "aws_organizations_account.sample1.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_organizations_account.sample1",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_securitylake_custom_log_source.sample2",
+          "mode": "managed",
+          "type": "aws_securitylake_custom_log_source",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "configuration": [
+              {
+                "crawler_configuration": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.sample3.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample3",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_securitylake_data_lake.sample4",
+          "mode": "managed",
+          "type": "aws_securitylake_data_lake",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "configuration": [
+              {
+                "encryption_configuration": {
+                  "references": [
+                    "aws_kms_key.sample5.key_id"
+                  ]
+                },
+                "replication_configuration": [
+                  {
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.sample3.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "meta_store_manager_role_arn": {
+              "references": [
+                "aws_iam_role.sample3.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.sample5",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_securitylake_subscriber.sample6",
+          "mode": "managed",
+          "type": "aws_securitylake_subscriber",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "source": [
+              {
+                "custom_log_source_resource": [
+                  {
+                    "source_name": {
+                      "references": [
+                        "aws_securitylake_custom_log_source.sample2.source_name"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_securitylake_subscriber_notification.sample7",
+          "mode": "managed",
+          "type": "aws_securitylake_subscriber_notification",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subscriber_id": {
+              "references": [
+                "aws_securitylake_subscriber.sample6.id"
+              ]
+            },
+            "configuration": [
+              {
+                "https_notification_configuration": [
+                  {
+                    "target_role_arn": {
+                      "references": [
+                        "aws_iam_role.sample3.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

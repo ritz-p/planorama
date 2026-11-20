@@ -226,6 +226,39 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::firewall_manager::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::fis_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::arc_configuration::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::security_lake::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::securityhub_integrations::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::securityhub_organization::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::macie_classification::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::inspector_assessments::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::guardduty_destinations::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::guardduty_members::label(resource, attribute) {
+        return Some(label);
+    }
+    if let Some(label) = super::detective_graphs::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::config_delivery::label(resource, attribute) {
         return Some(label);
     }
@@ -928,6 +961,17 @@ fn indexed_scalar<'a>(
         .flatten()
 }
 
+pub(crate) fn annotate_provider_accounts(
+    nodes: &[TerraformEntity],
+    references: &mut [AttributeReference],
+    evidence: &[(&Value, &Value)],
+) {
+    super::macie_classification::annotate(nodes, references, evidence);
+    super::arc_configuration::annotate(nodes, references, evidence);
+    super::fis_configuration::annotate(nodes, references, evidence);
+    super::detective_graphs::annotate(nodes, references, evidence);
+}
+
 pub(crate) fn annotate(
     nodes: &[TerraformEntity],
     references: &mut [AttributeReference],
@@ -1169,6 +1213,13 @@ pub(crate) fn annotate(
     super::timestream_queries::annotate(nodes, references, evidence);
     super::athena_queries::annotate(nodes, references, evidence);
     super::glue_encryption::annotate(nodes, references, evidence);
+    super::firewall_manager::annotate(nodes, references, evidence);
+    super::security_lake::annotate(nodes, references, evidence);
+    super::securityhub_integrations::annotate(nodes, references, evidence);
+    super::securityhub_organization::annotate(nodes, references, evidence);
+    super::inspector_assessments::annotate(nodes, references, evidence);
+    super::guardduty_destinations::annotate(nodes, references, evidence);
+    super::guardduty_members::annotate(nodes, references, evidence);
     super::config_delivery::annotate(nodes, references, evidence);
     super::config_rules::annotate(nodes, references, evidence);
     super::config_aggregation::annotate(nodes, references, evidence);
@@ -1270,6 +1321,17 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::firewall_manager::bindings(raw, reference)
+        && super::fis_configuration::bindings(raw, reference)
+        && super::arc_configuration::bindings(raw, reference)
+        && super::security_lake::bindings(raw, reference)
+        && super::securityhub_integrations::bindings(raw, reference)
+        && super::securityhub_organization::bindings(raw, reference)
+        && super::macie_classification::bindings(raw, reference)
+        && super::inspector_assessments::bindings(raw, reference)
+        && super::guardduty_destinations::bindings(raw, reference)
+        && super::guardduty_members::bindings(raw, reference)
+        && super::detective_graphs::bindings(raw, reference)
         && super::config_delivery::bindings(raw, reference)
         && super::config_rules::bindings(raw, reference)
         && super::config_aggregation::bindings(raw, reference)
@@ -2010,6 +2072,17 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::firewall_manager::indexed(&node.resource_type, &reference.attribute)
+            || super::fis_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::arc_configuration::indexed(&node.resource_type, &reference.attribute)
+            || super::security_lake::indexed(&node.resource_type, &reference.attribute)
+            || super::securityhub_integrations::indexed(&node.resource_type, &reference.attribute)
+            || super::securityhub_organization::indexed(&node.resource_type, &reference.attribute)
+            || super::macie_classification::indexed(&node.resource_type, &reference.attribute)
+            || super::inspector_assessments::indexed(&node.resource_type, &reference.attribute)
+            || super::guardduty_destinations::indexed(&node.resource_type, &reference.attribute)
+            || super::guardduty_members::indexed(&node.resource_type, &reference.attribute)
+            || super::detective_graphs::indexed(&node.resource_type, &reference.attribute)
             || super::config_delivery::indexed(&node.resource_type, &reference.attribute)
             || super::config_rules::indexed(&node.resource_type, &reference.attribute)
             || super::config_aggregation::indexed(&node.resource_type, &reference.attribute)
@@ -2128,6 +2201,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                         "aws_iam_group_membership" | "aws_iam_user_group_membership"
                     )) {
                     crate::model::ReferenceKind::Membership
+                } else if verified
+                    && node.resource_type == "aws_securityhub_configuration_policy_association"
+                    && reference.attribute == "target_id"
+                {
+                    reference
+                        .source_attributes
+                        .iter()
+                        .find_map(|path| super::organizations::root_index(path))
+                        .map_or(
+                            crate::model::ReferenceKind::Configured,
+                            crate::model::ReferenceKind::OrganizationRoot,
+                        )
                 } else {
                     crate::model::ReferenceKind::Configured
                 },
