@@ -1,0 +1,281 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_vpc.host",
+      "mode": "managed",
+      "type": "aws_vpc",
+      "name": "host",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.host",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "host",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-0123",
+          "vpc_id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_security_group.host",
+      "mode": "managed",
+      "type": "aws_security_group",
+      "name": "host",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "sg-0123",
+          "vpc_id": "vpc-0123"
+        }
+      }
+    },
+    {
+      "address": "aws_codeconnections_host.git",
+      "mode": "managed",
+      "type": "aws_codeconnections_host",
+      "name": "git",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:codeconnections:us-east-1:123456789012:host/sample-0",
+          "vpc_configuration": [
+            {
+              "vpc_id": "vpc-0123",
+              "subnet_ids": [
+                "subnet-0123"
+              ],
+              "security_group_ids": [
+                "sg-0123"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codeconnections_connection.git",
+      "mode": "managed",
+      "type": "aws_codeconnections_connection",
+      "name": "git",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "host_arn": "arn:aws:codeconnections:us-east-1:123456789012:host/sample-0",
+          "provider_type": "GitHubEnterpriseServer"
+        }
+      }
+    },
+    {
+      "address": "aws_codestarconnections_host.git",
+      "mode": "managed",
+      "type": "aws_codestarconnections_host",
+      "name": "git",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:codestar-connections:us-east-1:123456789012:host/sample-1",
+          "vpc_configuration": [
+            {
+              "vpc_id": "vpc-0123",
+              "subnet_ids": [
+                "subnet-0123"
+              ],
+              "security_group_ids": [
+                "sg-0123"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codestarconnections_connection.git",
+      "mode": "managed",
+      "type": "aws_codestarconnections_connection",
+      "name": "git",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "no-op"
+        ],
+        "after": {
+          "host_arn": "arn:aws:codestar-connections:us-east-1:123456789012:host/sample-1",
+          "provider_type": "GitHubEnterpriseServer"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_vpc.host",
+          "mode": "managed",
+          "type": "aws_vpc",
+          "name": "host",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.host",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "host",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.host.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_security_group.host",
+          "mode": "managed",
+          "type": "aws_security_group",
+          "name": "host",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_id": {
+              "references": [
+                "aws_vpc.host.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codeconnections_host.git",
+          "mode": "managed",
+          "type": "aws_codeconnections_host",
+          "name": "git",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_configuration": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.host.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.host.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.host.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codeconnections_connection.git",
+          "mode": "managed",
+          "type": "aws_codeconnections_connection",
+          "name": "git",
+          "provider_config_key": "aws",
+          "expressions": {
+            "host_arn": {
+              "references": [
+                "aws_codeconnections_host.git.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codestarconnections_host.git",
+          "mode": "managed",
+          "type": "aws_codestarconnections_host",
+          "name": "git",
+          "provider_config_key": "aws",
+          "expressions": {
+            "vpc_configuration": [
+              {
+                "vpc_id": {
+                  "references": [
+                    "aws_vpc.host.id"
+                  ]
+                },
+                "subnet_ids": {
+                  "references": [
+                    "aws_subnet.host.id"
+                  ]
+                },
+                "security_group_ids": {
+                  "references": [
+                    "aws_security_group.host.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codestarconnections_connection.git",
+          "mode": "managed",
+          "type": "aws_codestarconnections_connection",
+          "name": "git",
+          "provider_config_key": "aws",
+          "expressions": {
+            "host_arn": {
+              "references": [
+                "aws_codestarconnections_host.git.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

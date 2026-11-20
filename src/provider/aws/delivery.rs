@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = connections::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = repositories::rule(kind, path) {
         return Some(rule);
     }
@@ -36,6 +39,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if connections::resource(kind) {
+        return true;
+    }
     if repositories::resource(kind) {
         return true;
     }
@@ -79,6 +85,9 @@ pub(super) fn annotate(
 
 fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, path: &str) -> bool {
     let kind = &e.nodes[reference.target].resource_type;
+    if connections::resource(kind) {
+        return connections::qualifies(e, reference, source, path);
+    }
     if repositories::resource(kind) {
         return repositories::qualifies(e, reference, source, path);
     }
@@ -180,6 +189,8 @@ mod codebuild;
 mod codecatalyst;
 
 mod repositories;
+
+mod connections;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
