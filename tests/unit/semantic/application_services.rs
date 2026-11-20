@@ -159,3 +159,73 @@ fn amplify_rejects_cross_app_and_computed_endpoints() {
         assert!(label(kind, path).is_none());
     }
 }
+
+#[test]
+fn amplify_domain_reconciles_unordered_branches_and_custom_certificate() {
+    let certificate = "arn:aws:acm:us-east-1:123456789012:certificate/demo";
+    let mut fixture = plan(&[
+        ("aws_amplify_app.site", json!({"id":"d123"}), json!({})),
+        (
+            "aws_amplify_branch.one",
+            json!({"app_id":"d123","branch_name":"one"}),
+            json!({"app_id":{"references":["aws_amplify_app.site.id"]}}),
+        ),
+        (
+            "aws_amplify_branch.two",
+            json!({"app_id":"d123","branch_name":"two"}),
+            json!({"app_id":{"references":["aws_amplify_app.site.id"]}}),
+        ),
+        (
+            "aws_acm_certificate.custom",
+            json!({"arn":certificate}),
+            json!({}),
+        ),
+        (
+            "aws_amplify_domain_association.site",
+            json!({
+                "app_id":"d123", "sub_domain":[{"branch_name":"two","prefix":"docs"},{"branch_name":"one","prefix":""}],
+                "certificate_settings":[{"type":"CUSTOM","custom_certificate_arn":certificate}]
+            }),
+            json!({
+                "app_id":{"references":["aws_amplify_app.site.id"]},
+                "sub_domain":[{"branch_name":{"references":["aws_amplify_branch.one.branch_name"]}},{"branch_name":{"references":["aws_amplify_branch.two.branch_name"]}}],
+                "certificate_settings":[{"type":{"constant_value":"CUSTOM"},"custom_certificate_arn":{"references":["aws_acm_certificate.custom.arn"]}}]
+            }),
+        ),
+        (
+            "aws_amplify_webhook.trunk",
+            json!({"app_id":"d123","branch_name":"one","url":"https://unused.invalid"}),
+            json!({
+                "app_id":{"references":["aws_amplify_app.site.id"]},
+                "branch_name":{"references":["aws_amplify_branch.one.branch_name"]}
+            }),
+        ),
+    ]);
+    let domain = "aws_amplify_domain_association.site";
+    let webhook = "aws_amplify_webhook.trunk";
+    let cert_path = "certificate_settings.custom_certificate_arn";
+    let branches = "sub_domain.branch_name";
+    let proven = |plan: &Value, address: &str, path: &str| {
+        verified(
+            &graph(plan),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    for (address, path) in [
+        (domain, branches),
+        (domain, cert_path),
+        (webhook, "branch_name"),
+    ] {
+        assert!(proven(&fixture, address, path), "{address}/{path}");
+    }
+    fixture["resource_changes"][4]["change"]["after"]["certificate_settings"][0]["type"] =
+        json!("AMPLIFY_MANAGED");
+    assert!(!proven(&fixture, domain, cert_path));
+    fixture["resource_changes"][1]["change"]["after"]["app_id"] = json!("unrelated");
+    assert!(!proven(&fixture, domain, branches));
+    assert!(!proven(&fixture, webhook, "branch_name"));
+    assert!(label(super::AMPLIFY_DOMAIN, "certificate_verification_dns_record").is_none());
+    assert!(label(super::AMPLIFY_WEBHOOK, "url").is_none());
+}
