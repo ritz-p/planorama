@@ -342,22 +342,28 @@ fn synthetic_shortcuts_trade_two_bends_for_a_longer_route() {
     let terminals = [Terminal::plain(16); 2];
     assert!(scorer.safe_shortcut(&input, &first, &obstacles));
     assert!(scorer.safe_shortcut(&input, &bounded, &obstacles));
-    for (budget, expected) in [(1, first), (8, bounded)] {
-        let actual = select_shortcuts(
-            input.clone(),
-            &obstacles,
-            &scorer,
-            terminals,
-            budget,
-            &mut 0,
-            false,
-        );
-        assert_eq!(actual, expected);
+    let start = Port {
+        point: input[0],
+        side: Side::Right,
+    };
+    let end = Port {
+        point: *input.last().unwrap(),
+        side: Side::Top,
+    };
+    for route in [&first, &bounded] {
+        assert!(ports::valid_with_clearances(
+            route, start, end, &obstacles, terminals
+        ));
         assert_eq!(
-            select_shortcuts(
-                actual, &obstacles, &scorer, terminals, budget, &mut 0, false
-            ),
-            expected
+            simplify_path_with_clearances(route.clone(), &obstacles, &scorer, terminals),
+            *route
         );
     }
+    assert_eq!(
+        simplify_path_with_clearances(input, &obstacles, &scorer, terminals),
+        first
+    );
 }
+
+#[path = "../../../experiments/shortcuts/selection.rs"]
+mod selection;
