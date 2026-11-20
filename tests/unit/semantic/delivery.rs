@@ -26,3 +26,29 @@ fn cloud9_qualifies_provider_scope() {
         true,
     );
 }
+
+#[test]
+fn codeartifact_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/codeartifact-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_codeartifact_domain.packages", "encryption_key"),
+            (
+                "aws_codeartifact_domain_permissions_policy.shared",
+                "domain",
+            ),
+            ("aws_codeartifact_repository.delivery", "domain"),
+            (
+                "aws_codeartifact_repository.delivery",
+                "upstream.repository_name",
+            ),
+            (
+                "aws_codeartifact_repository_permissions_policy.read",
+                "repository",
+            ),
+        ],
+        ("aws_kms_key.packages", "arn"),
+    );
+}

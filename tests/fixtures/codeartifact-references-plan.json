@@ -1,0 +1,216 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codeartifact_domain.packages",
+      "mode": "managed",
+      "type": "aws_codeartifact_domain",
+      "name": "packages",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain": "packages",
+          "encryption_key": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.packages",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "packages",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_codeartifact_domain_permissions_policy.shared",
+      "mode": "managed",
+      "type": "aws_codeartifact_domain_permissions_policy",
+      "name": "shared",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain": "packages"
+        }
+      }
+    },
+    {
+      "address": "aws_codeartifact_repository.delivery",
+      "mode": "managed",
+      "type": "aws_codeartifact_repository",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain": "packages",
+          "repository": "delivery",
+          "upstream": [
+            {
+              "repository_name": "mirror"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codeartifact_repository.mirror",
+      "mode": "managed",
+      "type": "aws_codeartifact_repository",
+      "name": "mirror",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain": "packages",
+          "repository": "mirror"
+        }
+      }
+    },
+    {
+      "address": "aws_codeartifact_repository_permissions_policy.read",
+      "mode": "managed",
+      "type": "aws_codeartifact_repository_permissions_policy",
+      "name": "read",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "domain": "packages",
+          "repository": "delivery"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codeartifact_domain.packages",
+          "mode": "managed",
+          "type": "aws_codeartifact_domain",
+          "name": "packages",
+          "provider_config_key": "aws",
+          "expressions": {
+            "encryption_key": {
+              "references": [
+                "aws_kms_key.packages.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_kms_key.packages",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "packages",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_codeartifact_domain_permissions_policy.shared",
+          "mode": "managed",
+          "type": "aws_codeartifact_domain_permissions_policy",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain": {
+              "references": [
+                "aws_codeartifact_domain.packages.domain"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codeartifact_repository.delivery",
+          "mode": "managed",
+          "type": "aws_codeartifact_repository",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain": {
+              "references": [
+                "aws_codeartifact_domain.packages.domain"
+              ]
+            },
+            "upstream": [
+              {
+                "repository_name": {
+                  "references": [
+                    "aws_codeartifact_repository.mirror.repository"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codeartifact_repository.mirror",
+          "mode": "managed",
+          "type": "aws_codeartifact_repository",
+          "name": "mirror",
+          "provider_config_key": "aws",
+          "expressions": {
+            "domain": {
+              "references": [
+                "aws_codeartifact_domain.packages.domain"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_codeartifact_repository_permissions_policy.read",
+          "mode": "managed",
+          "type": "aws_codeartifact_repository_permissions_policy",
+          "name": "read",
+          "provider_config_key": "aws",
+          "expressions": {
+            "repository": {
+              "references": [
+                "aws_codeartifact_repository.delivery.repository"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
