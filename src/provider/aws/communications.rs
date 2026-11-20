@@ -143,8 +143,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_kms_key", &["arn"])],
         ),
         (SIP_APP, "endpoints.lambda_arn") => {
-            Rule::new("Chime SIP Lambda endpoint", LAMBDA, false, &["endpoints"])
-                .in_control_plane_account()
+            scalar("Chime SIP Lambda endpoint", LAMBDA).in_control_plane_account()
         }
         (SIP_RULE, "trigger_value") => scalar(
             "Chime SIP outbound host",
@@ -402,8 +401,8 @@ fn recording_bucket<'a>(_: &str, value: &'a Value) -> Option<std::collections::B
     if arn.next()? != "arn"
         || !arn.next()?.starts_with("aws")
         || arn.next()? != "s3"
-        || arn.next()? != ""
-        || arn.next()? != ""
+        || !arn.next()?.is_empty()
+        || !arn.next()?.is_empty()
     {
         return None;
     }
