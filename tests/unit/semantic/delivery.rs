@@ -247,3 +247,25 @@ fn pipeline_requires_current_typed_evidence() {
         ("aws_iam_role.pipeline", "arn"),
     );
 }
+
+#[test]
+fn delivery_notifications_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/delivery-notifications-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_codecommit_trigger.delivery", "repository_name"),
+            ("aws_codecommit_trigger.delivery", "trigger.destination_arn"),
+            (
+                "aws_codestarnotifications_notification_rule.delivery",
+                "resource",
+            ),
+            (
+                "aws_codestarnotifications_notification_rule.delivery",
+                "target.address",
+            ),
+        ],
+        ("aws_codecommit_repository.delivery", "repository_name"),
+    );
+}

@@ -80011,10 +80011,10 @@
       }
     },
     "aws_codecommit_trigger": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1534,
-      "gap": "#1534 — Associate the selected repository with each typed SNS or Lambda trigger destination. Event and branch filters do not prove event delivery.",
+      "gap": "#1534 — Verify the configured repository and each SNS or Lambda destination by type and ARN. Event and branch filters remain configuration.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80025,9 +80025,9 @@
           "trigger.events"
         ],
         "placement": "Supported: managed Logical Node for codecommit_trigger. Provides a CodeCommit Trigger Resource.",
-        "ownership": "Missing: verify repository_name before attaching codecommit_trigger to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the repository independently of the reusable notification destinations.",
         "network": "Not applicable: codecommit_trigger declares no VPC/subnet assignment; the configured repository_name does not establish network containment.",
-        "references": "Missing: Associate the selected repository with each typed SNS or Lambda trigger destination. Event and branch filters do not prove event delivery.",
+        "references": "Supported: Verify the configured repository and each SNS or Lambda destination by type and ARN. Event and branch filters remain configuration.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_trigger summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codecommit_trigger.html.markdown",
@@ -80059,7 +80059,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceTrigger. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -80880,10 +80882,10 @@
       }
     },
     "aws_codestarnotifications_notification_rule": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1534,
-      "gap": "#1534 — Resolve the source ARN and type-qualified SNS or supported Chatbot target ARN. Notification event IDs are filters, not resource identities.",
+      "gap": "#1534 — Verify the configured source and the SNS, Slack or Microsoft Teams target based on its discriminator.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80897,7 +80899,7 @@
         "placement": "Supported: managed Logical Policy for codestarnotifications_notification_rule. Provides a CodeStar Notifications Rule",
         "ownership": "Not applicable: AWS CodeStar Notifications codestarnotifications_notification_rule remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codestarnotifications_notification_rule declares no VPC/subnet assignment; the configured resource does not establish network containment.",
-        "references": "Missing: Resolve the source ARN and type-qualified SNS or supported Chatbot target ARN. Notification event IDs are filters, not resource identities.",
+        "references": "Supported: Verify the configured source and the SNS, Slack or Microsoft Teams target based on its discriminator.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit notification payloads and event contents from codestarnotifications_notification_rule summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codestarnotifications_notification_rule.html.markdown",
@@ -80933,7 +80935,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceNotificationRule. No same-name data source in the pinned schema.",
         "dataContracts": {}
