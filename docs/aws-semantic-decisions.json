@@ -84915,10 +84915,10 @@
       }
     },
     "aws_ssm_maintenance_window_target": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1551,
-      "gap": "#1551 — Verify the owning window; distinguish explicit instance/group identities, tag selectors and wildcard targets. A selector is not a recorded instance inventory.",
+      "gap": "#1551 — Verify the maintenance window and typed explicit instance IDs or Resource Groups names. Tags and wildcard selectors do not enumerate instances.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84932,7 +84932,7 @@
         "placement": "Supported: managed Logical Controller for ssm_maintenance_window_target. Provides an SSM Maintenance Window Target resource",
         "ownership": "Missing: verify window_id before attaching ssm_maintenance_window_target to a unique parent. Preserve the declaration on ambiguous or unknown references.",
         "network": "Not applicable: ssm_maintenance_window_target declares no VPC/subnet assignment; the configured window_id does not establish network containment.",
-        "references": "Missing: Verify the owning window; distinguish explicit instance/group identities, tag selectors and wildcard targets. A selector is not a recorded instance inventory.",
+        "references": "Supported: Verify the maintenance window and typed explicit instance IDs or Resource Groups names. Tags and wildcard selectors do not enumerate instances.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_maintenance_window_target summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_maintenance_window_target.html.markdown",
@@ -84968,7 +84968,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceMaintenanceWindowTarget. No same-name data source in the pinned schema.",
         "dataContracts": {},
@@ -84985,10 +84987,10 @@
       }
     },
     "aws_ssm_maintenance_window_task": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1551,
-      "gap": "#1551 — Bind the window and type-qualified task (document, Lambda or state machine as applicable), role and explicit target registration IDs. Do not parse invocation payloads.",
+      "gap": "#1551 — Verify the window, typed task destination, service role and explicit target IDs. Registered targets must belong to the same window, and invocation payloads remain opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85004,7 +85006,7 @@
         "placement": "Supported: managed Logical Controller for ssm_maintenance_window_task. Provides an SSM Maintenance Window Task resource",
         "ownership": "Missing: verify window_id before attaching ssm_maintenance_window_task to a unique parent. Preserve the declaration on ambiguous or unknown references.",
         "network": "Not applicable: ssm_maintenance_window_task declares no VPC/subnet assignment; the configured window_id does not establish network containment.",
-        "references": "Missing: Bind the window and type-qualified task (document, Lambda or state machine as applicable), role and explicit target registration IDs. Do not parse invocation payloads.",
+        "references": "Supported: Verify the window, typed task destination, service role and explicit target IDs. Registered targets must belong to the same window, and invocation payloads remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_maintenance_window_task summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_maintenance_window_task.html.markdown",
@@ -85048,7 +85050,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceMaintenanceWindowTask. No same-name data source in the pinned schema.",
         "dataContracts": {},
