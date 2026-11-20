@@ -121,6 +121,13 @@ regions stay in one group without a shared region claim. See the maintained
 Static resource-level `region` overrides are supported for managed `aws_vpc`,
 `aws_subnet` and `aws_cloudwatch_log_group`, verified with Terraform **1.9.8** or
 **1.16.6** with HashiCorp AWS **6.0.0**, and Terraform **1.9.8** with AWS **6.70.0**.
+For Terraform **1.9.8** with AWS **6.70.0**, managed
+`aws_cloudformation_stack_set` and `aws_cloudformation_stack_instances` also
+use this evidence contract for their administration region. StackSet instance
+declarations preserve unresolved deployment scope and show explicit target
+selectors independently. The singular `aws_cloudformation_stack_set_instance`
+uses its provider region for administration and accepts its legacy `region` as
+a target selector.
 The configuration must pin `version_constraint` to the corresponding exact provider
 version (optionally prefixed by `= `). Ranges and missing versions do not prove the
 schema. AWS v5 does not support these overrides. These are exact verified pairs,

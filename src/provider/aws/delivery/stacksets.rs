@@ -137,15 +137,22 @@ fn self_managed(e: &Evidence<'_>, node: usize) -> bool {
 
 fn administration_matches(e: &Evidence<'_>, instance: usize, stack: usize) -> bool {
     use crate::provider::aws::{configured_links::same_account, scope::scope};
-    let left = e.nodes[instance].provider_configuration.as_ref();
+    let declaration = &e.nodes[instance];
+    let left = declaration.provider_configuration.as_ref();
+    let region = if declaration.resource_type == "aws_cloudformation_stack_instances"
+        && declaration.has_region_override
+    {
+        declaration.region_override.as_ref()
+    } else {
+        left.and_then(|config| config.region.as_ref())
+    };
     let right = e.nodes[stack].provider_configuration.as_ref();
     let call_as = |node| {
         e.text(node, "call_as")
             .or_else(|| e.absent(node, "call_as").then_some("SELF"))
     };
     same_account(left, right)
-        && left
-            .and_then(|config| config.region.as_ref())
+        && region
             .zip(scope(&e.nodes[stack]).and_then(|scope| scope.region))
             .is_some_and(|(admin, region)| admin == &region)
         && call_as(instance)
@@ -180,17 +187,9 @@ fn stack_set(e: &Evidence<'_>, instance: usize) -> Option<usize> {
 }
 
 fn targets_have_region(e: &Evidence<'_>, node: usize) -> bool {
-    use crate::provider::aws::scope_selections::region;
+    use crate::provider::aws::scope_selections::{region, stackset_target_region};
     if e.nodes[node].resource_type == "aws_cloudformation_stack_set_instance" {
-        return e
-            .text(node, "stack_set_instance_region")
-            .or_else(|| {
-                e.absent(node, "stack_set_instance_region")
-                    .then(|| e.text(node, "region"))
-                    .flatten()
-            })
-            .and_then(region)
-            .is_some();
+        return stackset_target_region(node, e.values[node], e.refs).is_some();
     }
     e.value(node, "regions")
         .and_then(serde_json::Value::as_array)

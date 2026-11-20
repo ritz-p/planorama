@@ -26,6 +26,7 @@ struct ResourceConfiguration<'a> {
 
 pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
     let configuration = &plan["configuration"];
+    let providers = &configuration["provider_config"];
     let mut current_changes = BTreeMap::new();
     for change in plan["resource_changes"].as_array().into_iter().flatten() {
         if change.get("deposed").is_none() {
@@ -41,7 +42,7 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
     collect(
         &configuration["root_module"],
         "",
-        &configuration["provider_config"],
+        providers,
         plan["terraform_version"].as_str(),
         &mut resources,
     );
@@ -81,7 +82,13 @@ pub(super) fn enrich(plan: &Value, nodes: &mut [TerraformEntity]) {
                         .copied()
                         .flatten()
                         .and_then(|change| {
-                            resource_region(node, expression, &plan["terraform_version"], change)
+                            resource_region(
+                                node,
+                                expression,
+                                &plan["terraform_version"],
+                                providers[&configuration.key]["version_constraint"].as_str(),
+                                change,
+                            )
                         });
                 }
             }
@@ -160,17 +167,22 @@ fn resource_region(
     node: &TerraformEntity,
     expression: &Value,
     terraform_version: &Value,
+    provider_version: Option<&str>,
     change: &Value,
 ) -> Option<RegionScope> {
+    let supported_resource = match node.resource_type.as_str() {
+        "aws_vpc" | "aws_subnet" | "aws_cloudwatch_log_group" => true,
+        "aws_cloudformation_stack_set" | "aws_cloudformation_stack_instances" => {
+            matches!(provider_version, Some("6.70.0" | "= 6.70.0"))
+        }
+        _ => false,
+    };
     if node.mode != EntityMode::Managed
         || !matches!(
             node.action,
             Action::Create | Action::Update | Action::Unchanged | Action::Replace
         )
-        || !matches!(
-            node.resource_type.as_str(),
-            "aws_vpc" | "aws_subnet" | "aws_cloudwatch_log_group"
-        )
+        || !supported_resource
         || !terraform_version
             .as_str()
             .is_some_and(|version| REGION_OVERRIDE_CORE_VERSIONS.contains(&version))

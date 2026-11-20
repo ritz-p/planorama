@@ -81798,7 +81798,7 @@
         "ownership": "Supported: verify the administering StackSet and retain independently qualified deployment target selectors.",
         "network": "Not applicable: cloudformation_stack_instances declares no VPC/subnet assignment; the configured stack_set_name does not establish network containment.",
         "references": "Supported: Verify the named StackSet in its administration scope and explicit account or OU selectors with known target regions. Computed child summaries do not establish declarations.",
-        "scope": "Supported: the runtime preserves unresolved scope. Unknown because accounts, organizational units and regions are deployment selectors; verify each configured target separately.",
+        "scope": "Supported: the declaration preserves unresolved deployment scope. A verified resource-level region override qualifies the administering StackSet reference. Target accounts, organizational units and regions remain separately verified selectors.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack_instances summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack_instances.html.markdown",
         "shapes": {
@@ -81891,7 +81891,7 @@
         "ownership": "Not applicable: AWS CloudFormation cloudformation_stack_set remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudformation_stack_set declares no VPC/subnet assignment; the configured name does not establish network containment.",
         "references": "Supported: Verify StackSet prerequisites and permission-mode-specific administration and execution roles. Qualify the execution role with an explicit instance target account.",
-        "scope": "Supported: the StackSet has a regional administration context. Execution roles and instances require separate target-account and target-region evidence.",
+        "scope": "Supported: compare verified regional administration evidence, including a supported resource-level region override. Execution roles require independent target-account evidence.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack_set summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack_set.html.markdown",
         "shapes": {
@@ -81962,7 +81962,7 @@
         "ownership": "Supported: verify the administering StackSet without joining it to unverified deployed stacks.",
         "network": "Not applicable: cloudformation_stack_set_instance declares no VPC/subnet assignment; the configured stack_set_name does not establish network containment.",
         "references": "Supported: Verify the named StackSet and the explicitly configured target account, organization selector and region. Computed stack IDs do not establish deployment.",
-        "scope": "Supported: the runtime preserves unresolved scope. Unknown because the stack set and its target instance can occupy different accounts or regions.",
+        "scope": "Supported: the declaration preserves unresolved deployment scope. The administering StackSet uses provider account and region evidence. stack_set_instance_region and legacy region identify the target region.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack_set_instance summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack_set_instance.html.markdown",
         "shapes": {
