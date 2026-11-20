@@ -71177,10 +71177,10 @@
       }
     },
     "aws_config_config_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1473,
-      "gap": "#1473 — Resolve the Lambda function ARN only for CUSTOM_LAMBDA. Managed rule identifiers, policy text and compliance filters have no endpoint.",
+      "gap": "#1473 — Verified configuration references: source.source_identifier.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71193,7 +71193,7 @@
         "placement": "Supported: Logical Policy for the managed config_config_rule declaration. Provides an AWS Config Rule.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the Lambda function ARN only for CUSTOM_LAMBDA. Managed rule identifiers, policy text and compliance filters have no endpoint.",
+        "references": "Supported: Verified configuration references: source.source_identifier.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_config_rule summaries.",
         "officialDocumentation": "website/docs/r/config_config_rule.html.markdown",
@@ -71223,7 +71223,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_rules.rs",
+          "tests/unit/semantic/config_rules.rs"
         ],
         "managedDataContract": "Managed resourceConfigRule. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -71604,10 +71606,10 @@
       }
     },
     "aws_config_organization_custom_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1473,
-      "gap": "#1473 — Resolve the configured evaluation function ARN. Excluded accounts and type filters restrict evaluation.",
+      "gap": "#1473 — Verified configuration references: lambda_function_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71620,7 +71622,7 @@
         "placement": "Supported: Logical Policy for the managed config_organization_custom_rule declaration. Manages a Config Organization Custom Rule",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the configured evaluation function ARN. Excluded accounts and type filters restrict evaluation.",
+        "references": "Supported: Verified configuration references: lambda_function_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_organization_custom_rule summaries.",
         "officialDocumentation": "website/docs/r/config_organization_custom_rule.html.markdown",
@@ -71653,7 +71655,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_rules.rs",
+          "tests/unit/semantic/config_rules.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationCustomRule. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -71715,10 +71719,10 @@
       }
     },
     "aws_config_remediation_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1473,
-      "gap": "#1473 — Join the Config rule by name and the SSM document for a compatible target_type. AWS-owned documents may be external.",
+      "gap": "#1473 — Verified configuration references: config_rule_name, target_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71732,7 +71736,7 @@
         "placement": "Supported: Logical Controller for the managed config_remediation_configuration declaration. Provides an AWS Config Remediation Configuration.",
         "ownership": "Not applicable: The managed config_remediation_configuration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Join the Config rule by name and the SSM document for a compatible target_type. AWS-owned documents may be external.",
+        "references": "Supported: Verified configuration references: config_rule_name, target_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_remediation_configuration summaries.",
         "officialDocumentation": "website/docs/r/config_remediation_configuration.html.markdown",
@@ -71763,7 +71767,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_rules.rs",
+          "tests/unit/semantic/config_rules.rs"
         ],
         "managedDataContract": "Managed resourceRemediationConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}

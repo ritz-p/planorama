@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"config-rules-plan","focus":"aws_config_config_rule.sample0","target":0,"mask":{"source":true}},
   {"fixture":"config-aggregation-plan","focus":"aws_config_aggregate_authorization.sample0","target":0,"mask":{"authorized_aws_region":true}},
   {"fixture":"audit-manager-plan","focus":"aws_auditmanager_account_registration.sample0","target":0,"mask":{"kms_key":true}},
   {"fixture":"access-analyzer-plan","focus":"aws_accessanalyzer_archive_rule.sample0","target":0,"mask":{"analyzer_name":true}},
