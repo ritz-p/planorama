@@ -1,0 +1,39 @@
+#[test]
+fn configured_links_require_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/arc-readiness-plan.json"),
+        crate::plan::evidence::tests::parse_fixture,
+        super::label,
+        &[
+            (
+                "aws_route53recoveryreadiness_readiness_check.sample0",
+                "resource_set_name",
+            ),
+            ("aws_route53recoveryreadiness_cell.sample2", "cells"),
+            (
+                "aws_route53recoveryreadiness_recovery_group.sample3",
+                "cells",
+            ),
+            (
+                "aws_route53recoveryreadiness_resource_set.sample1",
+                "resources.resource_arn",
+            ),
+            (
+                "aws_route53recoveryreadiness_resource_set.sample1",
+                "resources.readiness_scopes",
+            ),
+            (
+                "aws_route53recoveryreadiness_resource_set.dns",
+                "resources.dns_target_resource.hosted_zone_arn",
+            ),
+            (
+                "aws_route53recoveryreadiness_resource_set.dns",
+                "resources.dns_target_resource.target_resource.nlb_resource.arn",
+            ),
+        ],
+        (
+            "aws_route53recoveryreadiness_resource_set.sample1",
+            "resource_set_name",
+        ),
+    );
+}
