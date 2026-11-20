@@ -1,0 +1,436 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_wafv2_web_acl_rule.sample0",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl_rule",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "statement": [
+            {
+              "rule_group_reference_statement": [
+                {
+                  "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_rule_group"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl.sample1",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scope": "REGIONAL",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "rule": [
+            {
+              "statement": [
+                {
+                  "ip_set_reference_statement": [
+                    {
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "statement": [
+                {
+                  "regex_pattern_set_reference_statement": [
+                    {
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl_rule_group_association.sample2",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl_rule_group_association",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "rule_group_reference": [
+            {
+              "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_rule_group"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_rule_group.sample3",
+      "mode": "managed",
+      "type": "aws_wafv2_rule_group",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scope": "REGIONAL",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_rule_group",
+          "rule": [
+            {
+              "statement": [
+                {
+                  "ip_set_reference_statement": [
+                    {
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "statement": [
+                {
+                  "regex_pattern_set_reference_statement": [
+                    {
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_ip_set.sample4",
+      "mode": "managed",
+      "type": "aws_wafv2_ip_set",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scope": "REGIONAL",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_regex_pattern_set.sample5",
+      "mode": "managed",
+      "type": "aws_wafv2_regex_pattern_set",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scope": "REGIONAL",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl_rule.ip_set_reference_statement",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl_rule",
+      "name": "ip_set_reference_statement",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "statement": [
+            {
+              "ip_set_reference_statement": [
+                {
+                  "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl_rule.regex_pattern_set_reference_statement",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl_rule",
+      "name": "regex_pattern_set_reference_statement",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "statement": [
+            {
+              "regex_pattern_set_reference_statement": [
+                {
+                  "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Plan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_wafv2_web_acl_rule.sample0",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl_rule",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.sample1.arn"
+              ]
+            },
+            "statement": [
+              {
+                "rule_group_reference_statement": [
+                  {
+                    "arn": {
+                      "references": [
+                        "aws_wafv2_rule_group.sample3.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl.sample1",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": [
+              {
+                "statement": [
+                  {
+                    "ip_set_reference_statement": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_wafv2_ip_set.sample4.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "statement": [
+                  {
+                    "regex_pattern_set_reference_statement": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_wafv2_regex_pattern_set.sample5.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl_rule_group_association.sample2",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl_rule_group_association",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.sample1.arn"
+              ]
+            },
+            "rule_group_reference": [
+              {
+                "arn": {
+                  "references": [
+                    "aws_wafv2_rule_group.sample3.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafv2_rule_group.sample3",
+          "mode": "managed",
+          "type": "aws_wafv2_rule_group",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "rule": [
+              {
+                "statement": [
+                  {
+                    "ip_set_reference_statement": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_wafv2_ip_set.sample4.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              {
+                "statement": [
+                  {
+                    "regex_pattern_set_reference_statement": [
+                      {
+                        "arn": {
+                          "references": [
+                            "aws_wafv2_regex_pattern_set.sample5.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafv2_ip_set.sample4",
+          "mode": "managed",
+          "type": "aws_wafv2_ip_set",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafv2_regex_pattern_set.sample5",
+          "mode": "managed",
+          "type": "aws_wafv2_regex_pattern_set",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_wafv2_web_acl_rule.ip_set_reference_statement",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl_rule",
+          "name": "ip_set_reference_statement",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.sample1.arn"
+              ]
+            },
+            "statement": [
+              {
+                "ip_set_reference_statement": [
+                  {
+                    "arn": {
+                      "references": [
+                        "aws_wafv2_ip_set.sample4.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl_rule.regex_pattern_set_reference_statement",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl_rule",
+          "name": "regex_pattern_set_reference_statement",
+          "provider_config_key": "aws",
+          "expressions": {
+            "web_acl_arn": {
+              "references": [
+                "aws_wafv2_web_acl.sample1.arn"
+              ]
+            },
+            "statement": [
+              {
+                "regex_pattern_set_reference_statement": [
+                  {
+                    "arn": {
+                      "references": [
+                        "aws_wafv2_regex_pattern_set.sample5.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

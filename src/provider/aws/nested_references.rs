@@ -158,6 +158,7 @@ pub(super) fn verify_collections(
 pub(super) enum NestedBlocks<'a> {
     Indexed(&'a [&'a str]),
     ScalarSet,
+    WafStatement,
 }
 
 fn endpoint_value<'a>(
@@ -288,8 +289,24 @@ pub(super) fn verify_values(
     {
         return None;
     }
-    let NestedBlocks::Indexed(collections) = blocks else {
-        return verify_scalar_set(nodes, refs, evidence, r, fields, valid, endpoint_mode);
+    let repeated;
+    let collections = match blocks {
+        NestedBlocks::Indexed(paths) => paths,
+        NestedBlocks::ScalarSet => {
+            return verify_scalar_set(nodes, refs, evidence, r, fields, valid, endpoint_mode);
+        }
+        NestedBlocks::WafStatement => {
+            repeated = r
+                .attribute
+                .match_indices(".statement.")
+                .filter_map(|(i, _)| {
+                    let path = &r.attribute[..i];
+                    (path.ends_with(".and_statement") || path.ends_with(".or_statement"))
+                        .then_some(&r.attribute[..i + ".statement".len()])
+                })
+                .collect::<Vec<_>>();
+            &repeated
+        }
     };
     let (value, mask) = evidence[r.target];
     let mut leaves = Vec::new();

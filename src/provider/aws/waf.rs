@@ -82,7 +82,7 @@ pub(super) fn source_fields(
     }
 }
 
-fn compatible(left: &TerraformEntity, right: &TerraformEntity, regional: bool) -> bool {
+pub(super) fn compatible(left: &TerraformEntity, right: &TerraformEntity, regional: bool) -> bool {
     let (Some(left_scope), Some(right_scope)) = (super::scope(left), super::scope(right)) else {
         return false;
     };
@@ -150,5 +150,66 @@ pub(super) fn effective_region(node: &TerraformEntity) -> Option<&crate::model::
         node.region_override.as_ref()
     } else {
         node.provider_configuration.as_ref()?.region.as_ref()
+    }
+}
+
+pub(crate) fn inherit_scope(
+    nodes: &mut [TerraformEntity],
+    refs: &[AttributeReference],
+    values: &[(&Value, &Value)],
+) {
+    for i in 0..nodes.len() {
+        let field = match nodes[i].resource_type.as_str() {
+            "aws_wafv2_web_acl_rule" | "aws_wafv2_web_acl_rule_group_association" => "web_acl_arn",
+            _ => continue,
+        };
+        nodes[i].waf_scope = parent_scope(nodes, refs, values, i, field);
+    }
+}
+
+fn parent_scope(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    values: &[(&Value, &Value)],
+    i: usize,
+    field: &str,
+) -> Option<WafScope> {
+    let r = super::lambda_core::unique(refs, i, field)?;
+    let [source] = *r.sources.as_slice() else {
+        return None;
+    };
+    let node = &nodes[i];
+    let acl = &nodes[source];
+    let current = |n: &TerraformEntity| {
+        n.provider.is_aws()
+            && n.mode == crate::model::EntityMode::Managed
+            && n.action != Action::Delete
+            && n.deposed_key.is_none()
+    };
+    if !current(node)
+        || !current(acl)
+        || acl.resource_type != "aws_wafv2_web_acl"
+        || !r.complete
+        || !r.instances_explicit
+        || !r.issues.is_empty()
+        || r.source_attributes.len() != 1
+        || !r.source_attributes.contains("arn")
+        || !super::configured_links::same_account(
+            node.provider_configuration.as_ref(),
+            acl.provider_configuration.as_ref(),
+        )
+    {
+        return None;
+    }
+    let arn = super::service_evidence::known(values, i, field)?;
+    if super::service_evidence::known(values, source, "arn") != Some(arn) {
+        return None;
+    }
+    let region = effective_region(node)?;
+    let scope = acl.waf_scope?;
+    match scope {
+        WafScope::Regional if super::scope(acl)?.region.as_ref() == Some(region) => Some(scope),
+        WafScope::CloudFront if region.0 == "us-east-1" => Some(scope),
+        _ => None,
     }
 }
