@@ -401,6 +401,20 @@ fn appconfig_deployment_limits_versions_and_ownership_to_the_configured_context(
             .attribute,
         "environment_id"
     );
+    for owner in [
+        ("after", json!("unrelated-app")),
+        ("after_unknown", json!(true)),
+        ("after_sensitive", json!(true)),
+    ] {
+        let mut different_profile = fixture.clone();
+        different_profile["resource_changes"][2]["change"][owner.0]["application_id"] = owner.1;
+        assert!(!verified(
+            &graph(&different_profile),
+            address,
+            "configuration_version",
+            label(super::CONFIG_DEPLOYMENT, "configuration_version")
+        ));
+    }
     fixture["resource_changes"][3]["change"]["after_unknown"] = json!({"version_number":true});
     fixture["resource_changes"][1]["change"]["after"]["application_id"] = json!("unrelated-app");
     let result = graph(&fixture);
