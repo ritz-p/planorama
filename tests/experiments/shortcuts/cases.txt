@@ -1,0 +1,9 @@
+empty 10 8 0
+no-improvement 10 8 0 10/yes 11/yes 1/no
+zero-budget 10 0 0 1/yes
+tie 10 8 1 6/yes 6/yes
+ineligible-cheapest 10 8 3 8/yes 1/no 4/yes
+budget-exhausted 10 2 1 8/yes 1/no 2/yes
+skip-prefix 10 2 4 1/no 11/yes 8/yes 2/yes
+original-tie 10 8 0 10/yes
+last-in-window 10 3 3 8/yes 7/yes 6/yes 1/yes

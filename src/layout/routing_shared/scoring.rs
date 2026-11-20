@@ -181,12 +181,22 @@ impl Scorer {
         self.paths.truncate(len);
     }
 
+    #[cfg(test)]
     pub(in crate::layout) fn safe_shortcut(
         &self,
         old: &[Point],
         new: &[Point],
         obstacles: &[Bounds],
     ) -> bool {
+        self.shortcut_cost(old, new, obstacles).is_some()
+    }
+
+    pub(in crate::layout) fn shortcut_cost(
+        &self,
+        old: &[Point],
+        new: &[Point],
+        obstacles: &[Bounds],
+    ) -> Option<u128> {
         let length = |path: &[Point]| {
             path.windows(2)
                 .map(|p| p[0].x.abs_diff(p[1].x) as u128 + p[0].y.abs_diff(p[1].y) as u128)
@@ -196,16 +206,17 @@ impl Scorer {
             || length(new) > length(old)
             || (new.len() == old.len() && length(new) == length(old))
         {
-            return false;
+            return None;
         }
         let a = self.score(old, obstacles);
         let b = self.score(new, obstacles);
-        b.node_crossings == 0
+        (b.node_crossings == 0
             && self.safe_border_change(old, new)
             && b.cost < a.cost
             && b.bends <= a.bends
             && b.length <= a.length
-            && (b.bends < a.bends || b.length < a.length)
+            && (b.bends < a.bends || b.length < a.length))
+            .then_some(b.cost)
     }
 
     pub(in crate::layout) fn set_peers(&mut self, peers: Vec<Bounds>) {
