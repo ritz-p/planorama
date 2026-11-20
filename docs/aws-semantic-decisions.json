@@ -84615,10 +84615,10 @@
       }
     },
     "aws_ssm_activation": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1549,
-      "gap": "#1549 — Resolve the IAM role by name without exposing activation codes or inferring registered instances from the requested registration limit.",
+      "gap": "#1549 — Verify the configured IAM role name. Omit activation codes and runtime registration details.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84631,7 +84631,7 @@
         "placement": "Supported: managed Logical Node for ssm_activation. Registers an on-premises server or virtual machine with Amazon EC2 so that it can be managed using Run Command.",
         "ownership": "Not applicable: AWS SSM (Systems Manager) ssm_activation remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssm_activation declares no VPC/subnet assignment; the configured iam_role does not establish network containment.",
-        "references": "Missing: Resolve the IAM role by name without exposing activation codes or inferring registered instances from the requested registration limit.",
+        "references": "Supported: Verify the configured IAM role name. Omit activation codes and runtime registration details.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_activation summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_activation.html.markdown",
@@ -84658,17 +84658,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceActivation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ssm_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1549,
-      "gap": "#1549 — Verify a managed SSM document and configured output bucket. AWS documents and tag selectors must not synthesize resources or resolve runtime fleet membership.",
+      "gap": "#1549 — Verify the customer document and output bucket. Tag selectors and AWS-owned documents without managed evidence do not identify resources.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84683,7 +84685,7 @@
         "placement": "Supported: managed Logical Association for ssm_association. Associates an SSM Document to an instance or EC2 tag.",
         "ownership": "Not applicable: AWS SSM (Systems Manager) ssm_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssm_association declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Verify a managed SSM document and configured output bucket. AWS documents and tag selectors must not synthesize resources or resolve runtime fleet membership.",
+        "references": "Supported: Verify the customer document and output bucket. Tag selectors and AWS-owned documents without managed evidence do not identify resources.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_association.html.markdown",
@@ -84724,7 +84726,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -85058,7 +85062,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1549,
-      "gap": "#1549 — Preserve #495 ordinary references and #549 purpose placement. Verify an explicit customer-managed KMS key only for SecureString. Omit all value variants, including write-only inputs.",
+      "gap": "#1549 — Verify an explicit customer-managed KMS key or alias for SecureString. All parameter values remain excluded.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85072,7 +85076,7 @@
         "placement": "Supported: regional logical Node by default, with the explicit SSM purpose-placement override from #549; data lookups have separate identity.",
         "ownership": "Not applicable: AWS SSM (Systems Manager) ssm_parameter remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssm_parameter declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Partial: Preserve #495 ordinary references and #549 purpose placement. Verify an explicit customer-managed KMS key only for SecureString. Omit all value variants, including write-only inputs.",
+        "references": "Supported: Verify an explicit customer-managed KMS key or alias for SecureString. All parameter values remain excluded.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Supported: retain safe parameter identification and omit every value variant, including ordinary strings, SecureString and write-only input.",
         "officialDocumentation": "website/docs/r/ssm_parameter.html.markdown",
@@ -85106,7 +85110,9 @@
           "tests/unit/resource_support.rs",
           "src/view/purpose.rs",
           "tests/unit/purpose_placement.rs",
-          "src/provider/aws/imagebuilder_distribution.rs"
+          "src/provider/aws/imagebuilder_distribution.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceParameter. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -85260,10 +85266,10 @@
       }
     },
     "aws_ssm_resource_data_sync": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1549,
-      "gap": "#1549 — Qualify the configured destination bucket and encryption key by destination region. Aggregated inventory and organization sharing are not network containment.",
+      "gap": "#1549 — Verify the configured S3 bucket and encryption key using the known destination region. Inventory aggregation does not establish containment.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85277,7 +85283,7 @@
         "placement": "Supported: managed Logical Node for ssm_resource_data_sync. Provides a SSM resource data sync.",
         "ownership": "Not applicable: AWS SSM (Systems Manager) ssm_resource_data_sync remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssm_resource_data_sync declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Qualify the configured destination bucket and encryption key by destination region. Aggregated inventory and organization sharing are not network containment.",
+        "references": "Supported: Verify the configured S3 bucket and encryption key using the known destination region. Inventory aggregation does not establish containment.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_resource_data_sync summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_resource_data_sync.html.markdown",
@@ -85311,7 +85317,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceResourceDataSync. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -85780,10 +85788,10 @@
       }
     },
     "aws_ssmquicksetup_configuration_manager": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1549,
-      "gap": "#1549 — Verify the administration role ARN and separately qualified execution role name. Use the schema spelling administration, not the prose spelling administrator; arbitrary parameters stay opaque.",
+      "gap": "#1549 — Verify the configured administration role ARN and qualified execution role name. Quick Setup parameters remain opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85796,7 +85804,7 @@
         "placement": "Supported: managed Logical Controller for ssmquicksetup_configuration_manager. Terraform resource for managing an AWS SSM Quick Setup Configuration Manager.",
         "ownership": "Not applicable: AWS SSM Quick Setup ssmquicksetup_configuration_manager remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssmquicksetup_configuration_manager declares no VPC/subnet assignment; the configured configuration_definition.local_deployment_administration_role_arn does not establish network containment.",
-        "references": "Missing: Verify the administration role ARN and separately qualified execution role name. Use the schema spelling administration, not the prose spelling administrator; arbitrary parameters stay opaque.",
+        "references": "Supported: Verify the configured administration role ARN and qualified execution role name. Quick Setup parameters remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit configuration parameter maps and execution payloads from ssmquicksetup_configuration_manager summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmquicksetup_configuration_manager.html.markdown",
@@ -85826,7 +85834,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newConfigurationManagerResource. No same-name data source in the pinned schema.",
         "dataContracts": {},

@@ -376,12 +376,79 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[],
         )
         .in_control_plane_account(),
+        ("aws_ssm_activation", "iam_role") => Rule::new(
+            "Activation IAM role",
+            &[("aws_iam_role", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_ssm_association", "name") => Rule::new(
+            "Association document",
+            &[("aws_ssm_document", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_ssm_association", "output_location.s3_bucket_name") => Rule::new(
+            "Association output bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_ssm_parameter", "key_id") => Rule::new(
+            "SecureString customer key",
+            &[
+                ("aws_kms_key", &["arn", "id", "key_id"]),
+                ("aws_kms_alias", &["arn", "name"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_ssm_resource_data_sync", "s3_destination.bucket_name") => Rule::new(
+            "Inventory destination bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &[],
+        )
+        .with_explicit_destination(),
+        ("aws_ssm_resource_data_sync", "s3_destination.kms_key_arn") => Rule::new(
+            "Inventory destination key",
+            &[("aws_kms_key", &["arn"])],
+            false,
+            &[],
+        )
+        .with_explicit_destination(),
+        (
+            "aws_ssmquicksetup_configuration_manager",
+            "configuration_definition.local_deployment_administration_role_arn",
+        ) => Rule::new(
+            "Quick Setup administration role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &["configuration_definition"],
+        )
+        .in_control_plane_account(),
+        (
+            "aws_ssmquicksetup_configuration_manager",
+            "configuration_definition.local_deployment_execution_role_name",
+        ) => Rule::new(
+            "Quick Setup execution role",
+            &[("aws_iam_role", &["name"])],
+            false,
+            &["configuration_definition"],
+        )
+        .in_control_plane_account(),
         _ => return None,
     })
 }
 
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    matches!(kind, "aws_servicecatalog_service_action")
+    matches!(
+        kind,
+        "aws_servicecatalog_service_action"
+            | "aws_ssm_association"
+            | "aws_ssm_resource_data_sync"
+            | "aws_ssmquicksetup_configuration_manager"
+    )
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
@@ -526,6 +593,28 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         }
         ("aws_servicequotas_auto_management", "notification_arn") => {
             principal_arn(e, source, "notifications", "configuration/")
+        }
+        ("aws_ssm_parameter", "key_id") => {
+            e.has_argument(r.target, path)
+                && e.text(r.target, "type") == Some("SecureString")
+                && e.text(r.target, path)
+                    .is_some_and(|key| key != "alias/aws/ssm" && !key.ends_with(":alias/aws/ssm"))
+        }
+        (
+            "aws_ssm_resource_data_sync",
+            "s3_destination.bucket_name" | "s3_destination.kms_key_arn",
+        ) => path.rsplit_once('.').is_some_and(|(block, _)| {
+            e.source_region(r.target, &format!("{block}.region"), source)
+                && configured_links::same_account(
+                    e.nodes[r.target].provider_configuration.as_ref(),
+                    e.nodes[source].provider_configuration.as_ref(),
+                )
+        }),
+        ("aws_ssmquicksetup_configuration_manager", _) => {
+            path.rsplit_once('.').is_some_and(|(block, _)| {
+                e.text(r.target, &format!("{block}.type")).is_some()
+                    && (r.attribute.ends_with("_name") || principal_arn(e, source, "iam", "role/"))
+            })
         }
         _ => true,
     }
