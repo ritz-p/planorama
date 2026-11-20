@@ -1,3 +1,4 @@
+pub(crate) mod access_analyzer;
 pub(crate) mod accountaccess_configuration;
 pub(crate) mod agentcore_gateway;
 pub(crate) mod agentcore_runtime;

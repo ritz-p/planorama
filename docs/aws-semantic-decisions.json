@@ -70641,10 +70641,10 @@
       }
     },
     "aws_accessanalyzer_archive_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1470,
-      "gap": "#1470 — Join the archive rule to its regional analyzer by analyzer_name. Filter criteria and values select findings.",
+      "gap": "#1470 — Verified configuration references: analyzer_name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -70655,9 +70655,9 @@
           "filter.criteria"
         ],
         "placement": "Supported: Logical Policy for the managed accessanalyzer_archive_rule declaration. Terraform resource for managing an AWS AccessAnalyzer Archive Rule.",
-        "ownership": "Missing: use a verified analyzer_name reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: AWS IAM Access Analyzer control-plane configuration has no network placement contract for accessanalyzer_archive_rule.",
-        "references": "Missing: Join the archive rule to its regional analyzer by analyzer_name. Filter criteria and values select findings.",
+        "references": "Supported: Verified configuration references: analyzer_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit analysis filters and finding contents from accessanalyzer_archive_rule summaries.",
         "officialDocumentation": "website/docs/r/accessanalyzer_archive_rule.html.markdown",
@@ -70685,7 +70685,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/access_analyzer.rs",
+          "tests/unit/semantic/access_analyzer.rs"
         ],
         "managedDataContract": "Managed resourceArchiveRule. No same-name data source in 6.70.0.",
         "dataContracts": {}
