@@ -437,3 +437,24 @@ fn service_catalog_provisioning_verifies_configured_endpoints() {
         Some("Service action role")
     ));
 }
+
+#[test]
+fn quota_management_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/quota-management-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[("aws_servicequotas_auto_management.all", "notification_arn")],
+        ("aws_notifications_notification_configuration.all", "arn"),
+    );
+    assert!(label("aws_servicequotas_auto_management", "exclusion_list").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_servicequotas_auto_management.all",
+        "notification_arn",
+        "aws_notifications_notification_configuration.all",
+        "Quota management notification configuration",
+        false,
+    );
+}

@@ -369,6 +369,13 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_servicequotas_auto_management", "notification_arn") => Rule::new(
+            "Quota management notification configuration",
+            &[("aws_notifications_notification_configuration", &["arn"])],
+            false,
+            &[],
+        )
+        .in_control_plane_account(),
         _ => return None,
     })
 }
@@ -516,6 +523,9 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     && (r.attribute == "definition.name"
                         || principal_arn(e, source, "iam", "role/"))
             })
+        }
+        ("aws_servicequotas_auto_management", "notification_arn") => {
+            principal_arn(e, source, "notifications", "configuration/")
         }
         _ => true,
     }
