@@ -329,3 +329,110 @@ fn appconfig_monitor_set_keeps_role_and_alarm_references_separate() {
         );
     }
 }
+
+#[test]
+fn appconfig_deployment_limits_versions_and_ownership_to_the_configured_context() {
+    let mut fixture = plan(&[
+        (
+            "aws_appconfig_application.site",
+            json!({"id":"app123"}),
+            json!({}),
+        ),
+        (
+            "aws_appconfig_environment.dev",
+            json!({"application_id":"app123","environment_id":"env1"}),
+            json!({"application_id":{"references":["aws_appconfig_application.site.id"]}}),
+        ),
+        (
+            "aws_appconfig_configuration_profile.settings",
+            json!({"application_id":"app123","configuration_profile_id":"p123","location_uri":"hosted"}),
+            json!({"application_id":{"references":["aws_appconfig_application.site.id"]}}),
+        ),
+        (
+            "aws_appconfig_hosted_configuration_version.initial",
+            json!({"application_id":"app123","configuration_profile_id":"p123","version_number":2,"version_label":"stable"}),
+            json!({"application_id":{"references":["aws_appconfig_application.site.id"]},
+                "configuration_profile_id":{"references":["aws_appconfig_configuration_profile.settings.configuration_profile_id"]}}),
+        ),
+        (
+            "aws_appconfig_deployment_strategy.gradual",
+            json!({"id":"st123"}),
+            json!({}),
+        ),
+        (
+            "aws_appconfig_deployment.release",
+            json!({"application_id":"app123","environment_id":"env1","configuration_profile_id":"p123","configuration_version":"2","deployment_strategy_id":"st123"}),
+            json!({
+                "application_id":{"references":["aws_appconfig_application.site.id"]},
+                "environment_id":{"references":["aws_appconfig_environment.dev.environment_id"]},
+                "configuration_profile_id":{"references":["aws_appconfig_configuration_profile.settings.configuration_profile_id"]},
+                "configuration_version":{"references":["aws_appconfig_hosted_configuration_version.initial.version_number"]},
+                "deployment_strategy_id":{"references":["aws_appconfig_deployment_strategy.gradual.id"]}
+            }),
+        ),
+    ]);
+    let address = "aws_appconfig_deployment.release";
+    for path in [
+        "application_id",
+        "environment_id",
+        "configuration_profile_id",
+        "configuration_version",
+        "deployment_strategy_id",
+    ] {
+        assert!(
+            verified(
+                &graph(&fixture),
+                address,
+                path,
+                label(super::CONFIG_DEPLOYMENT, path)
+            ),
+            "{path}"
+        );
+    }
+    assert_eq!(
+        graph(&fixture)
+            .nodes
+            .iter()
+            .find(|n| n.address == address)
+            .unwrap()
+            .member_owner
+            .as_ref()
+            .unwrap()
+            .attribute,
+        "environment_id"
+    );
+    for owner in [
+        ("after", json!("unrelated-app")),
+        ("after_unknown", json!(true)),
+        ("after_sensitive", json!(true)),
+    ] {
+        let mut different_profile = fixture.clone();
+        different_profile["resource_changes"][2]["change"][owner.0]["application_id"] = owner.1;
+        assert!(!verified(
+            &graph(&different_profile),
+            address,
+            "configuration_version",
+            label(super::CONFIG_DEPLOYMENT, "configuration_version")
+        ));
+    }
+    fixture["resource_changes"][3]["change"]["after_unknown"] = json!({"version_number":true});
+    fixture["resource_changes"][1]["change"]["after"]["application_id"] = json!("unrelated-app");
+    let result = graph(&fixture);
+    assert!(!verified(
+        &result,
+        address,
+        "configuration_version",
+        label(super::CONFIG_DEPLOYMENT, "configuration_version")
+    ));
+    assert!(
+        result
+            .nodes
+            .iter()
+            .find(|n| n.address == address)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+    assert!(label(super::CONFIG_DEPLOYMENT, "state").is_none());
+    assert!(label(super::CONFIG_DEPLOYMENT, "kms_key_arn").is_none());
+}
