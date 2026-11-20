@@ -1,0 +1,156 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_config_aggregate_authorization.sample0",
+      "mode": "managed",
+      "type": "aws_config_aggregate_authorization",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "authorized_aws_region": "us-west-2",
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.sample1",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_config_configuration_aggregator.sample2",
+      "mode": "managed",
+      "type": "aws_config_configuration_aggregator",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_aggregation_source": [
+            {
+              "regions": [
+                "us-east-1"
+              ],
+              "account_ids": [
+                "123456789012"
+              ]
+            }
+          ],
+          "organization_aggregation_source": [
+            {
+              "all_regions": true,
+              "role_arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample3",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam:us-east-1:123456789012:resource/iam_role"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          }
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_config_aggregate_authorization.sample0",
+          "mode": "managed",
+          "type": "aws_config_aggregate_authorization",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.sample1.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.sample1",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_config_configuration_aggregator.sample2",
+          "mode": "managed",
+          "type": "aws_config_configuration_aggregator",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_aggregation_source": [
+              {
+                "account_ids": {
+                  "references": [
+                    "aws_organizations_account.sample1.id"
+                  ]
+                }
+              }
+            ],
+            "organization_aggregation_source": [
+              {
+                "role_arn": {
+                  "references": [
+                    "aws_iam_role.sample3.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.sample3",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

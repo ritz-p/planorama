@@ -60,6 +60,7 @@ pub(crate) mod cognito;
 #[path = "../../tests/unit/semantic/cognito.rs"]
 mod cognito_tests;
 mod components;
+pub(crate) mod config_aggregation;
 mod configured_links;
 mod containment;
 mod data;

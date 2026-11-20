@@ -15,6 +15,21 @@ fn share_destination_requires_both_known_selectors() {
 }
 
 #[test]
+fn aggregator_preserves_each_account_and_region_tuple() {
+    let v = json!({"account_aggregation_source":[{"account_ids":["123456789012"],"regions":["us-east-1"]},{"account_ids":["210987654321"],"all_regions":true}]});
+    let s = selections("aws_config_configuration_aggregator", &v, &Value::Null);
+    assert_eq!(
+        s.iter().map(|row| row.2.as_str()).collect::<Vec<_>>(),
+        ["123456789012 / us-east-1", "210987654321 / all regions"]
+    );
+    let m = json!({"account_aggregation_source":[{},{"account_ids":true}]});
+    assert_eq!(
+        selections("aws_config_configuration_aggregator", &v, &m).len(),
+        1
+    );
+}
+
+#[test]
 fn delegation_control_set_is_scoped_to_a_known_assessment() {
     let v = json!({"assessment_id":"assessment-a","control_set_id":"payments"});
     let select = |mask: &Value| selections("aws_auditmanager_assessment_delegation", &v, mask);

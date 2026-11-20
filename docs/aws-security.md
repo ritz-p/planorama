@@ -500,3 +500,7 @@ An archive rule references its regional analyzer through the configured analyzer
 ## Verify Audit Manager configuration relationships (#1471)
 
 Assessments, reports, framework controls, delegates, report buckets and KMS keys use typed configuration references. Framework shares retain their destination account and region together. Evidence text and report contents are excluded.
+
+## Verify AWS Config aggregation scopes (#1472)
+
+Aggregation authorizations pair a grantee account with its authorized AWS region. Aggregators retain the account and region selections for each source and verify the organization role independently. All-regions mode is represented explicitly.
