@@ -87267,10 +87267,10 @@
       }
     },
     "aws_appintegrations_data_integration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1591,
-      "gap": "#1591 — Verify the KMS key ARN and decode only documented AppFlow connector-profile URI forms with known compatible connector type and qualified profile identity. Do not infer objects from schedule selections.",
+      "gap": "#1591 — Verify the configured KMS key and a documented Salesforce AppFlow locator with a matching connector type and scoped profile name. Schedule and object selections do not identify additional endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87284,7 +87284,7 @@
         "placement": "Supported: managed Logical Controller with the Amazon AppIntegrations service label. Provides details about a specific Amazon AppIntegrations Data Integration",
         "ownership": "Not applicable: The AppFlow profile and encryption key remain independent.",
         "network": "Not applicable: An integration URI specifies a data source, with no VPC placement proof.",
-        "references": "Missing: Verify the KMS key ARN and decode only documented AppFlow connector-profile URI forms with known compatible connector type and qualified profile identity. Do not infer objects from schedule selections.",
+        "references": "Supported: Verify the configured KMS key and a documented Salesforce AppFlow locator with a matching connector type and scoped profile name. Schedule and object selections do not identify additional endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The integration and referenced profile require compatible account and regional evidence.",
         "summaries": "Intentionally unsupported: omit URI credentials, schedule objects and fetched data. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appintegrations_data_integration.html.markdown",
@@ -87314,17 +87314,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceDataIntegration. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appintegrations_event_integration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1591,
-      "gap": "#1591 — Verify the configured EventBridge bus identity. The event source filter is a selector and does not identify a remote managed producer.",
+      "gap": "#1591 — Verify the configured EventBridge bus by scoped name. The event source filter does not identify a managed producer.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87338,7 +87340,7 @@
         "placement": "Supported: managed Logical Controller with the Amazon AppIntegrations service label. Provides details about a specific Amazon AppIntegrations Event Integration",
         "ownership": "Not applicable: Event buses can serve multiple integrations and remain independent.",
         "network": "Not applicable: Event subscription is unrelated to VPC attachment.",
-        "references": "Missing: Verify the configured EventBridge bus identity. The event source filter is a selector and does not identify a remote managed producer.",
+        "references": "Supported: Verify the configured EventBridge bus by scoped name. The event source filter does not identify a managed producer.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the event bus independently by its proven scope.",
         "summaries": "Intentionally unsupported: omit event filter values and event payloads. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appintegrations_event_integration.html.markdown",
@@ -87369,7 +87371,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceEventIntegration. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {

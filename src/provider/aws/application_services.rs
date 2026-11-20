@@ -35,6 +35,9 @@ const FLOW: &str = "aws_appflow_flow";
 const FLOW_PROFILE: &str = "aws_appflow_connector_profile";
 const FLOW_REDSHIFT: &str = "connector_profile_config.0.connector_profile_properties.0.redshift.0";
 
+const DATA_INTEGRATION: &str = "aws_appintegrations_data_integration";
+const EVENT_INTEGRATION: &str = "aws_appintegrations_event_integration";
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(
         kind,
@@ -202,6 +205,19 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             "AppFlow Glue database",
             &[("aws_glue_catalog_database", &["name"])],
         ),
+        (DATA_INTEGRATION, "kms_key") => scalar(
+            "AppIntegrations encryption key",
+            &[("aws_kms_key", &["arn"])],
+        ),
+        (DATA_INTEGRATION, "source_uri") => scalar(
+            "AppIntegrations AppFlow profile",
+            &[(FLOW_PROFILE, &["name"])],
+        )
+        .decoded(integration_profile),
+        (EVENT_INTEGRATION, "eventbridge_bus") => scalar(
+            "AppIntegrations EventBridge bus",
+            &[("aws_cloudwatch_event_bus", &["name"])],
+        ),
         _ => return None,
     })
 }
@@ -219,6 +235,15 @@ fn key(label: &'static str) -> Rule {
 fn s3_object(uri: &str) -> Option<(&str, &str)> {
     let (bucket, key) = uri.strip_prefix("s3://")?.split_once('/')?;
     (!bucket.is_empty() && !key.is_empty() && !uri.contains(['?', '#'])).then_some((bucket, key))
+}
+
+fn integration_profile<'a>(
+    _: &str,
+    value: &'a Value,
+) -> Option<std::collections::BTreeSet<&'a str>> {
+    let name = value.as_str()?.strip_prefix("Salesforce://AppFlow/")?;
+    (!name.is_empty() && !name.contains(['?', '#']) && !name.chars().any(char::is_whitespace))
+        .then(|| [name].into())
 }
 
 fn configuration_locator<'a>(
@@ -442,6 +467,14 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     .is_some_and(|account| account.as_str() == catalog)
             })
         }
+        (DATA_INTEGRATION, "kms_key") => service_arn(e, source, "kms", "key/").is_some_and(segment),
+        (DATA_INTEGRATION, "source_uri") => e.text(source, "connector_type") == Some("Salesforce"),
+        (EVENT_INTEGRATION, "eventbridge_bus") => e.text(target, path).is_some_and(|name| {
+            name.len() <= 255
+                && name
+                    .bytes()
+                    .all(|ch| ch.is_ascii_alphanumeric() || b"/._-".contains(&ch))
+        }),
         (CONFIG_EXTENSION, _) => extension_action(e, target, source, path),
         (CONFIG_ASSOCIATION, "extension_arn") => {
             service_arn(e, source, "appconfig", "extension/").is_some_and(segment)
