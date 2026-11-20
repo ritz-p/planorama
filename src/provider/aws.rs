@@ -107,6 +107,7 @@ mod elbv2_tls;
 pub(crate) mod emr;
 pub(crate) mod encryption;
 mod eventbridge;
+mod finding_exports;
 pub(crate) mod finspace_kx_configuration;
 mod firehose;
 pub(crate) mod firehose_sources;

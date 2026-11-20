@@ -53,7 +53,7 @@
         ],
         "after": {
           "bucket": "s3_bucket-fixture",
-          "arn": "arn:aws:s3:us-east-1:123456789012:resource/s3_bucket"
+          "arn": "arn:aws:s3:::fixture-export-bucket"
         }
       }
     },
@@ -70,8 +70,8 @@
         "after": {
           "destination_type": "S3",
           "detector_id": "guardduty_detector-fixture",
-          "destination_arn": "arn:aws:s3:us-east-1:123456789012:resource/s3_bucket",
-          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:resource/kms_key"
+          "destination_arn": "arn:aws:s3:::fixture-export-bucket",
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
         }
       }
     },
@@ -101,7 +101,7 @@
           "create"
         ],
         "after": {
-          "arn": "arn:aws:kms:us-east-1:123456789012:resource/kms_key"
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/12345678-1234-1234-1234-123456789012"
         }
       }
     }
