@@ -7189,7 +7189,7 @@
         "placement": "Supported: Logical Association for the managed wafv2_web_acl_association declaration. Creates a WAFv2 Web ACL Association.",
         "ownership": "Supported: association presentation requires verified, unambiguous ACL and protected endpoints; the ACL is independently reusable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Supported: verify the ACL ARN and the protected resource identity for application load balancers, REST API stages, Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access.",
+        "references": "Supported: verify the ACL ARN and the protected resource identity for application load balancers and REST API stages (#496), Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access.",
         "scope": "Supported: Amplify uses a CLOUDFRONT ACL and an association in us-east-1. The app may be in another region of the same account. Other protected endpoints require a REGIONAL ACL in the same region.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_association summaries.",
         "officialDocumentation": "website/docs/r/wafv2_web_acl_association.html.markdown",
