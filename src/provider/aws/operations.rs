@@ -168,6 +168,61 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[],
         )
         .with_explicit_destination(),
+        ("aws_resourceexplorer2_view", "scope") => Rule::new(
+            "Resource Explorer scope",
+            &[
+                ("aws_organizations_account", &["id"]),
+                ("aws_organizations_organizational_unit", &["arn"]),
+                ("aws_organizations_organization", &["arn"]),
+            ],
+            false,
+            &[],
+        )
+        .with_explicit_destination()
+        .decoded(explorer_scope),
+        ("aws_resourcegroups_resource", "group_arn") => Rule::new(
+            "Resource group",
+            &[("aws_resourcegroups_group", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_resourcegroups_resource", "resource_arn") => Rule::new(
+            "Grouped resource",
+            &[
+                ("aws_instance", &["arn"]),
+                ("aws_vpc", &["arn"]),
+                ("aws_subnet", &["arn"]),
+                ("aws_s3_bucket", &["arn"]),
+                ("aws_lambda_function", &["arn"]),
+                ("aws_dynamodb_table", &["arn"]),
+                ("aws_sns_topic", &["arn"]),
+                ("aws_sqs_queue", &["arn"]),
+                ("aws_rds_cluster", &["arn"]),
+                ("aws_db_instance", &["arn"]),
+                ("aws_cloudwatch_log_group", &["arn"]),
+                ("aws_ecs_cluster", &["arn"]),
+                ("aws_eks_cluster", &["arn"]),
+                ("aws_kms_key", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalogappregistry_attribute_group_association", "application_id") => {
+            Rule::new(
+                "AppRegistry application",
+                &[("aws_servicecatalogappregistry_application", &["id"])],
+                false,
+                &[],
+            )
+        }
+        ("aws_servicecatalogappregistry_attribute_group_association", "attribute_group_id") => {
+            Rule::new(
+                "AppRegistry attribute group",
+                &[("aws_servicecatalogappregistry_attribute_group", &["id"])],
+                false,
+                &[],
+            )
+        }
         _ => return None,
     })
 }
@@ -237,6 +292,20 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         ("aws_ram_resource_share_accepter", "share_arn") => {
             ram_arn(e, r.target, source, "resource-share/")
         }
+        ("aws_resourceexplorer2_view", "scope") => match e.nodes[source].resource_type.as_str() {
+            "aws_organizations_account" => e
+                .text(source, "id")
+                .is_some_and(|account| endpoint_account(e, r.target, account)),
+            "aws_organizations_organizational_unit" | "aws_organizations_organization" => {
+                ram_principal(e, source)
+                    && configured_links::same_account(
+                        e.nodes[r.target].provider_configuration.as_ref(),
+                        e.nodes[source].provider_configuration.as_ref(),
+                    )
+            }
+            _ => false,
+        },
+        ("aws_resourceexplorer2_view", _) => false,
         _ => true,
     }
 }
@@ -348,6 +417,10 @@ fn principal_arn(e: &Evidence<'_>, source: usize, service: &str, prefix: &str) -
         .is_some_and(|(region, account, id)| {
             region.is_empty() && !id.is_empty() && endpoint_account(e, source, account)
         })
+}
+
+fn explorer_scope<'a>(path: &str, value: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
+    account_root(path, value).or_else(|| super::nested_references::leaf_values(path, value))
 }
 
 #[cfg(test)]
