@@ -253,6 +253,7 @@ pub(crate) mod transit_routes;
 pub(crate) mod verified_access;
 pub(crate) mod verifiedpermissions;
 pub(crate) mod vpclattice;
+pub(crate) mod waf_classic;
 pub(crate) mod xray_encryption;
 
 #[cfg(test)]
