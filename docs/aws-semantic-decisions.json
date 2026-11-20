@@ -80890,11 +80890,11 @@
     "aws_codestarnotifications_notification_rule": {
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
-      "issue": 1534,
-      "gap": "#1534 — Verify the configured source and the SNS, Slack or Microsoft Teams target based on its discriminator.",
+      "issue": 1594,
+      "gap": "#1594 — Preserve the source and SNS target checks from #1534. The Chatbot target checks currently expect arn, while the pinned Provider exports chat_configuration_arn for Slack and Teams. Verify that output under the matching target.type and preserve same-account qualification.",
       "review": {
         "issue": 731,
-        "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
         "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
         "fields": [
           "resource",
@@ -80905,7 +80905,7 @@
         "placement": "Supported: managed Logical Policy for codestarnotifications_notification_rule. Provides a CodeStar Notifications Rule",
         "ownership": "Not applicable: AWS CodeStar Notifications codestarnotifications_notification_rule remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codestarnotifications_notification_rule declares no VPC/subnet assignment; the configured resource does not establish network containment.",
-        "references": "Supported: Verify the configured source and the SNS, Slack or Microsoft Teams target based on its discriminator.",
+        "references": "Partial: Preserve the source and SNS target checks from #1534. The Chatbot target checks currently expect arn, while the pinned Provider exports chat_configuration_arn for Slack and Teams. Verify that output under the matching target.type and preserve same-account qualification.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit notification payloads and event contents from codestarnotifications_notification_rule summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codestarnotifications_notification_rule.html.markdown",
@@ -80943,7 +80943,9 @@
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/delivery.rs",
-          "tests/unit/semantic/delivery.rs"
+          "tests/unit/semantic/delivery.rs",
+          "src/provider/aws/delivery/delivery_notifications.rs",
+          "tests/fixtures/delivery-notifications-references-plan.json"
         ],
         "managedDataContract": "Managed resourceNotificationRule. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -87572,6 +87574,3709 @@
           "tests/unit/resource_support.rs"
         ],
         "managedDataContract": "Managed newEnvironmentResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chatbot_slack_channel_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1594,
+      "gap": "#1594 — Verify the configured IAM role, explicit managed guardrail policies and SNS topic ARNs. Correct the existing #1534 CodeStar target.address verification to use the pinned Provider chat_configuration_arn output for AWSChatbotSlack instead of arn. Workspace and channel IDs remain external selectors.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "iam_role_arn",
+          "guardrail_policy_arns",
+          "sns_topic_arns",
+          "chat_configuration_arn",
+          "slack_channel_id",
+          "slack_team_id"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS Chatbot service label. Terraform resource for managing an AWS Chatbot Slack Channel Configuration.",
+        "ownership": "Not applicable: The channel configuration, role, policies and topics are reusable objects.",
+        "network": "Not applicable: A workspace channel is a notification endpoint without VPC placement.",
+        "references": "Missing: Verify the configured IAM role, explicit managed guardrail policies and SNS topic ARNs. Correct the existing #1534 CodeStar target.address verification to use the pinned Provider chat_configuration_arn output for AWSChatbotSlack instead of arn. Workspace and channel IDs remain external selectors.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Global Chatbot identity is distinct from each regional SNS topic. Qualify the configured topic ARN independently.",
+        "summaries": "Intentionally unsupported: omit Slack workspace details, account details, policy contents and message text. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chatbot_slack_channel_configuration.html.markdown",
+        "shapes": {
+          "iam_role_arn": [
+            "string"
+          ],
+          "guardrail_policy_arns": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "sns_topic_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "chat_configuration_arn": [
+            "string"
+          ],
+          "slack_channel_id": [
+            "string"
+          ],
+          "slack_team_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "iam_role_arn": "required",
+          "guardrail_policy_arns": "optional/computed",
+          "sns_topic_arns": "optional/computed",
+          "chat_configuration_arn": "computed",
+          "slack_channel_id": "required",
+          "slack_team_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery/delivery_notifications.rs",
+          "tests/unit/semantic/delivery.rs",
+          "tests/fixtures/delivery-notifications-references-plan.json"
+        ],
+        "managedDataContract": "Managed newSlackChannelConfigurationResource. No same-name data source in the pinned schema. The pinned resource exports chat_configuration_arn rather than arn.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chatbot_teams_channel_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1594,
+      "gap": "#1594 — Verify the configured IAM role and explicit guardrail policy and SNS topic ARNs. Use the pinned Provider chat_configuration_arn output for the existing #1534 CodeStar target.address rule when target.type is AWSChatbotMicrosoftTeams. Keep the Teams tenant, team and channel as external selectors.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "iam_role_arn",
+          "guardrail_policy_arns",
+          "sns_topic_arns",
+          "chat_configuration_arn",
+          "channel_id",
+          "team_id",
+          "tenant_id"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS Chatbot service label. Terraform resource for managing an AWS Chatbot Microsoft Teams Channel Configuration.",
+        "ownership": "Not applicable: Shared IAM policies and SNS topics remain independent of the channel configuration.",
+        "network": "Not applicable: The Teams destination does not set AWS network placement.",
+        "references": "Missing: Verify the configured IAM role and explicit guardrail policy and SNS topic ARNs. Use the pinned Provider chat_configuration_arn output for the existing #1534 CodeStar target.address rule when target.type is AWSChatbotMicrosoftTeams. Keep the Teams tenant, team and channel as external selectors.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The global channel configuration does not move its regional SNS targets.",
+        "summaries": "Intentionally unsupported: omit Teams identifiers, policy contents and message text. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chatbot_teams_channel_configuration.html.markdown",
+        "shapes": {
+          "iam_role_arn": [
+            "string"
+          ],
+          "guardrail_policy_arns": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "sns_topic_arns": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "chat_configuration_arn": [
+            "string"
+          ],
+          "channel_id": [
+            "string"
+          ],
+          "team_id": [
+            "string"
+          ],
+          "tenant_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "iam_role_arn": "required",
+          "guardrail_policy_arns": "optional/computed",
+          "sns_topic_arns": "optional/computed",
+          "chat_configuration_arn": "computed",
+          "channel_id": "required",
+          "team_id": "required",
+          "tenant_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery/delivery_notifications.rs",
+          "tests/unit/semantic/delivery.rs"
+        ],
+        "managedDataContract": "Managed newTeamsChannelConfigurationResource. No same-name data source in the pinned schema. The pinned resource exports chat_configuration_arn rather than arn.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chime_voice_connector": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1595,
+      "gap": "#1595 — Basic display preserves the connector identity and the outbound hostname is an output. Group and SIP trigger references are owned by their source rows. Qualify the connector by its known aws_region or verified returned connector ARN. The current regional provider binding alone does not prove the selected voice region.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_region",
+          "arn",
+          "id",
+          "outbound_host_name",
+          "require_encryption"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime service label. Enables you to connect your phone system to the telephone network at a substantial cost savings by using SIP trunking.",
+        "ownership": "Not applicable: A connector is independently addressable and may participate in a reusable group.",
+        "network": "Not applicable: SIP host output and encryption options do not prove VPC placement.",
+        "references": "Supported: Basic display preserves the connector identity and the outbound hostname is an output. Group and SIP trigger references are owned by their source rows.",
+        "scope": "Missing: Qualify the connector by its known aws_region or verified returned connector ARN. The current regional provider binding alone does not prove the selected voice region.",
+        "summaries": "Intentionally unsupported: omit outbound hostnames and inferred connection status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector.html.markdown",
+        "shapes": {
+          "aws_region": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "outbound_host_name": [
+            "string"
+          ],
+          "require_encryption": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "aws_region": "optional/computed",
+          "arn": "computed",
+          "id": "optional/computed",
+          "outbound_host_name": "computed",
+          "require_encryption": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnector. No same-name data source in the pinned schema.",
+        "dataContracts": {},
+        "sourceContracts": {
+          "id": {
+            "file": "internal/service/chime/voice_connector.go",
+            "token": "d.SetId(aws.ToString(resp.VoiceConnector.VoiceConnectorId))"
+          }
+        }
+      }
+    },
+    "aws_chime_voice_connector_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1595,
+      "gap": "#1595 — Verify each set member by the configured connector ID. Priority describes ordering and does not identify a network path.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "id",
+          "connector.voice_connector_id",
+          "connector.priority"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime service label. Creates an Amazon Chime Voice Connector group under the administrator's AWS account.",
+        "ownership": "Not applicable: Group membership keeps each member connector independently addressable.",
+        "network": "Not applicable: A connector group is a routing configuration without VPC attachment inputs.",
+        "references": "Missing: Verify each set member by the configured connector ID. Priority describes ordering and does not identify a network path.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Do not assign member connector regions from the group control plane. Qualify each member separately.",
+        "summaries": "Intentionally unsupported: omit routing priorities as inferred failover or health. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector_group.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "connector.voice_connector_id": [
+            "set",
+            "string"
+          ],
+          "connector.priority": [
+            "set",
+            "number"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "id": "optional/computed",
+          "connector.voice_connector_id": "required",
+          "connector.priority": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnectorGroup. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chime_voice_connector_logging": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1595,
+      "gap": "#1595 — Verify the configured connector ID. The logging toggles name no CloudWatch destination. Qualify logging as configuration of the verified connector and retain stand-alone presentation when unknown.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "voice_connector_id",
+          "enable_media_metric_logs",
+          "enable_sip_logs",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon Chime service label. Adds a logging configuration for the specified Amazon Chime Voice Connector. The logging configuration specifies whether SIP message logs are enabled for sending to Amazon CloudWatch Logs.",
+        "ownership": "Missing: Qualify logging as configuration of the verified connector and retain stand-alone presentation when unknown.",
+        "network": "Not applicable: Logging choices do not configure a VPC endpoint.",
+        "references": "Missing: Verify the configured connector ID. The logging toggles name no CloudWatch destination.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the verified connector for any separately presented owner region.",
+        "summaries": "Intentionally unsupported: omit SIP logs, metrics and call contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector_logging.html.markdown",
+        "shapes": {
+          "voice_connector_id": [
+            "string"
+          ],
+          "enable_media_metric_logs": [
+            "bool"
+          ],
+          "enable_sip_logs": [
+            "bool"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "voice_connector_id": "required",
+          "enable_media_metric_logs": "optional",
+          "enable_sip_logs": "optional",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnectorLogging. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chime_voice_connector_origination": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1595,
+      "gap": "#1595 — Verify the connector ID. A route host, port and protocol specify SIP routing settings, without identifying a managed endpoint or proven reachability. Keep configured origination attached only to a verified connector.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "voice_connector_id",
+          "route.host",
+          "route.port",
+          "route.protocol",
+          "route.priority",
+          "disabled"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime service label. Enable origination settings to control inbound calling to your SIP infrastructure.",
+        "ownership": "Missing: Keep configured origination attached only to a verified connector.",
+        "network": "Not applicable: SIP routing is distinct from subnet routing and does not prove network membership.",
+        "references": "Missing: Verify the connector ID. A route host, port and protocol specify SIP routing settings, without identifying a managed endpoint or proven reachability.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Origination configuration follows the connector's confirmed identity. A DNS host is not regional provider evidence.",
+        "summaries": "Intentionally unsupported: omit route hosts, port details and inferred call paths. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector_origination.html.markdown",
+        "shapes": {
+          "voice_connector_id": [
+            "string"
+          ],
+          "route.host": [
+            "set",
+            "string"
+          ],
+          "route.port": [
+            "set",
+            "number"
+          ],
+          "route.protocol": [
+            "set",
+            "string"
+          ],
+          "route.priority": [
+            "set",
+            "number"
+          ],
+          "disabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "voice_connector_id": "required",
+          "route.host": "required",
+          "route.port": "optional",
+          "route.protocol": "required",
+          "route.priority": "required",
+          "disabled": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnectorOrigination. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chime_voice_connector_streaming": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1596,
+      "gap": "#1596 — Verify the connector and configured Media Insights pipeline ARN when enabled. Notification options are service-kind selectors, without a specific SNS topic, SQS queue or event bus identifier. Resolve the sending connector independently of the reusable pipeline.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "voice_connector_id",
+          "streaming_notification_targets",
+          "media_insights_configuration.configuration_arn",
+          "media_insights_configuration.disabled",
+          "data_retention"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime service label. The streaming configuration associated with an Amazon Chime Voice Connector. Specifies whether media streaming is enabled for sending to Amazon Kinesis, and shows the retention period for the Amazon Kinesis data, in hours.",
+        "ownership": "Missing: Resolve the sending connector independently of the reusable pipeline.",
+        "network": "Not applicable: Media streaming does not assign the connector to a VPC.",
+        "references": "Missing: Verify the connector and configured Media Insights pipeline ARN when enabled. Notification options are service-kind selectors, without a specific SNS topic, SQS queue or event bus identifier.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The connector and the pipeline need their own deployment evidence and compatible scope.",
+        "summaries": "Intentionally unsupported: omit media payloads and delivery outcomes. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector_streaming.html.markdown",
+        "shapes": {
+          "voice_connector_id": [
+            "string"
+          ],
+          "streaming_notification_targets": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "media_insights_configuration.configuration_arn": [
+            "list",
+            "string"
+          ],
+          "media_insights_configuration.disabled": [
+            "list",
+            "bool"
+          ],
+          "data_retention": [
+            "number"
+          ]
+        },
+        "contracts": {
+          "voice_connector_id": "required",
+          "streaming_notification_targets": "optional",
+          "media_insights_configuration.configuration_arn": "optional",
+          "media_insights_configuration.disabled": "optional",
+          "data_retention": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnectorStreaming. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chime_voice_connector_termination": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1595,
+      "gap": "#1595 — Verify the configured connector. Calling regions and CIDR allowlists configure restrictions and do not identify managed network objects or called customers. Verify the connector as owner before nesting termination settings.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "voice_connector_id",
+          "calling_regions",
+          "cidr_allow_list",
+          "default_phone_number",
+          "disabled"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime service label. Enable Termination settings to control outbound calling from your SIP infrastructure.",
+        "ownership": "Missing: Verify the connector as owner before nesting termination settings.",
+        "network": "Not applicable: CIDRs are filter operands and do not establish subnet or VPC containment.",
+        "references": "Missing: Verify the configured connector. Calling regions and CIDR allowlists configure restrictions and do not identify managed network objects or called customers.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Calling regions describe permitted destinations, not the connector deployment region.",
+        "summaries": "Intentionally unsupported: omit phone numbers, CIDR allowlists and call records. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector_termination.html.markdown",
+        "shapes": {
+          "voice_connector_id": [
+            "string"
+          ],
+          "calling_regions": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "cidr_allow_list": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "default_phone_number": [
+            "string"
+          ],
+          "disabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "voice_connector_id": "required",
+          "calling_regions": "required",
+          "cidr_allow_list": "required",
+          "default_phone_number": "optional",
+          "disabled": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnectorTermination. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chime_voice_connector_termination_credentials": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1595,
+      "gap": "#1595 — Verify the connector ID while excluding all credentials from rendering, endpoints and output summaries. A credentials declaration concerns only its verified connector.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "voice_connector_id",
+          "credentials",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime service label. Adds termination SIP credentials for the specified Amazon Chime Voice Connector.",
+        "ownership": "Missing: A credentials declaration concerns only its verified connector.",
+        "network": "Not applicable: Authentication does not establish network attachment.",
+        "references": "Missing: Verify the connector ID while excluding all credentials from rendering, endpoints and output summaries.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the connector's independently verified location. Credentials provide no scope evidence.",
+        "summaries": "Intentionally unsupported: omit credential set members, usernames and passwords. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chime_voice_connector_termination_credentials.html.markdown",
+        "shapes": {
+          "voice_connector_id": [
+            "string"
+          ],
+          "credentials": [
+            "set"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "voice_connector_id": "required",
+          "credentials": "block",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceConnectorTerminationCredentials. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chimesdkmediapipelines_media_insights_pipeline_configuration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1596,
+      "gap": "#1596 — Verify the configured pipeline role. Verify only compatible explicitly configured Kinesis, Lambda, SNS, SQS or S3 sinks and the selected analytics output KMS key under each matching element type. No processor payload or alert rule establishes endpoint identity.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "resource_access_role_arn",
+          "elements.type",
+          "elements.kinesis_data_stream_sink_configuration.insights_target",
+          "elements.lambda_function_sink_configuration.insights_target",
+          "elements.sns_topic_sink_configuration.insights_target",
+          "elements.sqs_queue_sink_configuration.insights_target",
+          "elements.s3_recording_sink_configuration.destination",
+          "elements.amazon_transcribe_call_analytics_processor_configuration.post_call_analytics_settings.output_encryption_kms_key_id",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon Chime SDK service label. Terraform resource for managing an AWS Chime SDK Media Pipelines Media Insights Pipeline Configuration.",
+        "ownership": "Not applicable: Keep the pipeline and each shared processing or delivery endpoint independent.",
+        "network": "Not applicable: A media sink is a service relationship without placement inside a target's VPC.",
+        "references": "Missing: Verify the configured pipeline role. Verify only compatible explicitly configured Kinesis, Lambda, SNS, SQS or S3 sinks and the selected analytics output KMS key under each matching element type. No processor payload or alert rule establishes endpoint identity.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the pipeline and each compatible target separately by account and region.",
+        "summaries": "Intentionally unsupported: omit media, transcripts, alerts, recordings and processor payloads. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chimesdkmediapipelines_media_insights_pipeline_configuration.html.markdown",
+        "shapes": {
+          "resource_access_role_arn": [
+            "string"
+          ],
+          "elements.type": [
+            "list",
+            "string"
+          ],
+          "elements.kinesis_data_stream_sink_configuration.insights_target": [
+            "list",
+            "list",
+            "string"
+          ],
+          "elements.lambda_function_sink_configuration.insights_target": [
+            "list",
+            "list",
+            "string"
+          ],
+          "elements.sns_topic_sink_configuration.insights_target": [
+            "list",
+            "list",
+            "string"
+          ],
+          "elements.sqs_queue_sink_configuration.insights_target": [
+            "list",
+            "list",
+            "string"
+          ],
+          "elements.s3_recording_sink_configuration.destination": [
+            "list",
+            "list",
+            "string"
+          ],
+          "elements.amazon_transcribe_call_analytics_processor_configuration.post_call_analytics_settings.output_encryption_kms_key_id": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "resource_access_role_arn": "required",
+          "elements.type": "required",
+          "elements.kinesis_data_stream_sink_configuration.insights_target": "required",
+          "elements.lambda_function_sink_configuration.insights_target": "required",
+          "elements.sns_topic_sink_configuration.insights_target": "required",
+          "elements.sqs_queue_sink_configuration.insights_target": "required",
+          "elements.s3_recording_sink_configuration.destination": "optional",
+          "elements.amazon_transcribe_call_analytics_processor_configuration.post_call_analytics_settings.output_encryption_kms_key_id": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceMediaInsightsPipelineConfiguration. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chimesdkvoice_global_settings": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1597,
+      "gap": "#1597 — Verify the explicitly configured call-detail-record S3 bucket by documented identity. Do not create a matched connector from the aggregate setting.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "voice_connector.cdr_bucket",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon Chime SDK service label. Terraform resource for managing Amazon Chime SDK Voice Global Settings.",
+        "ownership": "Not applicable: Global settings and the reusable S3 bucket are independent.",
+        "network": "Not applicable: CDR delivery does not configure a VPC.",
+        "references": "Missing: Verify the explicitly configured call-detail-record S3 bucket by documented identity. Do not create a matched connector from the aggregate setting.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. The global policy scope does not establish the bucket region. Qualify the bucket independently.",
+        "summaries": "Intentionally unsupported: omit call detail records and bucket object contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chimesdkvoice_global_settings.html.markdown",
+        "shapes": {
+          "voice_connector.cdr_bucket": [
+            "list",
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "voice_connector.cdr_bucket": "optional",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceGlobalSettings. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chimesdkvoice_sip_media_application": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1598,
+      "gap": "#1598 — Verify each explicit Lambda endpoint ARN independently, with the Lambda region qualified by the application aws_region. Use the application aws_region or corroborating ARN region rather than deriving its deployment region from the API provider binding alone.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "aws_region",
+          "endpoints.lambda_arn",
+          "name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime SDK service label. A ChimeSDKVoice SIP Media Application is a managed object that passes values from a SIP rule to a target AWS Lambda function.",
+        "ownership": "Not applicable: Lambda endpoints remain independent from the SIP media application.",
+        "network": "Not applicable: Invoking Lambda does not attach the SIP media application to the Lambda VPC.",
+        "references": "Missing: Verify each explicit Lambda endpoint ARN independently, with the Lambda region qualified by the application aws_region.",
+        "scope": "Missing: Use the application aws_region or corroborating ARN region rather than deriving its deployment region from the API provider binding alone.",
+        "summaries": "Intentionally unsupported: omit voice and call payloads and Lambda invocation details. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chimesdkvoice_sip_media_application.html.markdown",
+        "shapes": {
+          "aws_region": [
+            "string"
+          ],
+          "endpoints.lambda_arn": [
+            "list",
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "aws_region": "required",
+          "endpoints.lambda_arn": "required",
+          "name": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceSipMediaApplication. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chimesdkvoice_sip_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1598,
+      "gap": "#1598 — Verify the typed RequestUriHostname selector against the configured connector's outbound host output, and verify each explicit application ID under its target aws_region. A ToPhoneNumber trigger is not a unique supported managed endpoint.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "trigger_type",
+          "trigger_value",
+          "target_applications.aws_region",
+          "target_applications.sip_media_application_id",
+          "target_applications.priority",
+          "disabled"
+        ],
+        "placement": "Supported: managed Logical Policy with the Amazon Chime SDK service label. A SIP rule associates your SIP media application with a phone number or a Request URI hostname. You can associate a SIP rule with more than one SIP media application. Each application then runs only that rule.",
+        "ownership": "Not applicable: A SIP rule routes to independent applications and does not own them.",
+        "network": "Not applicable: SIP trigger matching does not establish network placement or runtime reachability.",
+        "references": "Missing: Verify the typed RequestUriHostname selector against the configured connector's outbound host output, and verify each explicit application ID under its target aws_region. A ToPhoneNumber trigger is not a unique supported managed endpoint.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Each target application region is independent of the rule's API control-plane scope.",
+        "summaries": "Intentionally unsupported: omit literal phone numbers, hostname values and call outcomes. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chimesdkvoice_sip_rule.html.markdown",
+        "shapes": {
+          "trigger_type": [
+            "string"
+          ],
+          "trigger_value": [
+            "string"
+          ],
+          "target_applications.aws_region": [
+            "set",
+            "string"
+          ],
+          "target_applications.sip_media_application_id": [
+            "set",
+            "string"
+          ],
+          "target_applications.priority": [
+            "set",
+            "number"
+          ],
+          "disabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "trigger_type": "required",
+          "trigger_value": "required",
+          "target_applications.aws_region": "required",
+          "target_applications.sip_media_application_id": "required",
+          "target_applications.priority": "required",
+          "disabled": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceSipRule. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_chimesdkvoice_voice_profile_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1597,
+      "gap": "#1597 — Verify the configured KMS key ARN and its account and region. A profile domain does not identify actual voice profiles.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "server_side_encryption_configuration.kms_key_arn",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Chime SDK service label. Terraform resource for managing an AWS Chime SDK Voice Profile Domain.",
+        "ownership": "Not applicable: The encryption key can be shared and remains independent.",
+        "network": "Not applicable: Encryption does not configure network placement.",
+        "references": "Missing: Verify the configured KMS key ARN and its account and region. A profile domain does not identify actual voice profiles.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the regional domain and the key separately.",
+        "summaries": "Intentionally unsupported: omit voiceprints, profile data and encryption material. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/chimesdkvoice_voice_profile_domain.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "server_side_encryption_configuration.kms_key_arn": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "server_side_encryption_configuration.kms_key_arn": "required",
+          "arn": "computed",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed ResourceVoiceProfileDomain. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_connect_bot_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1599,
+      "gap": "#1599 — Verify the Connect instance ID. Keep the legacy Lex V1 bot name and selected region as historical configuration, without assigning them to a Lex V2 bot or alias.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "lex_bot.name",
+          "lex_bot.lex_region",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Association with the Amazon Connect service label. Associates an Amazon Connect instance to an Amazon Lex (V1) bot",
+        "ownership": "Not applicable: A bot association does not embed a bot in the Connect instance.",
+        "network": "Not applicable: Bot association provides no VPC attachment evidence.",
+        "references": "Missing: Verify the Connect instance ID. Keep the legacy Lex V1 bot name and selected region as historical configuration, without assigning them to a Lex V2 bot or alias.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The declared Lex V1 region is separate from the Connect instance region and cannot establish a V2 binding.",
+        "summaries": "Intentionally unsupported: omit legacy bot contents and conversation data. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_bot_association.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "lex_bot.name": [
+            "list",
+            "string"
+          ],
+          "lex_bot.lex_region": [
+            "list",
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "lex_bot.name": "required",
+          "lex_bot.lex_region": "optional/computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBotAssociation. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_contact_flow": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1599,
+      "gap": "#1599 — Verify the owning Connect instance ID. Do not parse flow contents or file paths into resource relationships. Qualify contact-flow identity by the verified instance. Retain unverified declarations independently.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "contact_flow_id",
+          "type",
+          "arn",
+          "content_hash"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Contact Flow.",
+        "ownership": "Missing: Qualify contact-flow identity by the verified instance. Retain unverified declarations independently.",
+        "network": "Not applicable: Flow routing is a service configuration, separate from VPC routing.",
+        "references": "Missing: Verify the owning Connect instance ID. Do not parse flow contents or file paths into resource relationships.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Flow ID and type are qualified by instance, region and provider account.",
+        "summaries": "Intentionally unsupported: omit flow content, local files and execution traces. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_contact_flow.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "contact_flow_id": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "content_hash": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "contact_flow_id": "computed",
+          "type": "optional",
+          "arn": "computed",
+          "content_hash": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceContactFlow. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "contact_flow_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "type": {
+            "shape": "string",
+            "contract": "optional"
+          }
+        }
+      }
+    },
+    "aws_connect_contact_flow_module": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1599,
+      "gap": "#1599 — Verify the instance ID and maintain the module as an addressable definition. Flow module references require their own configured evidence, independent of content hashes. Qualify the module's owner by the instance, without nesting the reusable definition inside a consumer flow.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "contact_flow_module_id",
+          "arn",
+          "content_hash"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Contact Flow Module.",
+        "ownership": "Missing: Qualify the module's owner by the instance, without nesting the reusable definition inside a consumer flow.",
+        "network": "Not applicable: A flow module has no network placement input.",
+        "references": "Missing: Verify the instance ID and maintain the module as an addressable definition. Flow module references require their own configured evidence, independent of content hashes.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Module identity is scoped to the Connect instance.",
+        "summaries": "Intentionally unsupported: omit flow module content and local file paths. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_contact_flow_module.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "contact_flow_module_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "content_hash": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "contact_flow_module_id": "computed",
+          "arn": "computed",
+          "content_hash": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceContactFlowModule. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "contact_flow_module_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_hours_of_operation": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1599,
+      "gap": "#1599 — Verify the owning instance ID. Schedule entries and time zone do not identify queue targets or current availability. Qualify the schedule by its instance and leave it reusable by queues.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "hours_of_operation_id",
+          "time_zone",
+          "config.day",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Hours of Operation.",
+        "ownership": "Missing: Qualify the schedule by its instance and leave it reusable by queues.",
+        "network": "Not applicable: A service schedule supplies no VPC or subnet assignment.",
+        "references": "Missing: Verify the owning instance ID. Schedule entries and time zone do not identify queue targets or current availability.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Time zone describes schedule interpretation, not AWS region.",
+        "summaries": "Intentionally unsupported: omit shift schedules and inferred live availability. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_hours_of_operation.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "hours_of_operation_id": [
+            "string"
+          ],
+          "time_zone": [
+            "string"
+          ],
+          "config.day": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "hours_of_operation_id": "computed",
+          "time_zone": "required",
+          "config.day": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceHoursOfOperation. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "hours_of_operation_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_instance": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1599,
+      "gap": "#1599 — Verify the configured Directory Service directory when identity_management_type is EXISTING_DIRECTORY. Computed service_role and status do not identify a configured role or availability.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "directory_id",
+          "identity_management_type",
+          "service_role",
+          "status",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Connect Instance.",
+        "ownership": "Not applicable: Keep the Connect instance and verified directory independently addressable.",
+        "network": "Not applicable: A directory association does not place the instance in the directory's network.",
+        "references": "Missing: Verify the configured Directory Service directory when identity_management_type is EXISTING_DIRECTORY. Computed service_role and status do not identify a configured role or availability.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the regional Connect instance and compatible directory by known account and region.",
+        "summaries": "Intentionally unsupported: omit instance aliases, directory user data and service state. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_instance.html.markdown",
+        "shapes": {
+          "directory_id": [
+            "string"
+          ],
+          "identity_management_type": [
+            "string"
+          ],
+          "service_role": [
+            "string"
+          ],
+          "status": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "directory_id": "optional",
+          "identity_management_type": "required",
+          "service_role": "computed",
+          "status": "computed",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceInstance. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_alias": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_instance_storage_config": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1600,
+      "gap": "#1600 — Verify the instance and compatible configured S3, Kinesis stream or Firehose destination under the proven storage type. Verify explicit customer key inputs. Video streaming retention and prefixes do not identify an existing managed Kinesis Video stream. Verify instance ownership separately from reusable storage and key references.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "resource_type",
+          "storage_config.storage_type",
+          "storage_config.kinesis_firehose_config.firehose_arn",
+          "storage_config.kinesis_stream_config.stream_arn",
+          "storage_config.kinesis_video_stream_config.encryption_config.key_id",
+          "storage_config.s3_config.bucket_name",
+          "storage_config.s3_config.encryption_config.key_id",
+          "association_id"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon Connect service label. Provides details about a specific Amazon Connect Instance Storage Config.",
+        "ownership": "Missing: Verify instance ownership separately from reusable storage and key references.",
+        "network": "Not applicable: Delivery does not place Connect in a destination network.",
+        "references": "Missing: Verify the instance and compatible configured S3, Kinesis stream or Firehose destination under the proven storage type. Verify explicit customer key inputs. Video streaming retention and prefixes do not identify an existing managed Kinesis Video stream.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the regional instance context and qualify all stored destinations independently.",
+        "summaries": "Intentionally unsupported: omit recordings, stream payloads, bucket prefixes and contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_instance_storage_config.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "resource_type": [
+            "string"
+          ],
+          "storage_config.storage_type": [
+            "list",
+            "string"
+          ],
+          "storage_config.kinesis_firehose_config.firehose_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "storage_config.kinesis_stream_config.stream_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "storage_config.kinesis_video_stream_config.encryption_config.key_id": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "storage_config.s3_config.bucket_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "storage_config.s3_config.encryption_config.key_id": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "association_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "resource_type": "required",
+          "storage_config.storage_type": "required",
+          "storage_config.kinesis_firehose_config.firehose_arn": "required",
+          "storage_config.kinesis_stream_config.stream_arn": "required",
+          "storage_config.kinesis_video_stream_config.encryption_config.key_id": "required",
+          "storage_config.s3_config.bucket_name": "required",
+          "storage_config.s3_config.encryption_config.key_id": "required",
+          "association_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceInstanceStorageConfig. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "association_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "resource_type": {
+            "shape": "string",
+            "contract": "required"
+          }
+        }
+      }
+    },
+    "aws_connect_lambda_function_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1600,
+      "gap": "#1600 — Verify the configured Connect instance and Lambda ARN, retaining qualified alias or version evidence where supported. The association does not prove invocation.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "function_arn",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Association with the Amazon Connect service label. Provides details about a specific Connect Lambda Function Association.",
+        "ownership": "Not applicable: The Lambda function remains independently addressable from the Connect association.",
+        "network": "Not applicable: A Lambda association is a service relationship without Connect VPC placement.",
+        "references": "Missing: Verify the configured Connect instance and Lambda ARN, retaining qualified alias or version evidence where supported. The association does not prove invocation.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the Lambda endpoint by its explicit ARN, account and region.",
+        "summaries": "Intentionally unsupported: omit Lambda arguments and runtime invocation data. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_lambda_function_association.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "function_arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "function_arn": "required",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceLambdaFunctionAssociation. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "function_arn": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_phone_number": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1602,
+      "gap": "#1602 — Verify an explicit compatible Connect instance target ARN. The returned phone number and allocation status do not identify a contact flow or a live route.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "target_arn",
+          "country_code",
+          "type",
+          "phone_number",
+          "arn",
+          "status",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Phone Number.",
+        "ownership": "Not applicable: The claimed number stays independently addressable and may have distinct contact-flow assignments.",
+        "network": "Not applicable: Phone allocation does not establish network placement.",
+        "references": "Missing: Verify an explicit compatible Connect instance target ARN. The returned phone number and allocation status do not identify a contact flow or a live route.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Country and phone type describe allocation, not AWS region. Check the configured target's scope.",
+        "summaries": "Intentionally unsupported: omit phone numbers, prefixes and allocation status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_phone_number.html.markdown",
+        "shapes": {
+          "target_arn": [
+            "string"
+          ],
+          "country_code": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "phone_number": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "status": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "message": "string",
+                  "status": "string"
+                }
+              ]
+            ]
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "target_arn": "required",
+          "country_code": "required",
+          "type": "required",
+          "phone_number": "computed",
+          "arn": "computed",
+          "status": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourcePhoneNumber. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_connect_phone_number_contact_flow_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1602,
+      "gap": "#1602 — Verify configured instance, phone-number ID and flow ID together. Confirm the number's claimed target and the flow's instance before associating them.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "phone_number_id",
+          "contact_flow_id"
+        ],
+        "placement": "Supported: managed Logical Association with the Amazon Connect service label. Associates a flow with a phone number claimed to an Amazon Connect instance.",
+        "ownership": "Not applicable: Leave both endpoints independent and present only the association.",
+        "network": "Not applicable: Call routing does not establish VPC placement.",
+        "references": "Missing: Verify configured instance, phone-number ID and flow ID together. Confirm the number's claimed target and the flow's instance before associating them.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require the same verified instance and compatible account and region evidence for both endpoints.",
+        "summaries": "Intentionally unsupported: omit phone numbers and call reachability. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_phone_number_contact_flow_association.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "phone_number_id": [
+            "string"
+          ],
+          "contact_flow_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "phone_number_id": "required",
+          "contact_flow_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newPhoneNumberContactFlowAssociationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_connect_queue": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1601,
+      "gap": "#1601 — Verify the instance, referenced schedule and quick connects, and explicitly configured outbound number and flow. Outbound caller name and status do not establish live routing. Verify ownership by the instance. Shared schedules and quick connects remain independent.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "hours_of_operation_id",
+          "quick_connect_ids",
+          "outbound_caller_config.outbound_caller_id_number_id",
+          "outbound_caller_config.outbound_flow_id",
+          "queue_id",
+          "arn",
+          "status"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Queue",
+        "ownership": "Missing: Verify ownership by the instance. Shared schedules and quick connects remain independent.",
+        "network": "Not applicable: Queue membership and outbound configuration are service relationships without VPC placement.",
+        "references": "Missing: Verify the instance, referenced schedule and quick connects, and explicitly configured outbound number and flow. Outbound caller name and status do not establish live routing.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The instance qualifies schedule, queue, quick-connect and flow identifiers. Qualify number scope independently.",
+        "summaries": "Intentionally unsupported: omit caller names, phone numbers and queue status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_queue.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "hours_of_operation_id": [
+            "string"
+          ],
+          "quick_connect_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "outbound_caller_config.outbound_caller_id_number_id": [
+            "list",
+            "string"
+          ],
+          "outbound_caller_config.outbound_flow_id": [
+            "list",
+            "string"
+          ],
+          "queue_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "hours_of_operation_id": "required",
+          "quick_connect_ids": "optional",
+          "outbound_caller_config.outbound_caller_id_number_id": "optional",
+          "outbound_caller_config.outbound_flow_id": "optional",
+          "queue_id": "computed",
+          "arn": "computed",
+          "status": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceQueue. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "queue_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_quick_connect": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1601,
+      "gap": "#1601 — Verify the owner instance and type-gated queue or user and contact flow. The PHONE form contains a literal number and does not identify a managed Connect claim. Qualify the independently reusable quick connect by its instance.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "quick_connect_config.quick_connect_type",
+          "quick_connect_config.queue_config.queue_id",
+          "quick_connect_config.queue_config.contact_flow_id",
+          "quick_connect_config.user_config.user_id",
+          "quick_connect_config.user_config.contact_flow_id",
+          "quick_connect_id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Quick Connect",
+        "ownership": "Missing: Qualify the independently reusable quick connect by its instance.",
+        "network": "Not applicable: Quick-connect routes do not configure a VPC or subnet.",
+        "references": "Missing: Verify the owner instance and type-gated queue or user and contact flow. The PHONE form contains a literal number and does not identify a managed Connect claim.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. For typed queue and user targets, require the same verified instance and scope.",
+        "summaries": "Intentionally unsupported: omit literal phone numbers and runtime transfer state. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_quick_connect.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "quick_connect_config.quick_connect_type": [
+            "list",
+            "string"
+          ],
+          "quick_connect_config.queue_config.queue_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "quick_connect_config.queue_config.contact_flow_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "quick_connect_config.user_config.user_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "quick_connect_config.user_config.contact_flow_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "quick_connect_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "quick_connect_config.quick_connect_type": "required",
+          "quick_connect_config.queue_config.queue_id": "required",
+          "quick_connect_config.queue_config.contact_flow_id": "required",
+          "quick_connect_config.user_config.user_id": "required",
+          "quick_connect_config.user_config.contact_flow_id": "required",
+          "quick_connect_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceQuickConnect. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "quick_connect_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_routing_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1601,
+      "gap": "#1601 — Verify instance and default outbound queue plus each configured queue ID under unordered queue configs. Returned queue ARN or name and media concurrency do not create extra targets. Verify the profile's instance and leave its queues independently reusable.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "default_outbound_queue_id",
+          "queue_configs.queue_id",
+          "queue_configs.queue_arn",
+          "queue_configs.channel",
+          "media_concurrencies.channel",
+          "routing_profile_id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Routing Profile.",
+        "ownership": "Missing: Verify the profile's instance and leave its queues independently reusable.",
+        "network": "Not applicable: Routing priority describes service queue assignment, not networking.",
+        "references": "Missing: Verify instance and default outbound queue plus each configured queue ID under unordered queue configs. Returned queue ARN or name and media concurrency do not create extra targets.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Queue identifiers and scope must match the routing profile's instance.",
+        "summaries": "Intentionally unsupported: omit queue names, concurrency values as runtime load and service status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_routing_profile.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "default_outbound_queue_id": [
+            "string"
+          ],
+          "queue_configs.queue_id": [
+            "set",
+            "string"
+          ],
+          "queue_configs.queue_arn": [
+            "set",
+            "string"
+          ],
+          "queue_configs.channel": [
+            "set",
+            "string"
+          ],
+          "media_concurrencies.channel": [
+            "set",
+            "string"
+          ],
+          "routing_profile_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "default_outbound_queue_id": "required",
+          "queue_configs.queue_id": "required",
+          "queue_configs.queue_arn": "computed",
+          "queue_configs.channel": "required",
+          "media_concurrencies.channel": "required",
+          "routing_profile_id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceRoutingProfile. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "routing_profile_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_security_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1603,
+      "gap": "#1603 — Verify the instance ID and preserve the resulting profile identifier for explicit user assignments. Organization resource output and permissions cannot establish external identities or effective access. Qualify the profile by its instance while retaining it as a reusable object.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "security_profile_id",
+          "organization_resource_id",
+          "arn",
+          "permissions"
+        ],
+        "placement": "Supported: managed Logical Policy with the Amazon Connect service label. Provides details about a specific Amazon Connect Security Profile.",
+        "ownership": "Missing: Qualify the profile by its instance while retaining it as a reusable object.",
+        "network": "Not applicable: Permissions are control-plane configuration and do not indicate network placement.",
+        "references": "Missing: Verify the instance ID and preserve the resulting profile identifier for explicit user assignments. Organization resource output and permissions cannot establish external identities or effective access.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The security profile ID is meaningful only within its verified instance.",
+        "summaries": "Intentionally unsupported: omit permission lists, effective access and user assignment inventories. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_security_profile.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "security_profile_id": [
+            "string"
+          ],
+          "organization_resource_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "permissions": [
+            [
+              "set",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "security_profile_id": "computed",
+          "organization_resource_id": "computed",
+          "arn": "computed",
+          "permissions": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSecurityProfile. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "security_profile_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_user": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1603,
+      "gap": "#1603 — Verify the instance, routing profile, hierarchy group and configured security profile IDs. Do not treat a computed or unspecified directory user ID as a same-name managed user. Verify ownership by the instance. Shared profiles and groups remain independent.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "directory_user_id",
+          "hierarchy_group_id",
+          "routing_profile_id",
+          "security_profile_ids",
+          "user_id",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Identity with the Amazon Connect service label. Provides details about a specific Amazon Connect User",
+        "ownership": "Missing: Verify ownership by the instance. Shared profiles and groups remain independent.",
+        "network": "Not applicable: User assignment is service configuration without deployment placement.",
+        "references": "Missing: Verify the instance, routing profile, hierarchy group and configured security profile IDs. Do not treat a computed or unspecified directory user ID as a same-name managed user.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Resolve all Connect selectors within the verified instance. Directory identity needs separate evidence.",
+        "summaries": "Intentionally unsupported: omit passwords, personal details and directory identity values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_user.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "directory_user_id": [
+            "string"
+          ],
+          "hierarchy_group_id": [
+            "string"
+          ],
+          "routing_profile_id": [
+            "string"
+          ],
+          "security_profile_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "user_id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "directory_user_id": "optional/computed",
+          "hierarchy_group_id": "optional",
+          "routing_profile_id": "required",
+          "security_profile_ids": "required",
+          "user_id": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceUser. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "user_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_user_hierarchy_group": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1603,
+      "gap": "#1603 — Verify the configured instance and optional unique parent group, rejecting cycles. Provider-returned hierarchy path and level do not prove additional managed ancestors. Verify the parent in the same instance before hierarchical presentation.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "parent_group_id",
+          "hierarchy_group_id",
+          "level_id",
+          "hierarchy_path",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect User Hierarchy Group",
+        "ownership": "Missing: Verify the parent in the same instance before hierarchical presentation.",
+        "network": "Not applicable: Hierarchy membership has no VPC attachment input.",
+        "references": "Missing: Verify the configured instance and optional unique parent group, rejecting cycles. Provider-returned hierarchy path and level do not prove additional managed ancestors.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Parent group identity must share the verified instance and provider scope.",
+        "summaries": "Intentionally unsupported: omit computed hierarchy contents and personal details. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_user_hierarchy_group.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "parent_group_id": [
+            "string"
+          ],
+          "hierarchy_group_id": [
+            "string"
+          ],
+          "level_id": [
+            "string"
+          ],
+          "hierarchy_path": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "level_five": [
+                    "list",
+                    [
+                      "object",
+                      {
+                        "arn": "string",
+                        "id": "string",
+                        "name": "string"
+                      }
+                    ]
+                  ],
+                  "level_four": [
+                    "list",
+                    [
+                      "object",
+                      {
+                        "arn": "string",
+                        "id": "string",
+                        "name": "string"
+                      }
+                    ]
+                  ],
+                  "level_one": [
+                    "list",
+                    [
+                      "object",
+                      {
+                        "arn": "string",
+                        "id": "string",
+                        "name": "string"
+                      }
+                    ]
+                  ],
+                  "level_three": [
+                    "list",
+                    [
+                      "object",
+                      {
+                        "arn": "string",
+                        "id": "string",
+                        "name": "string"
+                      }
+                    ]
+                  ],
+                  "level_two": [
+                    "list",
+                    [
+                      "object",
+                      {
+                        "arn": "string",
+                        "id": "string",
+                        "name": "string"
+                      }
+                    ]
+                  ]
+                }
+              ]
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "parent_group_id": "optional",
+          "hierarchy_group_id": "computed",
+          "level_id": "computed",
+          "hierarchy_path": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceUserHierarchyGroup. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "hierarchy_group_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_user_hierarchy_structure": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1603,
+      "gap": "#1603 — Verify the owning instance. Configured hierarchy level names describe structure but do not identify concrete groups or users. Treat the schema as configuration of a verified instance without deriving membership.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "hierarchy_structure"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect User Hierarchy Structure",
+        "ownership": "Missing: Treat the schema as configuration of a verified instance without deriving membership.",
+        "network": "Not applicable: A hierarchy schema has no network placement input.",
+        "references": "Missing: Verify the owning instance. Configured hierarchy level names describe structure but do not identify concrete groups or users.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The hierarchy structure is specific to the verified instance.",
+        "summaries": "Intentionally unsupported: omit hierarchy labels as inferred identity or membership. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_user_hierarchy_structure.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "hierarchy_structure": [
+            "list"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "hierarchy_structure": "block"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceUserHierarchyStructure. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_connect_vocabulary": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1599,
+      "gap": "#1599 — Verify the configured instance. Language and computed vocabulary state cannot determine whether a contact flow uses it. Qualify vocabulary ownership by the instance while preserving reusable configuration identity.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "instance_id",
+          "vocabulary_id",
+          "language_code",
+          "state",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Vocabulary",
+        "ownership": "Missing: Qualify vocabulary ownership by the instance while preserving reusable configuration identity.",
+        "network": "Not applicable: A vocabulary does not declare a network attachment.",
+        "references": "Missing: Verify the configured instance. Language and computed vocabulary state cannot determine whether a contact flow uses it.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. A language code is not region evidence for a regional vocabulary definition.",
+        "summaries": "Intentionally unsupported: omit vocabulary contents, failure details and inferred transcription behavior. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/connect_vocabulary.html.markdown",
+        "shapes": {
+          "instance_id": [
+            "string"
+          ],
+          "vocabulary_id": [
+            "string"
+          ],
+          "language_code": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "instance_id": "required",
+          "vocabulary_id": "computed",
+          "language_code": "required",
+          "state": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceVocabulary. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "instance_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          },
+          "vocabulary_id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_customerprofiles_domain": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1604,
+      "gap": "#1604 — Verify the explicit KMS key, SQS dead-letter URL and configured S3 export buckets under the proven matching mode. Service defaults and matching rules do not identify actual merges or deliveries.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "default_encryption_key",
+          "dead_letter_queue_url",
+          "matching.exporting_config.s3_exporting.s3_bucket_name",
+          "rule_based_matching.exporting_config.s3_exporting.s3_bucket_name",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect Customer Profiles service label. Terraform resource for managing an Amazon Customer Profiles Domain.",
+        "ownership": "Not applicable: The domain and its reusable destinations remain independently addressable.",
+        "network": "Not applicable: Matching and delivery do not establish a VPC deployment.",
+        "references": "Missing: Verify the explicit KMS key, SQS dead-letter URL and configured S3 export buckets under the proven matching mode. Service defaults and matching rules do not identify actual merges or deliveries.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Domain names require account and regional qualification. Qualify destinations separately.",
+        "summaries": "Intentionally unsupported: omit matching rules, merge outcomes and individual data. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/customerprofiles_domain.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "default_encryption_key": [
+            "string"
+          ],
+          "dead_letter_queue_url": [
+            "string"
+          ],
+          "matching.exporting_config.s3_exporting.s3_bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "rule_based_matching.exporting_config.s3_exporting.s3_bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "domain_name": "required",
+          "default_encryption_key": "optional",
+          "dead_letter_queue_url": "optional",
+          "matching.exporting_config.s3_exporting.s3_bucket_name": "required",
+          "rule_based_matching.exporting_config.s3_exporting.s3_bucket_name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDomain. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_customerprofiles_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1604,
+      "gap": "#1604 — Verify the configured domain name by scoped, explicit domain evidence. IDs and attribute values do not establish matching or identity equivalence across services. Qualify the profile owner by the domain without treating profile values as relationships.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "domain_name",
+          "id",
+          "attributes"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Connect Customer Profiles service label. Terraform resource for managing an Amazon Customer Profiles Profile.",
+        "ownership": "Missing: Qualify the profile owner by the domain without treating profile values as relationships.",
+        "network": "Not applicable: An individual profile has no network placement input.",
+        "references": "Missing: Verify the configured domain name by scoped, explicit domain evidence. IDs and attribute values do not establish matching or identity equivalence across services.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Profile identity is local to the regional domain.",
+        "summaries": "Intentionally unsupported: omit personal identifiers, contact details, addresses and profile attribute values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/customerprofiles_profile.html.markdown",
+        "shapes": {
+          "domain_name": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "attributes": [
+            [
+              "map",
+              "string"
+            ]
+          ]
+        },
+        "contracts": {
+          "domain_name": "required",
+          "id": "optional/computed",
+          "attributes": "optional"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceProfile. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_lex_bot": {
+      "status": "Deferred",
+      "priority": "P3",
+      "gap": "AWS ended Lex V1 support on 2025-09-15. Preserve declaration and generic Terraform references in historical plans. Dedicated version-qualified relationships require a reproducible historical use case and must stay separate from Lex V2.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "version",
+          "locale",
+          "intent.intent_name",
+          "intent.intent_version",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Provides an Amazon Lex bot resource.",
+        "ownership": "Not applicable: V1 names and versions do not establish V2 ownership or membership.",
+        "network": "Not applicable: A conversational definition supplies no subnet or VPC attachment.",
+        "references": "Intentionally unsupported: AWS ended Lex V1 support on 2025-09-15. Preserve declaration and generic Terraform references in historical plans. Dedicated version-qualified relationships require a reproducible historical use case and must stay separate from Lex V2.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The locale is a language selector. Historical identity still requires its regional provider evidence.",
+        "summaries": "Intentionally unsupported: omit messages, utterances and legacy runtime status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lex_bot.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "version": [
+            "string"
+          ],
+          "locale": [
+            "string"
+          ],
+          "intent.intent_name": [
+            "set",
+            "string"
+          ],
+          "intent.intent_version": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "version": "computed",
+          "locale": "optional",
+          "intent.intent_name": "required",
+          "intent.intent_version": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBot. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "version": {
+            "shape": "string",
+            "contract": "optional"
+          }
+        },
+        "sourceContracts": {
+          "arn": {
+            "file": "internal/service/lexmodels/bot.go",
+            "token": "names.AttrARN:"
+          }
+        }
+      }
+    },
+    "aws_lex_bot_alias": {
+      "status": "Deferred",
+      "priority": "P3",
+      "gap": "Preserve this retired Lex V1 alias as a historical declaration. The bot name, version and logging role stay as generic references until a reproducible historical-plan requirement establishes a V1-only contract.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bot_name",
+          "bot_version",
+          "name",
+          "arn",
+          "conversation_logs.iam_role_arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Provides an Amazon Lex Bot Alias resource.",
+        "ownership": "Not applicable: Historical alias and bot identities remain separate from Lex V2 versions.",
+        "network": "Not applicable: Logging and alias routing do not configure a VPC.",
+        "references": "Intentionally unsupported: Preserve this retired Lex V1 alias as a historical declaration. The bot name, version and logging role stay as generic references until a reproducible historical-plan requirement establishes a V1-only contract.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. A V1 bot alias and version are region qualified. They do not select a V2 bot.",
+        "summaries": "Intentionally unsupported: omit conversation logs, destinations and utterances. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lex_bot_alias.html.markdown",
+        "shapes": {
+          "bot_name": [
+            "string"
+          ],
+          "bot_version": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "conversation_logs.iam_role_arn": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "bot_name": "required",
+          "bot_version": "required",
+          "name": "required",
+          "arn": "computed",
+          "conversation_logs.iam_role_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBotAlias. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "bot_name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_lex_intent": {
+      "status": "Deferred",
+      "priority": "P3",
+      "gap": "Preserve this retired Lex V1 intent in historical plans. Built-in signatures, version-qualified slot names and code hook URIs need separate V1 evidence before dedicated links are warranted.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "version",
+          "parent_intent_signature",
+          "slot.slot_type",
+          "slot.slot_type_version",
+          "dialog_code_hook.uri",
+          "fulfillment_activity.code_hook.uri",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Provides an Amazon Lex intent resource.",
+        "ownership": "Not applicable: A historical intent and its slot types are reusable and independent. No V2 membership is implied.",
+        "network": "Not applicable: A code hook is not network placement.",
+        "references": "Intentionally unsupported: Preserve this retired Lex V1 intent in historical plans. Built-in signatures, version-qualified slot names and code hook URIs need separate V1 evidence before dedicated links are warranted.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. V1 intent name and version are region qualified independently of Lambda URIs.",
+        "summaries": "Intentionally unsupported: omit sample utterances, hook payloads and interaction messages. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lex_intent.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "version": [
+            "string"
+          ],
+          "parent_intent_signature": [
+            "string"
+          ],
+          "slot.slot_type": [
+            "set",
+            "string"
+          ],
+          "slot.slot_type_version": [
+            "set",
+            "string"
+          ],
+          "dialog_code_hook.uri": [
+            "list",
+            "string"
+          ],
+          "fulfillment_activity.code_hook.uri": [
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "version": "computed",
+          "parent_intent_signature": "optional",
+          "slot.slot_type": "required",
+          "slot.slot_type_version": "optional",
+          "dialog_code_hook.uri": "required",
+          "fulfillment_activity.code_hook.uri": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceIntent. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "version": {
+            "shape": "string",
+            "contract": "optional"
+          }
+        }
+      }
+    },
+    "aws_lex_slot_type": {
+      "status": "Deferred",
+      "priority": "P3",
+      "gap": "Keep retired Lex V1 slot type declarations visible in historical plans. Enumerated values and selection behavior have no managed resource endpoints.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "version",
+          "value_selection_strategy",
+          "enumeration_value.value"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Provides details about a specific Amazon Lex Slot Type",
+        "ownership": "Not applicable: A slot type stays reusable across independently declared historical intents.",
+        "network": "Not applicable: Slot definitions have no VPC attachment.",
+        "references": "Intentionally unsupported: Keep retired Lex V1 slot type declarations visible in historical plans. Enumerated values and selection behavior have no managed resource endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Slot names and versions are region qualified under V1, independent of locale in V2.",
+        "summaries": "Intentionally unsupported: omit enumerated values, synonyms and dialogue contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lex_slot_type.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "version": [
+            "string"
+          ],
+          "value_selection_strategy": [
+            "string"
+          ],
+          "enumeration_value.value": [
+            "set",
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "version": "computed",
+          "value_selection_strategy": "optional",
+          "enumeration_value.value": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceSlotType. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "version": {
+            "shape": "string",
+            "contract": "optional"
+          }
+        }
+      }
+    },
+    "aws_lexv2models_bot": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1605,
+      "gap": "#1605 — Verify the configured execution role and typed bot-network member identity. Qualify explicit member IDs within their bot and version context. Alias names and alias IDs without a compatible registered managed producer do not create endpoints.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "role_arn",
+          "type",
+          "members.id",
+          "members.alias_id",
+          "members.version",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Bot.",
+        "ownership": "Not applicable: Bots and network members retain independently addressable identities. A bot network is not an ownership hierarchy.",
+        "network": "Not applicable: Bot networks are logical service compositions without VPC placement.",
+        "references": "Missing: Verify the configured execution role and typed bot-network member identity. Qualify explicit member IDs within their bot and version context. Alias names and alias IDs without a compatible registered managed producer do not create endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Verify bot identities in their actual account and region. A network member declaration does not create a network location.",
+        "summaries": "Intentionally unsupported: omit bot data, fulfillment execution and test alias metadata. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lexv2models_bot.html.markdown",
+        "shapes": {
+          "role_arn": [
+            "string"
+          ],
+          "type": [
+            "string"
+          ],
+          "members.id": [
+            "list",
+            "string"
+          ],
+          "members.alias_id": [
+            "list",
+            "string"
+          ],
+          "members.version": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "role_arn": "required",
+          "type": "optional/computed",
+          "members.id": "required",
+          "members.alias_id": "required",
+          "members.version": "required",
+          "arn": "computed",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newBotResource. No same-name data source in the pinned schema.",
+        "dataContracts": {},
+        "sourceContracts": {
+          "arn": {
+            "file": "internal/service/lexv2models/bot.go",
+            "token": "names.AttrARN: framework.ARNAttributeComputedOnly()"
+          }
+        }
+      }
+    },
+    "aws_lexv2models_bot_locale": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1605,
+      "gap": "#1605 — Verify the configured bot ID and distinguish the DRAFT selector from verifiable version identity. Locale code and voice selection do not identify managed runtime services. Qualify a locale by its bot and version before presenting ownership.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bot_id",
+          "bot_version",
+          "locale_id",
+          "voice_settings.voice_id",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Bot Locale.",
+        "ownership": "Missing: Qualify a locale by its bot and version before presenting ownership.",
+        "network": "Not applicable: A language model locale does not configure a network attachment.",
+        "references": "Missing: Verify the configured bot ID and distinguish the DRAFT selector from verifiable version identity. Locale code and voice selection do not identify managed runtime services.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Locale ID is only meaningful within the bot and version. Language and voice are not region evidence.",
+        "summaries": "Intentionally unsupported: omit utterances, voice samples and language inference. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lexv2models_bot_locale.html.markdown",
+        "shapes": {
+          "bot_id": [
+            "string"
+          ],
+          "bot_version": [
+            "string"
+          ],
+          "locale_id": [
+            "string"
+          ],
+          "voice_settings.voice_id": [
+            "list",
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "bot_id": "required",
+          "bot_version": "required",
+          "locale_id": "required",
+          "voice_settings.voice_id": "required",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newBotLocaleResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_lexv2models_bot_version": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1605,
+      "gap": "#1605 — Verify the configured bot ID and the map of explicitly selected locales and source versions within that bot. A DRAFT selector and provider-computed version number do not identify an unrelated managed version. Verify version ownership by the bot and keep reusable source locales independently addressable.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bot_id",
+          "bot_version",
+          "locale_specification",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Bot Version.",
+        "ownership": "Missing: Verify version ownership by the bot and keep reusable source locales independently addressable.",
+        "network": "Not applicable: Publishing a version does not assign the bot to subnets.",
+        "references": "Missing: Verify the configured bot ID and the map of explicitly selected locales and source versions within that bot. A DRAFT selector and provider-computed version number do not identify an unrelated managed version.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Bot and source locale scope must agree. A version number alone is not globally unique.",
+        "summaries": "Intentionally unsupported: omit model contents and publication outcome. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lexv2models_bot_version.html.markdown",
+        "shapes": {
+          "bot_id": [
+            "string"
+          ],
+          "bot_version": [
+            "string"
+          ],
+          "locale_specification": [
+            [
+              "map",
+              [
+                "object",
+                {
+                  "source_bot_version": "string"
+                }
+              ]
+            ]
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "bot_id": "required",
+          "bot_version": "optional/computed",
+          "locale_specification": "required",
+          "id": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newBotVersionResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_lexv2models_intent": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1606,
+      "gap": "#1606 — Verify the bot and compatible locale/version, explicit slot priorities in that intent, and the configured Kendra index ARN for the supported intent type. Built-in signatures and arbitrary QnA configuration are not managed endpoints. Verify the owning bot locale before nesting an intent. Keep the Kendra index independently addressable.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bot_id",
+          "bot_version",
+          "locale_id",
+          "intent_id",
+          "parent_intent_signature",
+          "slot_priority.slot_id",
+          "kendra_configuration.kendra_index"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Intent.",
+        "ownership": "Missing: Verify the owning bot locale before nesting an intent. Keep the Kendra index independently addressable.",
+        "network": "Not applicable: Search and slot configuration do not establish network placement.",
+        "references": "Missing: Verify the bot and compatible locale/version, explicit slot priorities in that intent, and the configured Kendra index ARN for the supported intent type. Built-in signatures and arbitrary QnA configuration are not managed endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require bot, version and locale identity for all local selectors. The Kendra index must also match account and region.",
+        "summaries": "Intentionally unsupported: omit utterances, prompts, query filters and model payloads. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lexv2models_intent.html.markdown",
+        "shapes": {
+          "bot_id": [
+            "string"
+          ],
+          "bot_version": [
+            "string"
+          ],
+          "locale_id": [
+            "string"
+          ],
+          "intent_id": [
+            "string"
+          ],
+          "parent_intent_signature": [
+            "string"
+          ],
+          "slot_priority.slot_id": [
+            "list",
+            "string"
+          ],
+          "kendra_configuration.kendra_index": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "bot_id": "required",
+          "bot_version": "required",
+          "locale_id": "required",
+          "intent_id": "computed",
+          "parent_intent_signature": "optional",
+          "slot_priority.slot_id": "required",
+          "kendra_configuration.kendra_index": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newIntentResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_lexv2models_slot": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1606,
+      "gap": "#1606 — Verify the intent and any configured custom slot type using the same bot, version and locale. Omitted or computed slot type IDs and built-in selectors do not identify managed custom types. Bind only to a verified intent while preserving shared slot types.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bot_id",
+          "bot_version",
+          "locale_id",
+          "intent_id",
+          "slot_type_id",
+          "slot_id",
+          "obfuscation_setting.obfuscation_setting_type"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Slot.",
+        "ownership": "Missing: Bind only to a verified intent while preserving shared slot types.",
+        "network": "Not applicable: Slot elicitation does not attach to a VPC.",
+        "references": "Missing: Verify the intent and any configured custom slot type using the same bot, version and locale. Omitted or computed slot type IDs and built-in selectors do not identify managed custom types.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Scope includes bot identity, version, locale and intent. A slot ID alone is insufficient.",
+        "summaries": "Intentionally unsupported: omit slot samples, default values and elicitation prompts. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lexv2models_slot.html.markdown",
+        "shapes": {
+          "bot_id": [
+            "string"
+          ],
+          "bot_version": [
+            "string"
+          ],
+          "locale_id": [
+            "string"
+          ],
+          "intent_id": [
+            "string"
+          ],
+          "slot_type_id": [
+            "string"
+          ],
+          "slot_id": [
+            "string"
+          ],
+          "obfuscation_setting.obfuscation_setting_type": [
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "bot_id": "required",
+          "bot_version": "required",
+          "locale_id": "required",
+          "intent_id": "required",
+          "slot_type_id": "optional/computed",
+          "slot_id": "computed",
+          "obfuscation_setting.obfuscation_setting_type": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSlotResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_lexv2models_slot_type": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1606,
+      "gap": "#1606 — Verify the bot locale, compatible configured composite sub-slot type IDs, and explicit grammar S3 bucket and key. A built-in parent signature, external file content or regex must not invent a managed slot type. Qualify the type by the verified bot locale. Shared subtypes, buckets and keys remain independent.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "bot_id",
+          "bot_version",
+          "locale_id",
+          "slot_type_id",
+          "parent_slot_type_signature",
+          "composite_slot_type_setting.sub_slots.slot_type_id",
+          "external_source_setting.grammar_slot_type_setting.source.s3_bucket_name",
+          "external_source_setting.grammar_slot_type_setting.source.kms_key_arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Slot Type.",
+        "ownership": "Missing: Qualify the type by the verified bot locale. Shared subtypes, buckets and keys remain independent.",
+        "network": "Not applicable: Grammar storage does not establish a VPC deployment.",
+        "references": "Missing: Verify the bot locale, compatible configured composite sub-slot type IDs, and explicit grammar S3 bucket and key. A built-in parent signature, external file content or regex must not invent a managed slot type.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require bot, version and locale for subtypes and separately qualify external bucket and key ownership.",
+        "summaries": "Intentionally unsupported: omit grammar files, patterns, sample values and synonyms. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/lexv2models_slot_type.html.markdown",
+        "shapes": {
+          "bot_id": [
+            "string"
+          ],
+          "bot_version": [
+            "string"
+          ],
+          "locale_id": [
+            "string"
+          ],
+          "slot_type_id": [
+            "string"
+          ],
+          "parent_slot_type_signature": [
+            "string"
+          ],
+          "composite_slot_type_setting.sub_slots.slot_type_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "external_source_setting.grammar_slot_type_setting.source.s3_bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "external_source_setting.grammar_slot_type_setting.source.kms_key_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ]
+        },
+        "contracts": {
+          "bot_id": "required",
+          "bot_version": "required",
+          "locale_id": "required",
+          "slot_type_id": "computed",
+          "parent_slot_type_signature": "optional",
+          "composite_slot_type_setting.sub_slots.slot_type_id": "required",
+          "external_source_setting.grammar_slot_type_setting.source.s3_bucket_name": "required",
+          "external_source_setting.grammar_slot_type_setting.source.kms_key_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newSlotTypeResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_channel_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1607,
+      "gap": "#1607 — Verify the customer-created notification configuration ARN and a compatible explicitly configured email contact or Slack or Teams channel configuration ARN. Distinguish service-owned managed notification identifiers.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "notification_configuration_arn"
+        ],
+        "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Channel Association.",
+        "ownership": "Not applicable: Keep both related notification endpoints independent.",
+        "network": "Not applicable: Channel delivery does not establish VPC placement.",
+        "references": "Missing: Verify the customer-created notification configuration ARN and a compatible explicitly configured email contact or Slack or Teams channel configuration ARN. Distinguish service-owned managed notification identifiers.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Use the global configuration namespace and separately verify the channel owner and scope.",
+        "summaries": "Intentionally unsupported: omit email addresses, workspace contents and notification bodies. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_channel_association.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "notification_configuration_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "required",
+          "notification_configuration_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newChannelAssociationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_event_rule": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1607,
+      "gap": "#1607 — Verify the configured Notification configuration ARN. EventBridge source and event type identify filters, and selected event regions do not identify managed event buses or resources. Qualify rule ownership by its verified notification configuration.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "notification_configuration_arn",
+          "source",
+          "event_type",
+          "regions",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Policy with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Event Rule.",
+        "ownership": "Missing: Qualify rule ownership by its verified notification configuration.",
+        "network": "Not applicable: Event subscription has no VPC or subnet placement input.",
+        "references": "Missing: Verify the configured Notification configuration ARN. EventBridge source and event type identify filters, and selected event regions do not identify managed event buses or resources.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Event regions filter captured events and do not relocate the global rule.",
+        "summaries": "Intentionally unsupported: omit event filter details, patterns and payloads. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_event_rule.html.markdown",
+        "shapes": {
+          "notification_configuration_arn": [
+            "string"
+          ],
+          "source": [
+            "string"
+          ],
+          "event_type": [
+            "string"
+          ],
+          "regions": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "notification_configuration_arn": "required",
+          "source": "required",
+          "event_type": "required",
+          "regions": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newEventRuleResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_managed_notification_account_contact_association": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Account contact identifiers select AWS contact categories. The AWS-managed notification ARN does not identify a customer-created notification configuration. Preserve this declaration until a compatible independently managed endpoint is representable.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "contact_identifier",
+          "managed_notification_configuration_arn"
+        ],
+        "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Managed Notification Account Contact Association.",
+        "ownership": "Not applicable: There is no managed notification owner or unique person to embed.",
+        "network": "Not applicable: Account notification settings do not assign network placement.",
+        "references": "Intentionally unsupported: Account contact identifiers select AWS contact categories. The AWS-managed notification ARN does not identify a customer-created notification configuration. Preserve this declaration until a compatible independently managed endpoint is representable.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. The association concerns the independently scoped AWS-managed notification and account contact category.",
+        "summaries": "Intentionally unsupported: omit contact values and inferred notification delivery. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_managed_notification_account_contact_association.html.markdown",
+        "shapes": {
+          "contact_identifier": [
+            "string"
+          ],
+          "managed_notification_configuration_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "contact_identifier": "required",
+          "managed_notification_configuration_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newManagedNotificationAccountContactAssociationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_managed_notification_additional_channel_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1607,
+      "gap": "#1607 — Verify compatible explicitly configured email contact or Chatbot channel identities. AWS-managed notification ARNs remain service-owned and do not match customer notification configurations.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "channel_arn",
+          "managed_notification_arn"
+        ],
+        "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Managed Notification Additional Channel Association.",
+        "ownership": "Not applicable: Keep the customer channel independent of the service-owned configuration.",
+        "network": "Not applicable: Delivery to a channel does not establish a network path.",
+        "references": "Missing: Verify compatible explicitly configured email contact or Chatbot channel identities. AWS-managed notification ARNs remain service-owned and do not match customer notification configurations.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Validate owner account using ARN evidence independently from source notification category.",
+        "summaries": "Intentionally unsupported: omit channel contact details and notification bodies. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_managed_notification_additional_channel_association.html.markdown",
+        "shapes": {
+          "channel_arn": [
+            "string"
+          ],
+          "managed_notification_arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "channel_arn": "required",
+          "managed_notification_arn": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newManagedNotificationAdditionalChannelAssociationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_notification_configuration": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P3",
+      "gap": "#1548 already verifies the ARN as the explicitly configured Service Quotas notification destination. A standalone configuration has no configured destination field. Rules and channels are verified through their association declarations.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "name",
+          "aggregation_duration"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Notification Configuration.",
+        "ownership": "Not applicable: The independent notification configuration may serve multiple rules and channels.",
+        "network": "Not applicable: Aggregation choices do not establish network placement.",
+        "references": "Supported: #1548 already verifies the ARN as the explicitly configured Service Quotas notification destination. A standalone configuration has no configured destination field. Rules and channels are verified through their association declarations.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Global configuration identity stays account-qualified. Regional event selection remains separate.",
+        "summaries": "Intentionally unsupported: omit configuration description, aggregation details as inferred delivery and notification contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_notification_configuration.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "aggregation_duration": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "name": "required",
+          "aggregation_duration": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
+        ],
+        "managedDataContract": "Managed newNotificationConfigurationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_notification_hub": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Basic display preserves the configured hub declaration. The chosen region is a destination selector for notification processing, without another managed resource identity. Revisit only when presenting hub regions independently of the global control plane.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "notification_hub_region"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Notification Hub.",
+        "ownership": "Not applicable: There is no owned regional resource declaration in the hub setting.",
+        "network": "Not applicable: A hub does not configure a VPC or endpoint.",
+        "references": "Supported: Basic display preserves the configured hub declaration. The chosen region is a destination selector for notification processing, without another managed resource identity. Revisit only when presenting hub regions independently of the global control plane.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Global control-plane runtime scope stays separate from notification_hub_region.",
+        "summaries": "Intentionally unsupported: omit inferred event coverage and processing health. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_notification_hub.html.markdown",
+        "shapes": {
+          "notification_hub_region": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "notification_hub_region": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newNotificationHubResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_organizational_unit_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1607,
+      "gap": "#1607 — Verify the configured notification ARN and a typed Organization, OU or organization root ID with the corresponding verified identity format. A chosen organization target does not establish its member inventory.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "notification_configuration_arn",
+          "organizational_unit_id"
+        ],
+        "placement": "Supported: managed Logical Association with the AWS User Notifications service label. Terraform resource for managing an AWS User Notifications Organizational Unit Association.",
+        "ownership": "Not applicable: Organization targets and notification configurations remain independent.",
+        "network": "Not applicable: Organization assignment has no network deployment consequence.",
+        "references": "Missing: Verify the configured notification ARN and a typed Organization, OU or organization root ID with the corresponding verified identity format. A chosen organization target does not establish its member inventory.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Preserve organization and account scope independently from rule event regions.",
+        "summaries": "Intentionally unsupported: omit member account inventories and effective notification delivery. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_organizational_unit_association.html.markdown",
+        "shapes": {
+          "notification_configuration_arn": [
+            "string"
+          ],
+          "organizational_unit_id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "notification_configuration_arn": "required",
+          "organizational_unit_id": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newOrganizationalUnitAssociationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notifications_organizations_access": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Basic display preserves the Organizations access switch. The boolean declares no specific organization, OU, member account or actual permissions.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "enabled"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS User Notifications service label. Terraform resource for managing AWS User Notifications Organizations Access.",
+        "ownership": "Not applicable: A service access toggle does not establish managed organization ownership.",
+        "network": "Not applicable: Service access configuration has no VPC attachment.",
+        "references": "Supported: Basic display preserves the Organizations access switch. The boolean declares no specific organization, OU, member account or actual permissions.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. A global control-plane setting does not prove service coverage for any members.",
+        "summaries": "Intentionally unsupported: omit access outcomes and organization inventory. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notifications_organizations_access.html.markdown",
+        "shapes": {
+          "enabled": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "enabled": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newOrganizationsAccessResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_notificationscontacts_email_contact": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Basic display preserves an independent email contact ARN. Configured inbound channel associations are owned by the corresponding User Notifications rows. Contact details do not identify another managed AWS resource.",
+      "review": {
+        "issue": 734,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "arn",
+          "name",
+          "email_address"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS User Notifications Contacts service label. Terraform resource for managing an AWS User Notifications Contacts Email Contact.",
+        "ownership": "Not applicable: A contact remains reusable across independently verified notification configurations.",
+        "network": "Not applicable: An email contact provides no network placement evidence.",
+        "references": "Supported: Basic display preserves an independent email contact ARN. Configured inbound channel associations are owned by the corresponding User Notifications rows. Contact details do not identify another managed AWS resource.",
+        "scope": "Supported: The runtime treats this control-plane declaration as global. Use the global account-owned contact identity. The email address does not prove deployment scope.",
+        "summaries": "Intentionally unsupported: omit email addresses and delivery or verification status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/notificationscontacts_email_contact.html.markdown",
+        "shapes": {
+          "arn": [
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "email_address": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "arn": "computed",
+          "name": "required",
+          "email_address": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newEmailContactResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     }

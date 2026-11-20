@@ -872,3 +872,28 @@ test('#733 distinguishes typed application configuration from service outputs an
   assert.equal(review('m2_environment').contracts.load_balancer_arn, 'computed');
   assert.match(review('m2_environment').network, /common VPC/);
 });
+
+test('#734 distinguishes communications endpoints, service scopes, and historical Lex contracts', () => {
+  const decisions = auditedServiceTypes(734, [
+    'connect', 'customerprofiles', 'chime', 'chimesdkvoice', 'chimesdkmediapipelines',
+    'chatbot', 'notifications', 'notificationscontacts', 'lexmodels', 'lexv2models',
+  ], 52);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('chatbot_slack_channel_configuration').contracts.chat_configuration_arn, 'computed');
+  assert.equal(review('chatbot_teams_channel_configuration').contracts.chat_configuration_arn, 'computed');
+  assert.equal(decisions.aws_codestarnotifications_notification_rule.issue,
+    decisions.aws_chatbot_slack_channel_configuration.issue);
+  assert.match(review('codestarnotifications_notification_rule').references, /Partial:.*chat_configuration_arn/);
+  assert.match(review('chime_voice_connector').scope, /Missing:.*aws_region/);
+  assert.deepEqual(review('chime_voice_connector_group').shapes['connector.voice_connector_id'], ['set', 'string']);
+  assert.equal(review('connect_instance').contracts.service_role, 'computed');
+  assert.equal(review('connect_instance_storage_config').contracts.association_id, 'computed');
+  assert.deepEqual(review('lexv2models_bot_version').shapes.locale_specification,
+    [['map', ['object', {source_bot_version: 'string'}]]]);
+  assert.equal(decisions.aws_lex_bot.status, 'Deferred');
+  assert.match(review('connect_bot_association').references, /legacy Lex V1/);
+  assert.match(review('notifications_managed_notification_account_contact_association').references,
+    /Intentionally unsupported: .*contact categories/);
+  assert.match(review('notifications_notification_configuration').references, /#1548/);
+  assert.match(review('notifications_event_rule').scope, /filter captured events/);
+});
