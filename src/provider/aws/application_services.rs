@@ -15,6 +15,8 @@ const CONFIG_ENV: &str = "aws_appconfig_environment";
 const CONFIG_PROFILE: &str = "aws_appconfig_configuration_profile";
 const CONFIG_VERSION: &str = "aws_appconfig_hosted_configuration_version";
 
+const CONFIG_DEPLOYMENT: &str = "aws_appconfig_deployment";
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(kind, AMPLIFY_DOMAIN | CONFIG_ENV)
 }
@@ -47,10 +49,10 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_acm_certificate", &["arn"])],
         )
         .in_control_plane_account(),
-        (CONFIG_ENV | CONFIG_PROFILE | CONFIG_VERSION, "application_id") => {
+        (CONFIG_ENV | CONFIG_PROFILE | CONFIG_VERSION | CONFIG_DEPLOYMENT, "application_id") => {
             scalar("AppConfig application", &[(CONFIG_APP, &["id"])])
         }
-        (CONFIG_VERSION, "configuration_profile_id") => scalar(
+        (CONFIG_VERSION | CONFIG_DEPLOYMENT, "configuration_profile_id") => scalar(
             "AppConfig configuration profile",
             &[(CONFIG_PROFILE, &["configuration_profile_id"])],
         ),
@@ -75,6 +77,19 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             ],
         )
         .decoded(configuration_locator),
+        (CONFIG_DEPLOYMENT, "environment_id") => scalar(
+            "AppConfig deployment environment",
+            &[(CONFIG_ENV, &["environment_id"])],
+        ),
+        (CONFIG_DEPLOYMENT, "deployment_strategy_id") => scalar(
+            "AppConfig deployment strategy",
+            &[("aws_appconfig_deployment_strategy", &["id"])],
+        ),
+        (CONFIG_DEPLOYMENT, "configuration_version") => scalar(
+            "AppConfig deployed hosted version",
+            &[(CONFIG_VERSION, &["version_number", "version_label"])],
+        ),
+        (CONFIG_DEPLOYMENT, "kms_key_identifier") => key("AppConfig deployment encryption key"),
         _ => return None,
     })
 }
@@ -129,6 +144,7 @@ pub(super) fn annotate(
     values: &[(&Value, &Value)],
 ) {
     configured_links::annotate(nodes, refs, values, rule, qualifies);
+    annotate_versions(nodes, refs, values);
 }
 
 fn arn_resource<'a>(
@@ -170,6 +186,20 @@ fn endpoint(
     kind: &str,
     outputs: &[&str],
 ) -> Option<usize> {
+    configured_source(e, target, path, kind, outputs, |source, output| {
+        e.text(target, path)
+            .is_some_and(|value| e.text(source, output) == Some(value))
+    })
+}
+
+fn configured_source(
+    e: &Evidence<'_>,
+    target: usize,
+    path: &str,
+    kind: &str,
+    outputs: &[&str],
+    matches: impl FnOnce(usize, &str) -> bool,
+) -> Option<usize> {
     let r = super::lambda_core::unique(e.refs, target, path)?;
     let [source] = *r.sources.as_slice() else {
         return None;
@@ -193,8 +223,7 @@ fn endpoint(
         && right.resource_type == kind
         && attrs.len() == 1
         && outputs.contains(&output.as_str())
-        && e.text(target, path)
-            .is_some_and(|value| e.text(source, output) == Some(value))
+        && matches(source, output)
         && super::eventbridge::bindings(
             left.provider_configuration.as_ref(),
             right.provider_configuration.as_ref(),
@@ -246,9 +275,10 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             })
         }
         (CONFIG_PROFILE, "kms_key_identifier") => e.text(target, "location_uri") == Some("hosted"),
-        (CONFIG_VERSION, "configuration_profile_id") => {
+        (CONFIG_VERSION | CONFIG_DEPLOYMENT, "configuration_profile_id") => {
             same_endpoint(e, target, source, "application_id", CONFIG_APP, &["id"])
         }
+        (CONFIG_DEPLOYMENT, "environment_id") => deployment_context(e, target, source),
         (CONFIG_ENV, _) if r.attribute == "monitor.alarm_arn" => e
             .text(source, "arn")
             .and_then(|arn| arn_resource(&e.nodes[source], arn, "cloudwatch", true))
@@ -275,6 +305,96 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             })
         }
         _ => true,
+    }
+}
+
+fn deployment_context(e: &Evidence<'_>, deployment: usize, environment: usize) -> bool {
+    same_endpoint(
+        e,
+        deployment,
+        environment,
+        "application_id",
+        CONFIG_APP,
+        &["id"],
+    ) && endpoint(
+        e,
+        deployment,
+        "configuration_profile_id",
+        CONFIG_PROFILE,
+        &["configuration_profile_id"],
+    )
+    .is_some_and(|profile| {
+        same_endpoint(
+            e,
+            deployment,
+            profile,
+            "application_id",
+            CONFIG_APP,
+            &["id"],
+        )
+    })
+}
+
+fn annotate_versions(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    values: &[(&Value, &Value)],
+) {
+    let e = Evidence {
+        nodes,
+        refs,
+        values,
+    };
+    let verified: Vec<_> = refs
+        .iter()
+        .map(|r| {
+            if nodes[r.target].resource_type != CONFIG_DEPLOYMENT
+                || r.attribute != "configuration_version"
+            {
+                return None;
+            }
+            let version = configured_source(
+                &e,
+                r.target,
+                "configuration_version",
+                CONFIG_VERSION,
+                &["version_number", "version_label"],
+                |source, output| {
+                    e.text(r.target, "configuration_version")
+                        .is_some_and(|actual| match output {
+                            "version_number" => e
+                                .value(source, output)
+                                .and_then(Value::as_u64)
+                                .is_some_and(|number| number > 0 && actual == number.to_string()),
+                            _ => e.text(source, output) == Some(actual),
+                        })
+                },
+            );
+            Some(version.is_some_and(|source| {
+                same_endpoint(&e, r.target, source, "application_id", CONFIG_APP, &["id"])
+                    && same_endpoint(
+                        &e,
+                        r.target,
+                        source,
+                        "configuration_profile_id",
+                        CONFIG_PROFILE,
+                        &["configuration_profile_id"],
+                    )
+                    && endpoint(
+                        &e,
+                        r.target,
+                        "configuration_profile_id",
+                        CONFIG_PROFILE,
+                        &["configuration_profile_id"],
+                    )
+                    .is_some_and(|profile| e.text(profile, "location_uri") == Some("hosted"))
+            }))
+        })
+        .collect();
+    for (r, verified) in refs.iter_mut().zip(verified) {
+        if let Some(verified) = verified {
+            r.service_reference_verified = verified;
+        }
     }
 }
 
@@ -307,6 +427,11 @@ fn configuration_source(e: &Evidence<'_>, target: usize, source: usize) -> bool 
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match kind {
+        CONFIG_DEPLOYMENT => Some((
+            "environment_id",
+            "AppConfig deployment environment",
+            "Deployments",
+        )),
         CONFIG_ENV => Some(("application_id", "AppConfig application", "Environments")),
         CONFIG_PROFILE => Some((
             "application_id",

@@ -86350,10 +86350,10 @@
       }
     },
     "aws_appconfig_deployment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1586,
-      "gap": "#1586 — Verify application, environment and profile IDs together, a compatible deployment strategy, hosted version within its application and profile, and the configured KMS identifier. Version strings and deployment state do not identify arbitrary external versions or outcomes. Verify the joint application and environment context before presenting ownership. Strategies and keys remain shared.",
+      "gap": "#1586 — Verify the application, environment, profile, deployment strategy, configured KMS key and a hosted version by its explicit version output within the same application and profile. Computed state and KMS output do not establish behavior or endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86369,9 +86369,9 @@
           "state"
         ],
         "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Deployment resource.",
-        "ownership": "Missing: Verify the joint application and environment context before presenting ownership. Strategies and keys remain shared.",
+        "ownership": "Supported: Present beneath the verified environment once the application and profile also qualify.",
         "network": "Not applicable: An AppConfig rollout describes configuration selection, without target network inventory.",
-        "references": "Missing: Verify application, environment and profile IDs together, a compatible deployment strategy, hosted version within its application and profile, and the configured KMS identifier. Version strings and deployment state do not identify arbitrary external versions or outcomes.",
+        "references": "Supported: Verify the application, environment, profile, deployment strategy, configured KMS key and a hosted version by its explicit version output within the same application and profile. Computed state and KMS output do not establish behavior or endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The application qualifies environment and profile IDs. The hosted version number is local to the profile.",
         "summaries": "Intentionally unsupported: omit deployment payloads, configuration contents and rollout state. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appconfig_deployment.html.markdown",
@@ -86417,7 +86417,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceDeployment. No same-name data source in the pinned schema.",
         "dataContracts": {}
