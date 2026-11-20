@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = codebuild::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = codeartifact_rule(kind, path) {
         return Some(rule);
     }
@@ -27,6 +30,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if codebuild::resource(kind) {
+        return true;
+    }
     matches!(
         kind,
         "aws_codeartifact_domain"
@@ -59,8 +65,11 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
 
-fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, _: &str) -> bool {
+fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, path: &str) -> bool {
     let kind = &e.nodes[reference.target].resource_type;
+    if codebuild::resource(kind) {
+        return codebuild::qualifies(e, reference, source, path);
+    }
     if kind.starts_with("aws_codeartifact_") && reference.attribute != "encryption_key" {
         return codeartifact_qualifies(e, reference, source);
     }
@@ -147,6 +156,8 @@ fn codeartifact_qualifies(e: &Evidence<'_>, reference: &AttributeReference, sour
             .zip(e.text(source, "domain"))
             .is_some_and(|(a, b)| a == b)
 }
+
+mod codebuild;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
