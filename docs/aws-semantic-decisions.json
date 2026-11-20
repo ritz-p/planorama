@@ -84735,10 +84735,10 @@
       }
     },
     "aws_ssm_default_patch_baseline": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1550,
-      "gap": "#1550 — Match the configured baseline ID, checking OS compatibility; default status does not identify patched hosts.",
+      "gap": "#1550 — Verify the declared baseline ID with compatible operating-system evidence. Default status does not identify patched hosts.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84750,7 +84750,7 @@
         "placement": "Supported: managed Logical Node for ssm_default_patch_baseline. Terraform resource for managing an AWS Systems Manager Default Patch Baseline.",
         "ownership": "Not applicable: choosing an OS default selects a reusable patch baseline; the selector does not own or embed the baseline.",
         "network": "Not applicable: ssm_default_patch_baseline declares no VPC/subnet assignment; the configured baseline_id does not establish network containment.",
-        "references": "Missing: Match the configured baseline ID, checking OS compatibility; default status does not identify patched hosts.",
+        "references": "Supported: Verify the declared baseline ID with compatible operating-system evidence. Default status does not identify patched hosts.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_default_patch_baseline summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_default_patch_baseline.html.markdown",
@@ -84773,7 +84773,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceDefaultPatchBaseline. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -85221,10 +85223,10 @@
       }
     },
     "aws_ssm_patch_group": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1550,
-      "gap": "#1550 — Resolve the explicit baseline ID. The patch group string is a tag value and cannot prove any managed instance belongs to the group.",
+      "gap": "#1550 — Verify the declared baseline ID. The patch group tag does not identify managed instances.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85236,7 +85238,7 @@
         "placement": "Supported: managed Logical Node for ssm_patch_group. Provides an SSM Patch Group resource",
         "ownership": "Not applicable: several patch group names may select the same baseline. Neither the association nor the tag value owns the baseline or the hosts.",
         "network": "Not applicable: ssm_patch_group declares no VPC/subnet assignment; the configured baseline_id does not establish network containment.",
-        "references": "Missing: Resolve the explicit baseline ID. The patch group string is a tag value and cannot prove any managed instance belongs to the group.",
+        "references": "Supported: Verify the declared baseline ID. The patch group tag does not identify managed instances.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit parameter values, activation codes, document bodies and command arguments from ssm_patch_group summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssm_patch_group.html.markdown",
@@ -85259,7 +85261,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourcePatchGroup. No same-name data source in the pinned schema.",
         "dataContracts": {}

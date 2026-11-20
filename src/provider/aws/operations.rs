@@ -437,6 +437,18 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &["configuration_definition"],
         )
         .in_control_plane_account(),
+        ("aws_ssm_default_patch_baseline", "baseline_id") => Rule::new(
+            "SSM patch baseline",
+            &[("aws_ssm_patch_baseline", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_ssm_patch_group", "baseline_id") => Rule::new(
+            "SSM patch baseline",
+            &[("aws_ssm_patch_baseline", &["id"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -616,6 +628,9 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     && (r.attribute.ends_with("_name") || principal_arn(e, source, "iam", "role/"))
             })
         }
+        ("aws_ssm_default_patch_baseline", "baseline_id") => e
+            .text(r.target, "operating_system")
+            .is_some_and(|os| e.text(source, "operating_system") == Some(os)),
         _ => true,
     }
 }

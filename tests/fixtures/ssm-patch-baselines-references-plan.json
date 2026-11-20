@@ -1,0 +1,121 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ssm_default_patch_baseline.linux",
+      "mode": "managed",
+      "type": "aws_ssm_default_patch_baseline",
+      "name": "linux",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "baseline_id": "pb-0123456789abcdef0",
+          "operating_system": "AMAZON_LINUX_2"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_patch_group.linux",
+      "mode": "managed",
+      "type": "aws_ssm_patch_group",
+      "name": "linux",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "baseline_id": "pb-0123456789abcdef0",
+          "patch_group": "staging"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_patch_baseline.linux",
+      "mode": "managed",
+      "type": "aws_ssm_patch_baseline",
+      "name": "linux",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "pb-0123456789abcdef0",
+          "operating_system": "AMAZON_LINUX_2",
+          "name": "linux"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ssm_default_patch_baseline.linux",
+          "mode": "managed",
+          "type": "aws_ssm_default_patch_baseline",
+          "name": "linux",
+          "provider_config_key": "aws",
+          "expressions": {
+            "baseline_id": {
+              "references": [
+                "aws_ssm_patch_baseline.linux.id"
+              ]
+            },
+            "operating_system": {
+              "constant_value": "AMAZON_LINUX_2"
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_patch_group.linux",
+          "mode": "managed",
+          "type": "aws_ssm_patch_group",
+          "name": "linux",
+          "provider_config_key": "aws",
+          "expressions": {
+            "baseline_id": {
+              "references": [
+                "aws_ssm_patch_baseline.linux.id"
+              ]
+            },
+            "patch_group": {
+              "constant_value": "staging"
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_patch_baseline.linux",
+          "mode": "managed",
+          "type": "aws_ssm_patch_baseline",
+          "name": "linux",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

@@ -527,3 +527,42 @@ fn systems_manager_configuration_verifies_configured_endpoints() {
         Some("Inventory destination bucket")
     ));
 }
+
+#[test]
+fn ssm_patch_baselines_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/ssm-patch-baselines-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_ssm_default_patch_baseline.linux", "baseline_id"),
+            ("aws_ssm_patch_group.linux", "baseline_id"),
+        ],
+        ("aws_ssm_patch_baseline.linux", "id"),
+    );
+    assert!(label("aws_ssm_patch_group", "patch_group").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_ssm_default_patch_baseline.linux",
+        "baseline_id",
+        "aws_ssm_patch_baseline.linux",
+        "SSM patch baseline",
+        true,
+    );
+    let mut plan: Value = serde_json::from_str(fixture).unwrap();
+    plan["resource_changes"][0]["change"]["after"]["operating_system"] = json!("WINDOWS");
+    let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+    assert!(!verified(
+        &graph,
+        "aws_ssm_default_patch_baseline.linux",
+        "baseline_id",
+        Some("SSM patch baseline")
+    ));
+    assert!(verified(
+        &graph,
+        "aws_ssm_patch_group.linux",
+        "baseline_id",
+        Some("SSM patch baseline")
+    ));
+}
