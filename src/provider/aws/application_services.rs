@@ -21,6 +21,10 @@ const CONFIG_EXTENSION: &str = "aws_appconfig_extension";
 const CONFIG_ASSOCIATION: &str = "aws_appconfig_extension_association";
 const ACTION_BLOCKS: &[&str] = &["action_point", "action_point.action"];
 
+const FABRIC_BUNDLE: &str = "aws_appfabric_app_bundle";
+const FABRIC_AUTH: &str = "aws_appfabric_app_authorization";
+const FABRIC_CONNECTION: &str = "aws_appfabric_app_authorization_connection";
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(kind, AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION)
 }
@@ -119,6 +123,16 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 (CONFIG_PROFILE, &["arn"]),
             ],
         ),
+        (FABRIC_AUTH | FABRIC_CONNECTION, "app_bundle_arn") => {
+            scalar("AppFabric bundle", &[(FABRIC_BUNDLE, &["arn"])])
+        }
+        (FABRIC_CONNECTION, "app_authorization_arn") => {
+            scalar("AppFabric authorization", &[(FABRIC_AUTH, &["arn"])])
+        }
+        (FABRIC_BUNDLE, "customer_managed_key_arn") => scalar(
+            "AppFabric bundle encryption key",
+            &[("aws_kms_key", &["arn"])],
+        ),
         _ => return None,
     })
 }
@@ -174,6 +188,7 @@ pub(super) fn annotate(
 ) {
     configured_links::annotate(nodes, refs, values, rule, qualifies);
     annotate_versions(nodes, refs, values);
+    annotate_fabric_connections(nodes, refs, values);
 }
 
 fn arn_resource<'a>(
@@ -297,6 +312,12 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         return false;
     }
     match (e.nodes[target].resource_type.as_str(), path) {
+        (FABRIC_AUTH | FABRIC_CONNECTION, "app_bundle_arn") => {
+            service_arn(e, source, "appfabric", "appbundle/").is_some_and(segment)
+        }
+        (FABRIC_BUNDLE, "customer_managed_key_arn") => {
+            service_arn(e, source, "kms", "key/").is_some_and(segment)
+        }
         (CONFIG_EXTENSION, _) => extension_action(e, target, source, path),
         (CONFIG_ASSOCIATION, "extension_arn") => {
             service_arn(e, source, "appconfig", "extension/").is_some_and(segment)
@@ -508,6 +529,82 @@ fn extension_action(e: &Evidence<'_>, target: usize, source: usize, path: &str) 
     })
 }
 
+fn fabric_child_id<'a>(
+    e: &'a Evidence<'_>,
+    child: usize,
+    bundle: usize,
+    kind: &str,
+) -> Option<&'a str> {
+    let bundle_arn = e.text(bundle, "arn")?;
+    let child_arn = e.text(child, "arn")?;
+    let id = child_arn
+        .strip_prefix(bundle_arn)?
+        .strip_prefix('/')?
+        .strip_prefix(kind)?
+        .strip_prefix('/')?;
+    (segment(id) && arn_resource(&e.nodes[child], child_arn, "appfabric", true).is_some())
+        .then_some(id)
+}
+
+fn annotate_fabric_connections(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    values: &[(&Value, &Value)],
+) {
+    let e = Evidence {
+        nodes,
+        refs,
+        values,
+    };
+    let results: Vec<_> = refs
+        .iter()
+        .map(|r| {
+            if nodes[r.target].resource_type != FABRIC_CONNECTION
+                || r.attribute != "app_authorization_arn"
+            {
+                return None;
+            }
+            let verified = endpoint(&e, r.target, "app_bundle_arn", FABRIC_BUNDLE, &["arn"])
+                .is_some_and(|bundle| {
+                    service_arn(&e, bundle, "appfabric", "appbundle/").is_some_and(segment)
+                        && configured_source(
+                            &e,
+                            r.target,
+                            "app_authorization_arn",
+                            FABRIC_AUTH,
+                            &["arn"],
+                            |source, _| {
+                                let Some((actual, id)) = e
+                                    .text(r.target, "app_authorization_arn")
+                                    .zip(fabric_child_id(&e, source, bundle, "appauthorization"))
+                                else {
+                                    return false;
+                                };
+                                endpoint(&e, source, "app_bundle_arn", FABRIC_BUNDLE, &["arn"])
+                                    == Some(bundle)
+                                    && (e.text(source, "arn") == Some(actual)
+                                        || (uuid(actual) && actual == id))
+                            },
+                        )
+                        .is_some()
+                });
+            Some(verified)
+        })
+        .collect();
+    for (r, verified) in refs.iter_mut().zip(results) {
+        if let Some(verified) = verified {
+            r.service_reference_verified = verified;
+        }
+    }
+}
+
+fn uuid(value: &str) -> bool {
+    value.split('-').map(|part| part.len()).eq([8, 4, 4, 4, 12])
+        && value
+            .bytes()
+            .all(|byte| byte.is_ascii_hexdigit() || byte == b'-')
+}
+
 fn iam_role(e: &Evidence<'_>, source: usize) -> bool {
     e.text(source, "arn")
         .and_then(|arn| arn_resource(&e.nodes[source], arn, "iam", false))
@@ -537,6 +634,12 @@ fn configuration_source(e: &Evidence<'_>, target: usize, source: usize) -> bool 
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match kind {
+        FABRIC_AUTH => Some(("app_bundle_arn", "AppFabric bundle", "Authorizations")),
+        FABRIC_CONNECTION => Some((
+            "app_authorization_arn",
+            "AppFabric authorization",
+            "Authorization connections",
+        )),
         CONFIG_DEPLOYMENT => Some((
             "environment_id",
             "AppConfig deployment environment",

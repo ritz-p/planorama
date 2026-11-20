@@ -508,3 +508,61 @@ fn appconfig_extension_matches_unordered_actions_and_typed_targets() {
     fixture["resource_changes"][5]["change"]["after"]["resource_arn"] = json!(other);
     assert!(!check(&fixture, paths[3].0, paths[3].1));
 }
+
+#[test]
+fn appfabric_authorization_connections_use_the_qualified_bundle() {
+    let bundle = "arn:aws:appfabric:us-east-1:123456789012:appbundle/b1";
+    let authorization = format!("{bundle}/appauthorization/01010101-0101-0101-0101-010101010101");
+    let key = "arn:aws:kms:us-east-1:123456789012:key/01010101-0101-0101-0101-010101010101";
+    let mut fixture = plan(&[
+        ("aws_kms_key.bundle", json!({"arn":key}), json!({})),
+        (
+            "aws_appfabric_app_bundle.main",
+            json!({"arn":bundle,"customer_managed_key_arn":key}),
+            json!({
+                "customer_managed_key_arn":{"references":["aws_kms_key.bundle.arn"]}
+            }),
+        ),
+        (
+            "aws_appfabric_app_authorization.saas",
+            json!({"arn":authorization,"app_bundle_arn":bundle,"app":"SLACK","tenant":[{"tenant_identifier":"tenant"}]}),
+            json!({
+                "app_bundle_arn":{"references":["aws_appfabric_app_bundle.main.arn"]}
+            }),
+        ),
+        (
+            "aws_appfabric_app_authorization_connection.saas",
+            json!({"app_bundle_arn":bundle,"app_authorization_arn":authorization}),
+            json!({
+                "app_bundle_arn":{"references":["aws_appfabric_app_bundle.main.arn"]},
+                "app_authorization_arn":{"references":["aws_appfabric_app_authorization.saas.arn"]}
+            }),
+        ),
+    ]);
+    let connection = "aws_appfabric_app_authorization_connection.saas";
+    let path = "app_authorization_arn";
+    let check = |fixture: &Value| {
+        verified(
+            &graph(fixture),
+            connection,
+            path,
+            label(super::FABRIC_CONNECTION, path),
+        )
+    };
+    assert!(check(&fixture));
+    fixture["resource_changes"][3]["change"]["after"][path] =
+        json!("01010101-0101-0101-0101-010101010101");
+    assert!(check(&fixture));
+    fixture["resource_changes"][2]["change"]["after"]["app_bundle_arn"] = json!("unrelated");
+    assert!(!check(&fixture));
+    assert!(
+        graph(&fixture)
+            .nodes
+            .iter()
+            .find(|n| n.address == connection)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+    assert!(label(super::FABRIC_CONNECTION, "tenant").is_none());
+}
