@@ -78878,10 +78878,10 @@
       }
     },
     "aws_cloud9_environment_ec2": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1526,
-      "gap": "#1526 — Resolve a configured subnet for the EC2 environment and an explicit IAM owner separately. The service-created instance is not a declared EC2 child.",
+      "gap": "#1526 — Verify the configured subnet and IAM user or role independently. The AWS-created EC2 instance stays implicit.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -78894,8 +78894,8 @@
         ],
         "placement": "Supported: managed Logical Node for cloud9_environment_ec2. Provides a Cloud9 EC2 Development Environment.",
         "ownership": "Not applicable: AWS Cloud9 cloud9_environment_ec2 remains independently addressable; a reference or shared target does not justify embedding.",
-        "network": "Missing: verify subnet_id for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
-        "references": "Missing: Resolve a configured subnet for the EC2 environment and an explicit IAM owner separately. The service-created instance is not a declared EC2 child.",
+        "network": "Supported: A verified subnet reference expresses network context. The environment remains a logical resource.",
+        "references": "Supported: Verify the configured subnet and IAM user or role independently. The AWS-created EC2 instance stays implicit.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit membership identities and environment access details from cloud9_environment_ec2 summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloud9_environment_ec2.html.markdown",
@@ -78926,17 +78926,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceEnvironmentEC2. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_cloud9_environment_membership": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1526,
-      "gap": "#1526 — Represent membership between one verified environment and the IAM user; the computed user_id cannot establish a second endpoint.",
+      "gap": "#1526 — Verify the explicit environment ID and IAM user ARN. AWS-returned user_id has no independent relationship.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -78948,9 +78950,9 @@
           "user_id"
         ],
         "placement": "Supported: managed Logical Association for cloud9_environment_membership. Provides an environment member to an AWS Cloud9 development environment.",
-        "ownership": "Missing: verify environment_id before attaching cloud9_environment_membership to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: verify the declared membership environment identity without attributing ownership of the IAM user to it.",
         "network": "Not applicable: cloud9_environment_membership declares no VPC/subnet assignment; the configured environment_id does not establish network containment.",
-        "references": "Missing: Represent membership between one verified environment and the IAM user; the computed user_id cannot establish a second endpoint.",
+        "references": "Supported: Verify the explicit environment ID and IAM user ARN. AWS-returned user_id has no independent relationship.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit membership identities and environment access details from cloud9_environment_membership summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloud9_environment_membership.html.markdown",
@@ -78981,7 +78983,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceEnvironmentMembership. No same-name data source in the pinned schema.",
         "dataContracts": {}

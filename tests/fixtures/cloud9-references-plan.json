@@ -1,0 +1,150 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_cloud9_environment_ec2.workspace",
+      "mode": "managed",
+      "type": "aws_cloud9_environment_ec2",
+      "name": "workspace",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "f353070c510b43c2809b4e06c16841fe",
+          "subnet_id": "subnet-123",
+          "owner_arn": "arn:aws:iam::123456789012:user/sample",
+          "instance_type": "t3.small"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.workspace",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "workspace",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "subnet-123"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_user.member",
+      "mode": "managed",
+      "type": "aws_iam_user",
+      "name": "member",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:user/sample"
+        }
+      }
+    },
+    {
+      "address": "aws_cloud9_environment_membership.member",
+      "mode": "managed",
+      "type": "aws_cloud9_environment_membership",
+      "name": "member",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "environment_id": "f353070c510b43c2809b4e06c16841fe",
+          "user_arn": "arn:aws:iam::123456789012:user/sample",
+          "permissions": "read-write",
+          "user_id": "SERVICE-USER-ID"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloud9_environment_ec2.workspace",
+          "mode": "managed",
+          "type": "aws_cloud9_environment_ec2",
+          "name": "workspace",
+          "provider_config_key": "aws",
+          "expressions": {
+            "subnet_id": {
+              "references": [
+                "aws_subnet.workspace.id"
+              ]
+            },
+            "owner_arn": {
+              "references": [
+                "aws_iam_user.member.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_subnet.workspace",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "workspace",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_user.member",
+          "mode": "managed",
+          "type": "aws_iam_user",
+          "name": "member",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloud9_environment_membership.member",
+          "mode": "managed",
+          "type": "aws_cloud9_environment_membership",
+          "name": "member",
+          "provider_config_key": "aws",
+          "expressions": {
+            "environment_id": {
+              "references": [
+                "aws_cloud9_environment_ec2.workspace.id"
+              ]
+            },
+            "user_arn": {
+              "references": [
+                "aws_iam_user.member.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
