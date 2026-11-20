@@ -824,3 +824,17 @@ test('#729 distinguishes Classic WAF scopes, WAFv2 endpoints and recovery contro
   assert.match(review('route53recoverycontrolconfig_routing_control').references, /RECOVERY_CONTROL/);
   assert.equal(review('resiliencehubv2_assertion').contracts.assertion_id, 'computed');
 });
+
+test('#731 distinguishes configured delivery endpoints from service outputs', () => {
+  const decisions = auditedServiceTypes(731, [
+    'cloud9', 'codeartifact', 'codebuild', 'codecatalyst', 'codecommit', 'codeconnections',
+    'codestarnotifications', 'codestarconnections', 'codepipeline', 'deploy',
+    'codeguruprofiler', 'codegurureviewer', 'devopsagent', 'devopsguru', 'devicefarm',
+  ], 43);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('codeartifact_domain').contracts.s3_bucket_arn, 'computed');
+  assert.equal(review('codegurureviewer_repository_association').contracts.connection_arn, 'computed');
+  assert.deepEqual(review('codebuild_project').shapes['environment.fleet.fleet_arn'], ['list', 'list', 'string']);
+  assert.equal(review('codepipeline_webhook').contracts.target_action, 'required');
+  assert.match(review('devicefarm_network_profile').references, /network simulation/);
+});
