@@ -85865,6 +85865,1715 @@
           }
         }
       }
+    },
+    "aws_amplify_app": {
+      "status": "Partial (bounded capabilities implemented)",
+      "priority": "P2",
+      "issue": 1583,
+      "gap": "#1583 — #1493 already verifies its ARN as a WAFv2 association target. Verify the configured build service and SSR compute IAM role ARNs separately, without inferring which code paths invoke either role.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "iam_service_role_arn",
+          "compute_role_arn",
+          "platform",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify App resource.",
+        "ownership": "Not applicable: The app is independently addressable. Service and compute roles can be shared.",
+        "network": "Not applicable: A platform discriminator and IAM roles do not configure VPC attachment.",
+        "references": "Partial: #1493 already verifies its ARN as a WAFv2 association target. Verify the configured build service and SSR compute IAM role ARNs separately, without inferring which code paths invoke either role.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The app remains regional even when a CloudFront-scope ACL protects its ARN.",
+        "summaries": "Intentionally unsupported: omit repository credentials, build specifications and environment variables. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/amplify_app.html.markdown",
+        "shapes": {
+          "iam_service_role_arn": [
+            "string"
+          ],
+          "compute_role_arn": [
+            "string"
+          ],
+          "platform": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "iam_service_role_arn": "optional",
+          "compute_role_arn": "optional",
+          "platform": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs"
+        ],
+        "managedDataContract": "Managed resourceApp. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_amplify_backend_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1583,
+      "gap": "#1583 — Verify the exact app ID. The returned or optional deployment artifact locator and stack name do not identify a verified managed bucket or stack. Qualify environment ownership by a unique app and environment ARN. Preserve the declaration on uncertain ownership.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_id",
+          "environment_name",
+          "deployment_artifacts",
+          "stack_name",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify Backend Environment resource.",
+        "ownership": "Missing: Qualify environment ownership by a unique app and environment ARN. Preserve the declaration on uncertain ownership.",
+        "network": "Not applicable: Backend environment identity does not prove VPC placement of its CloudFormation resources.",
+        "references": "Missing: Verify the exact app ID. The returned or optional deployment artifact locator and stack name do not identify a verified managed bucket or stack.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Resolve the regional app in the environment's provider scope.",
+        "summaries": "Intentionally unsupported: omit artifact locations and backend stack contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/amplify_backend_environment.html.markdown",
+        "shapes": {
+          "app_id": [
+            "string"
+          ],
+          "environment_name": [
+            "string"
+          ],
+          "deployment_artifacts": [
+            "string"
+          ],
+          "stack_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_id": "required",
+          "environment_name": "required",
+          "deployment_artifacts": "optional/computed",
+          "stack_name": "optional/computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBackendEnvironment. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_amplify_branch": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1583,
+      "gap": "#1583 — Verify the configured app ID and backend environment ARN in the same app. Computed associated resources and pull request source and destination names do not give architectural endpoints. Resolve ownership by the qualified app. Keep reusable backend environments independently addressable.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_id",
+          "branch_name",
+          "backend_environment_arn",
+          "associated_resources",
+          "source_branch",
+          "destination_branch",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify Branch resource.",
+        "ownership": "Missing: Resolve ownership by the qualified app. Keep reusable backend environments independently addressable.",
+        "network": "Not applicable: Branch configuration does not configure a subnet or VPC.",
+        "references": "Missing: Verify the configured app ID and backend environment ARN in the same app. Computed associated resources and pull request source and destination names do not give architectural endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Branch names are only unique within the regional app.",
+        "summaries": "Intentionally unsupported: omit repository content, credentials and environment values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/amplify_branch.html.markdown",
+        "shapes": {
+          "app_id": [
+            "string"
+          ],
+          "branch_name": [
+            "string"
+          ],
+          "backend_environment_arn": [
+            "string"
+          ],
+          "associated_resources": [
+            [
+              "list",
+              "string"
+            ]
+          ],
+          "source_branch": [
+            "string"
+          ],
+          "destination_branch": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_id": "required",
+          "branch_name": "required",
+          "backend_environment_arn": "optional",
+          "associated_resources": "computed",
+          "source_branch": "computed",
+          "destination_branch": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceBranch. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_amplify_domain_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1584,
+      "gap": "#1584 — Verify the app, same-app configured branch names and custom ACM certificate ARN when the selected certificate type is CUSTOM. DNS verification output is not a configured Route 53 record. Verify the owning app while preserving separate branch and certificate identities.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_id",
+          "domain_name",
+          "sub_domain.branch_name",
+          "sub_domain.prefix",
+          "certificate_settings.type",
+          "certificate_settings.custom_certificate_arn",
+          "certificate_verification_dns_record"
+        ],
+        "placement": "Supported: managed Logical Association with the AWS Amplify service label. Provides an Amplify Domain Association resource.",
+        "ownership": "Missing: Verify the owning app while preserving separate branch and certificate identities.",
+        "network": "Not applicable: The domain and certificate describe publication, with no VPC placement evidence.",
+        "references": "Missing: Verify the app, same-app configured branch names and custom ACM certificate ARN when the selected certificate type is CUSTOM. DNS verification output is not a configured Route 53 record.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the regional app for branch identity and require a custom certificate in us-east-1 based on the configured ARN.",
+        "summaries": "Intentionally unsupported: omit returned verification DNS records and certificate material. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/amplify_domain_association.html.markdown",
+        "shapes": {
+          "app_id": [
+            "string"
+          ],
+          "domain_name": [
+            "string"
+          ],
+          "sub_domain.branch_name": [
+            "set",
+            "string"
+          ],
+          "sub_domain.prefix": [
+            "set",
+            "string"
+          ],
+          "certificate_settings.type": [
+            "list",
+            "string"
+          ],
+          "certificate_settings.custom_certificate_arn": [
+            "list",
+            "string"
+          ],
+          "certificate_verification_dns_record": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_id": "required",
+          "domain_name": "required",
+          "sub_domain.branch_name": "required",
+          "sub_domain.prefix": "required",
+          "certificate_settings.type": "required",
+          "certificate_settings.custom_certificate_arn": "optional",
+          "certificate_verification_dns_record": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDomainAssociation. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_amplify_webhook": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1584,
+      "gap": "#1584 — Verify the app and its named branch. The generated webhook URL is not a downstream endpoint. Verify webhook ownership by the app and qualify the branch without treating the URL as an identifier.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_id",
+          "branch_name",
+          "arn",
+          "url"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify Webhook resource.",
+        "ownership": "Missing: Verify webhook ownership by the app and qualify the branch without treating the URL as an identifier.",
+        "network": "Not applicable: A webhook does not establish network attachment.",
+        "references": "Missing: Verify the app and its named branch. The generated webhook URL is not a downstream endpoint.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. A branch selector is local to the app and its region.",
+        "summaries": "Intentionally unsupported: omit generated webhook URLs and invocation contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/amplify_webhook.html.markdown",
+        "shapes": {
+          "app_id": [
+            "string"
+          ],
+          "branch_name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "url": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_id": "required",
+          "branch_name": "required",
+          "arn": "computed",
+          "url": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceWebhook. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appconfig_application": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Basic support preserves a standalone application identity. Current inputs declare no service endpoints. Its verified inbound links are owned by the configuration, environment and deployment audit rows.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "arn",
+          "id"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS AppConfig service label. Provides an AppConfig Application resource.",
+        "ownership": "Not applicable: A reusable application is independent and does not belong inside one environment.",
+        "network": "Not applicable: An AppConfig application has no VPC attachment input.",
+        "references": "Supported: Basic support preserves a standalone application identity. Current inputs declare no service endpoints. Its verified inbound links are owned by the configuration, environment and deployment audit rows.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The application ID is scoped to provider account and region.",
+        "summaries": "Intentionally unsupported: omit descriptions and tag values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_application.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "arn": "computed",
+          "id": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceApplication. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_appconfig_configuration_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1585,
+      "gap": "#1585 — Verify application ID and the configured retrieval role for external sources. Match only known supported S3 object, SSM document or SSM parameter locators using explicit typed evidence. For hosted profiles verify the configured KMS key, excluding the hosted selector and validation payloads as external endpoints. Qualify profile ownership using the application. Keep referenced data stores and roles independent.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_id",
+          "configuration_profile_id",
+          "location_uri",
+          "retrieval_role_arn",
+          "kms_key_identifier",
+          "validator.type",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Configuration Profile resource.",
+        "ownership": "Missing: Qualify profile ownership using the application. Keep referenced data stores and roles independent.",
+        "network": "Not applicable: Configuration retrieval does not establish a VPC deployment for the profile.",
+        "references": "Missing: Verify application ID and the configured retrieval role for external sources. Match only known supported S3 object, SSM document or SSM parameter locators using explicit typed evidence. For hosted profiles verify the configured KMS key, excluding the hosted selector and validation payloads as external endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The application qualifies the profile ID. A source URI must carry independent scope evidence.",
+        "summaries": "Intentionally unsupported: omit validator contents, arbitrary configuration URIs and retrieved values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_configuration_profile.html.markdown",
+        "shapes": {
+          "application_id": [
+            "string"
+          ],
+          "configuration_profile_id": [
+            "string"
+          ],
+          "location_uri": [
+            "string"
+          ],
+          "retrieval_role_arn": [
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ],
+          "validator.type": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "application_id": "required",
+          "configuration_profile_id": "computed",
+          "location_uri": "required",
+          "retrieval_role_arn": "optional",
+          "kms_key_identifier": "optional",
+          "validator.type": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceConfigurationProfile. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "application_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "configuration_profile_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_appconfig_deployment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1586,
+      "gap": "#1586 — Verify application, environment and profile IDs together, a compatible deployment strategy, hosted version within its application and profile, and the configured KMS identifier. Version strings and deployment state do not identify arbitrary external versions or outcomes. Verify the joint application and environment context before presenting ownership. Strategies and keys remain shared.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_id",
+          "environment_id",
+          "configuration_profile_id",
+          "configuration_version",
+          "deployment_strategy_id",
+          "kms_key_identifier",
+          "kms_key_arn",
+          "state"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Deployment resource.",
+        "ownership": "Missing: Verify the joint application and environment context before presenting ownership. Strategies and keys remain shared.",
+        "network": "Not applicable: An AppConfig rollout describes configuration selection, without target network inventory.",
+        "references": "Missing: Verify application, environment and profile IDs together, a compatible deployment strategy, hosted version within its application and profile, and the configured KMS identifier. Version strings and deployment state do not identify arbitrary external versions or outcomes.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The application qualifies environment and profile IDs. The hosted version number is local to the profile.",
+        "summaries": "Intentionally unsupported: omit deployment payloads, configuration contents and rollout state. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_deployment.html.markdown",
+        "shapes": {
+          "application_id": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "configuration_profile_id": [
+            "string"
+          ],
+          "configuration_version": [
+            "string"
+          ],
+          "deployment_strategy_id": [
+            "string"
+          ],
+          "kms_key_identifier": [
+            "string"
+          ],
+          "kms_key_arn": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "application_id": "required",
+          "environment_id": "required",
+          "configuration_profile_id": "required",
+          "configuration_version": "required",
+          "deployment_strategy_id": "required",
+          "kms_key_identifier": "optional",
+          "kms_key_arn": "computed",
+          "state": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDeployment. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appconfig_deployment_strategy": {
+      "status": "Basic-only",
+      "priority": "P3",
+      "gap": "Basic support preserves a reusable strategy. The replicate_to enum selects a service behavior and supplies no managed document identifier.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "deployment_duration_in_minutes",
+          "growth_factor",
+          "replicate_to",
+          "id",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Deployment Strategy resource.",
+        "ownership": "Not applicable: A shared strategy remains independent of deployments.",
+        "network": "Not applicable: Rollout timing and replication mode are control-plane settings.",
+        "references": "Supported: Basic support preserves a reusable strategy. The replicate_to enum selects a service behavior and supplies no managed document identifier.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The strategy definition is regional. The replication enum is not another region.",
+        "summaries": "Intentionally unsupported: omit timing and growth parameters as inferred rollout outcomes. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_deployment_strategy.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "deployment_duration_in_minutes": [
+            "number"
+          ],
+          "growth_factor": [
+            "number"
+          ],
+          "replicate_to": [
+            "string"
+          ],
+          "id": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "deployment_duration_in_minutes": "required",
+          "growth_factor": "required",
+          "replicate_to": "required",
+          "id": "optional/computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDeploymentStrategy. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appconfig_environment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1585,
+      "gap": "#1585 — Verify the application ID and each unordered monitor's explicit CloudWatch alarm and IAM monitor role ARN. Returned state does not identify health or alarms. Resolve app ownership separately from shared alarms and roles.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_id",
+          "environment_id",
+          "monitor.alarm_arn",
+          "monitor.alarm_role_arn",
+          "arn",
+          "state"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS AppConfig service label. Provides an AppConfig Environment resource.",
+        "ownership": "Missing: Resolve app ownership separately from shared alarms and roles.",
+        "network": "Not applicable: Monitoring configuration does not assign the environment to a VPC.",
+        "references": "Missing: Verify the application ID and each unordered monitor's explicit CloudWatch alarm and IAM monitor role ARN. Returned state does not identify health or alarms.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Match the environment in its application and qualify each alarm using ARN and deployment evidence.",
+        "summaries": "Intentionally unsupported: omit monitor status and state values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_environment.html.markdown",
+        "shapes": {
+          "application_id": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "monitor.alarm_arn": [
+            "set",
+            "string"
+          ],
+          "monitor.alarm_role_arn": [
+            "set",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ],
+          "state": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "application_id": "required",
+          "environment_id": "computed",
+          "monitor.alarm_arn": "required",
+          "monitor.alarm_role_arn": "optional",
+          "arn": "computed",
+          "state": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newEnvironmentResource. The same-name data source has a separate lookup contract and does not prove managed ownership. Deprecated attributes include id.",
+        "dataContracts": {
+          "application_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "environment_id": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_appconfig_extension": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1587,
+      "gap": "#1587 — Verify an explicitly configured compatible Lambda, SNS, SQS or EventBridge action ARN and its execution role under their documented action-point shape. Opaque URI alternatives, action names and parameters do not establish resources.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "action_point.point",
+          "action_point.action.uri",
+          "action_point.action.role_arn",
+          "version",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Extension resource.",
+        "ownership": "Not applicable: Extensions can be reused across associations and keep separate identity from action targets.",
+        "network": "Not applicable: Action invocation is independent of network placement.",
+        "references": "Missing: Verify an explicitly configured compatible Lambda, SNS, SQS or EventBridge action ARN and its execution role under their documented action-point shape. Opaque URI alternatives, action names and parameters do not establish resources.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The extension is regional. Target and role ownership must be qualified separately.",
+        "summaries": "Intentionally unsupported: omit action descriptions, parameter definitions and any invocation payload. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_extension.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "action_point.point": [
+            "set",
+            "string"
+          ],
+          "action_point.action.uri": [
+            "set",
+            "set",
+            "string"
+          ],
+          "action_point.action.role_arn": [
+            "set",
+            "set",
+            "string"
+          ],
+          "version": [
+            "number"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "action_point.point": "required",
+          "action_point.action.uri": "required",
+          "action_point.action.role_arn": "optional",
+          "version": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceExtension. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appconfig_extension_association": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1587,
+      "gap": "#1587 — Verify the extension ARN and distinguish application, environment and configuration-profile target ARN. Returned extension version and parameter maps cannot create additional endpoints.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "extension_arn",
+          "resource_arn",
+          "extension_version",
+          "parameters",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Association with the AWS AppConfig service label. Associates an AppConfig Extension with a Resource.",
+        "ownership": "Not applicable: Keep an association between both independently addressable endpoints. Do not embed the shared extension in one target.",
+        "network": "Not applicable: Applying an extension does not establish network placement.",
+        "references": "Missing: Verify the extension ARN and distinguish application, environment and configuration-profile target ARN. Returned extension version and parameter maps cannot create additional endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Verify target region and application-qualified identity independently of the extension version.",
+        "summaries": "Intentionally unsupported: omit association parameter values. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_extension_association.html.markdown",
+        "shapes": {
+          "extension_arn": [
+            "string"
+          ],
+          "resource_arn": [
+            "string"
+          ],
+          "extension_version": [
+            "number"
+          ],
+          "parameters": [
+            [
+              "map",
+              "string"
+            ]
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "extension_arn": "required",
+          "resource_arn": "required",
+          "extension_version": "computed",
+          "parameters": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceExtensionAssociation. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appconfig_hosted_configuration_version": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1585,
+      "gap": "#1585 — Verify application and configuration profile IDs as joint context for the computed version number. Do not parse or expose the hosted content. A version belongs to a verified configuration profile within its app. An equal version number alone does not establish ownership.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_id",
+          "configuration_profile_id",
+          "content_type",
+          "version_number",
+          "version_label",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Hosted Configuration Version resource.",
+        "ownership": "Missing: A version belongs to a verified configuration profile within its app. An equal version number alone does not establish ownership.",
+        "network": "Not applicable: Content type and version do not represent deployment placement.",
+        "references": "Missing: Verify application and configuration profile IDs as joint context for the computed version number. Do not parse or expose the hosted content.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Version identity is scoped to the application and regional profile.",
+        "summaries": "Intentionally unsupported: omit all hosted configuration content. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appconfig_hosted_configuration_version.html.markdown",
+        "shapes": {
+          "application_id": [
+            "string"
+          ],
+          "configuration_profile_id": [
+            "string"
+          ],
+          "content_type": [
+            "string"
+          ],
+          "version_number": [
+            "number"
+          ],
+          "version_label": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "application_id": "required",
+          "configuration_profile_id": "required",
+          "content_type": "required",
+          "version_number": "computed",
+          "version_label": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceHostedConfigurationVersion. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appfabric_app_authorization": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1588,
+      "gap": "#1588 — Verify the app bundle ARN. Provider app, auth type and tenant selectors do not establish a separately managed SaaS resource. Qualify authorization ownership by the bundle ARN before any nested presentation.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app",
+          "app_bundle_arn",
+          "auth_type",
+          "tenant.tenant_identifier",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Policy with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric App Authorization.",
+        "ownership": "Missing: Qualify authorization ownership by the bundle ARN before any nested presentation.",
+        "network": "Not applicable: Authorization does not describe a network or workload attachment.",
+        "references": "Missing: Verify the app bundle ARN. Provider app, auth type and tenant selectors do not establish a separately managed SaaS resource.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use bundle account and region and keep tenant and external app identifiers outside AWS scope.",
+        "summaries": "Intentionally unsupported: omit OAuth or API key credentials, auth URLs and tenant display details. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appfabric_app_authorization.html.markdown",
+        "shapes": {
+          "app": [
+            "string"
+          ],
+          "app_bundle_arn": [
+            "string"
+          ],
+          "auth_type": [
+            "string"
+          ],
+          "tenant.tenant_identifier": [
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app": "required",
+          "app_bundle_arn": "required",
+          "auth_type": "required",
+          "tenant.tenant_identifier": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAppAuthorizationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appfabric_app_authorization_connection": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1588,
+      "gap": "#1588 — Verify the configured app bundle and authorization ARN or UUID in bundle context. Returned tenant and app fields and OAuth request material do not prove more endpoints. Verify both the bundle and the compatible authorization before treating the connection as its configuration.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_bundle_arn",
+          "app_authorization_arn",
+          "app",
+          "tenant"
+        ],
+        "placement": "Supported: managed Logical Policy with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric App Authorization Connection.",
+        "ownership": "Missing: Verify both the bundle and the compatible authorization before treating the connection as its configuration.",
+        "network": "Not applicable: Authorization connection is a service control-plane association.",
+        "references": "Missing: Verify the configured app bundle and authorization ARN or UUID in bundle context. Returned tenant and app fields and OAuth request material do not prove more endpoints.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. An authorization UUID requires bundle, account and region qualification.",
+        "summaries": "Intentionally unsupported: omit authorization codes, redirect locations and tenant information. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appfabric_app_authorization_connection.html.markdown",
+        "shapes": {
+          "app_bundle_arn": [
+            "string"
+          ],
+          "app_authorization_arn": [
+            "string"
+          ],
+          "app": [
+            "string"
+          ],
+          "tenant": [
+            [
+              "list",
+              [
+                "object",
+                {
+                  "tenant_display_name": "string",
+                  "tenant_identifier": "string"
+                }
+              ]
+            ]
+          ]
+        },
+        "contracts": {
+          "app_bundle_arn": "required",
+          "app_authorization_arn": "required",
+          "app": "computed",
+          "tenant": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAppAuthorizationConnectionResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appfabric_app_bundle": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1588,
+      "gap": "#1588 — Verify the configured customer-managed KMS key ARN. An omitted key means an AWS-owned key and does not identify a managed resource.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "customer_managed_key_arn",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric AppBundle.",
+        "ownership": "Not applicable: A bundle remains independently addressable. The encryption key can be shared.",
+        "network": "Not applicable: Encryption is independent of VPC attachment.",
+        "references": "Missing: Verify the configured customer-managed KMS key ARN. An omitted key means an AWS-owned key and does not identify a managed resource.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Bundle and encryption key require compatible account and regional evidence.",
+        "summaries": "Intentionally unsupported: omit application data or key material. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appfabric_app_bundle.html.markdown",
+        "shapes": {
+          "customer_managed_key_arn": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "customer_managed_key_arn": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newAppBundleResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appfabric_ingestion": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1589,
+      "gap": "#1589 — Verify the configured bundle. Match the existing authorization only when bundle, app and tenant evidence uniquely qualifies it. The tenant identifier is not an AWS account ID. Qualify ingestion ownership using the app bundle and preserve the declaration on ambiguous authorization.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_bundle_arn",
+          "app",
+          "tenant_id",
+          "ingestion_type",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric Ingestion.",
+        "ownership": "Missing: Qualify ingestion ownership using the app bundle and preserve the declaration on ambiguous authorization.",
+        "network": "Not applicable: SaaS audit ingestion does not attach to a network.",
+        "references": "Missing: Verify the configured bundle. Match the existing authorization only when bundle, app and tenant evidence uniquely qualifies it. The tenant identifier is not an AWS account ID.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Bundle identity determines the regional context, independently of tenant identity.",
+        "summaries": "Intentionally unsupported: omit audit event contents, tenant values and ingestion status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appfabric_ingestion.html.markdown",
+        "shapes": {
+          "app_bundle_arn": [
+            "string"
+          ],
+          "app": [
+            "string"
+          ],
+          "tenant_id": [
+            "string"
+          ],
+          "ingestion_type": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_bundle_arn": "required",
+          "app": "required",
+          "tenant_id": "required",
+          "ingestion_type": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newIngestionResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appfabric_ingestion_destination": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1589,
+      "gap": "#1589 — Verify the ingestion and app bundle together. Verify the configured S3 bucket or Firehose stream by known identity and matching explicit references under the selected destination shape. Bind only to the verified ingestion; keep the bucket and stream shared and independent.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "app_bundle_arn",
+          "ingestion_arn",
+          "destination_configuration.audit_log.destination.s3_bucket.bucket_name",
+          "destination_configuration.audit_log.destination.firehose_stream.stream_name",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric Ingestion Destination.",
+        "ownership": "Missing: Bind only to the verified ingestion; keep the bucket and stream shared and independent.",
+        "network": "Not applicable: Delivery to S3 or Firehose does not place the destination in an ingestion network.",
+        "references": "Missing: Verify the ingestion and app bundle together. Verify the configured S3 bucket or Firehose stream by known identity and matching explicit references under the selected destination shape.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify both the ingestion and destination in their actual scopes.",
+        "summaries": "Intentionally unsupported: omit audit records, delivery prefixes and processing format contents. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appfabric_ingestion_destination.html.markdown",
+        "shapes": {
+          "app_bundle_arn": [
+            "string"
+          ],
+          "ingestion_arn": [
+            "string"
+          ],
+          "destination_configuration.audit_log.destination.s3_bucket.bucket_name": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "destination_configuration.audit_log.destination.firehose_stream.stream_name": [
+            "list",
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "app_bundle_arn": "required",
+          "ingestion_arn": "required",
+          "destination_configuration.audit_log.destination.s3_bucket.bucket_name": "required",
+          "destination_configuration.audit_log.destination.firehose_stream.stream_name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newIngestionDestinationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appflow_connector_profile": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1590,
+      "gap": "#1590 — Verify the configured KMS key and typed Redshift connector IAM role ARNs when the selector and compatible block match. Computed credentials ARN and connection mode do not establish a managed secret or a VPC.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "connector_type",
+          "connection_mode",
+          "kms_arn",
+          "credentials_arn",
+          "connector_profile_config.connector_profile_properties.redshift.role_arn",
+          "connector_profile_config.connector_profile_properties.redshift.data_api_role_arn",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon AppFlow service label. Provides an AppFlow Connector Profile resource.",
+        "ownership": "Not applicable: A connector profile can serve multiple flows and remains independent.",
+        "network": "Not applicable: The Private connection mode alone does not establish a VPC endpoint or subnet for the connector.",
+        "references": "Missing: Verify the configured KMS key and typed Redshift connector IAM role ARNs when the selector and compatible block match. Computed credentials ARN and connection mode do not establish a managed secret or a VPC.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Connector profile names are regional, and their configured connector type constrains compatible flows.",
+        "summaries": "Intentionally unsupported: omit all credentials, tokens, connector URLs and private connection details. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appflow_connector_profile.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "connector_type": [
+            "string"
+          ],
+          "connection_mode": [
+            "string"
+          ],
+          "kms_arn": [
+            "string"
+          ],
+          "credentials_arn": [
+            "string"
+          ],
+          "connector_profile_config.connector_profile_properties.redshift.role_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "connector_profile_config.connector_profile_properties.redshift.data_api_role_arn": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "connector_type": "required",
+          "connection_mode": "required",
+          "kms_arn": "optional/computed",
+          "credentials_arn": "computed",
+          "connector_profile_config.connector_profile_properties.redshift.role_arn": "required",
+          "connector_profile_config.connector_profile_properties.redshift.data_api_role_arn": "optional",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceConnectorProfile. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appflow_flow": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1590,
+      "gap": "#1590 — Verify connector profiles under each typed source or destination block, explicitly configured S3 buckets, catalog database and role, and the configured KMS key. Other connector-specific objects and task mappings require separate bounded contracts before inference.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "kms_arn",
+          "source_flow_config.connector_type",
+          "source_flow_config.connector_profile_name",
+          "source_flow_config.source_connector_properties.s3.bucket_name",
+          "destination_flow_config.connector_type",
+          "destination_flow_config.connector_profile_name",
+          "destination_flow_config.destination_connector_properties.s3.bucket_name",
+          "metadata_catalog_config.glue_data_catalog.role_arn",
+          "metadata_catalog_config.glue_data_catalog.database_name",
+          "flow_status"
+        ],
+        "placement": "Supported: managed Logical Node with the Amazon AppFlow service label. Provides an AppFlow Flow resource.",
+        "ownership": "Not applicable: Profiles, catalogs and buckets remain reusable. A flow does not own these targets.",
+        "network": "Not applicable: A configured data flow is a service relation without VPC placement evidence.",
+        "references": "Missing: Verify connector profiles under each typed source or destination block, explicitly configured S3 buckets, catalog database and role, and the configured KMS key. Other connector-specific objects and task mappings require separate bounded contracts before inference.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The flow and each selected profile or bucket require separate verified deployment and owner evidence.",
+        "summaries": "Intentionally unsupported: omit task mappings, transformed record contents, schedules and actual flow status. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appflow_flow.html.markdown",
+        "shapes": {
+          "kms_arn": [
+            "string"
+          ],
+          "source_flow_config.connector_type": [
+            "list",
+            "string"
+          ],
+          "source_flow_config.connector_profile_name": [
+            "list",
+            "string"
+          ],
+          "source_flow_config.source_connector_properties.s3.bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "destination_flow_config.connector_type": [
+            "list",
+            "string"
+          ],
+          "destination_flow_config.connector_profile_name": [
+            "list",
+            "string"
+          ],
+          "destination_flow_config.destination_connector_properties.s3.bucket_name": [
+            "list",
+            "list",
+            "list",
+            "string"
+          ],
+          "metadata_catalog_config.glue_data_catalog.role_arn": [
+            "list",
+            "list",
+            "string"
+          ],
+          "metadata_catalog_config.glue_data_catalog.database_name": [
+            "list",
+            "list",
+            "string"
+          ],
+          "flow_status": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "kms_arn": "optional/computed",
+          "source_flow_config.connector_type": "required",
+          "source_flow_config.connector_profile_name": "optional",
+          "source_flow_config.source_connector_properties.s3.bucket_name": "required",
+          "destination_flow_config.connector_type": "required",
+          "destination_flow_config.connector_profile_name": "optional",
+          "destination_flow_config.destination_connector_properties.s3.bucket_name": "required",
+          "metadata_catalog_config.glue_data_catalog.role_arn": "required",
+          "metadata_catalog_config.glue_data_catalog.database_name": "required",
+          "flow_status": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceFlow. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appintegrations_data_integration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1591,
+      "gap": "#1591 — Verify the KMS key ARN and decode only documented AppFlow connector-profile URI forms with known compatible connector type and qualified profile identity. Do not infer objects from schedule selections.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "name",
+          "kms_key",
+          "source_uri",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon AppIntegrations service label. Provides details about a specific Amazon AppIntegrations Data Integration",
+        "ownership": "Not applicable: The AppFlow profile and encryption key remain independent.",
+        "network": "Not applicable: An integration URI specifies a data source, with no VPC placement proof.",
+        "references": "Missing: Verify the KMS key ARN and decode only documented AppFlow connector-profile URI forms with known compatible connector type and qualified profile identity. Do not infer objects from schedule selections.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The integration and referenced profile require compatible account and regional evidence.",
+        "summaries": "Intentionally unsupported: omit URI credentials, schedule objects and fetched data. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appintegrations_data_integration.html.markdown",
+        "shapes": {
+          "name": [
+            "string"
+          ],
+          "kms_key": [
+            "string"
+          ],
+          "source_uri": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "name": "required",
+          "kms_key": "required",
+          "source_uri": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceDataIntegration. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_appintegrations_event_integration": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1591,
+      "gap": "#1591 — Verify the configured EventBridge bus identity. The event source filter is a selector and does not identify a remote managed producer.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "eventbridge_bus",
+          "event_filter.source",
+          "name",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Controller with the Amazon AppIntegrations service label. Provides details about a specific Amazon AppIntegrations Event Integration",
+        "ownership": "Not applicable: Event buses can serve multiple integrations and remain independent.",
+        "network": "Not applicable: Event subscription is unrelated to VPC attachment.",
+        "references": "Missing: Verify the configured EventBridge bus identity. The event source filter is a selector and does not identify a remote managed producer.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the event bus independently by its proven scope.",
+        "summaries": "Intentionally unsupported: omit event filter values and event payloads. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/appintegrations_event_integration.html.markdown",
+        "shapes": {
+          "eventbridge_bus": [
+            "string"
+          ],
+          "event_filter.source": [
+            "list",
+            "string"
+          ],
+          "name": [
+            "string"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "eventbridge_bus": "required",
+          "event_filter.source": "required",
+          "name": "required",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed resourceEventIntegration. The same-name data source has a separate lookup contract and does not prove managed ownership.",
+        "dataContracts": {
+          "id": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "name": {
+            "shape": "string",
+            "contract": "required"
+          },
+          "region": {
+            "shape": "string",
+            "contract": "optional/computed"
+          },
+          "tags": {
+            "shape": [
+              "map",
+              "string"
+            ],
+            "contract": "optional/computed"
+          }
+        }
+      }
+    },
+    "aws_m2_application": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1592,
+      "gap": "#1592 — Verify the configured KMS key, IAM role and documented S3 definition locator using explicit evidence. Keep the computed current version distinct from an explicit deployment version.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_id",
+          "engine_type",
+          "kms_key_id",
+          "role_arn",
+          "definition.s3_location",
+          "current_version",
+          "arn"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS Mainframe Modernization service label. Terraform resource for managing an AWS Mainframe Modernization Application.",
+        "ownership": "Not applicable: The application, role and key remain individually addressable and reusable.",
+        "network": "Not applicable: The application definition does not configure environment network placement.",
+        "references": "Missing: Verify the configured KMS key, IAM role and documented S3 definition locator using explicit evidence. Keep the computed current version distinct from an explicit deployment version.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The regional application identifier and version context are independent of S3 location.",
+        "summaries": "Intentionally unsupported: omit inline definition bytes, S3 object contents and runtime version state. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/m2_application.html.markdown",
+        "shapes": {
+          "application_id": [
+            "string"
+          ],
+          "engine_type": [
+            "string"
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "role_arn": [
+            "string"
+          ],
+          "definition.s3_location": [
+            "list",
+            "string"
+          ],
+          "current_version": [
+            "number"
+          ],
+          "arn": [
+            "string"
+          ]
+        },
+        "contracts": {
+          "application_id": "computed",
+          "engine_type": "required",
+          "kms_key_id": "optional",
+          "role_arn": "optional",
+          "definition.s3_location": "optional",
+          "current_version": "computed",
+          "arn": "computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newApplicationResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_m2_deployment": {
+      "status": "Basic-only",
+      "priority": "P2",
+      "issue": 1592,
+      "gap": "#1592 — Verify configured application and environment IDs, and qualify version evidence within that application. Start is a requested action, and the returned deployment ID does not prove execution or health.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "application_id",
+          "application_version",
+          "deployment_id",
+          "environment_id",
+          "start"
+        ],
+        "placement": "Supported: managed Logical Controller with the AWS Mainframe Modernization service label. Terraform resource for managing an AWS Mainframe Modernization Deployment.",
+        "ownership": "Not applicable: The deployment relates separately scoped application and environment objects without embedding either.",
+        "network": "Not applicable: The application inherits no network placement from a deployment reference. Review the environment network contract separately.",
+        "references": "Missing: Verify configured application and environment IDs, and qualify version evidence within that application. Start is a requested action, and the returned deployment ID does not prove execution or health.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require account, regional and engine compatibility for the application and environment.",
+        "summaries": "Intentionally unsupported: omit deployment status and workload health. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/m2_deployment.html.markdown",
+        "shapes": {
+          "application_id": [
+            "string"
+          ],
+          "application_version": [
+            "number"
+          ],
+          "deployment_id": [
+            "string"
+          ],
+          "environment_id": [
+            "string"
+          ],
+          "start": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "application_id": "required",
+          "application_version": "required",
+          "deployment_id": "computed",
+          "environment_id": "required",
+          "start": "required"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newDeploymentResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
+    },
+    "aws_m2_environment": {
+      "status": "Basic-only",
+      "priority": "P1",
+      "issue": 1592,
+      "gap": "#1592 — Verify the configured encryption key and typed EFS or FSx filesystem identifiers. The returned load balancer ARN and public access flag do not establish a configured load balancer or reachability. Verify complete subnet and security-group sets with a common VPC. Multiple subnets do not identify a unique subnet card. Retain the unresolved placement when evidence is incomplete.",
+      "review": {
+        "issue": 733,
+        "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
+        "providerCommit": "5e13eedee7c22ac362e6ffdfbdcfd23a5f9f797f",
+        "fields": [
+          "environment_id",
+          "engine_type",
+          "subnet_ids",
+          "security_group_ids",
+          "kms_key_id",
+          "storage_configuration.efs.file_system_id",
+          "storage_configuration.fsx.file_system_id",
+          "load_balancer_arn",
+          "publicly_accessible"
+        ],
+        "placement": "Supported: managed Logical Node with the AWS Mainframe Modernization service label. Terraform resource for managing an AWS Mainframe Modernization Environment.",
+        "ownership": "Not applicable: Environment, filesystems and security groups keep independent identities.",
+        "network": "Missing: Verify complete subnet and security-group sets with a common VPC. Multiple subnets do not identify a unique subnet card. Retain the unresolved placement when evidence is incomplete.",
+        "references": "Missing: Verify the configured encryption key and typed EFS or FSx filesystem identifiers. The returned load balancer ARN and public access flag do not establish a configured load balancer or reachability.",
+        "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Provider region qualifies the regional environment. Network and storage candidates require compatible scope.",
+        "summaries": "Intentionally unsupported: omit filesystem paths, runtime connectivity and inferred public reachability. Preserve the resource label and action without exposing those values.",
+        "officialDocumentation": "website/docs/r/m2_environment.html.markdown",
+        "shapes": {
+          "environment_id": [
+            "string"
+          ],
+          "engine_type": [
+            "string"
+          ],
+          "subnet_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "security_group_ids": [
+            [
+              "set",
+              "string"
+            ]
+          ],
+          "kms_key_id": [
+            "string"
+          ],
+          "storage_configuration.efs.file_system_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "storage_configuration.fsx.file_system_id": [
+            "list",
+            "list",
+            "string"
+          ],
+          "load_balancer_arn": [
+            "string"
+          ],
+          "publicly_accessible": [
+            "bool"
+          ]
+        },
+        "contracts": {
+          "environment_id": "computed",
+          "engine_type": "required",
+          "subnet_ids": "optional/computed",
+          "security_group_ids": "optional/computed",
+          "kms_key_id": "optional",
+          "storage_configuration.efs.file_system_id": "required",
+          "storage_configuration.fsx.file_system_id": "required",
+          "load_balancer_arn": "computed",
+          "publicly_accessible": "optional/computed"
+        },
+        "implementationEvidence": [
+          "src/provider/aws/basic_entries.rs",
+          "src/provider/aws/classification.rs",
+          "src/provider/aws/scope.rs",
+          "src/provider/aws/service_references.rs",
+          "tests/unit/aws_inventory.rs",
+          "tests/unit/resource_support.rs"
+        ],
+        "managedDataContract": "Managed newEnvironmentResource. No same-name data source in the pinned schema.",
+        "dataContracts": {}
+      }
     }
   }
 }

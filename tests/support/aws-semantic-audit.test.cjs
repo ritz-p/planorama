@@ -853,3 +853,22 @@ test('#732 separates delegated targets, document payloads and cross-region input
   assert.ok(review('ssmincidents_replication_set').fields.includes('regions.kms_key_arn'));
   assert.equal(review('ssmquicksetup_configuration_manager').contracts['configuration_definition.local_deployment_administration_role_arn'], 'optional');
 });
+
+test('#733 distinguishes typed application configuration from service outputs and payloads', () => {
+  const decisions = auditedServiceTypes(733, [
+    'amplify', 'appconfig', 'appfabric', 'appflow', 'appintegrations', 'm2',
+  ], 25);
+  const review = type => decisions['aws_' + type].review;
+  assert.match(review('amplify_app').references, /#1493/);
+  assert.deepEqual(review('amplify_domain_association').shapes['sub_domain.branch_name'], ['set', 'string']);
+  assert.equal(review('amplify_webhook').contracts.url, 'computed');
+  assert.deepEqual(review('appconfig_environment').shapes['monitor.alarm_arn'], ['set', 'string']);
+  assert.equal(review('appconfig_deployment').contracts.kms_key_arn, 'computed');
+  assert.equal(review('appconfig_hosted_configuration_version').contracts.version_number, 'computed');
+  assert.match(review('appconfig_deployment_strategy').references, /enum/);
+  assert.equal(review('appflow_connector_profile').contracts.credentials_arn, 'computed');
+  assert.equal(review('appfabric_app_authorization_connection').contracts.app_authorization_arn, 'required');
+  assert.equal(review('appintegrations_data_integration').contracts.source_uri, 'required');
+  assert.equal(review('m2_environment').contracts.load_balancer_arn, 'computed');
+  assert.match(review('m2_environment').network, /common VPC/);
+});
