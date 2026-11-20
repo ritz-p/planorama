@@ -911,10 +911,23 @@ fn mainframe_network_requires_complete_subnets_and_groups_in_one_vpc() {
                 && graph.nodes[edge.to].address == "aws_m2_environment.main"
         })
     };
+    let placement_is_logical = |fixture: &Value| {
+        let rendered = crate::generate(&fixture.to_string(), &crate::Options::default()).unwrap();
+        let svg = roxmltree::Document::parse(&rendered.content).unwrap();
+        svg.descendants()
+            .find(|element| {
+                element.attribute("data-terraform-address") == Some("aws_m2_environment.main")
+            })
+            .unwrap()
+            .attribute("data-placement")
+            == Some("logical")
+    };
     assert!(vpc(&fixture));
+    assert!(!placement_is_logical(&fixture));
     fixture["resource_changes"][4]["change"]["after_sensitive"] =
         json!({"security_group_ids":true});
     assert!(!vpc(&fixture));
+    assert!(placement_is_logical(&fixture));
     fixture["resource_changes"][4]["change"]["after_sensitive"] = Value::Null;
     fixture["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("vpc-unrelated");
     assert!(!vpc(&fixture));

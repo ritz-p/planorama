@@ -1060,6 +1060,7 @@ fn annotate_mainframe_versions(
 }
 
 pub(super) fn present(raw: &Input, graph: &mut crate::model::Graph) {
+    let first = graph.edges.len();
     super::lambda_core::present_network(
         raw,
         graph,
@@ -1067,6 +1068,9 @@ pub(super) fn present(raw: &Input, graph: &mut crate::model::Graph) {
         ("subnet_ids", "security_group_ids"),
         bindings,
     );
+    for edge in &graph.edges[first..] {
+        graph.nodes[edge.to].placement = crate::model::Placement::Spatial;
+    }
 }
 
 fn iam_role(e: &Evidence<'_>, source: usize) -> bool {
