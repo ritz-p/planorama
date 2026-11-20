@@ -112,8 +112,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_kms_key", &["arn"])],
         ),
         (SIP_APP, "endpoints.lambda_arn") => {
-            Rule::new("Chime SIP Lambda endpoint", LAMBDA, false, &["endpoints"])
-                .in_control_plane_account()
+            scalar("Chime SIP Lambda endpoint", LAMBDA).in_control_plane_account()
         }
         (SIP_RULE, "trigger_value") => scalar(
             "Chime SIP outbound host",
