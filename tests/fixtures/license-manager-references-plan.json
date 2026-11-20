@@ -1,0 +1,220 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_licensemanager_association.host",
+      "mode": "managed",
+      "type": "aws_licensemanager_association",
+      "name": "host",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "license_configuration_arn": "arn:aws:license-manager:us-east-1:123456789012:license-configuration:lic-example",
+          "resource_arn": "arn:aws:ec2:us-east-1:123456789012:instance/i-example"
+        }
+      }
+    },
+    {
+      "address": "aws_licensemanager_grant.recipient",
+      "mode": "managed",
+      "type": "aws_licensemanager_grant",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:license-manager::123456789012:grant:g-example",
+          "home_region": "us-east-1",
+          "principal": "arn:aws:iam::210987654321:root",
+          "license_arn": "arn:aws:license-manager:us-east-1:123456789012:license:l-example",
+          "allowed_operations": [
+            "CheckoutLicense"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_licensemanager_grant_accepter.recipient",
+      "mode": "managed",
+      "type": "aws_licensemanager_grant_accepter",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "grant_arn": "arn:aws:license-manager::123456789012:grant:g-example",
+          "principal": "arn:aws:iam::210987654321:root",
+          "status": "ACTIVE"
+        }
+      }
+    },
+    {
+      "address": "aws_licensemanager_license_configuration.cpu",
+      "mode": "managed",
+      "type": "aws_licensemanager_license_configuration",
+      "name": "cpu",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:license-manager:us-east-1:123456789012:license-configuration:lic-example",
+          "name": "cpu"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.machine",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "machine",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:instance/i-example",
+          "id": "i-example"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.recipient",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "210987654321",
+          "name": "recipient"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      },
+      "aws.recipient": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "recipient",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::210987654321:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_licensemanager_association.host",
+          "mode": "managed",
+          "type": "aws_licensemanager_association",
+          "name": "host",
+          "provider_config_key": "aws",
+          "expressions": {
+            "license_configuration_arn": {
+              "references": [
+                "aws_licensemanager_license_configuration.cpu.arn"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_instance.machine.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_licensemanager_grant.recipient",
+          "mode": "managed",
+          "type": "aws_licensemanager_grant",
+          "name": "recipient",
+          "provider_config_key": "aws",
+          "expressions": {
+            "principal": {
+              "references": [
+                "aws_organizations_account.recipient.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_licensemanager_grant_accepter.recipient",
+          "mode": "managed",
+          "type": "aws_licensemanager_grant_accepter",
+          "name": "recipient",
+          "provider_config_key": "aws.recipient",
+          "expressions": {
+            "grant_arn": {
+              "references": [
+                "aws_licensemanager_grant.recipient.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_licensemanager_license_configuration.cpu",
+          "mode": "managed",
+          "type": "aws_licensemanager_license_configuration",
+          "name": "cpu",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_instance.machine",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "machine",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.recipient",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "recipient",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

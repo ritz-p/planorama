@@ -82,3 +82,65 @@ fn controltower_verifies_configured_endpoints() {
         false,
     );
 }
+
+#[test]
+fn license_grant_acceptance_uses_known_home_region() {
+    let fixture = include_str!("../../fixtures/license-manager-references-plan.json");
+    for (home_region, unknown, expected) in [
+        (json!("us-east-1"), false, true),
+        (json!("us-west-2"), false, false),
+        (Value::Null, false, false),
+        (json!("us-east-1"), true, false),
+    ] {
+        let mut plan: Value = serde_json::from_str(fixture).unwrap();
+        let grant = plan["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|row| row["address"] == "aws_licensemanager_grant.recipient")
+            .unwrap();
+        grant["change"]["after"]["home_region"] = home_region;
+        grant["change"]["after_unknown"]["home_region"] = json!(unknown);
+        let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+        assert_eq!(
+            verified(
+                &graph,
+                "aws_licensemanager_grant_accepter.recipient",
+                "grant_arn",
+                Some("Accepted license grant")
+            ),
+            expected
+        );
+    }
+}
+
+#[test]
+fn license_manager_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/license-manager-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            (
+                "aws_licensemanager_association.host",
+                "license_configuration_arn",
+            ),
+            ("aws_licensemanager_association.host", "resource_arn"),
+            ("aws_licensemanager_grant.recipient", "principal"),
+            ("aws_licensemanager_grant_accepter.recipient", "grant_arn"),
+        ],
+        ("aws_licensemanager_license_configuration.cpu", "arn"),
+    );
+    assert!(label("aws_licensemanager_grant", "license_arn").is_none());
+    assert!(label("aws_licensemanager_grant_accepter", "principal").is_none());
+    assert!(label("aws_licensemanager_grant_accepter", "status").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_licensemanager_association.host",
+        "resource_arn",
+        "aws_instance.machine",
+        "License assignment target",
+        true,
+    );
+}
