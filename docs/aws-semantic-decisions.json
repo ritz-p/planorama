@@ -76117,7 +76117,7 @@
       }
     },
     "aws_route53recoveryreadiness_cell": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1488,
       "gap": "#1488 — Resolve explicitly configured nested cell ARNs. Returned parent scopes are not inputs or evidence of workload ownership.",
@@ -76133,7 +76133,7 @@
         "placement": "Supported: Logical Node for the managed route53recoveryreadiness_cell declaration. Provides an AWS Route 53 Recovery Readiness Cell",
         "ownership": "Not applicable: The managed route53recoveryreadiness_cell declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_cell.",
-        "references": "Missing: Resolve explicitly configured nested cell ARNs. Returned parent scopes are not inputs or evidence of workload ownership.",
+        "references": "Supported: Resolve explicitly configured nested cell ARNs. Returned parent scopes are not inputs or evidence of workload ownership.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_cell summaries.",
         "officialDocumentation": "website/docs/r/route53recoveryreadiness_cell.html.markdown",
@@ -76166,14 +76166,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_readiness.rs",
+          "tests/unit/semantic/arc_readiness.rs"
         ],
         "managedDataContract": "Managed resourceCell. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_route53recoveryreadiness_readiness_check": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1488,
       "gap": "#1488 — Resolve the resource set by verified name in the same control-plane account. The association does not establish readiness.",
@@ -76188,7 +76190,7 @@
         "placement": "Supported: Logical Node for the managed route53recoveryreadiness_readiness_check declaration. Provides an AWS Route 53 Recovery Readiness Readiness Check",
         "ownership": "Not applicable: The managed route53recoveryreadiness_readiness_check declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_readiness_check.",
-        "references": "Missing: Resolve the resource set by verified name in the same control-plane account. The association does not establish readiness.",
+        "references": "Supported: Resolve the resource set by verified name in the same control-plane account. The association does not establish readiness.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_readiness_check summaries.",
         "officialDocumentation": "website/docs/r/route53recoveryreadiness_readiness_check.html.markdown",
@@ -76211,14 +76213,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_readiness.rs",
+          "tests/unit/semantic/arc_readiness.rs"
         ],
         "managedDataContract": "Managed resourceReadinessCheck. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_route53recoveryreadiness_recovery_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1488,
       "gap": "#1488 — Join configured cell ARNs as readiness scopes. A recovery group does not contain workload networks.",
@@ -76233,7 +76237,7 @@
         "placement": "Supported: Logical Node for the managed route53recoveryreadiness_recovery_group declaration. Provides an AWS Route 53 Recovery Readiness Recovery Group",
         "ownership": "Not applicable: The managed route53recoveryreadiness_recovery_group declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_recovery_group.",
-        "references": "Missing: Join configured cell ARNs as readiness scopes. A recovery group does not contain workload networks.",
+        "references": "Supported: Join configured cell ARNs as readiness scopes. A recovery group does not contain workload networks.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_recovery_group summaries.",
         "officialDocumentation": "website/docs/r/route53recoveryreadiness_recovery_group.html.markdown",
@@ -76259,14 +76263,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_readiness.rs",
+          "tests/unit/semantic/arc_readiness.rs"
         ],
         "managedDataContract": "Managed resourceRecoveryGroup. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_route53recoveryreadiness_resource_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1488,
       "gap": "#1488 — Resolve type-compatible resource ARNs and explicit cell/group scopes per element. DNS target form uses its own hosted-zone and target contract.",
@@ -76283,7 +76289,7 @@
         "placement": "Supported: Logical Node for the managed route53recoveryreadiness_resource_set declaration. Provides an AWS Route 53 Recovery Readiness Resource Set",
         "ownership": "Not applicable: The managed route53recoveryreadiness_resource_set declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Route 53 Recovery Readiness control-plane configuration has no network placement contract for route53recoveryreadiness_resource_set.",
-        "references": "Missing: Resolve type-compatible resource ARNs and explicit cell/group scopes per element. DNS target form uses its own hosted-zone and target contract.",
+        "references": "Supported: Resolve type-compatible resource ARNs and explicit cell/group scopes per element. DNS target form uses its own hosted-zone and target contract.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit readiness results and inferred failover behavior from route53recoveryreadiness_resource_set summaries.",
         "officialDocumentation": "website/docs/r/route53recoveryreadiness_resource_set.html.markdown",
@@ -76321,7 +76327,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_readiness.rs",
+          "tests/unit/semantic/arc_readiness.rs"
         ],
         "managedDataContract": "Managed resourceResourceSet. No same-name data source in 6.70.0.",
         "dataContracts": {}
