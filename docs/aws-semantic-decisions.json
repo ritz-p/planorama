@@ -86581,10 +86581,10 @@
       }
     },
     "aws_appconfig_extension": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1587,
-      "gap": "#1587 — Verify an explicitly configured compatible Lambda, SNS, SQS or EventBridge action ARN and its execution role under their documented action-point shape. Opaque URI alternatives, action names and parameters do not establish resources.",
+      "gap": "#1587 — Verify typed Lambda, SNS, SQS and default EventBridge action ARNs and configured IAM roles in the documented unordered action blocks. Opaque URIs and parameter maps do not identify endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86600,7 +86600,7 @@
         "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Extension resource.",
         "ownership": "Not applicable: Extensions can be reused across associations and keep separate identity from action targets.",
         "network": "Not applicable: Action invocation is independent of network placement.",
-        "references": "Missing: Verify an explicitly configured compatible Lambda, SNS, SQS or EventBridge action ARN and its execution role under their documented action-point shape. Opaque URI alternatives, action names and parameters do not establish resources.",
+        "references": "Supported: Verify typed Lambda, SNS, SQS and default EventBridge action ARNs and configured IAM roles in the documented unordered action blocks. Opaque URIs and parameter maps do not identify endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The extension is regional. Target and role ownership must be qualified separately.",
         "summaries": "Intentionally unsupported: omit action descriptions, parameter definitions and any invocation payload. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appconfig_extension.html.markdown",
@@ -86643,17 +86643,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceExtension. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appconfig_extension_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1587,
-      "gap": "#1587 — Verify the extension ARN and distinguish application, environment and configuration-profile target ARN. Returned extension version and parameter maps cannot create additional endpoints.",
+      "gap": "#1587 — Verify the extension ARN and distinguish application, environment and profile target ARN shapes. Returned extension versions and parameter maps do not identify additional resources.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86668,7 +86670,7 @@
         "placement": "Supported: managed Logical Association with the AWS AppConfig service label. Associates an AppConfig Extension with a Resource.",
         "ownership": "Not applicable: Keep an association between both independently addressable endpoints. Do not embed the shared extension in one target.",
         "network": "Not applicable: Applying an extension does not establish network placement.",
-        "references": "Missing: Verify the extension ARN and distinguish application, environment and configuration-profile target ARN. Returned extension version and parameter maps cannot create additional endpoints.",
+        "references": "Supported: Verify the extension ARN and distinguish application, environment and profile target ARN shapes. Returned extension versions and parameter maps do not identify additional resources.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Verify target region and application-qualified identity independently of the extension version.",
         "summaries": "Intentionally unsupported: omit association parameter values. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appconfig_extension_association.html.markdown",
@@ -86705,7 +86707,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceExtensionAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}

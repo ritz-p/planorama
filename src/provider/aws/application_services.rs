@@ -17,8 +17,12 @@ const CONFIG_VERSION: &str = "aws_appconfig_hosted_configuration_version";
 
 const CONFIG_DEPLOYMENT: &str = "aws_appconfig_deployment";
 
+const CONFIG_EXTENSION: &str = "aws_appconfig_extension";
+const CONFIG_ASSOCIATION: &str = "aws_appconfig_extension_association";
+const ACTION_BLOCKS: &[&str] = &["action_point", "action_point.action"];
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    matches!(kind, AMPLIFY_DOMAIN | CONFIG_ENV)
+    matches!(kind, AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION)
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
@@ -90,6 +94,31 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[(CONFIG_VERSION, &["version_number", "version_label"])],
         ),
         (CONFIG_DEPLOYMENT, "kms_key_identifier") => key("AppConfig deployment encryption key"),
+        (CONFIG_EXTENSION, "action_point.action.uri") => scalar(
+            "AppConfig extension action",
+            &[
+                ("aws_lambda_function", &["arn"]),
+                ("aws_lambda_alias", &["arn"]),
+                ("aws_sns_topic", &["arn"]),
+                ("aws_sqs_queue", &["arn"]),
+                ("aws_cloudwatch_event_bus", &["arn"]),
+            ],
+        )
+        .unordered(ACTION_BLOCKS),
+        (CONFIG_EXTENSION, "action_point.action.role_arn") => {
+            role("AppConfig extension action role").unordered(ACTION_BLOCKS)
+        }
+        (CONFIG_ASSOCIATION, "extension_arn") => {
+            scalar("AppConfig extension", &[(CONFIG_EXTENSION, &["arn"])])
+        }
+        (CONFIG_ASSOCIATION, "resource_arn") => scalar(
+            "AppConfig extension target",
+            &[
+                (CONFIG_APP, &["arn"]),
+                (CONFIG_ENV, &["arn"]),
+                (CONFIG_PROFILE, &["arn"]),
+            ],
+        ),
         _ => return None,
     })
 }
@@ -268,6 +297,11 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         return false;
     }
     match (e.nodes[target].resource_type.as_str(), path) {
+        (CONFIG_EXTENSION, _) => extension_action(e, target, source, path),
+        (CONFIG_ASSOCIATION, "extension_arn") => {
+            service_arn(e, source, "appconfig", "extension/").is_some_and(segment)
+        }
+        (CONFIG_ASSOCIATION, "resource_arn") => extension_target(e, source),
         (CONFIG_PROFILE, "location_uri") => configuration_source(e, target, source),
         (CONFIG_PROFILE, "retrieval_role_arn") => {
             e.text(target, "location_uri").is_some_and(|uri| {
@@ -378,6 +412,100 @@ fn annotate_versions(
             r.service_reference_verified = verified;
         }
     }
+}
+
+fn service_arn<'a>(
+    e: &'a Evidence<'_>,
+    source: usize,
+    service: &str,
+    prefix: &str,
+) -> Option<&'a str> {
+    let resource = arn_resource(&e.nodes[source], e.text(source, "arn")?, service, true)?;
+    resource.strip_prefix(prefix).filter(|id| !id.is_empty())
+}
+
+fn segment(value: &str) -> bool {
+    !value.is_empty() && !value.contains(['/', ':'])
+}
+
+fn extension_target(e: &Evidence<'_>, source: usize) -> bool {
+    let Some(id) = service_arn(e, source, "appconfig", "application/") else {
+        return false;
+    };
+    let parts: Vec<_> = id.split('/').collect();
+    match (e.nodes[source].resource_type.as_str(), parts.as_slice()) {
+        (CONFIG_APP, [app]) => segment(app),
+        (CONFIG_ENV, [app, "environment", env]) => segment(app) && segment(env),
+        (CONFIG_PROFILE, [app, "configurationprofile", profile]) => {
+            segment(app) && segment(profile)
+        }
+        _ => false,
+    }
+}
+
+fn extension_action(e: &Evidence<'_>, target: usize, source: usize, path: &str) -> bool {
+    let Some((action, leaf)) = path.rsplit_once('.') else {
+        return false;
+    };
+    let Some((point, _)) = action.rsplit_once(".action.") else {
+        return false;
+    };
+    let point = e.text(target, &format!("{point}.point"));
+    let deployment_notification = matches!(
+        point,
+        Some(
+            "ON_DEPLOYMENT_START"
+                | "ON_DEPLOYMENT_COMPLETE"
+                | "ON_DEPLOYMENT_ROLLED_BACK"
+                | "ON_DEPLOYMENT_BAKING"
+                | "ON_DEPLOYMENT_STEP"
+        )
+    );
+    if !deployment_notification
+        && !matches!(
+            point,
+            Some(
+                "PRE_CREATE_HOSTED_CONFIGURATION_VERSION"
+                    | "PRE_START_DEPLOYMENT"
+                    | "AT_DEPLOYMENT_TICK"
+            )
+        )
+    {
+        return false;
+    }
+    let Some(uri) = e.text(target, &format!("{action}.uri")) else {
+        return false;
+    };
+    let node = if leaf == "role_arn" {
+        &e.nodes[target]
+    } else {
+        &e.nodes[source]
+    };
+    let (service, prefix) = match uri.split(':').nth(2) {
+        Some("lambda") => ("lambda", "function:"),
+        Some("events") if deployment_notification => ("events", "event-bus/default"),
+        Some("sns") if deployment_notification => ("sns", ""),
+        Some("sqs") if deployment_notification => ("sqs", ""),
+        _ => return false,
+    };
+    if leaf == "uri"
+        && !matches!(
+            (e.nodes[source].resource_type.as_str(), service),
+            ("aws_lambda_function" | "aws_lambda_alias", "lambda")
+                | ("aws_sns_topic", "sns")
+                | ("aws_sqs_queue", "sqs")
+                | ("aws_cloudwatch_event_bus", "events")
+        )
+    {
+        return false;
+    }
+    arn_resource(node, uri, service, true).is_some_and(|resource| match service {
+        "events" => resource == prefix,
+        "lambda" => resource
+            .strip_prefix(prefix)
+            .is_some_and(|name| !name.is_empty()),
+        _ => segment(resource),
+    })
 }
 
 fn iam_role(e: &Evidence<'_>, source: usize) -> bool {
