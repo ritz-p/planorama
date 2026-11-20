@@ -29,19 +29,22 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 false,
                 &[],
             )
+            .with_explicit_destination()
         }
         ("aws_guardduty_organization_admin_account", "admin_account_id") => Rule::new(
             "GuardDuty administrator",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_guardduty_invite_accepter", "master_account_id") => Rule::new(
             "Inviting administrator",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }
