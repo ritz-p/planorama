@@ -838,3 +838,18 @@ test('#731 distinguishes configured delivery endpoints from service outputs', ()
   assert.equal(review('codepipeline_webhook').contracts.target_action, 'required');
   assert.match(review('devicefarm_network_profile').references, /network simulation/);
 });
+
+test('#732 separates delegated targets, document payloads and cross-region inputs', () => {
+  const decisions = auditedServiceTypes(732, [
+    'account', 'cloudcontrol', 'cloudformation', 'cloudtrail', 'controltower', 'licensemanager',
+    'organizations', 'ram', 'resourceexplorer2', 'resourcegroups', 'servicecatalog',
+    'servicecatalogappregistry', 'servicequotas', 'ssm', 'ssmcontacts', 'ssmincidents', 'ssmquicksetup',
+  ], 78);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('licensemanager_grant').contracts.home_region, 'computed');
+  assert.equal(review('cloudtrail').contracts.sns_topic_arn, 'computed');
+  assert.equal(review('cloudtrail').contracts.sns_topic_name, 'optional');
+  assert.deepEqual(review('ram_resource_share_associations_exclusive').shapes.sources, [['set', 'string']]);
+  assert.ok(review('ssmincidents_replication_set').fields.includes('regions.kms_key_arn'));
+  assert.equal(review('ssmquicksetup_configuration_manager').contracts['configuration_definition.local_deployment_administration_role_arn'], 'optional');
+});
