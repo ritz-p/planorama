@@ -49,7 +49,7 @@ pub(super) fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize,
     use crate::model::{Action, EntityMode};
     match r.attribute.as_str() {
         "host_arn" => {
-            e.absent(r.target, "provider_type")
+            !e.has_argument(r.target, "provider_type")
                 && e.text(source, "arn").is_some_and(|arn| {
                     e.nodes
                         .iter()

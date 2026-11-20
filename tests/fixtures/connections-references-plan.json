@@ -83,10 +83,11 @@
       "provider_name": "registry.terraform.io/hashicorp/aws",
       "change": {
         "actions": [
-          "create"
+          "no-op"
         ],
         "after": {
-          "host_arn": "arn:aws:codeconnections:us-east-1:123456789012:host/sample-0"
+          "host_arn": "arn:aws:codeconnections:us-east-1:123456789012:host/sample-0",
+          "provider_type": "GitHubEnterpriseServer"
         }
       }
     },
@@ -124,10 +125,11 @@
       "provider_name": "registry.terraform.io/hashicorp/aws",
       "change": {
         "actions": [
-          "create"
+          "no-op"
         ],
         "after": {
-          "host_arn": "arn:aws:codestar-connections:us-east-1:123456789012:host/sample-1"
+          "host_arn": "arn:aws:codestar-connections:us-east-1:123456789012:host/sample-1",
+          "provider_type": "GitHubEnterpriseServer"
         }
       }
     }
