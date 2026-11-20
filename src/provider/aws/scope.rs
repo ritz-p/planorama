@@ -478,7 +478,10 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
     }
     if matches!(
         resource,
-        "aws_glue_catalog_database" | "aws_glue_catalog_table" | "aws_acmpca_certificate"
+        "aws_glue_catalog_database"
+            | "aws_glue_catalog_table"
+            | "aws_acmpca_certificate"
+            | "aws_cloudcontrolapi_resource"
     ) || (resource == "aws_acmpca_certificate_authority" && entity.mode == EntityMode::Data)
     {
         account = None;

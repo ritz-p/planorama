@@ -407,3 +407,31 @@ fn organizations_tag_accepts_roots_and_rejects_organization_ids() {
         );
     }
 }
+
+#[test]
+fn cloud_control_role_keeps_target_placement_unresolved() {
+    let fixture = include_str!("../../fixtures/cloudformation-references-plan.json");
+    let plan = crate::plan::evidence::tests::parse_fixture(fixture).unwrap();
+    let graph = crate::semantic::transform(&plan);
+    let address = "aws_cloudcontrolapi_resource.resource";
+    let target = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == address)
+        .unwrap();
+    assert!(
+        target
+            .provider_configuration
+            .as_ref()
+            .unwrap()
+            .account
+            .is_some()
+    );
+    assert!(target.entity.scope.is_none());
+    assert!(crate::configured_service_links::verified(
+        &graph,
+        address,
+        "role_arn",
+        super::label("aws_cloudcontrolapi_resource", "role_arn"),
+    ));
+}
