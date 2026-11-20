@@ -495,3 +495,74 @@ fn communications_connect_storage_uses_only_the_selected_shape() {
         label(super::STORAGE, "instance_id")
     ));
 }
+
+#[test]
+fn communications_connect_queue_routes_require_same_instance() {
+    let mut fixture = plan(&[
+        (
+            "aws_connect_instance.main",
+            json!({"id":"connect"}),
+            json!({}),
+        ),
+        (
+            "aws_connect_hours_of_operation.office",
+            json!({"instance_id":"connect","hours_of_operation_id":"office"}),
+            json!({"instance_id":{"references":["aws_connect_instance.main.id"]}}),
+        ),
+        (
+            "aws_connect_queue.sales",
+            json!({"instance_id":"connect","queue_id":"sales","hours_of_operation_id":"office"}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"hours_of_operation_id":{"references":["aws_connect_hours_of_operation.office.hours_of_operation_id"]}
+            }),
+        ),
+        (
+            "aws_connect_quick_connect.sales",
+            json!({"instance_id":"connect","quick_connect_config":[{"quick_connect_type":"QUEUE","queue_config":[{"queue_id":"sales"}]}]}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"quick_connect_config":[{"queue_config":[{"queue_id":{"references":["aws_connect_queue.sales.queue_id"]}}]}]
+            }),
+        ),
+        (
+            "aws_connect_routing_profile.sales",
+            json!({"instance_id":"connect","default_outbound_queue_id":"sales","queue_configs":[{"queue_id":"sales","channel":"VOICE"}]}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"default_outbound_queue_id":{"references":["aws_connect_queue.sales.queue_id"]},"queue_configs":[{"queue_id":{"references":["aws_connect_queue.sales.queue_id"]}}]
+            }),
+        ),
+    ]);
+    let quick = "aws_connect_quick_connect.sales";
+    let queue = "aws_connect_queue.sales";
+    let routing = "aws_connect_routing_profile.sales";
+    let to_queue = "quick_connect_config.queue_config.queue_id";
+    let g = graph(&fixture);
+    for (address, kind, path) in [
+        (quick, super::QUICK, to_queue),
+        (queue, super::QUEUE, "hours_of_operation_id"),
+        (routing, super::ROUTING, "queue_configs.queue_id"),
+    ] {
+        assert!(verified(&g, address, path, label(kind, path)), "{path}");
+    }
+    fixture["resource_changes"][3]["change"]["after"]["quick_connect_config"][0]["quick_connect_type"] =
+        json!("PHONE_NUMBER");
+    fixture["resource_changes"][1]["change"]["after"]["instance_id"] = json!("other");
+    let g = graph(&fixture);
+    assert!(!verified(
+        &g,
+        quick,
+        to_queue,
+        label(super::QUICK, to_queue)
+    ));
+    assert!(!verified(
+        &g,
+        queue,
+        "hours_of_operation_id",
+        label(super::QUEUE, "hours_of_operation_id")
+    ));
+    assert!(verified(
+        &g,
+        routing,
+        "queue_configs.queue_id",
+        label(super::ROUTING, "queue_configs.queue_id")
+    ));
+}

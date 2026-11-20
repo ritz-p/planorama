@@ -38,7 +38,15 @@ const INSTANCE_ID: Outputs = &[(CONNECT, &["id"])];
 fn instance_child(kind: &str) -> bool {
     matches!(
         kind,
-        BOT | FLOW | MODULE | HOURS | VOCABULARY | STORAGE | CONNECT_LAMBDA
+        BOT | FLOW
+            | MODULE
+            | HOURS
+            | VOCABULARY
+            | STORAGE
+            | CONNECT_LAMBDA
+            | QUEUE
+            | QUICK
+            | ROUTING
     )
 }
 
@@ -50,6 +58,15 @@ const STORAGE_BUCKET: &str = "storage_config.s3_config.bucket_name";
 const STORAGE_S3_KEY: &str = "storage_config.s3_config.encryption_config.key_id";
 const STORAGE_VIDEO_KEY: &str =
     "storage_config.kinesis_video_stream_config.encryption_config.key_id";
+
+const QUEUE: &str = "aws_connect_queue";
+const QUICK: &str = "aws_connect_quick_connect";
+const ROUTING: &str = "aws_connect_routing_profile";
+const USER: &str = "aws_connect_user";
+const PHONE: &str = "aws_connect_phone_number";
+const QUEUE_ID: Outputs = &[(QUEUE, &["queue_id"])];
+const FLOW_ID: Outputs = &[(FLOW, &["contact_flow_id"])];
+const PHONE_ID: Outputs = &[(PHONE, &["id"])];
 
 fn voice_configuration(kind: &str) -> bool {
     matches!(
@@ -69,6 +86,9 @@ pub(crate) fn has_indexed(kind: &str) -> bool {
             | SIP_APP
             | SIP_RULE
             | STORAGE
+            | QUEUE
+            | QUICK
+            | ROUTING
     )
 }
 
@@ -173,6 +193,37 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         (STORAGE, STORAGE_S3_KEY | STORAGE_VIDEO_KEY) => {
             scalar("Connect storage encryption key", KMS)
         }
+        (QUEUE, "hours_of_operation_id") => scalar(
+            "Connect queue schedule",
+            &[(HOURS, &["hours_of_operation_id"])],
+        ),
+        (QUEUE, "quick_connect_ids") => Rule::new(
+            "Connect queue quick connects",
+            &[(QUICK, &["quick_connect_id"])],
+            true,
+            &[],
+        ),
+        (QUEUE, "outbound_caller_config.outbound_caller_id_number_id") => {
+            scalar("Connect outbound number", PHONE_ID)
+        }
+        (QUEUE, "outbound_caller_config.outbound_flow_id") => {
+            scalar("Connect outbound flow", FLOW_ID)
+        }
+        (QUICK, "quick_connect_config.queue_config.queue_id") => {
+            scalar("Connect quick connect queue", QUEUE_ID)
+        }
+        (QUICK, "quick_connect_config.user_config.user_id") => {
+            scalar("Connect quick connect user", &[(USER, &["user_id"])])
+        }
+        (
+            QUICK,
+            "quick_connect_config.queue_config.contact_flow_id"
+            | "quick_connect_config.user_config.contact_flow_id",
+        ) => scalar("Connect quick connect flow", FLOW_ID),
+        (ROUTING, "default_outbound_queue_id") => {
+            scalar("Connect default outbound queue", QUEUE_ID)
+        }
+        (ROUTING, "queue_configs.queue_id") => Rule::scalar_set("Connect routing queues", QUEUE_ID),
         _ => return None,
     })
 }
@@ -305,6 +356,13 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     }
     if e.nodes[target].resource_type == STORAGE {
         return storage_destination(e, r, source, path);
+    }
+    if matches!(
+        e.nodes[target].resource_type.as_str(),
+        QUEUE | QUICK | ROUTING
+    ) {
+        return same_instance(e, target, source)
+            && (e.nodes[target].resource_type != QUICK || quick_connect_shape(e, target, path));
     }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
@@ -538,6 +596,39 @@ fn storage_destination(
             }
             _ => false,
         }
+}
+
+fn instance(e: &Evidence<'_>, node: usize) -> Option<usize> {
+    let owner = if e.nodes[node].resource_type == PHONE {
+        let owner = endpoint(e, node, "target_arn", CONNECT, "arn")?;
+        connect_instance_arn(e, owner).then_some(owner)?
+    } else {
+        endpoint(e, node, "instance_id", CONNECT, "id")?
+    };
+    same_region(&e.nodes[node], &e.nodes[owner]).then_some(owner)
+}
+
+fn same_instance(e: &Evidence<'_>, a: usize, b: usize) -> bool {
+    instance(e, a).is_some_and(|id| instance(e, b) == Some(id))
+}
+
+fn connect_instance_arn(e: &Evidence<'_>, source: usize) -> bool {
+    e.text(source, "arn").is_some_and(|value| {
+        qualified_arn(&e.nodes[source], value, "connect", "instance/")
+            && arn(&e.nodes[source], value, "connect", "instance/")
+                .is_some_and(|(_, id)| e.text(source, "id") == Some(id))
+    })
+}
+
+fn quick_connect_shape(e: &Evidence<'_>, node: usize, path: &str) -> bool {
+    let (selector, other) = if path.starts_with("quick_connect_config.0.queue_config.") {
+        ("QUEUE", "user_config")
+    } else {
+        ("USER", "queue_config")
+    };
+    e.text(node, "quick_connect_config.0.quick_connect_type") == Some(selector)
+        && e.absent(node, &format!("quick_connect_config.0.{other}"))
+        && e.absent(node, "quick_connect_config.0.phone_config")
 }
 
 #[cfg(test)]
