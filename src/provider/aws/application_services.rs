@@ -412,6 +412,17 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     }
 }
 
+fn appconfig_profile(e: &Evidence<'_>, consumer: usize) -> Option<usize> {
+    endpoint(
+        e,
+        consumer,
+        "configuration_profile_id",
+        CONFIG_PROFILE,
+        &["configuration_profile_id"],
+    )
+    .filter(|&profile| same_endpoint(e, consumer, profile, "application_id", CONFIG_APP, &["id"]))
+}
+
 fn deployment_context(e: &Evidence<'_>, deployment: usize, environment: usize) -> bool {
     same_endpoint(
         e,
@@ -420,23 +431,7 @@ fn deployment_context(e: &Evidence<'_>, deployment: usize, environment: usize) -
         "application_id",
         CONFIG_APP,
         &["id"],
-    ) && endpoint(
-        e,
-        deployment,
-        "configuration_profile_id",
-        CONFIG_PROFILE,
-        &["configuration_profile_id"],
-    )
-    .is_some_and(|profile| {
-        same_endpoint(
-            e,
-            deployment,
-            profile,
-            "application_id",
-            CONFIG_APP,
-            &["id"],
-        )
-    })
+    ) && appconfig_profile(e, deployment).is_some()
 }
 
 fn annotate_versions(
@@ -475,23 +470,10 @@ fn annotate_versions(
                 },
             );
             Some(version.is_some_and(|source| {
-                same_endpoint(&e, r.target, source, "application_id", CONFIG_APP, &["id"])
-                    && same_endpoint(
-                        &e,
-                        r.target,
-                        source,
-                        "configuration_profile_id",
-                        CONFIG_PROFILE,
-                        &["configuration_profile_id"],
-                    )
-                    && endpoint(
-                        &e,
-                        r.target,
-                        "configuration_profile_id",
-                        CONFIG_PROFILE,
-                        &["configuration_profile_id"],
-                    )
-                    .is_some_and(|profile| e.text(profile, "location_uri") == Some("hosted"))
+                appconfig_profile(&e, r.target).is_some_and(|profile| {
+                    appconfig_profile(&e, source) == Some(profile)
+                        && e.text(profile, "location_uri") == Some("hosted")
+                })
             }))
         })
         .collect();
