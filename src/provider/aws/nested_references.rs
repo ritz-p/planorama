@@ -158,6 +158,7 @@ pub(super) fn verify_collections(
 pub(super) enum NestedBlocks<'a> {
     Indexed(&'a [&'a str]),
     ScalarSet(Option<&'a str>),
+    Unordered(&'a [&'a str]),
     WafStatement,
 }
 
@@ -282,6 +283,89 @@ fn verify_scalar_set(
     expected.values().all(|(_, n)| *n == 0).then_some(())
 }
 
+fn verify_unordered(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    evidence: &[(&Value, &Value)],
+    r: &AttributeReference,
+    fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
+    valid: impl Fn(usize, &str) -> bool,
+    (collections, mode): (&[&str], EntityMode),
+) -> Option<()> {
+    let leaf_fields: Vec<_> = r.attribute.split('.').collect();
+    let depth = leaf_fields.len() - 1;
+    let mut expected = BTreeMap::new();
+    for leaf in refs.iter().filter(|leaf| {
+        leaf.target == r.target
+            && leaf.indexed_block_lengths.len() == depth
+            && leaf
+                .attribute
+                .split('.')
+                .filter(|part| part.parse::<usize>().is_err())
+                .eq(leaf_fields.iter().copied())
+    }) {
+        if !leaf.complete || !leaf.instances_explicit || !leaf.issues.is_empty() {
+            return None;
+        }
+        if leaf.sources.is_empty() && !leaf.has_references {
+            continue;
+        }
+        let [source] = *leaf.sources.as_slice() else {
+            return None;
+        };
+        let endpoint = &nodes[source];
+        if source == r.target || !current(endpoint, mode) {
+            return None;
+        }
+        let outputs = fields(
+            &nodes[r.target].resource_type,
+            &r.attribute,
+            super::aliases::entity_type(endpoint),
+        );
+        let id = endpoint_value(leaf, source, evidence, outputs)?;
+        let (owner, counts) = expected.entry(id).or_insert((source, BTreeMap::new()));
+        if *owner != source {
+            return None;
+        }
+        *counts
+            .entry(leaf.indexed_block_lengths.clone())
+            .or_insert(0usize) += 1;
+    }
+    if expected.is_empty()
+        || expected.values().map(|(s, _)| *s).collect::<BTreeSet<_>>()
+            != r.sources.iter().copied().collect()
+    {
+        return None;
+    }
+    let (value, mask) = evidence[r.target];
+    let mut observed = Vec::new();
+    rows(
+        value,
+        mask,
+        &leaf_fields,
+        String::new(),
+        Vec::new(),
+        &mut observed,
+        collections,
+    )?;
+    for (path, lengths, value) in observed {
+        if lengths.len() != depth {
+            return None;
+        }
+        if let Some((source, counts)) = expected.get_mut(value.as_str()?) {
+            let count = counts.get_mut(&lengths)?;
+            *count = count.checked_sub(1)?;
+            if !valid(*source, &path) {
+                return None;
+            }
+        }
+    }
+    expected
+        .values()
+        .all(|(_, counts)| counts.values().all(|&count| count == 0))
+        .then_some(())
+}
+
 pub(super) type DecodeLeaf = for<'a> fn(&str, &'a Value) -> Option<BTreeSet<&'a str>>;
 
 pub(super) fn verify_values(
@@ -317,6 +401,17 @@ pub(super) fn verify_values(
                 fields,
                 valid,
                 (path, endpoint_mode),
+            );
+        }
+        NestedBlocks::Unordered(paths) => {
+            return verify_unordered(
+                nodes,
+                refs,
+                evidence,
+                r,
+                fields,
+                valid,
+                (paths, endpoint_mode),
             );
         }
         NestedBlocks::WafStatement => {

@@ -422,3 +422,75 @@ fn appconfig_deployment_limits_versions_and_ownership_to_the_configured_context(
     assert!(label(super::CONFIG_DEPLOYMENT, "state").is_none());
     assert!(label(super::CONFIG_DEPLOYMENT, "kms_key_arn").is_none());
 }
+
+#[test]
+fn appconfig_extension_matches_unordered_actions_and_typed_targets() {
+    let lambda = "arn:aws:lambda:us-east-1:123456789012:function:validation";
+    let topic = "arn:aws:sns:us-east-1:123456789012:notifications";
+    let role = "arn:aws:iam::123456789012:role/Extension";
+    let extension = "arn:aws:appconfig:us-east-1:123456789012:extension/ex1";
+    let target = "arn:aws:appconfig:us-east-1:123456789012:application/a1/environment/e1";
+    let mut fixture = plan(&[
+        (
+            "aws_lambda_function.validation",
+            json!({"arn":lambda}),
+            json!({}),
+        ),
+        ("aws_sns_topic.notify", json!({"arn":topic}), json!({})),
+        ("aws_iam_role.extension", json!({"arn":role}), json!({})),
+        (
+            "aws_appconfig_environment.dev",
+            json!({"arn":target}),
+            json!({}),
+        ),
+        (
+            "aws_appconfig_extension.validation",
+            json!({"arn":extension,"action_point":[
+                {"point":"ON_DEPLOYMENT_START","action":[{"uri":topic},{"uri":lambda,"role_arn":role}]},
+                {"point":"PRE_START_DEPLOYMENT","action":[{"uri":lambda,"role_arn":role}]}
+            ]}),
+            json!({"action_point":[
+                {"action":[{"uri":{"references":["aws_lambda_function.validation.arn"]},"role_arn":{"references":["aws_iam_role.extension.arn"]}}]},
+                {"action":[{"uri":{"references":["aws_lambda_function.validation.arn"]},"role_arn":{"references":["aws_iam_role.extension.arn"]}},{"uri":{"references":["aws_sns_topic.notify.arn"]}}]}
+            ]}),
+        ),
+        (
+            "aws_appconfig_extension_association.dev",
+            json!({"extension_arn":extension,"resource_arn":target}),
+            json!({
+                "extension_arn":{"references":["aws_appconfig_extension.validation.arn"]},
+                "resource_arn":{"references":["aws_appconfig_environment.dev.arn"]}
+            }),
+        ),
+    ]);
+    let paths = [
+        (
+            "aws_appconfig_extension.validation",
+            "action_point.action.uri",
+        ),
+        (
+            "aws_appconfig_extension.validation",
+            "action_point.action.role_arn",
+        ),
+        ("aws_appconfig_extension_association.dev", "extension_arn"),
+        ("aws_appconfig_extension_association.dev", "resource_arn"),
+    ];
+    let check = |fixture: &Value, address: &str, path: &str| {
+        verified(
+            &graph(fixture),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    for (address, path) in paths {
+        assert!(check(&fixture, address, path), "{address}/{path}");
+    }
+    fixture["resource_changes"][4]["change"]["after"]["action_point"][0]["point"] =
+        json!("PRE_START_DEPLOYMENT");
+    assert!(!check(&fixture, paths[0].0, paths[0].1));
+    let other = "arn:aws:appconfig:us-east-1:123456789012:application/a1/configurationprofile/p1";
+    fixture["resource_changes"][3]["change"]["after"]["arn"] = json!(other);
+    fixture["resource_changes"][5]["change"]["after"]["resource_arn"] = json!(other);
+    assert!(!check(&fixture, paths[3].0, paths[3].1));
+}
