@@ -7,8 +7,11 @@ use std::fmt::Write;
 mod tests;
 
 fn description(row: &Row<'_>, qualified: bool) -> String {
-    if row.reference.kind == crate::model::ReferenceKind::Information {
-        return row.reference.label.into();
+    if matches!(
+        row.reference.kind,
+        crate::model::ReferenceKind::Information | crate::model::ReferenceKind::ConfiguredScope(_)
+    ) {
+        return row.label(true, qualified);
     }
     let reference = row.reference;
     if matches!(
@@ -155,7 +158,11 @@ pub(super) fn render(
                 super::escape(&row.reference.attribute)
             )
             .unwrap();
-        } else if row.reference.kind == crate::model::ReferenceKind::Information {
+        } else if matches!(
+            row.reference.kind,
+            crate::model::ReferenceKind::Information
+                | crate::model::ReferenceKind::ConfiguredScope(_)
+        ) {
             svg.push_str("<g>");
         } else {
             write!(

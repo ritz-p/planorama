@@ -255,6 +255,10 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             "aws_accessanalyzer_archive_rule" => {
                 ("analyzer_name", "Archive rule analyzer", "Archive rules")
             }
+            "aws_auditmanager_assessment_delegation" => {
+                ("assessment_id", "Assessment", "Delegations")
+            }
+            "aws_auditmanager_assessment_report" => ("assessment_id", "Assessment", "Reports"),
             "aws_athena_named_query" => ("workgroup", "Query workgroup", "Named queries"),
             "aws_athena_prepared_statement" => {
                 ("workgroup", "Query workgroup", "Prepared statements")

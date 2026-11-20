@@ -69,6 +69,7 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::audit_manager::resource(resource)
         && resource != "aws_accessanalyzer_analyzer"
         && !super::access_analyzer::resource(resource)
         && resource != "aws_verifiedaccess_instance"

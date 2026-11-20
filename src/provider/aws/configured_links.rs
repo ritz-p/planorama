@@ -171,7 +171,8 @@ pub(super) fn indexed(kind: &str, path: &str, lookup: Lookup) -> bool {
 fn global(kind: &str) -> bool {
     matches!(
         kind,
-        "aws_organizations_organization"
+        "aws_organizations_account"
+            | "aws_organizations_organization"
             | "aws_organizations_organizational_unit"
             | "aws_iam_saml_provider"
             | "aws_iam_instance_profile"

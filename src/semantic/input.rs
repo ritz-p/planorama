@@ -121,6 +121,7 @@ pub(crate) fn base_graph(plan: &TerraformPlan) -> Graph {
             .collect(),
     };
     crate::provider::aws::organization_policies::facts(plan, &mut graph);
+    crate::provider::aws::scope_selections::facts(plan, &mut graph);
     crate::provider::aws::encryption::facts(plan, &mut graph);
     crate::provider::cloudflare::facts(plan, &mut graph);
     graph.relationships =

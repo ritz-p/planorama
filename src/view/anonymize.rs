@@ -491,6 +491,12 @@ impl Projection {
                     *attribute = self.name("attribute", attribute);
                 }
             }
+            references.retain(|reference| {
+                !matches!(
+                    reference.kind,
+                    crate::model::ReferenceKind::ConfiguredScope(_)
+                )
+            });
             for reference in references {
                 if member_owner
                     .as_ref()
