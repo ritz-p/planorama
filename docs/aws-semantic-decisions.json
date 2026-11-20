@@ -6512,7 +6512,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1541,
-      "gap": "#1541 — Preserve the verified bucket, log group, log role and key references from #507. Add a bounded SNS notification-topic match using the configured name; the returned ARN is an output.",
+      "gap": "#1541 — Verify the configured SNS topic name and retain the verified bucket, log group, log role and key references. The returned SNS ARN is display metadata.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -6529,7 +6529,7 @@
         "placement": "Supported: managed Spatial Node for cloudtrail. Provides a CloudTrail resource.",
         "ownership": "Not applicable: AWS CloudTrail cloudtrail remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: multi-region and organization-wide logging flags describe event coverage, not VPC membership.",
-        "references": "Partial: Preserve the verified bucket, log group, log role and key references from #507. Add a bounded SNS notification-topic match using the configured name; the returned ARN is an output.",
+        "references": "Supported: Verify the configured SNS topic name and retain the verified bucket, log group, log role and key references. The returned SNS ARN is display metadata.",
         "scope": "Supported: regional service scope requires deployment evidence. The trail home region is distinct from multi-region or organization-wide event capture.",
         "summaries": "Intentionally unsupported: omit event contents, selectors and trail delivery status from cloudtrail summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudtrail.html.markdown",
@@ -6574,7 +6574,9 @@
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
           "tests/unit/semantic/cloudtrail.rs",
-          "src/provider/aws/icons.rs"
+          "src/provider/aws/icons.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceTrail. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -82102,10 +82104,10 @@
       }
     },
     "aws_cloudtrail_event_data_store": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1541,
-      "gap": "#1541 — Validate the configured encryption key for the event store; multi-region and organization capture settings describe coverage, not individual source endpoints.",
+      "gap": "#1541 — Verify the configured KMS key or alias. Multi-region and organization capture settings describe coverage.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82119,7 +82121,7 @@
         "placement": "Supported: managed Logical Node for cloudtrail_event_data_store. Provides a CloudTrail Event Data Store resource.",
         "ownership": "Not applicable: AWS CloudTrail cloudtrail_event_data_store remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudtrail_event_data_store declares no VPC/subnet assignment; the configured kms_key_id does not establish network containment.",
-        "references": "Missing: Validate the configured encryption key for the event store; multi-region and organization capture settings describe coverage, not individual source endpoints.",
+        "references": "Supported: Verify the configured KMS key or alias. Multi-region and organization capture settings describe coverage.",
         "scope": "Supported: regional service scope requires deployment evidence. Multi-region collection does not relocate the event data store.",
         "summaries": "Intentionally unsupported: omit event contents, selectors and trail delivery status from cloudtrail_event_data_store summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudtrail_event_data_store.html.markdown",
@@ -82150,7 +82152,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceEventDataStore. No same-name data source in the pinned schema.",
         "dataContracts": {}
