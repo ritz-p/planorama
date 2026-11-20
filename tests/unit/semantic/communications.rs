@@ -349,6 +349,20 @@ fn communications_sip_application_uses_its_selected_region() {
         targets,
         label(super::SIP_RULE, targets)
     ));
+    let mut extra_endpoint = fixture.clone();
+    extra_endpoint["resource_changes"][2]["change"]["after"]["endpoints"] =
+        json!([{"lambda_arn":arn},{"lambda_arn":arn}]);
+    let endpoints =
+        extra_endpoint["configuration"]["root_module"]["resources"][2]["expressions"]["endpoints"]
+            .as_array_mut()
+            .unwrap();
+    endpoints.push(endpoints[0].clone());
+    assert!(!verified(
+        &graph(&extra_endpoint),
+        app,
+        "endpoints.lambda_arn",
+        label(super::SIP_APP, "endpoints.lambda_arn")
+    ));
     fixture["resource_changes"][2]["change"]["after"]["aws_region"] = json!("us-west-2");
     fixture["resource_changes"][3]["change"]["after"]["trigger_type"] = json!("ToPhoneNumber");
     assert!(!verified(
