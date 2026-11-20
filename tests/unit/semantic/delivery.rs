@@ -118,3 +118,32 @@ fn codecatalyst_requires_current_typed_evidence() {
         ("aws_codecatalyst_project.delivery", "name"),
     );
 }
+
+#[test]
+fn repositories_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/repositories-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            (
+                "aws_codecommit_approval_rule_template_association.review",
+                "approval_rule_template_name",
+            ),
+            (
+                "aws_codecommit_approval_rule_template_association.review",
+                "repository_name",
+            ),
+            ("aws_codecommit_repository.repo", "kms_key_id"),
+            (
+                "aws_codegurureviewer_repository_association.review",
+                "kms_key_details.kms_key_id",
+            ),
+            (
+                "aws_codegurureviewer_repository_association.review",
+                "repository.codecommit.name",
+            ),
+        ],
+        ("aws_codecommit_approval_rule_template.review", "name"),
+    );
+}
