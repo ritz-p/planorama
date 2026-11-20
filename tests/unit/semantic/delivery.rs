@@ -695,3 +695,67 @@ fn stackset_single_instance_legacy_region_is_a_target_selector() {
         );
     }
 }
+
+#[test]
+fn stackset_execution_role_requires_an_explicit_target_account() {
+    use serde_json::{Value, json};
+
+    let fixture: Value = serde_json::from_str(include_str!(
+        "../../fixtures/stacksets-references-plan.json"
+    ))
+    .unwrap();
+    for (instance, field, literal) in [
+        (
+            "aws_cloudformation_stack_set_instance.shipping",
+            "account_id",
+            json!("123456789012"),
+        ),
+        (
+            "aws_cloudformation_stack_instances.shipping",
+            "accounts",
+            json!(["123456789012"]),
+        ),
+    ] {
+        for (case, argument, expected) in [
+            ("omitted", None, false),
+            ("null", Some(json!({"constant_value": null})), false),
+            ("literal", Some(json!({"constant_value": literal})), true),
+            (
+                "reference",
+                Some(json!({"references": ["aws_organizations_account.dest.id"]})),
+                true,
+            ),
+        ] {
+            let mut plan = fixture.clone();
+            for resource in plan["configuration"]["root_module"]["resources"]
+                .as_array_mut()
+                .unwrap()
+            {
+                let expressions = resource["expressions"].as_object_mut().unwrap();
+                expressions.remove("account_id");
+                expressions.remove("accounts");
+            }
+            if let Some(argument) = argument {
+                let configuration = plan["configuration"]["root_module"]["resources"]
+                    .as_array_mut()
+                    .unwrap()
+                    .iter_mut()
+                    .find(|resource| resource["address"] == instance)
+                    .unwrap();
+                configuration["expressions"][field] = argument;
+            }
+
+            let graph = crate::semantic::transform(&crate::plan::parse(&plan.to_string()).unwrap());
+            assert_eq!(
+                crate::configured_service_links::verified(
+                    &graph,
+                    "aws_cloudformation_stack_set.shipping",
+                    "execution_role_name",
+                    super::label("aws_cloudformation_stack_set", "execution_role_name"),
+                ),
+                expected,
+                "{instance}: {case}"
+            );
+        }
+    }
+}

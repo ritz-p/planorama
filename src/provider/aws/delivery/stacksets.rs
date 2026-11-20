@@ -222,20 +222,25 @@ fn execution_account(e: &Evidence<'_>, stack: usize, source: usize) -> bool {
             && node.mode == EntityMode::Managed
             && node.action != Action::Delete
             && node.deposed_key.is_none()
-            && matches!(
-                node.resource_type.as_str(),
-                "aws_cloudformation_stack_instances" | "aws_cloudformation_stack_set_instance"
-            )
+            && match node.resource_type.as_str() {
+                "aws_cloudformation_stack_set_instance" => {
+                    e.has_argument(instance, "account_id")
+                        && e.text(instance, "account_id") == Some(account.as_str())
+                }
+                "aws_cloudformation_stack_instances" => {
+                    e.has_argument(instance, "accounts")
+                        && e.value(instance, "accounts")
+                            .and_then(serde_json::Value::as_array)
+                            .is_some_and(|accounts| {
+                                accounts
+                                    .iter()
+                                    .any(|v| v.as_str() == Some(account.as_str()))
+                            })
+                }
+                _ => false,
+            }
             && stack_set(e, instance) == Some(stack)
             && targets_have_region(e, instance)
             && e.absent(instance, "deployment_targets")
-            && (e.text(instance, "account_id") == Some(account.as_str())
-                || e.value(instance, "accounts")
-                    .and_then(serde_json::Value::as_array)
-                    .is_some_and(|accounts| {
-                        accounts
-                            .iter()
-                            .any(|v| v.as_str() == Some(account.as_str()))
-                    }))
     })
 }
