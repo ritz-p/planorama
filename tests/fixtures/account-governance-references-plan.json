@@ -1,0 +1,254 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_account_alternate_contact.target",
+      "mode": "managed",
+      "type": "aws_account_alternate_contact",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_account_primary_contact.target",
+      "mode": "managed",
+      "type": "aws_account_primary_contact",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_account_region.target",
+      "mode": "managed",
+      "type": "aws_account_region",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012",
+          "region_name": "us-west-2",
+          "enabled": true
+        }
+      }
+    },
+    {
+      "address": "aws_cloudtrail_organization_delegated_admin_account.target",
+      "mode": "managed",
+      "type": "aws_cloudtrail_organization_delegated_admin_account",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_delegated_administrator.target",
+      "mode": "managed",
+      "type": "aws_organizations_delegated_administrator",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "account_id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.target",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_organizational_unit.target",
+      "mode": "managed",
+      "type": "aws_organizations_organizational_unit",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ou-abcd-12345678"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_tag.target",
+      "mode": "managed",
+      "type": "aws_organizations_tag",
+      "name": "target",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_id": "ou-abcd-12345678",
+          "key": "synthetic",
+          "value": "suppressed"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_account_alternate_contact.target",
+          "mode": "managed",
+          "type": "aws_account_alternate_contact",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_account_primary_contact.target",
+          "mode": "managed",
+          "type": "aws_account_primary_contact",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_account_region.target",
+          "mode": "managed",
+          "type": "aws_account_region",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudtrail_organization_delegated_admin_account.target",
+          "mode": "managed",
+          "type": "aws_cloudtrail_organization_delegated_admin_account",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_delegated_administrator.target",
+          "mode": "managed",
+          "type": "aws_organizations_delegated_administrator",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "account_id": {
+              "references": [
+                "aws_organizations_account.target.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.target",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_organizational_unit.target",
+          "mode": "managed",
+          "type": "aws_organizations_organizational_unit",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_tag.target",
+          "mode": "managed",
+          "type": "aws_organizations_tag",
+          "name": "target",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_id": {
+              "references": [
+                "aws_organizations_organizational_unit.target.id"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -318,3 +318,27 @@ fn devops_insights_requires_current_typed_evidence() {
         ("aws_kms_key.insights", "arn"),
     );
 }
+
+#[test]
+fn account_governance_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/account-governance-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_account_alternate_contact.target", "account_id"),
+            ("aws_account_primary_contact.target", "account_id"),
+            ("aws_account_region.target", "account_id"),
+            (
+                "aws_cloudtrail_organization_delegated_admin_account.target",
+                "account_id",
+            ),
+            (
+                "aws_organizations_delegated_administrator.target",
+                "account_id",
+            ),
+            ("aws_organizations_tag.target", "resource_id"),
+        ],
+        ("aws_organizations_account.target", "id"),
+    );
+}
