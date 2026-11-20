@@ -80888,10 +80888,10 @@
       }
     },
     "aws_codestarnotifications_notification_rule": {
-      "status": "Partial (bounded capabilities implemented)",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1594,
-      "gap": "#1594 — Preserve the source and SNS target checks from #1534. The Chatbot target checks currently expect arn, while the pinned Provider exports chat_configuration_arn for Slack and Teams. Verify that output under the matching target.type and preserve same-account qualification.",
+      "gap": "#1594 — Verify the configured source and SNS targets and the chat_configuration_arn output of Slack and Teams under their matching target.type.",
       "review": {
         "issue": 731,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -80905,7 +80905,7 @@
         "placement": "Supported: managed Logical Policy for codestarnotifications_notification_rule. Provides a CodeStar Notifications Rule",
         "ownership": "Not applicable: AWS CodeStar Notifications codestarnotifications_notification_rule remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codestarnotifications_notification_rule declares no VPC/subnet assignment; the configured resource does not establish network containment.",
-        "references": "Partial: Preserve the source and SNS target checks from #1534. The Chatbot target checks currently expect arn, while the pinned Provider exports chat_configuration_arn for Slack and Teams. Verify that output under the matching target.type and preserve same-account qualification.",
+        "references": "Supported: Verify the configured source and SNS targets and the chat_configuration_arn output of Slack and Teams under their matching target.type.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit notification payloads and event contents from codestarnotifications_notification_rule summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codestarnotifications_notification_rule.html.markdown",
@@ -80945,7 +80945,9 @@
           "src/provider/aws/delivery.rs",
           "tests/unit/semantic/delivery.rs",
           "src/provider/aws/delivery/delivery_notifications.rs",
-          "tests/fixtures/delivery-notifications-references-plan.json"
+          "tests/fixtures/delivery-notifications-references-plan.json",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceNotificationRule. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -87624,10 +87626,10 @@
       }
     },
     "aws_chatbot_slack_channel_configuration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1594,
-      "gap": "#1594 — Verify the configured IAM role, explicit managed guardrail policies and SNS topic ARNs. Correct the existing #1534 CodeStar target.address verification to use the pinned Provider chat_configuration_arn output for AWSChatbotSlack instead of arn. Workspace and channel IDs remain external selectors.",
+      "gap": "#1594 — Verify configured IAM roles, managed guardrail policies and SNS topics. Slack workspace and channel identifiers remain external selectors.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87643,7 +87645,7 @@
         "placement": "Supported: managed Logical Controller with the AWS Chatbot service label. Terraform resource for managing an AWS Chatbot Slack Channel Configuration.",
         "ownership": "Not applicable: The channel configuration, role, policies and topics are reusable objects.",
         "network": "Not applicable: A workspace channel is a notification endpoint without VPC placement.",
-        "references": "Missing: Verify the configured IAM role, explicit managed guardrail policies and SNS topic ARNs. Correct the existing #1534 CodeStar target.address verification to use the pinned Provider chat_configuration_arn output for AWSChatbotSlack instead of arn. Workspace and channel IDs remain external selectors.",
+        "references": "Supported: Verify configured IAM roles, managed guardrail policies and SNS topics. Slack workspace and channel identifiers remain external selectors.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Global Chatbot identity is distinct from each regional SNS topic. Qualify the configured topic ARN independently.",
         "summaries": "Intentionally unsupported: omit Slack workspace details, account details, policy contents and message text. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chatbot_slack_channel_configuration.html.markdown",
@@ -87690,17 +87692,19 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/delivery/delivery_notifications.rs",
           "tests/unit/semantic/delivery.rs",
-          "tests/fixtures/delivery-notifications-references-plan.json"
+          "tests/fixtures/delivery-notifications-references-plan.json",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed newSlackChannelConfigurationResource. No same-name data source in the pinned schema. The pinned resource exports chat_configuration_arn rather than arn.",
         "dataContracts": {}
       }
     },
     "aws_chatbot_teams_channel_configuration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1594,
-      "gap": "#1594 — Verify the configured IAM role and explicit guardrail policy and SNS topic ARNs. Use the pinned Provider chat_configuration_arn output for the existing #1534 CodeStar target.address rule when target.type is AWSChatbotMicrosoftTeams. Keep the Teams tenant, team and channel as external selectors.",
+      "gap": "#1594 — Verify configured IAM roles, managed guardrail policies and SNS topics. Tenant, team and channel identifiers remain external selectors.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87717,7 +87721,7 @@
         "placement": "Supported: managed Logical Controller with the AWS Chatbot service label. Terraform resource for managing an AWS Chatbot Microsoft Teams Channel Configuration.",
         "ownership": "Not applicable: Shared IAM policies and SNS topics remain independent of the channel configuration.",
         "network": "Not applicable: The Teams destination does not set AWS network placement.",
-        "references": "Missing: Verify the configured IAM role and explicit guardrail policy and SNS topic ARNs. Use the pinned Provider chat_configuration_arn output for the existing #1534 CodeStar target.address rule when target.type is AWSChatbotMicrosoftTeams. Keep the Teams tenant, team and channel as external selectors.",
+        "references": "Supported: Verify configured IAM roles, managed guardrail policies and SNS topics. Tenant, team and channel identifiers remain external selectors.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The global channel configuration does not move its regional SNS targets.",
         "summaries": "Intentionally unsupported: omit Teams identifiers, policy contents and message text. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chatbot_teams_channel_configuration.html.markdown",
@@ -87767,7 +87771,9 @@
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/delivery/delivery_notifications.rs",
-          "tests/unit/semantic/delivery.rs"
+          "tests/unit/semantic/delivery.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed newTeamsChannelConfigurationResource. No same-name data source in the pinned schema. The pinned resource exports chat_configuration_arn rather than arn.",
         "dataContracts": {}
