@@ -76336,7 +76336,7 @@
       }
     },
     "aws_shield_application_layer_automatic_response": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1489,
       "gap": "#1489 — Resolve the protected resource ARN independently of the configured automatic response action.",
@@ -76351,7 +76351,7 @@
         "placement": "Supported: Logical Node for the managed shield_application_layer_automatic_response declaration. Terraform resource for managing an AWS Shield Application Layer Automatic Response.",
         "ownership": "Not applicable: The managed shield_application_layer_automatic_response declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Protection of a resource does not place Shield in its network.",
-        "references": "Missing: Resolve the protected resource ARN independently of the configured automatic response action.",
+        "references": "Supported: Resolve the protected resource ARN independently of the configured automatic response action.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_application_layer_automatic_response summaries.",
         "officialDocumentation": "website/docs/r/shield_application_layer_automatic_response.html.markdown",
@@ -76374,14 +76374,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/shield.rs",
+          "tests/unit/semantic/shield.rs"
         ],
         "managedDataContract": "Managed newApplicationLayerAutomaticResponseResource. No same-name data source in 6.70.0. Deprecated managed attributes: id.",
         "dataContracts": {}
       }
     },
     "aws_shield_drt_access_log_bucket_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1489,
       "gap": "#1489 — Resolve the S3 log bucket and DRT role association ID. The association ID is not a role ARN.",
@@ -76396,7 +76398,7 @@
         "placement": "Supported: Logical Association for the managed shield_drt_access_log_bucket_association declaration. Terraform resource for managing an AWS Shield DRT Access Log Bucket Association.",
         "ownership": "Not applicable: The managed shield_drt_access_log_bucket_association declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Protection of a resource does not place Shield in its network.",
-        "references": "Missing: Resolve the S3 log bucket and DRT role association ID. The association ID is not a role ARN.",
+        "references": "Supported: Resolve the S3 log bucket and DRT role association ID. The association ID is not a role ARN.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_drt_access_log_bucket_association summaries.",
         "officialDocumentation": "website/docs/r/shield_drt_access_log_bucket_association.html.markdown",
@@ -76419,14 +76421,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/shield.rs",
+          "tests/unit/semantic/shield.rs"
         ],
         "managedDataContract": "Managed newDRTAccessLogBucketAssociationResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_shield_drt_access_role_arn_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1489,
       "gap": "#1489 — Resolve the explicitly authorized DRT IAM role by ARN.",
@@ -76440,7 +76444,7 @@
         "placement": "Supported: Logical Association for the managed shield_drt_access_role_arn_association declaration. Terraform resource for managing an AWS Shield DRT Access Role ARN Association.",
         "ownership": "Not applicable: The managed shield_drt_access_role_arn_association declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Protection of a resource does not place Shield in its network.",
-        "references": "Missing: Resolve the explicitly authorized DRT IAM role by ARN.",
+        "references": "Supported: Resolve the explicitly authorized DRT IAM role by ARN.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_drt_access_role_arn_association summaries.",
         "officialDocumentation": "website/docs/r/shield_drt_access_role_arn_association.html.markdown",
@@ -76459,7 +76463,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/shield.rs",
+          "tests/unit/semantic/shield.rs"
         ],
         "managedDataContract": "Managed newDRTAccessRoleARNAssociationResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -76510,7 +76516,7 @@
       }
     },
     "aws_shield_protection": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1489,
       "gap": "#1489 — Resolve a supported protected endpoint from the resource ARN. Keep the protection ARN distinct from its target.",
@@ -76526,7 +76532,7 @@
         "placement": "Supported: Logical Node for the managed shield_protection declaration. Enables AWS Shield Advanced for a specific AWS resource.",
         "ownership": "Not applicable: The managed shield_protection declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Protection of a resource does not place Shield in its network.",
-        "references": "Missing: Resolve a supported protected endpoint from the resource ARN. Keep the protection ARN distinct from its target.",
+        "references": "Supported: Resolve a supported protected endpoint from the resource ARN. Keep the protection ARN distinct from its target.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_protection summaries.",
         "officialDocumentation": "website/docs/r/shield_protection.html.markdown",
@@ -76553,7 +76559,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/shield.rs",
+          "tests/unit/semantic/shield.rs"
         ],
         "managedDataContract": "Managed resourceProtection. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -76569,7 +76577,7 @@
       }
     },
     "aws_shield_protection_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1489,
       "gap": "#1489 — Resolve individual member ARNs only for the ARBITRARY membership pattern. ALL or BY_RESOURCE_TYPE cannot enumerate protections.",
@@ -76585,7 +76593,7 @@
         "placement": "Supported: Logical Node for the managed shield_protection_group declaration. Creates a grouping of protected resources so they can be handled as a collective.",
         "ownership": "Not applicable: The managed shield_protection_group declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Protection of a resource does not place Shield in its network.",
-        "references": "Missing: Resolve individual member ARNs only for the ARBITRARY membership pattern. ALL or BY_RESOURCE_TYPE cannot enumerate protections.",
+        "references": "Supported: Resolve individual member ARNs only for the ARBITRARY membership pattern. ALL or BY_RESOURCE_TYPE cannot enumerate protections.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_protection_group summaries.",
         "officialDocumentation": "website/docs/r/shield_protection_group.html.markdown",
@@ -76615,14 +76623,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/shield.rs",
+          "tests/unit/semantic/shield.rs"
         ],
         "managedDataContract": "Managed ResourceProtectionGroup. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_shield_protection_health_check_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1489,
       "gap": "#1489 — Resolve the Route 53 health check ARN and Shield protection ID independently. Do not infer the health check outcome.",
@@ -76637,7 +76647,7 @@
         "placement": "Supported: Logical Association for the managed shield_protection_health_check_association declaration. Creates an association between a Route53 Health Check and a Shield Advanced protected resource.",
         "ownership": "Not applicable: The managed shield_protection_health_check_association declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Protection of a resource does not place Shield in its network.",
-        "references": "Missing: Resolve the Route 53 health check ARN and Shield protection ID independently. Do not infer the health check outcome.",
+        "references": "Supported: Resolve the Route 53 health check ARN and Shield protection ID independently. Do not infer the health check outcome.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit contact details, log contents and observed protection status from shield_protection_health_check_association summaries.",
         "officialDocumentation": "website/docs/r/shield_protection_health_check_association.html.markdown",
@@ -76660,7 +76670,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/shield.rs",
+          "tests/unit/semantic/shield.rs"
         ],
         "managedDataContract": "Managed ResourceProtectionHealthCheckAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}

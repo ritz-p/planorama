@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::shield::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::arc_readiness::label(resource, attribute) {
         return Some(label);
     }
@@ -981,6 +984,7 @@ pub(crate) fn annotate_provider_accounts(
     super::resilience_hub::annotate(nodes, references, evidence);
     super::arc_routing_control::annotate(nodes, references, evidence);
     super::arc_readiness::annotate(nodes, references, evidence);
+    super::shield::annotate(nodes, references, evidence);
     super::detective_graphs::annotate(nodes, references, evidence);
 }
 
@@ -1333,6 +1337,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::shield::bindings(raw, reference)
         && super::arc_readiness::bindings(raw, reference)
         && super::arc_routing_control::bindings(raw, reference)
         && super::resilience_hub::bindings(raw, reference)
@@ -2087,6 +2092,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::shield::indexed(&node.resource_type, &reference.attribute)
             || super::arc_readiness::indexed(&node.resource_type, &reference.attribute)
             || super::arc_routing_control::indexed(&node.resource_type, &reference.attribute)
             || super::resilience_hub::indexed(&node.resource_type, &reference.attribute)
