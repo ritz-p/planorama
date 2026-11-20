@@ -794,3 +794,141 @@ fn appintegrations_checks_the_salesforce_profile_and_event_bus_name() {
     assert!(label(super::EVENT_INTEGRATION, "event_filter.source").is_none());
     assert!(label(super::DATA_INTEGRATION, "schedule_config.object").is_none());
 }
+
+#[test]
+fn mainframe_deployment_uses_explicit_version_and_compatible_environment() {
+    let locator = "s3://definitions-bucket/app.json";
+    let key = "arn:aws:kms:us-east-1:123456789012:key/mainframe";
+    let mut fixture = plan(&[
+        (
+            "aws_s3_object.definition",
+            json!({"bucket":"definitions-bucket","key":"app.json"}),
+            json!({}),
+        ),
+        ("aws_kms_key.environment", json!({"arn":key}), json!({})),
+        (
+            "aws_efs_file_system.app",
+            json!({"id":"fs-mainframe"}),
+            json!({}),
+        ),
+        (
+            "aws_m2_application.main",
+            json!({"application_id":"app1","engine_type":"microfocus","current_version":3,"definition":[{"s3_location":locator}]}),
+            json!({
+                "definition":[{"s3_location":{"references":["aws_s3_object.definition.bucket","aws_s3_object.definition.key"]}}]
+            }),
+        ),
+        (
+            "aws_m2_environment.main",
+            json!({"environment_id":"env1","engine_type":"microfocus","kms_key_id":key,
+                "storage_configuration":[{"efs":[{"file_system_id":"fs-mainframe","mount_point":"/data"}]}],
+                "publicly_accessible":true,"load_balancer_arn":"arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/returned"
+            }),
+            json!({
+                "kms_key_id":{"references":["aws_kms_key.environment.arn"]},
+                "storage_configuration":[{"efs":[{"file_system_id":{"references":["aws_efs_file_system.app.id"]}}]}]
+            }),
+        ),
+        (
+            "aws_m2_deployment.main",
+            json!({"application_id":"app1","environment_id":"env1","application_version":3,"start":true}),
+            json!({
+                "application_id":{"references":["aws_m2_application.main.application_id"]},
+                "environment_id":{"references":["aws_m2_environment.main.environment_id"]},
+                "application_version":{"references":["aws_m2_application.main.current_version"]}
+            }),
+        ),
+    ]);
+    let deployment = "aws_m2_deployment.main";
+    let check = |fixture: &Value, address: &str, path: &str| {
+        verified(
+            &graph(fixture),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    for (address, path) in [
+        ("aws_m2_application.main", "definition.s3_location"),
+        (
+            "aws_m2_environment.main",
+            "storage_configuration.efs.file_system_id",
+        ),
+        ("aws_m2_environment.main", "kms_key_id"),
+        (deployment, "application_id"),
+        (deployment, "environment_id"),
+        (deployment, "application_version"),
+    ] {
+        assert!(check(&fixture, address, path), "{path}");
+    }
+    fixture["resource_changes"][4]["change"]["after"]["engine_type"] = json!("bluage");
+    assert!(!check(&fixture, deployment, "environment_id"));
+    fixture["configuration"]["root_module"]["resources"][5]["expressions"]["application_version"] =
+        json!({"constant_value":3});
+    assert!(!check(&fixture, deployment, "application_version"));
+    assert!(label(super::MAINFRAME_ENV, "load_balancer_arn").is_none());
+    assert!(label(super::MAINFRAME_ENV, "publicly_accessible").is_none());
+    assert!(label(super::MAINFRAME_DEPLOYMENT, "start").is_none());
+}
+
+#[test]
+fn mainframe_network_requires_complete_subnets_and_groups_in_one_vpc() {
+    let mut fixture = plan(&[
+        (
+            "aws_vpc.main",
+            json!({"id":"vpc-main","cidr_block":"10.0.0.0/16"}),
+            json!({}),
+        ),
+        (
+            "aws_subnet.a",
+            json!({"id":"subnet-a","vpc_id":"vpc-main","cidr_block":"10.0.1.0/24"}),
+            json!({"vpc_id":{"references":["aws_vpc.main.id"]}}),
+        ),
+        (
+            "aws_subnet.b",
+            json!({"id":"subnet-b","vpc_id":"vpc-main","cidr_block":"10.0.2.0/24"}),
+            json!({"vpc_id":{"references":["aws_vpc.main.id"]}}),
+        ),
+        (
+            "aws_security_group.main",
+            json!({"id":"sg-main","vpc_id":"vpc-main"}),
+            json!({"vpc_id":{"references":["aws_vpc.main.id"]}}),
+        ),
+        (
+            "aws_m2_environment.main",
+            json!({"subnet_ids":["subnet-b","subnet-a"],"security_group_ids":["sg-main"]}),
+            json!({
+                "subnet_ids":{"references":["aws_subnet.a.id","aws_subnet.b.id"]},
+                "security_group_ids":{"references":["aws_security_group.main.id"]}
+            }),
+        ),
+    ]);
+    let vpc = |fixture: &Value| {
+        let graph = graph(fixture);
+        graph.edges.iter().any(|edge| {
+            edge.kind == crate::model::EdgeKind::Containment
+                && graph.nodes[edge.from].address == "aws_vpc.main"
+                && graph.nodes[edge.to].address == "aws_m2_environment.main"
+        })
+    };
+    let placement_is_logical = |fixture: &Value| {
+        let rendered = crate::generate(&fixture.to_string(), &crate::Options::default()).unwrap();
+        let svg = roxmltree::Document::parse(&rendered.content).unwrap();
+        svg.descendants()
+            .find(|element| {
+                element.attribute("data-terraform-address") == Some("aws_m2_environment.main")
+            })
+            .unwrap()
+            .attribute("data-placement")
+            == Some("logical")
+    };
+    assert!(vpc(&fixture));
+    assert!(!placement_is_logical(&fixture));
+    fixture["resource_changes"][4]["change"]["after_sensitive"] =
+        json!({"security_group_ids":true});
+    assert!(!vpc(&fixture));
+    assert!(placement_is_logical(&fixture));
+    fixture["resource_changes"][4]["change"]["after_sensitive"] = Value::Null;
+    fixture["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("vpc-unrelated");
+    assert!(!vpc(&fixture));
+}

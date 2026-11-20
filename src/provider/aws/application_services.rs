@@ -38,10 +38,25 @@ const FLOW_REDSHIFT: &str = "connector_profile_config.0.connector_profile_proper
 const DATA_INTEGRATION: &str = "aws_appintegrations_data_integration";
 const EVENT_INTEGRATION: &str = "aws_appintegrations_event_integration";
 
+const MAINFRAME_APP: &str = "aws_m2_application";
+const MAINFRAME_ENV: &str = "aws_m2_environment";
+const MAINFRAME_DEPLOYMENT: &str = "aws_m2_deployment";
+const MAINFRAME_NETWORK: &[(&str, &str)] = &[
+    ("subnet_ids", "aws_subnet"),
+    ("security_group_ids", "aws_security_group"),
+];
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(
         kind,
-        AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION | FABRIC_DESTINATION | FLOW | FLOW_PROFILE
+        AMPLIFY_DOMAIN
+            | CONFIG_ENV
+            | CONFIG_EXTENSION
+            | FABRIC_DESTINATION
+            | FLOW
+            | FLOW_PROFILE
+            | MAINFRAME_APP
+            | MAINFRAME_ENV
     )
 }
 
@@ -218,6 +233,49 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             "AppIntegrations EventBridge bus",
             &[("aws_cloudwatch_event_bus", &["name"])],
         ),
+        (MAINFRAME_APP, "kms_key_id") => key("Mainframe application encryption key"),
+        (MAINFRAME_ENV, "kms_key_id") => scalar(
+            "Mainframe environment encryption key",
+            &[("aws_kms_key", &["arn"])],
+        ),
+        (MAINFRAME_APP, "role_arn") => role("Mainframe application role"),
+        (MAINFRAME_APP, "definition.s3_location") => scalar(
+            "Mainframe definition object",
+            &[("aws_s3_object", &["key"])],
+        )
+        .decoded(definition_object),
+        (MAINFRAME_ENV, "subnet_ids") => Rule::new(
+            "Mainframe environment subnets",
+            &[("aws_subnet", &["id"])],
+            true,
+            &[],
+        ),
+        (MAINFRAME_ENV, "security_group_ids") => Rule::new(
+            "Mainframe environment security groups",
+            &[("aws_security_group", &["id"])],
+            true,
+            &[],
+        ),
+        (MAINFRAME_ENV, "storage_configuration.efs.file_system_id") => scalar(
+            "Mainframe EFS filesystem",
+            &[("aws_efs_file_system", &["id"])],
+        ),
+        (MAINFRAME_ENV, "storage_configuration.fsx.file_system_id") => scalar(
+            "Mainframe FSx filesystem",
+            &[("aws_fsx_lustre_file_system", &["id"])],
+        ),
+        (MAINFRAME_DEPLOYMENT, "application_id") => scalar(
+            "Mainframe deployed application",
+            &[(MAINFRAME_APP, &["application_id", "id"])],
+        ),
+        (MAINFRAME_DEPLOYMENT, "environment_id") => scalar(
+            "Mainframe deployment environment",
+            &[(MAINFRAME_ENV, &["environment_id", "id"])],
+        ),
+        (MAINFRAME_DEPLOYMENT, "application_version") => scalar(
+            "Mainframe configured application version",
+            &[(MAINFRAME_APP, &["current_version"])],
+        ),
         _ => return None,
     })
 }
@@ -244,6 +302,97 @@ fn integration_profile<'a>(
     let name = value.as_str()?.strip_prefix("Salesforce://AppFlow/")?;
     (!name.is_empty() && !name.contains(['?', '#']) && !name.chars().any(char::is_whitespace))
         .then(|| [name].into())
+}
+
+fn annotation_for_object(e: &Evidence<'_>, r: &AttributeReference) -> Option<usize> {
+    let target = r.target;
+    let examined = match (e.nodes[target].resource_type.as_str(), r.attribute.as_str()) {
+        (CONFIG_PROFILE, "location_uri") => r,
+        (MAINFRAME_APP, "definition.s3_location") => {
+            if !e.absent(target, "definition.0.content") {
+                return None;
+            }
+            let (v, mask) = e.values[target];
+            if !super::nested_references::singleton(v, mask, "definition") {
+                return None;
+            }
+            let leaf = super::lambda_core::unique(e.refs, target, "definition.0.s3_location")?;
+            if leaf.indexed_block_lengths != [1] || leaf.sources != r.sources {
+                return None;
+            }
+            leaf
+        }
+        _ => return None,
+    };
+    let (bucket, key) = s3_object(e.text(target, &examined.attribute)?)?;
+    if !current(&e.nodes[target])
+        || !examined.complete
+        || !examined.instances_explicit
+        || !examined.issues.is_empty()
+    {
+        return None;
+    }
+    let mut object = None;
+    let mut bucket_source = None;
+    for &source in &examined.sources {
+        let node = &e.nodes[source];
+        let outputs = examined.source_attributes_by_instance.get(&source)?;
+        if !current(node) || !regional_binding(&e.nodes[target], node) {
+            return None;
+        }
+        match node.resource_type.as_str() {
+            "aws_s3_object"
+                if object.is_none()
+                    && outputs.contains("key")
+                    && outputs
+                        .iter()
+                        .all(|output| matches!(output.as_str(), "key" | "bucket"))
+                    && e.text(source, "key") == Some(key)
+                    && e.text(source, "bucket") == Some(bucket) =>
+            {
+                object = Some(source);
+            }
+            "aws_s3_bucket"
+                if bucket_source.is_none()
+                    && outputs.len() == 1
+                    && outputs.first().is_some_and(|output| {
+                        matches!(output.as_str(), "id" | "bucket")
+                            && e.text(source, output) == Some(bucket)
+                    }) =>
+            {
+                bucket_source = Some(source);
+            }
+            _ => return None,
+        }
+    }
+    object
+}
+
+fn annotate_object_locators(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    values: &[(&Value, &Value)],
+) {
+    let e = Evidence {
+        nodes,
+        refs,
+        values,
+    };
+    let results: Vec<_> = refs.iter().map(|r| annotation_for_object(&e, r)).collect();
+    for (r, source) in refs.iter_mut().zip(results) {
+        if let Some(source) = source {
+            r.sources.retain(|&candidate| candidate == source);
+            r.source_attributes_by_instance
+                .retain(|&candidate, _| candidate == source);
+            r.source_attributes = r.source_attributes_by_instance[&source].clone();
+            r.service_reference_verified = true;
+            r.complete = true;
+        }
+    }
+}
+
+fn definition_object<'a>(_: &str, value: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
+    s3_object(value.as_str()?).map(|(_, key)| [key].into())
 }
 
 fn configuration_locator<'a>(
@@ -283,6 +432,8 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies);
     annotate_versions(nodes, refs, values);
     annotate_fabric_connections(nodes, refs, values);
+    annotate_mainframe_versions(nodes, refs, values);
+    annotate_object_locators(nodes, refs, values);
 }
 
 fn arn_resource<'a>(
@@ -346,12 +497,6 @@ fn configured_source(
     let right = &e.nodes[source];
     let attrs = r.source_attributes_by_instance.get(&source)?;
     let output = attrs.first()?;
-    let current = |node: &TerraformEntity| {
-        node.provider.is_aws()
-            && node.mode == crate::model::EntityMode::Managed
-            && node.action != crate::model::Action::Delete
-            && node.deposed_key.is_none()
-    };
     (r.complete
         && r.instances_explicit
         && r.issues.is_empty()
@@ -362,18 +507,29 @@ fn configured_source(
         && attrs.len() == 1
         && outputs.contains(&output.as_str())
         && matches(source, output)
-        && super::eventbridge::bindings(
-            left.provider_configuration.as_ref(),
-            right.provider_configuration.as_ref(),
-            super::scope::scope(left)
-                .as_ref()
-                .and_then(|s| s.region.as_ref()),
-            super::scope::scope(right)
-                .as_ref()
-                .and_then(|s| s.region.as_ref()),
-            false,
-        ))
+        && regional_binding(left, right))
     .then_some(source)
+}
+
+fn current(node: &TerraformEntity) -> bool {
+    node.provider.is_aws()
+        && node.mode == crate::model::EntityMode::Managed
+        && node.action != crate::model::Action::Delete
+        && node.deposed_key.is_none()
+}
+
+fn regional_binding(left: &TerraformEntity, right: &TerraformEntity) -> bool {
+    super::eventbridge::bindings(
+        left.provider_configuration.as_ref(),
+        right.provider_configuration.as_ref(),
+        super::scope::scope(left)
+            .as_ref()
+            .and_then(|s| s.region.as_ref()),
+        super::scope::scope(right)
+            .as_ref()
+            .and_then(|s| s.region.as_ref()),
+        false,
+    )
 }
 
 fn same_endpoint(
@@ -474,6 +630,33 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                 && name
                     .bytes()
                     .all(|ch| ch.is_ascii_alphanumeric() || b"/._-".contains(&ch))
+        }),
+        (MAINFRAME_APP, "definition.0.s3_location") => {
+            e.absent(target, "definition.0.content")
+                && e.text(target, path)
+                    .and_then(s3_object)
+                    .is_some_and(|(bucket, _)| e.text(source, "bucket") == Some(bucket))
+        }
+        (MAINFRAME_ENV, "kms_key_id") => service_arn(e, source, "kms", "key/").is_some_and(segment),
+        (MAINFRAME_ENV, "security_group_ids" | "subnet_ids") => {
+            configured_links::network_context(e, target, MAINFRAME_NETWORK).is_some()
+        }
+        (MAINFRAME_ENV, "storage_configuration.0.efs.0.file_system_id") => {
+            e.absent(target, "storage_configuration.0.fsx")
+        }
+        (MAINFRAME_ENV, "storage_configuration.0.fsx.0.file_system_id") => {
+            e.absent(target, "storage_configuration.0.efs")
+        }
+        (MAINFRAME_DEPLOYMENT, "environment_id") => endpoint(
+            e,
+            target,
+            "application_id",
+            MAINFRAME_APP,
+            &["application_id", "id"],
+        )
+        .is_some_and(|app| {
+            e.text(app, "engine_type")
+                .is_some_and(|engine| e.text(source, "engine_type") == Some(engine))
         }),
         (CONFIG_EXTENSION, _) => extension_action(e, target, source, path),
         (CONFIG_ASSOCIATION, "extension_arn") => {
@@ -822,6 +1005,74 @@ fn uuid(value: &str) -> bool {
             .all(|byte| byte.is_ascii_hexdigit() || byte == b'-')
 }
 
+fn annotate_mainframe_versions(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    values: &[(&Value, &Value)],
+) {
+    let e = Evidence {
+        nodes,
+        refs,
+        values,
+    };
+    let results: Vec<_> = refs
+        .iter()
+        .map(|r| {
+            if nodes[r.target].resource_type != MAINFRAME_DEPLOYMENT
+                || r.attribute != "application_version"
+            {
+                return None;
+            }
+            let app = endpoint(
+                &e,
+                r.target,
+                "application_id",
+                MAINFRAME_APP,
+                &["application_id", "id"],
+            );
+            Some(
+                configured_source(
+                    &e,
+                    r.target,
+                    "application_version",
+                    MAINFRAME_APP,
+                    &["current_version"],
+                    |source, output| {
+                        app == Some(source)
+                            && e.value(r.target, "application_version")
+                                .and_then(Value::as_u64)
+                                .is_some_and(|number| {
+                                    number > 0
+                                        && e.value(source, output).and_then(Value::as_u64)
+                                            == Some(number)
+                                })
+                    },
+                )
+                .is_some(),
+            )
+        })
+        .collect();
+    for (r, verified) in refs.iter_mut().zip(results) {
+        if let Some(verified) = verified {
+            r.service_reference_verified = verified;
+        }
+    }
+}
+
+pub(super) fn present(raw: &Input, graph: &mut crate::model::Graph) {
+    let first = graph.edges.len();
+    super::lambda_core::present_network(
+        raw,
+        graph,
+        MAINFRAME_ENV,
+        ("subnet_ids", "security_group_ids"),
+        bindings,
+    );
+    for edge in &graph.edges[first..] {
+        graph.nodes[edge.to].placement = crate::model::Placement::Spatial;
+    }
+}
+
 fn iam_role(e: &Evidence<'_>, source: usize) -> bool {
     e.text(source, "arn")
         .and_then(|arn| arn_resource(&e.nodes[source], arn, "iam", false))
@@ -851,6 +1102,11 @@ fn configuration_source(e: &Evidence<'_>, target: usize, source: usize) -> bool 
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match kind {
+        MAINFRAME_DEPLOYMENT => Some((
+            "environment_id",
+            "Mainframe deployment environment",
+            "Deployments",
+        )),
         FABRIC_INGESTION => Some(("app_bundle_arn", "AppFabric bundle", "Ingestions")),
         FABRIC_DESTINATION => Some((
             "ingestion_arn",
