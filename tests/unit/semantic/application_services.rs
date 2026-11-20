@@ -566,3 +566,91 @@ fn appfabric_authorization_connections_use_the_qualified_bundle() {
     );
     assert!(label(super::FABRIC_CONNECTION, "tenant").is_none());
 }
+
+#[test]
+fn appfabric_qualifies_ingestion_destination_and_implicit_authorization() {
+    let bundle = "arn:aws:appfabric:us-east-1:123456789012:appbundle/b1";
+    let auth = format!("{bundle}/appauthorization/auth1");
+    let ingestion = format!("{bundle}/ingestion/in1");
+    let mut fixture = plan(&[
+        (
+            "aws_appfabric_app_bundle.main",
+            json!({"arn":bundle}),
+            json!({}),
+        ),
+        (
+            "aws_appfabric_app_authorization.saas",
+            json!({"arn":auth,"app_bundle_arn":bundle,"app":"SLACK","tenant":[{"tenant_identifier":"tenant"}]}),
+            json!({
+                "app_bundle_arn":{"references":["aws_appfabric_app_bundle.main.arn"]}
+            }),
+        ),
+        (
+            "aws_appfabric_ingestion.saas",
+            json!({"arn":ingestion,"app_bundle_arn":bundle,"app":"SLACK","tenant_id":"tenant","ingestion_type":"auditLog"}),
+            json!({
+                "app_bundle_arn":{"references":["aws_appfabric_app_bundle.main.arn"]}
+            }),
+        ),
+        (
+            "aws_s3_bucket.logs",
+            json!({"bucket":"logging-bucket"}),
+            json!({}),
+        ),
+        (
+            "aws_appfabric_ingestion_destination.logs",
+            json!({"app_bundle_arn":bundle,"ingestion_arn":ingestion,
+                "destination_configuration":[{"audit_log":[{"destination":[{"s3_bucket":[{"bucket_name":"logging-bucket"}]}]}]}]
+            }),
+            json!({
+                "app_bundle_arn":{"references":["aws_appfabric_app_bundle.main.arn"]},
+                "ingestion_arn":{"references":["aws_appfabric_ingestion.saas.arn"]},
+                "destination_configuration":[{"audit_log":[{"destination":[{"s3_bucket":[{"bucket_name":{"references":["aws_s3_bucket.logs.bucket"]}}]}]}]}]
+            }),
+        ),
+    ]);
+    let ingestion = "aws_appfabric_ingestion.saas";
+    let destination = "aws_appfabric_ingestion_destination.logs";
+    let check = |fixture: &Value, address: &str, path: &str| {
+        verified(
+            &graph(fixture),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    assert!(check(&fixture, ingestion, "authorization"));
+    assert!(check(&fixture, destination, "ingestion_arn"));
+    assert!(check(&fixture, destination, super::FABRIC_S3));
+    for key in ["resource_changes", "configuration"] {
+        let rows = if key == "configuration" {
+            &mut fixture[key]["root_module"]["resources"]
+        } else {
+            &mut fixture[key]
+        };
+        let mut duplicate = rows[1].clone();
+        duplicate["name"] = json!("other");
+        duplicate["address"] = json!("aws_appfabric_app_authorization.other");
+        if key == "resource_changes" {
+            duplicate["change"]["after"]["arn"] = json!(format!("{bundle}/appauthorization/auth2"));
+        }
+        rows.as_array_mut().unwrap().push(duplicate);
+    }
+    assert!(!check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][5]["change"]["after_unknown"] =
+        json!({"tenant":[{"tenant_identifier":true}]});
+    assert!(!check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][5]["change"]["after"]["app"] = json!("DIFFERENT");
+    assert!(check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][4]["change"]["after"]["app_bundle_arn"] = json!("unrelated");
+    assert!(!check(&fixture, destination, "ingestion_arn"));
+    assert!(
+        graph(&fixture)
+            .nodes
+            .iter()
+            .find(|n| n.address == destination)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+}

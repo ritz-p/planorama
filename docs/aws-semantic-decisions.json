@@ -86955,10 +86955,10 @@
       }
     },
     "aws_appfabric_ingestion": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1589,
-      "gap": "#1589 — Verify the configured bundle. Match the existing authorization only when bundle, app and tenant evidence uniquely qualifies it. The tenant identifier is not an AWS account ID. Qualify ingestion ownership using the app bundle and preserve the declaration on ambiguous authorization.",
+      "gap": "#1589 — Verify the bundle and match one managed authorization by the qualified bundle, application and tenant tuple.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86971,9 +86971,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Node with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric Ingestion.",
-        "ownership": "Missing: Qualify ingestion ownership using the app bundle and preserve the declaration on ambiguous authorization.",
+        "ownership": "Supported: Present the configured ingestion under the verified bundle and preserve the ingestion when its authorization is ambiguous.",
         "network": "Not applicable: SaaS audit ingestion does not attach to a network.",
-        "references": "Missing: Verify the configured bundle. Match the existing authorization only when bundle, app and tenant evidence uniquely qualifies it. The tenant identifier is not an AWS account ID.",
+        "references": "Supported: Verify the bundle and match one managed authorization by the qualified bundle, application and tenant tuple.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Bundle identity determines the regional context, independently of tenant identity.",
         "summaries": "Intentionally unsupported: omit audit event contents, tenant values and ingestion status. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appfabric_ingestion.html.markdown",
@@ -87007,17 +87007,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newIngestionResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appfabric_ingestion_destination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1589,
-      "gap": "#1589 — Verify the ingestion and app bundle together. Verify the configured S3 bucket or Firehose stream by known identity and matching explicit references under the selected destination shape. Bind only to the verified ingestion; keep the bucket and stream shared and independent.",
+      "gap": "#1589 — Verify the ingestion and bundle together and verify the selected S3 or Firehose destination.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87030,9 +87032,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Node with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric Ingestion Destination.",
-        "ownership": "Missing: Bind only to the verified ingestion; keep the bucket and stream shared and independent.",
+        "ownership": "Supported: Present under the verified ingestion while retaining independent S3 and Firehose resources.",
         "network": "Not applicable: Delivery to S3 or Firehose does not place the destination in an ingestion network.",
-        "references": "Missing: Verify the ingestion and app bundle together. Verify the configured S3 bucket or Firehose stream by known identity and matching explicit references under the selected destination shape.",
+        "references": "Supported: Verify the ingestion and bundle together and verify the selected S3 or Firehose destination.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify both the ingestion and destination in their actual scopes.",
         "summaries": "Intentionally unsupported: omit audit records, delivery prefixes and processing format contents. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appfabric_ingestion_destination.html.markdown",
@@ -87074,7 +87076,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newIngestionDestinationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}

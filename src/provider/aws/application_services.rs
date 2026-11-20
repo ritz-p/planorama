@@ -25,8 +25,17 @@ const FABRIC_BUNDLE: &str = "aws_appfabric_app_bundle";
 const FABRIC_AUTH: &str = "aws_appfabric_app_authorization";
 const FABRIC_CONNECTION: &str = "aws_appfabric_app_authorization_connection";
 
+const FABRIC_INGESTION: &str = "aws_appfabric_ingestion";
+const FABRIC_DESTINATION: &str = "aws_appfabric_ingestion_destination";
+const FABRIC_S3: &str = "destination_configuration.audit_log.destination.s3_bucket.bucket_name";
+const FABRIC_FIREHOSE: &str =
+    "destination_configuration.audit_log.destination.firehose_stream.stream_name";
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    matches!(kind, AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION)
+    matches!(
+        kind,
+        AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION | FABRIC_DESTINATION
+    )
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
@@ -123,15 +132,31 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 (CONFIG_PROFILE, &["arn"]),
             ],
         ),
-        (FABRIC_AUTH | FABRIC_CONNECTION, "app_bundle_arn") => {
-            scalar("AppFabric bundle", &[(FABRIC_BUNDLE, &["arn"])])
-        }
+        (
+            FABRIC_AUTH | FABRIC_CONNECTION | FABRIC_INGESTION | FABRIC_DESTINATION,
+            "app_bundle_arn",
+        ) => scalar("AppFabric bundle", &[(FABRIC_BUNDLE, &["arn"])]),
         (FABRIC_CONNECTION, "app_authorization_arn") => {
             scalar("AppFabric authorization", &[(FABRIC_AUTH, &["arn"])])
         }
         (FABRIC_BUNDLE, "customer_managed_key_arn") => scalar(
             "AppFabric bundle encryption key",
             &[("aws_kms_key", &["arn"])],
+        ),
+        (FABRIC_INGESTION, "authorization") => scalar(
+            "AppFabric ingestion authorization",
+            &[(FABRIC_AUTH, &["arn"])],
+        ),
+        (FABRIC_DESTINATION, "ingestion_arn") => {
+            scalar("AppFabric ingestion", &[(FABRIC_INGESTION, &["arn"])])
+        }
+        (FABRIC_DESTINATION, FABRIC_S3) => scalar(
+            "AppFabric delivery bucket",
+            &[("aws_s3_bucket", &["id", "bucket"])],
+        ),
+        (FABRIC_DESTINATION, FABRIC_FIREHOSE) => scalar(
+            "AppFabric delivery stream",
+            &[("aws_kinesis_firehose_delivery_stream", &["name"])],
         ),
         _ => return None,
     })
@@ -312,7 +337,31 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         return false;
     }
     match (e.nodes[target].resource_type.as_str(), path) {
-        (FABRIC_AUTH | FABRIC_CONNECTION, "app_bundle_arn") => {
+        (FABRIC_INGESTION, "app_bundle_arn") => {
+            service_arn(e, source, "appfabric", "appbundle/").is_some_and(segment)
+                && fabric_child_id(e, target, source, "ingestion").is_some()
+        }
+        (FABRIC_DESTINATION, "ingestion_arn") => {
+            let bundle = endpoint(e, target, "app_bundle_arn", FABRIC_BUNDLE, &["arn"]);
+            bundle.is_some_and(|bundle| {
+                service_arn(e, bundle, "appfabric", "appbundle/").is_some_and(segment)
+                    && endpoint(e, source, "app_bundle_arn", FABRIC_BUNDLE, &["arn"])
+                        == Some(bundle)
+                    && fabric_child_id(e, source, bundle, "ingestion").is_some()
+            })
+        }
+        (FABRIC_DESTINATION, _) if matches!(r.attribute.as_str(), FABRIC_S3 | FABRIC_FIREHOSE) => {
+            let other = if r.attribute == FABRIC_S3 {
+                "firehose_stream"
+            } else {
+                "s3_bucket"
+            };
+            e.absent(
+                target,
+                &format!("destination_configuration.0.audit_log.0.destination.0.{other}"),
+            )
+        }
+        (FABRIC_AUTH | FABRIC_CONNECTION | FABRIC_DESTINATION, "app_bundle_arn") => {
             service_arn(e, source, "appfabric", "appbundle/").is_some_and(segment)
         }
         (FABRIC_BUNDLE, "customer_managed_key_arn") => {
@@ -598,6 +647,66 @@ fn annotate_fabric_connections(
     }
 }
 
+pub(crate) fn fabric_ingestion_authorizations(
+    nodes: &[TerraformEntity],
+    refs: &[AttributeReference],
+    values: &[(&Value, &Value)],
+) -> Vec<AttributeReference> {
+    let e = Evidence {
+        nodes,
+        refs,
+        values,
+    };
+    let authorizations: Vec<_> = nodes
+        .iter()
+        .enumerate()
+        .filter_map(|(index, node)| {
+            if node.resource_type != FABRIC_AUTH {
+                return None;
+            }
+            let bundle = endpoint(&e, index, "app_bundle_arn", FABRIC_BUNDLE, &["arn"])?;
+            let (value, mask) = values[index];
+            let tenant = super::nested_references::singleton(value, mask, "tenant")
+                .then(|| e.text(index, "tenant.0.tenant_identifier"))
+                .flatten();
+            Some((index, bundle, e.text(index, "app"), tenant))
+        })
+        .collect();
+    refs.iter()
+        .filter_map(|r| {
+            let target = r.target;
+            if nodes[target].resource_type != FABRIC_INGESTION
+                || r.attribute != "app_bundle_arn"
+                || !r.service_reference_verified
+            {
+                return None;
+            }
+            let [bundle] = *r.sources.as_slice() else {
+                return None;
+            };
+            let app = e.text(target, "app")?;
+            let tenant = e.text(target, "tenant_id")?;
+            let mut matches = authorizations.iter().filter(|(_, b, a, t)| {
+                *b == bundle && a.is_none_or(|a| a == app) && t.is_none_or(|t| t == tenant)
+            });
+            let &(source, _, Some(_), Some(_)) = matches.next()? else {
+                return None;
+            };
+            if matches.next().is_some() {
+                return None;
+            }
+            fabric_child_id(&e, source, bundle, "appauthorization")?;
+            let mut matched = r.clone();
+            matched.attribute = "authorization".into();
+            matched.has_references = false;
+            matched.sources = vec![source];
+            matched.source_attributes_by_instance.clear();
+            matched.source_attributes.clear();
+            Some(matched)
+        })
+        .collect()
+}
+
 fn uuid(value: &str) -> bool {
     value.split('-').map(|part| part.len()).eq([8, 4, 4, 4, 12])
         && value
@@ -634,6 +743,12 @@ fn configuration_source(e: &Evidence<'_>, target: usize, source: usize) -> bool 
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match kind {
+        FABRIC_INGESTION => Some(("app_bundle_arn", "AppFabric bundle", "Ingestions")),
+        FABRIC_DESTINATION => Some((
+            "ingestion_arn",
+            "AppFabric ingestion",
+            "Ingestion destinations",
+        )),
         FABRIC_AUTH => Some(("app_bundle_arn", "AppFabric bundle", "Authorizations")),
         FABRIC_CONNECTION => Some((
             "app_authorization_arn",
