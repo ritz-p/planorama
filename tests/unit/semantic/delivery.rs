@@ -182,3 +182,48 @@ fn connections_requires_current_typed_evidence() {
         ("aws_codeconnections_host.git", "arn"),
     );
 }
+
+#[test]
+fn codedeploy_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/codedeploy-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_codedeploy_deployment_group.shipping", "app_name"),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "deployment_config_name",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "service_role_arn",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "autoscaling_groups",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "ecs_service.cluster_name",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "ecs_service.service_name",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "load_balancer_info.target_group_pair_info.target_group.name",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "load_balancer_info.target_group_pair_info.prod_traffic_route.listener_arns",
+            ),
+            (
+                "aws_codedeploy_deployment_group.shipping",
+                "trigger_configuration.trigger_target_arn",
+            ),
+        ],
+        ("aws_codedeploy_app.shipping", "name"),
+    );
+}

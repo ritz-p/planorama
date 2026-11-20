@@ -80298,10 +80298,10 @@
       }
     },
     "aws_codedeploy_deployment_group": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1532,
-      "gap": "#1532 — Resolve the application, custom deployment configuration, role, ASGs, cluster-qualified ECS service, load-balancer targets/listeners and notification ARN. Tags and built-in deployment configuration names are not managed endpoints.",
+      "gap": "#1532 — Verify the application, custom deployment configuration, role, Auto Scaling groups, cluster-qualified ECS service, load balancer and notification endpoints. Tags and built-in rollout names remain configuration.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80318,9 +80318,9 @@
           "trigger_configuration.trigger_target_arn"
         ],
         "placement": "Supported: managed Logical Controller for codedeploy_deployment_group. Provides a CodeDeploy deployment group.",
-        "ownership": "Missing: verify app_name before attaching codedeploy_deployment_group to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified application and preserve independently addressable shared targets.",
         "network": "Not applicable: codedeploy_deployment_group declares no VPC/subnet assignment; the configured app_name does not establish network containment.",
-        "references": "Missing: Resolve the application, custom deployment configuration, role, ASGs, cluster-qualified ECS service, load-balancer targets/listeners and notification ARN. Tags and built-in deployment configuration names are not managed endpoints.",
+        "references": "Supported: Verify the application, custom deployment configuration, role, Auto Scaling groups, cluster-qualified ECS service, load balancer and notification endpoints. Tags and built-in rollout names remain configuration.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit deployment payloads, tags and runtime deployment outcomes from codedeploy_deployment_group summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codedeploy_deployment_group.html.markdown",
@@ -80385,7 +80385,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceDeploymentGroup. No same-name data source in the pinned schema.",
         "dataContracts": {}

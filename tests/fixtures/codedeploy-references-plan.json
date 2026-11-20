@@ -1,0 +1,407 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_codedeploy_deployment_group.shipping",
+      "mode": "managed",
+      "type": "aws_codedeploy_deployment_group",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "app_name": "app",
+          "deployment_config_name": "custom-configuration",
+          "service_role_arn": "arn:aws:iam::123456789012:role/Deploy",
+          "autoscaling_groups": [
+            "deployment"
+          ],
+          "ecs_service": [
+            {
+              "cluster_name": "delivery",
+              "service_name": "service"
+            }
+          ],
+          "load_balancer_info": [
+            {
+              "target_group_pair_info": [
+                {
+                  "target_group": [
+                    {
+                      "name": "blue"
+                    },
+                    {
+                      "name": "green"
+                    }
+                  ],
+                  "prod_traffic_route": [
+                    {
+                      "listener_arns": [
+                        "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/delivery/541f/456"
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "trigger_configuration": [
+            {
+              "trigger_target_arn": "arn:aws:sns:us-east-1:123456789012:deploy"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_codedeploy_app.shipping",
+      "mode": "managed",
+      "type": "aws_codedeploy_app",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "app"
+        }
+      }
+    },
+    {
+      "address": "aws_codedeploy_deployment_config.shipping",
+      "mode": "managed",
+      "type": "aws_codedeploy_deployment_config",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "deployment_config_name": "custom-configuration"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.shipping",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Deploy"
+        }
+      }
+    },
+    {
+      "address": "aws_autoscaling_group.shipping",
+      "mode": "managed",
+      "type": "aws_autoscaling_group",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "deployment"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_cluster.shipping",
+      "mode": "managed",
+      "type": "aws_ecs_cluster",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "delivery",
+          "arn": "arn:aws:ecs:us-east-1:123456789012:cluster/delivery"
+        }
+      }
+    },
+    {
+      "address": "aws_ecs_service.shipping",
+      "mode": "managed",
+      "type": "aws_ecs_service",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "service",
+          "cluster": "arn:aws:ecs:us-east-1:123456789012:cluster/delivery"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_target_group.blue",
+      "mode": "managed",
+      "type": "aws_lb_target_group",
+      "name": "blue",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "blue"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_target_group.green",
+      "mode": "managed",
+      "type": "aws_lb_target_group",
+      "name": "green",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "green"
+        }
+      }
+    },
+    {
+      "address": "aws_lb_listener.shipping",
+      "mode": "managed",
+      "type": "aws_lb_listener",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:listener/app/delivery/541f/456"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.shipping",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:deploy"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_codedeploy_deployment_group.shipping",
+          "mode": "managed",
+          "type": "aws_codedeploy_deployment_group",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "app_name": {
+              "references": [
+                "aws_codedeploy_app.shipping.name"
+              ]
+            },
+            "deployment_config_name": {
+              "references": [
+                "aws_codedeploy_deployment_config.shipping.deployment_config_name"
+              ]
+            },
+            "service_role_arn": {
+              "references": [
+                "aws_iam_role.shipping.arn"
+              ]
+            },
+            "autoscaling_groups": {
+              "references": [
+                "aws_autoscaling_group.shipping.name"
+              ]
+            },
+            "ecs_service": [
+              {
+                "cluster_name": {
+                  "references": [
+                    "aws_ecs_cluster.shipping.name"
+                  ]
+                },
+                "service_name": {
+                  "references": [
+                    "aws_ecs_service.shipping.name"
+                  ]
+                }
+              }
+            ],
+            "load_balancer_info": [
+              {
+                "target_group_pair_info": [
+                  {
+                    "target_group": [
+                      {
+                        "name": {
+                          "references": [
+                            "aws_lb_target_group.blue.name"
+                          ]
+                        }
+                      },
+                      {
+                        "name": {
+                          "references": [
+                            "aws_lb_target_group.green.name"
+                          ]
+                        }
+                      }
+                    ],
+                    "prod_traffic_route": [
+                      {
+                        "listener_arns": {
+                          "references": [
+                            "aws_lb_listener.shipping.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ],
+            "trigger_configuration": [
+              {
+                "trigger_target_arn": {
+                  "references": [
+                    "aws_sns_topic.shipping.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_codedeploy_app.shipping",
+          "mode": "managed",
+          "type": "aws_codedeploy_app",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_codedeploy_deployment_config.shipping",
+          "mode": "managed",
+          "type": "aws_codedeploy_deployment_config",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.shipping",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_autoscaling_group.shipping",
+          "mode": "managed",
+          "type": "aws_autoscaling_group",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_cluster.shipping",
+          "mode": "managed",
+          "type": "aws_ecs_cluster",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ecs_service.shipping",
+          "mode": "managed",
+          "type": "aws_ecs_service",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cluster": {
+              "references": [
+                "aws_ecs_cluster.shipping.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb_target_group.blue",
+          "mode": "managed",
+          "type": "aws_lb_target_group",
+          "name": "blue",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb_target_group.green",
+          "mode": "managed",
+          "type": "aws_lb_target_group",
+          "name": "green",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lb_listener.shipping",
+          "mode": "managed",
+          "type": "aws_lb_listener",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.shipping",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
