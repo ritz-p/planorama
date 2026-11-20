@@ -2124,6 +2124,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::arc_readiness::indexed(&node.resource_type, &reference.attribute)
             || super::arc_routing_control::indexed(&node.resource_type, &reference.attribute)
             || super::resilience_hub::indexed(&node.resource_type, &reference.attribute)
+            || super::operations::indexed(&node.resource_type, &reference.attribute)
             || super::delivery::indexed(&node.resource_type, &reference.attribute)
             || super::firewall_manager::indexed(&node.resource_type, &reference.attribute)
             || super::fis_configuration::indexed(&node.resource_type, &reference.attribute)

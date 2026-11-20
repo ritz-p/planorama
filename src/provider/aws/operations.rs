@@ -318,8 +318,67 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_servicecatalog_provisioned_product", "product_id") => Rule::new(
+            "Provisioned product definition",
+            &[("aws_servicecatalog_product", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_provisioned_product", "product_name") => Rule::new(
+            "Provisioned product definition",
+            &[("aws_servicecatalog_product", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_provisioned_product", "provisioning_artifact_id") => Rule::new(
+            "Provisioned product artifact",
+            &[(
+                "aws_servicecatalog_provisioning_artifact",
+                &["provisioning_artifact_id"],
+            )],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_provisioned_product", "provisioning_artifact_name") => Rule::new(
+            "Provisioned product artifact",
+            &[("aws_servicecatalog_provisioning_artifact", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_provisioned_product", "notification_arns") => Rule::new(
+            "Provisioned product notification topics",
+            &[("aws_sns_topic", &["arn"])],
+            true,
+            &[],
+        ),
+        ("aws_servicecatalog_provisioning_artifact", "product_id") => Rule::new(
+            "Artifact product",
+            &[("aws_servicecatalog_product", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_service_action", "definition.name") => Rule::new(
+            "Service action SSM document",
+            &[("aws_ssm_document", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_service_action", "definition.assume_role") => Rule::new(
+            "Service action role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
+}
+
+pub(crate) fn has_indexed(kind: &str) -> bool {
+    matches!(kind, "aws_servicecatalog_service_action")
+}
+
+pub(crate) fn indexed(kind: &str, path: &str) -> bool {
+    configured_links::indexed(kind, path, rule)
 }
 
 pub(super) fn label(kind: &str, path: &str) -> Option<&'static str> {
@@ -436,6 +495,27 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                     "aws_iam_group" => principal_arn(e, source, "iam", "group/"),
                     _ => ram_principal(e, source),
                 }
+        }
+        (
+            "aws_servicecatalog_provisioned_product",
+            "provisioning_artifact_id" | "provisioning_artifact_name",
+        ) => {
+            let kind = "aws_servicecatalog_product";
+            let product = if e.has_argument(r.target, "product_id") {
+                e.configured_endpoint(r.target, "product_id", kind, &["id"])
+            } else {
+                e.configured_endpoint(r.target, "product_name", kind, &["name"])
+            };
+            product.is_some_and(|p| {
+                e.configured_endpoint(source, "product_id", kind, &["id"]) == Some(p)
+            })
+        }
+        ("aws_servicecatalog_service_action", "definition.name" | "definition.assume_role") => {
+            path.rsplit_once('.').is_some_and(|(block, _)| {
+                e.text(r.target, &format!("{block}.type")) == Some("SSM_AUTOMATION")
+                    && (r.attribute == "definition.name"
+                        || principal_arn(e, source, "iam", "role/"))
+            })
         }
         _ => true,
     }

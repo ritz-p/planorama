@@ -83896,10 +83896,10 @@
       }
     },
     "aws_servicecatalog_provisioned_product": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1547,
-      "gap": "#1547 — Resolve configured product and artifact within its product context, and explicit SNS topics. Returned outputs, dashboard names and launch role are not configuration inputs.",
+      "gap": "#1547 — Verify configured product and product-qualified artifact identifiers or names and explicit SNS topics. Returned outputs and launch role do not establish endpoints.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83915,7 +83915,7 @@
         "placement": "Supported: managed Logical Node for servicecatalog_provisioned_product. Manages a Service Catalog Provisioned Product",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_provisioned_product remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_provisioned_product declares no VPC/subnet assignment; the configured product_id does not establish network containment.",
-        "references": "Missing: Resolve configured product and artifact within its product context, and explicit SNS topics. Returned outputs, dashboard names and launch role are not configuration inputs.",
+        "references": "Supported: Verify configured product and product-qualified artifact identifiers or names and explicit SNS topics. Returned outputs and launch role do not establish endpoints.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_provisioned_product summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_provisioned_product.html.markdown",
@@ -83967,17 +83967,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceProvisionedProduct. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_servicecatalog_provisioning_artifact": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1547,
-      "gap": "#1547 — Verify the owning product; distinguish the computed artifact ID from the template locator. Do not parse or deploy template contents.",
+      "gap": "#1547 — Verify the product ID. Artifact identity and template locators serve different purposes, and template contents remain opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83991,7 +83993,7 @@
         "placement": "Supported: managed Logical Node for servicecatalog_provisioning_artifact. Manages a Service Catalog Provisioning Artifact",
         "ownership": "Missing: verify product_id before attaching servicecatalog_provisioning_artifact to a unique parent. Preserve the declaration on ambiguous or unknown references.",
         "network": "Not applicable: servicecatalog_provisioning_artifact declares no VPC/subnet assignment; the configured product_id does not establish network containment.",
-        "references": "Missing: Verify the owning product; distinguish the computed artifact ID from the template locator. Do not parse or deploy template contents.",
+        "references": "Supported: Verify the product ID. Artifact identity and template locators serve different purposes, and template contents remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_provisioning_artifact summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_provisioning_artifact.html.markdown",
@@ -84022,17 +84024,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceProvisioningArtifact. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_servicecatalog_service_action": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1547,
-      "gap": "#1547 — Verify the SSM document under the supported definition type and a configured role ARN. LAUNCH_ROLE is a sentinel and document parameters remain opaque.",
+      "gap": "#1547 — Verify the document name and configured IAM role for SSM automation. The LAUNCH_ROLE sentinel and document parameters remain metadata.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84046,7 +84050,7 @@
         "placement": "Supported: managed Logical Controller for servicecatalog_service_action. Manages a Service Catalog Service Action",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_service_action remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_service_action declares no VPC/subnet assignment; the configured definition.type does not establish network containment.",
-        "references": "Missing: Verify the SSM document under the supported definition type and a configured role ARN. LAUNCH_ROLE is a sentinel and document parameters remain opaque.",
+        "references": "Supported: Verify the document name and configured IAM role for SSM automation. The LAUNCH_ROLE sentinel and document parameters remain metadata.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_service_action summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_service_action.html.markdown",
@@ -84081,7 +84085,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceServiceAction. No same-name data source in the pinned schema.",
         "dataContracts": {}
