@@ -84374,10 +84374,10 @@
       }
     },
     "aws_servicequotas_auto_management": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1548,
-      "gap": "#1548 — Verify the explicitly configured AWS User Notifications ARN against a compatible endpoint. Exclusions are service/quota codes, not managed resources or SNS topics.",
+      "gap": "#1548 — Verify the configured account-scoped AWS User Notifications configuration ARN. Exclusion codes and SNS endpoints do not qualify.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84391,7 +84391,7 @@
         "placement": "Supported: managed Logical Node for servicequotas_auto_management. Manages AWS Service Quotas Automatic Management.",
         "ownership": "Not applicable: Service Quotas servicequotas_auto_management remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicequotas_auto_management declares no VPC/subnet assignment; the configured opt_in_level does not establish network containment.",
-        "references": "Missing: Verify the explicitly configured AWS User Notifications ARN against a compatible endpoint. Exclusions are service/quota codes, not managed resources or SNS topics.",
+        "references": "Supported: Verify the configured account-scoped AWS User Notifications configuration ARN. Exclusion codes and SNS endpoints do not qualify.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit usage, quota request status and organizational member inventories from servicequotas_auto_management summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicequotas_auto_management.html.markdown",
@@ -84428,7 +84428,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newAutoManagementResource. No same-name data source in the pinned schema. Deprecated attributes: id.",
         "dataContracts": {}

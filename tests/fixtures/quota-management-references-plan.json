@@ -1,0 +1,113 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_servicequotas_auto_management.all",
+      "mode": "managed",
+      "type": "aws_servicequotas_auto_management",
+      "name": "all",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "notification_arn": "arn:aws:notifications::123456789012:configuration/example",
+          "opt_in_level": "ACCOUNT",
+          "opt_in_type": "NotifyOnly",
+          "exclusion_list": {
+            "ec2": [
+              "L-EXAMPLE"
+            ]
+          }
+        }
+      }
+    },
+    {
+      "address": "aws_notifications_notification_configuration.all",
+      "mode": "managed",
+      "type": "aws_notifications_notification_configuration",
+      "name": "all",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:notifications::123456789012:configuration/example",
+          "name": "quotas"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.other",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "other",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:quotas"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_servicequotas_auto_management.all",
+          "mode": "managed",
+          "type": "aws_servicequotas_auto_management",
+          "name": "all",
+          "provider_config_key": "aws",
+          "expressions": {
+            "notification_arn": {
+              "references": [
+                "aws_notifications_notification_configuration.all.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_notifications_notification_configuration.all",
+          "mode": "managed",
+          "type": "aws_notifications_notification_configuration",
+          "name": "all",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.other",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
