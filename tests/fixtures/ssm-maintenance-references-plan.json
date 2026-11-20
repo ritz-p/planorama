@@ -1,0 +1,450 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ssm_maintenance_window_target.machines",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window_target",
+      "name": "machines",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "b38b4fe9-a2e1-4bb9-b345-da2f0932d55a",
+          "window_id": "mw-0123456789abcdef0",
+          "resource_type": "INSTANCE",
+          "targets": [
+            {
+              "key": "InstanceIds",
+              "values": [
+                "i-example"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_maintenance_window_target.group",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window_target",
+      "name": "group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "window_id": "mw-0123456789abcdef0",
+          "resource_type": "RESOURCE_GROUP",
+          "targets": [
+            {
+              "key": "resource-groups:Name",
+              "values": [
+                "maintained"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_maintenance_window_task.run",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window_task",
+      "name": "run",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "window_id": "mw-0123456789abcdef0",
+          "task_type": "RUN_COMMAND",
+          "task_arn": "Runbook",
+          "service_role_arn": "arn:aws:iam::123456789012:role/Window",
+          "targets": [
+            {
+              "key": "WindowTargetIds",
+              "values": [
+                "b38b4fe9-a2e1-4bb9-b345-da2f0932d55a"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_maintenance_window_task.lambda",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window_task",
+      "name": "lambda",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "window_id": "mw-0123456789abcdef0",
+          "task_type": "LAMBDA",
+          "task_arn": "arn:aws:lambda:us-east-1:123456789012:function:ChangeWindow"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_maintenance_window_task.step",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window_task",
+      "name": "step",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "window_id": "mw-0123456789abcdef0",
+          "task_type": "STEP_FUNCTIONS",
+          "task_arn": "arn:aws:states:us-east-1:123456789012:stateMachine:ChangeWindow"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_maintenance_window.main",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "mw-0123456789abcdef0"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_maintenance_window.other",
+      "mode": "managed",
+      "type": "aws_ssm_maintenance_window",
+      "name": "other",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "mw-other"
+        }
+      }
+    },
+    {
+      "address": "aws_instance.machine",
+      "mode": "managed",
+      "type": "aws_instance",
+      "name": "machine",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "i-example"
+        }
+      }
+    },
+    {
+      "address": "aws_resourcegroups_group.group",
+      "mode": "managed",
+      "type": "aws_resourcegroups_group",
+      "name": "group",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "maintained"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_document.commands",
+      "mode": "managed",
+      "type": "aws_ssm_document",
+      "name": "commands",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Runbook",
+          "document_type": "Command"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.window",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "window",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Window"
+        }
+      }
+    },
+    {
+      "address": "aws_lambda_function.window",
+      "mode": "managed",
+      "type": "aws_lambda_function",
+      "name": "window",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:lambda:us-east-1:123456789012:function:ChangeWindow"
+        }
+      }
+    },
+    {
+      "address": "aws_sfn_state_machine.window",
+      "mode": "managed",
+      "type": "aws_sfn_state_machine",
+      "name": "window",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:states:us-east-1:123456789012:stateMachine:ChangeWindow"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ssm_maintenance_window_target.machines",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window_target",
+          "name": "machines",
+          "provider_config_key": "aws",
+          "expressions": {
+            "window_id": {
+              "references": [
+                "aws_ssm_maintenance_window.main.id"
+              ]
+            },
+            "targets": [
+              {
+                "key": {
+                  "constant_value": "InstanceIds"
+                },
+                "values": {
+                  "references": [
+                    "aws_instance.machine.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssm_maintenance_window_target.group",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window_target",
+          "name": "group",
+          "provider_config_key": "aws",
+          "expressions": {
+            "window_id": {
+              "references": [
+                "aws_ssm_maintenance_window.main.id"
+              ]
+            },
+            "targets": [
+              {
+                "key": {
+                  "constant_value": "resource-groups:Name"
+                },
+                "values": {
+                  "references": [
+                    "aws_resourcegroups_group.group.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssm_maintenance_window_task.run",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window_task",
+          "name": "run",
+          "provider_config_key": "aws",
+          "expressions": {
+            "window_id": {
+              "references": [
+                "aws_ssm_maintenance_window.main.id"
+              ]
+            },
+            "task_arn": {
+              "references": [
+                "aws_ssm_document.commands.name"
+              ]
+            },
+            "service_role_arn": {
+              "references": [
+                "aws_iam_role.window.arn"
+              ]
+            },
+            "targets": [
+              {
+                "key": {
+                  "constant_value": "WindowTargetIds"
+                },
+                "values": {
+                  "references": [
+                    "aws_ssm_maintenance_window_target.machines.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssm_maintenance_window_task.lambda",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window_task",
+          "name": "lambda",
+          "provider_config_key": "aws",
+          "expressions": {
+            "window_id": {
+              "references": [
+                "aws_ssm_maintenance_window.main.id"
+              ]
+            },
+            "task_arn": {
+              "references": [
+                "aws_lambda_function.window.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_maintenance_window_task.step",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window_task",
+          "name": "step",
+          "provider_config_key": "aws",
+          "expressions": {
+            "window_id": {
+              "references": [
+                "aws_ssm_maintenance_window.main.id"
+              ]
+            },
+            "task_arn": {
+              "references": [
+                "aws_sfn_state_machine.window.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_maintenance_window.main",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_maintenance_window.other",
+          "mode": "managed",
+          "type": "aws_ssm_maintenance_window",
+          "name": "other",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_instance.machine",
+          "mode": "managed",
+          "type": "aws_instance",
+          "name": "machine",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_resourcegroups_group.group",
+          "mode": "managed",
+          "type": "aws_resourcegroups_group",
+          "name": "group",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_document.commands",
+          "mode": "managed",
+          "type": "aws_ssm_document",
+          "name": "commands",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.window",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "window",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_lambda_function.window",
+          "mode": "managed",
+          "type": "aws_lambda_function",
+          "name": "window",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sfn_state_machine.window",
+          "mode": "managed",
+          "type": "aws_sfn_state_machine",
+          "name": "window",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

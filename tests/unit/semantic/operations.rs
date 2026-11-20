@@ -566,3 +566,68 @@ fn ssm_patch_baselines_verifies_configured_endpoints() {
         Some("SSM patch baseline")
     ));
 }
+
+#[test]
+fn ssm_maintenance_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/ssm-maintenance-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_ssm_maintenance_window_task.run", "window_id"),
+            ("aws_ssm_maintenance_window_target.machines", "window_id"),
+            (
+                "aws_ssm_maintenance_window_target.machines",
+                "targets.values",
+            ),
+            ("aws_ssm_maintenance_window_target.group", "targets.values"),
+            ("aws_ssm_maintenance_window_task.run", "task_arn"),
+            ("aws_ssm_maintenance_window_task.run", "service_role_arn"),
+            ("aws_ssm_maintenance_window_task.run", "targets.values"),
+            ("aws_ssm_maintenance_window_task.lambda", "task_arn"),
+            ("aws_ssm_maintenance_window_task.step", "task_arn"),
+        ],
+        ("aws_ssm_maintenance_window.main", "id"),
+    );
+    assert!(
+        label(
+            "aws_ssm_maintenance_window_task",
+            "task_invocation_parameters.run_command_parameters.parameters"
+        )
+        .is_none()
+    );
+    check_provider_alias(
+        fixture,
+        "aws_ssm_maintenance_window_task.run",
+        "window_id",
+        "aws_ssm_maintenance_window.main",
+        "Maintenance window",
+        true,
+    );
+    let mut plan: Value = serde_json::from_str(fixture).unwrap();
+    plan["resource_changes"][0]["change"]["after"]["targets"][0]["key"] = json!("tag:Name");
+    plan["resource_changes"][2]["change"]["after"]["task_type"] = json!("LAMBDA");
+    plan["resource_changes"][2]["change"]["after"]["window_id"] = json!("mw-other");
+    plan["configuration"]["root_module"]["resources"][2]["expressions"]["window_id"] =
+        json!({"references":["aws_ssm_maintenance_window.other.id"]});
+    let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+    assert!(!verified(
+        &graph,
+        "aws_ssm_maintenance_window_target.machines",
+        "targets.values",
+        Some("Maintenance window explicit targets")
+    ));
+    assert!(!verified(
+        &graph,
+        "aws_ssm_maintenance_window_task.run",
+        "task_arn",
+        Some("Maintenance task destination")
+    ));
+    assert!(!verified(
+        &graph,
+        "aws_ssm_maintenance_window_task.run",
+        "targets.values",
+        Some("Maintenance task targets")
+    ));
+}

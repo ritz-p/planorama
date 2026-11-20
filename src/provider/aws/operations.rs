@@ -449,6 +449,52 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_ssm_maintenance_window_target", "window_id") => Rule::new(
+            "Maintenance window",
+            &[("aws_ssm_maintenance_window", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_ssm_maintenance_window_task", "window_id") => Rule::new(
+            "Maintenance window",
+            &[("aws_ssm_maintenance_window", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_ssm_maintenance_window_target", "targets.values") => Rule::new(
+            "Maintenance window explicit targets",
+            &[
+                ("aws_instance", &["id"]),
+                ("aws_resourcegroups_group", &["name"]),
+            ],
+            true,
+            &["targets"],
+        ),
+        ("aws_ssm_maintenance_window_task", "targets.values") => Rule::new(
+            "Maintenance task targets",
+            &[
+                ("aws_ssm_maintenance_window_target", &["id"]),
+                ("aws_instance", &["id"]),
+            ],
+            true,
+            &["targets"],
+        ),
+        ("aws_ssm_maintenance_window_task", "task_arn") => Rule::new(
+            "Maintenance task destination",
+            &[
+                ("aws_ssm_document", &["name", "arn"]),
+                ("aws_lambda_function", &["arn"]),
+                ("aws_sfn_state_machine", &["arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_ssm_maintenance_window_task", "service_role_arn") => Rule::new(
+            "Maintenance task service role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -460,6 +506,8 @@ pub(crate) fn has_indexed(kind: &str) -> bool {
             | "aws_ssm_association"
             | "aws_ssm_resource_data_sync"
             | "aws_ssmquicksetup_configuration_manager"
+            | "aws_ssm_maintenance_window_target"
+            | "aws_ssm_maintenance_window_task"
     )
 }
 
@@ -631,6 +679,60 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         ("aws_ssm_default_patch_baseline", "baseline_id") => e
             .text(r.target, "operating_system")
             .is_some_and(|os| e.text(source, "operating_system") == Some(os)),
+        ("aws_ssm_maintenance_window_target", "targets.values") => {
+            path.rsplit_once('.').is_some_and(|(block, _)| {
+                matches!(
+                    (
+                        e.text(r.target, "resource_type"),
+                        e.text(r.target, &format!("{block}.key")),
+                        e.nodes[source].resource_type.as_str()
+                    ),
+                    (Some("INSTANCE"), Some("InstanceIds"), "aws_instance")
+                        | (
+                            Some("RESOURCE_GROUP"),
+                            Some("resource-groups:Name"),
+                            "aws_resourcegroups_group"
+                        )
+                )
+            })
+        }
+        ("aws_ssm_maintenance_window_task", "targets.values") => {
+            path.rsplit_once('.').is_some_and(|(block, _)| {
+                match (
+                    e.text(r.target, &format!("{block}.key")),
+                    e.nodes[source].resource_type.as_str(),
+                ) {
+                    (Some("WindowTargetIds"), "aws_ssm_maintenance_window_target") => e
+                        .same_endpoint(
+                            r.target,
+                            "window_id",
+                            source,
+                            "window_id",
+                            "aws_ssm_maintenance_window",
+                            "id",
+                        ),
+                    (Some("InstanceIds"), "aws_instance") => true,
+                    _ => false,
+                }
+            })
+        }
+        ("aws_ssm_maintenance_window_task", "task_arn") => match (
+            e.text(r.target, "task_type"),
+            e.nodes[source].resource_type.as_str(),
+        ) {
+            (Some("RUN_COMMAND"), "aws_ssm_document") => {
+                e.text(source, "document_type") == Some("Command")
+            }
+            (Some("AUTOMATION"), "aws_ssm_document") => {
+                e.text(source, "document_type") == Some("Automation")
+            }
+            (Some("LAMBDA"), "aws_lambda_function")
+            | (Some("STEP_FUNCTIONS"), "aws_sfn_state_machine") => true,
+            _ => false,
+        },
+        ("aws_ssm_maintenance_window_task", "service_role_arn") => {
+            principal_arn(e, source, "iam", "role/")
+        }
         _ => true,
     }
 }
