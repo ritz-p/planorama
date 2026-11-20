@@ -82505,7 +82505,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1543,
-      "gap": "#1543 — Verify the configured grant ARN in its home region across provider accounts. Returned license, principal and status are not additional endpoints.",
+      "gap": "#1543 — Verify the configured regionless grant ARN against the grant home region and accepter deployment region across provider accounts. Returned license, principal and status are not additional endpoints.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82519,7 +82519,7 @@
         "placement": "Supported: managed Logical Association for licensemanager_grant_accepter. Accepts a License Manager grant resource.",
         "ownership": "Not applicable: AWS License Manager licensemanager_grant_accepter remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: licensemanager_grant_accepter declares no VPC/subnet assignment; the configured grant_arn does not establish network containment.",
-        "references": "Supported: Verify the configured grant ARN in its home region across provider accounts. Returned license, principal and status are not additional endpoints.",
+        "references": "Supported: Verify the configured regionless grant ARN against the grant home region and accepter deployment region across provider accounts. Returned license, principal and status are not additional endpoints.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit license rules, grant contents and entitlement/usage state from licensemanager_grant_accepter summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/licensemanager_grant_accepter.html.markdown",

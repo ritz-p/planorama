@@ -29,7 +29,8 @@
           "create"
         ],
         "after": {
-          "arn": "arn:aws:license-manager:us-east-1:123456789012:grant:g-example",
+          "arn": "arn:aws:license-manager::123456789012:grant:g-example",
+          "home_region": "us-east-1",
           "principal": "arn:aws:iam::210987654321:root",
           "license_arn": "arn:aws:license-manager:us-east-1:123456789012:license:l-example",
           "allowed_operations": [
@@ -49,7 +50,7 @@
           "create"
         ],
         "after": {
-          "grant_arn": "arn:aws:license-manager:us-east-1:123456789012:grant:g-example",
+          "grant_arn": "arn:aws:license-manager::123456789012:grant:g-example",
           "principal": "arn:aws:iam::210987654321:root",
           "status": "ACTIVE"
         }

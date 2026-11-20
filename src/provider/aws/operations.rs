@@ -117,10 +117,12 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         ("aws_licensemanager_grant_accepter", "grant_arn") => e
             .text(r.target, path)
             .and_then(|v| arn_resource(v, "license-manager", "grant:"))
-            .is_some_and(|(region, account, _)| {
-                endpoint_region(e, source, region)
-                    && endpoint_region(e, r.target, region)
+            .is_some_and(|(region, account, id)| {
+                region.is_empty()
+                    && !id.is_empty()
                     && endpoint_account(e, source, account)
+                    && e.text(source, "home_region")
+                        .is_some_and(|home| endpoint_region(e, r.target, home))
             }),
         _ => true,
     }
@@ -158,9 +160,11 @@ fn organizations_ou_account(arn: &str) -> Option<&str> {
 }
 
 fn account_root<'a>(_: &str, value: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
-    let (_, account, identity) = arn_resource(value.as_str()?, "iam", "root")?;
-    (identity.is_empty() && crate::model::AwsAccountScope::new(account).is_some())
-        .then(|| [account].into())
+    let (region, account, identity) = arn_resource(value.as_str()?, "iam", "root")?;
+    (region.is_empty()
+        && identity.is_empty()
+        && crate::model::AwsAccountScope::new(account).is_some())
+    .then(|| [account].into())
 }
 
 fn arn_resource<'a>(
