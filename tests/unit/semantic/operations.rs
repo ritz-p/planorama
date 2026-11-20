@@ -367,3 +367,73 @@ fn service_catalog_associations_verifies_configured_endpoints() {
         Some("Portfolio IAM principal")
     ));
 }
+
+#[test]
+fn service_catalog_provisioning_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/service-catalog-provisioning-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_servicecatalog_provisioned_product.id", "product_id"),
+            (
+                "aws_servicecatalog_provisioned_product.id",
+                "provisioning_artifact_id",
+            ),
+            (
+                "aws_servicecatalog_provisioned_product.id",
+                "notification_arns",
+            ),
+            (
+                "aws_servicecatalog_provisioned_product.name",
+                "product_name",
+            ),
+            (
+                "aws_servicecatalog_provisioned_product.name",
+                "provisioning_artifact_name",
+            ),
+            (
+                "aws_servicecatalog_provisioning_artifact.main",
+                "product_id",
+            ),
+            ("aws_servicecatalog_service_action.main", "definition.name"),
+            (
+                "aws_servicecatalog_service_action.main",
+                "definition.assume_role",
+            ),
+        ],
+        ("aws_servicecatalog_product.main", "id"),
+    );
+    assert!(label("aws_servicecatalog_provisioned_product", "outputs").is_none());
+    assert!(label("aws_servicecatalog_provisioned_product", "launch_role_arn").is_none());
+    assert!(label("aws_servicecatalog_provisioning_artifact", "template_url").is_none());
+    assert!(label("aws_servicecatalog_service_action", "definition.version").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_servicecatalog_provisioning_artifact.main",
+        "product_id",
+        "aws_servicecatalog_product.main",
+        "Artifact product",
+        true,
+    );
+    let mut plan: Value = serde_json::from_str(fixture).unwrap();
+    plan["resource_changes"][0]["change"]["after"]["product_id"] = json!("prod-456");
+    plan["configuration"]["root_module"]["resources"][0]["expressions"]["product_id"] =
+        json!({"references":["aws_servicecatalog_product.other.id"]});
+    plan["resource_changes"][3]["change"]["after"]["definition"][0]["assume_role"] =
+        json!("LAUNCH_ROLE");
+    let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+    assert!(!verified(
+        &graph,
+        "aws_servicecatalog_provisioned_product.id",
+        "provisioning_artifact_id",
+        Some("Provisioned product artifact")
+    ));
+    assert!(!verified(
+        &graph,
+        "aws_servicecatalog_service_action.main",
+        "definition.assume_role",
+        Some("Service action role")
+    ));
+}

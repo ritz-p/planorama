@@ -178,7 +178,7 @@ mod observability;
 pub(crate) mod observability_logs;
 pub(crate) mod observability_monitors;
 mod opensearch_serverless;
-mod operations;
+pub(crate) mod operations;
 pub(crate) mod organization_accounts;
 pub(crate) mod organization_policies;
 pub(crate) mod organizations;
