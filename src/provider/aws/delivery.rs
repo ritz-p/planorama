@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = pipeline::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = codedeploy::rule(kind, path) {
         return Some(rule);
     }
@@ -42,6 +45,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if pipeline::resource(kind) {
+        return true;
+    }
     if codedeploy::resource(kind) {
         return true;
     }
@@ -91,6 +97,9 @@ pub(super) fn annotate(
 
 fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, path: &str) -> bool {
     let kind = &e.nodes[reference.target].resource_type;
+    if pipeline::resource(kind) {
+        return pipeline::qualifies(e, reference, source, path);
+    }
     if codedeploy::resource(kind) {
         return codedeploy::qualifies(e, reference, source, path);
     }
@@ -202,6 +211,8 @@ mod repositories;
 mod connections;
 
 mod codedeploy;
+
+mod pipeline;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
