@@ -1,4 +1,3 @@
-use super::service_references::scalar;
 use crate::model::{Action, AttributeReference, TerraformEntity, WafScope};
 use serde_json::Value;
 
@@ -71,8 +70,6 @@ pub(super) fn source_fields(
 ) -> &'static [&'static str] {
     match (resource, attribute, source) {
         ("aws_cloudfront_distribution", "web_acl_id", "aws_wafv2_web_acl")
-        | ("aws_wafv2_web_acl_association", "web_acl_arn", "aws_wafv2_web_acl")
-        | ("aws_wafv2_web_acl_association", "resource_arn", "aws_lb" | "aws_api_gateway_stage")
         | (
             "aws_wafv2_web_acl",
             "rule.statement.rule_group_reference_statement.arn",
@@ -110,11 +107,7 @@ pub(super) fn compatible(left: &TerraformEntity, right: &TerraformEntity, region
     }
 }
 
-pub(super) fn verify_scope(
-    nodes: &[TerraformEntity],
-    reference: &AttributeReference,
-    evidence: &[(&Value, &Value)],
-) -> bool {
+pub(super) fn verify_scope(nodes: &[TerraformEntity], reference: &AttributeReference) -> bool {
     let [source] = reference.sources.as_slice() else {
         return false;
     };
@@ -123,18 +116,6 @@ pub(super) fn verify_scope(
     match (node.resource_type.as_str(), reference.attribute.as_str()) {
         ("aws_cloudfront_distribution", "web_acl_id") => {
             endpoint.waf_scope == Some(WafScope::CloudFront)
-        }
-        ("aws_wafv2_web_acl_association", "web_acl_arn") => {
-            endpoint.waf_scope == Some(WafScope::Regional) && compatible(node, endpoint, true)
-        }
-        ("aws_wafv2_web_acl_association", "resource_arn") => {
-            compatible(node, endpoint, true)
-                && (endpoint.resource_type == "aws_api_gateway_stage"
-                    || scalar(
-                        evidence[*source].0,
-                        evidence[*source].1,
-                        &["load_balancer_type"],
-                    ) == Some("application"))
         }
         ("aws_wafv2_web_acl", "rule.statement.rule_group_reference_statement.arn") => {
             node.waf_scope.is_some()
@@ -160,6 +141,7 @@ pub(crate) fn inherit_scope(
 ) {
     for i in 0..nodes.len() {
         let field = match nodes[i].resource_type.as_str() {
+            "aws_wafv2_web_acl_logging_configuration" => "resource_arn",
             "aws_wafv2_web_acl_rule" | "aws_wafv2_web_acl_rule_group_association" => "web_acl_arn",
             _ => continue,
         };
@@ -212,4 +194,154 @@ fn parent_scope(
         WafScope::CloudFront if region.0 == "us-east-1" => Some(scope),
         _ => None,
     }
+}
+
+pub(super) fn protected_fields(kind: &str) -> &'static [&'static str] {
+    match super::aliases::canonical(kind) {
+        "aws_lb"
+        | "aws_api_gateway_stage"
+        | "aws_cognito_user_pool"
+        | "aws_appsync_graphql_api"
+        | "aws_apprunner_service"
+        | "aws_amplify_app" => &["arn"],
+        "aws_bedrockagentcore_gateway" => &["gateway_arn"],
+        "aws_verifiedaccess_instance" => &["id"],
+        _ => &[],
+    }
+}
+pub(super) fn annotate_associations(
+    nodes: &[TerraformEntity],
+    refs: &mut [AttributeReference],
+    values: &[(&Value, &Value)],
+) {
+    let verified: Vec<_> = refs
+        .iter()
+        .enumerate()
+        .filter_map(|(i, r)| {
+            let node = &nodes[r.target];
+            if node.resource_type != "aws_wafv2_web_acl_association"
+                || !matches!(r.attribute.as_str(), "web_acl_arn" | "resource_arn")
+            {
+                return None;
+            }
+            let valid = if r.attribute == "web_acl_arn" {
+                parent_scope(nodes, refs, values, r.target, "web_acl_arn")
+                    == Some(WafScope::Regional)
+            } else {
+                association_endpoint(nodes, r, values)
+            };
+            Some((i, valid))
+        })
+        .collect();
+    for (i, valid) in verified {
+        refs[i].service_reference_verified = valid;
+    }
+}
+fn association_endpoint(
+    nodes: &[TerraformEntity],
+    r: &AttributeReference,
+    values: &[(&Value, &Value)],
+) -> bool {
+    let [s] = *r.sources.as_slice() else {
+        return false;
+    };
+    let node = &nodes[r.target];
+    let endpoint = &nodes[s];
+    let current = |n: &TerraformEntity| {
+        n.provider.is_aws()
+            && n.mode == crate::model::EntityMode::Managed
+            && n.action != Action::Delete
+            && n.deposed_key.is_none()
+    };
+    let Some(actual) = super::service_evidence::known(values, r.target, &r.attribute) else {
+        return false;
+    };
+    let Some(field) = r.source_attributes.iter().next() else {
+        return false;
+    };
+    if !current(node)
+        || !current(endpoint)
+        || !r.complete
+        || !r.instances_explicit
+        || !r.issues.is_empty()
+        || r.source_attributes.len() != 1
+        || !super::eventbridge::bindings(
+            node.provider_configuration.as_ref(),
+            endpoint.provider_configuration.as_ref(),
+            effective_region(node),
+            effective_region(endpoint),
+            false,
+        )
+    {
+        return false;
+    }
+    let Some(output) = super::service_evidence::known(values, s, field) else {
+        return false;
+    };
+    let kind = super::aliases::entity_type(endpoint);
+    if !protected_fields(kind).contains(&field.as_str()) {
+        return false;
+    }
+    if kind == "aws_verifiedaccess_instance" {
+        let Some(account) = endpoint
+            .provider_configuration
+            .as_ref()
+            .and_then(|c| c.account.as_ref())
+        else {
+            return false;
+        };
+        let Some(region) = effective_region(endpoint) else {
+            return false;
+        };
+        let partition = if region.0.starts_with("cn-") {
+            "aws-cn"
+        } else if region.0.starts_with("us-gov-") {
+            "aws-us-gov"
+        } else {
+            "aws"
+        };
+        return actual
+            == format!(
+                "arn:{partition}:ec2:{}:{}:verified-access-instance/{output}",
+                region.0,
+                account.as_str()
+            );
+    }
+    if actual != output {
+        return false;
+    }
+    match kind {
+        "aws_lb" => {
+            super::service_evidence::known(values, s, "load_balancer_type") == Some("application")
+        }
+        "aws_api_gateway_stage" => true,
+        "aws_cognito_user_pool" => regional_arn(endpoint, actual, "cognito-idp", "userpool/"),
+        "aws_appsync_graphql_api" => regional_arn(endpoint, actual, "appsync", "apis/"),
+        "aws_apprunner_service" => regional_arn(endpoint, actual, "apprunner", "service/"),
+        "aws_amplify_app" => regional_arn(endpoint, actual, "amplify", "apps/"),
+        "aws_bedrockagentcore_gateway" => {
+            regional_arn(endpoint, actual, "bedrock-agentcore", "gateway/")
+        }
+        _ => false,
+    }
+}
+
+fn regional_arn(endpoint: &TerraformEntity, arn: &str, service: &str, prefix: &str) -> bool {
+    let parts: Vec<_> = arn.splitn(6, ':').collect();
+    let ["arn", partition, actual, region, account, resource] = parts.as_slice() else {
+        return false;
+    };
+    !partition.is_empty()
+        && *actual == service
+        && effective_region(endpoint).is_some_and(|r| r.0 == *region)
+        && crate::model::AwsAccountScope::new(account).is_some_and(|a| {
+            endpoint
+                .provider_configuration
+                .as_ref()
+                .and_then(|p| p.account.as_ref())
+                .is_none_or(|bound| bound == &a)
+        })
+        && resource
+            .strip_prefix(prefix)
+            .is_some_and(|id| !id.is_empty())
 }

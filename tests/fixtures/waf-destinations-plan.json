@@ -1,0 +1,114 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_wafv2_web_acl_logging_configuration.sample0",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl_logging_configuration",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "log_destination_configs": [
+            "arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-test"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_wafv2_web_acl.sample1",
+      "mode": "managed",
+      "type": "aws_wafv2_web_acl",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "scope": "REGIONAL",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl"
+        }
+      }
+    },
+    {
+      "address": "aws_kinesis_firehose_delivery_stream.sample2",
+      "mode": "managed",
+      "type": "aws_kinesis_firehose_delivery_stream",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-test"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Plan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_wafv2_web_acl_logging_configuration.sample0",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl_logging_configuration",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_wafv2_web_acl.sample1.arn"
+              ]
+            },
+            "log_destination_configs": {
+              "references": [
+                "aws_kinesis_firehose_delivery_stream.sample2.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_wafv2_web_acl.sample1",
+          "mode": "managed",
+          "type": "aws_wafv2_web_acl",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kinesis_firehose_delivery_stream.sample2",
+          "mode": "managed",
+          "type": "aws_kinesis_firehose_delivery_stream",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

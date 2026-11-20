@@ -306,5 +306,5 @@ pub(super) fn endpoint_type_matches(
             && actual == "aws_vpn_gateway")
         || (resource == "aws_wafv2_web_acl_association"
             && attribute == "resource_arn"
-            && actual == "aws_api_gateway_stage")
+            && !super::waf::protected_fields(actual).is_empty())
 }

@@ -398,3 +398,71 @@ fn set_and_key_scopes_use_only_unmasked_managed_values() {
         }
     }
 }
+
+#[test]
+fn additional_waf_associations_verify_the_exported_identity() {
+    for (kind, field, resource) in [
+        (
+            "aws_cognito_user_pool",
+            "arn",
+            "cognito-idp:us-west-2:123456789012:userpool/us-west-2_example",
+        ),
+        (
+            "aws_appsync_graphql_api",
+            "arn",
+            "appsync:us-west-2:123456789012:apis/example",
+        ),
+        (
+            "aws_apprunner_service",
+            "arn",
+            "apprunner:us-west-2:123456789012:service/app/example",
+        ),
+        (
+            "aws_amplify_app",
+            "arn",
+            "amplify:us-west-2:123456789012:apps/example",
+        ),
+        (
+            "aws_bedrockagentcore_gateway",
+            "gateway_arn",
+            "bedrock-agentcore:us-west-2:123456789012:gateway/example",
+        ),
+        (
+            "aws_verifiedaccess_instance",
+            "id",
+            "ec2:us-west-2:123456789012:verified-access-instance/vai-example",
+        ),
+    ] {
+        let mut f = fixture();
+        let address = format!("{kind}.app");
+        let arn = format!("arn:aws:{resource}");
+        f["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]);
+        let output = if field == "id" { "vai-example" } else { &arn };
+        let row = &mut f["resource_changes"][3];
+        row["type"] = json!(kind);
+        row["address"] = json!(address);
+        row["change"]["after"] = json!({field:output});
+        let cfg = &mut f["configuration"]["root_module"]["resources"][3];
+        cfg["type"] = json!(kind);
+        cfg["address"] = json!(address);
+        f["configuration"]["root_module"]["resources"][5]["expressions"]["resource_arn"] =
+            json!({"references":[format!("{address}.{field}")]});
+        f["resource_changes"][5]["change"]["after"]["resource_arn"] = json!(arn);
+        for mask in [false, true] {
+            f["resource_changes"][3]["change"]["after_sensitive"] = json!({field:mask});
+            let parsed = crate::plan::evidence::tests::parse_fixture(&f.to_string()).unwrap();
+            let graph = semantic::transform(&parsed);
+            assert_eq!(
+                graph
+                    .edges
+                    .iter()
+                    .any(|edge| edge.kind == EdgeKind::Association
+                        && edge.change.as_ref().unwrap().address
+                            == "aws_wafv2_web_acl_association.alb"),
+                !mask,
+                "{kind}/{mask}"
+            );
+        }
+    }
+}
