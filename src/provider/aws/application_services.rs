@@ -487,6 +487,17 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     }
 }
 
+fn appconfig_profile(e: &Evidence<'_>, consumer: usize) -> Option<usize> {
+    endpoint(
+        e,
+        consumer,
+        "configuration_profile_id",
+        CONFIG_PROFILE,
+        &["configuration_profile_id"],
+    )
+    .filter(|&profile| same_endpoint(e, consumer, profile, "application_id", CONFIG_APP, &["id"]))
+}
+
 fn deployment_context(e: &Evidence<'_>, deployment: usize, environment: usize) -> bool {
     same_endpoint(
         e,
@@ -495,23 +506,7 @@ fn deployment_context(e: &Evidence<'_>, deployment: usize, environment: usize) -
         "application_id",
         CONFIG_APP,
         &["id"],
-    ) && endpoint(
-        e,
-        deployment,
-        "configuration_profile_id",
-        CONFIG_PROFILE,
-        &["configuration_profile_id"],
-    )
-    .is_some_and(|profile| {
-        same_endpoint(
-            e,
-            deployment,
-            profile,
-            "application_id",
-            CONFIG_APP,
-            &["id"],
-        )
-    })
+    ) && appconfig_profile(e, deployment).is_some()
 }
 
 fn annotate_versions(
@@ -550,23 +545,10 @@ fn annotate_versions(
                 },
             );
             Some(version.is_some_and(|source| {
-                same_endpoint(&e, r.target, source, "application_id", CONFIG_APP, &["id"])
-                    && same_endpoint(
-                        &e,
-                        r.target,
-                        source,
-                        "configuration_profile_id",
-                        CONFIG_PROFILE,
-                        &["configuration_profile_id"],
-                    )
-                    && endpoint(
-                        &e,
-                        r.target,
-                        "configuration_profile_id",
-                        CONFIG_PROFILE,
-                        &["configuration_profile_id"],
-                    )
-                    .is_some_and(|profile| e.text(profile, "location_uri") == Some("hosted"))
+                appconfig_profile(&e, r.target).is_some_and(|profile| {
+                    appconfig_profile(&e, source) == Some(profile)
+                        && e.text(profile, "location_uri") == Some("hosted")
+                })
             }))
         })
         .collect();
@@ -758,13 +740,11 @@ pub(crate) fn fabric_ingestion_authorizations(
                 return None;
             }
             let bundle = endpoint(&e, index, "app_bundle_arn", FABRIC_BUNDLE, &["arn"])?;
-            fabric_child_id(&e, index, bundle, "appauthorization")?;
-            Some((
-                index,
-                bundle,
-                e.text(index, "app")?,
-                e.text(index, "tenant.0.tenant_identifier")?,
-            ))
+            let (value, mask) = values[index];
+            let tenant = super::nested_references::singleton(value, mask, "tenant")
+                .then(|| e.text(index, "tenant.0.tenant_identifier"))
+                .flatten();
+            Some((index, bundle, e.text(index, "app"), tenant))
         })
         .collect();
     refs.iter()
@@ -781,13 +761,16 @@ pub(crate) fn fabric_ingestion_authorizations(
             };
             let app = e.text(target, "app")?;
             let tenant = e.text(target, "tenant_id")?;
-            let mut matches = authorizations
-                .iter()
-                .filter(|(_, b, a, t)| (*b, *a, *t) == (bundle, app, tenant));
-            let &(source, _, _, _) = matches.next()?;
+            let mut matches = authorizations.iter().filter(|(_, b, a, t)| {
+                *b == bundle && a.is_none_or(|a| a == app) && t.is_none_or(|t| t == tenant)
+            });
+            let &(source, _, Some(_), Some(_)) = matches.next()? else {
+                return None;
+            };
             if matches.next().is_some() {
                 return None;
             }
+            fabric_child_id(&e, source, bundle, "appauthorization")?;
             let mut matched = r.clone();
             matched.attribute = "authorization".into();
             matched.has_references = false;
