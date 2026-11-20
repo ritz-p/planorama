@@ -269,3 +269,27 @@ fn delivery_notifications_requires_current_typed_evidence() {
         ("aws_codecommit_repository.delivery", "repository_name"),
     );
 }
+
+#[test]
+fn devicefarm_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/devicefarm-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_devicefarm_device_pool.test", "project_arn"),
+            ("aws_devicefarm_network_profile.test", "project_arn"),
+            ("aws_devicefarm_upload.test", "project_arn"),
+            ("aws_devicefarm_test_grid_project.test", "vpc_config.vpc_id"),
+            (
+                "aws_devicefarm_test_grid_project.test",
+                "vpc_config.subnet_ids",
+            ),
+            (
+                "aws_devicefarm_test_grid_project.test",
+                "vpc_config.security_group_ids",
+            ),
+        ],
+        ("aws_devicefarm_project.test", "arn"),
+    );
+}
