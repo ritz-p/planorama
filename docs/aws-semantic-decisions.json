@@ -86254,10 +86254,10 @@
       }
     },
     "aws_appconfig_configuration_profile": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1585,
-      "gap": "#1585 — Verify application ID and the configured retrieval role for external sources. Match only known supported S3 object, SSM document or SSM parameter locators using explicit typed evidence. For hosted profiles verify the configured KMS key, excluding the hosted selector and validation payloads as external endpoints. Qualify profile ownership using the application. Keep referenced data stores and roles independent.",
+      "gap": "#1585 — Verify the app, explicitly configured S3 or SSM locators, external retrieval role and hosted KMS identifier.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86272,9 +86272,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Configuration Profile resource.",
-        "ownership": "Missing: Qualify profile ownership using the application. Keep referenced data stores and roles independent.",
+        "ownership": "Supported: Present the profile under its verified application. Keep stores, keys and roles independent.",
         "network": "Not applicable: Configuration retrieval does not establish a VPC deployment for the profile.",
-        "references": "Missing: Verify application ID and the configured retrieval role for external sources. Match only known supported S3 object, SSM document or SSM parameter locators using explicit typed evidence. For hosted profiles verify the configured KMS key, excluding the hosted selector and validation payloads as external endpoints.",
+        "references": "Supported: Verify the app, explicitly configured S3 or SSM locators, external retrieval role and hosted KMS identifier.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The application qualifies the profile ID. A source URI must carry independent scope evidence.",
         "summaries": "Intentionally unsupported: omit validator contents, arbitrary configuration URIs and retrieved values. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appconfig_configuration_profile.html.markdown",
@@ -86317,7 +86317,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationProfile. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -86485,10 +86487,10 @@
       }
     },
     "aws_appconfig_environment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1585,
-      "gap": "#1585 — Verify the application ID and each unordered monitor's explicit CloudWatch alarm and IAM monitor role ARN. Returned state does not identify health or alarms. Resolve app ownership separately from shared alarms and roles.",
+      "gap": "#1585 — Verify the app ID and match configured alarm and role references in unordered monitor blocks.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86502,9 +86504,9 @@
           "state"
         ],
         "placement": "Supported: managed Logical Node with the AWS AppConfig service label. Provides an AppConfig Environment resource.",
-        "ownership": "Missing: Resolve app ownership separately from shared alarms and roles.",
+        "ownership": "Supported: Present the environment under its verified application.",
         "network": "Not applicable: Monitoring configuration does not assign the environment to a VPC.",
-        "references": "Missing: Verify the application ID and each unordered monitor's explicit CloudWatch alarm and IAM monitor role ARN. Returned state does not identify health or alarms.",
+        "references": "Supported: Verify the app ID and match configured alarm and role references in unordered monitor blocks.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Match the environment in its application and qualify each alarm using ARN and deployment evidence.",
         "summaries": "Intentionally unsupported: omit monitor status and state values. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appconfig_environment.html.markdown",
@@ -86544,7 +86546,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newEnvironmentResource. The same-name data source has a separate lookup contract and does not prove managed ownership. Deprecated attributes include id.",
         "dataContracts": {
@@ -86706,10 +86710,10 @@
       }
     },
     "aws_appconfig_hosted_configuration_version": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1585,
-      "gap": "#1585 — Verify application and configuration profile IDs as joint context for the computed version number. Do not parse or expose the hosted content. A version belongs to a verified configuration profile within its app. An equal version number alone does not establish ownership.",
+      "gap": "#1585 — Verify the application and configuration profile together. Hosted payloads do not contribute endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86723,9 +86727,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Controller with the AWS AppConfig service label. Provides an AppConfig Hosted Configuration Version resource.",
-        "ownership": "Missing: A version belongs to a verified configuration profile within its app. An equal version number alone does not establish ownership.",
+        "ownership": "Supported: Present the version under the verified profile within its app.",
         "network": "Not applicable: Content type and version do not represent deployment placement.",
-        "references": "Missing: Verify application and configuration profile IDs as joint context for the computed version number. Do not parse or expose the hosted content.",
+        "references": "Supported: Verify the application and configuration profile together. Hosted payloads do not contribute endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Version identity is scoped to the application and regional profile.",
         "summaries": "Intentionally unsupported: omit all hosted configuration content. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appconfig_hosted_configuration_version.html.markdown",
@@ -86763,7 +86767,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceHostedConfigurationVersion. No same-name data source in the pinned schema.",
         "dataContracts": {}

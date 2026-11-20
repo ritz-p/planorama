@@ -229,3 +229,103 @@ fn amplify_domain_reconciles_unordered_branches_and_custom_certificate() {
     assert!(label(super::AMPLIFY_DOMAIN, "certificate_verification_dns_record").is_none());
     assert!(label(super::AMPLIFY_WEBHOOK, "url").is_none());
 }
+
+#[test]
+fn appconfig_profiles_and_versions_require_the_right_application_and_source() {
+    let uri = "s3://config-artifacts/settings.json";
+    let mut fixture = plan(&[
+        (
+            "aws_appconfig_application.site",
+            json!({"id":"app123"}),
+            json!({}),
+        ),
+        (
+            "aws_s3_object.config",
+            json!({"key":"settings.json","bucket":"config-artifacts"}),
+            json!({}),
+        ),
+        (
+            "aws_appconfig_configuration_profile.hosted",
+            json!({"application_id":"app123","configuration_profile_id":"p123","location_uri":"hosted"}),
+            json!({"application_id":{"references":["aws_appconfig_application.site.id"]}}),
+        ),
+        (
+            "aws_appconfig_configuration_profile.external",
+            json!({"application_id":"app123","configuration_profile_id":"p456","location_uri":uri}),
+            json!({"application_id":{"references":["aws_appconfig_application.site.id"]},
+                "location_uri":{"references":["aws_s3_object.config.key","aws_s3_object.config"]}}),
+        ),
+        (
+            "aws_appconfig_hosted_configuration_version.current",
+            json!({"application_id":"app123","configuration_profile_id":"p123","version_number":1,"content":"private"}),
+            json!({"application_id":{"references":["aws_appconfig_application.site.id"]},
+                "configuration_profile_id":{"references":["aws_appconfig_configuration_profile.hosted.configuration_profile_id"]}}),
+        ),
+    ]);
+    let external = "aws_appconfig_configuration_profile.external";
+    let version = "aws_appconfig_hosted_configuration_version.current";
+    let check = |fixture: &Value, address: &str, path: &str| {
+        verified(
+            &graph(fixture),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    assert!(check(&fixture, external, "location_uri"));
+    assert!(check(&fixture, version, "configuration_profile_id"));
+    let result = graph(&fixture);
+    assert!(
+        result
+            .nodes
+            .iter()
+            .find(|n| n.address == version)
+            .unwrap()
+            .member_owner
+            .is_some()
+    );
+    fixture["resource_changes"][1]["change"]["after"]["bucket"] = json!("unrelated");
+    fixture["resource_changes"][2]["change"]["after"]["application_id"] = json!("other");
+    assert!(!check(&fixture, external, "location_uri"));
+    assert!(!check(&fixture, version, "configuration_profile_id"));
+    assert!(label(super::CONFIG_VERSION, "content").is_none());
+}
+
+#[test]
+fn appconfig_monitor_set_keeps_role_and_alarm_references_separate() {
+    let role = "arn:aws:iam::123456789012:role/Monitor";
+    let first = "arn:aws:cloudwatch:us-east-1:123456789012:alarm:first";
+    let second = "arn:aws:cloudwatch:us-east-1:123456789012:alarm:second";
+    let fixture = plan(&[
+        ("aws_iam_role.monitor", json!({"arn":role}), json!({})),
+        (
+            "aws_cloudwatch_metric_alarm.first",
+            json!({"arn":first}),
+            json!({}),
+        ),
+        (
+            "aws_cloudwatch_composite_alarm.second",
+            json!({"arn":second}),
+            json!({}),
+        ),
+        (
+            "aws_appconfig_environment.dev",
+            json!({"monitor":[{"alarm_arn":second},{"alarm_arn":first,"alarm_role_arn":role}]}),
+            json!({"monitor":[
+                {"alarm_arn":{"references":["aws_cloudwatch_metric_alarm.first.arn"]},"alarm_role_arn":{"references":["aws_iam_role.monitor.arn"]}},
+                {"alarm_arn":{"references":["aws_cloudwatch_composite_alarm.second.arn"]}}
+            ]}),
+        ),
+    ]);
+    for path in ["monitor.alarm_arn", "monitor.alarm_role_arn"] {
+        assert!(
+            verified(
+                &graph(&fixture),
+                "aws_appconfig_environment.dev",
+                path,
+                label(super::CONFIG_ENV, path)
+            ),
+            "{path}"
+        );
+    }
+}
