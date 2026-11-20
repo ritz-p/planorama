@@ -125,6 +125,26 @@
           "value": "suppressed"
         }
       }
+    },
+    {
+      "address": "aws_organizations_organization.example",
+      "mode": "managed",
+      "type": "aws_organizations_organization",
+      "name": "example",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "o-abcdef0123",
+          "roots": [
+            {
+              "id": "r-abcd"
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration": {
@@ -247,6 +267,14 @@
               ]
             }
           }
+        },
+        {
+          "address": "aws_organizations_organization.example",
+          "mode": "managed",
+          "type": "aws_organizations_organization",
+          "name": "example",
+          "provider_config_key": "aws",
+          "expressions": {}
         }
       ]
     }

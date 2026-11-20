@@ -34,7 +34,7 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[
                 ("aws_organizations_account", &["id"]),
                 ("aws_organizations_organizational_unit", &["id"]),
-                ("aws_organizations_organization", &["id", "roots[].id"]),
+                ("aws_organizations_organization", &["roots[].id"]),
                 ("aws_organizations_policy", &["id"]),
             ],
             false,
@@ -63,7 +63,7 @@ pub(super) fn qualifies(
     value.is_some_and(|id| match e.nodes[source].resource_type.as_str() {
         "aws_organizations_account" => AwsAccountScope::new(id).is_some(),
         "aws_organizations_organizational_unit" => id.starts_with("ou-"),
-        "aws_organizations_organization" => id.starts_with("o-") || id.starts_with("r-"),
+        "aws_organizations_organization" => id.starts_with("r-"),
         "aws_organizations_policy" => id.starts_with("p-"),
         _ => false,
     })

@@ -342,3 +342,44 @@ fn account_governance_requires_current_typed_evidence() {
         ("aws_organizations_account.target", "id"),
     );
 }
+
+#[test]
+fn organizations_tag_accepts_roots_and_rejects_organization_ids() {
+    use serde_json::{Value, json};
+    for (attribute, value, expected) in [
+        ("id", "o-abcdef0123", false),
+        ("roots[0].id", "r-abcd", true),
+    ] {
+        let mut fixture: Value = serde_json::from_str(include_str!(
+            "../../fixtures/account-governance-references-plan.json"
+        ))
+        .unwrap();
+        let address = "aws_organizations_tag.target";
+        fixture["resource_changes"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|row| row["address"] == address)
+            .unwrap()["change"]["after"]["resource_id"] = json!(value);
+        let config = fixture["configuration"]["root_module"]["resources"]
+            .as_array_mut()
+            .unwrap()
+            .iter_mut()
+            .find(|row| row["address"] == address)
+            .unwrap();
+        config["expressions"]["resource_id"]["references"] = json!([format!(
+            "aws_organizations_organization.example.{attribute}"
+        )]);
+        let graph = crate::semantic::transform(&crate::plan::parse(&fixture.to_string()).unwrap());
+        assert_eq!(
+            crate::configured_service_links::verified(
+                &graph,
+                address,
+                "resource_id",
+                super::label("aws_organizations_tag", "resource_id"),
+            ),
+            expected,
+            "{attribute}"
+        );
+    }
+}

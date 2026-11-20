@@ -82733,7 +82733,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Verify the configured ID of a compatible Organizations account, OU, organization or policy. Tags do not establish ownership.",
+      "gap": "#1538 — Verify the configured ID of a compatible Organizations account, OU, root or policy. Tags do not establish ownership.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82746,7 +82746,7 @@
         "placement": "Supported: managed Logical Controller for organizations_tag. Manages an individual Organizations resource tag",
         "ownership": "Not applicable: AWS Organizations organizations_tag remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: organizations_tag declares no VPC/subnet assignment; the configured resource_id does not establish network containment.",
-        "references": "Supported: Verify the configured ID of a compatible Organizations account, OU, organization or policy. Tags do not establish ownership.",
+        "references": "Supported: Verify the configured ID of a compatible Organizations account, OU, root or policy. Tags do not establish ownership.",
         "scope": "Supported: global service scope.",
         "summaries": "Intentionally unsupported: omit policy content and account contact details from organizations_tag summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/organizations_tag.html.markdown",

@@ -168,10 +168,6 @@ fn endpoint_value<'a>(
     outputs: &[&str],
 ) -> Option<&'a str> {
     let attrs = reference.source_attributes_by_instance.get(&source)?;
-    let field = attrs.first()?;
-    if attrs.len() == 1 && outputs.contains(&field.as_str()) && field != "roots[].id" {
-        return super::service_evidence::known(evidence, source, field);
-    }
     if outputs.contains(&"roots[].id") {
         let mut indices = attrs
             .iter()
@@ -189,7 +185,11 @@ fn endpoint_value<'a>(
         let (v, m) = evidence[source];
         return value(v, m, &format!("roots.{index}.id"))?.as_str();
     }
-    None
+    let output = attrs.first()?;
+    if attrs.len() != 1 || !outputs.contains(&output.as_str()) {
+        return None;
+    }
+    super::service_evidence::known(evidence, source, output)
 }
 
 fn verify_scalar_set(
