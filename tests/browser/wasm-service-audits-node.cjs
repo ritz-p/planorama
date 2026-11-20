@@ -11,6 +11,7 @@ const native = require('../support/native-reference.cjs')(binary);
 const cases = [
   {"fixture":"lakeformation-selectors-plan","focus":"aws_lakeformation_permissions.sample4","target":4,"mask":{"table":true}},
   {"fixture":"glue-encryption-plan","focus":"aws_glue_data_catalog_encryption_settings.sample3","target":3,"mask":{"data_catalog_encryption_settings":true}},
+  {"fixture":"waf-classic-plan","focus":"aws_waf_rule.sample0","target":0,"mask":{"predicates":true}},
   {"fixture":"shield-plan","focus":"aws_shield_application_layer_automatic_response.sample0","target":0,"mask":{"resource_arn":true}},
   {"fixture":"arc-readiness-plan","focus":"aws_route53recoveryreadiness_readiness_check.sample0","target":0,"mask":{"resource_set_name":true}},
   {"fixture":"arc-routing-control-plan","focus":"aws_route53recoverycontrolconfig_control_panel.sample0","target":0,"mask":{"cluster_arn":true}},

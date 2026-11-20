@@ -252,6 +252,25 @@ fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
                 ));
             }
         }
+        "aws_waf_rule_group"
+        | "aws_wafregional_rule_group"
+        | "aws_waf_web_acl"
+        | "aws_wafregional_web_acl" => {
+            let (block, attribute) = match kind {
+                "aws_waf_web_acl" => ("rules", "rules.priority"),
+                "aws_wafregional_web_acl" => ("rule", "rule.priority"),
+                _ => ("activated_rule", "activated_rule.priority"),
+            };
+            for index in 0..v[block].as_array().map_or(0, Vec::len) {
+                let base = format!("{block}.{index}");
+                if let Some((id, priority)) = value(v, mask, &format!("{base}.rule_id"))
+                    .and_then(Value::as_str)
+                    .zip(value(v, mask, &format!("{base}.priority")).and_then(Value::as_u64))
+                {
+                    details.push((attribute, "Rule priority", format!("{priority} / {id}")));
+                }
+            }
+        }
         "aws_auditmanager_framework_share" => {
             if let Some((account, region)) = value(v, mask, "destination_account")
                 .and_then(Value::as_str)

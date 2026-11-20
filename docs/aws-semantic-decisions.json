@@ -76873,7 +76873,7 @@
       }
     },
     "aws_waf_rate_based_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Global Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
@@ -76889,7 +76889,7 @@
         "placement": "Supported: Logical Policy for the managed waf_rate_based_rule declaration. Provides a AWS WAF rule resource.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Global Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
+        "references": "Supported: Global Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_rate_based_rule summaries.",
         "officialDocumentation": "website/docs/r/waf_rate_based_rule.html.markdown",
@@ -76918,7 +76918,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRateBasedRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {
@@ -76934,7 +76936,7 @@
       }
     },
     "aws_waf_regex_match_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Global Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
@@ -76948,7 +76950,7 @@
         "placement": "Supported: Logical Policy for the managed waf_regex_match_set declaration. Provides a AWS WAF Regex Match Set resource.",
         "ownership": "Not applicable: The managed waf_regex_match_set declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Global Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
+        "references": "Supported: Global Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_regex_match_set summaries.",
         "officialDocumentation": "website/docs/r/waf_regex_match_set.html.markdown",
@@ -76968,7 +76970,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRegexMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {}
@@ -77022,7 +77026,7 @@
       }
     },
     "aws_waf_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Global Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
@@ -77037,7 +77041,7 @@
         "placement": "Supported: Logical Policy for the managed waf_rule declaration. Provides a AWS WAF rule resource.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Global Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
+        "references": "Supported: Global Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_rule summaries.",
         "officialDocumentation": "website/docs/r/waf_rule.html.markdown",
@@ -77062,7 +77066,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {
@@ -77078,7 +77084,7 @@
       }
     },
     "aws_waf_rule_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Global Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
@@ -77093,7 +77099,7 @@
         "placement": "Supported: Logical Policy for the managed waf_rule_group declaration. Provides a AWS WAF rule group resource.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Global Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
+        "references": "Supported: Global Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_rule_group summaries.",
         "officialDocumentation": "website/docs/r/waf_rule_group.html.markdown",
@@ -77118,7 +77124,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRuleGroup. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {}
@@ -77221,7 +77229,7 @@
       }
     },
     "aws_waf_web_acl": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Global Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
@@ -77237,7 +77245,7 @@
         "placement": "Supported: Logical Policy for the managed waf_web_acl declaration. Provides a AWS WAF web access control group (ACL) resource.",
         "ownership": "Not applicable: The managed waf_web_acl declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Global Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
+        "references": "Supported: Global Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from waf_web_acl summaries.",
         "officialDocumentation": "website/docs/r/waf_web_acl.html.markdown",
@@ -77267,7 +77275,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceWebACL. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {
@@ -77482,7 +77492,7 @@
       }
     },
     "aws_wafregional_rate_based_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Regional Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
@@ -77498,7 +77508,7 @@
         "placement": "Supported: Logical Policy for the managed wafregional_rate_based_rule declaration. Provides a AWS WAF Regional rate based rule resource.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Regional Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
+        "references": "Supported: Regional Classic: Resolve each predicate data ID using its paired type. Rate limits and negation do not identify protected resources.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_rate_based_rule summaries.",
         "officialDocumentation": "website/docs/r/wafregional_rate_based_rule.html.markdown",
@@ -77527,7 +77537,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRateBasedRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {
@@ -77547,7 +77559,7 @@
       }
     },
     "aws_wafregional_regex_match_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Regional Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
@@ -77561,7 +77573,7 @@
         "placement": "Supported: Logical Policy for the managed wafregional_regex_match_set declaration. Provides a AWS WAF Regional Regex Match Set resource.",
         "ownership": "Not applicable: The managed wafregional_regex_match_set declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Regional Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
+        "references": "Supported: Regional Classic: Resolve the referenced regex pattern set by its ID within this WAF generation and scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_regex_match_set summaries.",
         "officialDocumentation": "website/docs/r/wafregional_regex_match_set.html.markdown",
@@ -77581,7 +77593,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRegexMatchSet. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {}
@@ -77635,7 +77649,7 @@
       }
     },
     "aws_wafregional_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Regional Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
@@ -77650,7 +77664,7 @@
         "placement": "Supported: Logical Policy for the managed wafregional_rule declaration. Provides an AWS WAF Regional rule resource for use with ALB.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Regional Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
+        "references": "Supported: Regional Classic: Resolve each predicate data ID to the condition resource of the declared type and matching scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_rule summaries.",
         "officialDocumentation": "website/docs/r/wafregional_rule.html.markdown",
@@ -77675,7 +77689,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRule. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {
@@ -77695,7 +77711,7 @@
       }
     },
     "aws_wafregional_rule_group": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Regional Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
@@ -77710,7 +77726,7 @@
         "placement": "Supported: Logical Policy for the managed wafregional_rule_group declaration. Provides a AWS WAF Regional Rule Group resource.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Regional Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
+        "references": "Supported: Regional Classic: Resolve each activated rule using paired type and ID; preserve priority, and exclude unverified managed catalog identifiers.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_rule_group summaries.",
         "officialDocumentation": "website/docs/r/wafregional_rule_group.html.markdown",
@@ -77735,7 +77751,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceRuleGroup. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {}
@@ -77838,7 +77856,7 @@
       }
     },
     "aws_wafregional_web_acl": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Regional Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
@@ -77854,7 +77872,7 @@
         "placement": "Supported: Logical Policy for the managed wafregional_web_acl declaration. Provides a AWS WAF Regional web access control group (ACL) resource for use with ALB.",
         "ownership": "Not applicable: The managed wafregional_web_acl declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Regional Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
+        "references": "Supported: Regional Classic: Resolve activated rules or groups by ID/type and the explicit Firehose delivery stream ARN. Preserve the distinct Classic scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_web_acl summaries.",
         "officialDocumentation": "website/docs/r/wafregional_web_acl.html.markdown",
@@ -77884,7 +77902,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceWebACL. Separate same-name data lookup with its own selector contracts. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {
@@ -77949,7 +77969,7 @@
       }
     },
     "aws_wafregional_web_acl_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1490,
       "gap": "#1490 — Regional Classic: Resolve a regional Classic ACL by ID and the supported protected endpoint by ARN. Require compatible regional evidence.",
@@ -77964,7 +77984,7 @@
         "placement": "Supported: Logical Association for the managed wafregional_web_acl_association declaration. Manages an association with WAF Regional Web ACL",
         "ownership": "Not applicable: The managed wafregional_web_acl_association declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Regional Classic: Resolve a regional Classic ACL by ID and the supported protected endpoint by ARN. Require compatible regional evidence.",
+        "references": "Supported: Regional Classic: Resolve a regional Classic ACL by ID and the supported protected endpoint by ARN. Require compatible regional evidence.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafregional_web_acl_association summaries.",
         "officialDocumentation": "website/docs/r/wafregional_web_acl_association.html.markdown",
@@ -77987,7 +78007,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_classic.rs",
+          "tests/unit/semantic/waf_classic.rs"
         ],
         "managedDataContract": "Managed resourceWebACLAssociation. No same-name data source in 6.70.0. WAF Classic and regional Classic use distinct registrations from WAFv2.",
         "dataContracts": {}
