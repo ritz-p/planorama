@@ -31,10 +31,14 @@ const FABRIC_S3: &str = "destination_configuration.audit_log.destination.s3_buck
 const FABRIC_FIREHOSE: &str =
     "destination_configuration.audit_log.destination.firehose_stream.stream_name";
 
+const FLOW: &str = "aws_appflow_flow";
+const FLOW_PROFILE: &str = "aws_appflow_connector_profile";
+const FLOW_REDSHIFT: &str = "connector_profile_config.0.connector_profile_properties.0.redshift.0";
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(
         kind,
-        AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION | FABRIC_DESTINATION
+        AMPLIFY_DOMAIN | CONFIG_ENV | CONFIG_EXTENSION | FABRIC_DESTINATION | FLOW | FLOW_PROFILE
     )
 }
 
@@ -157,6 +161,46 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         (FABRIC_DESTINATION, FABRIC_FIREHOSE) => scalar(
             "AppFabric delivery stream",
             &[("aws_kinesis_firehose_delivery_stream", &["name"])],
+        ),
+        (FLOW | FLOW_PROFILE, "kms_arn") => {
+            scalar("AppFlow encryption key", &[("aws_kms_key", &["arn"])])
+        }
+        (
+            FLOW_PROFILE,
+            "connector_profile_config.connector_profile_properties.redshift.role_arn",
+        ) => role("AppFlow Redshift connector role"),
+        (
+            FLOW_PROFILE,
+            "connector_profile_config.connector_profile_properties.redshift.data_api_role_arn",
+        ) => role("AppFlow Redshift Data API role"),
+        (FLOW, "source_flow_config.connector_profile_name") => scalar(
+            "AppFlow source connector profile",
+            &[(FLOW_PROFILE, &["name"])],
+        ),
+        (FLOW, "destination_flow_config.connector_profile_name") => Rule::new(
+            "AppFlow destination connector profiles",
+            &[(FLOW_PROFILE, &["name"])],
+            false,
+            &["destination_flow_config"],
+        ),
+        (FLOW, "source_flow_config.source_connector_properties.s3.bucket_name") => scalar(
+            "AppFlow source bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+        ),
+        (FLOW, "destination_flow_config.destination_connector_properties.s3.bucket_name") => {
+            Rule::new(
+                "AppFlow destination buckets",
+                &[("aws_s3_bucket", &["bucket", "id"])],
+                false,
+                &["destination_flow_config"],
+            )
+        }
+        (FLOW, "metadata_catalog_config.glue_data_catalog.role_arn") => {
+            role("AppFlow catalog role")
+        }
+        (FLOW, "metadata_catalog_config.glue_data_catalog.database_name") => scalar(
+            "AppFlow Glue database",
+            &[("aws_glue_catalog_database", &["name"])],
         ),
         _ => return None,
     })
@@ -366,6 +410,37 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
         }
         (FABRIC_BUNDLE, "customer_managed_key_arn") => {
             service_arn(e, source, "kms", "key/").is_some_and(segment)
+        }
+        (FLOW | FLOW_PROFILE, "kms_arn") => {
+            service_arn(e, source, "kms", "key/").is_some_and(segment)
+        }
+        (FLOW_PROFILE, _) if path.starts_with(FLOW_REDSHIFT) => {
+            e.text(target, "connector_type") == Some("Redshift")
+        }
+        (FLOW, _) if path.ends_with(".connector_profile_name") => {
+            let Some((block, _)) = path.rsplit_once('.') else {
+                return false;
+            };
+            e.text(target, &format!("{block}.connector_type"))
+                .is_some_and(|kind| kind != "S3" && e.text(source, "connector_type") == Some(kind))
+        }
+        (FLOW, _) if path.ends_with(".s3.0.bucket_name") => {
+            let Some((block, _)) = path.rsplit_once("_connector_properties.") else {
+                return false;
+            };
+            let Some((parent, _)) = block.rsplit_once('.') else {
+                return false;
+            };
+            e.text(target, &format!("{parent}.connector_type")) == Some("S3")
+        }
+        (FLOW, "metadata_catalog_config.0.glue_data_catalog.0.database_name") => {
+            e.text(source, "catalog_id").is_some_and(|catalog| {
+                e.nodes[target]
+                    .provider_configuration
+                    .as_ref()
+                    .and_then(|config| config.account.as_ref())
+                    .is_some_and(|account| account.as_str() == catalog)
+            })
         }
         (CONFIG_EXTENSION, _) => extension_action(e, target, source, path),
         (CONFIG_ASSOCIATION, "extension_arn") => {

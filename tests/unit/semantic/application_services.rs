@@ -635,3 +635,86 @@ fn appfabric_qualifies_ingestion_destination_and_implicit_authorization() {
             .is_none()
     );
 }
+
+#[test]
+fn appflow_matches_profiles_and_buckets_under_the_selected_connector() {
+    let key = "arn:aws:kms:us-east-1:123456789012:key/appflow";
+    let role = "arn:aws:iam::123456789012:role/Redshift";
+    let mut fixture = plan(&[
+        ("aws_kms_key.flow", json!({"arn":key}), json!({})),
+        ("aws_iam_role.redshift", json!({"arn":role}), json!({})),
+        (
+            "aws_s3_bucket.output",
+            json!({"bucket":"target-bucket"}),
+            json!({}),
+        ),
+        (
+            "aws_appflow_connector_profile.crm",
+            json!({"name":"crm","connector_type":"Salesforce"}),
+            json!({}),
+        ),
+        (
+            "aws_appflow_connector_profile.warehouse",
+            json!({"name":"warehouse","connector_type":"Redshift","connector_profile_config":[{"connector_profile_properties":[{"redshift":[{"role_arn":role,"data_api_role_arn":role}]}]}]}),
+            json!({
+                "connector_profile_config":[{"connector_profile_properties":[{"redshift":[{"role_arn":{"references":["aws_iam_role.redshift.arn"]},"data_api_role_arn":{"references":["aws_iam_role.redshift.arn"]}}]}]}]
+            }),
+        ),
+        (
+            "aws_appflow_flow.pipeline",
+            json!({
+                "kms_arn":key,"source_flow_config":[{"connector_type":"Salesforce","connector_profile_name":"crm"}],
+                "destination_flow_config":[{"connector_type":"S3","destination_connector_properties":[{"s3":[{"bucket_name":"target-bucket"}]}]},
+                    {"connector_type":"Redshift","connector_profile_name":"warehouse"}]
+            }),
+            json!({
+                "kms_arn":{"references":["aws_kms_key.flow.arn"]},
+                "source_flow_config":[{"connector_profile_name":{"references":["aws_appflow_connector_profile.crm.name"]}}],
+                "destination_flow_config":[{"destination_connector_properties":[{"s3":[{"bucket_name":{"references":["aws_s3_bucket.output.bucket"]}}]}]},
+                    {"connector_profile_name":{"references":["aws_appflow_connector_profile.warehouse.name"]}}]
+            }),
+        ),
+    ]);
+    let flow = "aws_appflow_flow.pipeline";
+    let profile = "aws_appflow_connector_profile.warehouse";
+    let check = |fixture: &Value, address: &str, path: &str| {
+        verified(
+            &graph(fixture),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    for path in [
+        "kms_arn",
+        "source_flow_config.connector_profile_name",
+        "destination_flow_config.connector_profile_name",
+        "destination_flow_config.destination_connector_properties.s3.bucket_name",
+    ] {
+        assert!(check(&fixture, flow, path), "{path}");
+    }
+    assert!(check(
+        &fixture,
+        profile,
+        "connector_profile_config.connector_profile_properties.redshift.role_arn"
+    ));
+    fixture["resource_changes"][5]["change"]["after"]["destination_flow_config"][0]["connector_type"] =
+        json!("Redshift");
+    fixture["resource_changes"][4]["change"]["after"]["connector_type"] = json!("Salesforce");
+    assert!(!check(
+        &fixture,
+        flow,
+        "destination_flow_config.connector_profile_name"
+    ));
+    assert!(!check(
+        &fixture,
+        flow,
+        "destination_flow_config.destination_connector_properties.s3.bucket_name"
+    ));
+    assert!(!check(
+        &fixture,
+        profile,
+        "connector_profile_config.connector_profile_properties.redshift.role_arn"
+    ));
+    assert!(label(super::FLOW_PROFILE, "credentials_arn").is_none());
+}

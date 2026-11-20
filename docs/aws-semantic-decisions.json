@@ -87085,10 +87085,10 @@
       }
     },
     "aws_appflow_connector_profile": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1590,
-      "gap": "#1590 — Verify the configured KMS key and typed Redshift connector IAM role ARNs when the selector and compatible block match. Computed credentials ARN and connection mode do not establish a managed secret or a VPC.",
+      "gap": "#1590 — Verify configured KMS and Redshift IAM roles under matching connector properties. Computed credentials and connection mode do not establish a secret or network attachment.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87106,7 +87106,7 @@
         "placement": "Supported: managed Logical Node with the Amazon AppFlow service label. Provides an AppFlow Connector Profile resource.",
         "ownership": "Not applicable: A connector profile can serve multiple flows and remains independent.",
         "network": "Not applicable: The Private connection mode alone does not establish a VPC endpoint or subnet for the connector.",
-        "references": "Missing: Verify the configured KMS key and typed Redshift connector IAM role ARNs when the selector and compatible block match. Computed credentials ARN and connection mode do not establish a managed secret or a VPC.",
+        "references": "Supported: Verify configured KMS and Redshift IAM roles under matching connector properties. Computed credentials and connection mode do not establish a secret or network attachment.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Connector profile names are regional, and their configured connector type constrains compatible flows.",
         "summaries": "Intentionally unsupported: omit all credentials, tokens, connector URLs and private connection details. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appflow_connector_profile.html.markdown",
@@ -87158,17 +87158,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceConnectorProfile. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appflow_flow": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1590,
-      "gap": "#1590 — Verify connector profiles under each typed source or destination block, explicitly configured S3 buckets, catalog database and role, and the configured KMS key. Other connector-specific objects and task mappings require separate bounded contracts before inference.",
+      "gap": "#1590 — Verify connector profiles by scoped name and connector type, selected S3 buckets, Glue database and role, and the configured KMS key. Other connector payloads and task mappings do not identify endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87188,7 +87190,7 @@
         "placement": "Supported: managed Logical Node with the Amazon AppFlow service label. Provides an AppFlow Flow resource.",
         "ownership": "Not applicable: Profiles, catalogs and buckets remain reusable. A flow does not own these targets.",
         "network": "Not applicable: A configured data flow is a service relation without VPC placement evidence.",
-        "references": "Missing: Verify connector profiles under each typed source or destination block, explicitly configured S3 buckets, catalog database and role, and the configured KMS key. Other connector-specific objects and task mappings require separate bounded contracts before inference.",
+        "references": "Supported: Verify connector profiles by scoped name and connector type, selected S3 buckets, Glue database and role, and the configured KMS key. Other connector payloads and task mappings do not identify endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The flow and each selected profile or bucket require separate verified deployment and owner evidence.",
         "summaries": "Intentionally unsupported: omit task mappings, transformed record contents, schedules and actual flow status. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appflow_flow.html.markdown",
@@ -87256,7 +87258,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceFlow. No same-name data source in the pinned schema.",
         "dataContracts": {}
