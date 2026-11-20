@@ -504,6 +504,7 @@ pub(super) fn transform(raw: crate::semantic::Input) -> crate::model::Graph {
     cloudhsm_configuration::present(&raw, &mut graph);
     flink_configuration::present(&raw, &mut graph);
     mwaa_configuration::present(&raw, &mut graph);
+    application_services::present(&raw, &mut graph);
     sagemaker_workforce::present(&raw, &mut graph);
     msk_connect::present(&raw, &mut graph);
     timestream_influx::present(&raw, &mut graph);

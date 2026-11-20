@@ -87400,10 +87400,10 @@
       }
     },
     "aws_m2_application": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1592,
-      "gap": "#1592 — Verify the configured KMS key, IAM role and documented S3 definition locator using explicit evidence. Keep the computed current version distinct from an explicit deployment version.",
+      "gap": "#1592 — Verify configured KMS and IAM references and the S3 definition locator by exact object bucket and key. A computed current version does not establish a deployment.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87420,7 +87420,7 @@
         "placement": "Supported: managed Logical Node with the AWS Mainframe Modernization service label. Terraform resource for managing an AWS Mainframe Modernization Application.",
         "ownership": "Not applicable: The application, role and key remain individually addressable and reusable.",
         "network": "Not applicable: The application definition does not configure environment network placement.",
-        "references": "Missing: Verify the configured KMS key, IAM role and documented S3 definition locator using explicit evidence. Keep the computed current version distinct from an explicit deployment version.",
+        "references": "Supported: Verify configured KMS and IAM references and the S3 definition locator by exact object bucket and key. A computed current version does not establish a deployment.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The regional application identifier and version context are independent of S3 location.",
         "summaries": "Intentionally unsupported: omit inline definition bytes, S3 object contents and runtime version state. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/m2_application.html.markdown",
@@ -87463,17 +87463,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newApplicationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_m2_deployment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1592,
-      "gap": "#1592 — Verify configured application and environment IDs, and qualify version evidence within that application. Start is a requested action, and the returned deployment ID does not prove execution or health.",
+      "gap": "#1592 — Verify configured application and compatible environment IDs. Qualify an explicitly referenced current version against the same application. Start and deployment ID do not establish execution or health.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87486,9 +87488,9 @@
           "start"
         ],
         "placement": "Supported: managed Logical Controller with the AWS Mainframe Modernization service label. Terraform resource for managing an AWS Mainframe Modernization Deployment.",
-        "ownership": "Not applicable: The deployment relates separately scoped application and environment objects without embedding either.",
+        "ownership": "Supported: Present a deployment under its compatible verified environment.",
         "network": "Not applicable: The application inherits no network placement from a deployment reference. Review the environment network contract separately.",
-        "references": "Missing: Verify configured application and environment IDs, and qualify version evidence within that application. Start is a requested action, and the returned deployment ID does not prove execution or health.",
+        "references": "Supported: Verify configured application and compatible environment IDs. Qualify an explicitly referenced current version against the same application. Start and deployment ID do not establish execution or health.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require account, regional and engine compatibility for the application and environment.",
         "summaries": "Intentionally unsupported: omit deployment status and workload health. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/m2_deployment.html.markdown",
@@ -87522,17 +87524,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newDeploymentResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_m2_environment": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P1",
       "issue": 1592,
-      "gap": "#1592 — Verify the configured encryption key and typed EFS or FSx filesystem identifiers. The returned load balancer ARN and public access flag do not establish a configured load balancer or reachability. Verify complete subnet and security-group sets with a common VPC. Multiple subnets do not identify a unique subnet card. Retain the unresolved placement when evidence is incomplete.",
+      "gap": "#1592 — Verify the configured key and typed EFS or FSx for Lustre filesystem IDs. Returned load balancers and public access flags do not establish endpoints or reachability.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87550,8 +87554,8 @@
         ],
         "placement": "Supported: managed Logical Node with the AWS Mainframe Modernization service label. Terraform resource for managing an AWS Mainframe Modernization Environment.",
         "ownership": "Not applicable: Environment, filesystems and security groups keep independent identities.",
-        "network": "Missing: Verify complete subnet and security-group sets with a common VPC. Multiple subnets do not identify a unique subnet card. Retain the unresolved placement when evidence is incomplete.",
-        "references": "Missing: Verify the configured encryption key and typed EFS or FSx filesystem identifiers. The returned load balancer ARN and public access flag do not establish a configured load balancer or reachability.",
+        "network": "Supported: Place the environment in a common VPC only when both configured subnet and security-group sets are verified. Multiple subnets do not provide a unique subnet card.",
+        "references": "Supported: Verify the configured key and typed EFS or FSx for Lustre filesystem IDs. Returned load balancers and public access flags do not establish endpoints or reachability.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Provider region qualifies the regional environment. Network and storage candidates require compatible scope.",
         "summaries": "Intentionally unsupported: omit filesystem paths, runtime connectivity and inferred public reachability. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/m2_environment.html.markdown",
@@ -87611,7 +87615,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newEnvironmentResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
