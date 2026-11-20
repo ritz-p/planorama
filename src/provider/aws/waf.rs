@@ -225,8 +225,14 @@ pub(super) fn annotate_associations(
                 return None;
             }
             let valid = if r.attribute == "web_acl_arn" {
-                parent_scope(nodes, refs, values, r.target, "web_acl_arn")
-                    == Some(WafScope::Regional)
+                let protected = super::lambda_core::unique(refs, r.target, "resource_arn");
+                let scope = match protected.map(|r| r.sources.as_slice()) {
+                    Some([s]) if nodes[*s].resource_type == "aws_amplify_app" => {
+                        WafScope::CloudFront
+                    }
+                    _ => WafScope::Regional,
+                };
+                parent_scope(nodes, refs, values, r.target, "web_acl_arn") == Some(scope)
             } else {
                 association_endpoint(nodes, r, values)
             };
@@ -259,18 +265,25 @@ fn association_endpoint(
     let Some(field) = r.source_attributes.iter().next() else {
         return false;
     };
+    let kind = super::aliases::entity_type(endpoint);
+    let Some(region) = effective_region(node) else {
+        return false;
+    };
+    let region_matches = if kind == "aws_amplify_app" {
+        region.0 == "us-east-1"
+    } else {
+        effective_region(endpoint) == Some(region)
+    };
     if !current(node)
         || !current(endpoint)
         || !r.complete
         || !r.instances_explicit
         || !r.issues.is_empty()
         || r.source_attributes.len() != 1
-        || !super::eventbridge::bindings(
+        || !region_matches
+        || !super::configured_links::same_account(
             node.provider_configuration.as_ref(),
             endpoint.provider_configuration.as_ref(),
-            effective_region(node),
-            effective_region(endpoint),
-            false,
         )
     {
         return false;
@@ -278,7 +291,6 @@ fn association_endpoint(
     let Some(output) = super::service_evidence::known(values, s, field) else {
         return false;
     };
-    let kind = super::aliases::entity_type(endpoint);
     if !protected_fields(kind).contains(&field.as_str()) {
         return false;
     }

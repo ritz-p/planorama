@@ -7177,7 +7177,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1493,
-      "gap": "#1493 — Partial: Existing #496 resolves a REGIONAL ACL and an application load balancer or REST API stage. Extend verified ARN matching to supported Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access targets.",
+      "gap": "#1493 — Resolve configured ACL and protected resource identities. Literal or ambiguous endpoints retain the association declaration.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -7189,8 +7189,8 @@
         "placement": "Supported: Logical Association for the managed wafv2_web_acl_association declaration. Creates a WAFv2 Web ACL Association.",
         "ownership": "Supported: association presentation requires verified, unambiguous ACL and protected endpoints; the ACL is independently reusable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Partial: Existing #496 resolves a REGIONAL ACL and an application load balancer or REST API stage. Extend verified ARN matching to supported Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access targets.",
-        "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
+        "references": "Supported: verify the ACL ARN and the protected resource identity for application load balancers, REST API stages, Cognito, AppSync, App Runner, Amplify, Bedrock AgentCore and Verified Access.",
+        "scope": "Supported: Amplify uses a CLOUDFRONT ACL and an association in us-east-1. The app may be in another region of the same account. Other protected endpoints require a REGIONAL ACL in the same region.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_association summaries.",
         "officialDocumentation": "website/docs/r/wafv2_web_acl_association.html.markdown",
         "shapes": {
