@@ -81600,10 +81600,10 @@
       }
     },
     "aws_cloudcontrolapi_resource": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1539,
-      "gap": "#1539 — Verify the optional operations IAM role. Leave type-dependent target placement unresolved and keep arbitrary desired state, schema and returned properties opaque.",
+      "gap": "#1539 — Verify a configured operations role against its control-plane account. Type-dependent placement remains unresolved and target payloads stay opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81618,7 +81618,7 @@
         "placement": "Supported: managed Logical Node for cloudcontrolapi_resource. Manages a Cloud Control API Resource.",
         "ownership": "Not applicable: AWS Cloud Control API cloudcontrolapi_resource remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudcontrolapi_resource declares no VPC/subnet assignment; the configured type_name does not establish network containment.",
-        "references": "Missing: Verify the optional operations IAM role. Leave type-dependent target placement unresolved and keep arbitrary desired state, schema and returned properties opaque.",
+        "references": "Supported: Verify a configured operations role against its control-plane account. Type-dependent placement remains unresolved and target payloads stay opaque.",
         "scope": "Supported: the runtime preserves unresolved scope. Unknown because type_name selects the target schema; leave target account/region unresolved.",
         "summaries": "Intentionally unsupported: omit arbitrary resource state, schema and properties from cloudcontrolapi_resource summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudcontrolapi_resource.html.markdown",
@@ -81653,7 +81653,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceResource. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -81688,7 +81690,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1539,
-      "gap": "#1539 — Resolve the stack execution role and explicit SNS notification topics. Preserve independently verified consumer references; do not expand resources from templates, URLs, parameters or outputs.",
+      "gap": "#1539 — Verify execution role and explicit SNS topics while preserving existing consumer relationships. Templates, parameters and outputs stay opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81703,7 +81705,7 @@
         "placement": "Supported: managed Logical Controller for cloudformation_stack. Provides a CloudFormation Stack resource.",
         "ownership": "Not applicable: AWS CloudFormation cloudformation_stack remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudformation_stack declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Partial: Resolve the stack execution role and explicit SNS notification topics. Preserve independently verified consumer references; do not expand resources from templates, URLs, parameters or outputs.",
+        "references": "Supported: Verify execution role and explicit SNS topics while preserving existing consumer relationships. Templates, parameters and outputs stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack.html.markdown",
@@ -81747,7 +81749,9 @@
           "tests/unit/resource_support.rs",
           "src/provider/aws/application_scaling.rs",
           "src/provider/aws/resilience_hub.rs",
-          "tests/unit/semantic/resilience_hub.rs"
+          "tests/unit/semantic/resilience_hub.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceStack. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -82003,10 +82007,10 @@
       }
     },
     "aws_cloudformation_type": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1539,
-      "gap": "#1539 — Verify the extension execution role and log role/group only from their configured fields. The registered schema and handler package are not child infrastructure.",
+      "gap": "#1539 — Verify the registered extension execution role and configured logging role and group. Handler packages and schemas stay opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82021,7 +82025,7 @@
         "placement": "Supported: managed Logical Controller for cloudformation_type. Manages a version of a CloudFormation Type.",
         "ownership": "Not applicable: AWS CloudFormation cloudformation_type remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudformation_type declares no VPC/subnet assignment; the configured type_name does not establish network containment.",
-        "references": "Missing: Verify the extension execution role and log role/group only from their configured fields. The registered schema and handler package are not child infrastructure.",
+        "references": "Supported: Verify the registered extension execution role and configured logging role and group. Handler packages and schemas stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_type summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_type.html.markdown",
@@ -82058,7 +82062,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceType. Same-name data lookup has separate selectors.",
         "dataContracts": {

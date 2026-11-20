@@ -344,6 +344,30 @@ fn account_governance_requires_current_typed_evidence() {
 }
 
 #[test]
+fn cloudformation_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/cloudformation-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_cloudcontrolapi_resource.resource", "role_arn"),
+            ("aws_cloudformation_stack.stack", "iam_role_arn"),
+            ("aws_cloudformation_stack.stack", "notification_arns"),
+            ("aws_cloudformation_type.type", "execution_role_arn"),
+            (
+                "aws_cloudformation_type.type",
+                "logging_config.log_role_arn",
+            ),
+            (
+                "aws_cloudformation_type.type",
+                "logging_config.log_group_name",
+            ),
+        ],
+        ("aws_iam_role.template", "arn"),
+    );
+}
+
+#[test]
 fn organizations_tag_accepts_roots_and_rejects_organization_ids() {
     use serde_json::{Value, json};
     for (attribute, value, expected) in [
@@ -382,4 +406,32 @@ fn organizations_tag_accepts_roots_and_rejects_organization_ids() {
             "{attribute}"
         );
     }
+}
+
+#[test]
+fn cloud_control_role_keeps_target_placement_unresolved() {
+    let fixture = include_str!("../../fixtures/cloudformation-references-plan.json");
+    let plan = crate::plan::evidence::tests::parse_fixture(fixture).unwrap();
+    let graph = crate::semantic::transform(&plan);
+    let address = "aws_cloudcontrolapi_resource.resource";
+    let target = graph
+        .nodes
+        .iter()
+        .find(|node| node.address == address)
+        .unwrap();
+    assert!(
+        target
+            .provider_configuration
+            .as_ref()
+            .unwrap()
+            .account
+            .is_some()
+    );
+    assert!(target.entity.scope.is_none());
+    assert!(crate::configured_service_links::verified(
+        &graph,
+        address,
+        "role_arn",
+        super::label("aws_cloudcontrolapi_resource", "role_arn"),
+    ));
 }
