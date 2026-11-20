@@ -105,9 +105,9 @@ pub(super) fn annotate(
 ) {
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
-fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
+fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &str) -> bool {
     let kind = &e.nodes[r.target].resource_type;
-    let target = &e.nodes[source].resource_type;
+    let target = super::aliases::entity_type(&e.nodes[source]);
     if r.attribute == "members" && e.text(r.target, "pattern") != Some("ARBITRARY") {
         return false;
     }
@@ -118,7 +118,6 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             _ => false,
         };
     }
-    let _ = path;
     true
 }
 #[cfg(test)]
