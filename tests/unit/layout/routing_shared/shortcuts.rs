@@ -305,3 +305,65 @@ fn shortcuts_preserve_ports_and_reject_obstacles_and_conflicts() {
     assert!(shortened[1].x >= 116);
     assert!(shortened[shortened.len() - 2].y <= 92);
 }
+
+#[test]
+fn synthetic_shortcuts_trade_two_bends_for_a_longer_route() {
+    let points = |coords: &[(usize, usize)]| {
+        coords
+            .iter()
+            .map(|&(x, y)| Point { x, y })
+            .collect::<Vec<_>>()
+    };
+    let input = points(&[
+        (112, 112),
+        (128, 112),
+        (128, 16),
+        (80, 16),
+        (80, 64),
+        (32, 64),
+        (32, 96),
+    ]);
+    let first = points(&[
+        (112, 112),
+        (128, 112),
+        (128, 88),
+        (80, 88),
+        (80, 64),
+        (32, 64),
+        (32, 96),
+    ]);
+    let bounded = points(&[(112, 112), (128, 112), (128, 16), (32, 16), (32, 96)]);
+    let obstacles = [Bounds {
+        origin: Point { x: 104, y: 56 },
+        width: 16,
+        height: 16,
+    }];
+    let scorer = Scorer::default();
+    let terminals = [Terminal::plain(16); 2];
+    assert!(scorer.safe_shortcut(&input, &first, &obstacles));
+    assert!(scorer.safe_shortcut(&input, &bounded, &obstacles));
+    let start = Port {
+        point: input[0],
+        side: Side::Right,
+    };
+    let end = Port {
+        point: *input.last().unwrap(),
+        side: Side::Top,
+    };
+    for route in [&first, &bounded] {
+        assert!(ports::valid_with_clearances(
+            route, start, end, &obstacles, terminals
+        ));
+        assert_eq!(
+            simplify_path_with_clearances(route.clone(), &obstacles, &scorer, terminals),
+            *route
+        );
+    }
+    assert_eq!(
+        simplify_path_with_clearances(input, &obstacles, &scorer, terminals),
+        first
+    );
+}
+
+#[path = "../../../experiments/shortcuts/selection.rs"]
+mod selection;
