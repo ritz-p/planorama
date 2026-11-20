@@ -83419,10 +83419,10 @@
       }
     },
     "aws_servicecatalog_budget_resource_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Resolve the named budget and an eligible portfolio or product ID. Budget thresholds and billing outcomes are excluded.",
+      "gap": "#1546 — Verify the account-qualified budget name and the corresponding portfolio or product ID.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83434,7 +83434,7 @@
         "placement": "Supported: managed Logical Association for servicecatalog_budget_resource_association. Manages a Service Catalog Budget Resource Association",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_budget_resource_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_budget_resource_association declares no VPC/subnet assignment; the configured budget_name does not establish network containment.",
-        "references": "Missing: Resolve the named budget and an eligible portfolio or product ID. Budget thresholds and billing outcomes are excluded.",
+        "references": "Supported: Verify the account-qualified budget name and the corresponding portfolio or product ID.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_budget_resource_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_budget_resource_association.html.markdown",
@@ -83457,17 +83457,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceBudgetResourceAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_servicecatalog_constraint": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Match the portfolio/product pair; constraint parameters are type-dependent payloads and cannot infer a launch role.",
+      "gap": "#1546 — Verify the portfolio and product IDs. Constraint parameters remain opaque.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83481,7 +83483,7 @@
         "placement": "Supported: managed Logical Node for servicecatalog_constraint. Manages a Service Catalog Constraint",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_constraint remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_constraint declares no VPC/subnet assignment; the configured portfolio_id does not establish network containment.",
-        "references": "Missing: Match the portfolio/product pair; constraint parameters are type-dependent payloads and cannot infer a launch role.",
+        "references": "Supported: Verify the portfolio and product IDs. Constraint parameters remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_constraint summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_constraint.html.markdown",
@@ -83512,7 +83514,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceConstraint. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -83650,10 +83654,10 @@
       }
     },
     "aws_servicecatalog_portfolio_share": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Resolve the portfolio and the type-qualified recipient account, organization or OU; computed accepted is not proof of effective access.",
+      "gap": "#1546 — Verify the portfolio ID and type-qualified account, organization or OU recipient. Computed acceptance does not establish access.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83667,7 +83671,7 @@
         "placement": "Supported: managed Logical Association for servicecatalog_portfolio_share. Manages a Service Catalog Portfolio Share",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_portfolio_share remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_portfolio_share declares no VPC/subnet assignment; the configured portfolio_id does not establish network containment.",
-        "references": "Missing: Resolve the portfolio and the type-qualified recipient account, organization or OU; computed accepted is not proof of effective access.",
+        "references": "Supported: Verify the portfolio ID and type-qualified account, organization or OU recipient. Computed acceptance does not establish access.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_portfolio_share summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_portfolio_share.html.markdown",
@@ -83698,17 +83702,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourcePortfolioShare. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_servicecatalog_principal_portfolio_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Verify the portfolio and eligible IAM principal. IAM_PATTERN is a pattern, not a unique managed principal.",
+      "gap": "#1546 — Verify the portfolio and an eligible IAM role, user or group ARN. IAM patterns do not identify a unique principal.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83721,7 +83727,7 @@
         "placement": "Supported: managed Logical Association for servicecatalog_principal_portfolio_association. Manages a Service Catalog Principal Portfolio Association",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_principal_portfolio_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_principal_portfolio_association declares no VPC/subnet assignment; the configured portfolio_id does not establish network containment.",
-        "references": "Missing: Verify the portfolio and eligible IAM principal. IAM_PATTERN is a pattern, not a unique managed principal.",
+        "references": "Supported: Verify the portfolio and an eligible IAM role, user or group ARN. IAM patterns do not identify a unique principal.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_principal_portfolio_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_principal_portfolio_association.html.markdown",
@@ -83748,7 +83754,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourcePrincipalPortfolioAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -83836,10 +83844,10 @@
       }
     },
     "aws_servicecatalog_product_portfolio_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Resolve the two required IDs and optional source portfolio separately; a reusable product may belong to multiple portfolios.",
+      "gap": "#1546 — Verify the product, portfolio and optional source portfolio IDs independently. Products remain reusable.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83852,7 +83860,7 @@
         "placement": "Supported: managed Logical Association for servicecatalog_product_portfolio_association. Manages a Service Catalog Product Portfolio Association",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_product_portfolio_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_product_portfolio_association declares no VPC/subnet assignment; the configured portfolio_id does not establish network containment.",
-        "references": "Missing: Resolve the two required IDs and optional source portfolio separately; a reusable product may belong to multiple portfolios.",
+        "references": "Supported: Verify the product, portfolio and optional source portfolio IDs independently. Products remain reusable.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_product_portfolio_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_product_portfolio_association.html.markdown",
@@ -83879,7 +83887,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceProductPortfolioAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -84132,10 +84142,10 @@
       }
     },
     "aws_servicecatalog_tag_option_resource_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Verify the tag option and the catalog resource ID; the returned ARN is corroborating output, not a configured third endpoint.",
+      "gap": "#1546 — Verify the tag option and eligible catalog resource ID. The computed resource ARN does not add another endpoint.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84148,7 +84158,7 @@
         "placement": "Supported: managed Logical Association for servicecatalog_tag_option_resource_association. Manages a Service Catalog Tag Option Resource Association",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_tag_option_resource_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_tag_option_resource_association declares no VPC/subnet assignment; the configured tag_option_id does not establish network containment.",
-        "references": "Missing: Verify the tag option and the catalog resource ID; the returned ARN is corroborating output, not a configured third endpoint.",
+        "references": "Supported: Verify the tag option and eligible catalog resource ID. The computed resource ARN does not add another endpoint.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_tag_option_resource_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_tag_option_resource_association.html.markdown",
@@ -84175,7 +84185,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceTagOptionResourceAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}

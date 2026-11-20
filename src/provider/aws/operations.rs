@@ -223,6 +223,101 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 &[],
             )
         }
+        ("aws_servicecatalog_budget_resource_association", "budget_name") => Rule::new(
+            "Associated budget",
+            &[("aws_budgets_budget", &["name"])],
+            false,
+            &[],
+        )
+        .in_control_plane_account(),
+        ("aws_servicecatalog_budget_resource_association", "resource_id") => Rule::new(
+            "Budgeted catalog resource",
+            &[
+                ("aws_servicecatalog_portfolio", &["id"]),
+                ("aws_servicecatalog_product", &["id"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_constraint", "portfolio_id") => Rule::new(
+            "Service Catalog portfolio",
+            &[("aws_servicecatalog_portfolio", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_portfolio_share", "portfolio_id") => Rule::new(
+            "Service Catalog portfolio",
+            &[("aws_servicecatalog_portfolio", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_principal_portfolio_association", "portfolio_id") => Rule::new(
+            "Service Catalog portfolio",
+            &[("aws_servicecatalog_portfolio", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_product_portfolio_association", "portfolio_id") => Rule::new(
+            "Service Catalog portfolio",
+            &[("aws_servicecatalog_portfolio", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_constraint", "product_id") => Rule::new(
+            "Service Catalog product",
+            &[("aws_servicecatalog_product", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_product_portfolio_association", "product_id") => Rule::new(
+            "Service Catalog product",
+            &[("aws_servicecatalog_product", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_portfolio_share", "principal_id") => Rule::new(
+            "Portfolio share recipient",
+            &[
+                ("aws_organizations_account", &["id"]),
+                ("aws_organizations_organization", &["arn", "id"]),
+                ("aws_organizations_organizational_unit", &["arn", "id"]),
+            ],
+            false,
+            &[],
+        )
+        .with_explicit_destination(),
+        ("aws_servicecatalog_principal_portfolio_association", "principal_arn") => Rule::new(
+            "Portfolio IAM principal",
+            &[
+                ("aws_iam_role", &["arn"]),
+                ("aws_iam_user", &["arn"]),
+                ("aws_iam_group", &["arn"]),
+            ],
+            false,
+            &[],
+        )
+        .in_control_plane_account(),
+        ("aws_servicecatalog_product_portfolio_association", "source_portfolio_id") => Rule::new(
+            "Source portfolio",
+            &[("aws_servicecatalog_portfolio", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_tag_option_resource_association", "tag_option_id") => Rule::new(
+            "Service Catalog tag option",
+            &[("aws_servicecatalog_tag_option", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_servicecatalog_tag_option_resource_association", "resource_id") => Rule::new(
+            "Tagged catalog resource",
+            &[
+                ("aws_servicecatalog_portfolio", &["id"]),
+                ("aws_servicecatalog_product", &["id"]),
+            ],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -306,6 +401,35 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             _ => false,
         },
         ("aws_resourceexplorer2_view", _) => false,
+        ("aws_servicecatalog_portfolio_share", "principal_id") => {
+            let recipient = e.text(r.target, path).unwrap_or_default();
+            match (
+                e.text(r.target, "type"),
+                e.nodes[source].resource_type.as_str(),
+            ) {
+                (Some("ACCOUNT" | "ORGANIZATION_MEMBER_ACCOUNT"), "aws_organizations_account") => {
+                    crate::model::AwsAccountScope::new(recipient).is_some()
+                }
+                (Some("ORGANIZATION"), "aws_organizations_organization") => {
+                    recipient.starts_with("o-")
+                        || principal_arn(e, source, "organizations", "organization/o-")
+                }
+                (Some("ORGANIZATIONAL_UNIT"), "aws_organizations_organizational_unit") => {
+                    recipient.starts_with("ou-")
+                        || organizations_ou_account(recipient)
+                            .is_some_and(|account| endpoint_account(e, source, account))
+                }
+                _ => false,
+            }
+        }
+        ("aws_servicecatalog_principal_portfolio_association", "principal_arn") => {
+            let principal_type = e.text(r.target, "principal_type");
+            (principal_type == Some("IAM") || e.absent(r.target, "principal_type"))
+                && match e.nodes[source].resource_type.as_str() {
+                    "aws_iam_group" => principal_arn(e, source, "iam", "group/"),
+                    _ => ram_principal(e, source),
+                }
+        }
         _ => true,
     }
 }
