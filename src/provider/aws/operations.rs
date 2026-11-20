@@ -20,6 +20,18 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_controltower_baseline", "target_identifier") => Rule::new(
+            "Control Tower target OU",
+            &[("aws_organizations_organizational_unit", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_controltower_control", "target_identifier") => Rule::new(
+            "Control Tower target OU",
+            &[("aws_organizations_organizational_unit", &["arn"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -40,8 +52,54 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, references, values, rule, qualifies);
 }
 
-fn qualifies(_: &Evidence<'_>, _: &AttributeReference, _: usize, _: &str) -> bool {
-    true
+fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
+    match (
+        e.nodes[r.target].resource_type.as_str(),
+        r.attribute.as_str(),
+    ) {
+        ("aws_controltower_baseline" | "aws_controltower_control", "target_identifier") => e
+            .text(r.target, path)
+            .and_then(organizations_ou_account)
+            .is_some_and(|account| {
+                e.nodes[source]
+                    .provider_configuration
+                    .as_ref()
+                    .and_then(|config| config.account.as_ref())
+                    .is_none_or(|owner| owner.as_str() == account)
+            }),
+        _ => true,
+    }
+}
+
+fn organizations_ou_account(arn: &str) -> Option<&str> {
+    let mut fields = arn.splitn(6, ':');
+    match (
+        fields.next(),
+        fields.next(),
+        fields.next(),
+        fields.next(),
+        fields.next(),
+        fields.next(),
+    ) {
+        (
+            Some("arn"),
+            Some("aws" | "aws-us-gov" | "aws-cn"),
+            Some("organizations"),
+            Some(""),
+            Some(account),
+            Some(resource),
+        ) if crate::model::AwsAccountScope::new(account).is_some()
+            && resource
+                .strip_prefix("ou/o-")
+                .and_then(|path| path.split_once("/ou-"))
+                .is_some_and(|(org, ou)| {
+                    !org.is_empty() && !ou.is_empty() && !ou.contains('/')
+                }) =>
+        {
+            Some(account)
+        }
+        _ => None,
+    }
 }
 
 #[cfg(test)]
