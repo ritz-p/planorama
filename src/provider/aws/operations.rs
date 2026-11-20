@@ -401,6 +401,13 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             _ => false,
         },
         ("aws_resourceexplorer2_view", _) => false,
+        ("aws_servicecatalog_budget_resource_association", "budget_name") => {
+            match e.value(source, "account_id") {
+                Some(Value::Null) => true,
+                Some(Value::String(account)) => endpoint_account(e, r.target, account),
+                _ => false,
+            }
+        }
         ("aws_servicecatalog_portfolio_share", "principal_id") => {
             let recipient = e.text(r.target, path).unwrap_or_default();
             match (

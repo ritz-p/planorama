@@ -83422,7 +83422,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1546,
-      "gap": "#1546 — Verify the account-qualified budget name and the corresponding portfolio or product ID.",
+      "gap": "#1546 — Verify the budget name against its effective account and match the configured portfolio or product ID.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83434,7 +83434,7 @@
         "placement": "Supported: managed Logical Association for servicecatalog_budget_resource_association. Manages a Service Catalog Budget Resource Association",
         "ownership": "Not applicable: AWS Service Catalog servicecatalog_budget_resource_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalog_budget_resource_association declares no VPC/subnet assignment; the configured budget_name does not establish network containment.",
-        "references": "Supported: Verify the account-qualified budget name and the corresponding portfolio or product ID.",
+        "references": "Supported: Verify the budget name against its effective account and match the configured portfolio or product ID.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provisioning parameters, templates, product outputs and contact details from servicecatalog_budget_resource_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalog_budget_resource_association.html.markdown",
