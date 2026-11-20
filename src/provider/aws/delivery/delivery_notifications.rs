@@ -16,14 +16,12 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
-        ("aws_codecommit_trigger", "trigger.destination_arn") => Rule::new(
+        ("aws_codecommit_trigger", "trigger.destination_arn") => Rule::scalar_set(
             "Repository trigger destination",
             &[
                 ("aws_sns_topic", &["arn"]),
                 ("aws_lambda_function", &["arn"]),
             ],
-            false,
-            &["trigger"],
         ),
         ("aws_codestarnotifications_notification_rule", "resource") => Rule::new(
             "Notification source resource",
