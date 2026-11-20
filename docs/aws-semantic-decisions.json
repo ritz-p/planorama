@@ -88031,7 +88031,7 @@
       }
     },
     "aws_chime_voice_connector_streaming": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1596,
       "gap": "#1596 — Verify the connector and configured Media Insights pipeline ARN when enabled. Notification options are service-kind selectors, without a specific SNS topic, SQS queue or event bus identifier. Resolve the sending connector independently of the reusable pipeline.",
@@ -88047,9 +88047,9 @@
           "data_retention"
         ],
         "placement": "Supported: managed Logical Node with the Amazon Chime service label. The streaming configuration associated with an Amazon Chime Voice Connector. Specifies whether media streaming is enabled for sending to Amazon Kinesis, and shows the retention period for the Amazon Kinesis data, in hours.",
-        "ownership": "Missing: Resolve the sending connector independently of the reusable pipeline.",
+        "ownership": "Supported: Present streaming under its verified connector.",
         "network": "Not applicable: Media streaming does not assign the connector to a VPC.",
-        "references": "Missing: Verify the connector and configured Media Insights pipeline ARN when enabled. Notification options are service-kind selectors, without a specific SNS topic, SQS queue or event bus identifier.",
+        "references": "Supported: Verify the connector and configured Media Insights pipeline ARN when enabled. Notification options are service-kind selectors, without a specific SNS topic, SQS queue or event bus identifier. Resolve the sending connector independently of the reusable pipeline.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The connector and the pipeline need their own deployment evidence and compatible scope.",
         "summaries": "Intentionally unsupported: omit media payloads and delivery outcomes. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector_streaming.html.markdown",
@@ -88088,7 +88088,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnectorStreaming. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -88213,7 +88215,7 @@
       }
     },
     "aws_chimesdkmediapipelines_media_insights_pipeline_configuration": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1596,
       "gap": "#1596 — Verify the configured pipeline role. Verify only compatible explicitly configured Kinesis, Lambda, SNS, SQS or S3 sinks and the selected analytics output KMS key under each matching element type. No processor payload or alert rule establishes endpoint identity.",
@@ -88235,7 +88237,7 @@
         "placement": "Supported: managed Logical Controller with the Amazon Chime SDK service label. Terraform resource for managing an AWS Chime SDK Media Pipelines Media Insights Pipeline Configuration.",
         "ownership": "Not applicable: Keep the pipeline and each shared processing or delivery endpoint independent.",
         "network": "Not applicable: A media sink is a service relationship without placement inside a target's VPC.",
-        "references": "Missing: Verify the configured pipeline role. Verify only compatible explicitly configured Kinesis, Lambda, SNS, SQS or S3 sinks and the selected analytics output KMS key under each matching element type. No processor payload or alert rule establishes endpoint identity.",
+        "references": "Supported: Verify the configured pipeline role. Verify only compatible explicitly configured Kinesis, Lambda, SNS, SQS or S3 sinks and the selected analytics output KMS key under each matching element type. No processor payload or alert rule establishes endpoint identity.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the pipeline and each compatible target separately by account and region.",
         "summaries": "Intentionally unsupported: omit media, transcripts, alerts, recordings and processor payloads. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chimesdkmediapipelines_media_insights_pipeline_configuration.html.markdown",
@@ -88299,7 +88301,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceMediaInsightsPipelineConfiguration. No same-name data source in the pinned schema.",
         "dataContracts": {}
