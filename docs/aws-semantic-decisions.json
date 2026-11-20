@@ -79894,10 +79894,10 @@
       }
     },
     "aws_codecommit_approval_rule_template_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1530,
-      "gap": "#1530 — Verify both template and repository names against their respective declarations; attaching a reusable template does not transfer ownership.",
+      "gap": "#1530 — Verify the configured template and repository names as independent targets.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79909,7 +79909,7 @@
         "placement": "Supported: managed Logical Association for codecommit_approval_rule_template_association. Associates a CodeCommit Approval Rule Template with a Repository.",
         "ownership": "Not applicable: AWS CodeCommit codecommit_approval_rule_template_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codecommit_approval_rule_template_association declares no VPC/subnet assignment; the configured approval_rule_template_name does not establish network containment.",
-        "references": "Missing: Verify both template and repository names against their respective declarations; attaching a reusable template does not transfer ownership.",
+        "references": "Supported: Verify the configured template and repository names as independent targets.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_approval_rule_template_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codecommit_approval_rule_template_association.html.markdown",
@@ -79932,17 +79932,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceApprovalRuleTemplateAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_codecommit_repository": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1530,
-      "gap": "#1530 — Resolve the configured KMS key. The repository ID is an output and a branch name is not a managed resource.",
+      "gap": "#1530 — Verify the configured KMS key. The repository ID and default branch supply no additional endpoint.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79956,7 +79958,7 @@
         "placement": "Supported: managed Logical Node for codecommit_repository. Provides a CodeCommit Repository Resource.",
         "ownership": "Not applicable: AWS CodeCommit codecommit_repository remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codecommit_repository declares no VPC/subnet assignment; the configured repository_name does not establish network containment.",
-        "references": "Missing: Resolve the configured KMS key. The repository ID is an output and a branch name is not a managed resource.",
+        "references": "Supported: Verify the configured KMS key. The repository ID and default branch supply no additional endpoint.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit approval rule content, clone URLs and trigger custom data from codecommit_repository summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codecommit_repository.html.markdown",
@@ -79987,7 +79989,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceRepository. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -80443,10 +80447,10 @@
       }
     },
     "aws_codegurureviewer_repository_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1530,
-      "gap": "#1530 — Resolve endpoints only from the selected repository variant and optional key. External repository names are not CodeCommit declarations; the top-level connection ARN is computed.",
+      "gap": "#1530 — Verify the selected repository variant and an explicitly configured customer-managed key. The computed connection ARN remains output metadata.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80462,7 +80466,7 @@
         "placement": "Supported: managed Logical Association for codegurureviewer_repository_association. Terraform resource for managing an AWS CodeGuru Reviewer Repository Association.",
         "ownership": "Not applicable: AWS CodeGuru Reviewer codegurureviewer_repository_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codegurureviewer_repository_association declares no VPC/subnet assignment; the configured repository.codecommit.name does not establish network containment.",
-        "references": "Missing: Resolve endpoints only from the selected repository variant and optional key. External repository names are not CodeCommit declarations; the top-level connection ARN is computed.",
+        "references": "Supported: Verify the selected repository variant and an explicitly configured customer-managed key. The computed connection ARN remains output metadata.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit review contents and external repository URLs from codegurureviewer_repository_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codegurureviewer_repository_association.html.markdown",
@@ -80510,7 +80514,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceRepositoryAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
