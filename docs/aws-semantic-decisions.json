@@ -88973,7 +88973,7 @@
       }
     },
     "aws_connect_instance_storage_config": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1600,
       "gap": "#1600 — Verify the instance and compatible configured S3, Kinesis stream or Firehose destination under the proven storage type. Verify explicit customer key inputs. Video streaming retention and prefixes do not identify an existing managed Kinesis Video stream. Verify instance ownership separately from reusable storage and key references.",
@@ -88993,9 +88993,9 @@
           "association_id"
         ],
         "placement": "Supported: managed Logical Controller with the Amazon Connect service label. Provides details about a specific Amazon Connect Instance Storage Config.",
-        "ownership": "Missing: Verify instance ownership separately from reusable storage and key references.",
+        "ownership": "Supported: Present the storage configuration under its verified instance.",
         "network": "Not applicable: Delivery does not place Connect in a destination network.",
-        "references": "Missing: Verify the instance and compatible configured S3, Kinesis stream or Firehose destination under the proven storage type. Verify explicit customer key inputs. Video streaming retention and prefixes do not identify an existing managed Kinesis Video stream.",
+        "references": "Supported: Verify the instance and compatible configured S3, Kinesis stream or Firehose destination under the proven storage type. Verify explicit customer key inputs. Video streaming retention and prefixes do not identify an existing managed Kinesis Video stream. Verify instance ownership separately from reusable storage and key references.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the regional instance context and qualify all stored destinations independently.",
         "summaries": "Intentionally unsupported: omit recordings, stream payloads, bucket prefixes and contents. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_instance_storage_config.html.markdown",
@@ -89058,7 +89058,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceInstanceStorageConfig. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89086,7 +89088,7 @@
       }
     },
     "aws_connect_lambda_function_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1600,
       "gap": "#1600 — Verify the configured Connect instance and Lambda ARN, retaining qualified alias or version evidence where supported. The association does not prove invocation.",
@@ -89102,7 +89104,7 @@
         "placement": "Supported: managed Logical Association with the Amazon Connect service label. Provides details about a specific Connect Lambda Function Association.",
         "ownership": "Not applicable: The Lambda function remains independently addressable from the Connect association.",
         "network": "Not applicable: A Lambda association is a service relationship without Connect VPC placement.",
-        "references": "Missing: Verify the configured Connect instance and Lambda ARN, retaining qualified alias or version evidence where supported. The association does not prove invocation.",
+        "references": "Supported: Verify the configured Connect instance and Lambda ARN, retaining qualified alias or version evidence where supported. The association does not prove invocation.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the Lambda endpoint by its explicit ARN, account and region.",
         "summaries": "Intentionally unsupported: omit Lambda arguments and runtime invocation data. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_lambda_function_association.html.markdown",
@@ -89128,7 +89130,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceLambdaFunctionAssociation. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {

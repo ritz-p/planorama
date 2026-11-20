@@ -36,8 +36,20 @@ const VOCABULARY: &str = "aws_connect_vocabulary";
 const INSTANCE_ID: Outputs = &[(CONNECT, &["id"])];
 
 fn instance_child(kind: &str) -> bool {
-    matches!(kind, BOT | FLOW | MODULE | HOURS | VOCABULARY)
+    matches!(
+        kind,
+        BOT | FLOW | MODULE | HOURS | VOCABULARY | STORAGE | CONNECT_LAMBDA
+    )
 }
+
+const STORAGE: &str = "aws_connect_instance_storage_config";
+const CONNECT_LAMBDA: &str = "aws_connect_lambda_function_association";
+const STORAGE_FIREHOSE: &str = "storage_config.kinesis_firehose_config.firehose_arn";
+const STORAGE_KINESIS: &str = "storage_config.kinesis_stream_config.stream_arn";
+const STORAGE_BUCKET: &str = "storage_config.s3_config.bucket_name";
+const STORAGE_S3_KEY: &str = "storage_config.s3_config.encryption_config.key_id";
+const STORAGE_VIDEO_KEY: &str =
+    "storage_config.kinesis_video_stream_config.encryption_config.key_id";
 
 fn voice_configuration(kind: &str) -> bool {
     matches!(
@@ -49,7 +61,14 @@ fn voice_configuration(kind: &str) -> bool {
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(
         kind,
-        VOICE_GROUP | MEDIA | STREAMING | VOICE_GLOBAL | PROFILE_DOMAIN | SIP_APP | SIP_RULE
+        VOICE_GROUP
+            | MEDIA
+            | STREAMING
+            | VOICE_GLOBAL
+            | PROFILE_DOMAIN
+            | SIP_APP
+            | SIP_RULE
+            | STORAGE
     )
 }
 
@@ -141,6 +160,19 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             "Connect identity directory",
             &[("aws_directory_service_directory", &["id"])],
         ),
+        (CONNECT_LAMBDA, "function_arn") => scalar("Connect associated Lambda", LAMBDA),
+        (STORAGE, STORAGE_FIREHOSE) => scalar(
+            "Connect storage delivery stream",
+            &[("aws_kinesis_firehose_delivery_stream", &["arn"])],
+        ),
+        (STORAGE, STORAGE_KINESIS) => scalar(
+            "Connect storage data stream",
+            &[("aws_kinesis_stream", &["arn"])],
+        ),
+        (STORAGE, STORAGE_BUCKET) => scalar("Connect storage bucket", BUCKET),
+        (STORAGE, STORAGE_S3_KEY | STORAGE_VIDEO_KEY) => {
+            scalar("Connect storage encryption key", KMS)
+        }
         _ => return None,
     })
 }
@@ -267,6 +299,12 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     }
     if e.nodes[target].resource_type == CONNECT && r.attribute == "directory_id" {
         return e.text(target, "identity_management_type") == Some("EXISTING_DIRECTORY");
+    }
+    if r.attribute == "function_arn" && e.nodes[target].resource_type == CONNECT_LAMBDA {
+        return input_arn(e, target, source, path, "lambda", "function:");
+    }
+    if e.nodes[target].resource_type == STORAGE {
+        return storage_destination(e, r, source, path);
     }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
@@ -461,6 +499,45 @@ fn key_input(e: &Evidence<'_>, target: usize, source: usize, path: &str) -> bool
             !value.contains([':', '/'])
         }
     })
+}
+
+fn storage_destination(
+    e: &Evidence<'_>,
+    r: &AttributeReference,
+    source: usize,
+    path: &str,
+) -> bool {
+    let target = r.target;
+    let (selector, selected) = match r.attribute.as_str() {
+        STORAGE_FIREHOSE => ("KINESIS_FIREHOSE", "kinesis_firehose_config"),
+        STORAGE_KINESIS => ("KINESIS_STREAM", "kinesis_stream_config"),
+        STORAGE_BUCKET | STORAGE_S3_KEY => ("S3", "s3_config"),
+        STORAGE_VIDEO_KEY => ("KINESIS_VIDEO_STREAM", "kinesis_video_stream_config"),
+        _ => return false,
+    };
+    e.text(target, "storage_config.0.storage_type") == Some(selector)
+        && [
+            "kinesis_firehose_config",
+            "kinesis_stream_config",
+            "s3_config",
+            "kinesis_video_stream_config",
+        ]
+        .iter()
+        .filter(|&&name| name != selected)
+        .all(|name| e.absent(target, &format!("storage_config.0.{name}")))
+        && match r.attribute.as_str() {
+            STORAGE_FIREHOSE => input_arn(e, target, source, path, "firehose", "deliverystream/"),
+            STORAGE_KINESIS => input_arn(e, target, source, path, "kinesis", "stream/"),
+            STORAGE_BUCKET => true,
+            STORAGE_VIDEO_KEY | STORAGE_S3_KEY => {
+                e.text(
+                    target,
+                    &format!("storage_config.0.{selected}.0.encryption_config.0.encryption_type"),
+                ) == Some("KMS")
+                    && key_input(e, target, source, path)
+            }
+            _ => false,
+        }
 }
 
 #[cfg(test)]

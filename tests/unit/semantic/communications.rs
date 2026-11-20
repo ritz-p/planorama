@@ -433,3 +433,65 @@ fn communications_connect_instance_qualifies_child_and_directory() {
     assert!(label(super::BOT, "lex_bot.name").is_none());
     assert!(label(super::CONNECT, "service_role").is_none());
 }
+
+#[test]
+fn communications_connect_storage_uses_only_the_selected_shape() {
+    let arn = "arn:aws:lambda:us-east-1:123456789012:function:connect:live";
+    let mut fixture = plan(&[
+        (
+            "aws_connect_instance.main",
+            json!({"id":"connect"}),
+            json!({}),
+        ),
+        (
+            "aws_s3_bucket.recordings",
+            json!({"bucket":"recordings"}),
+            json!({}),
+        ),
+        ("aws_lambda_alias.target", json!({"arn":arn}), json!({})),
+        (
+            "aws_connect_instance_storage_config.main",
+            json!({"instance_id":"connect","resource_type":"CALL_RECORDINGS","storage_config":[{"storage_type":"S3","s3_config":[{"bucket_name":"recordings"}]}]}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},
+                "storage_config":[{"s3_config":[{"bucket_name":{"references":["aws_s3_bucket.recordings.bucket"]}}]}]
+            }),
+        ),
+        (
+            "aws_connect_lambda_function_association.main",
+            json!({"instance_id":"connect","function_arn":arn}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"function_arn":{"references":["aws_lambda_alias.target.arn"]}
+            }),
+        ),
+    ]);
+    let bucket = "aws_connect_instance_storage_config.main";
+    let function = "aws_connect_lambda_function_association.main";
+    let path = super::STORAGE_BUCKET;
+    assert!(verified(
+        &graph(&fixture),
+        bucket,
+        path,
+        label(super::STORAGE, path)
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        function,
+        "function_arn",
+        label(super::CONNECT_LAMBDA, "function_arn")
+    ));
+    fixture["resource_changes"][3]["change"]["after"]["storage_config"][0]["storage_type"] =
+        json!("KINESIS_STREAM");
+    assert!(!verified(
+        &graph(&fixture),
+        bucket,
+        path,
+        label(super::STORAGE, path)
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        bucket,
+        "instance_id",
+        label(super::STORAGE, "instance_id")
+    ));
+}
