@@ -401,6 +401,20 @@ fn appconfig_deployment_limits_versions_and_ownership_to_the_configured_context(
             .attribute,
         "environment_id"
     );
+    for owner in [
+        ("after", json!("unrelated-app")),
+        ("after_unknown", json!(true)),
+        ("after_sensitive", json!(true)),
+    ] {
+        let mut different_profile = fixture.clone();
+        different_profile["resource_changes"][2]["change"][owner.0]["application_id"] = owner.1;
+        assert!(!verified(
+            &graph(&different_profile),
+            address,
+            "configuration_version",
+            label(super::CONFIG_DEPLOYMENT, "configuration_version")
+        ));
+    }
     fixture["resource_changes"][3]["change"]["after_unknown"] = json!({"version_number":true});
     fixture["resource_changes"][1]["change"]["after"]["application_id"] = json!("unrelated-app");
     let result = graph(&fixture);
@@ -623,6 +637,11 @@ fn appfabric_qualifies_ingestion_destination_and_implicit_authorization() {
         rows.as_array_mut().unwrap().push(duplicate);
     }
     assert!(!check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][5]["change"]["after_unknown"] =
+        json!({"tenant":[{"tenant_identifier":true}]});
+    assert!(!check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][5]["change"]["after"]["app"] = json!("DIFFERENT");
+    assert!(check(&fixture, ingestion, "authorization"));
     fixture["resource_changes"][4]["change"]["after"]["app_bundle_arn"] = json!("unrelated");
     assert!(!check(&fixture, destination, "ingestion_arn"));
     assert!(
