@@ -112,9 +112,17 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
-    let kind = e.nodes[source].resource_type.as_str();
+    let kind = super::aliases::entity_type(&e.nodes[source]);
     match r.attribute.as_str() {
         "resources.resource_arn" => {
+            if kind == "aws_lb"
+                && !matches!(
+                    e.text(source, "load_balancer_type"),
+                    Some("application" | "network")
+                )
+            {
+                return false;
+            }
             e.text(r.target, "resource_set_type").is_some_and(|t| {
                 matches!(
                     (kind, t),
