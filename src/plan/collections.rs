@@ -249,7 +249,7 @@ pub(super) fn annotate(
                     .get(node.address.as_str())
                     .is_some_and(|mask| hides_scope(mask)))
     });
-    crate::provider::aws::scope_selections::enrich(nodes, &elbv2_evidence);
+    crate::provider::aws::scope_selections::enrich(nodes, &elbv2_evidence, references);
     crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identitystore::annotate(nodes, references, &elbv2_evidence);

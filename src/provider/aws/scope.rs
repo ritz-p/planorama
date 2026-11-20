@@ -482,6 +482,8 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
             | "aws_glue_catalog_table"
             | "aws_acmpca_certificate"
             | "aws_cloudcontrolapi_resource"
+            | "aws_cloudformation_stack_instances"
+            | "aws_cloudformation_stack_set_instance"
     ) || (resource == "aws_acmpca_certificate_authority" && entity.mode == EntityMode::Data)
     {
         account = None;

@@ -1,7 +1,7 @@
 use super::nested_references::value;
 use crate::model::{
-    Action, AwsAccountScope, EntityMode, Graph, ReferenceKind, ResourceReference, TerraformEntity,
-    TerraformPlan,
+    Action, AttributeReference, AwsAccountScope, EntityMode, Graph, ReferenceKind,
+    ResourceReference, TerraformEntity, TerraformPlan,
 };
 use serde_json::Value;
 
@@ -28,6 +28,17 @@ type Details = Vec<(&'static str, &'static str, String)>;
 fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
     let mut details = Vec::new();
     match kind {
+        "aws_cloudformation_stack_instances" => {
+            if let Some(regions) = strings(v, mask, "regions", |s| region(s).is_some())
+                .filter(|regions| !regions.is_empty())
+            {
+                details.push((
+                    "regions",
+                    "Configured deployment regions",
+                    regions.join(", "),
+                ));
+            }
+        }
         "aws_securityhub_aggregator_v2" | "aws_securityhub_finding_aggregator" => {
             let v2 = kind == "aws_securityhub_aggregator_v2";
             let (mode, regions) = if v2 {
@@ -293,14 +304,51 @@ fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
     details
 }
 
-pub(crate) fn enrich(nodes: &mut [TerraformEntity], values: &[(&Value, &Value)]) {
-    for (node, &(v, mask)) in nodes.iter_mut().zip(values) {
+pub(super) fn stackset_target_region<'a>(
+    node: usize,
+    value_and_mask: (&'a Value, &Value),
+    references: &[AttributeReference],
+) -> Option<(&'static str, &'a str)> {
+    let (v, mask) = value_and_mask;
+    let field = "stack_set_instance_region";
+    let configured = value(v, mask, field);
+    let has_argument = |path| {
+        references
+            .iter()
+            .any(|r| r.target == node && r.attribute == path && !r.root_constant_null)
+    };
+    let use_legacy = configured.is_some_and(Value::is_null)
+        || (configured.is_none() && has_argument("region") && !has_argument(field));
+    let (field, selected) = if use_legacy {
+        ("region", value(v, mask, "region"))
+    } else {
+        (field, configured)
+    };
+    Some((field, region(selected?.as_str()?)?))
+}
+
+pub(crate) fn enrich(
+    nodes: &mut [TerraformEntity],
+    values: &[(&Value, &Value)],
+    references: &[AttributeReference],
+) {
+    for (index, (node, &(v, mask))) in nodes.iter_mut().zip(values).enumerate() {
         if node.provider.is_aws()
             && node.mode == EntityMode::Managed
             && node.action != Action::Delete
             && node.deposed_key.is_none()
         {
             node.configured_scopes = selections(&node.resource_type, v, mask);
+            if node.resource_type == "aws_cloudformation_stack_set_instance" {
+                if let Some((field, region)) = stackset_target_region(index, (v, mask), references)
+                {
+                    node.configured_scopes.push((
+                        field,
+                        "Configured deployment region",
+                        region.to_owned(),
+                    ));
+                }
+            }
         }
     }
 }

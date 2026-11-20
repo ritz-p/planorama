@@ -81778,10 +81778,10 @@
       }
     },
     "aws_cloudformation_stack_instances": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1540,
-      "gap": "#1540 — Resolve the stack set by name and qualify explicit target accounts, OUs and regions. An OU selector or computed summary is not a verified deployment of a child stack.",
+      "gap": "#1540 — Verify the named StackSet in its administration scope and explicit account or OU selectors with known target regions. Computed child summaries do not establish declarations.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81795,10 +81795,10 @@
           "stack_instance_summaries"
         ],
         "placement": "Supported: managed Logical Controller for cloudformation_stack_instances. Manages CloudFormation stack instances.",
-        "ownership": "Missing: verify stack_set_name before attaching cloudformation_stack_instances to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: verify the administering StackSet and retain independently qualified deployment target selectors.",
         "network": "Not applicable: cloudformation_stack_instances declares no VPC/subnet assignment; the configured stack_set_name does not establish network containment.",
-        "references": "Missing: Resolve the stack set by name and qualify explicit target accounts, OUs and regions. An OU selector or computed summary is not a verified deployment of a child stack.",
-        "scope": "Supported: the runtime preserves unresolved scope. Unknown because accounts, organizational units and regions are deployment selectors; verify each configured target separately.",
+        "references": "Supported: Verify the named StackSet in its administration scope and explicit account or OU selectors with known target regions. Computed child summaries do not establish declarations.",
+        "scope": "Supported: the declaration preserves unresolved deployment scope. A verified resource-level region override qualifies the administering StackSet reference. Target accounts, organizational units and regions remain separately verified selectors.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack_instances summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack_instances.html.markdown",
         "shapes": {
@@ -81862,17 +81862,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceStackInstances. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_cloudformation_stack_set": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1540,
-      "gap": "#1540 — Verify auto-deployment prerequisites by configured StackSet ARN and roles under the selected permission model; qualify the execution role name by target account. Keep the stack set distinct from its instances and template.",
+      "gap": "#1540 — Verify StackSet prerequisites and permission-mode-specific administration and execution roles. Qualify the execution role with an explicit instance target account.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81888,8 +81890,8 @@
         "placement": "Supported: managed Logical Controller for cloudformation_stack_set. Manages a CloudFormation StackSet.",
         "ownership": "Not applicable: AWS CloudFormation cloudformation_stack_set remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudformation_stack_set declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Verify auto-deployment prerequisites by configured StackSet ARN and roles under the selected permission model; qualify the execution role name by target account. Keep the stack set distinct from its instances and template.",
-        "scope": "Supported: the StackSet has a regional administration context. Execution roles and instances require separate target-account and target-region evidence.",
+        "references": "Supported: Verify StackSet prerequisites and permission-mode-specific administration and execution roles. Qualify the execution role with an explicit instance target account.",
+        "scope": "Supported: compare verified regional administration evidence, including a supported resource-level region override. Execution roles require independent target-account evidence.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack_set summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack_set.html.markdown",
         "shapes": {
@@ -81931,17 +81933,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceStackSet. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_cloudformation_stack_set_instance": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1540,
-      "gap": "#1540 — Bind the instance declaration to its stack set. Verify configured target scope independently of the administration region and the computed stack_id.",
+      "gap": "#1540 — Verify the named StackSet and the explicitly configured target account, organization selector and region. Computed stack IDs do not establish deployment.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81955,10 +81959,10 @@
           "stack_id"
         ],
         "placement": "Supported: managed Logical Controller for cloudformation_stack_set_instance. Manages a CloudFormation StackSet Instance.",
-        "ownership": "Missing: verify stack_set_name before attaching cloudformation_stack_set_instance to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: verify the administering StackSet without joining it to unverified deployed stacks.",
         "network": "Not applicable: cloudformation_stack_set_instance declares no VPC/subnet assignment; the configured stack_set_name does not establish network containment.",
-        "references": "Missing: Bind the instance declaration to its stack set. Verify configured target scope independently of the administration region and the computed stack_id.",
-        "scope": "Supported: the runtime preserves unresolved scope. Unknown because the stack set and its target instance can occupy different accounts or regions.",
+        "references": "Supported: Verify the named StackSet and the explicitly configured target account, organization selector and region. Computed stack IDs do not establish deployment.",
+        "scope": "Supported: the declaration preserves unresolved deployment scope. The administering StackSet uses provider account and region evidence. stack_set_instance_region and legacy region identify the target region.",
         "summaries": "Intentionally unsupported: omit templates, parameters, stack outputs and policies from cloudformation_stack_set_instance summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudformation_stack_set_instance.html.markdown",
         "shapes": {
@@ -82000,7 +82004,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceStackSetInstance. No same-name data source in the pinned schema. Deprecated attributes: region.",
         "dataContracts": {}

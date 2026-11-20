@@ -1,0 +1,360 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_cloudformation_stack_set.shipping",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack_set",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "shipping",
+          "permission_model": "SELF_MANAGED",
+          "administration_role_arn": "arn:aws:iam::123456789012:role/Administration",
+          "execution_role_name": "Execution"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack_set.automatic",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack_set",
+      "name": "automatic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "automatic",
+          "permission_model": "SERVICE_MANAGED",
+          "auto_deployment": [
+            {
+              "enabled": true,
+              "depends_on_stack_sets": [
+                "arn:aws:cloudformation:us-east-1:123456789012:stackset/initial:aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack_set.initial",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack_set",
+      "name": "initial",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "initial",
+          "arn": "arn:aws:cloudformation:us-east-1:123456789012:stackset/initial:aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack_set_instance.shipping",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack_set_instance",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "stack_set_name": "shipping",
+          "account_id": "123456789012",
+          "stack_set_instance_region": "us-west-2"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack_instances.shipping",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack_instances",
+      "name": "shipping",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "stack_set_name": "shipping",
+          "accounts": [
+            "123456789012"
+          ],
+          "regions": [
+            "us-west-2",
+            "us-east-2"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack_instances.automatic",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack_instances",
+      "name": "automatic",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "stack_set_name": "automatic",
+          "regions": [
+            "us-west-2"
+          ],
+          "deployment_targets": [
+            {
+              "organizational_unit_ids": [
+                "ou-abcd-12345678"
+              ],
+              "accounts": [
+                "123456789012"
+              ],
+              "account_filter_type": "INTERSECTION"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.admin",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "admin",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Administration"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.execution",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "execution",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/Execution",
+          "name": "Execution"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.dest",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "dest",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_organizational_unit.dest",
+      "mode": "managed",
+      "type": "aws_organizations_organizational_unit",
+      "name": "dest",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "ou-abcd-12345678"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudformation_stack_set.shipping",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack_set",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "administration_role_arn": {
+              "references": [
+                "aws_iam_role.admin.arn"
+              ]
+            },
+            "execution_role_name": {
+              "references": [
+                "aws_iam_role.execution.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudformation_stack_set.automatic",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack_set",
+          "name": "automatic",
+          "provider_config_key": "aws",
+          "expressions": {
+            "auto_deployment": [
+              {
+                "depends_on_stack_sets": {
+                  "references": [
+                    "aws_cloudformation_stack_set.initial.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_cloudformation_stack_set.initial",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack_set",
+          "name": "initial",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudformation_stack_set_instance.shipping",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack_set_instance",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "stack_set_name": {
+              "references": [
+                "aws_cloudformation_stack_set.shipping.name"
+              ]
+            },
+            "account_id": {
+              "references": [
+                "aws_organizations_account.dest.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudformation_stack_instances.shipping",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack_instances",
+          "name": "shipping",
+          "provider_config_key": "aws",
+          "expressions": {
+            "stack_set_name": {
+              "references": [
+                "aws_cloudformation_stack_set.shipping.name"
+              ]
+            },
+            "accounts": {
+              "references": [
+                "aws_organizations_account.dest.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudformation_stack_instances.automatic",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack_instances",
+          "name": "automatic",
+          "provider_config_key": "aws",
+          "expressions": {
+            "stack_set_name": {
+              "references": [
+                "aws_cloudformation_stack_set.automatic.name"
+              ]
+            },
+            "deployment_targets": [
+              {
+                "organizational_unit_ids": {
+                  "references": [
+                    "aws_organizations_organizational_unit.dest.id"
+                  ]
+                },
+                "accounts": {
+                  "references": [
+                    "aws_organizations_account.dest.id"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.admin",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "admin",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.execution",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "execution",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.dest",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "dest",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_organizational_unit.dest",
+          "mode": "managed",
+          "type": "aws_organizations_organizational_unit",
+          "name": "dest",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
