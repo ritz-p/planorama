@@ -82867,10 +82867,10 @@
       }
     },
     "aws_ram_principal_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1544,
-      "gap": "#1544 — Match the share and qualify supported account, organization, OU or IAM principal forms. Do not join untyped names or infer access.",
+      "gap": "#1544 — Verify the share and the explicitly configured account, organization, OU or IAM principal. Principal references do not establish effective access.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82882,7 +82882,7 @@
         "placement": "Supported: managed Logical Association for ram_principal_association. Provides a Resource Access Manager (RAM) principal association.",
         "ownership": "Not applicable: AWS RAM (Resource Access Manager) ram_principal_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ram_principal_association declares no VPC/subnet assignment; the configured resource_share_arn does not establish network containment.",
-        "references": "Missing: Match the share and qualify supported account, organization, OU or IAM principal forms. Do not join untyped names or infer access.",
+        "references": "Supported: Verify the share and the explicitly configured account, organization, OU or IAM principal. Principal references do not establish effective access.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit permission policies and external principal inventories from ram_principal_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ram_principal_association.html.markdown",
@@ -82905,17 +82905,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourcePrincipalAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ram_resource_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1544,
-      "gap": "#1544 — Verify the explicitly shared resource ARN against a supported type and preserve its ownership and deployment scope.",
+      "gap": "#1544 — Verify the regional share and explicitly supported resource ARN, keeping the shared resource in its own scope.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82927,7 +82929,7 @@
         "placement": "Supported: managed Logical Association for ram_resource_association. Manages a Resource Access Manager (RAM) Resource Association.",
         "ownership": "Not applicable: AWS RAM (Resource Access Manager) ram_resource_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ram_resource_association declares no VPC/subnet assignment; the configured resource_share_arn does not establish network containment.",
-        "references": "Missing: Verify the explicitly shared resource ARN against a supported type and preserve its ownership and deployment scope.",
+        "references": "Supported: Verify the regional share and explicitly supported resource ARN, keeping the shared resource in its own scope.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit permission policies and external principal inventories from ram_resource_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ram_resource_association.html.markdown",
@@ -82950,17 +82952,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceResourceAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ram_resource_share": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1544,
-      "gap": "#1544 — Resolve configured custom permission ARNs; built-in permissions and allow_external_principals do not identify managed recipients.",
+      "gap": "#1544 — Verify explicitly configured customer-managed permissions. Built-in permissions and external-principal settings are metadata.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82974,7 +82978,7 @@
         "placement": "Supported: managed Logical Node for ram_resource_share. Manages a Resource Access Manager (RAM) Resource Share.",
         "ownership": "Not applicable: AWS RAM (Resource Access Manager) ram_resource_share remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ram_resource_share declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Resolve configured custom permission ARNs; built-in permissions and allow_external_principals do not identify managed recipients.",
+        "references": "Supported: Verify explicitly configured customer-managed permissions. Built-in permissions and external-principal settings are metadata.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit permission policies and external principal inventories from ram_resource_share summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ram_resource_share.html.markdown",
@@ -83008,7 +83012,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceResourceShare. Same-name data lookup has separate selectors and blocks filter.",
         "dataContracts": {
@@ -83043,10 +83049,10 @@
       }
     },
     "aws_ram_resource_share_accepter": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1544,
-      "gap": "#1544 — Resolve the configured share across accounts with explicit evidence; do not construct object membership from computed inventories.",
+      "gap": "#1544 — Verify the share ARN across provider accounts in its region. The computed inventory does not establish membership.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83060,7 +83066,7 @@
         "placement": "Supported: managed Logical Association for ram_resource_share_accepter. Manages accepting a Resource Access Manager (RAM) Resource Share invitation.",
         "ownership": "Not applicable: AWS RAM (Resource Access Manager) ram_resource_share_accepter remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ram_resource_share_accepter declares no VPC/subnet assignment; the configured share_arn does not establish network containment.",
-        "references": "Missing: Resolve the configured share across accounts with explicit evidence; do not construct object membership from computed inventories.",
+        "references": "Supported: Verify the share ARN across provider accounts in its region. The computed inventory does not establish membership.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit permission policies and external principal inventories from ram_resource_share_accepter summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ram_resource_share_accepter.html.markdown",
@@ -83094,17 +83100,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceResourceShareAccepter. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ram_resource_share_associations_exclusive": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1544,
-      "gap": "#1544 — Verify each explicit share/resource/principal independently. sources restricts service-principal access and is not an additional list of recipients.",
+      "gap": "#1544 — Verify the configured share, supported resource ARNs and qualified principals. Keep source restrictions separate from recipients.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83118,7 +83126,7 @@
         "placement": "Supported: managed Logical Association for ram_resource_share_associations_exclusive. Terraform resource for maintaining exclusive management of principal and resource associations for an AWS RAM (Resource Access Manager) Resource Share.",
         "ownership": "Not applicable: AWS RAM (Resource Access Manager) ram_resource_share_associations_exclusive remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ram_resource_share_associations_exclusive declares no VPC/subnet assignment; the configured resource_share_arn does not establish network containment.",
-        "references": "Missing: Verify each explicit share/resource/principal independently. sources restricts service-principal access and is not an additional list of recipients.",
+        "references": "Supported: Verify the configured share, supported resource ARNs and qualified principals. Keep source restrictions separate from recipients.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit permission policies and external principal inventories from ram_resource_share_associations_exclusive summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ram_resource_share_associations_exclusive.html.markdown",
@@ -83158,7 +83166,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newResourceShareAssociationsExclusiveResource. No same-name data source in the pinned schema.",
         "dataContracts": {}

@@ -1,0 +1,382 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ram_principal_association.account",
+      "mode": "managed",
+      "type": "aws_ram_principal_association",
+      "name": "account",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_share_arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example",
+          "principal": "210987654321"
+        }
+      }
+    },
+    {
+      "address": "aws_ram_resource_association.subnet",
+      "mode": "managed",
+      "type": "aws_ram_resource_association",
+      "name": "subnet",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_share_arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example",
+          "resource_arn": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-example"
+        }
+      }
+    },
+    {
+      "address": "aws_ram_resource_share.standard",
+      "mode": "managed",
+      "type": "aws_ram_resource_share",
+      "name": "standard",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "standard",
+          "arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example",
+          "permission_arns": [
+            "arn:aws:ram:us-east-1:123456789012:permission/example"
+          ],
+          "allow_external_principals": true
+        }
+      }
+    },
+    {
+      "address": "aws_ram_resource_share.exclusive",
+      "mode": "managed",
+      "type": "aws_ram_resource_share",
+      "name": "exclusive",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "exclusive",
+          "arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example-exclusive"
+        }
+      }
+    },
+    {
+      "address": "aws_ram_resource_share_accepter.recipient",
+      "mode": "managed",
+      "type": "aws_ram_resource_share_accepter",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "share_arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example",
+          "sender_account_id": "123456789012",
+          "receiver_account_id": "210987654321",
+          "resources": [
+            "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-example"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ram_resource_share_associations_exclusive.acl",
+      "mode": "managed",
+      "type": "aws_ram_resource_share_associations_exclusive",
+      "name": "acl",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_share_arn": "arn:aws:ram:us-east-1:123456789012:resource-share/share-example-exclusive",
+          "resource_arns": [
+            "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-example",
+            "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/example"
+          ],
+          "principals": [
+            "arn:aws:iam::210987654321:role/Shared"
+          ],
+          "sources": [
+            "210987654321"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ram_permission.custom",
+      "mode": "managed",
+      "type": "aws_ram_permission",
+      "name": "custom",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ram:us-east-1:123456789012:permission/example",
+          "name": "custom"
+        }
+      }
+    },
+    {
+      "address": "aws_subnet.shared",
+      "mode": "managed",
+      "type": "aws_subnet",
+      "name": "shared",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ec2:us-east-1:123456789012:subnet/subnet-example",
+          "id": "subnet-example"
+        }
+      }
+    },
+    {
+      "address": "aws_acmpca_certificate_authority.shared",
+      "mode": "managed",
+      "type": "aws_acmpca_certificate_authority",
+      "name": "shared",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:acm-pca:us-east-1:123456789012:certificate-authority/example"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.recipient",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::210987654321:role/Shared",
+          "name": "Shared"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.recipient",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "recipient",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "210987654321"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      },
+      "aws.recipient": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "recipient",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::210987654321:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ram_principal_association.account",
+          "mode": "managed",
+          "type": "aws_ram_principal_association",
+          "name": "account",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_share_arn": {
+              "references": [
+                "aws_ram_resource_share.standard.arn"
+              ]
+            },
+            "principal": {
+              "references": [
+                "aws_organizations_account.recipient.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ram_resource_association.subnet",
+          "mode": "managed",
+          "type": "aws_ram_resource_association",
+          "name": "subnet",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_share_arn": {
+              "references": [
+                "aws_ram_resource_share.standard.arn"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_subnet.shared.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ram_resource_share.standard",
+          "mode": "managed",
+          "type": "aws_ram_resource_share",
+          "name": "standard",
+          "provider_config_key": "aws",
+          "expressions": {
+            "permission_arns": {
+              "references": [
+                "aws_ram_permission.custom.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ram_resource_share.exclusive",
+          "mode": "managed",
+          "type": "aws_ram_resource_share",
+          "name": "exclusive",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ram_resource_share_accepter.recipient",
+          "mode": "managed",
+          "type": "aws_ram_resource_share_accepter",
+          "name": "recipient",
+          "provider_config_key": "aws.recipient",
+          "expressions": {
+            "share_arn": {
+              "references": [
+                "aws_ram_resource_share.standard.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ram_resource_share_associations_exclusive.acl",
+          "mode": "managed",
+          "type": "aws_ram_resource_share_associations_exclusive",
+          "name": "acl",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_share_arn": {
+              "references": [
+                "aws_ram_resource_share.exclusive.arn"
+              ]
+            },
+            "resource_arns": {
+              "references": [
+                "aws_subnet.shared.arn",
+                "aws_acmpca_certificate_authority.shared.arn"
+              ]
+            },
+            "principals": {
+              "references": [
+                "aws_iam_role.recipient.arn"
+              ]
+            },
+            "sources": {
+              "references": [
+                "aws_organizations_account.recipient.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ram_permission.custom",
+          "mode": "managed",
+          "type": "aws_ram_permission",
+          "name": "custom",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_subnet.shared",
+          "mode": "managed",
+          "type": "aws_subnet",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_acmpca_certificate_authority.shared",
+          "mode": "managed",
+          "type": "aws_acmpca_certificate_authority",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.recipient",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "recipient",
+          "provider_config_key": "aws.recipient",
+          "expressions": {}
+        },
+        {
+          "address": "aws_organizations_account.recipient",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "recipient",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
