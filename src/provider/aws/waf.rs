@@ -41,7 +41,7 @@ pub(crate) fn enrich(
                 .and_then(Value::as_str)
             {
                 Some("CLOUDFRONT")
-                    if historical || effective_region(node).is_some_and(|r| r.0 == "us-east-1") =>
+                    if historical || effective_region(node).is_none_or(|r| r.0 == "us-east-1") =>
                 {
                     Some(WafScope::CloudFront)
                 }
