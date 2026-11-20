@@ -157,7 +157,7 @@ pub(super) fn verify_collections(
 #[derive(Clone, Copy)]
 pub(super) enum NestedBlocks<'a> {
     Indexed(&'a [&'a str]),
-    ScalarSet,
+    ScalarSet(Option<&'a str>),
     WafStatement,
 }
 
@@ -199,17 +199,23 @@ fn verify_scalar_set(
     r: &AttributeReference,
     fields: impl Fn(&str, &str, &str) -> &'static [&'static str],
     valid: impl Fn(usize, &str) -> bool,
-    mode: EntityMode,
+    (set_path, mode): (Option<&str>, EntityMode),
 ) -> Option<()> {
-    let (block_name, field) = r.attribute.split_once('.')?;
-    let field = field.split('.').collect::<Vec<_>>().join(".0.");
+    let (root, _) = r.attribute.split_once('.')?;
+    let set_path = set_path.unwrap_or(root);
+    let field = r
+        .attribute
+        .strip_prefix(set_path)?
+        .strip_prefix('.')?
+        .replace('.', ".0.");
     let leaf_fields = r.attribute.split('.').collect::<Vec<_>>();
+    let set_index = set_path.split('.').count() - 1;
+    let set_location = set_path.replace('.', ".0.");
     let (v, mask) = evidence[r.target];
-    if !block(v, mask, block_name, usize::MAX) {
-        return None;
-    }
-    let count = v[block_name].as_array()?.len();
-    let path = |index| format!("{block_name}.{index}.{field}");
+    let count = block_len(v, mask, &set_location)?;
+    let mut config_lengths = vec![1; leaf_fields.len() - 1];
+    config_lengths[set_index] = count;
+    let path = |index| format!("{set_location}.{index}.{field}");
     let mut expected = BTreeMap::new();
     for index in 0..count {
         let attribute = path(index);
@@ -217,13 +223,7 @@ fn verify_scalar_set(
             .iter()
             .filter(|leaf| leaf.target == r.target && leaf.attribute == attribute);
         let Some(leaf) = matches.next() else { continue };
-        if matches.next().is_some()
-            || leaf.indexed_block_lengths.len() != leaf_fields.len() - 1
-            || leaf.indexed_block_lengths.first() != Some(&count)
-            || leaf.indexed_block_lengths[1..]
-                .iter()
-                .any(|&length| length != 1)
-        {
+        if matches.next().is_some() || leaf.indexed_block_lengths != config_lengths {
             return None;
         }
         if leaf.root_constant_null {
@@ -267,7 +267,7 @@ fn verify_scalar_set(
         String::new(),
         Vec::new(),
         &mut observed,
-        &[block_name],
+        &[set_path],
     )?;
     for (attribute, lengths, actual) in observed {
         if lengths.len() != leaf_fields.len() - 1 {
@@ -308,8 +308,16 @@ pub(super) fn verify_values(
     let repeated;
     let collections = match blocks {
         NestedBlocks::Indexed(paths) => paths,
-        NestedBlocks::ScalarSet => {
-            return verify_scalar_set(nodes, refs, evidence, r, fields, valid, endpoint_mode);
+        NestedBlocks::ScalarSet(path) => {
+            return verify_scalar_set(
+                nodes,
+                refs,
+                evidence,
+                r,
+                fields,
+                valid,
+                (path, endpoint_mode),
+            );
         }
         NestedBlocks::WafStatement => {
             repeated = r

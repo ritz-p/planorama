@@ -35,9 +35,14 @@ impl Rule {
         outputs: &'static [(&'static str, &'static [&'static str])],
     ) -> Self {
         Self {
-            blocks: nested_references::NestedBlocks::ScalarSet,
+            blocks: nested_references::NestedBlocks::ScalarSet(None),
             ..Self::new(label, outputs, false, &[])
         }
+    }
+
+    pub fn with_set_path(mut self, path: &'static str) -> Self {
+        self.blocks = nested_references::NestedBlocks::ScalarSet(Some(path));
+        self
     }
 
     pub fn data_source(mut self) -> Self {
