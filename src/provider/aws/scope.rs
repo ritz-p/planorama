@@ -69,6 +69,21 @@ pub(in crate::provider) fn scope(entity: &TerraformEntity) -> Option<DeploymentS
         && !super::agentcore_runtime::resource(resource)
         && !super::datazone::resource(resource)
         && !super::cloudwatch_omni::resource(resource)
+        && !super::firewall_manager::resource(resource)
+        && !super::fis_configuration::resource(resource)
+        && !super::arc_configuration::resource(resource)
+        && !super::security_lake::resource(resource)
+        && !super::securityhub_integrations::resource(resource)
+        && resource != "aws_securityhub_configuration_policy"
+        && !super::securityhub_organization::resource(resource)
+        && !super::macie_classification::resource(resource)
+        && !super::inspector_assessments::resource(resource)
+        && !super::guardduty_destinations::resource(resource)
+        && resource != "aws_guardduty_detector"
+        && !super::guardduty_members::resource(resource)
+        && resource != "aws_detective_graph"
+        && !super::detective_graphs::resource(resource)
+        && !super::config_delivery::resource(resource)
         && !super::config_rules::resource(resource)
         && !super::config_aggregation::resource(resource)
         && !super::audit_manager::resource(resource)

@@ -71299,10 +71299,10 @@
       }
     },
     "aws_config_configuration_recorder": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Resolve its recorder IAM role. Recorded resource types select inventory.",
+      "gap": "#1474 — Verified configuration references: role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71315,7 +71315,7 @@
         "placement": "Supported: Logical Controller for the managed config_configuration_recorder declaration. Provides an AWS Config Configuration Recorder.",
         "ownership": "Not applicable: The managed config_configuration_recorder declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve its recorder IAM role. Recorded resource types select inventory.",
+        "references": "Supported: Verified configuration references: role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_configuration_recorder summaries.",
         "officialDocumentation": "website/docs/r/config_configuration_recorder.html.markdown",
@@ -71346,17 +71346,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationRecorder. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_configuration_recorder_status": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Bind enabled configuration to the same account/region recorder by name.",
+      "gap": "#1474 — Verified configuration references: name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71366,9 +71368,9 @@
           "is_enabled"
         ],
         "placement": "Supported: Logical Controller for the managed config_configuration_recorder_status declaration. Manages status of an AWS Config Configuration Recorder.",
-        "ownership": "Missing: use a verified name reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Bind enabled configuration to the same account/region recorder by name.",
+        "references": "Supported: Verified configuration references: name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_configuration_recorder_status summaries.",
         "officialDocumentation": "website/docs/r/config_configuration_recorder_status.html.markdown",
@@ -71391,17 +71393,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationRecorderStatus. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_conformance_pack": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Resolve the explicit delivery bucket; keep the template URI and delivery prefix separate.",
+      "gap": "#1474 — Verified configuration references: delivery_s3_bucket.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71414,7 +71418,7 @@
         "placement": "Supported: Logical Controller for the managed config_conformance_pack declaration. Manages a Config Conformance Pack",
         "ownership": "Not applicable: The managed config_conformance_pack declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the explicit delivery bucket; keep the template URI and delivery prefix separate.",
+        "references": "Supported: Verified configuration references: delivery_s3_bucket.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_conformance_pack summaries.",
         "officialDocumentation": "website/docs/r/config_conformance_pack.html.markdown",
@@ -71441,17 +71445,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceConformancePack. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_delivery_channel": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Independently verify bucket name, SNS topic ARN and KMS key ARN. The shared channel is not owned by a recorder.",
+      "gap": "#1474 — Verified configuration references: s3_bucket_name, sns_topic_arn, s3_kms_key_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71464,7 +71470,7 @@
         "placement": "Supported: Logical Controller for the managed config_delivery_channel declaration. Provides an AWS Config Delivery Channel.",
         "ownership": "Not applicable: The managed config_delivery_channel declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Independently verify bucket name, SNS topic ARN and KMS key ARN. The shared channel is not owned by a recorder.",
+        "references": "Supported: Verified configuration references: s3_bucket_name, sns_topic_arn, s3_kms_key_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_delivery_channel summaries.",
         "officialDocumentation": "website/docs/r/config_delivery_channel.html.markdown",
@@ -71491,17 +71497,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceDeliveryChannel. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_config_organization_conformance_pack": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1474,
-      "gap": "#1474 — Resolve the named delivery bucket while preserving organization exclusion scope. Template content is opaque.",
+      "gap": "#1474 — Verified configuration references: delivery_s3_bucket.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71514,7 +71522,7 @@
         "placement": "Supported: Logical Controller for the managed config_organization_conformance_pack declaration. Manages a Config Organization Conformance Pack",
         "ownership": "Not applicable: The managed config_organization_conformance_pack declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Recording scopes and compliance selectors cannot establish network containment.",
-        "references": "Missing: Resolve the named delivery bucket while preserving organization exclusion scope. Template content is opaque.",
+        "references": "Supported: Verified configuration references: delivery_s3_bucket.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit policy documents, templates and evaluated resource data from config_organization_conformance_pack summaries.",
         "officialDocumentation": "website/docs/r/config_organization_conformance_pack.html.markdown",
@@ -71544,7 +71552,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/config_delivery.rs",
+          "tests/unit/semantic/config_delivery.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConformancePack. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -71859,10 +71869,10 @@
       }
     },
     "aws_detective_invitation_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the invited graph ARN across verified member and administrator scopes.",
+      "gap": "#1475 — Verified configuration references: graph_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71873,7 +71883,7 @@
         "placement": "Supported: Logical Association for the managed detective_invitation_accepter declaration. Provides a resource to manage an Amazon Detective member invitation accepter.",
         "ownership": "Not applicable: The managed detective_invitation_accepter declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_invitation_accepter.",
-        "references": "Missing: Resolve the invited graph ARN across verified member and administrator scopes.",
+        "references": "Supported: Verified configuration references: graph_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_invitation_accepter summaries.",
         "officialDocumentation": "website/docs/r/detective_invitation_accepter.html.markdown",
@@ -71892,17 +71902,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceInvitationAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_detective_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the graph and explicitly configured member account. Email and invitation state are excluded.",
+      "gap": "#1475 — Verified configuration references: graph_arn, account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71915,7 +71927,7 @@
         "placement": "Supported: Logical Association for the managed detective_member declaration. Provides a resource to manage an Amazon Detective member.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_member.",
-        "references": "Missing: Resolve the graph and explicitly configured member account. Email and invitation state are excluded.",
+        "references": "Supported: Verified configuration references: graph_arn, account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_member summaries.",
         "officialDocumentation": "website/docs/r/detective_member.html.markdown",
@@ -71942,17 +71954,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_detective_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the delegated administrator account by account_id.",
+      "gap": "#1475 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -71963,7 +71977,7 @@
         "placement": "Supported: Logical Node for the managed detective_organization_admin_account declaration. Manages a Detective Organization Admin Account",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_organization_admin_account.",
-        "references": "Missing: Resolve the delegated administrator account by account_id.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/detective_organization_admin_account.html.markdown",
@@ -71982,17 +71996,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_detective_organization_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1475,
-      "gap": "#1475 — Resolve the organization configuration's graph. Auto-enable predicts no future members.",
+      "gap": "#1475 — Verified configuration references: graph_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72002,9 +72018,9 @@
           "auto_enable"
         ],
         "placement": "Supported: Logical Controller for the managed detective_organization_configuration declaration. Manages the Detective Organization Configuration",
-        "ownership": "Missing: use a verified graph_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: AWS Detective control-plane configuration has no network placement contract for detective_organization_configuration.",
-        "references": "Missing: Resolve the organization configuration's graph. Auto-enable predicts no future members.",
+        "references": "Supported: Verified configuration references: graph_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit invitation messages, email addresses and behavioral findings from detective_organization_configuration summaries.",
         "officialDocumentation": "website/docs/r/detective_organization_configuration.html.markdown",
@@ -72027,7 +72043,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/detective_graphs.rs",
+          "tests/unit/semantic/detective_graphs.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72104,10 +72122,10 @@
       }
     },
     "aws_guardduty_detector_feature": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the regional detector ID. Feature name and configured status are scoped to that detector.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72118,9 +72136,9 @@
           "status"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_detector_feature declaration. Provides a resource to manage an Amazon GuardDuty detector feature",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the regional detector ID. Feature name and configured status are scoped to that detector.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_detector_feature summaries.",
         "officialDocumentation": "website/docs/r/guardduty_detector_feature.html.markdown",
@@ -72147,17 +72165,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceDetectorFeature. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_filter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Join the filter to the regional detector. Finding selectors never identify protected endpoints.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72168,9 +72188,9 @@
           "name"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_filter declaration. Provides a resource to manage a GuardDuty filter",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Join the filter to the regional detector. Finding selectors never identify protected endpoints.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_filter summaries.",
         "officialDocumentation": "website/docs/r/guardduty_filter.html.markdown",
@@ -72197,17 +72217,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceFilter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_invite_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the member's detector and administrator account separately, preserving the provider's legacy field name.",
+      "gap": "#1476 — Verified configuration references: detector_id, master_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72217,9 +72239,9 @@
           "master_account_id"
         ],
         "placement": "Supported: Logical Association for the managed guardduty_invite_accepter declaration. Provides a resource to accept a pending GuardDuty invite on creation, ensure the detector has the correct primary account on read, and disassociate with the primary account upon removal.",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the member's detector and administrator account separately, preserving the provider's legacy field name.",
+        "references": "Supported: Verified configuration references: detector_id, master_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_invite_accepter summaries.",
         "officialDocumentation": "website/docs/r/guardduty_invite_accepter.html.markdown",
@@ -72242,17 +72264,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceInviteAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_ipset": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Join the detector. A list location is a document URL and its entries cannot prove network containment.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72263,9 +72287,9 @@
           "format"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_ipset declaration. ",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Join the detector. A list location is a document URL and its entries cannot prove network containment.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_ipset summaries.",
         "officialDocumentation": "website/docs/r/guardduty_ipset.html.markdown",
@@ -72292,17 +72316,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceIPSet. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_malware_protection_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1477,
-      "gap": "#1477 — Resolve the execution role and configured S3 bucket. Exclude object keys and scan outcomes.",
+      "gap": "#1477 — Verified configuration references: role, protected_resource.s3_bucket.bucket_name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72314,7 +72340,7 @@
         "placement": "Supported: Logical Node for the managed guardduty_malware_protection_plan declaration. Provides a resource to manage a GuardDuty Malware Protection Plan",
         "ownership": "Not applicable: The managed guardduty_malware_protection_plan declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the execution role and configured S3 bucket. Exclude object keys and scan outcomes.",
+        "references": "Supported: Verified configuration references: role, protected_resource.s3_bucket.bucket_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_malware_protection_plan summaries.",
         "officialDocumentation": "website/docs/r/guardduty_malware_protection_plan.html.markdown",
@@ -72339,17 +72365,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_destinations.rs",
+          "tests/unit/semantic/guardduty_destinations.rs"
         ],
         "managedDataContract": "Managed newMalwareProtectionPlanResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Join detector and member account. Invitation messages and computed relationship status do not prove acceptance.",
+      "gap": "#1476 — Verified configuration references: detector_id, account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72360,9 +72388,9 @@
           "relationship_status"
         ],
         "placement": "Supported: Logical Association for the managed guardduty_member declaration. Provides a resource to manage a GuardDuty member",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Join detector and member account. Invitation messages and computed relationship status do not prove acceptance.",
+        "references": "Supported: Verified configuration references: detector_id, account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_member summaries.",
         "officialDocumentation": "website/docs/r/guardduty_member.html.markdown",
@@ -72389,17 +72417,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_member_detector_feature": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve detector and account together. Qualify the feature within that membership.",
+      "gap": "#1476 — Verified configuration references: detector_id, account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72410,9 +72440,9 @@
           "name"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_member_detector_feature declaration. Provides a resource to manage an Amazon GuardDuty member account detector feature",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve detector and account together. Qualify the feature within that membership.",
+        "references": "Supported: Verified configuration references: detector_id, account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_member_detector_feature summaries.",
         "officialDocumentation": "website/docs/r/guardduty_member_detector_feature.html.markdown",
@@ -72439,17 +72469,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed newMemberDetectorFeatureResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the designated administrator by account ID.",
+      "gap": "#1476 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72460,7 +72492,7 @@
         "placement": "Supported: Logical Node for the managed guardduty_organization_admin_account declaration. Manages a GuardDuty Organization Admin Account",
         "ownership": "Not applicable: The managed guardduty_organization_admin_account declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the designated administrator by account ID.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/guardduty_organization_admin_account.html.markdown",
@@ -72479,17 +72511,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_organization_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Bind configuration to its detector. Legacy datasources and enrollment defaults do not enumerate members.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72500,9 +72534,9 @@
           "datasources"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_organization_configuration declaration. Manages the GuardDuty Organization Configuration",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Bind configuration to its detector. Legacy datasources and enrollment defaults do not enumerate members.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_organization_configuration summaries.",
         "officialDocumentation": "website/docs/r/guardduty_organization_configuration.html.markdown",
@@ -72529,17 +72563,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_organization_configuration_feature": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the detector for a named organization feature. Future enrollment remains unspecified.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72550,9 +72586,9 @@
           "auto_enable"
         ],
         "placement": "Supported: Logical Controller for the managed guardduty_organization_configuration_feature declaration. Provides a resource to manage an Amazon GuardDuty organization configuration feature",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the detector for a named organization feature. Future enrollment remains unspecified.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_organization_configuration_feature summaries.",
         "officialDocumentation": "website/docs/r/guardduty_organization_configuration_feature.html.markdown",
@@ -72579,17 +72615,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationConfigurationFeature. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_publishing_destination": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1477,
-      "gap": "#1477 — Resolve detector, type-compatible S3 destination and encryption key independently.",
+      "gap": "#1477 — Verified configuration references: detector_id, destination_arn, kms_key_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72601,9 +72639,9 @@
           "kms_key_arn"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_publishing_destination declaration. ",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve detector, type-compatible S3 destination and encryption key independently.",
+        "references": "Supported: Verified configuration references: detector_id, destination_arn, kms_key_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_publishing_destination summaries.",
         "officialDocumentation": "website/docs/r/guardduty_publishing_destination.html.markdown",
@@ -72634,17 +72672,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_destinations.rs",
+          "tests/unit/semantic/guardduty_destinations.rs"
         ],
         "managedDataContract": "Managed resourcePublishingDestination. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_guardduty_threatintelset": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1476,
-      "gap": "#1476 — Resolve the owning detector. Feed URL and contents do not identify AWS workload endpoints.",
+      "gap": "#1476 — Verified configuration references: detector_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72655,9 +72695,9 @@
           "format"
         ],
         "placement": "Supported: Logical Node for the managed guardduty_threatintelset declaration. ",
-        "ownership": "Missing: use a verified detector_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Detector coverage, protected buckets and feed locations do not establish VPC membership.",
-        "references": "Missing: Resolve the owning detector. Feed URL and contents do not identify AWS workload endpoints.",
+        "references": "Supported: Verified configuration references: detector_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit feed contents, findings and invitation messages from guardduty_threatintelset summaries.",
         "officialDocumentation": "website/docs/r/guardduty_threatintelset.html.markdown",
@@ -72684,17 +72724,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/guardduty_members.rs",
+          "tests/unit/semantic/guardduty_members.rs"
         ],
         "managedDataContract": "Managed resourceThreatIntelSet. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_inspector_assessment_target": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Join the Classic Inspector resource group by ARN. Tag matches do not enumerate instances.",
+      "gap": "#1478 — Verified configuration references: resource_group_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72706,7 +72748,7 @@
         "placement": "Supported: Logical Controller for the managed inspector_assessment_target declaration. Provides an Inspector Classic Assessment Target.",
         "ownership": "Not applicable: The managed inspector_assessment_target declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Inspector Classic control-plane configuration has no network placement contract for inspector_assessment_target.",
-        "references": "Missing: Join the Classic Inspector resource group by ARN. Tag matches do not enumerate instances.",
+        "references": "Supported: Verified configuration references: resource_group_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment results and tag values from inspector_assessment_target summaries.",
         "officialDocumentation": "website/docs/r/inspector_assessment_target.html.markdown",
@@ -72729,17 +72771,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceAssessmentTarget. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_inspector_assessment_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve Classic assessment target and SNS notification topic. Preserve AWS rules package ARNs as catalog identifiers.",
+      "gap": "#1478 — Verified configuration references: target_arn, event_subscription.topic_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72752,7 +72796,7 @@
         "placement": "Supported: Logical Controller for the managed inspector_assessment_template declaration. Provides an Inspector Classic Assessment Template.",
         "ownership": "Not applicable: The managed inspector_assessment_template declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Inspector Classic control-plane configuration has no network placement contract for inspector_assessment_template.",
-        "references": "Missing: Resolve Classic assessment target and SNS notification topic. Preserve AWS rules package ARNs as catalog identifiers.",
+        "references": "Supported: Verified configuration references: target_arn, event_subscription.topic_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assessment results and tag values from inspector_assessment_template summaries.",
         "officialDocumentation": "website/docs/r/inspector_assessment_template.html.markdown",
@@ -72783,7 +72827,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceAssessmentTemplate. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72829,10 +72875,10 @@
       }
     },
     "aws_inspector2_delegated_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve the explicit Inspector2 administrator account. Its observed relationship status is separate.",
+      "gap": "#1478 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72844,7 +72890,7 @@
         "placement": "Supported: Logical Node for the managed inspector2_delegated_admin_account declaration. Terraform resource for managing an Amazon Inspector Delegated Admin Account.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Scan categories and finding filters are not subnet assignments.",
-        "references": "Missing: Resolve the explicit Inspector2 administrator account. Its observed relationship status is separate.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit vulnerability findings and matching resource inventory from inspector2_delegated_admin_account summaries.",
         "officialDocumentation": "website/docs/r/inspector2_delegated_admin_account.html.markdown",
@@ -72867,17 +72913,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceDelegatedAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_inspector2_enabler": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve configured account IDs independently of scan resource types. An enabled category cannot identify workloads.",
+      "gap": "#1478 — Verified configuration references: account_ids.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72889,7 +72937,7 @@
         "placement": "Supported: Logical Node for the managed inspector2_enabler declaration. Terraform resource for enabling Amazon Inspector resource scans.",
         "ownership": "Not applicable: The managed inspector2_enabler declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Scan categories and finding filters are not subnet assignments.",
-        "references": "Missing: Resolve configured account IDs independently of scan resource types. An enabled category cannot identify workloads.",
+        "references": "Supported: Verified configuration references: account_ids.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit vulnerability findings and matching resource inventory from inspector2_enabler summaries.",
         "officialDocumentation": "website/docs/r/inspector2_enabler.html.markdown",
@@ -72918,7 +72966,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed ResourceEnabler. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -72974,10 +73024,10 @@
       }
     },
     "aws_inspector2_member_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1478,
-      "gap": "#1478 — Resolve the configured member account separately from the returned administrator account.",
+      "gap": "#1478 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -72989,7 +73039,7 @@
         "placement": "Supported: Logical Association for the managed inspector2_member_association declaration. Terraform resource for managing an Amazon Inspector Member Association.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Scan categories and finding filters are not subnet assignments.",
-        "references": "Missing: Resolve the configured member account separately from the returned administrator account.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit vulnerability findings and matching resource inventory from inspector2_member_association summaries.",
         "officialDocumentation": "website/docs/r/inspector2_member_association.html.markdown",
@@ -73012,7 +73062,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/inspector_assessments.rs",
+          "tests/unit/semantic/inspector_assessments.rs"
         ],
         "managedDataContract": "Managed resourceMemberAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73109,10 +73161,10 @@
       }
     },
     "aws_macie2_classification_export_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the destination bucket and encryption key independently. Key prefixes do not identify resources.",
+      "gap": "#1479 — Verified configuration references: s3_destination.bucket_name, s3_destination.kms_key_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73124,7 +73176,7 @@
         "placement": "Supported: Logical Controller for the managed macie2_classification_export_configuration declaration. Provides a resource to manage Classification Results - Export Configuration",
         "ownership": "Not applicable: The managed macie2_classification_export_configuration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_classification_export_configuration.",
-        "references": "Missing: Resolve the destination bucket and encryption key independently. Key prefixes do not identify resources.",
+        "references": "Supported: Verified configuration references: s3_destination.bucket_name, s3_destination.kms_key_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_classification_export_configuration summaries.",
         "officialDocumentation": "website/docs/r/macie2_classification_export_configuration.html.markdown",
@@ -73149,17 +73201,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceClassificationExportConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_macie2_classification_job": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve custom identifier IDs and explicitly named buckets in their declared accounts. Dynamic selection criteria do not enumerate buckets.",
+      "gap": "#1479 — Verified configuration references: custom_data_identifier_ids, s3_job_definition.bucket_definitions.buckets, s3_job_definition.bucket_definitions.account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73172,7 +73226,7 @@
         "placement": "Supported: Logical Controller for the managed macie2_classification_job declaration. Provides a resource to manage an AWS Macie Classification Job.",
         "ownership": "Not applicable: The managed macie2_classification_job declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_classification_job.",
-        "references": "Missing: Resolve custom identifier IDs and explicitly named buckets in their declared accounts. Dynamic selection criteria do not enumerate buckets.",
+        "references": "Supported: Verified configuration references: custom_data_identifier_ids, s3_job_definition.bucket_definitions.buckets, s3_job_definition.bucket_definitions.account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_classification_job summaries.",
         "officialDocumentation": "website/docs/r/macie2_classification_job.html.markdown",
@@ -73209,7 +73263,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceClassificationJob. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73314,10 +73370,10 @@
       }
     },
     "aws_macie2_invitation_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the configured administrator; invitation ID is returned by the service.",
+      "gap": "#1479 — Verified configuration references: administrator_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73329,7 +73385,7 @@
         "placement": "Supported: Logical Association for the managed macie2_invitation_accepter declaration. Provides a resource to manage an Amazon Macie Invitation Accepter.",
         "ownership": "Not applicable: The managed macie2_invitation_accepter declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_invitation_accepter.",
-        "references": "Missing: Resolve the configured administrator; invitation ID is returned by the service.",
+        "references": "Supported: Verified configuration references: administrator_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_invitation_accepter summaries.",
         "officialDocumentation": "website/docs/r/macie2_invitation_accepter.html.markdown",
@@ -73352,17 +73408,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceInvitationAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_macie2_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the configured member account. Administrator/master outputs are aliases of the administrator identity, not two endpoints.",
+      "gap": "#1479 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73375,7 +73433,7 @@
         "placement": "Supported: Logical Association for the managed macie2_member declaration. Provides a resource to manage an Amazon Macie Member.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_member.",
-        "references": "Missing: Resolve the configured member account. Administrator/master outputs are aliases of the administrator identity, not two endpoints.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_member summaries.",
         "officialDocumentation": "website/docs/r/macie2_member.html.markdown",
@@ -73402,17 +73460,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_macie2_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1479,
-      "gap": "#1479 — Resolve the organization administrator account without inferring other membership.",
+      "gap": "#1479 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73423,7 +73483,7 @@
         "placement": "Supported: Logical Node for the managed macie2_organization_admin_account declaration. Provides a resource to manage an Amazon Macie Organization Admin Account.",
         "ownership": "Not applicable: The managed macie2_organization_admin_account declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Macie control-plane configuration has no network placement contract for macie2_organization_admin_account.",
-        "references": "Missing: Resolve the organization administrator account without inferring other membership.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit discovery results, regexes, object names and contact details from macie2_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/macie2_organization_admin_account.html.markdown",
@@ -73442,7 +73502,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/macie_classification.rs",
+          "tests/unit/semantic/macie_classification.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73625,10 +73687,10 @@
       }
     },
     "aws_securityhub_aggregator_v2": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Represent the V2 home region and configured linking mode/regions. Preserve implicit future regions without enumerating them.",
+      "gap": "#1480 — Explicit region selections and linking mode are represented separately from resource deployment scope.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73641,7 +73703,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_aggregator_v2 declaration. Manages a Security Hub V2 cross-region finding aggregator.",
         "ownership": "Not applicable: The managed securityhub_aggregator_v2 declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_aggregator_v2.",
-        "references": "Missing: Represent the V2 home region and configured linking mode/regions. Preserve implicit future regions without enumerating them.",
+        "references": "Supported: Explicit region selections and linking mode are represented separately from resource deployment scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_aggregator_v2 summaries.",
         "officialDocumentation": "website/docs/r/securityhub_aggregator_v2.html.markdown",
@@ -73671,7 +73733,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "src/provider/aws/scope_selections.rs"
         ],
         "managedDataContract": "Managed newAggregatorV2Resource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73728,10 +73792,10 @@
       }
     },
     "aws_securityhub_automation_rule_v2": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1481,
-      "gap": "#1481 — Resolve the explicitly configured V2 integration connector. OCSF JSON selectors and finding mutations are opaque.",
+      "gap": "#1481 — Verified configuration references: action.external_integration_configuration.connector_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73743,7 +73807,7 @@
         "placement": "Supported: Logical Policy for the managed securityhub_automation_rule_v2 declaration. Manages a Security Hub V2 automation rule.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_automation_rule_v2.",
-        "references": "Missing: Resolve the explicitly configured V2 integration connector. OCSF JSON selectors and finding mutations are opaque.",
+        "references": "Supported: Verified configuration references: action.external_integration_configuration.connector_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_automation_rule_v2 summaries.",
         "officialDocumentation": "website/docs/r/securityhub_automation_rule_v2.html.markdown",
@@ -73768,17 +73832,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_integrations.rs",
+          "tests/unit/semantic/securityhub_integrations.rs"
         ],
         "managedDataContract": "Managed newAutomationRuleV2Resource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_configuration_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Distinguish catalog standard ARNs from configured subscriptions and associate this policy only via verified policy IDs.",
+      "gap": "#1480 — A verified policy ID identifies the managed policy. Standard ARNs remain catalog identifiers.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73790,7 +73856,7 @@
         "placement": "Supported: Logical Policy for the managed securityhub_configuration_policy declaration. Provides a resource to manage Security Hub configuration policy",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_configuration_policy.",
-        "references": "Missing: Distinguish catalog standard ARNs from configured subscriptions and associate this policy only via verified policy IDs.",
+        "references": "Supported: A verified policy ID identifies the managed policy. Standard ARNs remain catalog identifiers.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_configuration_policy summaries.",
         "officialDocumentation": "website/docs/r/securityhub_configuration_policy.html.markdown",
@@ -73818,17 +73884,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "src/provider/aws/scope_selections.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationPolicy. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_configuration_policy_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the policy and type-disambiguated account, OU or root. SELF_MANAGED_SECURITY_HUB is a sentinel.",
+      "gap": "#1480 — Verified configuration references: policy_id, target_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73840,7 +73908,7 @@
         "placement": "Supported: Logical Association for the managed securityhub_configuration_policy_association declaration. Provides a resource to associate Security Hub configuration policy to a target.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_configuration_policy_association.",
-        "references": "Missing: Resolve the policy and type-disambiguated account, OU or root. SELF_MANAGED_SECURITY_HUB is a sentinel.",
+        "references": "Supported: Verified configuration references: policy_id, target_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_configuration_policy_association summaries.",
         "officialDocumentation": "website/docs/r/securityhub_configuration_policy_association.html.markdown",
@@ -73863,17 +73931,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceConfigurationPolicyAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_connector_v2": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1481,
-      "gap": "#1481 — Resolve the configured KMS key and Secrets Manager ARN. Provider credentials and connection health are excluded.",
+      "gap": "#1481 — Verified configuration references: kms_key_arn, connector_provider.service_now.secret_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73885,7 +73955,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_connector_v2 declaration. Manages a Security Hub V2 connector.",
         "ownership": "Not applicable: The managed securityhub_connector_v2 declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_connector_v2.",
-        "references": "Missing: Resolve the configured KMS key and Secrets Manager ARN. Provider credentials and connection health are excluded.",
+        "references": "Supported: Verified configuration references: kms_key_arn, connector_provider.service_now.secret_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_connector_v2 summaries.",
         "officialDocumentation": "website/docs/r/securityhub_connector_v2.html.markdown",
@@ -73910,7 +73980,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_integrations.rs",
+          "tests/unit/semantic/securityhub_integrations.rs"
         ],
         "managedDataContract": "Managed newConnectorV2Resource. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -73961,10 +74033,10 @@
       }
     },
     "aws_securityhub_finding_aggregator": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Represent only explicitly linked regions under the configured linking mode. Distinguish the original finding aggregator from V2.",
+      "gap": "#1480 — Explicit region selections and linking mode are represented separately from resource deployment scope.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -73976,7 +74048,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_finding_aggregator declaration. Manages a Security Hub finding aggregator",
         "ownership": "Not applicable: The managed securityhub_finding_aggregator declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_finding_aggregator.",
-        "references": "Missing: Represent only explicitly linked regions under the configured linking mode. Distinguish the original finding aggregator from V2.",
+        "references": "Supported: Explicit region selections and linking mode are represented separately from resource deployment scope.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_finding_aggregator summaries.",
         "officialDocumentation": "website/docs/r/securityhub_finding_aggregator.html.markdown",
@@ -74002,7 +74074,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "src/provider/aws/scope_selections.rs"
         ],
         "managedDataContract": "Managed resourceFindingAggregator. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -74058,10 +74132,10 @@
       }
     },
     "aws_securityhub_invite_accepter": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the configured administrator account. The invitation identifier is an output.",
+      "gap": "#1480 — Verified configuration references: master_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74073,7 +74147,7 @@
         "placement": "Supported: Logical Association for the managed securityhub_invite_accepter declaration. Accepts a Security Hub invitation.",
         "ownership": "Not applicable: The managed securityhub_invite_accepter declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_invite_accepter.",
-        "references": "Missing: Resolve the configured administrator account. The invitation identifier is an output.",
+        "references": "Supported: Verified configuration references: master_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_invite_accepter summaries.",
         "officialDocumentation": "website/docs/r/securityhub_invite_accepter.html.markdown",
@@ -74096,17 +74170,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceInviteAccepter. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_member": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the member account and retain the configured invite flag separately from observed membership.",
+      "gap": "#1480 — Verified configuration references: account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74119,7 +74195,7 @@
         "placement": "Supported: Logical Association for the managed securityhub_member declaration. Provides a Security Hub member resource.",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_member.",
-        "references": "Missing: Resolve the member account and retain the configured invite flag separately from observed membership.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_member summaries.",
         "officialDocumentation": "website/docs/r/securityhub_member.html.markdown",
@@ -74146,17 +74222,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceMember. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securityhub_organization_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1480,
-      "gap": "#1480 — Resolve the explicitly selected organization administrator.",
+      "gap": "#1480 — Verified configuration references: admin_account_id.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74167,7 +74245,7 @@
         "placement": "Supported: Logical Node for the managed securityhub_organization_admin_account declaration. Manages a Security Hub administrator account for an organization.",
         "ownership": "Not applicable: The managed securityhub_organization_admin_account declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Security Hub control-plane configuration has no network placement contract for securityhub_organization_admin_account.",
-        "references": "Missing: Resolve the explicitly selected organization administrator.",
+        "references": "Supported: Verified configuration references: admin_account_id.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit findings, connection credentials and account contact details from securityhub_organization_admin_account summaries.",
         "officialDocumentation": "website/docs/r/securityhub_organization_admin_account.html.markdown",
@@ -74186,7 +74264,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/securityhub_organization.rs",
+          "tests/unit/semantic/securityhub_organization.rs"
         ],
         "managedDataContract": "Managed resourceOrganizationAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -74424,10 +74504,10 @@
       }
     },
     "aws_securitylake_aws_log_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Retain the account/region-qualified AWS source tuple. A catalog log source does not prove producing workloads.",
+      "gap": "#1482 — Verified configuration references: source.accounts.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74440,7 +74520,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_aws_log_source declaration. Terraform resource for managing an Amazon Security Lake AWS Log Source.",
         "ownership": "Not applicable: The managed securitylake_aws_log_source declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Retain the account/region-qualified AWS source tuple. A catalog log source does not prove producing workloads.",
+        "references": "Supported: Verified configuration references: source.accounts.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_aws_log_source summaries.",
         "officialDocumentation": "website/docs/r/securitylake_aws_log_source.html.markdown",
@@ -74476,17 +74556,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newAWSLogSourceResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_custom_log_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Resolve the crawler IAM role. Preserve source name/version and provider identity without exposing external IDs.",
+      "gap": "#1482 — Verified configuration references: configuration.crawler_configuration.role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74500,7 +74582,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_custom_log_source declaration. Terraform resource for managing an AWS Security Lake Custom Log Source.",
         "ownership": "Not applicable: The managed securitylake_custom_log_source declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Resolve the crawler IAM role. Preserve source name/version and provider identity without exposing external IDs.",
+        "references": "Supported: Verified configuration references: configuration.crawler_configuration.role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_custom_log_source summaries.",
         "officialDocumentation": "website/docs/r/securitylake_custom_log_source.html.markdown",
@@ -74535,17 +74617,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newCustomLogSourceResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_data_lake": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Represent each configured lake region, replication role, encryption key and metastore role. The lake bucket ARN is a service output.",
+      "gap": "#1482 — Verified configuration references: configuration.encryption_configuration, configuration.replication_configuration.role_arn, meta_store_manager_role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74561,7 +74645,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_data_lake declaration. Terraform resource for managing an AWS Security Lake Data Lake.",
         "ownership": "Not applicable: The managed securitylake_data_lake declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Represent each configured lake region, replication role, encryption key and metastore role. The lake bucket ARN is a service output.",
+        "references": "Supported: Verified configuration references: configuration.encryption_configuration, configuration.replication_configuration.role_arn, meta_store_manager_role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_data_lake summaries.",
         "officialDocumentation": "website/docs/r/securitylake_data_lake.html.markdown",
@@ -74617,17 +74701,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newDataLakeResource. No same-name data source in 6.70.0. Deprecated managed attributes: id.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_subscriber": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Resolve custom sources by name/version in scope. Separate subscriber principal from returned bucket and role.",
+      "gap": "#1482 — Verified configuration references: source.custom_log_source_resource.source_name.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74642,7 +74728,7 @@
         "placement": "Supported: Logical Node for the managed securitylake_subscriber declaration. Terraform resource for managing an AWS Security Lake Subscriber.",
         "ownership": "Not applicable: The managed securitylake_subscriber declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Resolve custom sources by name/version in scope. Separate subscriber principal from returned bucket and role.",
+        "references": "Supported: Verified configuration references: source.custom_log_source_resource.source_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_subscriber summaries.",
         "officialDocumentation": "website/docs/r/securitylake_subscriber.html.markdown",
@@ -74682,17 +74768,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newSubscriberResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_securitylake_subscriber_notification": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1482,
-      "gap": "#1482 — Resolve the subscriber and HTTPS notification role when configured. Exclude tokens, authorization headers and generated endpoints.",
+      "gap": "#1482 — Verified configuration references: subscriber_id, configuration.https_notification_configuration.target_role_arn.",
       "review": {
         "issue": 728,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74702,9 +74790,9 @@
           "configuration.https_notification_configuration.target_role_arn"
         ],
         "placement": "Supported: Logical Controller for the managed securitylake_subscriber_notification declaration. Terraform resource for managing an AWS Security Lake Subscriber Notification.",
-        "ownership": "Missing: use a verified subscriber_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Delivery and replication regions describe service configuration, not subnet placement.",
-        "references": "Missing: Resolve the subscriber and HTTPS notification role when configured. Exclude tokens, authorization headers and generated endpoints.",
+        "references": "Supported: Verified configuration references: subscriber_id, configuration.https_notification_configuration.target_role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit external IDs, API keys, ingest payloads and event records from securitylake_subscriber_notification summaries.",
         "officialDocumentation": "website/docs/r/securitylake_subscriber_notification.html.markdown",
@@ -74729,17 +74817,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/security_lake.rs",
+          "tests/unit/semantic/security_lake.rs"
         ],
         "managedDataContract": "Managed newSubscriberNotificationResource. No same-name data source in 6.70.0. Deprecated managed attributes: endpoint_id.",
         "dataContracts": {}
       }
     },
     "aws_arcregionswitch_plan": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1483,
-      "gap": "#1483 — Resolve the plan execution role, configured alarms, routing controls and Lambda steps in their own account and region. Workflow definitions describe planned actions, not failover results.",
+      "gap": "#1483 — Verified configuration references: execution_role, associated_alarms.resource_identifier, associated_alarms.cross_account_role, workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn, workflow.step.custom_action_lambda_config.lambda.arn.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74756,7 +74846,7 @@
         "placement": "Supported: Logical Node for the managed arcregionswitch_plan declaration. Terraform resource for managing an Amazon ARC Region Switch Plan.",
         "ownership": "Not applicable: The managed arcregionswitch_plan declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Amazon ARC (Application Recovery Controller) Region Switch control-plane configuration has no network placement contract for arcregionswitch_plan.",
-        "references": "Missing: Resolve the plan execution role, configured alarms, routing controls and Lambda steps in their own account and region. Workflow definitions describe planned actions, not failover results.",
+        "references": "Supported: Verified configuration references: execution_role, associated_alarms.resource_identifier, associated_alarms.cross_account_role, workflow.step.arc_routing_control_config.region_and_routing_controls.routing_control.routing_control_arn, workflow.step.custom_action_lambda_config.lambda.arn.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit workflow payloads and execution results from arcregionswitch_plan summaries.",
         "officialDocumentation": "website/docs/r/arcregionswitch_plan.html.markdown",
@@ -74813,7 +74903,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_configuration.rs",
+          "tests/unit/semantic/arc_configuration.rs"
         ],
         "managedDataContract": "Managed newResourcePlan. Separate same-name data lookup with its own selector contracts. Deprecated managed attributes: region.",
         "dataContracts": {
@@ -74868,10 +74960,10 @@
       }
     },
     "aws_arczonalshift_zonal_autoshift_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1483,
-      "gap": "#1483 — Identify the supported target and distinguish blocking alarms from outcome alarms. Their state does not describe current availability.",
+      "gap": "#1483 — Verified configuration references: resource_arn, blocking_alarms.alarm_identifier, outcome_alarms.alarm_identifier.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74884,7 +74976,7 @@
         "placement": "Supported: Logical Controller for the managed arczonalshift_zonal_autoshift_configuration declaration. Manages an AWS Application Recovery Controller Zonal Shift Zonal Autoshift Configuration.",
         "ownership": "Not applicable: The managed arczonalshift_zonal_autoshift_configuration declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Amazon ARC (Application Recovery Controller) Zonal Shift control-plane configuration has no network placement contract for arczonalshift_zonal_autoshift_configuration.",
-        "references": "Missing: Identify the supported target and distinguish blocking alarms from outcome alarms. Their state does not describe current availability.",
+        "references": "Supported: Verified configuration references: resource_arn, blocking_alarms.alarm_identifier, outcome_alarms.alarm_identifier.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit alarm values and inferred availability from arczonalshift_zonal_autoshift_configuration summaries.",
         "officialDocumentation": "website/docs/r/arczonalshift_zonal_autoshift_configuration.html.markdown",
@@ -74913,17 +75005,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_configuration.rs",
+          "tests/unit/semantic/arc_configuration.rs"
         ],
         "managedDataContract": "Managed newResourceZonalAutoshiftConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_fis_experiment_template": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1484,
-      "gap": "#1484 — Resolve explicit typed target ARNs, execution role, CloudWatch stop alarms, logging and report endpoints. Exclude dynamic filters, action parameters and inferred effects.",
+      "gap": "#1484 — Verified configuration references: role_arn, target.resource_arns, stop_condition.value, log_configuration.cloudwatch_logs_configuration.log_group_arn, log_configuration.s3_configuration.bucket_name, experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn, experiment_report_configuration.outputs.s3_configuration.bucket_name.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -74942,7 +75036,7 @@
         "placement": "Supported: Logical Controller for the managed fis_experiment_template declaration. Provides an FIS Experiment Template.",
         "ownership": "Not applicable: The managed fis_experiment_template declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
-        "references": "Missing: Resolve explicit typed target ARNs, execution role, CloudWatch stop alarms, logging and report endpoints. Exclude dynamic filters, action parameters and inferred effects.",
+        "references": "Supported: Verified configuration references: role_arn, target.resource_arns, stop_condition.value, log_configuration.cloudwatch_logs_configuration.log_group_arn, log_configuration.s3_configuration.bucket_name, experiment_report_configuration.data_sources.cloudwatch_dashboard.dashboard_arn, experiment_report_configuration.outputs.s3_configuration.bucket_name.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_experiment_template summaries.",
         "officialDocumentation": "website/docs/r/fis_experiment_template.html.markdown",
@@ -75010,7 +75104,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/fis_configuration.rs",
+          "tests/unit/semantic/fis_configuration.rs"
         ],
         "managedDataContract": "Managed resourceExperimentTemplate. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -75062,10 +75158,10 @@
       }
     },
     "aws_fis_target_account_configuration": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1484,
-      "gap": "#1484 — Resolve the experiment template by ID and the optional role in the configured target account.",
+      "gap": "#1484 — Verified configuration references: experiment_template_id, account_id, role_arn.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75076,9 +75172,9 @@
           "role_arn"
         ],
         "placement": "Supported: Logical Controller for the managed fis_target_account_configuration declaration. Manages an AWS FIS (Fault Injection Simulator) Target Account Configuration.",
-        "ownership": "Missing: use a verified experiment_template_id reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
+        "ownership": "Supported: The current helper retains its identity under a uniquely verified parent.",
         "network": "Not applicable: Even a configured experiment target does not own or contain its target network.",
-        "references": "Missing: Resolve the experiment template by ID and the optional role in the configured target account.",
+        "references": "Supported: Verified configuration references: experiment_template_id, account_id, role_arn.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit action parameters, selectors and experiment outcomes from fis_target_account_configuration summaries.",
         "officialDocumentation": "website/docs/r/fis_target_account_configuration.html.markdown",
@@ -75105,17 +75201,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/fis_configuration.rs",
+          "tests/unit/semantic/fis_configuration.rs"
         ],
         "managedDataContract": "Managed newResourceTargetAccountConfiguration. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_fms_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1485,
-      "gap": "#1485 — Resolve an explicitly supplied delegated administrator. An omitted account ID is not evidence for another account node.",
+      "gap": "#1485 — Verified configuration references: account_id.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75126,7 +75224,7 @@
         "placement": "Supported: Logical Node for the managed fms_admin_account declaration. Provides a resource to associate/disassociate an AWS Firewall Manager administrator account",
         "ownership": "Not applicable: Account membership is a relationship, not presentation ownership.",
         "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
-        "references": "Missing: Resolve an explicitly supplied delegated administrator. An omitted account ID is not evidence for another account node.",
+        "references": "Supported: Verified configuration references: account_id.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_admin_account summaries.",
         "officialDocumentation": "website/docs/r/fms_admin_account.html.markdown",
@@ -75145,17 +75243,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/firewall_manager.rs",
+          "tests/unit/semantic/firewall_manager.rs"
         ],
         "managedDataContract": "Managed resourceAdminAccount. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_fms_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1485,
-      "gap": "#1485 — Resolve resource-set IDs and separately qualified account/OU include and exclude scopes. Treat managed_service_data as opaque.",
+      "gap": "#1485 — Verified configuration references: resource_set_ids, include_map.account, include_map.orgunit, exclude_map.account, exclude_map.orgunit.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -75171,7 +75271,7 @@
         "placement": "Supported: Logical Policy for the managed fms_policy declaration. Provides a resource to create an AWS Firewall Manager policy",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: Policy scope and tag selectors do not declare VPC placement.",
-        "references": "Missing: Resolve resource-set IDs and separately qualified account/OU include and exclude scopes. Treat managed_service_data as opaque.",
+        "references": "Supported: Verified configuration references: resource_set_ids, include_map.account, include_map.orgunit, exclude_map.account, exclude_map.orgunit.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit managed policy JSON, tag values and compliance results from fms_policy summaries.",
         "officialDocumentation": "website/docs/r/fms_policy.html.markdown",
@@ -75230,7 +75330,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/firewall_manager.rs",
+          "tests/unit/semantic/firewall_manager.rs"
         ],
         "managedDataContract": "Managed resourcePolicy. No same-name data source in 6.70.0.",
         "dataContracts": {}

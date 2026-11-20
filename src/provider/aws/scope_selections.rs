@@ -28,6 +28,162 @@ type Details = Vec<(&'static str, &'static str, String)>;
 fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
     let mut details = Vec::new();
     match kind {
+        "aws_securityhub_aggregator_v2" | "aws_securityhub_finding_aggregator" => {
+            let v2 = kind == "aws_securityhub_aggregator_v2";
+            let (mode, regions) = if v2 {
+                ("region_linking_mode", "linked_regions")
+            } else {
+                ("linking_mode", "specified_regions")
+            };
+            if let Some(home) = value(v, mask, "aggregation_region")
+                .and_then(Value::as_str)
+                .and_then(region)
+                .filter(|_| v2)
+            {
+                details.push(("aggregation_region", "Aggregation region", home.to_owned()));
+            }
+            if let Some((mode, regions)) = value(v, mask, mode)
+                .and_then(Value::as_str)
+                .zip(strings(v, mask, regions, |s| region(s).is_some()))
+            {
+                let selection = match mode {
+                    "ALL_REGIONS" if regions.is_empty() => Some("all regions".to_owned()),
+                    "NO_REGIONS" if !v2 && regions.is_empty() => Some("no regions".to_owned()),
+                    "ALL_REGIONS_EXCEPT_SPECIFIED" if !regions.is_empty() => {
+                        Some(format!("all except {}", regions.join(", ")))
+                    }
+                    "SPECIFIED_REGIONS" if !regions.is_empty() => Some(regions.join(", ")),
+                    _ => None,
+                };
+                if let Some(selection) = selection {
+                    details.push((
+                        if v2 {
+                            "linked_regions"
+                        } else {
+                            "specified_regions"
+                        },
+                        "Linked regions",
+                        selection,
+                    ));
+                }
+            }
+        }
+        "aws_securitylake_subscriber" | "aws_securitylake_custom_log_source" => {
+            let path = if kind == "aws_securitylake_subscriber" {
+                "subscriber_identity.0.principal"
+            } else {
+                "configuration.0.provider_identity.0.principal"
+            };
+            if let Some(principal) = value(v, mask, path).and_then(Value::as_str).filter(|s| {
+                AwsAccountScope::new(s).is_some()
+                    || [".amazonaws.com", ".amazon.com"].iter().any(|suffix| {
+                        s.strip_suffix(suffix).is_some_and(|prefix| {
+                            !prefix.is_empty()
+                                && prefix.split('.').all(|part| {
+                                    !part.is_empty()
+                                        && part.bytes().all(|b| {
+                                            b.is_ascii_lowercase()
+                                                || b.is_ascii_digit()
+                                                || b == b'-'
+                                        })
+                                })
+                        })
+                    })
+            }) {
+                details.push((
+                    if kind == "aws_securitylake_subscriber" {
+                        "subscriber_identity.principal"
+                    } else {
+                        "configuration.provider_identity.principal"
+                    },
+                    "AWS principal",
+                    principal.to_owned(),
+                ));
+            }
+            if kind == "aws_securitylake_custom_log_source" {
+                if let Some((name, version)) = value(v, mask, "source_name")
+                    .and_then(Value::as_str)
+                    .filter(|s| !s.is_empty())
+                    .zip(
+                        value(v, mask, "source_version")
+                            .and_then(Value::as_str)
+                            .filter(|s| !s.is_empty()),
+                    )
+                {
+                    details.push((
+                        "source_version",
+                        "Custom log source",
+                        format!("{name} / {version}"),
+                    ));
+                }
+            }
+        }
+        "aws_securitylake_data_lake" => {
+            for i in 0..v["configuration"].as_array().map_or(0, Vec::len) {
+                let prefix = format!("configuration.{i}");
+                if let Some(home) = value(v, mask, &format!("{prefix}.region"))
+                    .and_then(Value::as_str)
+                    .and_then(region)
+                {
+                    details.push(("configuration.region", "Lake region", home.to_owned()));
+                    if let Some(regions) = strings(
+                        v,
+                        mask,
+                        &format!("{prefix}.replication_configuration.0.regions"),
+                        |s| region(s).is_some(),
+                    )
+                    .filter(|r| !r.is_empty())
+                    {
+                        details.push((
+                            "configuration.replication_configuration.regions",
+                            "Replication regions",
+                            format!("{home} to {}", regions.join(", ")),
+                        ));
+                    }
+                }
+            }
+        }
+        "aws_securitylake_aws_log_source" => {
+            for i in 0..v["source"].as_array().map_or(0, Vec::len) {
+                let p = format!("source.{i}");
+                let Some(name) = value(v, mask, &format!("{p}.source_name"))
+                    .and_then(Value::as_str)
+                    .filter(|s| {
+                        matches!(
+                            *s,
+                            "ROUTE53"
+                                | "VPC_FLOW"
+                                | "SH_FINDINGS"
+                                | "CLOUD_TRAIL_MGMT"
+                                | "LAMBDA_EXECUTION"
+                                | "S3_DATA"
+                                | "EKS_AUDIT"
+                                | "WAF"
+                        )
+                    })
+                else {
+                    continue;
+                };
+                if let Some((regions, accounts)) =
+                    strings(v, mask, &format!("{p}.regions"), |s| region(s).is_some())
+                        .zip(strings(v, mask, &format!("{p}.accounts"), |s| {
+                            AwsAccountScope::new(s).is_some()
+                        }))
+                        .filter(|(r, _)| !r.is_empty())
+                {
+                    let accounts = if accounts.is_empty() {
+                        "all lake accounts".to_owned()
+                    } else {
+                        accounts.join(", ")
+                    };
+                    details.push((
+                        "source",
+                        "AWS log source",
+                        format!("{name} / {accounts} / {}", regions.join(", ")),
+                    ));
+                }
+            }
+        }
         "aws_config_configuration_aggregator" => {
             for block in [
                 "account_aggregation_source",

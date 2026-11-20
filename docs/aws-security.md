@@ -508,3 +508,51 @@ Aggregation authorizations pair a grantee account with its authorized AWS region
 ## Verify AWS Config evaluation and remediation targets (#1473)
 
 Config rules reference Lambda evaluators only in custom Lambda mode. Remediation uses the Config rule name and a compatible SSM document name. Managed catalog identifiers and evaluation criteria stay independent of infrastructure.
+
+## Verify AWS Config recording and delivery references (#1474)
+
+Recorder status binds to a same-scope recorder by name. Recording roles, named delivery buckets, notification topics and encryption keys resolve independently. Delivery prefixes and conformance template URIs do not identify delivery targets.
+
+## Verify Detective graph relationships (#1475)
+
+Graph members and organization settings identify their graph by ARN. Invitation acceptance checks the graph administrator and region independently of the member. Explicit account references use the Organizations account ID.
+
+## Verify GuardDuty detector configuration and membership (#1476)
+
+GuardDuty helpers reference the configured regional detector ID. Member feature settings keep both the detector and member account. Administration, invitation and enrollment settings do not enumerate future members or expose finding filters and feeds.
+
+## Verify GuardDuty publishing and malware protection resources (#1477)
+
+Publishing configurations resolve their detector, S3 destination and KMS key separately. Malware protection plans verify the IAM role and explicit protected bucket. Object prefixes and scan results do not produce resource relationships.
+
+## Verify Inspector assessment and enrollment references (#1478)
+
+Classic assessment templates resolve the target and explicitly subscribed SNS topics. Inspector2 enrollment identifies configured Organizations accounts, independently of scan categories or observed membership status.
+
+## Verify Macie classification and membership references (#1479)
+
+Macie classification jobs resolve named buckets within the account declared on each bucket definition and match custom identifier IDs independently. Export buckets and encryption keys have separate contracts. Criteria, regular expressions and invitation contents stay opaque.
+
+## Verify Security Hub central policy and aggregation scope (#1480)
+
+Security Hub policy associations distinguish customer policies, the self-managed sentinel, member accounts, OUs and organization roots. Aggregators show their linking mode and explicit regions. Catalog standards do not become subscription endpoints.
+
+## Verify Security Hub V2 integration references (#1481)
+
+Only the external integration action resolves its configured connector. Connectors resolve their encryption key and the ServiceNow secret ARN. Credentials, finding mutations and OCSF queries are omitted.
+
+## Verify Security Lake sources, replication and subscribers (#1482)
+
+Lake configuration retains each region and its replication destinations. Encryption keys, crawler, metastore and replication roles, custom source names and versions, and subscriber notifications resolve through their own configured fields. Generated roles, credentials and external IDs are excluded.
+
+## Verify ARC recovery plan and zonal shift references (#1483)
+
+Region Switch plans verify their execution role, alarm and workflow references against endpoint identities and the configured regions. Cross-account targets require matching role evidence. Zonal shift separates the protected resource and the blocking and outcome CloudWatch alarms.
+
+## Verify explicit FIS template and account references (#1484)
+
+FIS templates identify the execution role, explicit typed target ARNs, CloudWatch stop alarms, logging and report destinations. Target account configurations verify the template ID and the role in the specified account. Resource filters and action parameters remain opaque.
+
+## Verify Firewall Manager policy scopes and resource sets (#1485)
+
+Firewall Manager policies reference resource set IDs and distinguish included and excluded accounts and OUs. An explicit administrator account resolves by its Organizations ID. Policy JSON, resource type selectors and tag matching do not enumerate workloads.
