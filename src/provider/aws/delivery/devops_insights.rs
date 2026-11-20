@@ -46,7 +46,7 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
 pub(super) fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _: &str) -> bool {
     match r.attribute.as_str() {
         "cloudformation.stack_names" => {
-            e.text(r.target, "type") == Some("CLOUD_FORMATION")
+            e.text(r.target, "type") == Some("AWS_CLOUD_FORMATION")
                 && e.text(source, "name")
                     .is_some_and(|name| !name.contains('*'))
         }

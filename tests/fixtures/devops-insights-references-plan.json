@@ -47,7 +47,7 @@
           "create"
         ],
         "after": {
-          "type": "CLOUD_FORMATION",
+          "type": "AWS_CLOUD_FORMATION",
           "cloudformation": [
             {
               "stack_names": [
