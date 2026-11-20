@@ -495,6 +495,78 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_ssmcontacts_contact_channel", "contact_id") => Rule::new(
+            "Owning Incident Manager contact",
+            &[("aws_ssmcontacts_contact", &["arn", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_ssmcontacts_plan", "contact_id") => Rule::new(
+            "Owning Incident Manager contact",
+            &[("aws_ssmcontacts_contact", &["arn", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_ssmcontacts_plan", "stage.target.channel_target_info.contact_channel_id") => {
+            Rule::new(
+                "Stage contact channel",
+                &[("aws_ssmcontacts_contact_channel", &["arn", "id"])],
+                false,
+                &["stage", "stage.target"],
+            )
+        }
+        ("aws_ssmcontacts_plan", "stage.target.contact_target_info.contact_id") => Rule::new(
+            "Stage contact",
+            &[("aws_ssmcontacts_contact", &["arn", "id"])],
+            false,
+            &["stage", "stage.target"],
+        ),
+        ("aws_ssmcontacts_rotation", "contact_ids") => Rule::new(
+            "Rotation participants",
+            &[("aws_ssmcontacts_contact", &["arn", "id"])],
+            true,
+            &[],
+        ),
+        ("aws_ssmincidents_replication_set", "regions.kms_key_arn") => Rule::scalar_set(
+            "Incident replica encryption key",
+            &[("aws_kms_key", &["arn"])],
+        )
+        .with_explicit_destination(),
+        ("aws_ssmincidents_replication_set", "region.kms_key_arn") => Rule::scalar_set(
+            "Incident replica encryption key",
+            &[("aws_kms_key", &["arn"])],
+        )
+        .with_explicit_destination(),
+        ("aws_ssmincidents_response_plan", "engagements") => Rule::new(
+            "Response plan engagements",
+            &[
+                ("aws_ssmcontacts_contact", &["arn", "id"]),
+                ("aws_ssmcontacts_plan", &["contact_id", "id"]),
+            ],
+            true,
+            &[],
+        ),
+        ("aws_ssmincidents_response_plan", "action.ssm_automation.document_name") => Rule::new(
+            "Incident automation document",
+            &[("aws_ssm_document", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_ssmincidents_response_plan", "action.ssm_automation.role_arn") => Rule::new(
+            "Incident automation role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        (
+            "aws_ssmincidents_response_plan",
+            "incident_template.notification_target.sns_topic_arn",
+        ) => Rule::new(
+            "Incident notification topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &["incident_template.notification_target"],
+        ),
         _ => return None,
     })
 }
@@ -508,6 +580,9 @@ pub(crate) fn has_indexed(kind: &str) -> bool {
             | "aws_ssmquicksetup_configuration_manager"
             | "aws_ssm_maintenance_window_target"
             | "aws_ssm_maintenance_window_task"
+            | "aws_ssmcontacts_plan"
+            | "aws_ssmincidents_replication_set"
+            | "aws_ssmincidents_response_plan"
     )
 }
 
@@ -731,6 +806,40 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             _ => false,
         },
         ("aws_ssm_maintenance_window_task", "service_role_arn") => {
+            principal_arn(e, source, "iam", "role/")
+        }
+        ("aws_ssmcontacts_plan", "stage.target.channel_target_info.contact_channel_id") => {
+            e.same_endpoint(
+                r.target,
+                "contact_id",
+                source,
+                "contact_id",
+                "aws_ssmcontacts_contact",
+                "arn",
+            ) || e.same_endpoint(
+                r.target,
+                "contact_id",
+                source,
+                "contact_id",
+                "aws_ssmcontacts_contact",
+                "id",
+            )
+        }
+        ("aws_ssmincidents_replication_set", "regions.kms_key_arn" | "region.kms_key_arn") => {
+            (r.attribute.starts_with("regions.") || e.absent(r.target, "regions"))
+                && path.rsplit_once('.').is_some_and(|(block, _)| {
+                    e.text(r.target, &format!("{block}.name"))
+                        .is_some_and(|region| endpoint_region(e, source, region))
+                        && configured_links::same_account(
+                            e.nodes[r.target].provider_configuration.as_ref(),
+                            e.nodes[source].provider_configuration.as_ref(),
+                        )
+                })
+        }
+        ("aws_ssmincidents_response_plan", "action.ssm_automation.document_name") => {
+            e.text(source, "document_type") == Some("Automation")
+        }
+        ("aws_ssmincidents_response_plan", "action.ssm_automation.role_arn") => {
             principal_arn(e, source, "iam", "role/")
         }
         _ => true,

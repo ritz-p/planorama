@@ -85447,10 +85447,10 @@
       }
     },
     "aws_ssmcontacts_contact_channel": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1552,
-      "gap": "#1552 — Verify the owning contact by ID. A channel type is a discriminator; no phone, email, or delivery address belongs in the diagram.",
+      "gap": "#1552 — Verify the owning contact identity. Delivery addresses remain excluded.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85463,7 +85463,7 @@
         "placement": "Supported: managed Logical Node for ssmcontacts_contact_channel. Terraform resource for managing an AWS SSM Contacts Contact Channel.",
         "ownership": "Missing: verify contact_id before attaching ssmcontacts_contact_channel to a unique parent. Preserve the declaration on ambiguous or unknown references.",
         "network": "Not applicable: ssmcontacts_contact_channel declares no VPC/subnet assignment; the configured contact_id does not establish network containment.",
-        "references": "Missing: Verify the owning contact by ID. A channel type is a discriminator; no phone, email, or delivery address belongs in the diagram.",
+        "references": "Supported: Verify the owning contact identity. Delivery addresses remain excluded.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit personal contact addresses and delivery details from ssmcontacts_contact_channel summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmcontacts_contact_channel.html.markdown",
@@ -85490,7 +85490,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed ResourceContactChannel. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -85510,10 +85512,10 @@
       }
     },
     "aws_ssmcontacts_plan": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1552,
-      "gap": "#1552 — Bind the owning contact and distinguish each stage's channel and contact targets. Do not infer actual engagements.",
+      "gap": "#1552 — Verify the owning contact and distinguish configured stage contacts from channel identities. The plan does not establish runtime engagement.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85526,7 +85528,7 @@
         "placement": "Supported: managed Logical Node for ssmcontacts_plan. Terraform resource for managing an AWS SSM Contact Plan.",
         "ownership": "Missing: verify contact_id before attaching ssmcontacts_plan to a unique parent. Preserve the declaration on ambiguous or unknown references.",
         "network": "Not applicable: ssmcontacts_plan declares no VPC/subnet assignment; the configured contact_id does not establish network containment.",
-        "references": "Missing: Bind the owning contact and distinguish each stage's channel and contact targets. Do not infer actual engagements.",
+        "references": "Supported: Verify the owning contact and distinguish configured stage contacts from channel identities. The plan does not establish runtime engagement.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit personal contact addresses and delivery details from ssmcontacts_plan summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmcontacts_plan.html.markdown",
@@ -85559,7 +85561,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed ResourcePlan. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -85579,10 +85583,10 @@
       }
     },
     "aws_ssmcontacts_rotation": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1552,
-      "gap": "#1552 — Resolve explicit rotation participants; shifts and recurrence do not establish current on-call state or exclusive ownership.",
+      "gap": "#1552 — Verify explicit rotation participants. Shift details do not establish current on-call state or exclusive ownership.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85595,7 +85599,7 @@
         "placement": "Supported: managed Logical Controller for ssmcontacts_rotation. Provides a Terraform resource for managing a Contacts Rotation in AWS Systems Manager Incident Manager.",
         "ownership": "Not applicable: AWS SSM Contacts ssmcontacts_rotation remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssmcontacts_rotation declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Resolve explicit rotation participants; shifts and recurrence do not establish current on-call state or exclusive ownership.",
+        "references": "Supported: Verify explicit rotation participants. Shift details do not establish current on-call state or exclusive ownership.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit personal contact addresses and delivery details from ssmcontacts_rotation summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmcontacts_rotation.html.markdown",
@@ -85625,7 +85629,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newRotationResource. Same-name data lookup has separate selectors. Deprecated attributes: id.",
         "dataContracts": {
@@ -85641,10 +85647,10 @@
       }
     },
     "aws_ssmincidents_replication_set": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1552,
-      "gap": "#1552 — Verify a key per configured replica region. Prefer regions, support deprecated region separately, and leave the overall set's single-region scope unresolved.",
+      "gap": "#1552 — Verify each configured KMS key against its replica region. Prefer the regions form, and preserve unresolved overall regional placement.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85658,7 +85664,7 @@
         "placement": "Supported: managed Logical Node for ssmincidents_replication_set. Terraform resource for managing an incident replication set for AWS Systems Manager Incident Manager.",
         "ownership": "Not applicable: AWS SSM Incident Manager Incidents ssmincidents_replication_set remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssmincidents_replication_set declares no VPC/subnet assignment; the configured region.name does not establish network containment.",
-        "references": "Missing: Verify a key per configured replica region. Prefer regions, support deprecated region separately, and leave the overall set's single-region scope unresolved.",
+        "references": "Supported: Verify each configured KMS key against its replica region. Prefer the regions form, and preserve unresolved overall regional placement.",
         "scope": "Supported: the runtime preserves unresolved scope. Unknown for the set as a whole; configured replica regions do not establish a single home.",
         "summaries": "Intentionally unsupported: omit incident payloads, chat contents and integration secrets from ssmincidents_replication_set summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmincidents_replication_set.html.markdown",
@@ -85693,7 +85699,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceReplicationSet. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -85712,10 +85720,10 @@
       }
     },
     "aws_ssmincidents_response_plan": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1552,
-      "gap": "#1552 — Resolve typed engagement contacts/plans, the SSM runbook, IAM role and explicit SNS destinations. Do not infer incident state or expose integration secrets.",
+      "gap": "#1552 — Verify typed engagements, the SSM automation document, role and explicit SNS destinations. Incident state and integration credentials remain excluded.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85729,7 +85737,7 @@
         "placement": "Supported: managed Logical Node for ssmincidents_response_plan. Terraform resource for managing an incident response plan in AWS Systems Manager Incident Manager.",
         "ownership": "Not applicable: AWS SSM Incident Manager Incidents ssmincidents_response_plan remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssmincidents_response_plan declares no VPC/subnet assignment; the configured engagements does not establish network containment.",
-        "references": "Missing: Resolve typed engagement contacts/plans, the SSM runbook, IAM role and explicit SNS destinations. Do not infer incident state or expose integration secrets.",
+        "references": "Supported: Verify typed engagements, the SSM automation document, role and explicit SNS destinations. Incident state and integration credentials remain excluded.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit incident payloads, chat contents and integration secrets from ssmincidents_response_plan summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmincidents_response_plan.html.markdown",
@@ -85769,7 +85777,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceResponsePlan. Same-name data lookup has separate selectors.",
         "dataContracts": {

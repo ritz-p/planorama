@@ -631,3 +631,88 @@ fn ssm_maintenance_verifies_configured_endpoints() {
         Some("Maintenance task targets")
     ));
 }
+
+#[test]
+fn incident_manager_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/incident-manager-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_ssmcontacts_contact_channel.primary", "contact_id"),
+            ("aws_ssmcontacts_plan.primary", "contact_id"),
+            (
+                "aws_ssmcontacts_plan.primary",
+                "stage.target.channel_target_info.contact_channel_id",
+            ),
+            (
+                "aws_ssmcontacts_plan.primary",
+                "stage.target.contact_target_info.contact_id",
+            ),
+            ("aws_ssmcontacts_rotation.primary", "contact_ids"),
+            (
+                "aws_ssmincidents_replication_set.current",
+                "regions.kms_key_arn",
+            ),
+            (
+                "aws_ssmincidents_replication_set.legacy",
+                "region.kms_key_arn",
+            ),
+            ("aws_ssmincidents_response_plan.primary", "engagements"),
+            (
+                "aws_ssmincidents_response_plan.primary",
+                "action.ssm_automation.document_name",
+            ),
+            (
+                "aws_ssmincidents_response_plan.primary",
+                "action.ssm_automation.role_arn",
+            ),
+            (
+                "aws_ssmincidents_response_plan.primary",
+                "incident_template.notification_target.sns_topic_arn",
+            ),
+        ],
+        ("aws_ssmcontacts_contact.primary", "arn"),
+    );
+    assert!(
+        label(
+            "aws_ssmcontacts_contact_channel",
+            "delivery_address.simple_address"
+        )
+        .is_none()
+    );
+    assert!(label("aws_ssmincidents_response_plan", "incident_template.impact").is_none());
+    assert!(label("aws_ssmcontacts_rotation", "time_zone_id").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_ssmcontacts_contact_channel.primary",
+        "contact_id",
+        "aws_ssmcontacts_contact.primary",
+        "Owning Incident Manager contact",
+        true,
+    );
+    let mut plan: Value = serde_json::from_str(fixture).unwrap();
+    plan["resource_changes"][3]["change"]["after"]["regions"][0]["name"] = json!("us-east-1");
+    let preferred = plan["resource_changes"][3]["change"]["after"]["regions"].clone();
+    let preferred_config =
+        plan["configuration"]["root_module"]["resources"][3]["expressions"]["regions"].clone();
+    plan["resource_changes"][4]["change"]["after"]["regions"] = preferred;
+    plan["configuration"]["root_module"]["resources"][4]["expressions"]["regions"] =
+        preferred_config;
+    let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+    assert!(!verified(
+        &graph,
+        "aws_ssmincidents_replication_set.current",
+        "regions.kms_key_arn",
+        Some("Incident replica encryption key")
+    ));
+    assert!(!verified(
+        &graph,
+        "aws_ssmincidents_replication_set.legacy",
+        "region.kms_key_arn",
+        Some("Incident replica encryption key")
+    ));
+    let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
+    assert!(!svg.contains("fictional@example.invalid"));
+}

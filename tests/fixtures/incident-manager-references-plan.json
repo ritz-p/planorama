@@ -1,0 +1,541 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ssmcontacts_contact_channel.primary",
+      "mode": "managed",
+      "type": "aws_ssmcontacts_contact_channel",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "contact_id": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
+          "arn": "arn:aws:ssm-contacts:us-east-1:123456789012:contact-channel/primary/notify",
+          "type": "EMAIL",
+          "delivery_address": [
+            {
+              "simple_address": "fictional@example.invalid"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssmcontacts_plan.primary",
+      "mode": "managed",
+      "type": "aws_ssmcontacts_plan",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "contact_id": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
+          "id": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
+          "stage": [
+            {
+              "target": [
+                {
+                  "channel_target_info": [
+                    {
+                      "contact_channel_id": "arn:aws:ssm-contacts:us-east-1:123456789012:contact-channel/primary/notify",
+                      "retry_interval_in_minutes": 1
+                    }
+                  ]
+                },
+                {
+                  "contact_target_info": [
+                    {
+                      "contact_id": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/secondary",
+                      "is_essential": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssmcontacts_rotation.primary",
+      "mode": "managed",
+      "type": "aws_ssmcontacts_rotation",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "rotation",
+          "contact_ids": [
+            "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
+            "arn:aws:ssm-contacts:us-east-1:123456789012:contact/secondary"
+          ],
+          "time_zone_id": "UTC"
+        }
+      }
+    },
+    {
+      "address": "aws_ssmincidents_replication_set.current",
+      "mode": "managed",
+      "type": "aws_ssmincidents_replication_set",
+      "name": "current",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "regions": [
+            {
+              "name": "us-west-2",
+              "kms_key_arn": "arn:aws:kms:us-west-2:123456789012:key/example"
+            },
+            {
+              "name": "us-east-1",
+              "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/primary"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssmincidents_replication_set.legacy",
+      "mode": "managed",
+      "type": "aws_ssmincidents_replication_set",
+      "name": "legacy",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "region": [
+            {
+              "name": "us-west-2",
+              "kms_key_arn": "arn:aws:kms:us-west-2:123456789012:key/example"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssmincidents_response_plan.primary",
+      "mode": "managed",
+      "type": "aws_ssmincidents_response_plan",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "engagements": [
+            "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
+            "arn:aws:ssm-contacts:us-east-1:123456789012:contact/secondary"
+          ],
+          "action": [
+            {
+              "ssm_automation": [
+                {
+                  "document_name": "Automation",
+                  "role_arn": "arn:aws:iam::123456789012:role/IncidentAutomation"
+                }
+              ]
+            }
+          ],
+          "incident_template": [
+            {
+              "notification_target": [
+                {
+                  "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:incidents"
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssmcontacts_contact.primary",
+      "mode": "managed",
+      "type": "aws_ssmcontacts_contact",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
+          "type": "PERSONAL"
+        }
+      }
+    },
+    {
+      "address": "aws_ssmcontacts_contact.secondary",
+      "mode": "managed",
+      "type": "aws_ssmcontacts_contact",
+      "name": "secondary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/secondary",
+          "type": "PERSONAL"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.replica",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "replica",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/example"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.primary",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "primary",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/primary"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.incidents",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "incidents",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:incidents"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_document.incident",
+      "mode": "managed",
+      "type": "aws_ssm_document",
+      "name": "incident",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "document_type": "Automation",
+          "name": "Automation"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.incident",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "incident",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/IncidentAutomation"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      },
+      "aws.replica": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "replica",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ssmcontacts_contact_channel.primary",
+          "mode": "managed",
+          "type": "aws_ssmcontacts_contact_channel",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "contact_id": {
+              "references": [
+                "aws_ssmcontacts_contact.primary.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssmcontacts_plan.primary",
+          "mode": "managed",
+          "type": "aws_ssmcontacts_plan",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "contact_id": {
+              "references": [
+                "aws_ssmcontacts_contact.primary.arn"
+              ]
+            },
+            "stage": [
+              {
+                "target": [
+                  {
+                    "channel_target_info": [
+                      {
+                        "contact_channel_id": {
+                          "references": [
+                            "aws_ssmcontacts_contact_channel.primary.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "contact_target_info": [
+                      {
+                        "contact_id": {
+                          "references": [
+                            "aws_ssmcontacts_contact.secondary.arn"
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssmcontacts_rotation.primary",
+          "mode": "managed",
+          "type": "aws_ssmcontacts_rotation",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "contact_ids": {
+              "references": [
+                "aws_ssmcontacts_contact.primary.arn",
+                "aws_ssmcontacts_contact.secondary.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssmincidents_replication_set.current",
+          "mode": "managed",
+          "type": "aws_ssmincidents_replication_set",
+          "name": "current",
+          "provider_config_key": "aws",
+          "expressions": {
+            "regions": [
+              {
+                "name": {
+                  "constant_value": "us-east-1"
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.primary.arn"
+                  ]
+                }
+              },
+              {
+                "name": {
+                  "constant_value": "us-west-2"
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.replica.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssmincidents_replication_set.legacy",
+          "mode": "managed",
+          "type": "aws_ssmincidents_replication_set",
+          "name": "legacy",
+          "provider_config_key": "aws",
+          "expressions": {
+            "region": [
+              {
+                "name": {
+                  "constant_value": "us-west-2"
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.replica.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssmincidents_response_plan.primary",
+          "mode": "managed",
+          "type": "aws_ssmincidents_response_plan",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {
+            "engagements": {
+              "references": [
+                "aws_ssmcontacts_plan.primary.id",
+                "aws_ssmcontacts_contact.secondary.arn"
+              ]
+            },
+            "action": [
+              {
+                "ssm_automation": [
+                  {
+                    "document_name": {
+                      "references": [
+                        "aws_ssm_document.incident.name"
+                      ]
+                    },
+                    "role_arn": {
+                      "references": [
+                        "aws_iam_role.incident.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ],
+            "incident_template": [
+              {
+                "notification_target": [
+                  {
+                    "sns_topic_arn": {
+                      "references": [
+                        "aws_sns_topic.incidents.arn"
+                      ]
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssmcontacts_contact.primary",
+          "mode": "managed",
+          "type": "aws_ssmcontacts_contact",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssmcontacts_contact.secondary",
+          "mode": "managed",
+          "type": "aws_ssmcontacts_contact",
+          "name": "secondary",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.replica",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "replica",
+          "provider_config_key": "aws.replica",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.primary",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "primary",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.incidents",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "incidents",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_document.incident",
+          "mode": "managed",
+          "type": "aws_ssm_document",
+          "name": "incident",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.incident",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "incident",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
