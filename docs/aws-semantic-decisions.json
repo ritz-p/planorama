@@ -86062,10 +86062,10 @@
       }
     },
     "aws_amplify_domain_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1584,
-      "gap": "#1584 — Verify the app, same-app configured branch names and custom ACM certificate ARN when the selected certificate type is CUSTOM. DNS verification output is not a configured Route 53 record. Verify the owning app while preserving separate branch and certificate identities.",
+      "gap": "#1584 — Verify the app ID, the unordered same-app branch selectors and a CUSTOM ACM certificate in us-east-1. The DNS verification output does not establish a configured record.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86080,9 +86080,9 @@
           "certificate_verification_dns_record"
         ],
         "placement": "Supported: managed Logical Association with the AWS Amplify service label. Provides an Amplify Domain Association resource.",
-        "ownership": "Missing: Verify the owning app while preserving separate branch and certificate identities.",
+        "ownership": "Supported: Present the domain association under its verified app.",
         "network": "Not applicable: The domain and certificate describe publication, with no VPC placement evidence.",
-        "references": "Missing: Verify the app, same-app configured branch names and custom ACM certificate ARN when the selected certificate type is CUSTOM. DNS verification output is not a configured Route 53 record.",
+        "references": "Supported: Verify the app ID, the unordered same-app branch selectors and a CUSTOM ACM certificate in us-east-1. The DNS verification output does not establish a configured record.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the regional app for branch identity and require a custom certificate in us-east-1 based on the configured ARN.",
         "summaries": "Intentionally unsupported: omit returned verification DNS records and certificate material. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/amplify_domain_association.html.markdown",
@@ -86128,17 +86128,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceDomainAssociation. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_amplify_webhook": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1584,
-      "gap": "#1584 — Verify the app and its named branch. The generated webhook URL is not a downstream endpoint. Verify webhook ownership by the app and qualify the branch without treating the URL as an identifier.",
+      "gap": "#1584 — Verify the configured app and its branch by branch name. The generated webhook URL does not establish a downstream endpoint.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86150,9 +86152,9 @@
           "url"
         ],
         "placement": "Supported: managed Logical Node with the AWS Amplify service label. Provides an Amplify Webhook resource.",
-        "ownership": "Missing: Verify webhook ownership by the app and qualify the branch without treating the URL as an identifier.",
+        "ownership": "Supported: Present the webhook under its verified app.",
         "network": "Not applicable: A webhook does not establish network attachment.",
-        "references": "Missing: Verify the app and its named branch. The generated webhook URL is not a downstream endpoint.",
+        "references": "Supported: Verify the configured app and its branch by branch name. The generated webhook URL does not establish a downstream endpoint.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. A branch selector is local to the app and its region.",
         "summaries": "Intentionally unsupported: omit generated webhook URLs and invocation contents. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/amplify_webhook.html.markdown",
@@ -86182,7 +86184,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed resourceWebhook. No same-name data source in the pinned schema.",
         "dataContracts": {}

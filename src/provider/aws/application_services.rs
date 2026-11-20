@@ -7,17 +7,41 @@ const AMPLIFY_APP: &str = "aws_amplify_app";
 const AMPLIFY_BACKEND: &str = "aws_amplify_backend_environment";
 const AMPLIFY_BRANCH: &str = "aws_amplify_branch";
 
+const AMPLIFY_DOMAIN: &str = "aws_amplify_domain_association";
+const AMPLIFY_WEBHOOK: &str = "aws_amplify_webhook";
+
+pub(crate) fn has_indexed(kind: &str) -> bool {
+    kind == AMPLIFY_DOMAIN
+}
+
+pub(crate) fn indexed(kind: &str, path: &str) -> bool {
+    has_indexed(kind) && configured_links::indexed(kind, path, rule)
+}
+
 fn rule(kind: &str, path: &str) -> Option<Rule> {
     Some(match (kind, path) {
         (AMPLIFY_APP, "iam_service_role_arn") => role("Amplify build service role"),
         (AMPLIFY_APP, "compute_role_arn") => role("Amplify SSR compute role"),
-        (AMPLIFY_BACKEND | AMPLIFY_BRANCH, "app_id") => {
+        (AMPLIFY_BACKEND | AMPLIFY_BRANCH | AMPLIFY_DOMAIN | AMPLIFY_WEBHOOK, "app_id") => {
             scalar("Amplify app", &[(AMPLIFY_APP, &["id"])])
         }
         (AMPLIFY_BRANCH, "backend_environment_arn") => scalar(
             "Amplify backend environment",
             &[(AMPLIFY_BACKEND, &["arn"])],
         ),
+        (AMPLIFY_WEBHOOK, "branch_name") => scalar(
+            "Amplify target branch",
+            &[(AMPLIFY_BRANCH, &["branch_name"])],
+        ),
+        (AMPLIFY_DOMAIN, "sub_domain.branch_name") => Rule::scalar_set(
+            "Amplify target branches",
+            &[(AMPLIFY_BRANCH, &["branch_name"])],
+        ),
+        (AMPLIFY_DOMAIN, "certificate_settings.custom_certificate_arn") => scalar(
+            "Amplify custom certificate",
+            &[("aws_acm_certificate", &["arn"])],
+        )
+        .in_control_plane_account(),
         _ => return None,
     })
 }
@@ -158,6 +182,19 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             .is_some_and(|name| !name.is_empty());
     }
     match (e.nodes[target].resource_type.as_str(), path) {
+        (AMPLIFY_DOMAIN, "certificate_settings.0.custom_certificate_arn") => {
+            e.text(target, "certificate_settings.0.type") == Some("CUSTOM")
+                && super::scope::scope(&e.nodes[source])
+                    .and_then(|scope| scope.region)
+                    .is_some_and(|region| region.0 == "us-east-1")
+                && e.text(source, "arn")
+                    .and_then(|arn| arn_resource(&e.nodes[source], arn, "acm", true))
+                    .and_then(|resource| resource.strip_prefix("certificate/"))
+                    .is_some_and(|id| !id.is_empty())
+        }
+        (AMPLIFY_DOMAIN | AMPLIFY_WEBHOOK, _) if r.attribute != "app_id" => {
+            e.same_endpoint(target, "app_id", source, "app_id", AMPLIFY_APP, "id")
+        }
         (AMPLIFY_BACKEND, "app_id") => amplify_backend_in_app(e, target, source),
         (AMPLIFY_BRANCH, "backend_environment_arn") => {
             endpoint(e, target, "app_id", AMPLIFY_APP, &["id"]).is_some_and(|app| {
@@ -171,6 +208,8 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match kind {
+        AMPLIFY_DOMAIN => Some(("app_id", "Amplify app", "Domains")),
+        AMPLIFY_WEBHOOK => Some(("app_id", "Amplify app", "Webhooks")),
         AMPLIFY_BRANCH => Some(("app_id", "Amplify app", "Branches")),
         AMPLIFY_BACKEND => Some(("app_id", "Amplify app", "Backend environments")),
         _ => None,
