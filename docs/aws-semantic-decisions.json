@@ -89607,7 +89607,7 @@
       }
     },
     "aws_connect_security_profile": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1603,
       "gap": "#1603 — Verify the instance ID and preserve the resulting profile identifier for explicit user assignments. Organization resource output and permissions cannot establish external identities or effective access. Qualify the profile by its instance while retaining it as a reusable object.",
@@ -89625,7 +89625,7 @@
         "placement": "Supported: managed Logical Policy with the Amazon Connect service label. Provides details about a specific Amazon Connect Security Profile.",
         "ownership": "Missing: Qualify the profile by its instance while retaining it as a reusable object.",
         "network": "Not applicable: Permissions are control-plane configuration and do not indicate network placement.",
-        "references": "Missing: Verify the instance ID and preserve the resulting profile identifier for explicit user assignments. Organization resource output and permissions cannot establish external identities or effective access.",
+        "references": "Supported: Verify the instance ID and preserve the resulting profile identifier for explicit user assignments. Organization resource output and permissions cannot establish external identities or effective access. Qualify the profile by its instance while retaining it as a reusable object.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The security profile ID is meaningful only within its verified instance.",
         "summaries": "Intentionally unsupported: omit permission lists, effective access and user assignment inventories. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_security_profile.html.markdown",
@@ -89662,7 +89662,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceSecurityProfile. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89697,7 +89699,7 @@
       }
     },
     "aws_connect_user": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1603,
       "gap": "#1603 — Verify the instance, routing profile, hierarchy group and configured security profile IDs. Do not treat a computed or unspecified directory user ID as a same-name managed user. Verify ownership by the instance. Shared profiles and groups remain independent.",
@@ -89717,7 +89719,7 @@
         "placement": "Supported: managed Logical Identity with the Amazon Connect service label. Provides details about a specific Amazon Connect User",
         "ownership": "Missing: Verify ownership by the instance. Shared profiles and groups remain independent.",
         "network": "Not applicable: User assignment is service configuration without deployment placement.",
-        "references": "Missing: Verify the instance, routing profile, hierarchy group and configured security profile IDs. Do not treat a computed or unspecified directory user ID as a same-name managed user.",
+        "references": "Supported: Verify the instance, routing profile, hierarchy group and configured security profile IDs. Do not treat a computed or unspecified directory user ID as a same-name managed user. Verify ownership by the instance. Shared profiles and groups remain independent.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Resolve all Connect selectors within the verified instance. Directory identity needs separate evidence.",
         "summaries": "Intentionally unsupported: omit passwords, personal details and directory identity values. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_user.html.markdown",
@@ -89762,7 +89764,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceUser. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89797,7 +89801,7 @@
       }
     },
     "aws_connect_user_hierarchy_group": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1603,
       "gap": "#1603 — Verify the configured instance and optional unique parent group, rejecting cycles. Provider-returned hierarchy path and level do not prove additional managed ancestors. Verify the parent in the same instance before hierarchical presentation.",
@@ -89814,9 +89818,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect User Hierarchy Group",
-        "ownership": "Missing: Verify the parent in the same instance before hierarchical presentation.",
+        "ownership": "Supported: Present a child under its verified same-instance parent when the ancestry is acyclic.",
         "network": "Not applicable: Hierarchy membership has no VPC attachment input.",
-        "references": "Missing: Verify the configured instance and optional unique parent group, rejecting cycles. Provider-returned hierarchy path and level do not prove additional managed ancestors.",
+        "references": "Supported: Verify the configured instance and optional unique parent group, rejecting cycles. Provider-returned hierarchy path and level do not prove additional managed ancestors. Verify the parent in the same instance before hierarchical presentation.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Parent group identity must share the verified instance and provider scope.",
         "summaries": "Intentionally unsupported: omit computed hierarchy contents and personal details. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_user_hierarchy_group.html.markdown",
@@ -89916,7 +89920,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceUserHierarchyGroup. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89951,7 +89957,7 @@
       }
     },
     "aws_connect_user_hierarchy_structure": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1603,
       "gap": "#1603 — Verify the owning instance. Configured hierarchy level names describe structure but do not identify concrete groups or users. Treat the schema as configuration of a verified instance without deriving membership.",
@@ -89966,7 +89972,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect User Hierarchy Structure",
         "ownership": "Missing: Treat the schema as configuration of a verified instance without deriving membership.",
         "network": "Not applicable: A hierarchy schema has no network placement input.",
-        "references": "Missing: Verify the owning instance. Configured hierarchy level names describe structure but do not identify concrete groups or users.",
+        "references": "Supported: Verify the owning instance. Configured hierarchy level names describe structure but do not identify concrete groups or users. Treat the schema as configuration of a verified instance without deriving membership.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The hierarchy structure is specific to the verified instance.",
         "summaries": "Intentionally unsupported: omit hierarchy labels as inferred identity or membership. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_user_hierarchy_structure.html.markdown",
@@ -89988,7 +89994,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceUserHierarchyStructure. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
