@@ -46,3 +46,18 @@ fn invited_graph_requires_verified_bindings_in_the_graph_region() {
         json!("us-west-2");
     assert!(!check(&fixture));
 }
+
+#[test]
+fn organization_targets_can_be_managed_in_a_separate_account() {
+    crate::configured_service_links::organization_targets(
+        include_str!("../../fixtures/detective-graphs-plan.json"),
+        super::label,
+        &[
+            ("aws_detective_member.sample2", "account_id"),
+            (
+                "aws_detective_organization_admin_account.sample5",
+                "account_id",
+            ),
+        ],
+    );
+}
