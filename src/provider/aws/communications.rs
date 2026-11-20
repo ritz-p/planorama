@@ -80,6 +80,11 @@ const HIERARCHY: &str = "aws_connect_user_hierarchy_group";
 const STRUCTURE: &str = "aws_connect_user_hierarchy_structure";
 const HIERARCHY_ID: Outputs = &[(HIERARCHY, &["hierarchy_group_id"])];
 
+const CUSTOMER_DOMAIN: &str = "aws_customerprofiles_domain";
+const CUSTOMER_PROFILE: &str = "aws_customerprofiles_profile";
+const MATCH_BUCKET: &str = "matching.exporting_config.s3_exporting.s3_bucket_name";
+const RULE_BUCKET: &str = "rule_based_matching.exporting_config.s3_exporting.s3_bucket_name";
+
 fn voice_configuration(kind: &str) -> bool {
     matches!(
         kind,
@@ -101,6 +106,7 @@ pub(crate) fn has_indexed(kind: &str) -> bool {
             | QUEUE
             | QUICK
             | ROUTING
+            | CUSTOMER_DOMAIN
     )
 }
 
@@ -253,6 +259,20 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[],
         ),
         (HIERARCHY, "parent_group_id") => scalar("Connect parent hierarchy group", HIERARCHY_ID),
+        (CUSTOMER_DOMAIN, "default_encryption_key") => {
+            scalar("Customer Profiles encryption key", KMS)
+        }
+        (CUSTOMER_DOMAIN, "dead_letter_queue_url") => scalar(
+            "Customer Profiles dead-letter queue",
+            &[("aws_sqs_queue", &["url", "id"])],
+        ),
+        (CUSTOMER_DOMAIN, MATCH_BUCKET | RULE_BUCKET) => {
+            scalar("Customer Profiles export bucket", BUCKET)
+        }
+        (CUSTOMER_PROFILE, "domain_name") => scalar(
+            "Customer Profiles domain",
+            &[(CUSTOMER_DOMAIN, &["domain_name", "id"])],
+        ),
         _ => return None,
     })
 }
@@ -409,6 +429,20 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     if e.nodes[target].resource_type == HIERARCHY && r.attribute == "parent_group_id" {
         return hierarchy_parent(e, target, source);
     }
+    if e.nodes[target].resource_type == CUSTOMER_DOMAIN {
+        return match r.attribute.as_str() {
+            "default_encryption_key" => key_input(e, target, source, path),
+            "dead_letter_queue_url" => queue_url(e, target, source),
+            MATCH_BUCKET => e.value(target, "matching.0.enabled") == Some(&Value::Bool(true)),
+            RULE_BUCKET => {
+                e.value(target, "rule_based_matching.0.enabled") == Some(&Value::Bool(true))
+            }
+            _ => false,
+        };
+    }
+    if e.nodes[target].resource_type == CUSTOMER_PROFILE {
+        return r.attribute == "domain_name";
+    }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
         "guardrail_policy_arns" => ("iam", "policy/"),
@@ -467,6 +501,9 @@ pub(crate) fn inherit_voice_region(nodes: &mut [TerraformEntity], refs: &[Attrib
 }
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
+    if kind == CUSTOMER_PROFILE {
+        return Some(("domain_name", "Customer Profiles domain", "Profiles"));
+    }
     if kind == HIERARCHY {
         return Some((
             "parent_group_id",
@@ -702,6 +739,35 @@ fn hierarchy_parent(e: &Evidence<'_>, child: usize, parent: usize) -> bool {
         parent = next;
     }
     false
+}
+
+fn queue_url(e: &Evidence<'_>, target: usize, source: usize) -> bool {
+    let Some(url) = e
+        .text(target, "dead_letter_queue_url")
+        .and_then(|url| url.strip_prefix("https://"))
+    else {
+        return false;
+    };
+    let parts: Vec<_> = url.split('/').collect();
+    let [host, account, queue] = parts.as_slice() else {
+        return false;
+    };
+    let scope = super::scope::scope(&e.nodes[source]);
+    scope.and_then(|s| s.region).is_some_and(|region| {
+        let region = region.0;
+        *host == format!("sqs.{region}.amazonaws.com")
+            || *host == format!("sqs.{region}.amazonaws.com.cn")
+            || *host == format!("sqs.{region}.api.aws")
+            || *host == format!("{region}.queue.amazonaws.com")
+            || (region == "us-east-1" && *host == "queue.amazonaws.com")
+    }) && crate::model::AwsAccountScope::new(account).is_some()
+        && e.nodes[source]
+            .provider_configuration
+            .as_ref()
+            .and_then(|c| c.account.as_ref())
+            .is_none_or(|a| a.as_str() == *account)
+        && !queue.is_empty()
+        && !queue.contains(['?', '#', ':'])
 }
 
 #[cfg(test)]

@@ -90105,7 +90105,7 @@
       }
     },
     "aws_customerprofiles_domain": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1604,
       "gap": "#1604 — Verify the explicit KMS key, SQS dead-letter URL and configured S3 export buckets under the proven matching mode. Service defaults and matching rules do not identify actual merges or deliveries.",
@@ -90124,7 +90124,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect Customer Profiles service label. Terraform resource for managing an Amazon Customer Profiles Domain.",
         "ownership": "Not applicable: The domain and its reusable destinations remain independently addressable.",
         "network": "Not applicable: Matching and delivery do not establish a VPC deployment.",
-        "references": "Missing: Verify the explicit KMS key, SQS dead-letter URL and configured S3 export buckets under the proven matching mode. Service defaults and matching rules do not identify actual merges or deliveries.",
+        "references": "Supported: Verify the explicit KMS key, SQS dead-letter URL and configured S3 export buckets under the proven matching mode. Service defaults and matching rules do not identify actual merges or deliveries.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Domain names require account and regional qualification. Qualify destinations separately.",
         "summaries": "Intentionally unsupported: omit matching rules, merge outcomes and individual data. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/customerprofiles_domain.html.markdown",
@@ -90168,14 +90168,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceDomain. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_customerprofiles_profile": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1604,
       "gap": "#1604 — Verify the configured domain name by scoped, explicit domain evidence. IDs and attribute values do not establish matching or identity equivalence across services. Qualify the profile owner by the domain without treating profile values as relationships.",
@@ -90189,9 +90191,9 @@
           "attributes"
         ],
         "placement": "Supported: managed Logical Node with the Amazon Connect Customer Profiles service label. Terraform resource for managing an Amazon Customer Profiles Profile.",
-        "ownership": "Missing: Qualify the profile owner by the domain without treating profile values as relationships.",
+        "ownership": "Supported: Present a profile under its verified Customer Profiles domain.",
         "network": "Not applicable: An individual profile has no network placement input.",
-        "references": "Missing: Verify the configured domain name by scoped, explicit domain evidence. IDs and attribute values do not establish matching or identity equivalence across services.",
+        "references": "Supported: Verify the configured domain name by scoped, explicit domain evidence. IDs and attribute values do not establish matching or identity equivalence across services. Qualify the profile owner by the domain without treating profile values as relationships.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Profile identity is local to the regional domain.",
         "summaries": "Intentionally unsupported: omit personal identifiers, contact details, addresses and profile attribute values. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/customerprofiles_profile.html.markdown",
@@ -90220,7 +90222,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceProfile. No same-name data source in the pinned schema.",
         "dataContracts": {}
