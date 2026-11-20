@@ -27,6 +27,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 false,
                 &[],
             )
+            .with_explicit_destination()
         }
         _ => return None,
     })
