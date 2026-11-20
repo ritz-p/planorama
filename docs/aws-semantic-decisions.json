@@ -81274,10 +81274,10 @@
       }
     },
     "aws_devopsagent_agent_space": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1536,
-      "gap": "#1536 — Resolve only the configured encryption key; an agent space ID or locale supplies no deployment topology.",
+      "gap": "#1536 — Verify the configured customer KMS key ARN.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81290,7 +81290,7 @@
         "placement": "Supported: managed Logical Node for devopsagent_agent_space. Manages an AWS DevOps Agent Space.",
         "ownership": "Not applicable: AWS DevOps Agent devopsagent_agent_space remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: devopsagent_agent_space declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Resolve only the configured encryption key; an agent space ID or locale supplies no deployment topology.",
+        "references": "Supported: Verify the configured customer KMS key ARN.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit agent instructions and operational data from devopsagent_agent_space summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devopsagent_agent_space.html.markdown",
@@ -81317,7 +81317,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newAgentSpaceResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -81365,10 +81367,10 @@
       }
     },
     "aws_devopsguru_notification_channel": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1536,
-      "gap": "#1536 — Resolve the configured SNS notification topic; severity filters select notifications and do not identify resources.",
+      "gap": "#1536 — Verify the configured SNS topic. Notification severity filters remain configuration.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81380,7 +81382,7 @@
         "placement": "Supported: managed Logical Controller for devopsguru_notification_channel. Terraform resource for managing an AWS DevOps Guru Notification Channel.",
         "ownership": "Not applicable: AWS DevOps Guru devopsguru_notification_channel remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: devopsguru_notification_channel declares no VPC/subnet assignment; the configured sns.topic_arn does not establish network containment.",
-        "references": "Missing: Resolve the configured SNS notification topic; severity filters select notifications and do not identify resources.",
+        "references": "Supported: Verify the configured SNS topic. Notification severity filters remain configuration.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_notification_channel summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devopsguru_notification_channel.html.markdown",
@@ -81404,7 +81406,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newNotificationChannelResource. Same-name data lookup has separate selectors and blocks filters, sns.",
         "dataContracts": {
@@ -81420,10 +81424,10 @@
       }
     },
     "aws_devopsguru_resource_collection": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1536,
-      "gap": "#1536 — Match individually configured stack names to verified CloudFormation stacks. Wildcards, tags and account-wide selection do not establish membership.",
+      "gap": "#1536 — Verify individually configured stack names in a CloudFormation collection. Wildcards and tag selectors stay opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81435,7 +81439,7 @@
         "placement": "Supported: managed Logical Node for devopsguru_resource_collection. Terraform resource for managing an AWS DevOps Guru Resource Collection.",
         "ownership": "Not applicable: AWS DevOps Guru devopsguru_resource_collection remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: devopsguru_resource_collection declares no VPC/subnet assignment; the configured type does not establish network containment.",
-        "references": "Missing: Match individually configured stack names to verified CloudFormation stacks. Wildcards, tags and account-wide selection do not establish membership.",
+        "references": "Supported: Verify individually configured stack names in a CloudFormation collection. Wildcards and tag selectors stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_resource_collection summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devopsguru_resource_collection.html.markdown",
@@ -81462,7 +81466,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newResourceCollectionResource. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -81478,10 +81484,10 @@
       }
     },
     "aws_devopsguru_service_integration": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1536,
-      "gap": "#1536 — Verify a customer-managed KMS key only for the matching encryption mode and enabled setting. OpsCenter or anomaly-detection switches do not identify endpoints.",
+      "gap": "#1536 — Verify an explicitly configured customer-managed key only when server-side encryption is enabled in that mode.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81494,7 +81500,7 @@
         "placement": "Supported: managed Logical Controller for devopsguru_service_integration. Terraform resource for managing an AWS DevOps Guru Service Integration.",
         "ownership": "Not applicable: AWS DevOps Guru devopsguru_service_integration remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: devopsguru_service_integration declares no VPC/subnet assignment; the configured kms_server_side_encryption.type does not establish network containment.",
-        "references": "Missing: Verify a customer-managed KMS key only for the matching encryption mode and enabled setting. OpsCenter or anomaly-detection switches do not identify endpoints.",
+        "references": "Supported: Verify an explicitly configured customer-managed key only when server-side encryption is enabled in that mode.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit findings, notification contents and tag values from devopsguru_service_integration summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devopsguru_service_integration.html.markdown",
@@ -81524,7 +81530,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newServiceIntegrationResource. No same-name data source in the pinned schema. Deprecated attributes: id.",
         "dataContracts": {}

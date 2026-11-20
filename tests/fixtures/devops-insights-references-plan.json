@@ -1,0 +1,244 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_devopsagent_agent_space.insights",
+      "mode": "managed",
+      "type": "aws_devopsagent_agent_space",
+      "name": "insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_key_arn": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_devopsguru_notification_channel.insights",
+      "mode": "managed",
+      "type": "aws_devopsguru_notification_channel",
+      "name": "insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "sns": [
+            {
+              "topic_arn": "arn:aws:sns:us-east-1:123456789012:insights"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_devopsguru_resource_collection.insights",
+      "mode": "managed",
+      "type": "aws_devopsguru_resource_collection",
+      "name": "insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type": "CLOUD_FORMATION",
+          "cloudformation": [
+            {
+              "stack_names": [
+                "delivery"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_devopsguru_service_integration.insights",
+      "mode": "managed",
+      "type": "aws_devopsguru_service_integration",
+      "name": "insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "kms_server_side_encryption": [
+            {
+              "opt_in_status": "ENABLED",
+              "type": "CUSTOMER_MANAGED_KEY",
+              "kms_key_id": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.insights",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/aaaaaaaa-aaaa-4aaa-aaaa-aaaaaaaaaaaa"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.insights",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "insights",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:insights"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack.delivery",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack",
+      "name": "delivery",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "delivery"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_devopsagent_agent_space.insights",
+          "mode": "managed",
+          "type": "aws_devopsagent_agent_space",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_key_arn": {
+              "references": [
+                "aws_kms_key.insights.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_devopsguru_notification_channel.insights",
+          "mode": "managed",
+          "type": "aws_devopsguru_notification_channel",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {
+            "sns": [
+              {
+                "topic_arn": {
+                  "references": [
+                    "aws_sns_topic.insights.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_devopsguru_resource_collection.insights",
+          "mode": "managed",
+          "type": "aws_devopsguru_resource_collection",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {
+            "cloudformation": [
+              {
+                "stack_names": {
+                  "references": [
+                    "aws_cloudformation_stack.delivery.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_devopsguru_service_integration.insights",
+          "mode": "managed",
+          "type": "aws_devopsguru_service_integration",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {
+            "kms_server_side_encryption": [
+              {
+                "kms_key_id": {
+                  "references": [
+                    "aws_kms_key.insights.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_kms_key.insights",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.insights",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "insights",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudformation_stack.delivery",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack",
+          "name": "delivery",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

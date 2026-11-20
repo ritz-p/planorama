@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = devops_insights::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = devicefarm::rule(kind, path) {
         return Some(rule);
     }
@@ -51,6 +54,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if devops_insights::resource(kind) {
+        return true;
+    }
     if devicefarm::resource(kind) {
         return true;
     }
@@ -109,6 +115,9 @@ pub(super) fn annotate(
 
 fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, path: &str) -> bool {
     let kind = &e.nodes[reference.target].resource_type;
+    if devops_insights::resource(kind) {
+        return devops_insights::qualifies(e, reference, source, path);
+    }
     if devicefarm::resource(kind) {
         return devicefarm::qualifies(e, reference, source, path);
     }
@@ -235,6 +244,8 @@ mod pipeline;
 mod delivery_notifications;
 
 mod devicefarm;
+
+mod devops_insights;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
