@@ -52,3 +52,51 @@ fn codeartifact_requires_current_typed_evidence() {
         ("aws_kms_key.packages", "arn"),
     );
 }
+
+#[test]
+fn codebuild_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/codebuild-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_codebuild_project.build", "service_role"),
+            ("aws_codebuild_project.build", "encryption_key"),
+            ("aws_codebuild_project.build", "environment.fleet.fleet_arn"),
+            ("aws_codebuild_project.build", "vpc_config.vpc_id"),
+            ("aws_codebuild_project.build", "vpc_config.subnets"),
+            (
+                "aws_codebuild_project.build",
+                "vpc_config.security_group_ids",
+            ),
+            ("aws_codebuild_project.build", "artifacts.location"),
+            (
+                "aws_codebuild_project.build",
+                "secondary_artifacts.location",
+            ),
+            (
+                "aws_codebuild_project.build",
+                "logs_config.cloudwatch_logs.group_name",
+            ),
+            (
+                "aws_codebuild_project.build",
+                "logs_config.s3_logs.location",
+            ),
+            ("aws_codebuild_fleet.build", "fleet_service_role"),
+            ("aws_codebuild_fleet.build", "vpc_config.vpc_id"),
+            ("aws_codebuild_fleet.build", "vpc_config.subnets"),
+            ("aws_codebuild_fleet.build", "vpc_config.security_group_ids"),
+            (
+                "aws_codebuild_report_group.build",
+                "export_config.s3_destination.bucket",
+            ),
+            (
+                "aws_codebuild_report_group.build",
+                "export_config.s3_destination.encryption_key",
+            ),
+            ("aws_codebuild_resource_policy.build", "resource_arn"),
+            ("aws_codebuild_webhook.build", "project_name"),
+        ],
+        ("aws_iam_role.build", "arn"),
+    );
+}

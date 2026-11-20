@@ -79232,10 +79232,10 @@
       }
     },
     "aws_codebuild_fleet": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1528,
-      "gap": "#1528 — Resolve fleet role and configured network endpoints. Neither the fleet nor its projects own the subnets.",
+      "gap": "#1528 — Verify the fleet role, explicit VPC and VPC-qualified subnets and security groups.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79249,8 +79249,8 @@
         ],
         "placement": "Supported: managed Spatial Node for codebuild_fleet. Provides a CodeBuild Fleet Resource.",
         "ownership": "Not applicable: AWS CodeBuild codebuild_fleet remains independently addressable; a reference or shared target does not justify embedding.",
-        "network": "Missing: verify vpc_config.vpc_id, vpc_config.subnets, vpc_config.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
-        "references": "Missing: Resolve fleet role and configured network endpoints. Neither the fleet nor its projects own the subnets.",
+        "network": "Supported: Verify network choices in the configured VPC.",
+        "references": "Supported: Verify the fleet role, explicit VPC and VPC-qualified subnets and security groups.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_fleet summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codebuild_fleet.html.markdown",
@@ -79294,7 +79294,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceFleet. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -79317,10 +79319,10 @@
       }
     },
     "aws_codebuild_project": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1528,
-      "gap": "#1528 — Resolve project role, compatible KMS identity, fleet, network and type-qualified artifact/log destinations. Do not interpret buildspec, source credentials or environment variables.",
+      "gap": "#1528 — Verify build role, KMS key, fleet, VPC selections and mode-qualified artifact and logging destinations. Buildspecs and environment values stay opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79338,8 +79340,8 @@
         ],
         "placement": "Supported: managed Spatial Node for codebuild_project. Provides a CodeBuild Project resource.",
         "ownership": "Not applicable: AWS CodeBuild codebuild_project remains independently addressable; a reference or shared target does not justify embedding.",
-        "network": "Missing: verify vpc_config.vpc_id, vpc_config.subnets, vpc_config.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
-        "references": "Missing: Resolve project role, compatible KMS identity, fleet, network and type-qualified artifact/log destinations. Do not interpret buildspec, source credentials or environment variables.",
+        "network": "Supported: Verify network choices in the configured VPC.",
+        "references": "Supported: Verify build role, KMS key, fleet, VPC selections and mode-qualified artifact and logging destinations. Buildspecs and environment values stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_project summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codebuild_project.html.markdown",
@@ -79405,17 +79407,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceProject. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_codebuild_report_group": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1528,
-      "gap": "#1528 — Identify the configured S3 export bucket and key only for a compatible export type; report contents and service-produced artifacts remain opaque.",
+      "gap": "#1528 — Verify the configured S3 export bucket and encryption key when enabled.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79429,7 +79433,7 @@
         "placement": "Supported: managed Logical Node for codebuild_report_group. Provides a CodeBuild Report Group resource.",
         "ownership": "Not applicable: AWS CodeBuild codebuild_report_group remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codebuild_report_group declares no VPC/subnet assignment; the configured type does not establish network containment.",
-        "references": "Missing: Identify the configured S3 export bucket and key only for a compatible export type; report contents and service-produced artifacts remain opaque.",
+        "references": "Supported: Verify the configured S3 export bucket and encryption key when enabled.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_report_group summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codebuild_report_group.html.markdown",
@@ -79465,17 +79469,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceReportGroup. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_codebuild_resource_policy": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1528,
-      "gap": "#1528 — Bind the policy to an eligible, verified CodeBuild resource ARN. Policy statements do not establish principals or additional endpoints.",
+      "gap": "#1528 — Verify the policy target ARN on a project or report group. Policy text stays opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79487,7 +79493,7 @@
         "placement": "Supported: managed Logical Policy for codebuild_resource_policy. Provides a CodeBuild Resource Policy resource.",
         "ownership": "Not applicable: AWS CodeBuild codebuild_resource_policy remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codebuild_resource_policy declares no VPC/subnet assignment; the configured resource_arn does not establish network containment.",
-        "references": "Missing: Bind the policy to an eligible, verified CodeBuild resource ARN. Policy statements do not establish principals or additional endpoints.",
+        "references": "Supported: Verify the policy target ARN on a project or report group. Policy text stays opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_resource_policy summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codebuild_resource_policy.html.markdown",
@@ -79510,7 +79516,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceResourcePolicy. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -79566,10 +79574,10 @@
       }
     },
     "aws_codebuild_webhook": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1528,
-      "gap": "#1528 — Bind a webhook to its named project; external callback URLs, filters and secrets do not identify managed source repositories.",
+      "gap": "#1528 — Verify the project name. Callback URLs, filters and secrets stay opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79581,9 +79589,9 @@
           "payload_url"
         ],
         "placement": "Supported: managed Logical Node for codebuild_webhook. Provides a CodeBuild Webhook resource.",
-        "ownership": "Missing: verify project_name before attaching codebuild_webhook to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified build project without assigning ownership of external webhooks or repositories.",
         "network": "Not applicable: codebuild_webhook declares no VPC/subnet assignment; the configured project_name does not establish network containment.",
-        "references": "Missing: Bind a webhook to its named project; external callback URLs, filters and secrets do not identify managed source repositories.",
+        "references": "Supported: Verify the project name. Callback URLs, filters and secrets stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit tokens, webhook secrets, source locations, buildspecs and environment values from codebuild_webhook summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codebuild_webhook.html.markdown",
@@ -79614,7 +79622,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceWebhook. No same-name data source in the pinned schema.",
         "dataContracts": {}
