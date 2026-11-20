@@ -10,11 +10,17 @@ pub(super) struct Rule {
     pub list: bool,
     decoder: Option<nested_references::DecodeLeaf>,
     explicit_destination: bool,
+    account_only: bool,
     endpoint_mode: crate::model::EntityMode,
     blocks: nested_references::NestedBlocks<'static>,
 }
 
 impl Rule {
+    pub fn in_control_plane_account(mut self) -> Self {
+        self.account_only = true;
+        self
+    }
+
     pub fn with_explicit_destination(mut self) -> Self {
         self.explicit_destination = true;
         self
@@ -51,6 +57,7 @@ impl Rule {
             list,
             decoder: None,
             explicit_destination: false,
+            account_only: false,
             endpoint_mode: crate::model::EntityMode::Managed,
             blocks: nested_references::NestedBlocks::Indexed(blocks),
         }
@@ -189,6 +196,12 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference, lookup: Lookup) -> b
     lookup(&left.resource_type, &r.attribute).is_none_or(|rule| {
         r.sources.iter().all(|&s| {
             let right = &raw.nodes[s];
+            if rule.account_only {
+                return same_account(
+                    left.provider_configuration.as_ref(),
+                    right.provider_configuration.as_ref(),
+                );
+            }
             if rule.explicit_destination {
                 return destination_bindings(
                     left.provider_configuration.as_ref(),
@@ -203,6 +216,21 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference, lookup: Lookup) -> b
                 global(&right.resource_type),
             )
         })
+    })
+}
+
+fn same_account(
+    left: Option<&crate::model::ProviderConfiguration>,
+    right: Option<&crate::model::ProviderConfiguration>,
+) -> bool {
+    left.zip(right).is_some_and(|(left, right)| {
+        !left.account_conflict
+            && !right.account_conflict
+            && match (&left.account, &right.account) {
+                (Some(a), Some(b)) => a == b,
+                (None, None) => left == right,
+                _ => false,
+            }
     })
 }
 
@@ -293,7 +321,12 @@ pub(super) fn annotate(
                                 v.is_string()
                             }
                         })
-                        && if rule.explicit_destination {
+                        && if rule.account_only {
+                            same_account(
+                                node.provider_configuration.as_ref(),
+                                endpoint.provider_configuration.as_ref(),
+                            )
+                        } else if rule.explicit_destination {
                             destination_bindings(
                                 node.provider_configuration.as_ref(),
                                 endpoint.provider_configuration.as_ref(),

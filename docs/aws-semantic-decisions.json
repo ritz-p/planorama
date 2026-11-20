@@ -75939,7 +75939,7 @@
       }
     },
     "aws_route53recoverycontrolconfig_control_panel": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1487,
       "gap": "#1487 — Resolve the explicitly selected cluster. A returned default-panel flag cannot identify a new managed cluster.",
@@ -75955,7 +75955,7 @@
         "placement": "Supported: Logical Node for the managed route53recoverycontrolconfig_control_panel declaration. Provides an AWS Route 53 Recovery Control Config Control Panel",
         "ownership": "Not applicable: The managed route53recoverycontrolconfig_control_panel declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Route 53 Recovery Control Config control-plane configuration has no network placement contract for route53recoverycontrolconfig_control_panel.",
-        "references": "Missing: Resolve the explicitly selected cluster. A returned default-panel flag cannot identify a new managed cluster.",
+        "references": "Supported: Resolve the explicitly selected cluster. A returned default-panel flag cannot identify a new managed cluster.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit observed routing decisions and availability from route53recoverycontrolconfig_control_panel summaries.",
         "officialDocumentation": "website/docs/r/route53recoverycontrolconfig_control_panel.html.markdown",
@@ -75982,7 +75982,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_routing_control.rs",
+          "tests/unit/semantic/arc_routing_control.rs"
         ],
         "managedDataContract": "Managed resourceControlPanel. No same-name data source in 6.70.0.",
         "dataContracts": {}
@@ -75992,7 +75994,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1487,
-      "gap": "#1487 — Route 53 RECOVERY_CONTROL health checks already verify the routing control ARN. Resolve its own cluster and optional control panel; an omitted panel does not identify a declared default panel.",
+      "gap": "#1487 — Partial: Route 53 RECOVERY_CONTROL health checks already verify the routing control ARN. Resolve its own cluster and optional control panel; an omitted panel does not identify a declared default panel.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -76034,14 +76036,16 @@
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/route53_health.rs",
-          "tests/unit/semantic/route53_health.rs"
+          "tests/unit/semantic/route53_health.rs",
+          "src/provider/aws/arc_routing_control.rs",
+          "tests/unit/semantic/arc_routing_control.rs"
         ],
         "managedDataContract": "Managed resourceRoutingControl. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_route53recoverycontrolconfig_safety_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1487,
       "gap": "#1487 — Join the control panel and typed sets of routing control ARNs. Preserve asserted, gating and target roles without evaluating the rule.",
@@ -76059,7 +76063,7 @@
         "placement": "Supported: Logical Policy for the managed route53recoverycontrolconfig_safety_rule declaration. Provides an AWS Route 53 Recovery Control Config Safety Rule",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Route 53 Recovery Control Config control-plane configuration has no network placement contract for route53recoverycontrolconfig_safety_rule.",
-        "references": "Missing: Join the control panel and typed sets of routing control ARNs. Preserve asserted, gating and target roles without evaluating the rule.",
+        "references": "Supported: Join the control panel and typed sets of routing control ARNs. Preserve asserted, gating and target roles without evaluating the rule.",
         "scope": "Supported: global control-plane identity; configured target regions and accounts require separate evidence.",
         "summaries": "Intentionally unsupported: omit observed routing decisions and availability from route53recoverycontrolconfig_safety_rule summaries.",
         "officialDocumentation": "website/docs/r/route53recoverycontrolconfig_safety_rule.html.markdown",
@@ -76104,7 +76108,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/arc_routing_control.rs",
+          "tests/unit/semantic/arc_routing_control.rs"
         ],
         "managedDataContract": "Managed resourceSafetyRule. No same-name data source in 6.70.0.",
         "dataContracts": {}
