@@ -215,3 +215,38 @@ fn ram_verifies_configured_endpoints() {
         true,
     );
 }
+
+#[test]
+fn resource_groups_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/resource-groups-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_resourcegroups_resource.workloads", "group_arn"),
+            ("aws_resourcegroups_resource.workloads", "resource_arn"),
+            ("aws_resourceexplorer2_view.workloads", "scope"),
+            (
+                "aws_servicecatalogappregistry_attribute_group_association.workloads",
+                "application_id",
+            ),
+            (
+                "aws_servicecatalogappregistry_attribute_group_association.workloads",
+                "attribute_group_id",
+            ),
+        ],
+        ("aws_resourcegroups_group.workloads", "arn"),
+    );
+    assert!(label("aws_resourcegroups_resource", "resource_type").is_none());
+    assert!(label("aws_resourceexplorer2_view", "default_view").is_none());
+    assert!(label("aws_resourceexplorer2_view", "filters.filter_string").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_servicecatalogappregistry_attribute_group_association.workloads",
+        "attribute_group_id",
+        "aws_servicecatalogappregistry_attribute_group.shared",
+        "AppRegistry attribute group",
+        true,
+    );
+}

@@ -83258,10 +83258,10 @@
       }
     },
     "aws_resourceexplorer2_view": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1545,
-      "gap": "#1545 — Qualify the view's explicit scope ARN against a compatible organization, OU or account when evidenced. A search filter or default flag cannot prove indexed membership.",
+      "gap": "#1545 — Verify an explicitly configured account-root, organization or OU ARN against a compatible identity. Filter and default view settings do not enumerate resources.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83274,7 +83274,7 @@
         "placement": "Supported: managed Logical Node for resourceexplorer2_view. Provides a resource to manage a Resource Explorer view.",
         "ownership": "Not applicable: AWS Resource Explorer resourceexplorer2_view remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: resourceexplorer2_view declares no VPC/subnet assignment; the configured name does not establish network containment.",
-        "references": "Missing: Qualify the view's explicit scope ARN against a compatible organization, OU or account when evidenced. A search filter or default flag cannot prove indexed membership.",
+        "references": "Supported: Verify an explicitly configured account-root, organization or OU ARN against a compatible identity. Filter and default view settings do not enumerate resources.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit filter text and query results from resourceexplorer2_view summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/resourceexplorer2_view.html.markdown",
@@ -83301,7 +83301,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newViewResource. No same-name data source in the pinned schema. Deprecated attributes: id.",
         "dataContracts": {}
@@ -83365,10 +83367,10 @@
       }
     },
     "aws_resourcegroups_resource": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1545,
-      "gap": "#1545 — Verify both ARNs in explicit group membership. The returned resource_type and dynamic queries cannot substitute for a managed target.",
+      "gap": "#1545 — Verify the configured group ARN and supported resource ARN. The returned resource type does not provide another endpoint.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -83381,7 +83383,7 @@
         "placement": "Supported: managed Logical Node for resourcegroups_resource. Terraform resource for managing an AWS Resource Groups Resource.",
         "ownership": "Not applicable: AWS Resource Groups resourcegroups_resource remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: resourcegroups_resource declares no VPC/subnet assignment; the configured group_arn does not establish network containment.",
-        "references": "Missing: Verify both ARNs in explicit group membership. The returned resource_type and dynamic queries cannot substitute for a managed target.",
+        "references": "Supported: Verify the configured group ARN and supported resource ARN. The returned resource type does not provide another endpoint.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit resource query bodies and tag values from resourcegroups_resource summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/resourcegroups_resource.html.markdown",
@@ -83408,7 +83410,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed resourceResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -84305,10 +84309,10 @@
       }
     },
     "aws_servicecatalogappregistry_attribute_group_association": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1545,
-      "gap": "#1545 — Verify the application and group IDs as separate endpoints. Shared attribute groups remain independent of any one application.",
+      "gap": "#1545 — Verify application and attribute group IDs independently. Shared attribute groups retain independent placement.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -84320,7 +84324,7 @@
         "placement": "Supported: managed Logical Association for servicecatalogappregistry_attribute_group_association. Terraform resource for managing an AWS Service Catalog AppRegistry Attribute Group Association.",
         "ownership": "Not applicable: AWS Service Catalog AppRegistry servicecatalogappregistry_attribute_group_association remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: servicecatalogappregistry_attribute_group_association declares no VPC/subnet assignment; the configured application_id does not establish network containment.",
-        "references": "Missing: Verify the application and group IDs as separate endpoints. Shared attribute groups remain independent of any one application.",
+        "references": "Supported: Verify application and attribute group IDs independently. Shared attribute groups retain independent placement.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit attribute payloads and tag values from servicecatalogappregistry_attribute_group_association summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/servicecatalogappregistry_attribute_group_association.html.markdown",
@@ -84343,7 +84347,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/operations.rs",
+          "tests/unit/semantic/operations.rs"
         ],
         "managedDataContract": "Managed newAttributeGroupAssociationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}

@@ -1,0 +1,249 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_resourceexplorer2_view.workloads",
+      "mode": "managed",
+      "type": "aws_resourceexplorer2_view",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "workloads",
+          "scope": "arn:aws:iam::123456789012:root",
+          "default_view": true
+        }
+      }
+    },
+    {
+      "address": "aws_resourcegroups_resource.workloads",
+      "mode": "managed",
+      "type": "aws_resourcegroups_resource",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "group_arn": "arn:aws:resource-groups:us-east-1:123456789012:group/workloads",
+          "resource_arn": "arn:aws:dynamodb:us-east-1:123456789012:table/workloads",
+          "resource_type": "AWS::DynamoDB::Table"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalogappregistry_attribute_group_association.workloads",
+      "mode": "managed",
+      "type": "aws_servicecatalogappregistry_attribute_group_association",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "application_id": "app-123abc",
+          "attribute_group_id": "group-123abc"
+        }
+      }
+    },
+    {
+      "address": "aws_organizations_account.self",
+      "mode": "managed",
+      "type": "aws_organizations_account",
+      "name": "self",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "123456789012"
+        }
+      }
+    },
+    {
+      "address": "aws_resourcegroups_group.workloads",
+      "mode": "managed",
+      "type": "aws_resourcegroups_group",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:resource-groups:us-east-1:123456789012:group/workloads",
+          "name": "workloads"
+        }
+      }
+    },
+    {
+      "address": "aws_dynamodb_table.workloads",
+      "mode": "managed",
+      "type": "aws_dynamodb_table",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:dynamodb:us-east-1:123456789012:table/workloads",
+          "name": "workloads"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalogappregistry_application.workloads",
+      "mode": "managed",
+      "type": "aws_servicecatalogappregistry_application",
+      "name": "workloads",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "app-123abc"
+        }
+      }
+    },
+    {
+      "address": "aws_servicecatalogappregistry_attribute_group.shared",
+      "mode": "managed",
+      "type": "aws_servicecatalogappregistry_attribute_group",
+      "name": "shared",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "group-123abc"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_resourceexplorer2_view.workloads",
+          "mode": "managed",
+          "type": "aws_resourceexplorer2_view",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {
+            "scope": {
+              "references": [
+                "aws_organizations_account.self.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_resourcegroups_resource.workloads",
+          "mode": "managed",
+          "type": "aws_resourcegroups_resource",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {
+            "group_arn": {
+              "references": [
+                "aws_resourcegroups_group.workloads.arn"
+              ]
+            },
+            "resource_arn": {
+              "references": [
+                "aws_dynamodb_table.workloads.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_servicecatalogappregistry_attribute_group_association.workloads",
+          "mode": "managed",
+          "type": "aws_servicecatalogappregistry_attribute_group_association",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {
+            "application_id": {
+              "references": [
+                "aws_servicecatalogappregistry_application.workloads.id"
+              ]
+            },
+            "attribute_group_id": {
+              "references": [
+                "aws_servicecatalogappregistry_attribute_group.shared.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_organizations_account.self",
+          "mode": "managed",
+          "type": "aws_organizations_account",
+          "name": "self",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_resourcegroups_group.workloads",
+          "mode": "managed",
+          "type": "aws_resourcegroups_group",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_dynamodb_table.workloads",
+          "mode": "managed",
+          "type": "aws_dynamodb_table",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_servicecatalogappregistry_application.workloads",
+          "mode": "managed",
+          "type": "aws_servicecatalogappregistry_application",
+          "name": "workloads",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_servicecatalogappregistry_attribute_group.shared",
+          "mode": "managed",
+          "type": "aws_servicecatalogappregistry_attribute_group",
+          "name": "shared",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
