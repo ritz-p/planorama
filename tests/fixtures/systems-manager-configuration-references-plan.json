@@ -1,0 +1,420 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_ssm_activation.main",
+      "mode": "managed",
+      "type": "aws_ssm_activation",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "iam_role": "Setup",
+          "activation_code": "fixture-omitted"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_association.main",
+      "mode": "managed",
+      "type": "aws_ssm_association",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Runbook",
+          "targets": [
+            {
+              "key": "tag:Stage",
+              "values": [
+                "staging"
+              ]
+            }
+          ],
+          "output_location": [
+            {
+              "s3_bucket_name": "output"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_parameter.main",
+      "mode": "managed",
+      "type": "aws_ssm_parameter",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/example/keyed",
+          "type": "SecureString",
+          "key_id": "arn:aws:kms:us-east-1:123456789012:key/local"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_resource_data_sync.main",
+      "mode": "managed",
+      "type": "aws_ssm_resource_data_sync",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "inventory",
+          "s3_destination": [
+            {
+              "bucket_name": "remote-inventory",
+              "region": "us-west-2",
+              "kms_key_arn": "arn:aws:kms:us-west-2:123456789012:key/remote"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_ssmquicksetup_configuration_manager.main",
+      "mode": "managed",
+      "type": "aws_ssmquicksetup_configuration_manager",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "configuration_definition": [
+            {
+              "type": "AWSQuickSetupType-SSMHostMgmt",
+              "local_deployment_administration_role_arn": "arn:aws:iam::123456789012:role/Setup",
+              "local_deployment_execution_role_name": "Execution"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.setup",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "setup",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Setup",
+          "arn": "arn:aws:iam::123456789012:role/Setup"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.execution",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "execution",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Execution",
+          "arn": "arn:aws:iam::123456789012:role/Execution"
+        }
+      }
+    },
+    {
+      "address": "aws_ssm_document.main",
+      "mode": "managed",
+      "type": "aws_ssm_document",
+      "name": "main",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "Runbook"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.local",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "local",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "output"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.remote",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "remote",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "remote-inventory"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.local",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "local",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-east-1:123456789012:key/local"
+        }
+      }
+    },
+    {
+      "address": "aws_kms_key.remote",
+      "mode": "managed",
+      "type": "aws_kms_key",
+      "name": "remote",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:kms:us-west-2:123456789012:key/remote"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      },
+      "aws.remote": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "alias": "remote",
+        "expressions": {
+          "region": {
+            "constant_value": "us-west-2"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_ssm_activation.main",
+          "mode": "managed",
+          "type": "aws_ssm_activation",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "iam_role": {
+              "references": [
+                "aws_iam_role.setup.name"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_association.main",
+          "mode": "managed",
+          "type": "aws_ssm_association",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "name": {
+              "references": [
+                "aws_ssm_document.main.name"
+              ]
+            },
+            "output_location": [
+              {
+                "s3_bucket_name": {
+                  "references": [
+                    "aws_s3_bucket.local.bucket"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssm_parameter.main",
+          "mode": "managed",
+          "type": "aws_ssm_parameter",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "key_id": {
+              "references": [
+                "aws_kms_key.local.arn"
+              ]
+            },
+            "type": {
+              "constant_value": "SecureString"
+            }
+          }
+        },
+        {
+          "address": "aws_ssm_resource_data_sync.main",
+          "mode": "managed",
+          "type": "aws_ssm_resource_data_sync",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "s3_destination": [
+              {
+                "bucket_name": {
+                  "references": [
+                    "aws_s3_bucket.remote.bucket"
+                  ]
+                },
+                "region": {
+                  "constant_value": "us-west-2"
+                },
+                "kms_key_arn": {
+                  "references": [
+                    "aws_kms_key.remote.arn"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_ssmquicksetup_configuration_manager.main",
+          "mode": "managed",
+          "type": "aws_ssmquicksetup_configuration_manager",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {
+            "configuration_definition": [
+              {
+                "type": {
+                  "constant_value": "AWSQuickSetupType-SSMHostMgmt"
+                },
+                "local_deployment_administration_role_arn": {
+                  "references": [
+                    "aws_iam_role.setup.arn"
+                  ]
+                },
+                "local_deployment_execution_role_name": {
+                  "references": [
+                    "aws_iam_role.execution.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.setup",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "setup",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_iam_role.execution",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "execution",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_ssm_document.main",
+          "mode": "managed",
+          "type": "aws_ssm_document",
+          "name": "main",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.local",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "local",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_s3_bucket.remote",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "remote",
+          "provider_config_key": "aws.remote",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.local",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "local",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_kms_key.remote",
+          "mode": "managed",
+          "type": "aws_kms_key",
+          "name": "remote",
+          "provider_config_key": "aws.remote",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

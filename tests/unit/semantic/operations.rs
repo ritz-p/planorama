@@ -458,3 +458,72 @@ fn quota_management_verifies_configured_endpoints() {
         false,
     );
 }
+
+#[test]
+fn systems_manager_configuration_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/systems-manager-configuration-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            ("aws_ssm_parameter.main", "key_id"),
+            ("aws_ssm_activation.main", "iam_role"),
+            ("aws_ssm_association.main", "name"),
+            ("aws_ssm_association.main", "output_location.s3_bucket_name"),
+            (
+                "aws_ssm_resource_data_sync.main",
+                "s3_destination.bucket_name",
+            ),
+            (
+                "aws_ssm_resource_data_sync.main",
+                "s3_destination.kms_key_arn",
+            ),
+            (
+                "aws_ssmquicksetup_configuration_manager.main",
+                "configuration_definition.local_deployment_administration_role_arn",
+            ),
+            (
+                "aws_ssmquicksetup_configuration_manager.main",
+                "configuration_definition.local_deployment_execution_role_name",
+            ),
+        ],
+        ("aws_kms_key.local", "arn"),
+    );
+    assert!(label("aws_ssm_activation", "activation_code").is_none());
+    assert!(label("aws_ssm_association", "targets.values").is_none());
+    assert!(label("aws_ssm_parameter", "value").is_none());
+    assert!(label("aws_ssm_parameter", "value_wo").is_none());
+    assert!(
+        label(
+            "aws_ssmquicksetup_configuration_manager",
+            "configuration_definition.parameters"
+        )
+        .is_none()
+    );
+    check_provider_alias(
+        fixture,
+        "aws_ssm_parameter.main",
+        "key_id",
+        "aws_kms_key.local",
+        "SecureString customer key",
+        true,
+    );
+    let mut plan: Value = serde_json::from_str(fixture).unwrap();
+    plan["resource_changes"][2]["change"]["after"]["type"] = json!("String");
+    plan["resource_changes"][3]["change"]["after"]["s3_destination"][0]["region"] =
+        json!("us-east-1");
+    let graph = transform(&parse_fixture(&plan.to_string()).unwrap());
+    assert!(!verified(
+        &graph,
+        "aws_ssm_parameter.main",
+        "key_id",
+        Some("SecureString customer key")
+    ));
+    assert!(!verified(
+        &graph,
+        "aws_ssm_resource_data_sync.main",
+        "s3_destination.bucket_name",
+        Some("Inventory destination bucket")
+    ));
+}
