@@ -370,3 +370,66 @@ fn communications_sip_application_uses_its_selected_region() {
         label(super::SIP_RULE, targets)
     ));
 }
+
+#[test]
+fn communications_connect_instance_qualifies_child_and_directory() {
+    let mut fixture = plan(&[
+        (
+            "aws_directory_service_directory.login",
+            json!({"id":"d-123"}),
+            json!({}),
+        ),
+        (
+            "aws_connect_instance.main",
+            json!({"id":"connect","directory_id":"d-123","identity_management_type":"EXISTING_DIRECTORY","service_role":"service-managed"}),
+            json!({"directory_id":{"references":["aws_directory_service_directory.login.id"]}}),
+        ),
+        (
+            "aws_connect_contact_flow_module.main",
+            json!({"instance_id":"connect","contact_flow_module_id":"module","content_hash":"hash"}),
+            json!({"instance_id":{"references":["aws_connect_instance.main.id"]}}),
+        ),
+        (
+            "aws_connect_bot_association.legacy",
+            json!({"instance_id":"connect","lex_bot":[{"name":"bot","lex_region":"us-east-1"}]}),
+            json!({"instance_id":{"references":["aws_connect_instance.main.id"]}}),
+        ),
+    ]);
+    let directory = "aws_connect_instance.main";
+    let module = "aws_connect_contact_flow_module.main";
+    let g = graph(&fixture);
+    assert!(verified(
+        &g,
+        directory,
+        "directory_id",
+        label(super::CONNECT, "directory_id")
+    ));
+    assert!(
+        g.nodes
+            .iter()
+            .find(|n| n.address == module)
+            .unwrap()
+            .member_owner
+            .is_some()
+    );
+    fixture["resource_changes"][1]["change"]["after"]["identity_management_type"] =
+        json!("CONNECT_MANAGED");
+    fixture["resource_changes"][2]["change"]["after_sensitive"] = json!({"instance_id":true});
+    let g = graph(&fixture);
+    assert!(!verified(
+        &g,
+        directory,
+        "directory_id",
+        label(super::CONNECT, "directory_id")
+    ));
+    assert!(
+        g.nodes
+            .iter()
+            .find(|n| n.address == module)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+    assert!(label(super::BOT, "lex_bot.name").is_none());
+    assert!(label(super::CONNECT, "service_role").is_none());
+}

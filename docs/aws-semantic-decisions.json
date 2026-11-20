@@ -88545,7 +88545,7 @@
       }
     },
     "aws_connect_bot_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1599,
       "gap": "#1599 — Verify the Connect instance ID. Keep the legacy Lex V1 bot name and selected region as historical configuration, without assigning them to a Lex V2 bot or alias.",
@@ -88562,7 +88562,7 @@
         "placement": "Supported: managed Logical Association with the Amazon Connect service label. Associates an Amazon Connect instance to an Amazon Lex (V1) bot",
         "ownership": "Not applicable: A bot association does not embed a bot in the Connect instance.",
         "network": "Not applicable: Bot association provides no VPC attachment evidence.",
-        "references": "Missing: Verify the Connect instance ID. Keep the legacy Lex V1 bot name and selected region as historical configuration, without assigning them to a Lex V2 bot or alias.",
+        "references": "Supported: Verify the Connect instance ID. Keep the legacy Lex V1 bot name and selected region as historical configuration, without assigning them to a Lex V2 bot or alias.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. The declared Lex V1 region is separate from the Connect instance region and cannot establish a V2 binding.",
         "summaries": "Intentionally unsupported: omit legacy bot contents and conversation data. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_bot_association.html.markdown",
@@ -88594,7 +88594,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceBotAssociation. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -88614,7 +88616,7 @@
       }
     },
     "aws_connect_contact_flow": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1599,
       "gap": "#1599 — Verify the owning Connect instance ID. Do not parse flow contents or file paths into resource relationships. Qualify contact-flow identity by the verified instance. Retain unverified declarations independently.",
@@ -88632,7 +88634,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Contact Flow.",
         "ownership": "Missing: Qualify contact-flow identity by the verified instance. Retain unverified declarations independently.",
         "network": "Not applicable: Flow routing is a service configuration, separate from VPC routing.",
-        "references": "Missing: Verify the owning Connect instance ID. Do not parse flow contents or file paths into resource relationships.",
+        "references": "Supported: Verify the owning Connect instance ID. Do not parse flow contents or file paths into resource relationships. Qualify contact-flow identity by the verified instance. Retain unverified declarations independently.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Flow ID and type are qualified by instance, region and provider account.",
         "summaries": "Intentionally unsupported: omit flow content, local files and execution traces. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_contact_flow.html.markdown",
@@ -88666,7 +88668,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceContactFlow. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -88705,7 +88709,7 @@
       }
     },
     "aws_connect_contact_flow_module": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1599,
       "gap": "#1599 — Verify the instance ID and maintain the module as an addressable definition. Flow module references require their own configured evidence, independent of content hashes. Qualify the module's owner by the instance, without nesting the reusable definition inside a consumer flow.",
@@ -88722,7 +88726,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Contact Flow Module.",
         "ownership": "Missing: Qualify the module's owner by the instance, without nesting the reusable definition inside a consumer flow.",
         "network": "Not applicable: A flow module has no network placement input.",
-        "references": "Missing: Verify the instance ID and maintain the module as an addressable definition. Flow module references require their own configured evidence, independent of content hashes.",
+        "references": "Supported: Verify the instance ID and maintain the module as an addressable definition. Flow module references require their own configured evidence, independent of content hashes. Qualify the module's owner by the instance, without nesting the reusable definition inside a consumer flow.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Module identity is scoped to the Connect instance.",
         "summaries": "Intentionally unsupported: omit flow module content and local file paths. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_contact_flow_module.html.markdown",
@@ -88752,7 +88756,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceContactFlowModule. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -88787,7 +88793,7 @@
       }
     },
     "aws_connect_hours_of_operation": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1599,
       "gap": "#1599 — Verify the owning instance ID. Schedule entries and time zone do not identify queue targets or current availability. Qualify the schedule by its instance and leave it reusable by queues.",
@@ -88805,7 +88811,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Hours of Operation.",
         "ownership": "Missing: Qualify the schedule by its instance and leave it reusable by queues.",
         "network": "Not applicable: A service schedule supplies no VPC or subnet assignment.",
-        "references": "Missing: Verify the owning instance ID. Schedule entries and time zone do not identify queue targets or current availability.",
+        "references": "Supported: Verify the owning instance ID. Schedule entries and time zone do not identify queue targets or current availability. Qualify the schedule by its instance and leave it reusable by queues.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Time zone describes schedule interpretation, not AWS region.",
         "summaries": "Intentionally unsupported: omit shift schedules and inferred live availability. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_hours_of_operation.html.markdown",
@@ -88840,7 +88846,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceHoursOfOperation. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -88875,7 +88883,7 @@
       }
     },
     "aws_connect_instance": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1599,
       "gap": "#1599 — Verify the configured Directory Service directory when identity_management_type is EXISTING_DIRECTORY. Computed service_role and status do not identify a configured role or availability.",
@@ -88894,7 +88902,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Connect Instance.",
         "ownership": "Not applicable: Keep the Connect instance and verified directory independently addressable.",
         "network": "Not applicable: A directory association does not place the instance in the directory's network.",
-        "references": "Missing: Verify the configured Directory Service directory when identity_management_type is EXISTING_DIRECTORY. Computed service_role and status do not identify a configured role or availability.",
+        "references": "Supported: Verify the configured Directory Service directory when identity_management_type is EXISTING_DIRECTORY. Computed service_role and status do not identify a configured role or availability.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the regional Connect instance and compatible directory by known account and region.",
         "summaries": "Intentionally unsupported: omit instance aliases, directory user data and service state. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_instance.html.markdown",
@@ -88932,7 +88940,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceInstance. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
@@ -89984,7 +89994,7 @@
       }
     },
     "aws_connect_vocabulary": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1599,
       "gap": "#1599 — Verify the configured instance. Language and computed vocabulary state cannot determine whether a contact flow uses it. Qualify vocabulary ownership by the instance while preserving reusable configuration identity.",
@@ -90002,7 +90012,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Connect service label. Provides details about a specific Amazon Connect Vocabulary",
         "ownership": "Missing: Qualify vocabulary ownership by the instance while preserving reusable configuration identity.",
         "network": "Not applicable: A vocabulary does not declare a network attachment.",
-        "references": "Missing: Verify the configured instance. Language and computed vocabulary state cannot determine whether a contact flow uses it.",
+        "references": "Supported: Verify the configured instance. Language and computed vocabulary state cannot determine whether a contact flow uses it. Qualify vocabulary ownership by the instance while preserving reusable configuration identity.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. A language code is not region evidence for a regional vocabulary definition.",
         "summaries": "Intentionally unsupported: omit vocabulary contents, failure details and inferred transcription behavior. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/connect_vocabulary.html.markdown",
@@ -90036,7 +90046,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed resourceVocabulary. The same-name data source has a separate lookup contract and does not prove managed ownership.",
         "dataContracts": {
