@@ -80944,10 +80944,10 @@
       }
     },
     "aws_devicefarm_device_pool": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1535,
-      "gap": "#1535 — Link a device pool to its project; dynamic device rules do not identify a managed physical device.",
+      "gap": "#1535 — Verify the owning project ARN. Dynamic device rules remain opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80958,9 +80958,9 @@
           "max_devices"
         ],
         "placement": "Supported: managed Logical Node for devicefarm_device_pool. Provides a Devicefarm device_pool",
-        "ownership": "Missing: verify project_arn before attaching devicefarm_device_pool to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified Device Farm project.",
         "network": "Not applicable: devicefarm_device_pool declares no VPC/subnet assignment; the configured project_arn does not establish network containment.",
-        "references": "Missing: Link a device pool to its project; dynamic device rules do not identify a managed physical device.",
+        "references": "Supported: Verify the owning project ARN. Dynamic device rules remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_device_pool summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devicefarm_device_pool.html.markdown",
@@ -80987,7 +80987,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceDevicePool. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -81043,10 +81045,10 @@
       }
     },
     "aws_devicefarm_network_profile": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1535,
-      "gap": "#1535 — Associate the network simulation profile with its project. Bandwidth and delay settings do not place devices in an AWS VPC.",
+      "gap": "#1535 — Verify the project ARN and retain network simulation settings as test configuration.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81058,9 +81060,9 @@
           "downlink_delay_ms"
         ],
         "placement": "Supported: managed Logical Node for devicefarm_network_profile. Provides a Devicefarm network profile",
-        "ownership": "Missing: verify project_arn before attaching devicefarm_network_profile to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified Device Farm project.",
         "network": "Not applicable: devicefarm_network_profile declares no VPC/subnet assignment; the configured project_arn does not establish network containment.",
-        "references": "Missing: Associate the network simulation profile with its project. Bandwidth and delay settings do not place devices in an AWS VPC.",
+        "references": "Supported: Verify the project ARN and retain network simulation settings as test configuration.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_network_profile summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devicefarm_network_profile.html.markdown",
@@ -81091,7 +81093,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceNetworkProfile. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -81147,10 +81151,10 @@
       }
     },
     "aws_devicefarm_test_grid_project": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1535,
-      "gap": "#1535 — Resolve the TestGrid project's explicit VPC, subnets and security groups; browser sessions and their runtime network paths are excluded.",
+      "gap": "#1535 — Verify the explicit VPC, subnets and security groups. Browser sessions remain outside the static topology.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81163,8 +81167,8 @@
         ],
         "placement": "Supported: managed Logical Node for devicefarm_test_grid_project. Provides a Devicefarm test_grid_project",
         "ownership": "Not applicable: AWS Device Farm devicefarm_test_grid_project remains independently addressable; a reference or shared target does not justify embedding.",
-        "network": "Missing: verify vpc_config.vpc_id, vpc_config.subnet_ids, vpc_config.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
-        "references": "Missing: Resolve the TestGrid project's explicit VPC, subnets and security groups; browser sessions and their runtime network paths are excluded.",
+        "network": "Supported: Verify configured VPC and membership of the selected subnets and security groups.",
+        "references": "Supported: Verify the explicit VPC, subnets and security groups. Browser sessions remain outside the static topology.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_test_grid_project summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devicefarm_test_grid_project.html.markdown",
@@ -81204,17 +81208,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceTestGridProject. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_devicefarm_upload": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1535,
-      "gap": "#1535 — Verify the project ARN on the upload declaration; the computed presigned upload URL is never a resource endpoint or safe summary.",
+      "gap": "#1535 — Verify the project ARN. The presigned URL stays opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81226,9 +81232,9 @@
           "url"
         ],
         "placement": "Supported: managed Logical Node for devicefarm_upload. Provides a Devicefarm upload",
-        "ownership": "Missing: verify project_arn before attaching devicefarm_upload to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified Device Farm project.",
         "network": "Not applicable: devicefarm_upload declares no VPC/subnet assignment; the configured project_arn does not establish network containment.",
-        "references": "Missing: Verify the project ARN on the upload declaration; the computed presigned upload URL is never a resource endpoint or safe summary.",
+        "references": "Supported: Verify the project ARN. The presigned URL stays opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit upload URLs, package lists and device/session details from devicefarm_upload summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/devicefarm_upload.html.markdown",
@@ -81259,7 +81265,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceUpload. No same-name data source in the pinned schema.",
         "dataContracts": {}
