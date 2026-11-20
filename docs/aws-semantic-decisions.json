@@ -86782,10 +86782,10 @@
       }
     },
     "aws_appfabric_app_authorization": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1588,
-      "gap": "#1588 — Verify the app bundle ARN. Provider app, auth type and tenant selectors do not establish a separately managed SaaS resource. Qualify authorization ownership by the bundle ARN before any nested presentation.",
+      "gap": "#1588 — Verify the app bundle ARN. App and tenant selectors do not establish independent SaaS resources.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86798,9 +86798,9 @@
           "arn"
         ],
         "placement": "Supported: managed Logical Policy with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric App Authorization.",
-        "ownership": "Missing: Qualify authorization ownership by the bundle ARN before any nested presentation.",
+        "ownership": "Supported: Present under the verified app bundle.",
         "network": "Not applicable: Authorization does not describe a network or workload attachment.",
-        "references": "Missing: Verify the app bundle ARN. Provider app, auth type and tenant selectors do not establish a separately managed SaaS resource.",
+        "references": "Supported: Verify the app bundle ARN. App and tenant selectors do not establish independent SaaS resources.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use bundle account and region and keep tenant and external app identifiers outside AWS scope.",
         "summaries": "Intentionally unsupported: omit OAuth or API key credentials, auth URLs and tenant display details. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appfabric_app_authorization.html.markdown",
@@ -86835,17 +86835,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newAppAuthorizationResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appfabric_app_authorization_connection": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1588,
-      "gap": "#1588 — Verify the configured app bundle and authorization ARN or UUID in bundle context. Returned tenant and app fields and OAuth request material do not prove more endpoints. Verify both the bundle and the compatible authorization before treating the connection as its configuration.",
+      "gap": "#1588 — Verify the app bundle and the configured authorization ARN or UUID within that bundle. Returned tenant and OAuth material do not establish endpoints.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86857,9 +86859,9 @@
           "tenant"
         ],
         "placement": "Supported: managed Logical Policy with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric App Authorization Connection.",
-        "ownership": "Missing: Verify both the bundle and the compatible authorization before treating the connection as its configuration.",
+        "ownership": "Supported: Bind the connection to the verified authorization in the same bundle.",
         "network": "Not applicable: Authorization connection is a service control-plane association.",
-        "references": "Missing: Verify the configured app bundle and authorization ARN or UUID in bundle context. Returned tenant and app fields and OAuth request material do not prove more endpoints.",
+        "references": "Supported: Verify the app bundle and the configured authorization ARN or UUID within that bundle. Returned tenant and OAuth material do not establish endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. An authorization UUID requires bundle, account and region qualification.",
         "summaries": "Intentionally unsupported: omit authorization codes, redirect locations and tenant information. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appfabric_app_authorization_connection.html.markdown",
@@ -86898,17 +86900,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newAppAuthorizationConnectionResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appfabric_app_bundle": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1588,
-      "gap": "#1588 — Verify the configured customer-managed KMS key ARN. An omitted key means an AWS-owned key and does not identify a managed resource.",
+      "gap": "#1588 — Verify the configured customer-managed KMS key ARN. The AWS-managed default does not identify a managed endpoint.",
       "review": {
         "issue": 733,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -86920,7 +86924,7 @@
         "placement": "Supported: managed Logical Node with the AWS AppFabric service label. Terraform resource for managing an AWS AppFabric AppBundle.",
         "ownership": "Not applicable: A bundle remains independently addressable. The encryption key can be shared.",
         "network": "Not applicable: Encryption is independent of VPC attachment.",
-        "references": "Missing: Verify the configured customer-managed KMS key ARN. An omitted key means an AWS-owned key and does not identify a managed resource.",
+        "references": "Supported: Verify the configured customer-managed KMS key ARN. The AWS-managed default does not identify a managed endpoint.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Bundle and encryption key require compatible account and regional evidence.",
         "summaries": "Intentionally unsupported: omit application data or key material. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/appfabric_app_bundle.html.markdown",
@@ -86942,7 +86946,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/application_services.rs",
+          "tests/unit/semantic/application_services.rs"
         ],
         "managedDataContract": "Managed newAppBundleResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
