@@ -49,7 +49,15 @@ fn every_registered_managed_type_has_basic_capabilities() {
         if super::super::classification::classify(super::super::aliases::canonical(resource_type))
             == ResourceRole::Unknown
         {
-            let mut parsed = plan::parse(&input(resource_type, "managed").to_string()).unwrap();
+            let mut fixture = input(resource_type, "managed");
+            if matches!(
+                resource_type,
+                "aws_chime_voice_connector" | "aws_chimesdkvoice_sip_media_application"
+            ) {
+                fixture["resource_changes"][0]["change"]["after"] =
+                    json!({"aws_region":"us-east-1"});
+            }
+            let mut parsed = plan::parse(&fixture.to_string()).unwrap();
             parsed.nodes[0].provider_configuration = Some(model::ProviderConfiguration {
                 key: "aws".into(),
                 alias: None,
