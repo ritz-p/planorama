@@ -198,6 +198,7 @@ mod redshift_snapshots;
 #[cfg(test)]
 #[path = "../../tests/unit/semantic/redshift.rs"]
 mod redshift_tests;
+pub(crate) mod resilience_hub;
 pub(crate) mod rolesanywhere;
 pub(crate) mod route53_dnssec;
 pub(crate) mod route53_health;

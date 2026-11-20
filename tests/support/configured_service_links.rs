@@ -128,3 +128,44 @@ pub(crate) fn organization_targets(
         }
     }
 }
+
+pub(crate) fn check_provider_alias(
+    json: &str,
+    consumer: &str,
+    path: &str,
+    source: &str,
+    label: &'static str,
+    regional: bool,
+) {
+    let fixture: Value = serde_json::from_str(json).unwrap();
+    for (account, region, expected) in [
+        ("123456789012", "us-east-1", true),
+        ("987654321098", "us-east-1", false),
+        ("123456789012", "us-west-2", !regional),
+    ] {
+        let mut value = fixture.clone();
+        let config = &mut value["configuration"];
+        let mut other = config["provider_config"]["aws"].clone();
+        other["alias"] = json!("other");
+        other["expressions"]["region"] = json!({"constant_value":region});
+        other["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":format!("arn:aws:iam::{account}:role/Other")}}]);
+        config["provider_config"]["aws.other"] = other;
+        let resources = config["root_module"]["resources"].as_array_mut().unwrap();
+        resources
+            .iter_mut()
+            .find(|r| r["address"] == source)
+            .unwrap()["provider_config_key"] = json!("aws.other");
+        let parsed = crate::plan::evidence::tests::parse_fixture(&value.to_string()).unwrap();
+        assert_eq!(
+            verified(
+                &crate::semantic::transform(&parsed),
+                consumer,
+                path,
+                Some(label)
+            ),
+            expected,
+            "{account}/{region}"
+        );
+    }
+}

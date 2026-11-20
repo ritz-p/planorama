@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::resilience_hub::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::firewall_manager::label(resource, attribute) {
         return Some(label);
     }
@@ -969,6 +972,7 @@ pub(crate) fn annotate_provider_accounts(
     super::macie_classification::annotate(nodes, references, evidence);
     super::arc_configuration::annotate(nodes, references, evidence);
     super::fis_configuration::annotate(nodes, references, evidence);
+    super::resilience_hub::annotate(nodes, references, evidence);
     super::detective_graphs::annotate(nodes, references, evidence);
 }
 
@@ -1321,6 +1325,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::resilience_hub::bindings(raw, reference)
         && super::firewall_manager::bindings(raw, reference)
         && super::fis_configuration::bindings(raw, reference)
         && super::arc_configuration::bindings(raw, reference)
@@ -2072,6 +2077,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::resilience_hub::indexed(&node.resource_type, &reference.attribute)
             || super::firewall_manager::indexed(&node.resource_type, &reference.attribute)
             || super::fis_configuration::indexed(&node.resource_type, &reference.attribute)
             || super::arc_configuration::indexed(&node.resource_type, &reference.attribute)

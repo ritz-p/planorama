@@ -75444,7 +75444,7 @@
       }
     },
     "aws_resiliencehubv2_assertion": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Resolve the parent V2 service by ARN. The assertion text is opaque.",
@@ -75459,7 +75459,7 @@
         "placement": "Supported: Logical Node for the managed resiliencehubv2_assertion declaration. Terraform resource for managing an AWS Resilience Hub V2 Assertion.",
         "ownership": "Missing: use a verified service_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_assertion.",
-        "references": "Missing: Resolve the parent V2 service by ARN. The assertion text is opaque.",
+        "references": "Supported: Resolve the parent V2 service by ARN. The assertion text is opaque.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_assertion summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_assertion.html.markdown",
@@ -75482,14 +75482,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newAssertionResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_resiliencehubv2_input_source": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Join the service and explicitly selected CloudFormation stack or EKS cluster. Do not fetch state or design files or expand tag selections.",
@@ -75507,7 +75509,7 @@
         "placement": "Supported: Logical Node for the managed resiliencehubv2_input_source declaration. Terraform resource for managing an AWS Resilience Hub V2 Input Source.",
         "ownership": "Missing: use a verified service_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_input_source.",
-        "references": "Missing: Join the service and explicitly selected CloudFormation stack or EKS cluster. Do not fetch state or design files or expand tag selections.",
+        "references": "Supported: Join the service and explicitly selected CloudFormation stack or EKS cluster. Do not fetch state or design files or expand tag selections.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_input_source summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_input_source.html.markdown",
@@ -75547,14 +75549,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newInputSourceResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_resiliencehubv2_policy": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Resolve the configured KMS key ARN. Shared access and recovery objectives do not identify service consumers.",
@@ -75570,7 +75574,7 @@
         "placement": "Supported: Logical Policy for the managed resiliencehubv2_policy declaration. Terraform resource for managing an AWS Resilience Hub V2 Policy.",
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_policy.",
-        "references": "Missing: Resolve the configured KMS key ARN. Shared access and recovery objectives do not identify service consumers.",
+        "references": "Supported: Resolve the configured KMS key ARN. Shared access and recovery objectives do not identify service consumers.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_policy summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_policy.html.markdown",
@@ -75597,7 +75601,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newPolicyResource. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -75613,7 +75619,7 @@
       }
     },
     "aws_resiliencehubv2_service": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Resolve policy, system, scoped journey IDs and IAM/KMS configuration independently. Regions restrict discovery and cannot enumerate discovered dependencies.",
@@ -75633,7 +75639,7 @@
         "placement": "Supported: Logical Node for the managed resiliencehubv2_service declaration. Terraform resource for managing an AWS Resilience Hub V2 Service.",
         "ownership": "Not applicable: The managed resiliencehubv2_service declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_service.",
-        "references": "Missing: Resolve policy, system, scoped journey IDs and IAM/KMS configuration independently. Regions restrict discovery and cannot enumerate discovered dependencies.",
+        "references": "Supported: Resolve policy, system, scoped journey IDs and IAM/KMS configuration independently. Regions restrict discovery and cannot enumerate discovered dependencies.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_service summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_service.html.markdown",
@@ -75687,7 +75693,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newServiceResource. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -75703,7 +75711,7 @@
       }
     },
     "aws_resiliencehubv2_service_function": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Resolve the V2 service. Criticality is configuration, not an observation about availability.",
@@ -75719,7 +75727,7 @@
         "placement": "Supported: Logical Node for the managed resiliencehubv2_service_function declaration. Terraform resource for managing an AWS Resilience Hub V2 Service Function.",
         "ownership": "Missing: use a verified service_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_service_function.",
-        "references": "Missing: Resolve the V2 service. Criticality is configuration, not an observation about availability.",
+        "references": "Supported: Resolve the V2 service. Criticality is configuration, not an observation about availability.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_service_function summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_service_function.html.markdown",
@@ -75746,14 +75754,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newServiceFunctionResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_resiliencehubv2_system": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Resolve the configured KMS key. Returned OU and organization IDs are separate from configured membership.",
@@ -75770,7 +75780,7 @@
         "placement": "Supported: Logical Node for the managed resiliencehubv2_system declaration. Terraform resource for managing an AWS Resilience Hub V2 System.",
         "ownership": "Not applicable: The managed resiliencehubv2_system declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_system.",
-        "references": "Missing: Resolve the configured KMS key. Returned OU and organization IDs are separate from configured membership.",
+        "references": "Supported: Resolve the configured KMS key. Returned OU and organization IDs are separate from configured membership.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_system summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_system.html.markdown",
@@ -75801,7 +75811,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newSystemResource. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -75817,7 +75829,7 @@
       }
     },
     "aws_resiliencehubv2_user_journey": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1486,
       "gap": "#1486 — Join the system and policy by their distinct ARN types. The journey's own ID is an output.",
@@ -75833,7 +75845,7 @@
         "placement": "Supported: Logical Node for the managed resiliencehubv2_user_journey declaration. Terraform resource for managing an AWS Resilience Hub V2 User Journey.",
         "ownership": "Missing: use a verified system_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
         "network": "Not applicable: AWS Resilience Hub V2 control-plane configuration has no network placement contract for resiliencehubv2_user_journey.",
-        "references": "Missing: Join the system and policy by their distinct ARN types. The journey's own ID is an output.",
+        "references": "Supported: Join the system and policy by their distinct ARN types. The journey's own ID is an output.",
         "scope": "Supported: regional scope requires the configured resource override or bound provider region. An endpoint in another account or region requires independent scope evidence.",
         "summaries": "Intentionally unsupported: omit assertion text, imported state contents and inferred dependencies from resiliencehubv2_user_journey summaries.",
         "officialDocumentation": "website/docs/r/resiliencehubv2_user_journey.html.markdown",
@@ -75860,7 +75872,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/resilience_hub.rs",
+          "tests/unit/semantic/resilience_hub.rs"
         ],
         "managedDataContract": "Managed newUserJourneyResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
