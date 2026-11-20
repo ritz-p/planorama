@@ -299,8 +299,8 @@ fn recording_bucket<'a>(_: &str, value: &'a Value) -> Option<std::collections::B
     if arn.next()? != "arn"
         || !arn.next()?.starts_with("aws")
         || arn.next()? != "s3"
-        || arn.next()? != ""
-        || arn.next()? != ""
+        || !arn.next()?.is_empty()
+        || !arn.next()?.is_empty()
     {
         return None;
     }
