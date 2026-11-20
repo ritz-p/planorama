@@ -80066,10 +80066,10 @@
       }
     },
     "aws_codeconnections_connection": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1531,
-      "gap": "#1531 — Resolve the configured CodeConnections host when present. Do not infer a host from provider_type or from connection status.",
+      "gap": "#1531 — Verify host_arn against a unique current host ARN across both provider registrations. The provider type and status establish no host.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80083,7 +80083,7 @@
         "placement": "Supported: managed Logical Node for codeconnections_connection. Terraform resource for managing an AWS CodeConnections Connection.",
         "ownership": "Not applicable: AWS CodeConnections codeconnections_connection remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codeconnections_connection declares no VPC/subnet assignment; the configured host_arn does not establish network containment.",
-        "references": "Missing: Resolve the configured CodeConnections host when present. Do not infer a host from provider_type or from connection status.",
+        "references": "Supported: Verify host_arn against a unique current host ARN across both provider registrations. The provider type and status establish no host.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codeconnections_connection summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codeconnections_connection.html.markdown",
@@ -80114,17 +80114,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newConnectionResource. No same-name data source in the pinned schema. Deprecated attributes: id. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
         "dataContracts": {}
       }
     },
     "aws_codeconnections_host": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1531,
-      "gap": "#1531 — Verify the configured VPC, subnets and security groups. Exclude TLS certificates and provider endpoint URLs.",
+      "gap": "#1531 — Verify the explicit VPC, subnet and security group identities in the host network configuration. TLS certificates and external URLs remain opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80137,8 +80139,8 @@
         ],
         "placement": "Supported: managed Logical Node for codeconnections_host. Terraform resource for managing an AWS CodeConnections Host.",
         "ownership": "Not applicable: AWS CodeConnections codeconnections_host remains independently addressable; a reference or shared target does not justify embedding.",
-        "network": "Missing: verify vpc_configuration.vpc_id, vpc_configuration.subnet_ids, vpc_configuration.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
-        "references": "Missing: Verify the configured VPC, subnets and security groups. Exclude TLS certificates and provider endpoint URLs.",
+        "network": "Supported: Verify configured VPC and membership of selected subnets and security groups.",
+        "references": "Supported: Verify the explicit VPC, subnet and security group identities in the host network configuration. TLS certificates and external URLs remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codeconnections_host summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codeconnections_host.html.markdown",
@@ -80178,7 +80180,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newHostResource. No same-name data source in the pinned schema. Deprecated attributes: id. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
         "dataContracts": {}
@@ -80723,10 +80727,10 @@
       }
     },
     "aws_codestarconnections_connection": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1531,
-      "gap": "#1531 — Resolve the legacy connection's configured host ARN; distinguish CodeStar and CodeConnections registrations and require unique identity across both namespaces.",
+      "gap": "#1531 — Verify host_arn against a unique current host ARN across both provider registrations. The provider type and status establish no host.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80740,7 +80744,7 @@
         "placement": "Supported: managed Logical Node for codestarconnections_connection. Provides a CodeStar Connection",
         "ownership": "Not applicable: AWS CodeStar Connections codestarconnections_connection remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codestarconnections_connection declares no VPC/subnet assignment; the configured host_arn does not establish network containment.",
-        "references": "Missing: Resolve the legacy connection's configured host ARN; distinguish CodeStar and CodeConnections registrations and require unique identity across both namespaces.",
+        "references": "Supported: Verify host_arn against a unique current host ARN across both provider registrations. The provider type and status establish no host.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codestarconnections_connection summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codestarconnections_connection.html.markdown",
@@ -80771,7 +80775,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceConnection. Same-name data lookup has separate selectors. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
         "dataContracts": {
@@ -80802,10 +80808,10 @@
       }
     },
     "aws_codestarconnections_host": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1531,
-      "gap": "#1531 — Verify legacy host network endpoints using its own schema; similar modern host names alone do not establish an alias.",
+      "gap": "#1531 — Verify the explicit VPC, subnet and security group identities in the host network configuration. TLS certificates and external URLs remain opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80818,8 +80824,8 @@
         ],
         "placement": "Supported: managed Logical Node for codestarconnections_host. Provides a CodeStar Host",
         "ownership": "Not applicable: AWS CodeStar Connections codestarconnections_host remains independently addressable; a reference or shared target does not justify embedding.",
-        "network": "Missing: verify vpc_configuration.vpc_id, vpc_configuration.subnet_ids, vpc_configuration.security_group_ids for the configured environment. Keep the service declaration separate from its attachments; multiple selected subnets do not establish unique containment.",
-        "references": "Missing: Verify legacy host network endpoints using its own schema; similar modern host names alone do not establish an alias.",
+        "network": "Supported: Verify configured VPC and membership of selected subnets and security groups.",
+        "references": "Supported: Verify the explicit VPC, subnet and security group identities in the host network configuration. TLS certificates and external URLs remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit provider endpoints and TLS certificates from codestarconnections_host summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codestarconnections_host.html.markdown",
@@ -80859,7 +80865,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceHost. No same-name data source in the pinned schema. Inspect legacy CodeStarConnections and modern CodeConnections registrations separately; names alone do not identify the same object.",
         "dataContracts": {}

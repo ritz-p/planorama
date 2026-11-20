@@ -147,3 +147,38 @@ fn repositories_requires_current_typed_evidence() {
         ("aws_codecommit_approval_rule_template.review", "name"),
     );
 }
+
+#[test]
+fn connections_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/connections-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_codeconnections_connection.git", "host_arn"),
+            ("aws_codeconnections_host.git", "vpc_configuration.vpc_id"),
+            (
+                "aws_codeconnections_host.git",
+                "vpc_configuration.subnet_ids",
+            ),
+            (
+                "aws_codeconnections_host.git",
+                "vpc_configuration.security_group_ids",
+            ),
+            ("aws_codestarconnections_connection.git", "host_arn"),
+            (
+                "aws_codestarconnections_host.git",
+                "vpc_configuration.vpc_id",
+            ),
+            (
+                "aws_codestarconnections_host.git",
+                "vpc_configuration.subnet_ids",
+            ),
+            (
+                "aws_codestarconnections_host.git",
+                "vpc_configuration.security_group_ids",
+            ),
+        ],
+        ("aws_codeconnections_host.git", "arn"),
+    );
+}
