@@ -718,3 +718,60 @@ fn appflow_matches_profiles_and_buckets_under_the_selected_connector() {
     ));
     assert!(label(super::FLOW_PROFILE, "credentials_arn").is_none());
 }
+
+#[test]
+fn appintegrations_checks_the_salesforce_profile_and_event_bus_name() {
+    let key = "arn:aws:kms:us-east-1:123456789012:key/integration";
+    let mut fixture = plan(&[
+        ("aws_kms_key.integration", json!({"arn":key}), json!({})),
+        (
+            "aws_appflow_connector_profile.crm",
+            json!({"name":"crm","connector_type":"Salesforce"}),
+            json!({}),
+        ),
+        (
+            "aws_cloudwatch_event_bus.partner",
+            json!({"name":"aws.partner/example"}),
+            json!({}),
+        ),
+        (
+            "aws_appintegrations_data_integration.crm",
+            json!({"source_uri":"Salesforce://AppFlow/crm","kms_key":key}),
+            json!({
+                "kms_key":{"references":["aws_kms_key.integration.arn"]},
+                "source_uri":{"references":["aws_appflow_connector_profile.crm.name"]}
+            }),
+        ),
+        (
+            "aws_appintegrations_event_integration.notifications",
+            json!({"eventbridge_bus":"aws.partner/example","event_filter":[{"source":"aws.partner/example"}]}),
+            json!({
+                "eventbridge_bus":{"references":["aws_cloudwatch_event_bus.partner.name"]}
+            }),
+        ),
+    ]);
+    let data = "aws_appintegrations_data_integration.crm";
+    let event = "aws_appintegrations_event_integration.notifications";
+    let check = |fixture: &Value, address: &str, path: &str| {
+        verified(
+            &graph(fixture),
+            address,
+            path,
+            label(address.split('.').next().unwrap(), path),
+        )
+    };
+    for (address, path) in [
+        (data, "kms_key"),
+        (data, "source_uri"),
+        (event, "eventbridge_bus"),
+    ] {
+        assert!(check(&fixture, address, path), "{path}");
+    }
+    fixture["resource_changes"][1]["change"]["after"]["connector_type"] = json!("Zendesk");
+    assert!(!check(&fixture, data, "source_uri"));
+    fixture["resource_changes"][1]["change"]["after"]["connector_type"] = json!("Salesforce");
+    fixture["resource_changes"][3]["change"]["after"]["source_uri"] = json!("unrecognized://crm");
+    assert!(!check(&fixture, data, "source_uri"));
+    assert!(label(super::EVENT_INTEGRATION, "event_filter.source").is_none());
+    assert!(label(super::DATA_INTEGRATION, "schedule_config.object").is_none());
+}
