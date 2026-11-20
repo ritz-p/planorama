@@ -2250,8 +2250,13 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                     )) {
                     crate::model::ReferenceKind::Membership
                 } else if verified
-                    && node.resource_type == "aws_securityhub_configuration_policy_association"
-                    && reference.attribute == "target_id"
+                    && matches!(
+                        (node.resource_type.as_str(), reference.attribute.as_str()),
+                        (
+                            "aws_securityhub_configuration_policy_association",
+                            "target_id"
+                        ) | ("aws_organizations_tag", "resource_id")
+                    )
                 {
                     reference
                         .source_attributes

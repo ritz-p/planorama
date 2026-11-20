@@ -7911,10 +7911,10 @@
       }
     },
     "aws_account_alternate_contact": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Link only an explicitly identified member account; omission selects the caller account. The contact category is not a principal. Retain the existing suppression of names, email and telephone.",
+      "gap": "#1538 — Verify an explicit managed member account ID. Omitted account_id keeps the caller default and contact fields remain private.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -7926,7 +7926,7 @@
         "placement": "Supported: managed Logical Controller for account_alternate_contact. Manages the specified alternate contact attached to an AWS Account.",
         "ownership": "Not applicable: AWS Account Management account_alternate_contact remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: account_alternate_contact declares no VPC/subnet assignment; the configured account_id does not establish network containment.",
-        "references": "Missing: Link only an explicitly identified member account; omission selects the caller account. The contact category is not a principal. Retain the existing suppression of names, email and telephone.",
+        "references": "Supported: Verify an explicit managed member account ID. Omitted account_id keeps the caller default and contact fields remain private.",
         "scope": "Supported: global service scope.",
         "summaries": "Intentionally unsupported: contact name, email and telephone are personal data. The service label and action suffice.",
         "officialDocumentation": "website/docs/r/account_alternate_contact.html.markdown",
@@ -7949,17 +7949,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceAlternateContact. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_account_primary_contact": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Resolve only the optional explicit target account. Mailing address state_or_region and country are not AWS deployment scope; suppress all contact values.",
+      "gap": "#1538 — Verify an explicit managed member account ID. Mailing address fields stay private and do not set deployment scope.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -7972,7 +7974,7 @@
         "placement": "Supported: managed Logical Controller for account_primary_contact. Manages the specified primary contact information associated with an AWS Account.",
         "ownership": "Not applicable: AWS Account Management account_primary_contact remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: account_primary_contact declares no VPC/subnet assignment; the configured account_id does not establish network containment.",
-        "references": "Missing: Resolve only the optional explicit target account. Mailing address state_or_region and country are not AWS deployment scope; suppress all contact values.",
+        "references": "Supported: Verify an explicit managed member account ID. Mailing address fields stay private and do not set deployment scope.",
         "scope": "Supported: global service scope.",
         "summaries": "Intentionally unsupported: omit postal address, phone, contact name and company details; the structured contact is not diagram metadata.",
         "officialDocumentation": "website/docs/r/account_primary_contact.html.markdown",
@@ -7999,7 +8001,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourcePrimaryContact. Same-name data lookup has separate selectors.",
         "dataContracts": {
@@ -81539,10 +81543,10 @@
       }
     },
     "aws_account_region": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Qualify the opt-in setting by target account and region_name. A computed opt_status does not prove workloads or deployment in that region.",
+      "gap": "#1538 — Verify the selected member account and region_name. The opt-in status supplies no deployment placement.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -81556,7 +81560,7 @@
         "placement": "Supported: managed Logical Controller for account_region. Enable (Opt-In) or Disable (Opt-Out) a particular Region for an AWS account",
         "ownership": "Not applicable: AWS Account Management account_region remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: account_region declares no VPC/subnet assignment; the configured account_id does not establish network containment.",
-        "references": "Missing: Qualify the opt-in setting by target account and region_name. A computed opt_status does not prove workloads or deployment in that region.",
+        "references": "Supported: Verify the selected member account and region_name. The opt-in status supplies no deployment placement.",
         "scope": "Supported: global service scope. The selected region_name belongs to the target account; it does not relocate the Account service.",
         "summaries": "Intentionally unsupported: omit personal contact fields and account details from account_region summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/account_region.html.markdown",
@@ -81587,7 +81591,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceRegion. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -82139,10 +82145,10 @@
       }
     },
     "aws_cloudtrail_organization_delegated_admin_account": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Verify the explicitly delegated Organizations member account ID. Service principal and administrator ARN are returned metadata, not independent role inputs.",
+      "gap": "#1538 — Verify the explicit member account ID. Returned administrator ARN and service principal stay metadata.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82155,7 +82161,7 @@
         "placement": "Supported: managed Logical Node for cloudtrail_organization_delegated_admin_account. Provides a resource to manage an AWS CloudTrail Delegated Administrator.",
         "ownership": "Not applicable: AWS CloudTrail cloudtrail_organization_delegated_admin_account remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: cloudtrail_organization_delegated_admin_account declares no VPC/subnet assignment; the configured account_id does not establish network containment.",
-        "references": "Missing: Verify the explicitly delegated Organizations member account ID. Service principal and administrator ARN are returned metadata, not independent role inputs.",
+        "references": "Supported: Verify the explicit member account ID. Returned administrator ARN and service principal stay metadata.",
         "scope": "Supported: global service scope.",
         "summaries": "Intentionally unsupported: omit event contents, selectors and trail delivery status from cloudtrail_organization_delegated_admin_account summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/cloudtrail_organization_delegated_admin_account.html.markdown",
@@ -82182,7 +82188,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed newOrganizationDelegatedAdminAccountResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -82626,10 +82634,10 @@
       }
     },
     "aws_organizations_delegated_administrator": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Resolve the registered member account using account_id. service_principal names an AWS service, not an IAM principal resource.",
+      "gap": "#1538 — Verify the registered member account. Service principal remains a service selector.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82642,7 +82650,7 @@
         "placement": "Supported: managed Logical Node for organizations_delegated_administrator. Provides a resource to manage an AWS Organizations Delegated Administrator.",
         "ownership": "Not applicable: AWS Organizations organizations_delegated_administrator remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: organizations_delegated_administrator declares no VPC/subnet assignment; the configured account_id does not establish network containment.",
-        "references": "Missing: Resolve the registered member account using account_id. service_principal names an AWS service, not an IAM principal resource.",
+        "references": "Supported: Verify the registered member account. Service principal remains a service selector.",
         "scope": "Supported: global service scope.",
         "summaries": "Intentionally unsupported: omit policy content and account contact details from organizations_delegated_administrator summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/organizations_delegated_administrator.html.markdown",
@@ -82669,7 +82677,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceDelegatedAdministrator. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -82720,10 +82730,10 @@
       }
     },
     "aws_organizations_tag": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1538,
-      "gap": "#1538 — Resolve only compatible Organizations target identities; tag keys and values do not prove parentage, workload membership or deployment scope.",
+      "gap": "#1538 — Verify the configured ID of a compatible Organizations account, OU, root or policy. Tags do not establish ownership.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -82736,7 +82746,7 @@
         "placement": "Supported: managed Logical Controller for organizations_tag. Manages an individual Organizations resource tag",
         "ownership": "Not applicable: AWS Organizations organizations_tag remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: organizations_tag declares no VPC/subnet assignment; the configured resource_id does not establish network containment.",
-        "references": "Missing: Resolve only compatible Organizations target identities; tag keys and values do not prove parentage, workload membership or deployment scope.",
+        "references": "Supported: Verify the configured ID of a compatible Organizations account, OU, root or policy. Tags do not establish ownership.",
         "scope": "Supported: global service scope.",
         "summaries": "Intentionally unsupported: omit policy content and account contact details from organizations_tag summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/organizations_tag.html.markdown",
@@ -82763,7 +82773,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceTag. No same-name data source in the pinned schema.",
         "dataContracts": {}
