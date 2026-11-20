@@ -1,0 +1,219 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_cloudcontrolapi_resource.resource",
+      "mode": "managed",
+      "type": "aws_cloudcontrolapi_resource",
+      "name": "resource",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type_name": "AWS::SNS::Topic",
+          "role_arn": "arn:aws:iam::123456789012:role/CloudFormation",
+          "desired_state": "{}",
+          "properties": "{}"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_stack.stack",
+      "mode": "managed",
+      "type": "aws_cloudformation_stack",
+      "name": "stack",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "template",
+          "iam_role_arn": "arn:aws:iam::123456789012:role/CloudFormation",
+          "notification_arns": [
+            "arn:aws:sns:us-east-1:123456789012:cloudformation"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_cloudformation_type.type",
+      "mode": "managed",
+      "type": "aws_cloudformation_type",
+      "name": "type",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "type_name": "Example::Delivery::Resource",
+          "execution_role_arn": "arn:aws:iam::123456789012:role/CloudFormation",
+          "logging_config": [
+            {
+              "log_role_arn": "arn:aws:iam::123456789012:role/CloudFormation",
+              "log_group_name": "/aws/cloudformation/type"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.template",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "template",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/CloudFormation"
+        }
+      }
+    },
+    {
+      "address": "aws_sns_topic.template",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "template",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:cloudformation"
+        }
+      }
+    },
+    {
+      "address": "aws_cloudwatch_log_group.template",
+      "mode": "managed",
+      "type": "aws_cloudwatch_log_group",
+      "name": "template",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "name": "/aws/cloudformation/type"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Fixture"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_cloudcontrolapi_resource.resource",
+          "mode": "managed",
+          "type": "aws_cloudcontrolapi_resource",
+          "name": "resource",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.template.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudformation_stack.stack",
+          "mode": "managed",
+          "type": "aws_cloudformation_stack",
+          "name": "stack",
+          "provider_config_key": "aws",
+          "expressions": {
+            "iam_role_arn": {
+              "references": [
+                "aws_iam_role.template.arn"
+              ]
+            },
+            "notification_arns": {
+              "references": [
+                "aws_sns_topic.template.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_cloudformation_type.type",
+          "mode": "managed",
+          "type": "aws_cloudformation_type",
+          "name": "type",
+          "provider_config_key": "aws",
+          "expressions": {
+            "execution_role_arn": {
+              "references": [
+                "aws_iam_role.template.arn"
+              ]
+            },
+            "logging_config": [
+              {
+                "log_role_arn": {
+                  "references": [
+                    "aws_iam_role.template.arn"
+                  ]
+                },
+                "log_group_name": {
+                  "references": [
+                    "aws_cloudwatch_log_group.template.name"
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "address": "aws_iam_role.template",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "template",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.template",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "template",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_cloudwatch_log_group.template",
+          "mode": "managed",
+          "type": "aws_cloudwatch_log_group",
+          "name": "template",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}

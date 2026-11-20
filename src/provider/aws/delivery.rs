@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = cloudformation::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = account_governance::rule(kind, path) {
         return Some(rule);
     }
@@ -57,6 +60,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if cloudformation::resource(kind) {
+        return true;
+    }
     if account_governance::resource(kind) {
         return true;
     }
@@ -257,6 +263,8 @@ mod devicefarm;
 mod devops_insights;
 
 mod account_governance;
+
+mod cloudformation;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
