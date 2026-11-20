@@ -228,6 +228,7 @@ pub(crate) mod security_lake;
 pub(crate) mod securityhub_integrations;
 pub(crate) mod securityhub_organization;
 mod serverless_references;
+pub(crate) mod shield;
 pub(crate) mod signer_configuration;
 pub(crate) mod site_vpn;
 #[cfg(test)]

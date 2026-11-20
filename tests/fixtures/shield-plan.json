@@ -1,0 +1,314 @@
+{
+  "format_version": "1.2",
+  "terraform_version": "1.9.8",
+  "resource_changes": [
+    {
+      "address": "aws_shield_application_layer_automatic_response.sample0",
+      "mode": "managed",
+      "type": "aws_shield_application_layer_automatic_response",
+      "name": "sample0",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/public/1234"
+        }
+      }
+    },
+    {
+      "address": "aws_lb.sample1",
+      "mode": "managed",
+      "type": "aws_lb",
+      "name": "sample1",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "load_balancer_type": "application",
+          "arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/public/1234"
+        }
+      }
+    },
+    {
+      "address": "aws_shield_protection.sample2",
+      "mode": "managed",
+      "type": "aws_shield_protection",
+      "name": "sample2",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "resource_arn": "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/public/1234",
+          "id": "shield_protection-example"
+        }
+      }
+    },
+    {
+      "address": "aws_shield_protection_group.sample3",
+      "mode": "managed",
+      "type": "aws_shield_protection_group",
+      "name": "sample3",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "pattern": "ARBITRARY",
+          "members": [
+            "arn:aws:elasticloadbalancing:us-east-1:123456789012:loadbalancer/app/public/1234"
+          ]
+        }
+      }
+    },
+    {
+      "address": "aws_shield_drt_access_log_bucket_association.sample4",
+      "mode": "managed",
+      "type": "aws_shield_drt_access_log_bucket_association",
+      "name": "sample4",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "log_bucket": "s3_bucket-example",
+          "role_arn_association_id": "shield_drt_access_role_arn_association-example"
+        }
+      }
+    },
+    {
+      "address": "aws_s3_bucket.sample5",
+      "mode": "managed",
+      "type": "aws_s3_bucket",
+      "name": "sample5",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "bucket": "s3_bucket-example"
+        }
+      }
+    },
+    {
+      "address": "aws_shield_drt_access_role_arn_association.sample6",
+      "mode": "managed",
+      "type": "aws_shield_drt_access_role_arn_association",
+      "name": "sample6",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "shield_drt_access_role_arn_association-example",
+          "role_arn": "arn:aws:iam::123456789012:role/DRT"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.sample7",
+      "mode": "managed",
+      "type": "aws_iam_role",
+      "name": "sample7",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/DRT"
+        }
+      }
+    },
+    {
+      "address": "aws_shield_protection_health_check_association.sample8",
+      "mode": "managed",
+      "type": "aws_shield_protection_health_check_association",
+      "name": "sample8",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "health_check_arn": "arn:aws:route53:::healthcheck/health",
+          "shield_protection_id": "shield_protection-example"
+        }
+      }
+    },
+    {
+      "address": "aws_route53_health_check.sample9",
+      "mode": "managed",
+      "type": "aws_route53_health_check",
+      "name": "sample9",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:route53:::healthcheck/health"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Plan"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_shield_application_layer_automatic_response.sample0",
+          "mode": "managed",
+          "type": "aws_shield_application_layer_automatic_response",
+          "name": "sample0",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_lb.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_lb.sample1",
+          "mode": "managed",
+          "type": "aws_lb",
+          "name": "sample1",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_shield_protection.sample2",
+          "mode": "managed",
+          "type": "aws_shield_protection",
+          "name": "sample2",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_lb.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_shield_protection_group.sample3",
+          "mode": "managed",
+          "type": "aws_shield_protection_group",
+          "name": "sample3",
+          "provider_config_key": "aws",
+          "expressions": {
+            "members": {
+              "references": [
+                "aws_lb.sample1.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_shield_drt_access_log_bucket_association.sample4",
+          "mode": "managed",
+          "type": "aws_shield_drt_access_log_bucket_association",
+          "name": "sample4",
+          "provider_config_key": "aws",
+          "expressions": {
+            "log_bucket": {
+              "references": [
+                "aws_s3_bucket.sample5.bucket"
+              ]
+            },
+            "role_arn_association_id": {
+              "references": [
+                "aws_shield_drt_access_role_arn_association.sample6.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_s3_bucket.sample5",
+          "mode": "managed",
+          "type": "aws_s3_bucket",
+          "name": "sample5",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_shield_drt_access_role_arn_association.sample6",
+          "mode": "managed",
+          "type": "aws_shield_drt_access_role_arn_association",
+          "name": "sample6",
+          "provider_config_key": "aws",
+          "expressions": {
+            "role_arn": {
+              "references": [
+                "aws_iam_role.sample7.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.sample7",
+          "mode": "managed",
+          "type": "aws_iam_role",
+          "name": "sample7",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_shield_protection_health_check_association.sample8",
+          "mode": "managed",
+          "type": "aws_shield_protection_health_check_association",
+          "name": "sample8",
+          "provider_config_key": "aws",
+          "expressions": {
+            "health_check_arn": {
+              "references": [
+                "aws_route53_health_check.sample9.arn"
+              ]
+            },
+            "shield_protection_id": {
+              "references": [
+                "aws_shield_protection.sample2.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_route53_health_check.sample9",
+          "mode": "managed",
+          "type": "aws_route53_health_check",
+          "name": "sample9",
+          "provider_config_key": "aws",
+          "expressions": {}
+        }
+      ]
+    }
+  }
+}
