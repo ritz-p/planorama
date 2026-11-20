@@ -293,3 +293,28 @@ fn devicefarm_requires_current_typed_evidence() {
         ("aws_devicefarm_project.test", "arn"),
     );
 }
+
+#[test]
+fn devops_insights_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/devops-insights-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_devopsagent_agent_space.insights", "kms_key_arn"),
+            (
+                "aws_devopsguru_notification_channel.insights",
+                "sns.topic_arn",
+            ),
+            (
+                "aws_devopsguru_resource_collection.insights",
+                "cloudformation.stack_names",
+            ),
+            (
+                "aws_devopsguru_service_integration.insights",
+                "kms_server_side_encryption.kms_key_id",
+            ),
+        ],
+        ("aws_kms_key.insights", "arn"),
+    );
+}
