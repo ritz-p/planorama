@@ -10,8 +10,13 @@ const AMPLIFY_BRANCH: &str = "aws_amplify_branch";
 const AMPLIFY_DOMAIN: &str = "aws_amplify_domain_association";
 const AMPLIFY_WEBHOOK: &str = "aws_amplify_webhook";
 
+const CONFIG_APP: &str = "aws_appconfig_application";
+const CONFIG_ENV: &str = "aws_appconfig_environment";
+const CONFIG_PROFILE: &str = "aws_appconfig_configuration_profile";
+const CONFIG_VERSION: &str = "aws_appconfig_hosted_configuration_version";
+
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    kind == AMPLIFY_DOMAIN
+    matches!(kind, AMPLIFY_DOMAIN | CONFIG_ENV)
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
@@ -42,8 +47,64 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_acm_certificate", &["arn"])],
         )
         .in_control_plane_account(),
+        (CONFIG_ENV | CONFIG_PROFILE | CONFIG_VERSION, "application_id") => {
+            scalar("AppConfig application", &[(CONFIG_APP, &["id"])])
+        }
+        (CONFIG_VERSION, "configuration_profile_id") => scalar(
+            "AppConfig configuration profile",
+            &[(CONFIG_PROFILE, &["configuration_profile_id"])],
+        ),
+        (CONFIG_ENV, "monitor.alarm_arn") => Rule::scalar_set(
+            "AppConfig monitor alarms",
+            &[
+                ("aws_cloudwatch_metric_alarm", &["arn"]),
+                ("aws_cloudwatch_composite_alarm", &["arn"]),
+            ],
+        ),
+        (CONFIG_ENV, "monitor.alarm_role_arn") => {
+            Rule::scalar_set("AppConfig monitor roles", &[("aws_iam_role", &["arn"])])
+        }
+        (CONFIG_PROFILE, "retrieval_role_arn") => role("AppConfig retrieval role"),
+        (CONFIG_PROFILE, "kms_key_identifier") => key("AppConfig hosted configuration key"),
+        (CONFIG_PROFILE, "location_uri") => scalar(
+            "AppConfig external configuration",
+            &[
+                ("aws_s3_object", &["key"]),
+                ("aws_ssm_document", &["name", "arn"]),
+                ("aws_ssm_parameter", &["name", "arn"]),
+            ],
+        )
+        .decoded(configuration_locator),
         _ => return None,
     })
+}
+
+fn key(label: &'static str) -> Rule {
+    scalar(
+        label,
+        &[
+            ("aws_kms_key", &["arn", "key_id", "id"]),
+            ("aws_kms_alias", &["arn", "name"]),
+        ],
+    )
+}
+
+fn s3_object(uri: &str) -> Option<(&str, &str)> {
+    let (bucket, key) = uri.strip_prefix("s3://")?.split_once('/')?;
+    (!bucket.is_empty() && !key.is_empty() && !uri.contains(['?', '#'])).then_some((bucket, key))
+}
+
+fn configuration_locator<'a>(
+    _: &str,
+    value: &'a Value,
+) -> Option<std::collections::BTreeSet<&'a str>> {
+    let uri = value.as_str()?;
+    let id = s3_object(uri)
+        .map(|(_, key)| key)
+        .or_else(|| uri.strip_prefix("ssm-document://"))
+        .or_else(|| uri.strip_prefix("ssm-parameter://"))
+        .or_else(|| uri.starts_with("arn:").then_some(uri))?;
+    (!id.is_empty()).then(|| [id].into())
 }
 
 fn role(label: &'static str) -> Rule {
@@ -174,14 +235,25 @@ fn amplify_backend_in_app(e: &Evidence<'_>, backend: usize, app: usize) -> bool 
 
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
     let target = r.target;
-    if e.nodes[source].resource_type == "aws_iam_role" {
-        return e
-            .text(source, "arn")
-            .and_then(|arn| arn_resource(&e.nodes[source], arn, "iam", false))
-            .and_then(|resource| resource.strip_prefix("role/"))
-            .is_some_and(|name| !name.is_empty());
+    if e.nodes[source].resource_type == "aws_iam_role" && !iam_role(e, source) {
+        return false;
     }
     match (e.nodes[target].resource_type.as_str(), path) {
+        (CONFIG_PROFILE, "location_uri") => configuration_source(e, target, source),
+        (CONFIG_PROFILE, "retrieval_role_arn") => {
+            e.text(target, "location_uri").is_some_and(|uri| {
+                uri != "hosted" && configuration_locator("", &Value::String(uri.into())).is_some()
+            })
+        }
+        (CONFIG_PROFILE, "kms_key_identifier") => e.text(target, "location_uri") == Some("hosted"),
+        (CONFIG_VERSION, "configuration_profile_id") => {
+            same_endpoint(e, target, source, "application_id", CONFIG_APP, &["id"])
+        }
+        (CONFIG_ENV, _) if r.attribute == "monitor.alarm_arn" => e
+            .text(source, "arn")
+            .and_then(|arn| arn_resource(&e.nodes[source], arn, "cloudwatch", true))
+            .and_then(|resource| resource.strip_prefix("alarm:"))
+            .is_some_and(|name| !name.is_empty()),
         (AMPLIFY_DOMAIN, "certificate_settings.0.custom_certificate_arn") => {
             e.text(target, "certificate_settings.0.type") == Some("CUSTOM")
                 && super::scope::scope(&e.nodes[source])
@@ -206,8 +278,46 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     }
 }
 
+fn iam_role(e: &Evidence<'_>, source: usize) -> bool {
+    e.text(source, "arn")
+        .and_then(|arn| arn_resource(&e.nodes[source], arn, "iam", false))
+        .and_then(|resource| resource.strip_prefix("role/"))
+        .is_some_and(|name| !name.is_empty())
+}
+
+fn configuration_source(e: &Evidence<'_>, target: usize, source: usize) -> bool {
+    let Some(uri) = e.text(target, "location_uri") else {
+        return false;
+    };
+    let ssm = |scheme: &str, prefix: &str| {
+        uri.starts_with(scheme)
+            || arn_resource(&e.nodes[source], uri, "ssm", true)
+                .and_then(|resource| resource.strip_prefix(prefix))
+                .is_some_and(|name| !name.is_empty())
+    };
+    match e.nodes[source].resource_type.as_str() {
+        "aws_s3_object" => {
+            s3_object(uri).is_some_and(|(bucket, _)| e.text(source, "bucket") == Some(bucket))
+        }
+        "aws_ssm_document" => ssm("ssm-document://", "document/"),
+        "aws_ssm_parameter" => ssm("ssm-parameter://", "parameter/"),
+        _ => false,
+    }
+}
+
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
     match kind {
+        CONFIG_ENV => Some(("application_id", "AppConfig application", "Environments")),
+        CONFIG_PROFILE => Some((
+            "application_id",
+            "AppConfig application",
+            "Configuration profiles",
+        )),
+        CONFIG_VERSION => Some((
+            "configuration_profile_id",
+            "AppConfig configuration profile",
+            "Hosted versions",
+        )),
         AMPLIFY_DOMAIN => Some(("app_id", "Amplify app", "Domains")),
         AMPLIFY_WEBHOOK => Some(("app_id", "Amplify app", "Webhooks")),
         AMPLIFY_BRANCH => Some(("app_id", "Amplify app", "Branches")),
