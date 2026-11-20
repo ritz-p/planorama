@@ -644,10 +644,6 @@ fn incident_manager_verifies_configured_endpoints() {
             ("aws_ssmcontacts_plan.primary", "contact_id"),
             (
                 "aws_ssmcontacts_plan.primary",
-                "stage.target.channel_target_info.contact_channel_id",
-            ),
-            (
-                "aws_ssmcontacts_plan.primary",
                 "stage.target.contact_target_info.contact_id",
             ),
             ("aws_ssmcontacts_rotation.primary", "contact_ids"),
@@ -667,10 +663,6 @@ fn incident_manager_verifies_configured_endpoints() {
             (
                 "aws_ssmincidents_response_plan.primary",
                 "action.ssm_automation.role_arn",
-            ),
-            (
-                "aws_ssmincidents_response_plan.primary",
-                "incident_template.notification_target.sns_topic_arn",
             ),
         ],
         ("aws_ssmcontacts_contact.primary", "arn"),
@@ -715,4 +707,32 @@ fn incident_manager_verifies_configured_endpoints() {
     ));
     let svg = crate::svg::render(&graph, &crate::layout::Layout::new(&graph));
     assert!(!svg.contains("fictional@example.invalid"));
+}
+
+#[test]
+fn incident_stage_channel_matches_contact_arn_and_id() {
+    check(
+        include_str!("../../fixtures/incident-manager-references-plan.json"),
+        parse_fixture,
+        label,
+        &[(
+            "aws_ssmcontacts_plan.primary",
+            "stage.target.channel_target_info.contact_channel_id",
+        )],
+        ("aws_ssmcontacts_contact_channel.primary", "arn"),
+    );
+}
+
+#[test]
+fn incident_notification_targets_verify_reordered_sns_arns() {
+    check(
+        include_str!("../../fixtures/incident-manager-references-plan.json"),
+        parse_fixture,
+        label,
+        &[(
+            "aws_ssmincidents_response_plan.primary",
+            "incident_template.notification_target.sns_topic_arn",
+        )],
+        ("aws_sns_topic.incidents", "arn"),
+    );
 }

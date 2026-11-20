@@ -561,12 +561,11 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         (
             "aws_ssmincidents_response_plan",
             "incident_template.notification_target.sns_topic_arn",
-        ) => Rule::new(
+        ) => Rule::scalar_set(
             "Incident notification topic",
             &[("aws_sns_topic", &["arn"])],
-            false,
-            &["incident_template.notification_target"],
-        ),
+        )
+        .with_set_path("incident_template.notification_target"),
         _ => return None,
     })
 }
@@ -809,21 +808,17 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
             principal_arn(e, source, "iam", "role/")
         }
         ("aws_ssmcontacts_plan", "stage.target.channel_target_info.contact_channel_id") => {
-            e.same_endpoint(
-                r.target,
-                "contact_id",
-                source,
-                "contact_id",
-                "aws_ssmcontacts_contact",
-                "arn",
-            ) || e.same_endpoint(
-                r.target,
-                "contact_id",
-                source,
-                "contact_id",
-                "aws_ssmcontacts_contact",
-                "id",
-            )
+            let owner = |node| {
+                e.configured_endpoint(
+                    node,
+                    "contact_id",
+                    "aws_ssmcontacts_contact",
+                    &["arn", "id"],
+                )
+            };
+            owner(r.target)
+                .zip(owner(source))
+                .is_some_and(|(plan, channel)| plan == channel)
         }
         ("aws_ssmincidents_replication_set", "regions.kms_key_arn" | "region.kms_key_arn") => {
             (r.attribute.starts_with("regions.") || e.absent(r.target, "regions"))

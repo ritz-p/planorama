@@ -85723,7 +85723,7 @@
       "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1552,
-      "gap": "#1552 — Verify typed engagements, the SSM automation document, role and explicit SNS destinations. Incident state and integration credentials remain excluded.",
+      "gap": "#1552 — Verify typed engagements, the SSM automation document and role, and match explicitly configured notification topics by ARN across the unordered set. Incident state and integration credentials remain excluded.",
       "review": {
         "issue": 732,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -85737,7 +85737,7 @@
         "placement": "Supported: managed Logical Node for ssmincidents_response_plan. Terraform resource for managing an incident response plan in AWS Systems Manager Incident Manager.",
         "ownership": "Not applicable: AWS SSM Incident Manager Incidents ssmincidents_response_plan remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: ssmincidents_response_plan declares no VPC/subnet assignment; the configured engagements does not establish network containment.",
-        "references": "Supported: Verify typed engagements, the SSM automation document, role and explicit SNS destinations. Incident state and integration credentials remain excluded.",
+        "references": "Supported: Verify typed engagements, the SSM automation document and role, and match explicitly configured notification topics by ARN across the unordered set. Incident state and integration credentials remain excluded.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit incident payloads, chat contents and integration secrets from ssmincidents_response_plan summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/ssmincidents_response_plan.html.markdown",

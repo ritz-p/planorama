@@ -155,6 +155,9 @@
             {
               "notification_target": [
                 {
+                  "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:fallback"
+                },
+                {
                   "sns_topic_arn": "arn:aws:sns:us-east-1:123456789012:incidents"
                 }
               ]
@@ -175,7 +178,8 @@
         ],
         "after": {
           "arn": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary",
-          "type": "PERSONAL"
+          "type": "PERSONAL",
+          "id": "arn:aws:ssm-contacts:us-east-1:123456789012:contact/primary"
         }
       }
     },
@@ -270,6 +274,21 @@
           "arn": "arn:aws:iam::123456789012:role/IncidentAutomation"
         }
       }
+    },
+    {
+      "address": "aws_sns_topic.fallback",
+      "mode": "managed",
+      "type": "aws_sns_topic",
+      "name": "fallback",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:sns:us-east-1:123456789012:fallback"
+        }
+      }
     }
   ],
   "configuration": {
@@ -333,7 +352,7 @@
           "expressions": {
             "contact_id": {
               "references": [
-                "aws_ssmcontacts_contact.primary.arn"
+                "aws_ssmcontacts_contact.primary.id"
               ]
             },
             "stage": [
@@ -473,6 +492,13 @@
                         "aws_sns_topic.incidents.arn"
                       ]
                     }
+                  },
+                  {
+                    "sns_topic_arn": {
+                      "references": [
+                        "aws_sns_topic.fallback.arn"
+                      ]
+                    }
                   }
                 ]
               }
@@ -532,6 +558,14 @@
           "mode": "managed",
           "type": "aws_iam_role",
           "name": "incident",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_sns_topic.fallback",
+          "mode": "managed",
+          "type": "aws_sns_topic",
+          "name": "fallback",
           "provider_config_key": "aws",
           "expressions": {}
         }
