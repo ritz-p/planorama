@@ -205,11 +205,11 @@ fn parent_scope(
     if super::service_evidence::known(values, source, "arn") != Some(arn) {
         return None;
     }
-    let region = effective_region(node)?;
+    let region = effective_region(node);
     let scope = acl.waf_scope?;
     match scope {
-        WafScope::Regional if super::scope(acl)?.region.as_ref() == Some(region) => Some(scope),
-        WafScope::CloudFront if region.0 == "us-east-1" => Some(scope),
+        WafScope::Regional if super::scope(acl)?.region.as_ref() == Some(region?) => Some(scope),
+        WafScope::CloudFront if region.is_none_or(|r| r.0 == "us-east-1") => Some(scope),
         _ => None,
     }
 }
