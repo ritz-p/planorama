@@ -226,6 +226,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::glue_encryption::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::waf_destinations::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::waf_statements::label(resource, attribute) {
         return Some(label);
     }
@@ -993,6 +996,8 @@ pub(crate) fn annotate_provider_accounts(
     super::shield::annotate(nodes, references, evidence);
     super::waf_classic::annotate(nodes, references, evidence);
     super::waf_statements::annotate(nodes, references, evidence);
+    super::waf::annotate_associations(nodes, references, evidence);
+    super::waf_destinations::annotate(nodes, references, evidence);
     super::detective_graphs::annotate(nodes, references, evidence);
 }
 
@@ -1090,8 +1095,7 @@ pub(crate) fn annotate(
                             actual.and_then(|arn| arn.strip_suffix(":*")) == Some(target)
                         })))
         });
-        reference.service_reference_verified &=
-            super::waf::verify_scope(nodes, reference, evidence);
+        reference.service_reference_verified &= super::waf::verify_scope(nodes, reference);
         reference.service_reference_verified &= super::dynamodb::verify(nodes, reference, evidence);
         if super::s3::object(&node.resource_type) {
             reference.service_reference_verified &=
@@ -1345,6 +1349,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::timestream_queries::bindings(raw, reference)
         && super::athena_queries::bindings(raw, reference)
         && super::glue_encryption::bindings(raw, reference)
+        && super::waf_destinations::bindings(raw, reference)
         && super::waf_statements::bindings(raw, reference)
         && super::waf_classic::bindings(raw, reference)
         && super::shield::bindings(raw, reference)
@@ -2102,6 +2107,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::timestream_queries::indexed(&node.resource_type, &reference.attribute)
             || super::athena_queries::indexed(&node.resource_type, &reference.attribute)
             || super::glue_encryption::indexed(&node.resource_type, &reference.attribute)
+            || super::waf_destinations::indexed(&node.resource_type, &reference.attribute)
             || super::waf_statements::indexed(&node.resource_type, &reference.attribute)
             || super::waf_classic::indexed(&node.resource_type, &reference.attribute)
             || super::shield::indexed(&node.resource_type, &reference.attribute)

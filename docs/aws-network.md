@@ -204,10 +204,12 @@ before-value, but current configuration cannot establish historical links.
 `aws_wafv2_web_acl_association` retains its identity/action as a logical
 association fallback. It becomes an undirected Association edge only when both
 `web_acl_arn` and `resource_arn` prove unique current managed AWS endpoints with
-matching known ARN outputs, compatible account/provider bindings and the same
-known region. Protected endpoints are application LBs and explicit
-`aws_api_gateway_stage.arn` (REST stages, not HTTP/WebSocket APIs or a REST API
-root ARN). Extra relationships keep the association resource visible.
+matching resource identities and compatible account/provider bindings. A REGIONAL
+ACL can protect an application load balancer, REST API stage, Cognito user pool,
+AppSync GraphQL API, App Runner service, Bedrock AgentCore gateway or Verified
+Access instance in the same region. An Amplify app requires a CLOUDFRONT ACL and
+an association in `us-east-1`. The app can reside in another region of the same
+account. Extra relationships keep the association resource visible.
 The edge preserves import/move provenance and coverage exactly once.
 
 CloudFront `web_acl_id` is a separate configured reference to an explicit Web ACL

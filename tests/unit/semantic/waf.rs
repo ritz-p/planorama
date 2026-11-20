@@ -418,3 +418,120 @@ fn explicit_cloudfront_scope_survives_an_unresolved_provider_region() {
         Some("Web ACL reference")
     ));
 }
+
+#[test]
+fn additional_waf_associations_verify_the_exported_identity() {
+    for (kind, field, resource) in [
+        (
+            "aws_cognito_user_pool",
+            "arn",
+            "cognito-idp:us-west-2:123456789012:userpool/us-west-2_example",
+        ),
+        (
+            "aws_appsync_graphql_api",
+            "arn",
+            "appsync:us-west-2:123456789012:apis/example",
+        ),
+        (
+            "aws_apprunner_service",
+            "arn",
+            "apprunner:us-west-2:123456789012:service/app/example",
+        ),
+        (
+            "aws_bedrockagentcore_gateway",
+            "gateway_arn",
+            "bedrock-agentcore:us-west-2:123456789012:gateway/example",
+        ),
+        (
+            "aws_verifiedaccess_instance",
+            "id",
+            "ec2:us-west-2:123456789012:verified-access-instance/vai-example",
+        ),
+    ] {
+        let mut f = fixture();
+        let address = format!("{kind}.app");
+        let arn = format!("arn:aws:{resource}");
+        f["configuration"]["provider_config"]["aws"]["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]);
+        let output = if field == "id" { "vai-example" } else { &arn };
+        let row = &mut f["resource_changes"][3];
+        row["type"] = json!(kind);
+        row["address"] = json!(address);
+        row["change"]["after"] = json!({field:output});
+        let cfg = &mut f["configuration"]["root_module"]["resources"][3];
+        cfg["type"] = json!(kind);
+        cfg["address"] = json!(address);
+        f["configuration"]["root_module"]["resources"][5]["expressions"]["resource_arn"] =
+            json!({"references":[format!("{address}.{field}")]});
+        f["resource_changes"][5]["change"]["after"]["resource_arn"] = json!(arn);
+        for mask in [false, true] {
+            f["resource_changes"][3]["change"]["after_sensitive"] = json!({field:mask});
+            let parsed = crate::plan::evidence::tests::parse_fixture(&f.to_string()).unwrap();
+            let graph = semantic::transform(&parsed);
+            assert_eq!(
+                graph
+                    .edges
+                    .iter()
+                    .any(|edge| edge.kind == EdgeKind::Association
+                        && edge.change.as_ref().unwrap().address
+                            == "aws_wafv2_web_acl_association.alb"),
+                !mask,
+                "{kind}/{mask}"
+            );
+        }
+    }
+}
+
+#[test]
+fn amplify_requires_a_same_account_cloudfront_acl_and_an_east_region_association() {
+    let mut f = fixture();
+    let address = "aws_amplify_app.app";
+    let app_arn = "arn:aws:amplify:us-west-2:123456789012:apps/example";
+    let app = &mut f["resource_changes"][3];
+    app["address"] = json!(address);
+    app["type"] = json!("aws_amplify_app");
+    app["change"]["after"] = json!({"arn":app_arn});
+    let resources = &mut f["configuration"]["root_module"]["resources"];
+    resources[3]["address"] = json!(address);
+    resources[3]["type"] = json!("aws_amplify_app");
+    resources[5]["expressions"]["resource_arn"] = json!({"references":[format!("{address}.arn")]});
+    f["resource_changes"][5]["change"]["after"]["resource_arn"] = json!(app_arn);
+    for provider in ["aws", "aws.global"] {
+        f["configuration"]["provider_config"][provider]["expressions"]["assume_role"] =
+            json!([{"role_arn":{"constant_value":"arn:aws:iam::123456789012:role/Fixture"}}]);
+    }
+
+    let association = &mut f["configuration"]["root_module"]["resources"][5];
+    association["provider_config_key"] = json!("aws.global");
+    association["expressions"]["web_acl_arn"] = json!({"references":["aws_wafv2_web_acl.cdn.arn"]});
+    f["resource_changes"][5]["change"]["after"]["web_acl_arn"] =
+        f["resource_changes"][2]["change"]["after"]["arn"].clone();
+    let has_association = |plan: &Value| {
+        let parsed = crate::plan::evidence::tests::parse_fixture(&plan.to_string()).unwrap();
+        semantic::transform(&parsed).edges.iter().any(|edge| {
+            edge.kind == EdgeKind::Association
+                && edge.change.as_ref().unwrap().address == "aws_wafv2_web_acl_association.alb"
+        })
+    };
+    assert!(has_association(&f));
+
+    let mut regional = f.clone();
+    let regional_arn = "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/cdn/fixture";
+    regional["resource_changes"][2]["change"]["after"] =
+        json!({"scope":"REGIONAL","arn":regional_arn});
+    regional["resource_changes"][5]["change"]["after"]["web_acl_arn"] = json!(regional_arn);
+    assert!(!has_association(&regional));
+
+    let mut wrong_region = f.clone();
+    wrong_region["configuration"]["root_module"]["resources"][5]["provider_config_key"] =
+        json!("aws");
+    assert!(!has_association(&wrong_region));
+    for mask in ["after_sensitive", "after_unknown"] {
+        let mut masked = f.clone();
+        masked["resource_changes"][3]["change"][mask] = json!({"arn":true});
+        assert!(!has_association(&masked));
+    }
+    f["configuration"]["provider_config"]["aws.global"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::999999999999:role/Fixture"}}]);
+    assert!(!has_association(&f));
+}
