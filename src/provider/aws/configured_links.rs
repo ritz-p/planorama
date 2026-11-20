@@ -192,6 +192,7 @@ fn global(kind: &str) -> bool {
             | "aws_iam_policy"
             | "aws_cloudfront_distribution"
             | "aws_globalaccelerator_accelerator"
+            | "aws_networkmanager_core_network"
     )
 }
 

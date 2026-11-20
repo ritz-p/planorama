@@ -144,3 +144,74 @@ fn license_manager_verifies_configured_endpoints() {
         true,
     );
 }
+
+#[test]
+fn ram_verifies_global_core_network_in_both_associations() {
+    let fixture = include_str!("../../fixtures/ram-references-plan.json");
+    for (address, path, label) in [
+        (
+            "aws_ram_resource_association.core",
+            "resource_arn",
+            "Shared resource",
+        ),
+        (
+            "aws_ram_resource_share_associations_exclusive.acl",
+            "resource_arns",
+            "Shared resources",
+        ),
+    ] {
+        check_provider_alias(
+            fixture,
+            address,
+            path,
+            "aws_networkmanager_core_network.shared",
+            label,
+            false,
+        );
+    }
+}
+
+#[test]
+fn ram_verifies_configured_endpoints() {
+    let fixture = include_str!("../../fixtures/ram-references-plan.json");
+    check(
+        fixture,
+        parse_fixture,
+        label,
+        &[
+            (
+                "aws_ram_principal_association.account",
+                "resource_share_arn",
+            ),
+            ("aws_ram_principal_association.account", "principal"),
+            ("aws_ram_resource_association.subnet", "resource_arn"),
+            ("aws_ram_resource_share.standard", "permission_arns"),
+            ("aws_ram_resource_share_accepter.recipient", "share_arn"),
+            (
+                "aws_ram_resource_share_associations_exclusive.acl",
+                "resource_share_arn",
+            ),
+            (
+                "aws_ram_resource_share_associations_exclusive.acl",
+                "resource_arns",
+            ),
+            (
+                "aws_ram_resource_share_associations_exclusive.acl",
+                "principals",
+            ),
+        ],
+        ("aws_ram_resource_share.standard", "arn"),
+    );
+    assert!(label("aws_ram_resource_share_associations_exclusive", "sources").is_none());
+    assert!(label("aws_ram_resource_share", "allow_external_principals").is_none());
+    assert!(label("aws_ram_resource_share_accepter", "resources").is_none());
+    assert!(label("aws_ram_resource_share_accepter", "sender_account_id").is_none());
+    check_provider_alias(
+        fixture,
+        "aws_ram_resource_association.subnet",
+        "resource_arn",
+        "aws_subnet.shared",
+        "Shared resource",
+        true,
+    );
+}
