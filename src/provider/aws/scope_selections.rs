@@ -28,6 +28,29 @@ type Details = Vec<(&'static str, &'static str, String)>;
 fn selections(kind: &str, v: &Value, mask: &Value) -> Details {
     let mut details = Vec::new();
     match kind {
+        "aws_cloudformation_stack_instances" => {
+            if let Some(regions) = strings(v, mask, "regions", |s| region(s).is_some())
+                .filter(|regions| !regions.is_empty())
+            {
+                details.push((
+                    "regions",
+                    "Configured deployment regions",
+                    regions.join(", "),
+                ));
+            }
+        }
+        "aws_cloudformation_stack_set_instance" => {
+            let field = "stack_set_instance_region";
+            let configured = value(v, mask, field);
+            let (field, selected) = if configured.is_some_and(Value::is_null) {
+                ("region", value(v, mask, "region"))
+            } else {
+                (field, configured)
+            };
+            if let Some(selected) = selected.and_then(Value::as_str).and_then(region) {
+                details.push((field, "Configured deployment region", selected.to_owned()));
+            }
+        }
         "aws_securityhub_aggregator_v2" | "aws_securityhub_finding_aggregator" => {
             let v2 = kind == "aws_securityhub_aggregator_v2";
             let (mode, regions) = if v2 {

@@ -435,3 +435,80 @@ fn cloud_control_role_keeps_target_placement_unresolved() {
         super::label("aws_cloudcontrolapi_resource", "role_arn"),
     ));
 }
+
+#[test]
+fn stacksets_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/stacksets-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            (
+                "aws_cloudformation_stack_set.shipping",
+                "administration_role_arn",
+            ),
+            (
+                "aws_cloudformation_stack_set.shipping",
+                "execution_role_name",
+            ),
+            (
+                "aws_cloudformation_stack_set.automatic",
+                "auto_deployment.depends_on_stack_sets",
+            ),
+            (
+                "aws_cloudformation_stack_set_instance.shipping",
+                "stack_set_name",
+            ),
+            (
+                "aws_cloudformation_stack_set_instance.shipping",
+                "account_id",
+            ),
+            (
+                "aws_cloudformation_stack_instances.shipping",
+                "stack_set_name",
+            ),
+            ("aws_cloudformation_stack_instances.shipping", "accounts"),
+            (
+                "aws_cloudformation_stack_instances.automatic",
+                "deployment_targets.organizational_unit_ids",
+            ),
+            (
+                "aws_cloudformation_stack_instances.automatic",
+                "deployment_targets.accounts",
+            ),
+        ],
+        ("aws_iam_role.admin", "arn"),
+    );
+}
+
+#[test]
+fn stacksets_distinguish_administration_scope_from_target_regions_and_accounts() {
+    use serde_json::{Value, json};
+    let fixture = include_str!("../../fixtures/stacksets-references-plan.json");
+    let instance = "aws_cloudformation_stack_set_instance.shipping";
+    let execution = "aws_cloudformation_stack_set.shipping";
+    let verify = |fixture: &Value, address: &str, path: &str| {
+        let graph = crate::semantic::transform(&crate::plan::parse(&fixture.to_string()).unwrap());
+        crate::configured_service_links::verified(
+            &graph,
+            address,
+            path,
+            super::label(address.split('.').next().unwrap(), path),
+        )
+    };
+    let mut fixture: Value = serde_json::from_str(fixture).unwrap();
+    let changes = fixture["resource_changes"].as_array_mut().unwrap();
+    changes
+        .iter_mut()
+        .find(|row| row["address"] == instance)
+        .unwrap()["change"]["after_unknown"] = json!({"stack_set_instance_region": true});
+    assert!(verify(&fixture, instance, "stack_set_name"));
+    assert!(!verify(&fixture, instance, "account_id"));
+
+    let changes = fixture["resource_changes"].as_array_mut().unwrap();
+    changes
+        .iter_mut()
+        .find(|row| row["address"] == "aws_cloudformation_stack_instances.shipping")
+        .unwrap()["change"]["after"]["accounts"] = json!(["210987654321"]);
+    assert!(!verify(&fixture, execution, "execution_role_name"));
+}

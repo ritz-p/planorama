@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = stacksets::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = cloudformation::rule(kind, path) {
         return Some(rule);
     }
@@ -60,6 +63,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if stacksets::resource(kind) {
+        return true;
+    }
     if cloudformation::resource(kind) {
         return true;
     }
@@ -127,6 +133,9 @@ pub(super) fn annotate(
 
 fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, path: &str) -> bool {
     let kind = &e.nodes[reference.target].resource_type;
+    if stacksets::resource(kind) {
+        return stacksets::qualifies(e, reference, source, path);
+    }
     if account_governance::resource(kind) {
         return account_governance::qualifies(e, reference, source, path);
     }
@@ -265,6 +274,8 @@ mod devops_insights;
 mod account_governance;
 
 mod cloudformation;
+
+mod stacksets;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
