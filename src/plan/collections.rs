@@ -133,7 +133,7 @@ fn known_strings<'a>(value: &'a Value, unknown: &'a Value, path: &[&str]) -> Opt
 pub(super) fn annotate(
     plan: &Value,
     nodes: &mut [TerraformEntity],
-    references: &mut [AttributeReference],
+    references: &mut Vec<AttributeReference>,
     recover: bool,
     bind: impl FnOnce(&mut [TerraformEntity]),
 ) -> Vec<crate::model::ConfiguredValueMatch> {
@@ -517,5 +517,12 @@ pub(super) fn annotate(
         references,
         &elbv2_evidence,
     );
+    let authorizations =
+        crate::provider::aws::application_services::fabric_ingestion_authorizations(
+            nodes,
+            references,
+            &elbv2_evidence,
+        );
+    references.extend(authorizations);
     recovered
 }
