@@ -30,13 +30,16 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_s3_bucket", &["arn"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination()
+        .decoded(super::finding_exports::bucket_arn),
         ("aws_guardduty_publishing_destination", "kms_key_arn") => Rule::new(
             "Finding export key",
             &[("aws_kms_key", &["arn"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }
@@ -63,8 +66,26 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
-    let _ = (source, path);
-    r.attribute != "destination_arn" || e.text(r.target, "destination_type") == Some("S3")
+    match path {
+        "destination_arn" => {
+            e.text(r.target, "destination_type") == Some("S3")
+                && super::finding_exports::region_matches(
+                    e,
+                    r.target,
+                    source,
+                    "destination_arn",
+                    "kms_key_arn",
+                )
+        }
+        "kms_key_arn" => super::finding_exports::region_matches(
+            e,
+            r.target,
+            source,
+            "destination_arn",
+            "kms_key_arn",
+        ),
+        _ => true,
+    }
 }
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/guardduty_destinations.rs"]

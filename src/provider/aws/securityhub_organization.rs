@@ -20,25 +20,29 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             ],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_securityhub_invite_accepter", "master_id") => Rule::new(
             "Inviting administrator",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_securityhub_member", "account_id") => Rule::new(
             "Security Hub member",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_securityhub_organization_admin_account", "admin_account_id") => Rule::new(
             "Security Hub administrator",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }
