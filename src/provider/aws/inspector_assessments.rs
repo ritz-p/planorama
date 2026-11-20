@@ -17,12 +17,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
-        ("aws_inspector_assessment_template", "event_subscription.topic_arn") => Rule::new(
-            "Assessment notifications",
-            &[("aws_sns_topic", &["arn"])],
-            false,
-            &["event_subscription"],
-        ),
+        ("aws_inspector_assessment_template", "event_subscription.topic_arn") => {
+            Rule::scalar_set("Assessment notifications", &[("aws_sns_topic", &["arn"])])
+        }
         (
             "aws_inspector2_delegated_admin_account" | "aws_inspector2_member_association",
             "account_id",
@@ -31,13 +28,15 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_inspector2_enabler", "account_ids") => Rule::new(
             "Enabled Inspector accounts",
             &[("aws_organizations_account", &["id"])],
             true,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }

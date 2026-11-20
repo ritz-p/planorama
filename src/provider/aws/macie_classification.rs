@@ -12,6 +12,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 false,
                 &[],
             )
+            .with_explicit_destination()
         }
         ("aws_macie2_classification_export_configuration", "s3_destination.kms_key_arn") => {
             Rule::new(
@@ -20,6 +21,7 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 false,
                 &[],
             )
+            .with_explicit_destination()
         }
         ("aws_macie2_classification_job", "custom_data_identifier_ids") => Rule::new(
             "Custom data identifiers",
@@ -43,25 +45,29 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
                 false,
                 &["s3_job_definition.bucket_definitions"],
             )
+            .with_explicit_destination()
         }
         ("aws_macie2_invitation_accepter", "administrator_account_id") => Rule::new(
             "Macie administrator",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_macie2_member", "account_id") => Rule::new(
             "Macie member",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_macie2_organization_admin_account", "admin_account_id") => Rule::new(
             "Organization administrator",
             &[("aws_organizations_account", &["id"])],
             false,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }
@@ -92,6 +98,18 @@ pub(super) fn annotate(
     configured_links::annotate(nodes, refs, values, rule, qualifies)
 }
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
+    if matches!(
+        path,
+        "s3_destination.0.bucket_name" | "s3_destination.0.kms_key_arn"
+    ) {
+        return super::finding_exports::region_matches(
+            e,
+            r.target,
+            source,
+            "s3_destination.0.bucket_name",
+            "s3_destination.0.kms_key_arn",
+        );
+    }
     if r.attribute == "s3_job_definition.bucket_definitions.buckets" {
         let Some((prefix, _)) = path.rsplit_once('.') else {
             return false;

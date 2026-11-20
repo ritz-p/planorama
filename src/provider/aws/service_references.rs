@@ -2177,6 +2177,18 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
                         "aws_iam_group_membership" | "aws_iam_user_group_membership"
                     )) {
                     crate::model::ReferenceKind::Membership
+                } else if verified
+                    && node.resource_type == "aws_securityhub_configuration_policy_association"
+                    && reference.attribute == "target_id"
+                {
+                    reference
+                        .source_attributes
+                        .iter()
+                        .find_map(|path| super::organizations::root_index(path))
+                        .map_or(
+                            crate::model::ReferenceKind::Configured,
+                            crate::model::ReferenceKind::OrganizationRoot,
+                        )
                 } else {
                     crate::model::ReferenceKind::Configured
                 },

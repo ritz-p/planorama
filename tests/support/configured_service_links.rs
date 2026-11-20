@@ -79,3 +79,52 @@ fn change<'a>(fixture: &'a mut Value, address: &str) -> &'a mut Value {
         .find(|row| row["address"] == address)
         .unwrap()
 }
+
+pub(crate) fn organization_targets(
+    json: &str,
+    label: fn(&str, &str) -> Option<&'static str>,
+    paths: &[(&str, &str)],
+) {
+    let mut fixture: Value = serde_json::from_str(json).unwrap();
+    let cfg = &mut fixture["configuration"];
+    cfg["provider_config"]["aws"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::999999999999:role/Delegated"}}]);
+    cfg["provider_config"]["aws.management"] = cfg["provider_config"]["aws"].clone();
+    cfg["provider_config"]["aws.management"]["alias"] = json!("management");
+    cfg["provider_config"]["aws.management"]["expressions"]["assume_role"] =
+        json!([{"role_arn":{"constant_value":"arn:aws:iam::210987654321:role/Management"}}]);
+    for resource in cfg["root_module"]["resources"].as_array_mut().unwrap() {
+        if resource["type"]
+            .as_str()
+            .unwrap()
+            .starts_with("aws_organizations_")
+        {
+            resource["provider_config_key"] = json!("aws.management");
+        }
+    }
+    for expected in [true, false] {
+        let parsed = crate::plan::evidence::tests::parse_fixture(&fixture.to_string()).unwrap();
+        let graph = crate::semantic::transform(&parsed);
+        for &(address, path) in paths {
+            assert_eq!(
+                verified(
+                    &graph,
+                    address,
+                    path,
+                    label(address.split('.').next().unwrap(), path)
+                ),
+                expected,
+                "{address}/{path}"
+            );
+        }
+        for resource in fixture["resource_changes"].as_array_mut().unwrap() {
+            if resource["type"]
+                .as_str()
+                .unwrap()
+                .starts_with("aws_organizations_")
+            {
+                resource["change"]["after_unknown"] = json!({"id":true});
+            }
+        }
+    }
+}
