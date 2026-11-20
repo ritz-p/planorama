@@ -23,25 +23,29 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_organizations_account", &["id"])],
             true,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_fms_policy", "include_map.orgunit") => Rule::new(
             "Included organizational units",
             &[("aws_organizations_organizational_unit", &["id"])],
             true,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_fms_policy", "exclude_map.account") => Rule::new(
             "Excluded accounts",
             &[("aws_organizations_account", &["id"])],
             true,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         ("aws_fms_policy", "exclude_map.orgunit") => Rule::new(
             "Excluded organizational units",
             &[("aws_organizations_organizational_unit", &["id"])],
             true,
             &[],
-        ),
+        )
+        .with_explicit_destination(),
         _ => return None,
     })
 }
