@@ -400,6 +400,26 @@ fn set_and_key_scopes_use_only_unmasked_managed_values() {
 }
 
 #[test]
+fn explicit_cloudfront_scope_survives_an_unresolved_provider_region() {
+    let mut f = fixture();
+    f["configuration"]["provider_config"]["aws.global"]["expressions"]["region"] =
+        json!({"references":["var.region"]});
+    let result = graph(&f);
+    let acl = result
+        .nodes
+        .iter()
+        .find(|n| n.address == "aws_wafv2_web_acl.cdn")
+        .unwrap();
+    assert!(acl.entity.scope.as_ref().unwrap().global);
+    assert!(crate::configured_service_links::verified(
+        &result,
+        "aws_cloudfront_distribution.cdn",
+        "web_acl_id",
+        Some("Web ACL reference")
+    ));
+}
+
+#[test]
 fn additional_waf_associations_verify_the_exported_identity() {
     for (kind, field, resource) in [
         (

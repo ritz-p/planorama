@@ -59,3 +59,46 @@ fn group_selectors_cannot_enumerate_members() {
         ));
     }
 }
+
+#[test]
+fn automatic_response_checks_the_load_balancer_type_for_alb_aliases() {
+    use serde_json::{Value, json};
+    let mut f: Value =
+        serde_json::from_str(include_str!("../../fixtures/shield-plan.json")).unwrap();
+    let alias = "aws_alb.sample1";
+    for row in f["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+    {
+        if row["type"] == "aws_lb" {
+            row["type"] = json!("aws_alb");
+            row["address"] = json!(alias);
+        }
+        if row["type"] == "aws_shield_application_layer_automatic_response" {
+            row["expressions"]["resource_arn"] = json!({"references":[format!("{alias}.arn")]});
+        }
+    }
+    f["resource_changes"][1]["type"] = json!("aws_alb");
+    f["resource_changes"][1]["address"] = json!(alias);
+    for (kind, sensitive, unknown, expected) in [
+        ("application", false, false, true),
+        ("network", false, false, false),
+        ("application", true, false, false),
+        ("application", false, true, false),
+    ] {
+        let change = &mut f["resource_changes"][1]["change"];
+        change["after"]["load_balancer_type"] = json!(kind);
+        change["after_sensitive"] = json!({"load_balancer_type":sensitive});
+        change["after_unknown"] = json!({"load_balancer_type":unknown});
+        let parsed = crate::plan::parse(&f.to_string()).unwrap();
+        assert_eq!(
+            crate::configured_service_links::verified(
+                &crate::semantic::transform(&parsed),
+                "aws_shield_application_layer_automatic_response.sample0",
+                "resource_arn",
+                Some("Automatic response target")
+            ),
+            expected
+        );
+    }
+}

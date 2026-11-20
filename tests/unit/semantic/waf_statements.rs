@@ -92,3 +92,30 @@ fn nested_sets_require_a_verified_parent_scope() {
         );
     }
 }
+
+#[test]
+fn global_parent_scope_can_be_inherited_without_a_provider_region() {
+    use serde_json::{Value, json};
+    let mut f: Value = serde_json::from_str(
+        &include_str!("../../fixtures/waf-statements-plan.json")
+            .replace(":regional/webacl/", ":global/webacl/"),
+    )
+    .unwrap();
+    for row in f["resource_changes"].as_array_mut().unwrap() {
+        if row["type"] == "aws_wafv2_web_acl" {
+            row["change"]["after"]["scope"] = json!("CLOUDFRONT");
+        }
+    }
+    f["configuration"]["provider_config"]["aws"]["expressions"]["region"] =
+        json!({"references":["var.region"]});
+    let parsed = crate::plan::parse(&f.to_string()).unwrap();
+    assert_eq!(
+        parsed
+            .nodes
+            .iter()
+            .find(|n| n.resource_type == "aws_wafv2_web_acl_rule")
+            .unwrap()
+            .waf_scope,
+        Some(crate::model::WafScope::CloudFront)
+    );
+}

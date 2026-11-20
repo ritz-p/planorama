@@ -13,12 +13,12 @@
           "create"
         ],
         "after": {
-          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001",
           "statement": [
             {
               "rule_group_reference_statement": [
                 {
-                  "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_rule_group"
+                  "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/rulegroup/app/00000000-0000-0000-0000-000000000002"
                 }
               ]
             }
@@ -38,14 +38,14 @@
         ],
         "after": {
           "scope": "REGIONAL",
-          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001",
           "rule": [
             {
               "statement": [
                 {
                   "ip_set_reference_statement": [
                     {
-                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/ipset/app/00000000-0000-0000-0000-000000000003"
                     }
                   ]
                 }
@@ -56,7 +56,7 @@
                 {
                   "regex_pattern_set_reference_statement": [
                     {
-                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/regexpatternset/app/00000000-0000-0000-0000-000000000004"
                     }
                   ]
                 }
@@ -77,10 +77,10 @@
           "create"
         ],
         "after": {
-          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001",
           "rule_group_reference": [
             {
-              "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_rule_group"
+              "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/rulegroup/app/00000000-0000-0000-0000-000000000002"
             }
           ]
         }
@@ -98,14 +98,14 @@
         ],
         "after": {
           "scope": "REGIONAL",
-          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_rule_group",
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/rulegroup/app/00000000-0000-0000-0000-000000000002",
           "rule": [
             {
               "statement": [
                 {
                   "ip_set_reference_statement": [
                     {
-                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/ipset/app/00000000-0000-0000-0000-000000000003"
                     }
                   ]
                 }
@@ -116,7 +116,7 @@
                 {
                   "regex_pattern_set_reference_statement": [
                     {
-                      "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+                      "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/regexpatternset/app/00000000-0000-0000-0000-000000000004"
                     }
                   ]
                 }
@@ -138,7 +138,7 @@
         ],
         "after": {
           "scope": "REGIONAL",
-          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/ipset/app/00000000-0000-0000-0000-000000000003"
         }
       }
     },
@@ -154,7 +154,7 @@
         ],
         "after": {
           "scope": "REGIONAL",
-          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/regexpatternset/app/00000000-0000-0000-0000-000000000004"
         }
       }
     },
@@ -169,12 +169,12 @@
           "create"
         ],
         "after": {
-          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001",
           "statement": [
             {
               "ip_set_reference_statement": [
                 {
-                  "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_ip_set"
+                  "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/ipset/app/00000000-0000-0000-0000-000000000003"
                 }
               ]
             }
@@ -193,12 +193,12 @@
           "create"
         ],
         "after": {
-          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "web_acl_arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001",
           "statement": [
             {
               "regex_pattern_set_reference_statement": [
                 {
-                  "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_regex_pattern_set"
+                  "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/regexpatternset/app/00000000-0000-0000-0000-000000000004"
                 }
               ]
             }
