@@ -88357,7 +88357,7 @@
       }
     },
     "aws_chimesdkvoice_sip_media_application": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1598,
       "gap": "#1598 — Verify each explicit Lambda endpoint ARN independently, with the Lambda region qualified by the application aws_region. Use the application aws_region or corroborating ARN region rather than deriving its deployment region from the API provider binding alone.",
@@ -88375,8 +88375,8 @@
         "placement": "Supported: managed Logical Node with the Amazon Chime SDK service label. A ChimeSDKVoice SIP Media Application is a managed object that passes values from a SIP rule to a target AWS Lambda function.",
         "ownership": "Not applicable: Lambda endpoints remain independent from the SIP media application.",
         "network": "Not applicable: Invoking Lambda does not attach the SIP media application to the Lambda VPC.",
-        "references": "Missing: Verify each explicit Lambda endpoint ARN independently, with the Lambda region qualified by the application aws_region.",
-        "scope": "Missing: Use the application aws_region or corroborating ARN region rather than deriving its deployment region from the API provider binding alone.",
+        "references": "Supported: Verify each explicit Lambda endpoint ARN independently, with the Lambda region qualified by the application aws_region. Use the application aws_region or corroborating ARN region rather than deriving its deployment region from the API provider binding alone.",
+        "scope": "Supported: Derive the deployment region from aws_region or a corroborating SIP media application ARN.",
         "summaries": "Intentionally unsupported: omit voice and call payloads and Lambda invocation details. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chimesdkvoice_sip_media_application.html.markdown",
         "shapes": {
@@ -88410,14 +88410,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceSipMediaApplication. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_chimesdkvoice_sip_rule": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1598,
       "gap": "#1598 — Verify the typed RequestUriHostname selector against the configured connector's outbound host output, and verify each explicit application ID under its target aws_region. A ToPhoneNumber trigger is not a unique supported managed endpoint.",
@@ -88436,7 +88438,7 @@
         "placement": "Supported: managed Logical Policy with the Amazon Chime SDK service label. A SIP rule associates your SIP media application with a phone number or a Request URI hostname. You can associate a SIP rule with more than one SIP media application. Each application then runs only that rule.",
         "ownership": "Not applicable: A SIP rule routes to independent applications and does not own them.",
         "network": "Not applicable: SIP trigger matching does not establish network placement or runtime reachability.",
-        "references": "Missing: Verify the typed RequestUriHostname selector against the configured connector's outbound host output, and verify each explicit application ID under its target aws_region. A ToPhoneNumber trigger is not a unique supported managed endpoint.",
+        "references": "Supported: Verify the typed RequestUriHostname selector against the configured connector's outbound host output, and verify each explicit application ID under its target aws_region. A ToPhoneNumber trigger is not a unique supported managed endpoint.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Each target application region is independent of the rule's API control-plane scope.",
         "summaries": "Intentionally unsupported: omit literal phone numbers, hostname values and call outcomes. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chimesdkvoice_sip_rule.html.markdown",
@@ -88477,7 +88479,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceSipRule. No same-name data source in the pinned schema.",
         "dataContracts": {}

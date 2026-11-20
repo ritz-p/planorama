@@ -24,6 +24,9 @@ const PROFILE_KEY: &str = "server_side_encryption_configuration.kms_key_arn";
 const CDR: &str = "voice_connector.cdr_bucket";
 const BUCKET: Outputs = &[("aws_s3_bucket", &["bucket", "id"])];
 
+const SIP_APP: &str = "aws_chimesdkvoice_sip_media_application";
+const SIP_RULE: &str = "aws_chimesdkvoice_sip_rule";
+
 fn voice_configuration(kind: &str) -> bool {
     matches!(
         kind,
@@ -34,7 +37,7 @@ fn voice_configuration(kind: &str) -> bool {
 pub(crate) fn has_indexed(kind: &str) -> bool {
     matches!(
         kind,
-        VOICE_GROUP | MEDIA | STREAMING | VOICE_GLOBAL | PROFILE_DOMAIN
+        VOICE_GROUP | MEDIA | STREAMING | VOICE_GLOBAL | PROFILE_DOMAIN | SIP_APP | SIP_RULE
     )
 }
 
@@ -108,6 +111,19 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             "Chime voice profile encryption key",
             &[("aws_kms_key", &["arn"])],
         ),
+        (SIP_APP, "endpoints.lambda_arn") => {
+            Rule::new("Chime SIP Lambda endpoint", LAMBDA, false, &["endpoints"])
+                .in_control_plane_account()
+        }
+        (SIP_RULE, "trigger_value") => scalar(
+            "Chime SIP outbound host",
+            &[(VOICE_CONNECTOR, &["outbound_host_name"])],
+        )
+        .in_control_plane_account(),
+        (SIP_RULE, "target_applications.sip_media_application_id") => {
+            Rule::scalar_set("Chime SIP target applications", &[(SIP_APP, &["id"])])
+                .in_control_plane_account()
+        }
         _ => return None,
     })
 }
@@ -165,7 +181,12 @@ fn qualified_arn(node: &TerraformEntity, value: &str, service: &str, prefix: &st
 
 fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
     if e.nodes[source].resource_type == VOICE_CONNECTOR {
-        return e.nodes[source].region_override.is_some();
+        return e.nodes[source].region_override.is_some()
+            && (r.attribute != "trigger_value"
+                || (e.text(r.target, "trigger_type") == Some("RequestUriHostname")
+                    && e.text(r.target, "trigger_value").is_some_and(|host| {
+                        !host.contains(['/', ':', '@']) && host.contains('.')
+                    })));
     }
     let target = r.target;
     if r.attribute == INSIGHTS {
@@ -207,6 +228,23 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     if r.attribute == PROFILE_KEY {
         return input_arn(e, target, source, path, "kms", "key/");
     }
+    if r.attribute == "endpoints.lambda_arn" {
+        return same_region(&e.nodes[target], &e.nodes[source])
+            && input_arn(e, target, source, path, "lambda", "function:");
+    }
+    if r.attribute == "target_applications.sip_media_application_id" {
+        let Some((block, _)) = path.rsplit_once('.') else {
+            return false;
+        };
+        return e
+            .text(target, &format!("{block}.aws_region"))
+            .is_some_and(|wanted| {
+                e.nodes[source]
+                    .region_override
+                    .as_ref()
+                    .is_some_and(|region| region.0 == wanted)
+            });
+    }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
         "guardrail_policy_arns" => ("iam", "policy/"),
@@ -228,6 +266,7 @@ pub(crate) fn service_regions(nodes: &mut [TerraformEntity], values: &[(&Value, 
     for (index, node) in nodes.iter_mut().enumerate() {
         let prefix = match node.resource_type.as_str() {
             VOICE_CONNECTOR => "vc/",
+            SIP_APP => "sma/",
             _ => continue,
         };
         if !current(node) {
