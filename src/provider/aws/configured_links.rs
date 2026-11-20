@@ -16,6 +16,10 @@ pub(super) struct Rule {
 }
 
 impl Rule {
+    pub fn statement_blocks(mut self) -> Self {
+        self.blocks = nested_references::NestedBlocks::WafStatement;
+        self
+    }
     pub fn in_control_plane_account(mut self) -> Self {
         self.account_only = true;
         self
@@ -219,7 +223,7 @@ pub(super) fn bindings(raw: &Input, r: &AttributeReference, lookup: Lookup) -> b
     })
 }
 
-fn same_account(
+pub(super) fn same_account(
     left: Option<&crate::model::ProviderConfiguration>,
     right: Option<&crate::model::ProviderConfiguration>,
 ) -> bool {

@@ -6999,7 +6999,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1492,
-      "gap": "#1492 — Preserve #496 inline group references, scoped CloudFront protection and regional associations. Resolve typed IP-set/regex-set references in structured statements without interpreting rule_json.",
+      "gap": "#1492 — Partial: Preserve #496 inline group references, scoped CloudFront protection and regional associations. Resolve typed IP-set/regex-set references in structured statements without interpreting rule_json.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -7015,7 +7015,7 @@
         "ownership": "Not applicable: The managed wafv2_web_acl declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
         "references": "Partial: Preserve #496 inline group references, scoped CloudFront protection and regional associations. Resolve typed IP-set/regex-set references in structured statements without interpreting rule_json.",
-        "scope": "Supported: known CLOUDFRONT yields global scope; REGIONAL uses region evidence. Unknown scope stays unresolved.",
+        "scope": "Supported: Explicit ACL or rule group scope, or scope inherited through a verified parent ACL ARN.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl summaries.",
         "officialDocumentation": "website/docs/r/wafv2_web_acl.html.markdown",
         "shapes": {
@@ -7062,7 +7062,9 @@
           "src/provider/aws/waf.rs",
           "tests/unit/semantic/waf.rs",
           "src/provider/aws/cloudfront_multitenant.rs",
-          "tests/unit/semantic/cloudfront_multitenant.rs"
+          "tests/unit/semantic/cloudfront_multitenant.rs",
+          "src/provider/aws/waf_statements.rs",
+          "tests/unit/semantic/waf_statements.rs"
         ],
         "managedDataContract": "Managed resourceWebACL. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -7093,7 +7095,7 @@
       "status": "Partial",
       "priority": "P2",
       "issue": 1492,
-      "gap": "#1492 — Existing #496 recognizes this group as a scoped ACL endpoint. Resolve the group's own typed IP-set and regex-set statement ARNs without interpreting rules_json.",
+      "gap": "#1492 — Partial: Existing #496 recognizes this group as a scoped ACL endpoint. Resolve the group's own typed IP-set and regex-set statement ARNs without interpreting rules_json.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -7108,7 +7110,7 @@
         "ownership": "Not applicable: Rule and policy references can be shared. Keep this definition independently addressable.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
         "references": "Partial: Existing #496 recognizes this group as a scoped ACL endpoint. Resolve the group's own typed IP-set and regex-set statement ARNs without interpreting rules_json.",
-        "scope": "Supported: known CLOUDFRONT yields global scope; REGIONAL uses region evidence. Unknown scope stays unresolved.",
+        "scope": "Supported: Explicit ACL or rule group scope, or scope inherited through a verified parent ACL ARN.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_rule_group summaries.",
         "officialDocumentation": "website/docs/r/wafv2_rule_group.html.markdown",
         "shapes": {
@@ -7146,7 +7148,9 @@
           "tests/unit/aws_inventory.rs",
           "tests/unit/resource_support.rs",
           "src/provider/aws/waf.rs",
-          "tests/unit/semantic/waf.rs"
+          "tests/unit/semantic/waf.rs",
+          "src/provider/aws/waf_statements.rs",
+          "tests/unit/semantic/waf_statements.rs"
         ],
         "managedDataContract": "Managed resourceRuleGroup. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -78253,7 +78257,7 @@
       }
     },
     "aws_wafv2_web_acl_rule": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1492,
       "gap": "#1492 — Resolve the parent ACL and the structured per-rule statement ARNs. Inherit scope from the verified ACL.",
@@ -78270,8 +78274,8 @@
         "placement": "Supported: Logical Policy for the managed wafv2_web_acl_rule declaration. Manages an individual rule within a WAFv2 Web ACL.",
         "ownership": "Missing: use a verified web_acl_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Resolve the parent ACL and the structured per-rule statement ARNs. Inherit scope from the verified ACL.",
-        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "references": "Supported: Resolve the parent ACL and the structured per-rule statement ARNs. Inherit scope from the verified ACL.",
+        "scope": "Supported: Explicit ACL or rule group scope, or scope inherited through a verified parent ACL ARN.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_rule summaries.",
         "officialDocumentation": "website/docs/r/wafv2_web_acl_rule.html.markdown",
         "shapes": {
@@ -78307,14 +78311,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_statements.rs",
+          "tests/unit/semantic/waf_statements.rs"
         ],
         "managedDataContract": "Managed newResourceWebACLRule. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_wafv2_web_acl_rule_group_association": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1492,
       "gap": "#1492 — Resolve the ACL and customer rule-group ARN. A managed vendor/name/version tuple identifies a catalog entry, not a customer group.",
@@ -78331,8 +78337,8 @@
         "placement": "Supported: Logical Association for the managed wafv2_web_acl_rule_group_association declaration. Associates a WAFv2 Rule Group with a Web ACL by adding a rule that references the Rule Group.",
         "ownership": "Missing: use a verified web_acl_arn reference to identify the parent. Keep the helper separately addressable until the unique parent and its lifecycle match.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Resolve the ACL and customer rule-group ARN. A managed vendor/name/version tuple identifies a catalog entry, not a customer group.",
-        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "references": "Supported: Resolve the ACL and customer rule-group ARN. A managed vendor/name/version tuple identifies a catalog entry, not a customer group.",
+        "scope": "Supported: Explicit ACL or rule group scope, or scope inherited through a verified parent ACL ARN.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_web_acl_rule_group_association summaries.",
         "officialDocumentation": "website/docs/r/wafv2_web_acl_rule_group_association.html.markdown",
         "shapes": {
@@ -78365,7 +78371,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf_statements.rs",
+          "tests/unit/semantic/waf_statements.rs"
         ],
         "managedDataContract": "Managed newResourceWebACLRuleGroupAssociation. No same-name data source in 6.70.0.",
         "dataContracts": {}

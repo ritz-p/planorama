@@ -511,6 +511,7 @@ pub(super) fn annotate(
     }
     crate::provider::aws::encryption::enrich(plan, nodes, references);
     bind(nodes);
+    crate::provider::aws::waf::inherit_scope(nodes, references, &elbv2_evidence);
     crate::provider::aws::service_references::annotate_provider_accounts(
         nodes,
         references,
