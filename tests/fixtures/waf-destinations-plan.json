@@ -13,7 +13,7 @@
           "create"
         ],
         "after": {
-          "resource_arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl",
+          "resource_arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001",
           "log_destination_configs": [
             "arn:aws:firehose:us-east-1:123456789012:deliverystream/aws-waf-logs-test"
           ]
@@ -32,7 +32,7 @@
         ],
         "after": {
           "scope": "REGIONAL",
-          "arn": "arn:aws:wafv2:us-east-1:123456789012:resource/wafv2_web_acl"
+          "arn": "arn:aws:wafv2:us-east-1:123456789012:regional/webacl/app/00000000-0000-0000-0000-000000000001"
         }
       }
     },

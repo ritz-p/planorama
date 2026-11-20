@@ -79,10 +79,15 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _path: &st
         }
         _ => return false,
     };
-    let expected = super::waf::effective_region(&e.nodes[r.target]);
+    let expected = match scope {
+        crate::model::WafScope::CloudFront => Some("us-east-1"),
+        crate::model::WafScope::Regional => {
+            super::waf::effective_region(&e.nodes[r.target]).map(|v| v.0.as_str())
+        }
+    };
     name.starts_with(prefix)
-        && expected.is_some_and(|v| v.0 == *region)
-        && super::waf::effective_region(&e.nodes[source]) == expected
+        && expected == Some(*region)
+        && super::waf::effective_region(&e.nodes[source]).is_some_and(|r| r.0 == *region)
         && crate::model::AwsAccountScope::new(owner).is_some_and(|a| {
             e.nodes[source]
                 .provider_configuration
