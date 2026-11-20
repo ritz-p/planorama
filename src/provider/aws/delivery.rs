@@ -6,6 +6,9 @@ use serde_json::Value;
 const IAM_OWNER: &[(&str, &[&str])] = &[("aws_iam_user", &["arn"]), ("aws_iam_role", &["arn"])];
 
 fn rule(kind: &str, path: &str) -> Option<Rule> {
+    if let Some(rule) = codecatalyst::rule(kind, path) {
+        return Some(rule);
+    }
     if let Some(rule) = codebuild::rule(kind, path) {
         return Some(rule);
     }
@@ -30,6 +33,9 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
 }
 
 pub(crate) fn resource(kind: &str) -> bool {
+    if codecatalyst::resource(kind) {
+        return true;
+    }
     if codebuild::resource(kind) {
         return true;
     }
@@ -67,6 +73,9 @@ pub(super) fn annotate(
 
 fn qualifies(e: &Evidence<'_>, reference: &AttributeReference, source: usize, path: &str) -> bool {
     let kind = &e.nodes[reference.target].resource_type;
+    if codecatalyst::resource(kind) {
+        return codecatalyst::qualifies(e, reference, source, path);
+    }
     if codebuild::resource(kind) {
         return codebuild::qualifies(e, reference, source, path);
     }
@@ -158,6 +167,8 @@ fn codeartifact_qualifies(e: &Evidence<'_>, reference: &AttributeReference, sour
 }
 
 mod codebuild;
+
+mod codecatalyst;
 
 #[cfg(test)]
 #[path = "../../../tests/unit/semantic/delivery.rs"]
