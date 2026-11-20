@@ -227,3 +227,23 @@ fn codedeploy_requires_current_typed_evidence() {
         ("aws_codedeploy_app.shipping", "name"),
     );
 }
+
+#[test]
+fn pipeline_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/pipeline-references-plan.json"),
+        crate::plan::evidence::tests::parse_fixture,
+        super::label,
+        &[
+            ("aws_codepipeline.delivery", "role_arn"),
+            ("aws_codepipeline.delivery", "artifact_store.location"),
+            (
+                "aws_codepipeline.delivery",
+                "artifact_store.encryption_key.id",
+            ),
+            ("aws_codepipeline.delivery", "stage.action.role_arn"),
+            ("aws_codepipeline_webhook.delivery", "target_pipeline"),
+        ],
+        ("aws_iam_role.pipeline", "arn"),
+    );
+}

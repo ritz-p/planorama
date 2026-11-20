@@ -80529,10 +80529,10 @@
       }
     },
     "aws_codepipeline": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1533,
-      "gap": "#1533 — Resolve pipeline/action roles and regional S3 artifact stores and keys; distinguish a stage-local action name from a resource name. Arbitrary action configurations and artifact names do not prove deployment endpoints.",
+      "gap": "#1533 — Verify pipeline and action roles and the S3 artifact bucket and KMS key against each store region. Arbitrary action configuration maps stay opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80551,7 +80551,7 @@
         "placement": "Supported: managed Logical Node for codepipeline. Provides a CodePipeline",
         "ownership": "Not applicable: AWS CodePipeline codepipeline remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codepipeline declares no VPC/subnet assignment; the configured role_arn does not establish network containment.",
-        "references": "Missing: Resolve pipeline/action roles and regional S3 artifact stores and keys; distinguish a stage-local action name from a resource name. Arbitrary action configurations and artifact names do not prove deployment endpoints.",
+        "references": "Supported: Verify pipeline and action roles and the S3 artifact bucket and KMS key against each store region. Arbitrary action configuration maps stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence. Each artifact_store.region qualifies that store separately.",
         "summaries": "Intentionally unsupported: omit action configuration maps, authentication secrets and artifact contents from codepipeline summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codepipeline.html.markdown",
@@ -80618,7 +80618,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourcePipeline. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -80679,10 +80681,10 @@
       }
     },
     "aws_codepipeline_webhook": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1533,
-      "gap": "#1533 — Link the verified pipeline and match an action name inside its stages; suppress webhook credentials, filters and callback URLs.",
+      "gap": "#1533 — Verify the configured pipeline and the named source action in its first stage. Webhook credentials and callback URLs stay opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -80693,9 +80695,9 @@
           "authentication"
         ],
         "placement": "Supported: managed Logical Node for codepipeline_webhook. Provides a CodePipeline Webhook",
-        "ownership": "Missing: verify target_pipeline before attaching codepipeline_webhook to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified pipeline source action context.",
         "network": "Not applicable: codepipeline_webhook declares no VPC/subnet assignment; the configured target_pipeline does not establish network containment.",
-        "references": "Missing: Link the verified pipeline and match an action name inside its stages; suppress webhook credentials, filters and callback URLs.",
+        "references": "Supported: Verify the configured pipeline and the named source action in its first stage. Webhook credentials and callback URLs stay opaque.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit action configuration maps, authentication secrets and artifact contents from codepipeline_webhook summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codepipeline_webhook.html.markdown",
@@ -80722,7 +80724,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceWebhook. No same-name data source in the pinned schema.",
         "dataContracts": {}
