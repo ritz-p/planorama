@@ -665,13 +665,11 @@ pub(crate) fn fabric_ingestion_authorizations(
                 return None;
             }
             let bundle = endpoint(&e, index, "app_bundle_arn", FABRIC_BUNDLE, &["arn"])?;
-            fabric_child_id(&e, index, bundle, "appauthorization")?;
-            Some((
-                index,
-                bundle,
-                e.text(index, "app")?,
-                e.text(index, "tenant.0.tenant_identifier")?,
-            ))
+            let (value, mask) = values[index];
+            let tenant = super::nested_references::singleton(value, mask, "tenant")
+                .then(|| e.text(index, "tenant.0.tenant_identifier"))
+                .flatten();
+            Some((index, bundle, e.text(index, "app"), tenant))
         })
         .collect();
     refs.iter()
@@ -688,13 +686,16 @@ pub(crate) fn fabric_ingestion_authorizations(
             };
             let app = e.text(target, "app")?;
             let tenant = e.text(target, "tenant_id")?;
-            let mut matches = authorizations
-                .iter()
-                .filter(|(_, b, a, t)| (*b, *a, *t) == (bundle, app, tenant));
-            let &(source, _, _, _) = matches.next()?;
+            let mut matches = authorizations.iter().filter(|(_, b, a, t)| {
+                *b == bundle && a.is_none_or(|a| a == app) && t.is_none_or(|t| t == tenant)
+            });
+            let &(source, _, Some(_), Some(_)) = matches.next()? else {
+                return None;
+            };
             if matches.next().is_some() {
                 return None;
             }
+            fabric_child_id(&e, source, bundle, "appauthorization")?;
             let mut matched = r.clone();
             matched.attribute = "authorization".into();
             matched.has_references = false;

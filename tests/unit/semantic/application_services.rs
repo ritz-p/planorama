@@ -637,6 +637,11 @@ fn appfabric_qualifies_ingestion_destination_and_implicit_authorization() {
         rows.as_array_mut().unwrap().push(duplicate);
     }
     assert!(!check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][5]["change"]["after_unknown"] =
+        json!({"tenant":[{"tenant_identifier":true}]});
+    assert!(!check(&fixture, ingestion, "authorization"));
+    fixture["resource_changes"][5]["change"]["after"]["app"] = json!("DIFFERENT");
+    assert!(check(&fixture, ingestion, "authorization"));
     fixture["resource_changes"][4]["change"]["after"]["app_bundle_arn"] = json!("unrelated");
     assert!(!check(&fixture, destination, "ingestion_arn"));
     assert!(
