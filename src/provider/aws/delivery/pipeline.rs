@@ -21,11 +21,9 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[("aws_s3_bucket", &["bucket", "id"])],
         )
         .with_explicit_destination(),
-        ("aws_codepipeline", "artifact_store.encryption_key.id") => Rule::new(
+        ("aws_codepipeline", "artifact_store.encryption_key.id") => Rule::scalar_set(
             "Pipeline artifact encryption key",
             &[("aws_kms_key", &["arn", "id", "key_id"])],
-            false,
-            &["artifact_store"],
         )
         .with_explicit_destination(),
         ("aws_codepipeline_webhook", "target_pipeline") => Rule::new(
@@ -78,15 +76,24 @@ pub(super) fn qualifies(
     let Some(action) = e.text(consumer, "target_action") else {
         return false;
     };
-    let Some(actions) = e
-        .value(source, "stage.0.action")
-        .and_then(serde_json::Value::as_array)
+    let (value, mask) = e.values[source];
+    let Some(count) =
+        crate::provider::aws::nested_references::block_len(value, mask, "stage.0.action")
     else {
         return false;
     };
-    let mut matches = (0..actions.len()).filter(|index| {
-        e.text(source, &format!("stage.0.action.{index}.name")) == Some(action)
-            && e.text(source, &format!("stage.0.action.{index}.category")) == Some("Source")
-    });
-    matches.next().is_some() && matches.next().is_none()
+    let mut matching = 0;
+    for index in 0..count {
+        let path = format!("stage.0.action.{index}");
+        let Some(category) = e.text(source, &format!("{path}.category")) else {
+            return false;
+        };
+        if category == "Source" {
+            let Some(name) = e.text(source, &format!("{path}.name")) else {
+                return false;
+            };
+            matching += usize::from(name == action);
+        }
+    }
+    matching == 1
 }

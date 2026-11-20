@@ -202,6 +202,8 @@ fn verify_scalar_set(
     mode: EntityMode,
 ) -> Option<()> {
     let (block_name, field) = r.attribute.split_once('.')?;
+    let field = field.split('.').collect::<Vec<_>>().join(".0.");
+    let leaf_fields = r.attribute.split('.').collect::<Vec<_>>();
     let (v, mask) = evidence[r.target];
     if !block(v, mask, block_name, usize::MAX) {
         return None;
@@ -215,7 +217,13 @@ fn verify_scalar_set(
             .iter()
             .filter(|leaf| leaf.target == r.target && leaf.attribute == attribute);
         let Some(leaf) = matches.next() else { continue };
-        if matches.next().is_some() || leaf.indexed_block_lengths != [count] {
+        if matches.next().is_some()
+            || leaf.indexed_block_lengths.len() != leaf_fields.len() - 1
+            || leaf.indexed_block_lengths.first() != Some(&count)
+            || leaf.indexed_block_lengths[1..]
+                .iter()
+                .any(|&length| length != 1)
+        {
             return None;
         }
         if leaf.root_constant_null {
@@ -251,11 +259,19 @@ fn verify_scalar_set(
     {
         return None;
     }
-    for index in 0..count {
-        let attribute = path(index);
-        let actual = value(v, mask, &attribute)?;
-        if actual.is_null() {
-            continue;
+    let mut observed = Vec::new();
+    rows(
+        v,
+        mask,
+        &leaf_fields,
+        String::new(),
+        Vec::new(),
+        &mut observed,
+        &[block_name],
+    )?;
+    for (attribute, lengths, actual) in observed {
+        if lengths.len() != leaf_fields.len() - 1 {
+            return None;
         }
         let (source, remaining) = expected.get_mut(actual.as_str()?)?;
         *remaining = remaining.checked_sub(1)?;
@@ -405,21 +421,22 @@ pub(super) fn singleton(value: &Value, mask: &Value, path: &str) -> bool {
 }
 
 pub(super) fn block(value: &Value, mask: &Value, path: &str, maximum: usize) -> bool {
-    let Some((value, mask)) = at(value, mask, path) else {
-        return false;
-    };
-    value.as_array().is_some_and(|values| {
-        !values.is_empty()
-            && values.len() <= maximum
-            && values.iter().all(Value::is_object)
-            && (matches!(mask, Value::Null | Value::Bool(false))
-                || mask.as_array().is_some_and(|masks| {
-                    masks.len() == values.len()
-                        && masks.iter().all(|m| {
-                            matches!(m, Value::Null | Value::Bool(false) | Value::Object(_))
-                        })
-                }))
-    })
+    block_len(value, mask, path).is_some_and(|length| length <= maximum)
+}
+
+pub(super) fn block_len(value: &Value, mask: &Value, path: &str) -> Option<usize> {
+    let (value, mask) = at(value, mask, path)?;
+    let values = value.as_array()?;
+    (!values.is_empty()
+        && values.iter().all(Value::is_object)
+        && (matches!(mask, Value::Null | Value::Bool(false))
+            || mask.as_array().is_some_and(|masks| {
+                masks.len() == values.len()
+                    && masks.iter().all(|mask| {
+                        matches!(mask, Value::Null | Value::Bool(false) | Value::Object(_))
+                    })
+            })))
+    .then_some(values.len())
 }
 
 fn known_leaf(value: &Value, mask: &Value) -> bool {

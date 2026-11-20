@@ -232,7 +232,7 @@ fn codedeploy_requires_current_typed_evidence() {
 fn pipeline_requires_current_typed_evidence() {
     crate::configured_service_links::check(
         include_str!("../../fixtures/pipeline-references-plan.json"),
-        crate::plan::parse,
+        crate::plan::evidence::tests::parse_fixture,
         super::label,
         &[
             ("aws_codepipeline.delivery", "role_arn"),
