@@ -190,7 +190,6 @@ pub(super) fn annotate(
         })
         .collect();
     let buses = eventbridge::bus_references(references);
-    crate::provider::aws::waf::enrich(nodes, &evidence, &before_evidence);
     crate::provider::aws::organizations::annotate(nodes, references, &evidence);
     crate::provider::aws::organization_policies::annotate(
         nodes,
@@ -240,6 +239,16 @@ pub(super) fn annotate(
         .zip(&masks)
         .map(|((value, _), mask)| (*value, mask))
         .collect();
+    crate::provider::aws::waf::enrich(nodes, &elbv2_evidence, &before_evidence, |node| {
+        let change = changes.get(&(node.address.as_str(), node.deposed_key.as_deref()));
+        let hides_scope =
+            |mask: &Value| mask == &Value::Bool(true) || mask["scope"] == Value::Bool(true);
+        change.is_some_and(|c| hides_scope(&c["change"]["before_sensitive"]))
+            || (node.deposed_key.is_none()
+                && prior_sensitive
+                    .get(node.address.as_str())
+                    .is_some_and(|mask| hides_scope(mask)))
+    });
     crate::provider::aws::scope_selections::enrich(nodes, &elbv2_evidence);
     crate::provider::aws::service_references::annotate(nodes, references, &elbv2_evidence);
     crate::provider::aws::identity_center::annotate(nodes, references, &elbv2_evidence);

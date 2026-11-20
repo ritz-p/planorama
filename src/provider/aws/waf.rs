@@ -6,25 +6,45 @@ use serde_json::Value;
 #[path = "../../../tests/unit/semantic/waf.rs"]
 mod tests;
 
+pub(super) fn explicit_scope(kind: &str) -> bool {
+    matches!(
+        kind,
+        "aws_wafv2_web_acl"
+            | "aws_wafv2_rule_group"
+            | "aws_wafv2_ip_set"
+            | "aws_wafv2_regex_pattern_set"
+            | "aws_wafv2_api_key"
+    )
+}
+
 pub(crate) fn enrich(
     nodes: &mut [TerraformEntity],
     after: &[(&Value, &Value)],
     before: &[(&Value, &Value)],
+    prior_scope_hidden: impl Fn(&TerraformEntity) -> bool,
 ) {
     for (index, node) in nodes.iter_mut().enumerate() {
         if node.provider.is_aws()
-            && matches!(
-                node.resource_type.as_str(),
-                "aws_wafv2_web_acl" | "aws_wafv2_rule_group"
-            )
+            && node.mode == crate::model::EntityMode::Managed
+            && explicit_scope(&node.resource_type)
         {
-            let (value, unknown) = if node.action == Action::Delete || node.deposed_key.is_some() {
+            let historical = node.action == Action::Delete || node.deposed_key.is_some();
+            let (value, unknown) = if historical {
+                if prior_scope_hidden(node) {
+                    continue;
+                }
                 before[index]
             } else {
                 after[index]
             };
-            node.waf_scope = match scalar(value, unknown, &["scope"]) {
-                Some("CLOUDFRONT") => Some(WafScope::CloudFront),
+            node.waf_scope = match super::nested_references::value(value, unknown, "scope")
+                .and_then(Value::as_str)
+            {
+                Some("CLOUDFRONT")
+                    if historical || effective_region(node).is_some_and(|r| r.0 == "us-east-1") =>
+                {
+                    Some(WafScope::CloudFront)
+                }
                 Some("REGIONAL") => Some(WafScope::Regional),
                 _ => None,
             };
@@ -122,5 +142,13 @@ pub(super) fn verify_scope(
                 && compatible(node, endpoint, node.waf_scope == Some(WafScope::Regional))
         }
         _ => true,
+    }
+}
+
+pub(super) fn effective_region(node: &TerraformEntity) -> Option<&crate::model::RegionScope> {
+    if node.has_region_override {
+        node.region_override.as_ref()
+    } else {
+        node.provider_configuration.as_ref()?.region.as_ref()
     }
 }

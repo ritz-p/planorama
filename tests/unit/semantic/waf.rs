@@ -334,3 +334,67 @@ fn waf_lifecycle_and_modules_retain_association_identity() {
     assert!(output.contains("11 resources"));
     assert!(!output.contains("PRIVATE_"));
 }
+
+#[test]
+fn set_and_key_scopes_use_only_unmasked_managed_values() {
+    for kind in [
+        "aws_wafv2_api_key",
+        "aws_wafv2_ip_set",
+        "aws_wafv2_regex_pattern_set",
+    ] {
+        let mut f = fixture();
+        let i = 1;
+        let name = "scoped";
+        let address = format!("{kind}.{name}");
+        {
+            let row = &mut f["resource_changes"][i];
+            row["type"] = json!(kind);
+            row["address"] = json!(address);
+            row["name"] = json!(name);
+        }
+        let cfg = &mut f["configuration"]["root_module"]["resources"][i];
+        cfg["type"] = json!(kind);
+        cfg["name"] = json!(name);
+        cfg["address"] = json!(address);
+        for (scope, expected) in [
+            ("CLOUDFRONT", Some(WafScope::CloudFront)),
+            ("REGIONAL", Some(WafScope::Regional)),
+            ("FUTURE", None),
+        ] {
+            f["configuration"]["root_module"]["resources"][i]["provider_config_key"] =
+                json!(if scope == "CLOUDFRONT" {
+                    "aws.global"
+                } else {
+                    "aws"
+                });
+            f["resource_changes"][i]["change"]["after"] = json!({"scope":scope,"api_key":"PRIVATE_KEY","token_domains":["PRIVATE_DOMAIN"],"addresses":["PRIVATE_ADDRESS"]});
+            let parsed = plan::parse(&f.to_string()).unwrap();
+            assert_eq!(
+                parsed
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == address)
+                    .unwrap()
+                    .waf_scope,
+                expected
+            );
+            assert!(!format!("{:?}", semantic::transform(&parsed)).contains("PRIVATE_"));
+        }
+        for mask in ["after_sensitive", "after_unknown"] {
+            let mut masked = f.clone();
+            let change = &mut masked["resource_changes"][i]["change"];
+            change["after"]["scope"] = json!("REGIONAL");
+            change[mask] = json!({"scope":true});
+            assert!(
+                plan::parse(&masked.to_string())
+                    .unwrap()
+                    .nodes
+                    .iter()
+                    .find(|n| n.address == address)
+                    .unwrap()
+                    .waf_scope
+                    .is_none()
+            );
+        }
+    }
+}

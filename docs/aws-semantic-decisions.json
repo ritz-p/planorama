@@ -78016,10 +78016,10 @@
       }
     },
     "aws_wafv2_api_key": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1491,
-      "gap": "#1491 — Resolve configured CLOUDFRONT or REGIONAL scope. Token domains are configuration, and the returned API key must not be displayed.",
+      "gap": "#1491 — Only the known, unmasked WAF scope is used.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -78031,8 +78031,8 @@
         "placement": "Supported: Logical Controller for the managed wafv2_api_key declaration. Provides a WAFv2 API Key resource.",
         "ownership": "Not applicable: The managed wafv2_api_key declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Resolve configured CLOUDFRONT or REGIONAL scope. Token domains are configuration, and the returned API key must not be displayed.",
-        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "references": "Supported: Only the known, unmasked WAF scope is used.",
+        "scope": "Supported: CLOUDFRONT selects global placement and REGIONAL uses the effective provider or resource region.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_api_key summaries.",
         "officialDocumentation": "website/docs/r/wafv2_api_key.html.markdown",
         "shapes": {
@@ -78057,17 +78057,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs"
         ],
         "managedDataContract": "Managed newAPIKeyResource. No same-name data source in 6.70.0.",
         "dataContracts": {}
       }
     },
     "aws_wafv2_ip_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1491,
-      "gap": "#1491 — Resolve its explicit scope for verified statement references. Address lists are not topology.",
+      "gap": "#1491 — Only the known, unmasked WAF scope is used.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -78080,8 +78082,8 @@
         "placement": "Supported: Logical Policy for the managed wafv2_ip_set declaration. Provides an AWS WAFv2 IP Set resource.",
         "ownership": "Not applicable: The managed wafv2_ip_set declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Resolve its explicit scope for verified statement references. Address lists are not topology.",
-        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "references": "Supported: Only the known, unmasked WAF scope is used.",
+        "scope": "Supported: CLOUDFRONT selects global placement and REGIONAL uses the effective provider or resource region.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_ip_set summaries.",
         "officialDocumentation": "website/docs/r/wafv2_ip_set.html.markdown",
         "shapes": {
@@ -78107,7 +78109,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs"
         ],
         "managedDataContract": "Managed resourceIPSet. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
@@ -78131,10 +78135,10 @@
       }
     },
     "aws_wafv2_regex_pattern_set": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1491,
-      "gap": "#1491 — Resolve its explicit scope for compatible statement references. Regex contents are excluded.",
+      "gap": "#1491 — Only the known, unmasked WAF scope is used.",
       "review": {
         "issue": 729,
         "implementationCommit": "ca6f7c627877957133b9ac03693206ea0ae244a7",
@@ -78147,8 +78151,8 @@
         "placement": "Supported: Logical Policy for the managed wafv2_regex_pattern_set declaration. Provides an AWS WAFv2 Regex Pattern Set resource.",
         "ownership": "Not applicable: The managed wafv2_regex_pattern_set declaration has no verified exclusive presentation owner.",
         "network": "Not applicable: ACL associations and match criteria do not declare subnet or VPC containment.",
-        "references": "Missing: Resolve its explicit scope for compatible statement references. Regex contents are excluded.",
-        "scope": "Missing: verify CLOUDFRONT/REGIONAL from configured scope or the uniquely matched ACL before assigning global or regional scope.",
+        "references": "Supported: Only the known, unmasked WAF scope is used.",
+        "scope": "Supported: CLOUDFRONT selects global placement and REGIONAL uses the effective provider or resource region.",
         "summaries": "Intentionally unsupported: omit match strings, address lists, rule payloads and sampled requests from wafv2_regex_pattern_set summaries.",
         "officialDocumentation": "website/docs/r/wafv2_regex_pattern_set.html.markdown",
         "shapes": {
@@ -78175,7 +78179,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/waf.rs",
+          "tests/unit/semantic/waf.rs"
         ],
         "managedDataContract": "Managed resourceRegexPatternSet. Separate same-name data lookup with its own selector contracts.",
         "dataContracts": {
