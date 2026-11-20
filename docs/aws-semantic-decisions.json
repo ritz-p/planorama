@@ -79631,10 +79631,10 @@
       }
     },
     "aws_codecatalyst_dev_environment": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1529,
-      "gap": "#1529 — Resolve project and repository names within the declared space/project pair; branch names and IDE settings are not resource identities.",
+      "gap": "#1529 — Verify the project within the configured space and repositories within the space and project. Branch and IDE settings remain metadata.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79647,9 +79647,9 @@
           "instance_type"
         ],
         "placement": "Supported: managed Logical Node for codecatalyst_dev_environment. Terraform resource for managing an AWS CodeCatalyst Devenvironment.",
-        "ownership": "Missing: verify space_name + project_name before attaching codecatalyst_dev_environment to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: resolve the verified project context. Repositories remain independent.",
         "network": "Not applicable: codecatalyst_dev_environment declares no VPC/subnet assignment; the configured space_name does not establish network containment.",
-        "references": "Missing: Resolve project and repository names within the declared space/project pair; branch names and IDE settings are not resource identities.",
+        "references": "Supported: Verify the project within the configured space and repositories within the space and project. Branch and IDE settings remain metadata.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit IDE configuration and branch contents from codecatalyst_dev_environment summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codecatalyst_dev_environment.html.markdown",
@@ -79686,7 +79686,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed ResourceDevEnvironment. Same-name data lookup has separate selectors and blocks repositories.",
         "dataContracts": {
@@ -79778,10 +79780,10 @@
       }
     },
     "aws_codecatalyst_source_repository": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1529,
-      "gap": "#1529 — Verify the owning CodeCatalyst project by space and project name. Repository names are scoped to that project.",
+      "gap": "#1529 — Verify the project name and space together.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79792,9 +79794,9 @@
           "name"
         ],
         "placement": "Supported: managed Logical Node for codecatalyst_source_repository. Terraform resource for managing an AWS CodeCatalyst Source Repository.",
-        "ownership": "Missing: verify space_name + project_name before attaching codecatalyst_source_repository to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: resolve the verified project context.",
         "network": "Not applicable: codecatalyst_source_repository declares no VPC/subnet assignment; the configured space_name does not establish network containment.",
-        "references": "Missing: Verify the owning CodeCatalyst project by space and project name. Repository names are scoped to that project.",
+        "references": "Supported: Verify the project name and space together.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit IDE configuration and branch contents from codecatalyst_source_repository summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codecatalyst_source_repository.html.markdown",
@@ -79821,7 +79823,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed ResourceSourceRepository. No same-name data source in the pinned schema.",
         "dataContracts": {}

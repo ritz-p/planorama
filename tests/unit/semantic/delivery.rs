@@ -100,3 +100,21 @@ fn codebuild_requires_current_typed_evidence() {
         ("aws_iam_role.build", "arn"),
     );
 }
+
+#[test]
+fn codecatalyst_requires_current_typed_evidence() {
+    crate::configured_service_links::check(
+        include_str!("../../fixtures/codecatalyst-references-plan.json"),
+        crate::plan::parse,
+        super::label,
+        &[
+            ("aws_codecatalyst_dev_environment.editor", "project_name"),
+            (
+                "aws_codecatalyst_dev_environment.editor",
+                "repositories.repository_name",
+            ),
+            ("aws_codecatalyst_source_repository.app", "project_name"),
+        ],
+        ("aws_codecatalyst_project.delivery", "name"),
+    );
+}
