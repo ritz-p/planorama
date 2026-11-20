@@ -78992,10 +78992,10 @@
       }
     },
     "aws_codeartifact_domain": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1527,
-      "gap": "#1527 — Associate the configured KMS key with the domain; the computed service storage bucket ARN is not a customer-owned bucket assignment.",
+      "gap": "#1527 — Verify an explicitly configured KMS key ARN. The returned storage bucket remains service-managed.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79009,7 +79009,7 @@
         "placement": "Supported: managed Logical Node for codeartifact_domain. Provides a CodeArtifact Domain resource.",
         "ownership": "Not applicable: AWS CodeArtifact codeartifact_domain remains independently addressable; a reference or shared target does not justify embedding.",
         "network": "Not applicable: codeartifact_domain declares no VPC/subnet assignment; the configured domain does not establish network containment.",
-        "references": "Missing: Associate the configured KMS key with the domain; the computed service storage bucket ARN is not a customer-owned bucket assignment.",
+        "references": "Supported: Verify an explicitly configured KMS key ARN. The returned storage bucket remains service-managed.",
         "scope": "Supported: regional service scope requires deployment evidence.",
         "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_domain summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codeartifact_domain.html.markdown",
@@ -79040,17 +79040,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceDomain. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_codeartifact_domain_permissions_policy": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1527,
-      "gap": "#1527 — Identify the domain by name and owner account; keep policy content opaque and distinguish the computed resource ARN.",
+      "gap": "#1527 — Verify the domain name and owner account. The policy content stays opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79062,9 +79064,9 @@
           "resource_arn"
         ],
         "placement": "Supported: managed Logical Policy for codeartifact_domain_permissions_policy. Provides a CodeArtifact Domain Permissions Policy resource.",
-        "ownership": "Missing: verify domain + domain_owner before attaching codeartifact_domain_permissions_policy to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: the verified domain identifies the policy target.",
         "network": "Not applicable: codeartifact_domain_permissions_policy declares no VPC/subnet assignment; the configured domain does not establish network containment.",
-        "references": "Missing: Identify the domain by name and owner account; keep policy content opaque and distinguish the computed resource ARN.",
+        "references": "Supported: Verify the domain name and owner account. The policy content stays opaque.",
         "scope": "Supported: regional service scope requires deployment evidence. domain_owner qualifies the target domain.",
         "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_domain_permissions_policy summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codeartifact_domain_permissions_policy.html.markdown",
@@ -79095,17 +79097,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceDomainPermissionsPolicy. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_codeartifact_repository": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1527,
-      "gap": "#1527 — Resolve the owning domain and same-domain upstream repositories independently. External package connection names are service catalog values.",
+      "gap": "#1527 — Verify the scoped domain and upstream repositories in the same domain. External connection names remain service catalog values.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79118,9 +79122,9 @@
           "external_connections.external_connection_name"
         ],
         "placement": "Supported: managed Logical Node for codeartifact_repository. Provides a CodeArtifact Repository resource.",
-        "ownership": "Missing: verify domain + domain_owner before attaching codeartifact_repository to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: the domain is verified independently of the reusable upstream repositories.",
         "network": "Not applicable: codeartifact_repository declares no VPC/subnet assignment; the configured domain does not establish network containment.",
-        "references": "Missing: Resolve the owning domain and same-domain upstream repositories independently. External package connection names are service catalog values.",
+        "references": "Supported: Verify the scoped domain and upstream repositories in the same domain. External connection names remain service catalog values.",
         "scope": "Supported: regional service scope requires deployment evidence. domain_owner qualifies the domain; a foreign account requires matching evidence.",
         "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_repository summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codeartifact_repository.html.markdown",
@@ -79157,17 +79161,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceRepository. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_codeartifact_repository_permissions_policy": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1527,
-      "gap": "#1527 — Bind to one repository qualified by domain and owner; a repository name alone is not unique.",
+      "gap": "#1527 — Verify the policy repository by name, domain and owner. Policy contents remain opaque.",
       "review": {
         "issue": 731,
         "implementationCommit": "b69841a5564f032c7b73afca7f26c790ddb05ec6",
@@ -79180,9 +79186,9 @@
           "policy_document"
         ],
         "placement": "Supported: managed Logical Policy for codeartifact_repository_permissions_policy. Provides a CodeArtifact Repository Permissions Policy resource.",
-        "ownership": "Missing: verify domain + domain_owner + repository before attaching codeartifact_repository_permissions_policy to a unique parent. Preserve the declaration on ambiguous or unknown references.",
+        "ownership": "Supported: identify the verified repository as the policy target.",
         "network": "Not applicable: codeartifact_repository_permissions_policy declares no VPC/subnet assignment; the configured domain does not establish network containment.",
-        "references": "Missing: Bind to one repository qualified by domain and owner; a repository name alone is not unique.",
+        "references": "Supported: Verify the policy repository by name, domain and owner. Policy contents remain opaque.",
         "scope": "Supported: regional service scope requires deployment evidence. domain_owner qualifies the target domain and repository.",
         "summaries": "Intentionally unsupported: omit permission documents, artifact contents and download locations from codeartifact_repository_permissions_policy summaries. Retain the service label and change action; reconsider a dedicated summary only for a bounded non-sensitive discriminator.",
         "officialDocumentation": "website/docs/r/codeartifact_repository_permissions_policy.html.markdown",
@@ -79217,7 +79223,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/delivery.rs",
+          "tests/unit/semantic/delivery.rs"
         ],
         "managedDataContract": "Managed resourceRepositoryPermissionsPolicy. No same-name data source in the pinned schema.",
         "dataContracts": {}
