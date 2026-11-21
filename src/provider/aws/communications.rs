@@ -48,6 +48,10 @@ fn instance_child(kind: &str) -> bool {
             | QUICK
             | ROUTING
             | PHONE_FLOW
+            | USER
+            | SECURITY_PROFILE
+            | HIERARCHY
+            | STRUCTURE
     )
 }
 
@@ -70,6 +74,11 @@ const FLOW_ID: Outputs = &[(FLOW, &["contact_flow_id"])];
 const PHONE_ID: Outputs = &[(PHONE, &["id"])];
 
 const PHONE_FLOW: &str = "aws_connect_phone_number_contact_flow_association";
+
+const SECURITY_PROFILE: &str = "aws_connect_security_profile";
+const HIERARCHY: &str = "aws_connect_user_hierarchy_group";
+const STRUCTURE: &str = "aws_connect_user_hierarchy_structure";
+const HIERARCHY_ID: Outputs = &[(HIERARCHY, &["hierarchy_group_id"])];
 
 fn voice_configuration(kind: &str) -> bool {
     matches!(
@@ -231,6 +240,18 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         }
         (PHONE_FLOW, "phone_number_id") => scalar("Connect associated phone number", PHONE_ID),
         (PHONE_FLOW, "contact_flow_id") => scalar("Connect associated contact flow", FLOW_ID),
+        (USER, "routing_profile_id") => scalar(
+            "Connect user routing profile",
+            &[(ROUTING, &["routing_profile_id"])],
+        ),
+        (USER, "hierarchy_group_id") => scalar("Connect user hierarchy group", HIERARCHY_ID),
+        (USER, "security_profile_ids") => Rule::new(
+            "Connect user security profiles",
+            &[(SECURITY_PROFILE, &["security_profile_id"])],
+            true,
+            &[],
+        ),
+        (HIERARCHY, "parent_group_id") => scalar("Connect parent hierarchy group", HIERARCHY_ID),
         _ => return None,
     })
 }
@@ -381,6 +402,12 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
     if e.nodes[target].resource_type == PHONE && r.attribute == "target_arn" {
         return connect_instance_arn(e, source);
     }
+    if e.nodes[target].resource_type == USER {
+        return same_instance(e, target, source);
+    }
+    if e.nodes[target].resource_type == HIERARCHY && r.attribute == "parent_group_id" {
+        return hierarchy_parent(e, target, source);
+    }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
         "guardrail_policy_arns" => ("iam", "policy/"),
@@ -439,6 +466,13 @@ pub(crate) fn inherit_voice_region(nodes: &mut [TerraformEntity], refs: &[Attrib
 }
 
 pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static str)> {
+    if kind == HIERARCHY {
+        return Some((
+            "parent_group_id",
+            "Connect parent hierarchy group",
+            "Child hierarchy groups",
+        ));
+    }
     if instance_child(kind) {
         return Some(("instance_id", "Connect instance", "Instance configuration"));
     }
@@ -646,6 +680,27 @@ fn quick_connect_shape(e: &Evidence<'_>, node: usize, path: &str) -> bool {
     e.text(node, "quick_connect_config.0.quick_connect_type") == Some(selector)
         && e.absent(node, &format!("quick_connect_config.0.{other}"))
         && e.absent(node, "quick_connect_config.0.phone_config")
+}
+
+fn hierarchy_parent(e: &Evidence<'_>, child: usize, parent: usize) -> bool {
+    let mut seen = std::collections::BTreeSet::from([child]);
+    let mut parent = parent;
+    while seen.insert(parent) && same_instance(e, child, parent) {
+        if e.absent(parent, "parent_group_id") {
+            return true;
+        }
+        let Some(next) = endpoint(
+            e,
+            parent,
+            "parent_group_id",
+            HIERARCHY,
+            "hierarchy_group_id",
+        ) else {
+            return false;
+        };
+        parent = next;
+    }
+    false
 }
 
 #[cfg(test)]

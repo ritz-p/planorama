@@ -637,3 +637,71 @@ fn communications_connect_phone_association_requires_claim_and_flow_context() {
     }
     assert!(label(super::PHONE, "phone_number").is_none());
 }
+
+#[test]
+fn communications_connect_groups_reject_cycles_and_users_use_explicit_profiles() {
+    let mut fixture = plan(&[
+        (
+            "aws_connect_instance.main",
+            json!({"id":"instance"}),
+            json!({}),
+        ),
+        (
+            "aws_connect_security_profile.agent",
+            json!({"instance_id":"instance","security_profile_id":"profile"}),
+            json!({"instance_id":{"references":["aws_connect_instance.main.id"]}}),
+        ),
+        (
+            "aws_connect_user_hierarchy_group.parent",
+            json!({"instance_id":"instance","hierarchy_group_id":"parent"}),
+            json!({"instance_id":{"references":["aws_connect_instance.main.id"]}}),
+        ),
+        (
+            "aws_connect_user_hierarchy_group.child",
+            json!({"instance_id":"instance","hierarchy_group_id":"child","parent_group_id":"parent"}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"parent_group_id":{"references":["aws_connect_user_hierarchy_group.parent.hierarchy_group_id"]}
+            }),
+        ),
+        (
+            "aws_connect_user.agent",
+            json!({"instance_id":"instance","hierarchy_group_id":"child","security_profile_ids":["profile"]}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"hierarchy_group_id":{"references":["aws_connect_user_hierarchy_group.child.hierarchy_group_id"]},"security_profile_ids":{"references":["aws_connect_security_profile.agent.security_profile_id"]}
+            }),
+        ),
+    ]);
+    let child = "aws_connect_user_hierarchy_group.child";
+    let user = "aws_connect_user.agent";
+    let g = graph(&fixture);
+    assert!(verified(
+        &g,
+        child,
+        "parent_group_id",
+        label(super::HIERARCHY, "parent_group_id")
+    ));
+    assert!(verified(
+        &g,
+        user,
+        "security_profile_ids",
+        label(super::USER, "security_profile_ids")
+    ));
+    fixture["resource_changes"][2]["change"]["after"]["parent_group_id"] = json!("child");
+    fixture["configuration"]["root_module"]["resources"][2]["expressions"]["parent_group_id"] =
+        json!({"references":["aws_connect_user_hierarchy_group.child.hierarchy_group_id"]});
+    fixture["resource_changes"][1]["change"]["after_unknown"] = json!({"security_profile_id":true});
+    let g = graph(&fixture);
+    assert!(!verified(
+        &g,
+        child,
+        "parent_group_id",
+        label(super::HIERARCHY, "parent_group_id")
+    ));
+    assert!(!verified(
+        &g,
+        user,
+        "security_profile_ids",
+        label(super::USER, "security_profile_ids")
+    ));
+    assert!(label(super::USER, "directory_user_id").is_none());
+}
