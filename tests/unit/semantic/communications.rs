@@ -705,3 +705,69 @@ fn communications_connect_groups_reject_cycles_and_users_use_explicit_profiles()
     ));
     assert!(label(super::USER, "directory_user_id").is_none());
 }
+
+#[test]
+fn communications_customer_profiles_preserve_scoped_domain_and_enabled_export() {
+    let url = "https://sqs.us-east-1.amazonaws.com/123456789012/dlq";
+    let mut fixture = plan(&[
+        (
+            "aws_s3_bucket.export",
+            json!({"bucket":"profiles-export"}),
+            json!({}),
+        ),
+        ("aws_sqs_queue.dlq", json!({"id":url}), json!({})),
+        (
+            "aws_customerprofiles_domain.main",
+            json!({"domain_name":"profiles","dead_letter_queue_url":url,"matching":[{"enabled":true,"exporting_config":[{"s3_exporting":[{"s3_bucket_name":"profiles-export"}]}]}]}),
+            json!({
+                "dead_letter_queue_url":{"references":["aws_sqs_queue.dlq.id"]},"matching":[{"exporting_config":[{"s3_exporting":[{"s3_bucket_name":{"references":["aws_s3_bucket.export.bucket"]}}]}]}]
+            }),
+        ),
+        (
+            "aws_customerprofiles_profile.main",
+            json!({"domain_name":"profiles","attributes":{"untrusted":"PRIVATE_PROFILE"}}),
+            json!({"domain_name":{"references":["aws_customerprofiles_domain.main.domain_name"]}}),
+        ),
+    ]);
+    let domain = "aws_customerprofiles_domain.main";
+    let profile = "aws_customerprofiles_profile.main";
+    let g = graph(&fixture);
+    assert!(verified(
+        &g,
+        domain,
+        "dead_letter_queue_url",
+        label(super::CUSTOMER_DOMAIN, "dead_letter_queue_url")
+    ));
+    assert!(verified(
+        &g,
+        domain,
+        super::MATCH_BUCKET,
+        label(super::CUSTOMER_DOMAIN, super::MATCH_BUCKET)
+    ));
+    assert!(
+        g.nodes
+            .iter()
+            .find(|n| n.address == profile)
+            .unwrap()
+            .member_owner
+            .is_some()
+    );
+    fixture["resource_changes"][2]["change"]["after"]["matching"][0]["enabled"] = json!(false);
+    fixture["resource_changes"][2]["change"]["after_sensitive"] = json!({"domain_name":true});
+    let g = graph(&fixture);
+    assert!(!verified(
+        &g,
+        domain,
+        super::MATCH_BUCKET,
+        label(super::CUSTOMER_DOMAIN, super::MATCH_BUCKET)
+    ));
+    assert!(
+        g.nodes
+            .iter()
+            .find(|n| n.address == profile)
+            .unwrap()
+            .member_owner
+            .is_none()
+    );
+    assert!(label(super::CUSTOMER_PROFILE, "attributes").is_none());
+}
