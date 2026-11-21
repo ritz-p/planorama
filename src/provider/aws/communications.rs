@@ -18,6 +18,12 @@ const MEDIA: &str = "aws_chimesdkmediapipelines_media_insights_pipeline_configur
 const INSIGHTS: &str = "media_insights_configuration.configuration_arn";
 const ANALYTICS_KEY: &str = "elements.amazon_transcribe_call_analytics_processor_configuration.post_call_analytics_settings.output_encryption_kms_key_id";
 
+const VOICE_GLOBAL: &str = "aws_chimesdkvoice_global_settings";
+const PROFILE_DOMAIN: &str = "aws_chimesdkvoice_voice_profile_domain";
+const PROFILE_KEY: &str = "server_side_encryption_configuration.kms_key_arn";
+const CDR: &str = "voice_connector.cdr_bucket";
+const BUCKET: Outputs = &[("aws_s3_bucket", &["bucket", "id"])];
+
 fn voice_configuration(kind: &str) -> bool {
     matches!(
         kind,
@@ -26,7 +32,10 @@ fn voice_configuration(kind: &str) -> bool {
 }
 
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    matches!(kind, VOICE_GROUP | MEDIA | STREAMING)
+    matches!(
+        kind,
+        VOICE_GROUP | MEDIA | STREAMING | VOICE_GLOBAL | PROFILE_DOMAIN
+    )
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
@@ -92,6 +101,13 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
         )
         .decoded(recording_bucket),
         (MEDIA, ANALYTICS_KEY) => element("Media Insights analytics output key", KMS),
+        (VOICE_GLOBAL, CDR) => {
+            scalar("Chime call detail records bucket", BUCKET).in_control_plane_account()
+        }
+        (PROFILE_DOMAIN, PROFILE_KEY) => scalar(
+            "Chime voice profile encryption key",
+            &[("aws_kms_key", &["arn"])],
+        ),
         _ => return None,
     })
 }
@@ -182,6 +198,14 @@ fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str
                 .is_some_and(|value| qualified_arn(&e.nodes[source], value, "iam", "role/"));
         }
         return media_element(e, r, source, path);
+    }
+    if r.attribute == CDR {
+        return e
+            .text(target, path)
+            .is_some_and(|name| !name.contains([':', '/']));
+    }
+    if r.attribute == PROFILE_KEY {
+        return input_arn(e, target, source, path, "kms", "key/");
     }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),

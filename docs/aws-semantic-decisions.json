@@ -88310,7 +88310,7 @@
       }
     },
     "aws_chimesdkvoice_global_settings": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1597,
       "gap": "#1597 — Verify the explicitly configured call-detail-record S3 bucket by documented identity. Do not create a matched connector from the aggregate setting.",
@@ -88325,7 +88325,7 @@
         "placement": "Supported: managed Logical Controller with the Amazon Chime SDK service label. Terraform resource for managing Amazon Chime SDK Voice Global Settings.",
         "ownership": "Not applicable: Global settings and the reusable S3 bucket are independent.",
         "network": "Not applicable: CDR delivery does not configure a VPC.",
-        "references": "Missing: Verify the explicitly configured call-detail-record S3 bucket by documented identity. Do not create a matched connector from the aggregate setting.",
+        "references": "Supported: Verify the explicitly configured call-detail-record S3 bucket by documented identity. Do not create a matched connector from the aggregate setting.",
         "scope": "Supported: The runtime treats this control-plane declaration as global. The global policy scope does not establish the bucket region. Qualify the bucket independently.",
         "summaries": "Intentionally unsupported: omit call detail records and bucket object contents. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chimesdkvoice_global_settings.html.markdown",
@@ -88348,7 +88348,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceGlobalSettings. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -88482,7 +88484,7 @@
       }
     },
     "aws_chimesdkvoice_voice_profile_domain": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1597,
       "gap": "#1597 — Verify the configured KMS key ARN and its account and region. A profile domain does not identify actual voice profiles.",
@@ -88499,7 +88501,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Chime SDK service label. Terraform resource for managing an AWS Chime SDK Voice Profile Domain.",
         "ownership": "Not applicable: The encryption key can be shared and remains independent.",
         "network": "Not applicable: Encryption does not configure network placement.",
-        "references": "Missing: Verify the configured KMS key ARN and its account and region. A profile domain does not identify actual voice profiles.",
+        "references": "Supported: Verify the configured KMS key ARN and its account and region. A profile domain does not identify actual voice profiles.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Qualify the regional domain and the key separately.",
         "summaries": "Intentionally unsupported: omit voiceprints, profile data and encryption material. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chimesdkvoice_voice_profile_domain.html.markdown",
@@ -88530,7 +88532,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceProfileDomain. No same-name data source in the pinned schema.",
         "dataContracts": {}
