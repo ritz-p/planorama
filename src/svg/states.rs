@@ -206,7 +206,7 @@ pub(crate) async fn render_step(
         let heading_height = heading_lines.len() * HEADING_LINE_HEIGHT + 2 * HEADING_PADDING;
         let header_height = heading_height + HEADING_GAP;
         let measured_sections =
-            super::Sections::from_cards(graph, &layout, &index, cards, width, None);
+            super::Sections::from_cards(graph, &layout, &index, cards, Some(width), None);
         let (_, height) = measured_sections.dimensions(&layout);
         let prefix = prefix(id);
         let architecture_offset = measured_sections.height();

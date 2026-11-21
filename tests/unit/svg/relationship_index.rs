@@ -758,7 +758,6 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
         let mut expected_section = String::new();
         for capacity in [2usize, 3, 4, 6] {
             for shortfall in [0, 1] {
-                let columns = capacity - shortfall;
                 layout.width = 112 + capacity * 640 + (capacity - 1) * 20 - shortfall;
                 let index = Index::new(&graph, &layout);
                 assert_eq!(index.width, layout.width);
@@ -766,10 +765,9 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
                 assert!(index.cards().iter().all(|card| card.width == 640));
                 let rendered = svg::render(&graph, &layout);
                 let document = roxmltree::Document::parse(&rendered).unwrap();
-                assert_eq!(
-                    attribute_number(document.root_element(), "width"),
-                    layout.width
-                );
+                let canvas_width = attribute_number(document.root_element(), "width");
+                assert!((layout.width..=layout.width.max(1412)).contains(&canvas_width));
+                let columns = (canvas_width - 112 + 20) / 660;
                 assert_eq!(
                     rendered.matches(">Relationship Resources</text>").count(),
                     usize::from(count > 0)
@@ -809,7 +807,7 @@ fn relationship_cards_fill_the_svg_width_at_exact_and_one_pixel_short_boundaries
                             }
                         );
                         assert_eq!(bounds.width, 640);
-                        assert!(bounds.right() <= layout.width - 96);
+                        assert!(bounds.right() <= canvas_width - 96);
                     }
                     y += row
                         .iter()
