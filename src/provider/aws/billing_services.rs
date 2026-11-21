@@ -237,11 +237,11 @@ fn destination_account_matches(
         .provider_configuration
         .as_ref();
     let target = evidence.nodes[endpoint].provider_configuration.as_ref();
-    if let Some(account) = evidence.text(reference.target, "account_id") {
-        return target
-            .and_then(|config| config.account.as_ref())
-            .is_some_and(|scope| scope.as_str() == account);
+    if !evidence.has_argument(reference.target, "account_id") {
+        return configured_links::same_account(source, target);
     }
-    !evidence.has_argument(reference.target, "account_id")
-        && configured_links::same_account(source, target)
+    evidence
+        .text(reference.target, "account_id")
+        .zip(target.and_then(|config| config.account.as_ref()))
+        .is_some_and(|(account, scope)| scope.as_str() == account)
 }
