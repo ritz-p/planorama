@@ -90767,7 +90767,7 @@
       }
     },
     "aws_lexv2models_intent": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1606,
       "gap": "#1606 — Verify the bot and compatible locale/version, explicit slot priorities in that intent, and the configured Kendra index ARN for the supported intent type. Built-in signatures and arbitrary QnA configuration are not managed endpoints. Verify the owning bot locale before nesting an intent. Keep the Kendra index independently addressable.",
@@ -90787,7 +90787,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Intent.",
         "ownership": "Missing: Verify the owning bot locale before nesting an intent. Keep the Kendra index independently addressable.",
         "network": "Not applicable: Search and slot configuration do not establish network placement.",
-        "references": "Missing: Verify the bot and compatible locale/version, explicit slot priorities in that intent, and the configured Kendra index ARN for the supported intent type. Built-in signatures and arbitrary QnA configuration are not managed endpoints.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the bot and compatible locale/version, explicit slot priorities in that intent, and the configured Kendra index ARN for the supported intent type. Built-in signatures and arbitrary QnA configuration are not managed endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require bot, version and locale identity for all local selectors. The Kendra index must also match account and region.",
         "summaries": "Intentionally unsupported: omit utterances, prompts, query filters and model payloads. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/lexv2models_intent.html.markdown",
@@ -90831,14 +90831,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newIntentResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_lexv2models_slot": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1606,
       "gap": "#1606 — Verify the intent and any configured custom slot type using the same bot, version and locale. Omitted or computed slot type IDs and built-in selectors do not identify managed custom types. Bind only to a verified intent while preserving shared slot types.",
@@ -90858,7 +90860,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Slot.",
         "ownership": "Missing: Bind only to a verified intent while preserving shared slot types.",
         "network": "Not applicable: Slot elicitation does not attach to a VPC.",
-        "references": "Missing: Verify the intent and any configured custom slot type using the same bot, version and locale. Omitted or computed slot type IDs and built-in selectors do not identify managed custom types.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the intent and any configured custom slot type using the same bot, version and locale. Omitted or computed slot type IDs and built-in selectors do not identify managed custom types.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Scope includes bot identity, version, locale and intent. A slot ID alone is insufficient.",
         "summaries": "Intentionally unsupported: omit slot samples, default values and elicitation prompts. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/lexv2models_slot.html.markdown",
@@ -90901,14 +90903,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newSlotResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_lexv2models_slot_type": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1606,
       "gap": "#1606 — Verify the bot locale, compatible configured composite sub-slot type IDs, and explicit grammar S3 bucket and key. A built-in parent signature, external file content or regex must not invent a managed slot type. Qualify the type by the verified bot locale. Shared subtypes, buckets and keys remain independent.",
@@ -90929,7 +90933,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Slot Type.",
         "ownership": "Missing: Qualify the type by the verified bot locale. Shared subtypes, buckets and keys remain independent.",
         "network": "Not applicable: Grammar storage does not establish a VPC deployment.",
-        "references": "Missing: Verify the bot locale, compatible configured composite sub-slot type IDs, and explicit grammar S3 bucket and key. A built-in parent signature, external file content or regex must not invent a managed slot type.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the bot locale, compatible configured composite sub-slot type IDs, and explicit grammar S3 bucket and key. A built-in parent signature, external file content or regex must not invent a managed slot type.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Require bot, version and locale for subtypes and separately qualify external bucket and key ownership.",
         "summaries": "Intentionally unsupported: omit grammar files, patterns, sample values and synonyms. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/lexv2models_slot_type.html.markdown",
@@ -90983,7 +90987,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newSlotTypeResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
