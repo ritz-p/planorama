@@ -91,3 +91,53 @@ fn lex_intent_owns_only_matching_locale() {
     fixture["resource_changes"][2]["change"]["after"]["bot_version"] = json!("1");
     assert!(!owner(&fixture));
 }
+
+#[test]
+fn notification_channel_separates_customer_and_managed_configurations() {
+    let config = "arn:aws:notifications::123456789012:notification-configuration/test";
+    let channel = "arn:aws:notificationscontacts:us-west-2:123456789012:emailcontact:test";
+    let mut fixture = plan(&[
+        (
+            "aws_notifications_notification_configuration.main",
+            json!({"arn":config}),
+            json!({}),
+        ),
+        (
+            "aws_notificationscontacts_email_contact.main",
+            json!({"arn":channel}),
+            json!({}),
+        ),
+        (
+            "aws_notifications_channel_association.main",
+            json!({"arn":channel,"notification_configuration_arn":config}),
+            json!({
+                "arn":{"references":["aws_notificationscontacts_email_contact.main.arn"]},
+                "notification_configuration_arn":{"references":["aws_notifications_notification_configuration.main.arn"]}
+            }),
+        ),
+    ]);
+    let check = |v: &Value, path: &str, label| {
+        crate::configured_service_links::verified(
+            &graph(v),
+            "aws_notifications_channel_association.main",
+            path,
+            Some(label),
+        )
+    };
+    assert!(check(&fixture, "arn", "Notification channel"));
+    assert!(check(
+        &fixture,
+        "notification_configuration_arn",
+        "Notification configuration"
+    ));
+    let managed =
+        "arn:aws:notifications::123456789012:managed-notification-configuration/category/test";
+    fixture["resource_changes"][0]["change"]["after"]["arn"] = json!(managed);
+    fixture["resource_changes"][2]["change"]["after"]["notification_configuration_arn"] =
+        json!(managed);
+    assert!(!check(
+        &fixture,
+        "notification_configuration_arn",
+        "Notification configuration"
+    ));
+}

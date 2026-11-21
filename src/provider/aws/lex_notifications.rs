@@ -13,6 +13,28 @@ const INTENT: &str = "aws_lexv2models_intent";
 const SLOT: &str = "aws_lexv2models_slot";
 const SLOT_TYPE: &str = "aws_lexv2models_slot_type";
 
+const CHANNEL: &str = "aws_notifications_channel_association";
+const EVENT: &str = "aws_notifications_event_rule";
+const ORG: &str = "aws_notifications_organizational_unit_association";
+const MANAGED: &str = "aws_notifications_managed_notification_additional_channel_association";
+const CONFIG: &str = "aws_notifications_notification_configuration";
+
+type Outputs = &'static [(&'static str, &'static [&'static str])];
+const CHANNELS: Outputs = &[
+    ("aws_notificationscontacts_email_contact", &["arn"]),
+    (
+        "aws_chatbot_slack_channel_configuration",
+        &["chat_configuration_arn"],
+    ),
+    (
+        "aws_chatbot_teams_channel_configuration",
+        &["chat_configuration_arn"],
+    ),
+];
+const ORGANIZATIONS: Outputs = &[
+    ("aws_organizations_organization", &["id", "roots[].id"]),
+    ("aws_organizations_organizational_unit", &["id"]),
+];
 pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
     if kind == VERSION && locale_map_key(path).is_some() {
         return Some(Rule::new(
@@ -89,6 +111,25 @@ pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
         (SLOT_TYPE, "external_source_setting.grammar_slot_type_setting.source.kms_key_arn") => {
             Rule::new("Lex grammar key", &[("aws_kms_key", &["arn"])], false, &[])
         }
+        (CHANNEL | EVENT | ORG, "notification_configuration_arn") => Rule::new(
+            "Notification configuration",
+            &[(CONFIG, &["arn"])],
+            false,
+            &[],
+        )
+        .in_control_plane_account(),
+        (CHANNEL, "arn") => {
+            Rule::new("Notification channel", CHANNELS, false, &[]).in_control_plane_account()
+        }
+        (MANAGED, "channel_arn") => Rule::new("Managed notification channel", CHANNELS, false, &[])
+            .in_control_plane_account(),
+        (ORG, "organizational_unit_id") => Rule::new(
+            "Notification organization target",
+            ORGANIZATIONS,
+            false,
+            &[],
+        )
+        .in_control_plane_account(),
         _ => return None,
     })
 }
@@ -100,6 +141,21 @@ pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static 
         INTENT => Some(("locale_id", "Lex bot locale", "Intents")),
         SLOT => Some(("intent_id", "Lex slot intent", "Slots")),
         SLOT_TYPE => Some(("locale_id", "Lex bot locale", "Slot types")),
+        EVENT => Some((
+            "notification_configuration_arn",
+            "Notification configuration",
+            "Event rules",
+        )),
+        CHANNEL => Some((
+            "notification_configuration_arn",
+            "Notification configuration",
+            "Channels",
+        )),
+        ORG => Some((
+            "notification_configuration_arn",
+            "Notification configuration",
+            "Organization associations",
+        )),
         _ => None,
     }
 }
@@ -160,6 +216,51 @@ pub(super) fn qualifies(
         (SLOT_TYPE, "external_source_setting.grammar_slot_type_setting.source.kms_key_arn") => {
             super::communications::input_arn(e, target, source, path, "kms", "key/")
         }
+        (CHANNEL | EVENT | ORG, "notification_configuration_arn") => {
+            e.text(target, path).is_some_and(|v| {
+                notification_arn(
+                    e,
+                    source,
+                    v,
+                    "notifications",
+                    "notification-configuration/",
+                    true,
+                )
+            })
+        }
+        (CHANNEL, "arn") | (MANAGED, "channel_arn") => e.text(target, path).is_some_and(|v| {
+            let prefix =
+                if e.nodes[source].resource_type == "aws_notificationscontacts_email_contact" {
+                    "notificationscontacts"
+                } else {
+                    "chatbot"
+                };
+            notification_arn(
+                e,
+                source,
+                v,
+                prefix,
+                if prefix == "chatbot" {
+                    "chat-configuration/"
+                } else {
+                    "emailcontact:"
+                },
+                prefix == "chatbot",
+            )
+        }),
+        (ORG, "organizational_unit_id") => e.text(target, path).is_some_and(|v| {
+            let prefix = if e.nodes[source].resource_type == "aws_organizations_organizational_unit"
+            {
+                "ou-"
+            } else if v.starts_with("r-") {
+                "r-"
+            } else {
+                "o-"
+            };
+            v.strip_prefix(prefix).is_some_and(|id| {
+                !id.is_empty() && id.bytes().all(|b| b.is_ascii_alphanumeric() || b == b'-')
+            })
+        }),
         _ => true,
     }
 }
@@ -243,6 +344,36 @@ fn member(e: &Evidence<'_>, target: usize, source: usize, path: &str) -> bool {
             })
             .count()
             == 1
+}
+
+fn notification_arn(
+    e: &Evidence<'_>,
+    source: usize,
+    value: &str,
+    service: &str,
+    prefix: &str,
+    global: bool,
+) -> bool {
+    let parts: Vec<_> = value.splitn(6, ':').collect();
+    let ["arn", partition, actual_service, region, account, resource] = parts.as_slice() else {
+        return false;
+    };
+    partition.starts_with("aws")
+        && *actual_service == service
+        && (if global {
+            region.is_empty()
+        } else {
+            super::scope_selections::region(region).is_some()
+        })
+        && crate::model::AwsAccountScope::new(account).is_some()
+        && e.nodes[source]
+            .provider_configuration
+            .as_ref()
+            .and_then(|c| c.account.as_ref())
+            .is_none_or(|a| a.as_str() == *account)
+        && resource
+            .strip_prefix(prefix)
+            .is_some_and(|id| !id.is_empty())
 }
 
 #[cfg(test)]

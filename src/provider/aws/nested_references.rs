@@ -169,7 +169,9 @@ fn endpoint_value<'a>(
     outputs: &[&str],
 ) -> Option<&'a str> {
     let attrs = reference.source_attributes_by_instance.get(&source)?;
-    if outputs.contains(&"roots[].id") {
+    if outputs.contains(&"roots[].id")
+        && !(attrs.len() == 1 && attrs.contains("id") && outputs.contains(&"id"))
+    {
         let mut indices = attrs
             .iter()
             .filter_map(|p| super::organizations::root_index(p));
