@@ -95,6 +95,58 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &["storage_location"],
         ),
+        ("aws_ivs_channel", "recording_configuration_arn") => Rule::new(
+            "IVS recording configuration",
+            &[("aws_ivs_recording_configuration", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_ivs_recording_configuration", "destination_configuration.s3.bucket_name") => {
+            Rule::new(
+                "Recording S3 bucket",
+                &[("aws_s3_bucket", &["bucket", "id"])],
+                false,
+                &["destination_configuration", "destination_configuration.s3"],
+            )
+        }
+        (
+            "aws_ivschat_logging_configuration",
+            "destination_configuration.cloudwatch_logs.log_group_name",
+        ) => Rule::new(
+            "Chat log group",
+            &[("aws_cloudwatch_log_group", &["name"])],
+            false,
+            &[
+                "destination_configuration",
+                "destination_configuration.cloudwatch_logs",
+            ],
+        ),
+        (
+            "aws_ivschat_logging_configuration",
+            "destination_configuration.firehose.delivery_stream_name",
+        ) => Rule::new(
+            "Chat delivery stream",
+            &[("aws_kinesis_firehose_delivery_stream", &["name"])],
+            false,
+            &[
+                "destination_configuration",
+                "destination_configuration.firehose",
+            ],
+        ),
+        ("aws_ivschat_logging_configuration", "destination_configuration.s3.bucket_name") => {
+            Rule::new(
+                "Chat log bucket",
+                &[("aws_s3_bucket", &["bucket", "id"])],
+                false,
+                &["destination_configuration", "destination_configuration.s3"],
+            )
+        }
+        ("aws_ivschat_room", "logging_configuration_identifiers") => Rule::new(
+            "Chat logging configurations",
+            &[("aws_ivschat_logging_configuration", &["arn"])],
+            true,
+            &[],
+        ),
         _ => return None,
     })
 }
