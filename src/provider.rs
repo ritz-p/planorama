@@ -77,6 +77,7 @@ pub(crate) fn has_indexed_service_references(
             )
             || matches!(resource, "aws_workspacesweb_session_logger")
             || matches!(resource, "aws_bcmdataexports_export")
+            || matches!(resource, "aws_budgets_budget" | "aws_budgets_budget_action")
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)

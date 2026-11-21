@@ -98093,10 +98093,10 @@
       }
     },
     "aws_billing_view": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1665,
-      "gap": "#1665 — Verify source_views for aws_billing_view.",
+      "gap": "#1665 — Verify source_views.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98108,7 +98108,7 @@
         "placement": "Supported: Logical Node for AWS Billing. Manages an AWS Billing View.",
         "ownership": "Not applicable: Keep AWS Billing node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS Billing View. No direct subnet placement follows from source_views.",
-        "references": "Missing: Resolve known source_views only against unique compatible managed endpoints (#1665).",
+        "references": "Supported: Verified references for source_views (#1665).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit data_filter_expression.dimensions.values, data_filter_expression.tags.values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/billing_view.html.markdown",
@@ -98131,17 +98131,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed newResourceView. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_budgets_budget": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1665,
-      "gap": "#1665 — Verify billing_view_arn, notification.subscriber_sns_topic_arns for aws_budgets_budget.",
+      "gap": "#1665 — Verify billing_view_arn, notification.subscriber_sns_topic_arns.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98155,7 +98156,7 @@
         "placement": "Supported: Logical Node for AWS Web Services Budgets. Provides a budgets budget resource.",
         "ownership": "Not applicable: Keep AWS Web Services Budgets node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a budgets budget resource. No direct subnet placement follows from billing_view_arn.",
-        "references": "Missing: Resolve known billing_view_arn, notification.subscriber_sns_topic_arns only against unique compatible managed endpoints (#1665). Service Catalog already references a budget by name (#1546).",
+        "references": "Supported: Verified references for billing_view_arn, notification.subscriber_sns_topic_arns (#1665).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit cost_filter.values, filter_expression.and.and.cost_categories.values, filter_expression.and.and.dimensions.values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/budgets_budget.html.markdown",
@@ -98188,7 +98189,8 @@
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
           "tests/unit/resource_support.rs",
-          "src/provider/aws/operations.rs"
+          "src/provider/aws/operations.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed resourceBudget. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -98219,10 +98221,10 @@
       }
     },
     "aws_budgets_budget_action": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1665,
-      "gap": "#1665 — Verify budget_name, execution_role_arn, definition.iam_action_definition.policy_arn, definition.scp_action_definition.policy_id, definition.ssm_action_definition.instance_ids for aws_budgets_budget_action.",
+      "gap": "#1665 — Verify budget_name, execution_role_arn, definition.iam_action_definition.policy_arn, definition.scp_action_definition.policy_id, definition.ssm_action_definition.instance_ids.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98239,7 +98241,7 @@
         "placement": "Supported: Logical Controller for AWS Web Services Budgets. Provides a budget action resource.",
         "ownership": "Not applicable: Keep AWS Web Services Budgets controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a budget action resource. No direct subnet placement follows from budget_name.",
-        "references": "Missing: Resolve known budget_name, execution_role_arn, definition.iam_action_definition.policy_arn, definition.scp_action_definition.policy_id, definition.ssm_action_definition.instance_ids only against unique compatible managed endpoints (#1665).",
+        "references": "Supported: Verified references for budget_name, execution_role_arn, definition.iam_action_definition.policy_arn, definition.scp_action_definition.policy_id, definition.ssm_action_definition.instance_ids (#1665).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit subscriber.address from dedicated summaries.",
         "officialDocumentation": "website/docs/r/budgets_budget_action.html.markdown",
@@ -98288,7 +98290,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed resourceBudgetAction. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -98346,10 +98349,10 @@
       }
     },
     "aws_ce_anomaly_subscription": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1665,
-      "gap": "#1665 — Verify monitor_arn_list for aws_ce_anomaly_subscription.",
+      "gap": "#1665 — Verify monitor_arn_list.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98362,7 +98365,7 @@
         "placement": "Supported: Logical Controller for AWS CE (Cost Explorer). Provides a CE Cost Anomaly Subscription",
         "ownership": "Not applicable: Keep AWS CE (Cost Explorer) controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a CE Cost Anomaly Subscription No direct subnet placement follows from monitor_arn_list.",
-        "references": "Missing: Resolve known monitor_arn_list only against unique compatible managed endpoints (#1665).",
+        "references": "Supported: Verified references for monitor_arn_list (#1665).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit subscriber.address, threshold_expression.and.cost_category.values, threshold_expression.and.dimension.values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ce_anomaly_subscription.html.markdown",
@@ -98389,7 +98392,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed resourceAnomalySubscription. No same-name data registration in the pinned schema.",
         "dataContracts": {}

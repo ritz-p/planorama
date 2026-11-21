@@ -775,3 +775,97 @@ fn cur_report_definition_validates_managed_reference() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"s3_bucket":true});
     assert!(!verified(&input, kind, "Cost and Usage Report bucket"));
 }
+
+#[test]
+fn ce_anomaly_subscription_validates_managed_reference() {
+    let kind = "aws_ce_anomaly_subscription";
+    let value = "arn:aws:ce::123456789012:anomalymonitor/example";
+    let mut input = reference_plan(
+        "aws_ce_anomaly_monitor",
+        json!({"arn":value}),
+        kind,
+        json!({"monitor_arn_list":[value]}),
+        json!({"monitor_arn_list":{"references":["aws_ce_anomaly_monitor.source.arn"]}}),
+    );
+
+    assert!(verified(&input, kind, "Cost anomaly monitors"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["allowed_account_ids"]["constant_value"] =
+        json!(["210987654321"]);
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Cost anomaly monitors"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"monitor_arn_list":true});
+    assert!(!verified(&input, kind, "Cost anomaly monitors"));
+}
+
+#[test]
+fn budget_ssm_action_uses_provider_when_account_is_computed() {
+    let kind = "aws_budgets_budget_action";
+    let mut input = reference_plan(
+        "aws_instance",
+        json!({"id":"i-example"}),
+        kind,
+        json!({"account_id":"123456789012","definition":[{"ssm_action_definition":[{
+            "action_sub_type":"STOP_EC2_INSTANCES","region":"us-east-1","instance_ids":["i-example"]
+        }]}]}),
+        json!({"definition":[{"ssm_action_definition":[{
+            "instance_ids":{"references":["aws_instance.source.id"]}
+        }]}]}),
+    );
+    assert!(verified(&input, kind, "Budget SSM action instances"));
+    input["configuration"]["root_module"]["resources"][1]["expressions"]["account_id"] =
+        json!({"constant_value":"210987654321"});
+    input["resource_changes"][1]["change"]["after"]["account_id"] = json!("210987654321");
+    assert!(!verified(&input, kind, "Budget SSM action instances"));
+}
+
+#[test]
+fn budgets_notification_recognizes_reordered_topic_sets() {
+    let kind = "aws_budgets_budget";
+    let first = "arn:aws:sns:us-east-1:123456789012:first";
+    let second = "arn:aws:sns:us-east-1:123456789012:second";
+    let mut input = reference_plan(
+        "aws_sns_topic",
+        json!({"arn":first}),
+        kind,
+        json!({"account_id":"123456789012","notification":[
+            {"subscriber_sns_topic_arns":[second]},
+            {"subscriber_sns_topic_arns":[first]}
+        ]}),
+        json!({"notification":[
+            {"subscriber_sns_topic_arns":{"references":["aws_sns_topic.source.arn"]}},
+            {"subscriber_sns_topic_arns":{"references":["aws_sns_topic.second.arn"]}}
+        ]}),
+    );
+    input["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_sns_topic.second","mode":"managed",
+            "type":"aws_sns_topic","name":"second",
+            "provider_name":"registry.terraform.io/hashicorp/aws",
+            "change":{"actions":["create"],"after":{"arn":second}}
+        }));
+    input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_sns_topic.second","provider_config_key":"aws","expressions":{}
+        }));
+    assert!(verified(&input, kind, "Budget notification topics"));
+    input["configuration"]["root_module"]["resources"][1]["expressions"]["account_id"] =
+        json!({"constant_value":"123456789012"});
+    assert!(!verified(&input, kind, "Budget notification topics"));
+    input["configuration"]["root_module"]["resources"][1]["expressions"]
+        .as_object_mut()
+        .unwrap()
+        .remove("account_id");
+    input["resource_changes"][1]["change"]["after"]["notification"][0]["subscriber_sns_topic_arns"] =
+        json!([first, second]);
+    assert!(!verified(&input, kind, "Budget notification topics"));
+}
