@@ -146,17 +146,18 @@ impl Sections {
         options: impl Into<Options>,
     ) -> Self {
         let options = options.into();
+        let cards = annotation_cards(
+            graph,
+            index,
+            options.address_format,
+            options.cloudflare_groups,
+        );
         Self::from_cards(
             graph,
             layout,
             index,
-            annotation_cards(
-                graph,
-                index,
-                options.address_format,
-                options.cloudflare_groups,
-            ),
-            index.width,
+            cards,
+            None,
             (!options.omit_relationship_legend).then_some(options.hide_relationship_legend),
         )
     }
@@ -174,7 +175,7 @@ impl Sections {
             layout,
             index,
             annotation_cards(graph, index, address_format, false),
-            available_width,
+            Some(available_width),
             None,
         )
     }
@@ -184,22 +185,36 @@ impl Sections {
         layout: &Layout<'_>,
         index: &relationship_index::Index<'_>,
         cards: Vec<(&str, style::SectionPalette, Vec<annotations::Card>)>,
-        available_width: usize,
+        shared_width: Option<usize>,
         hide_relationship_legend: Option<bool>,
     ) -> Self {
-        let packing_width =
-            annotations::Area::required_width(&cards, available_width.max(index.width));
+        let packing_width = annotations::Area::required_width(
+            &cards,
+            shared_width.unwrap_or(index.width).max(index.width),
+        );
         let legend = if let Some(hide) = hide_relationship_legend {
             legend::MeasuredLegend::from_graphs([graph], packing_width, 148, hide)
         } else {
             legend::MeasuredLegend::empty(packing_width)
         };
-        let annotations = annotations::Area::sections(cards, packing_width.max(legend.width));
+        let check_height = if graph.checks.is_empty() { 0 } else { 24 };
+        let architecture_top_padding = architecture_top_padding(graph, layout, index);
+        let width = packing_width.max(legend.width);
+        let width = if shared_width.is_some() {
+            width
+        } else {
+            annotations::Area::single_plan_width(
+                &cards,
+                width,
+                layout.height + architecture_top_padding + check_height + legend.height,
+            )
+        };
+        let annotations = annotations::Area::sections(cards, width);
         Self {
             legend,
             annotations,
-            check_height: if graph.checks.is_empty() { 0 } else { 24 },
-            architecture_top_padding: architecture_top_padding(graph, layout, index),
+            check_height,
+            architecture_top_padding,
         }
     }
 

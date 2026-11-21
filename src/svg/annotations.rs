@@ -31,6 +31,25 @@ pub(super) struct Area {
     pub height: usize,
 }
 
+fn flow_positions(width: usize, origin: Point, right: usize) -> impl FnMut(&Card) -> Bounds {
+    let (mut x, mut y, mut row_height) = (origin.x, origin.y, 0);
+    move |card| {
+        if x > origin.x && x + card.width > width - right {
+            x = origin.x;
+            y += row_height + 20;
+            row_height = 0;
+        }
+        let bounds = Bounds {
+            origin: Point { x, y },
+            width: card.width,
+            height: card.height,
+        };
+        x += card.width + 20;
+        row_height = row_height.max(card.height);
+        bounds
+    }
+}
+
 impl Area {
     pub fn flow(
         cards: Vec<Card>,
@@ -42,28 +61,19 @@ impl Area {
         let width = cards.iter().fold(available_width, |width, card| {
             width.max(card.width + origin.x + right)
         });
-        let (mut x, mut y, mut row_height) = (origin.x, origin.y, 0);
-        let mut placed = Vec::new();
-        for card in cards {
-            if x > origin.x && x + card.width > width - right {
-                x = origin.x;
-                y += row_height + 20;
-                row_height = 0;
-            }
-            let bounds = Bounds {
-                origin: Point { x, y },
-                width: card.width,
-                height: card.height,
-            };
-            x += card.width + 20;
-            row_height = row_height.max(card.height);
-            placed.push((card, bounds));
-        }
-        let height = if placed.is_empty() {
-            0
-        } else {
-            y + row_height + bottom - origin.y
-        };
+        let mut position = flow_positions(width, origin, right);
+        let placed: Vec<_> = cards
+            .into_iter()
+            .map(|card| {
+                let bounds = position(&card);
+                (card, bounds)
+            })
+            .collect();
+        let height = placed
+            .iter()
+            .map(|(_, bounds)| bounds.origin.y + bounds.height + bottom - origin.y)
+            .max()
+            .unwrap_or(0);
         Self {
             cards: placed,
             sections: Vec::new(),
@@ -106,6 +116,49 @@ impl Area {
             .iter()
             .flat_map(|(_, _, cards)| cards)
             .fold(available_width, |width, card| width.max(card.width + 112))
+    }
+
+    pub fn single_plan_width(
+        sections: &[(&str, super::style::SectionPalette, Vec<Card>)],
+        width: usize,
+        fixed_height: usize,
+    ) -> usize {
+        let pair_width = sections
+            .iter()
+            .flat_map(|(_, _, cards)| cards.windows(2))
+            .map(|pair| 112 + pair[0].width + 20 + pair[1].width)
+            .max()
+            .unwrap_or(0);
+        if pair_width <= width {
+            return width;
+        }
+        let height = |width| {
+            fixed_height
+                + sections
+                    .iter()
+                    .filter(|(_, _, cards)| !cards.is_empty())
+                    .map(|(_, _, cards)| {
+                        cards
+                            .iter()
+                            .map(flow_positions(width - 80, Point { x: 16, y: 48 }, 16))
+                            .map(|bounds| bounds.origin.y + bounds.height)
+                            .max()
+                            .unwrap_or(0)
+                            + 16
+                            + 20
+                    })
+                    .sum::<usize>()
+                + 4
+        };
+        let original = height(width);
+        if original > width * 2
+            && (height(pair_width) as u128) * (pair_width as u128)
+                < (original as u128) * (width as u128)
+        {
+            pair_width
+        } else {
+            width
+        }
     }
 
     pub fn sections(

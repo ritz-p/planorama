@@ -341,3 +341,23 @@ fn annotations_precede_architecture_without_mutating_routing() {
         assert!(architecture.attribute("transform").unwrap() != "translate(0 0)");
     }
 }
+
+#[test]
+fn tall_annotation_rows_reduce_the_area_of_the_final_canvas() {
+    let graph = crate::semantic::transform(
+        &crate::plan::parse(include_str!("../../fixtures/iam-policies-plan.json")).unwrap(),
+    );
+    let layout = crate::layout::Layout::new(&graph);
+    let index = crate::svg::relationship_index::Index::new(&graph, &layout);
+    let original = crate::svg::Sections::without_legend(
+        &graph,
+        &layout,
+        &index,
+        crate::svg::AddressFormat::Qualified,
+        index.width,
+    )
+    .dimensions(&layout);
+    let compact = crate::svg::dimensions(&graph, &layout);
+    assert!(compact.0 > original.0 && compact.1 < original.1);
+    assert!(compact.0 * compact.1 < original.0 * original.1);
+}
