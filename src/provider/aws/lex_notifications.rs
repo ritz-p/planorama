@@ -216,22 +216,13 @@ pub(super) fn qualifies(
         (SLOT_TYPE, "external_source_setting.grammar_slot_type_setting.source.kms_key_arn") => {
             super::communications::input_arn(e, target, source, path, "kms", "key/")
         }
-        (CHANNEL | EVENT | ORG, "notification_configuration_arn") => {
-            e.text(target, path).is_some_and(|v| {
-                notification_arn(
-                    e,
-                    source,
-                    v,
-                    "notifications",
-                    "notification-configuration/",
-                    true,
-                )
-            })
-        }
+        (CHANNEL | EVENT | ORG, "notification_configuration_arn") => e
+            .text(target, path)
+            .is_some_and(|v| notification_arn(e, source, v, "notifications", "configuration/")),
         (CHANNEL, "arn") | (MANAGED, "channel_arn") => e.text(target, path).is_some_and(|v| {
             let prefix =
                 if e.nodes[source].resource_type == "aws_notificationscontacts_email_contact" {
-                    "notificationscontacts"
+                    "notifications-contacts"
                 } else {
                     "chatbot"
                 };
@@ -243,9 +234,8 @@ pub(super) fn qualifies(
                 if prefix == "chatbot" {
                     "chat-configuration/"
                 } else {
-                    "emailcontact:"
+                    "emailcontact/"
                 },
-                prefix == "chatbot",
             )
         }),
         (ORG, "organizational_unit_id") => e.text(target, path).is_some_and(|v| {
@@ -379,7 +369,6 @@ fn notification_arn(
     value: &str,
     service: &str,
     prefix: &str,
-    global: bool,
 ) -> bool {
     let parts: Vec<_> = value.splitn(6, ':').collect();
     let ["arn", partition, actual_service, region, account, resource] = parts.as_slice() else {
@@ -387,11 +376,7 @@ fn notification_arn(
     };
     partition.starts_with("aws")
         && *actual_service == service
-        && (if global {
-            region.is_empty()
-        } else {
-            super::scope_selections::region(region).is_some()
-        })
+        && region.is_empty()
         && crate::model::AwsAccountScope::new(account).is_some()
         && e.nodes[source]
             .provider_configuration

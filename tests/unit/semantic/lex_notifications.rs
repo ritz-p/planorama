@@ -123,8 +123,9 @@ fn lex_intent_owns_only_matching_locale() {
 
 #[test]
 fn notification_channel_separates_customer_and_managed_configurations() {
-    let config = "arn:aws:notifications::123456789012:notification-configuration/test";
-    let channel = "arn:aws:notificationscontacts:us-west-2:123456789012:emailcontact:test";
+    let config = "arn:aws:notifications::123456789012:configuration/abcdefghijklmnopqrstuvwxyz0";
+    let channel =
+        "arn:aws:notifications-contacts::123456789012:emailcontact/abcdefghijklmnopqrstuvwxyz1";
     let mut fixture = plan(&[
         (
             "aws_notifications_notification_configuration.main",
@@ -161,6 +162,24 @@ fn notification_channel_separates_customer_and_managed_configurations() {
     ));
     let managed =
         "arn:aws:notifications::123456789012:managed-notification-configuration/category/test";
+    let managed_fixture = plan(&[
+        (
+            "aws_notificationscontacts_email_contact.main",
+            json!({"arn":channel}),
+            json!({}),
+        ),
+        (
+            "aws_notifications_managed_notification_additional_channel_association.main",
+            json!({"channel_arn":channel,"managed_notification_arn":managed}),
+            json!({"channel_arn":{"references":["aws_notificationscontacts_email_contact.main.arn"]}}),
+        ),
+    ]);
+    assert!(crate::configured_service_links::verified(
+        &graph(&managed_fixture),
+        "aws_notifications_managed_notification_additional_channel_association.main",
+        "channel_arn",
+        Some("Managed notification channel"),
+    ));
     fixture["resource_changes"][0]["change"]["after"]["arn"] = json!(managed);
     fixture["resource_changes"][2]["change"]["after"]["notification_configuration_arn"] =
         json!(managed);
