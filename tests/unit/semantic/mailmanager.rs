@@ -747,3 +747,31 @@ fn workspacesweb_browser_settings_association_validates_managed_reference() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"portal_arn":true});
     assert!(!verified(&input, kind, "Secure Browser portal"));
 }
+
+#[test]
+fn cur_report_definition_validates_managed_reference() {
+    let kind = "aws_cur_report_definition";
+    let value = "billing-export-test";
+    let mut input = reference_plan(
+        "aws_s3_bucket",
+        json!({"id":value}),
+        kind,
+        json!({"s3_bucket":value}),
+        json!({"s3_bucket":{"references":["aws_s3_bucket.source.id"]}}),
+    );
+
+    input["resource_changes"][1]["change"]["after"]["s3_region"] = json!("us-east-1");
+    assert!(verified(&input, kind, "Cost and Usage Report bucket"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["allowed_account_ids"]["constant_value"] =
+        json!(["210987654321"]);
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Cost and Usage Report bucket"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"s3_bucket":true});
+    assert!(!verified(&input, kind, "Cost and Usage Report bucket"));
+}

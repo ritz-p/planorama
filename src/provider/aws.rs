@@ -38,6 +38,7 @@ pub(crate) mod batch_configuration;
 pub(crate) mod beanstalk_configuration;
 pub(crate) mod bedrock_agents;
 pub(crate) mod bedrock_models;
+pub(crate) mod billing_services;
 pub(crate) mod classic_elb;
 mod classification;
 pub(crate) mod cleanrooms_configuration;
