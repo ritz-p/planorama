@@ -29,6 +29,72 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_gamelift_alias", "routing_strategy.fleet_id") => Rule::new(
+            "GameLift fleet",
+            &[("aws_gamelift_fleet", &["id"])],
+            false,
+            &["routing_strategy"],
+        ),
+        ("aws_gamelift_build", "storage_location.bucket") => Rule::new(
+            "Build source bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &["storage_location"],
+        ),
+        ("aws_gamelift_build", "storage_location.role_arn") => Rule::new(
+            "Build access role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &["storage_location"],
+        ),
+        ("aws_gamelift_fleet", "build_id") => Rule::new(
+            "GameLift build",
+            &[("aws_gamelift_build", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_gamelift_fleet", "script_id") => Rule::new(
+            "GameLift script",
+            &[("aws_gamelift_script", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_gamelift_fleet", "instance_role_arn") => Rule::new(
+            "Fleet instance role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_gamelift_game_server_group", "role_arn") => Rule::new(
+            "FleetIQ service role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_gamelift_game_server_group", "vpc_subnets") => {
+            Rule::new("FleetIQ subnets", &[("aws_subnet", &["id"])], true, &[])
+        }
+        ("aws_gamelift_game_session_queue", "destinations") => Rule::new(
+            "Session placement destinations",
+            &[
+                ("aws_gamelift_fleet", &["arn"]),
+                ("aws_gamelift_alias", &["arn"]),
+            ],
+            true,
+            &[],
+        ),
+        ("aws_gamelift_script", "storage_location.bucket") => Rule::new(
+            "Script source bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &["storage_location"],
+        ),
+        ("aws_gamelift_script", "storage_location.role_arn") => Rule::new(
+            "Script access role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &["storage_location"],
+        ),
         _ => return None,
     })
 }
@@ -47,5 +113,22 @@ pub(super) fn annotate(
     refs: &mut [AttributeReference],
     values: &[(&Value, &Value)],
 ) {
-    configured_links::annotate(nodes, refs, values, rule, |_, _, _, _| true)
+    configured_links::annotate(nodes, refs, values, rule, network_matches)
+}
+
+fn network_matches(
+    evidence: &configured_links::Evidence<'_>,
+    reference: &AttributeReference,
+    endpoint: usize,
+    _: &str,
+) -> bool {
+    if reference.attribute != "vpc_subnets" || reference.sources.len() < 2 {
+        return true;
+    }
+    evidence.text(endpoint, "vpc_id").is_some_and(|vpc| {
+        reference
+            .sources
+            .iter()
+            .all(|&source| evidence.text(source, "vpc_id") == Some(vpc))
+    })
 }
