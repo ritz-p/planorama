@@ -28,11 +28,12 @@ provider row rather than representing additional states.
 | `semantic_transform` | Architecture lowering for each state; input resources and reference edges |
 | `selection_projection` | Filtering and view projection; input nodes/edges or states |
 | `layout_routing` | Placement, routing and spacing refinement for each retained state; selected nodes/edges |
+| `placement`, `routing`, `routing_spacing` | Initial containment/placement, route search (including any replacement placement), and final spacing/refinement inside layout |
 | `cross_state_routing` | Each cross-state endpoint-to-margin route; obstacles |
 | `composition_serialization` | SVG composition and optional HTML metadata/viewer serialization; named-state count |
 | `output_io` | Diagram and optional layout-report writes, including their status messages; diagram bytes |
 
-Layout includes its routing work; no separate routing estimate is added to it.
+Layout includes its child stages.
 Named-state layout and cross-state routing occur inside composition: subtract
 their durations to obtain composition's exclusive time. Inclusive rows must not
 be summed. Exclusive rows are disjoint, but their sum is not the wall-clock total:
@@ -63,6 +64,36 @@ compiler, machine, output destination, diagnostic options and cache conditions
 with results. Run on an otherwise idle machine; repeat manually if a distribution
 is needed. These observations do not guarantee performance, and CI checks report
 structure and byte equality rather than timing thresholds.
+
+## Native and Wasm profiles
+
+Build the native binary without default features and the Wasm bindings to compare
+service-name rendering using the same committed inputs. Run from the repository
+root in the development environment:
+
+```sh
+cargo build --locked --release --no-default-features --bin planorama
+sh scripts/build-wasm-bindings.sh output/wasm-profile
+node scripts/profile-pipeline.cjs native target/release/planorama typical svg
+node scripts/profile-pipeline.cjs wasm output/wasm-profile typical svg
+```
+
+Choose `typical`, `dense`, `multi-state` or `multi-account` and `svg` or `html`.
+Run each sample in a fresh process. JSON includes input hashes, engine, format,
+Node version and architecture. Record the repository revision, compiler and machine
+with comparisons. Both engines discard the diagram after measurement.
+
+On Linux, native timing rows also report inclusive CPU milliseconds for the
+calling thread from `/proc/thread-self/schedstat` and process peak resident KiB
+through the end of each span from `VmHWM`, when available. The scheduler counter
+can be coarse for short spans. Wasm measures elapsed and Node process CPU between
+existing progress callbacks. Selection includes semantic transformation, and
+output includes final transfer/serialization and any named-state gutter routing.
+Linear memory bytes are allocated Wasm capacity. Peak resident KiB includes
+the Node runtime and compilation. Both memory measures are cumulative high-water
+marks, so do not sum them or attribute a previous peak to a later stage.
+Native totals include input and output I/O. Wasm totals start after bindings
+initialization and file reads. Use repeated samples for performance decisions.
 
 ## Synthetic benchmark harness
 

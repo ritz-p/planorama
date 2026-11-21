@@ -57,6 +57,9 @@ fn timings_preserve_bytes_and_report_pipeline_without_input_names() {
                 "semantic_transform",
                 "selection_projection",
                 "layout_routing",
+                "placement",
+                "routing",
+                "routing_spacing",
                 "composition_serialization",
                 "output_io",
             ] {
@@ -85,6 +88,12 @@ fn timings_preserve_bytes_and_report_pipeline_without_input_names() {
                     } else {
                         assert_eq!(parent, 0);
                     }
+                }
+                if let Some(cpu) = fields.get("thread_cpu_ms") {
+                    assert!(cpu.parse::<f64>().unwrap() >= 0.0);
+                }
+                if let Some(peak) = fields.get("process_peak_rss_kib_at_end") {
+                    assert!(peak.parse::<u64>().unwrap() > 0);
                 }
                 for field in ["inclusive_ms", "exclusive_ms"] {
                     assert!(fields[field].parse::<f64>().unwrap().is_finite());
