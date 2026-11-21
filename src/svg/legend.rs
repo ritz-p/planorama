@@ -79,7 +79,7 @@ const ENTRIES: [Entry<'static>; 5] = [
 pub(super) struct MeasuredLegend {
     pub width: usize,
     pub height: usize,
-    bounds: Bounds,
+    pub(super) bounds: Bounds,
     content: Option<MeasuredContent>,
     actions_only: bool,
 }

@@ -129,3 +129,27 @@ in Docker Desktop Linux: two disabled runs took 3.386/3.308ms; enabled runs took
 7.683/7.867ms. SVG remained 318,966 bytes and compact report JSON was 165,641
 bytes. These same-layout observations include collection and report construction,
 excluding JSON serialization and file I/O; other validation was running.
+
+## Viewport coverage
+
+Schema 1 includes an optional `summary.viewport_coverage` object in JSON and text.
+`aspect_ratio` is final SVG width divided by height. `viewport_area`,
+`occupied_area` and `whitespace_area` use square SVG units. Occupancy and
+whitespace ratios divide their respective areas by the viewport area. A zero
+denominator yields JSON null.
+
+Occupied area is the union of spatial resource and container frames, measured
+annotation sections, visible legend cards, named-state heading frames and
+orthogonal route segments at their rendered stroke widths. Coordinates include
+all state offsets and gutter paths and are clipped to the viewport. Overlapping
+frames and shared trunks count once. A frame includes its interior. Route
+corridors use continuous rectangular strokes before dashing and corner rounding.
+Text outside frames, arrowheads, module bands, deployment-scope backdrops and
+viewer chrome are excluded. These metrics describe layout footprint rather than
+rasterized ink coverage.
+
+SVG and the initial SVG embedded in HTML use the same rules. Compare identical
+legend and filter settings to isolate a layout change. Showing a legend changes
+both the occupied area and the viewport. Layout-quality summaries display the
+available observations alongside the existing checks, including when an older
+baseline lacks coverage fields.

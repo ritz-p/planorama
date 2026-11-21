@@ -108,6 +108,10 @@ impl Area {
         svg
     }
 
+    pub fn section_bounds(&self) -> impl Iterator<Item = Bounds> + '_ {
+        self.sections.iter().map(|s| s.bounds)
+    }
+
     pub fn required_width(
         sections: &[(&str, super::style::SectionPalette, Vec<Card>)],
         available_width: usize,

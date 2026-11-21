@@ -5,12 +5,15 @@ use crate::view::geometry;
 use serde_json::{Value, json};
 use std::collections::BTreeSet;
 
+mod coverage;
+
 const PAIR_LIMIT: usize = 2_000_000;
 const FINDING_LIMIT: usize = 20_000;
 
 #[derive(Default)]
 pub(crate) struct Scene {
     edges: Vec<Route>,
+    occupied_frames: Vec<Bounds>,
     frames: Vec<(Value, borders::Frame)>,
     states: Vec<Value>,
     resources: Vec<Value>,
@@ -228,6 +231,10 @@ fn identity(graph: &Graph, index: usize, state: Option<&str>) -> Value {
 }
 
 impl Scene {
+    pub(crate) fn include_frame(&mut self, frame: Bounds, offset: usize) {
+        self.occupied_frames.push(translated(frame, offset));
+    }
+
     fn add_resources(
         &mut self,
         graph: &Graph,
@@ -267,6 +274,7 @@ impl Scene {
                 parent = layout.containment.parents[index];
             }
             if measured {
+                self.include_frame(frame, offset);
                 let mut panels: Vec<_> = layout
                     .scopes
                     .iter()
@@ -511,7 +519,8 @@ impl Scene {
             "resource_geometry": {"schema_version": 1, "records": self.resources,
                 "bounds_contract": "final spatial and embedded resource frames; logical and lowered resources explicitly unmeasured"},
             "canvas": {"width": width, "height": height}, "states": self.states, "edges": routes, "findings": findings,
-            "summary": {"routed_paths": self.edges.len(), "raw_polyline": {"length": raw_length, "bends": raw_bends},
+            "summary": {"viewport_coverage": coverage::measure(width, height, &self.occupied_frames, &self.edges),
+                "routed_paths": self.edges.len(), "raw_polyline": {"length": raw_length, "bends": raw_bends},
                 "visible_straight_sections": {"crossings": crossing_count, "independent_overlap_length": overlap,
                     "shared_trunk_length": shared_length, "parallel_deficit": parallel_deficit},
                 "visible_border_minimum_deficit": border_deficit as f64 / 4.0},

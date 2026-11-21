@@ -188,6 +188,9 @@ pub(crate) async fn render_step(
             .unwrap();
         }
     }
+    if let Some(scene) = &mut scene {
+        scene.include_frame(legend.bounds, 0);
+    }
     sections.push_str(&legend.render());
     let mut top = 60 + legend.height;
     for (id, graph, layout, index, cards) in states {
@@ -211,6 +214,15 @@ pub(crate) async fn render_step(
         let prefix = prefix(id);
         let architecture_offset = measured_sections.height();
         if let Some(scene) = &mut scene {
+            scene.include_frame(
+                Bounds {
+                    origin: Point { x: 40, y: top },
+                    width: heading_width,
+                    height: heading_height,
+                },
+                0,
+            );
+            measured_sections.include_frames(scene, top + header_height);
             scene.add_state(
                 graph,
                 &layout,
