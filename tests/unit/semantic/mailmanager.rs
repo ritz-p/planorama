@@ -2,6 +2,60 @@ use crate::{plan, semantic};
 use serde_json::{Value, json};
 
 #[test]
+fn ses_event_destination_verifies_firehose_delivery_stream() {
+    let kind = "aws_ses_event_destination";
+    let arn = "arn:aws:firehose:us-east-1:123456789012:deliverystream/example";
+    let mut input = reference_plan(
+        "aws_kinesis_firehose_delivery_stream",
+        json!({"arn":arn}),
+        kind,
+        json!({"kinesis_destination":[{"stream_arn":arn}]}),
+        json!({"kinesis_destination":[{"stream_arn":{"references":["aws_kinesis_firehose_delivery_stream.source.arn"]}}]}),
+    );
+    assert!(verified(&input, kind, "Firehose delivery stream"));
+    input["resource_changes"][0]["change"]["after"]["arn"] = json!("different");
+    assert!(!verified(&input, kind, "Firehose delivery stream"));
+}
+
+#[test]
+fn mailmanager_rule_verifies_s3_bucket_id() {
+    let provider = "registry.terraform.io/hashicorp/aws";
+    let mut input: Value =
+        serde_json::from_str(include_str!("../../fixtures/sagemaker-catalog-plan.json")).unwrap();
+    input["resource_changes"] = json!([
+        {
+            "address":"aws_s3_bucket.bucket","mode":"managed","type":"aws_s3_bucket",
+            "name":"bucket","provider_name":provider,
+            "change":{"actions":["create"],"after":{"id":"mail-bucket"}}
+        },
+        {
+            "address":"aws_mailmanager_rule_set.rules","mode":"managed","type":"aws_mailmanager_rule_set",
+            "name":"rules","provider_name":provider,
+            "change":{"actions":["create"],"after":{"rule":[{"action":[{"write_to_s3":[{"s3_bucket":"mail-bucket"}]}]}]}}
+        }
+    ]);
+    input["configuration"]["root_module"]["resources"] = json!([
+        {"address":"aws_s3_bucket.bucket","provider_config_key":"aws","expressions":{}},
+        {"address":"aws_mailmanager_rule_set.rules","provider_config_key":"aws",
+         "expressions":{"rule":[{"action":[{"write_to_s3":[{"s3_bucket":{
+            "references":["aws_s3_bucket.bucket.id"]
+         }}]}]}]}}
+    ]);
+    let graph = semantic::transform(&plan::parse(&input.to_string()).unwrap());
+    let node = graph
+        .nodes
+        .iter()
+        .find(|node| node.resource_type == "aws_mailmanager_rule_set")
+        .unwrap();
+    assert!(node.references.iter().any(|reference| {
+        reference.label == "S3 bucket"
+            && reference.complete
+            && !reference.dependency
+            && !reference.targets.is_empty()
+    }));
+}
+
+#[test]
 fn mailmanager_rule_verifies_nested_relay_action() {
     let provider = "registry.terraform.io/hashicorp/aws";
     let mut input: Value =
