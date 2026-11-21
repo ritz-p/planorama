@@ -171,6 +171,68 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_media_store_container_policy", "container_name") => Rule::new(
+            "MediaStore container",
+            &[("aws_media_store_container", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_medialive_channel", "input_attachments.input_id") => Rule::new(
+            "MediaLive input",
+            &[("aws_medialive_input", &["id"])],
+            false,
+            &[],
+        )
+        .unordered(&["input_attachments"]),
+        ("aws_medialive_channel", "destinations.media_package_settings.channel_id") => Rule::new(
+            "MediaPackage channel",
+            &[("aws_media_package_channel", &["channel_id", "id"])],
+            false,
+            &[],
+        )
+        .unordered(&["destinations", "destinations.media_package_settings"]),
+        ("aws_medialive_channel", "vpc.subnet_ids") => Rule::new(
+            "MediaLive subnets",
+            &[("aws_subnet", &["id"])],
+            true,
+            &["vpc"],
+        ),
+        ("aws_medialive_channel", "vpc.security_group_ids") => Rule::new(
+            "MediaLive security groups",
+            &[("aws_security_group", &["id"])],
+            true,
+            &["vpc"],
+        ),
+        ("aws_medialive_channel", "role_arn") => Rule::new(
+            "MediaLive service role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_medialive_input", "vpc.subnet_ids") => Rule::new(
+            "MediaLive subnets",
+            &[("aws_subnet", &["id"])],
+            true,
+            &["vpc"],
+        ),
+        ("aws_medialive_input", "vpc.security_group_ids") => Rule::new(
+            "MediaLive security groups",
+            &[("aws_security_group", &["id"])],
+            true,
+            &["vpc"],
+        ),
+        ("aws_medialive_input", "role_arn") => Rule::new(
+            "MediaLive service role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_medialive_multiplex_program", "multiplex_id") => Rule::new(
+            "MediaLive multiplex",
+            &[("aws_medialive_multiplex", &["id"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -198,13 +260,24 @@ fn network_matches(
     endpoint: usize,
     _: &str,
 ) -> bool {
-    if reference.attribute != "vpc_subnets" || reference.sources.len() < 2 {
+    let related_path = match reference.attribute.as_str() {
+        "vpc_subnets" => None,
+        "vpc.subnet_ids" => Some("vpc.security_group_ids"),
+        "vpc.security_group_ids" => Some("vpc.subnet_ids"),
+        _ => return true,
+    };
+    let related = related_path
+        .and_then(|path| super::lambda_core::unique(evidence.refs, reference.target, path))
+        .filter(|other| other.complete && other.issues.is_empty())
+        .map_or(&[][..], |other| other.sources.as_slice());
+    if reference.sources.len() + related.len() < 2 {
         return true;
     }
     evidence.text(endpoint, "vpc_id").is_some_and(|vpc| {
         reference
             .sources
             .iter()
+            .chain(related)
             .all(|&source| evidence.text(source, "vpc_id") == Some(vpc))
     })
 }
