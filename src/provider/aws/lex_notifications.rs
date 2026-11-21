@@ -36,7 +36,7 @@ const ORGANIZATIONS: Outputs = &[
     ("aws_organizations_organizational_unit", &["id"]),
 ];
 pub(super) fn rule(kind: &str, path: &str) -> Option<Rule> {
-    if kind == VERSION && locale_map_key(path).is_some() {
+    if kind == VERSION && path == "locale_specification" {
         return Some(Rule::new(
             "Lex source locale version",
             &[(VERSION, &["bot_version"])],
@@ -265,15 +265,55 @@ pub(super) fn qualifies(
     }
 }
 
-fn locale_map_key(path: &str) -> Option<&str> {
-    let locale = path
-        .strip_prefix("locale_specification.")?
-        .strip_suffix(".source_bot_version")?;
-    (!locale.is_empty()
-        && locale
-            .bytes()
-            .all(|b| b.is_ascii_alphanumeric() || b == b'_'))
-    .then_some(locale)
+fn source_versions(e: &Evidence<'_>, r: &AttributeReference) -> Option<()> {
+    let target = r.target;
+    if !super::communications::current(&e.nodes[target])
+        || !r.complete
+        || !r.instances_explicit
+        || !r.issues.is_empty()
+        || r.sources.is_empty()
+    {
+        return None;
+    }
+    let locales = e.values[target].0["locale_specification"].as_object()?;
+    let mut verified = std::collections::BTreeSet::new();
+    for locale in locales.keys() {
+        if locale.is_empty()
+            || !locale
+                .bytes()
+                .all(|b| b.is_ascii_alphanumeric() || b == b'_')
+        {
+            return None;
+        }
+        let path = format!("locale_specification.{locale}.source_bot_version");
+        let version = e.text(target, &path)?;
+        let mut candidates = r.sources.iter().copied().filter(|&source| {
+            let node = &e.nodes[source];
+            let attributes = r.source_attributes_by_instance.get(&source);
+            source != target
+                && super::communications::current(node)
+                && attributes.is_some_and(|a| a.len() == 1 && a.contains("bot_version"))
+                && same_bot(e, target, source)
+                && super::communications::same_region(&e.nodes[target], node)
+                && e.text(source, "bot_version") == Some(version)
+                && match node.resource_type.as_str() {
+                    LOCALE if version == "DRAFT" => e.text(source, "locale_id") == Some(locale),
+                    VERSION if version.parse::<u32>().is_ok_and(|v| v > 0) => {
+                        e.text(source, &path).is_some()
+                    }
+                    _ => false,
+                }
+        });
+        if let Some(source) = candidates.next() {
+            if candidates.next().is_some() {
+                return None;
+            }
+            verified.insert(source);
+        } else if version != "DRAFT" {
+            return None;
+        }
+    }
+    (verified.len() == r.sources.len()).then_some(())
 }
 
 pub(super) fn annotate_map(
@@ -289,21 +329,8 @@ pub(super) fn annotate_map(
     let matches: Vec<_> = refs
         .iter()
         .map(|r| {
-            if nodes[r.target].resource_type != VERSION {
-                return None;
-            }
-            let locale = locale_map_key(&r.attribute)?;
-            Some(
-                super::communications::endpoint(&e, r.target, &r.attribute, VERSION, "bot_version")
-                    .is_some_and(|source| {
-                        same_bot(&e, r.target, source)
-                            && super::communications::same_region(&nodes[r.target], &nodes[source])
-                            && e.text(r.target, &r.attribute)
-                                .is_some_and(|v| v.parse::<u32>().is_ok_and(|n| n > 0))
-                            && e.value(source, &format!("locale_specification.{locale}"))
-                                .is_some_and(serde_json::Value::is_object)
-                    }),
-            )
+            (nodes[r.target].resource_type == VERSION && r.attribute == "locale_specification")
+                .then(|| source_versions(&e, r).is_some())
         })
         .collect();
     for (r, valid) in refs.iter_mut().zip(matches) {
