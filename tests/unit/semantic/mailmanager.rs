@@ -149,3 +149,29 @@ fn sms_pool_verifies_root_collection_members() {
         json!({"origination_identities":[true]});
     assert!(!verified(&input, kind, "Pool origination identities"));
 }
+
+#[test]
+fn ses_receipt_rule_validates_reference_scope() {
+    let kind = "aws_ses_receipt_rule";
+    let value = "receipt-example";
+    let mut input = reference_plan(
+        "aws_ses_receipt_rule_set",
+        json!({"rule_set_name":value}),
+        kind,
+        json!({"rule_set_name":value}),
+        json!({"rule_set_name":{"references":["aws_ses_receipt_rule_set.source.rule_set_name"]}}),
+    );
+    assert!(verified(&input, kind, "Receipt rule set"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Receipt rule set"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"rule_set_name":true});
+    assert!(!verified(&input, kind, "Receipt rule set"));
+}

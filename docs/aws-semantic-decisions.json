@@ -92598,10 +92598,10 @@
       }
     },
     "aws_ses_active_receipt_rule_set": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify rule_set_name for aws_ses_active_receipt_rule_set.",
+      "gap": "#1648 — Verify rule_set_name.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92612,9 +92612,9 @@
           "id"
         ],
         "placement": "Supported: Logical Policy for AWS SES (Simple Email). Provides a resource to designate the active SES receipt rule set",
-        "ownership": "Missing: Verify the service parent selected by rule_set_name before presenting this helper under that parent (#1648).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1648).",
         "network": "Not applicable: Provides a resource to designate the active SES receipt rule set No direct subnet placement follows from rule_set_name.",
-        "references": "Missing: Resolve known rule_set_name only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for rule_set_name (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit rule_set_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_active_receipt_rule_set.html.markdown",
@@ -92638,7 +92638,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceActiveReceiptRuleSet. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -92706,10 +92707,10 @@
       }
     },
     "aws_ses_domain_dkim": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify domain for aws_ses_domain_dkim.",
+      "gap": "#1648 — Verify domain.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92718,9 +92719,9 @@
           "domain"
         ],
         "placement": "Supported: Logical Node for AWS SES (Simple Email). Provides an SES domain DKIM generation resource",
-        "ownership": "Missing: Verify the service parent selected by domain before presenting this helper under that parent (#1648).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1648).",
         "network": "Not applicable: Provides an SES domain DKIM generation resource No direct subnet placement follows from domain.",
-        "references": "Missing: Resolve known domain only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for domain (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit domain values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_domain_dkim.html.markdown",
@@ -92736,7 +92737,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceDomainDKIM. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -92803,10 +92805,10 @@
       }
     },
     "aws_ses_domain_identity_verification": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify domain for aws_ses_domain_identity_verification.",
+      "gap": "#1648 — Verify domain.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92817,9 +92819,9 @@
           "id"
         ],
         "placement": "Supported: Logical Controller for AWS SES (Simple Email). Waits for and checks successful verification of an SES domain identity.",
-        "ownership": "Missing: Verify the service parent selected by domain before presenting this helper under that parent (#1648).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1648).",
         "network": "Not applicable: Waits for and checks successful verification of an SES domain identity. No direct subnet placement follows from domain.",
-        "references": "Missing: Resolve known domain only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for domain (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit domain values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_domain_identity_verification.html.markdown",
@@ -92843,17 +92845,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceDomainIdentityVerification. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ses_domain_mail_from": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify domain for aws_ses_domain_mail_from.",
+      "gap": "#1648 — Verify domain.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92863,9 +92866,9 @@
           "id"
         ],
         "placement": "Supported: Logical Node for AWS SES (Simple Email). Provides an SES domain MAIL FROM resource",
-        "ownership": "Missing: Verify the service parent selected by domain before presenting this helper under that parent (#1648).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1648).",
         "network": "Not applicable: Provides an SES domain MAIL FROM resource No direct subnet placement follows from domain.",
-        "references": "Missing: Resolve known domain only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for domain (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit domain values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_domain_mail_from.html.markdown",
@@ -92885,7 +92888,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceDomainMailFrom. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -92947,10 +92951,10 @@
       }
     },
     "aws_ses_event_destination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify configuration_set_name, kinesis_destination.stream_arn, sns_destination.topic_arn for aws_ses_event_destination.",
+      "gap": "#1648 — Verify configuration_set_name, kinesis_destination.stream_arn, sns_destination.topic_arn.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -92963,9 +92967,9 @@
           "id"
         ],
         "placement": "Supported: Logical Node for AWS SES (Simple Email). Provides an SES event destination",
-        "ownership": "Missing: Verify the service parent selected by configuration_set_name before presenting this helper under that parent (#1648).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1648).",
         "network": "Not applicable: Provides an SES event destination No direct subnet placement follows from configuration_set_name.",
-        "references": "Missing: Resolve known configuration_set_name, kinesis_destination.stream_arn, sns_destination.topic_arn only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for configuration_set_name, kinesis_destination.stream_arn, sns_destination.topic_arn (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit configuration_set_name, kinesis_destination.stream_arn, sns_destination.topic_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_event_destination.html.markdown",
@@ -92999,17 +93003,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceEventDestination. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ses_identity_notification_topic": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify identity, topic_arn for aws_ses_identity_notification_topic.",
+      "gap": "#1648 — Verify identity, topic_arn.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93021,7 +93026,7 @@
         "placement": "Supported: Logical Controller for AWS SES (Simple Email). Setting AWS SES Identity Notification Topic",
         "ownership": "Not applicable: Keep AWS SES (Simple Email) controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Setting AWS SES Identity Notification Topic No direct subnet placement follows from identity.",
-        "references": "Missing: Resolve known identity, topic_arn only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for identity, topic_arn (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit identity, topic_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_identity_notification_topic.html.markdown",
@@ -93041,17 +93046,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceIdentityNotificationTopic. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_ses_identity_policy": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify identity for aws_ses_identity_policy.",
+      "gap": "#1648 — Verify identity.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93062,7 +93068,7 @@
         "placement": "Supported: Logical Policy for AWS SES (Simple Email). Manages a SES Identity Policy",
         "ownership": "Not applicable: Keep AWS SES (Simple Email) policy independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages a SES Identity Policy No direct subnet placement follows from identity.",
-        "references": "Missing: Resolve known identity only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for identity (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_identity_policy.html.markdown",
@@ -93078,7 +93084,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceIdentityPolicy. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -93136,10 +93143,10 @@
       }
     },
     "aws_ses_receipt_rule": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1648,
-      "gap": "#1648 — Verify rule_set_name, lambda_action.function_arn, s3_action.bucket_name, sns_action.topic_arn, workmail_action.organization_arn for aws_ses_receipt_rule.",
+      "gap": "#1648 — Verify rule_set_name, lambda_action.function_arn, s3_action.bucket_name, sns_action.topic_arn, workmail_action.organization_arn.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -93154,9 +93161,9 @@
           "id"
         ],
         "placement": "Supported: Logical Policy for AWS SES (Simple Email). Provides an SES receipt rule resource",
-        "ownership": "Missing: Verify the service parent selected by rule_set_name before presenting this helper under that parent (#1648).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1648).",
         "network": "Not applicable: Provides an SES receipt rule resource No direct subnet placement follows from rule_set_name.",
-        "references": "Missing: Resolve known rule_set_name, lambda_action.function_arn, s3_action.bucket_name, sns_action.topic_arn, workmail_action.organization_arn only against unique compatible managed endpoints (#1648).",
+        "references": "Supported: Verified references for rule_set_name, lambda_action.function_arn, s3_action.bucket_name, sns_action.topic_arn, workmail_action.organization_arn (#1648).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit rule_set_name, lambda_action.function_arn, s3_action.bucket_name, sns_action.topic_arn, workmail_action.organization_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/ses_receipt_rule.html.markdown",
@@ -93200,7 +93207,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed resourceReceiptRule. No same-name data registration in the pinned schema.",
         "dataContracts": {}

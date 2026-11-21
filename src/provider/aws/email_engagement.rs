@@ -233,6 +233,105 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_ses_active_receipt_rule_set", "rule_set_name") => Rule::new(
+            "Active receipt rule set",
+            &[("aws_ses_receipt_rule_set", &["rule_set_name"])],
+            false,
+            &[],
+        ),
+        ("aws_ses_domain_dkim", "domain") => Rule::new(
+            "DKIM domain identity",
+            &[("aws_ses_domain_identity", &["domain", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_ses_domain_identity_verification", "domain") => Rule::new(
+            "Verified domain identity",
+            &[("aws_ses_domain_identity", &["domain", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_ses_domain_mail_from", "domain") => Rule::new(
+            "MAIL FROM domain identity",
+            &[("aws_ses_domain_identity", &["domain", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_ses_event_destination", "configuration_set_name") => Rule::new(
+            "SES configuration set",
+            &[("aws_ses_configuration_set", &["name"])],
+            false,
+            &[],
+        ),
+        ("aws_ses_event_destination", "kinesis_destination.stream_arn") => Rule::new(
+            "Kinesis stream",
+            &[("aws_kinesis_stream", &["arn"])],
+            false,
+            &["kinesis_destination"],
+        ),
+        ("aws_ses_event_destination", "sns_destination.topic_arn") => Rule::new(
+            "SNS topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &["sns_destination"],
+        ),
+        ("aws_ses_identity_notification_topic", "identity") => Rule::new(
+            "SES identity",
+            &[
+                ("aws_ses_domain_identity", &["domain", "arn", "id"]),
+                ("aws_ses_email_identity", &["email", "arn", "id"]),
+                ("aws_sesv2_email_identity", &["email_identity", "arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_ses_identity_notification_topic", "topic_arn") => {
+            Rule::new("SNS topic", &[("aws_sns_topic", &["arn"])], false, &[])
+        }
+        ("aws_ses_identity_policy", "identity") => Rule::new(
+            "SES identity",
+            &[
+                ("aws_ses_domain_identity", &["domain", "arn", "id"]),
+                ("aws_ses_email_identity", &["email", "arn", "id"]),
+                ("aws_sesv2_email_identity", &["email_identity", "arn"]),
+            ],
+            false,
+            &[],
+        ),
+        ("aws_ses_receipt_rule", "rule_set_name") => Rule::new(
+            "Receipt rule set",
+            &[("aws_ses_receipt_rule_set", &["rule_set_name"])],
+            false,
+            &[],
+        ),
+        ("aws_ses_receipt_rule", "lambda_action.function_arn") => Rule::new(
+            "Receipt Lambda function",
+            &[("aws_lambda_function", &["arn"])],
+            false,
+            &[],
+        )
+        .unordered(&["lambda_action"]),
+        ("aws_ses_receipt_rule", "s3_action.bucket_name") => Rule::new(
+            "Receipt S3 bucket",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &[],
+        )
+        .unordered(&["s3_action"]),
+        ("aws_ses_receipt_rule", "sns_action.topic_arn") => Rule::new(
+            "Receipt SNS topic",
+            &[("aws_sns_topic", &["arn"])],
+            false,
+            &[],
+        )
+        .unordered(&["sns_action"]),
+        ("aws_ses_receipt_rule", "workmail_action.organization_arn") => Rule::new(
+            "Receipt WorkMail organization",
+            &[("aws_workmail_organization", &["arn"])],
+            false,
+            &[],
+        )
+        .unordered(&["workmail_action"]),
         _ => return None,
     })
 }
