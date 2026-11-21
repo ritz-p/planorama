@@ -511,12 +511,14 @@ pub(super) fn annotate(
     }
     crate::provider::aws::encryption::enrich(plan, nodes, references);
     bind(nodes);
+    crate::provider::aws::communications::service_regions(nodes, &elbv2_evidence);
     crate::provider::aws::waf::inherit_scope(nodes, references, &elbv2_evidence);
     crate::provider::aws::service_references::annotate_provider_accounts(
         nodes,
         references,
         &elbv2_evidence,
     );
+    crate::provider::aws::communications::inherit_voice_region(nodes, references);
     let authorizations =
         crate::provider::aws::application_services::fabric_ingestion_authorizations(
             nodes,

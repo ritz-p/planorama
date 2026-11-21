@@ -87780,10 +87780,10 @@
       }
     },
     "aws_chime_voice_connector": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1595,
-      "gap": "#1595 — Basic display preserves the connector identity and the outbound hostname is an output. Group and SIP trigger references are owned by their source rows. Qualify the connector by its known aws_region or verified returned connector ARN. The current regional provider binding alone does not prove the selected voice region.",
+      "gap": "#1595 — Use the known aws_region or corroborating connector ARN for the selected Voice Connector region.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87798,8 +87798,8 @@
         "placement": "Supported: managed Logical Node with the Amazon Chime service label. Enables you to connect your phone system to the telephone network at a substantial cost savings by using SIP trunking.",
         "ownership": "Not applicable: A connector is independently addressable and may participate in a reusable group.",
         "network": "Not applicable: SIP host output and encryption options do not prove VPC placement.",
-        "references": "Supported: Basic display preserves the connector identity and the outbound hostname is an output. Group and SIP trigger references are owned by their source rows.",
-        "scope": "Missing: Qualify the connector by its known aws_region or verified returned connector ARN. The current regional provider binding alone does not prove the selected voice region.",
+        "references": "Supported: Use the known aws_region or corroborating connector ARN for the selected Voice Connector region.",
+        "scope": "Supported: Use the selected aws_region or a scoped Voice Connector ARN with a matching ID. Keep placement unresolved when evidence conflicts.",
         "summaries": "Intentionally unsupported: omit outbound hostnames and inferred connection status. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector.html.markdown",
         "shapes": {
@@ -87832,7 +87832,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnector. No same-name data source in the pinned schema.",
         "dataContracts": {},
@@ -87845,10 +87847,10 @@
       }
     },
     "aws_chime_voice_connector_group": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1595,
-      "gap": "#1595 — Verify each set member by the configured connector ID. Priority describes ordering and does not identify a network path.",
+      "gap": "#1595 — Verify configured connector IDs across unordered group members. Priority identifies ordering.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87862,7 +87864,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Chime service label. Creates an Amazon Chime Voice Connector group under the administrator's AWS account.",
         "ownership": "Not applicable: Group membership keeps each member connector independently addressable.",
         "network": "Not applicable: A connector group is a routing configuration without VPC attachment inputs.",
-        "references": "Missing: Verify each set member by the configured connector ID. Priority describes ordering and does not identify a network path.",
+        "references": "Supported: Verify configured connector IDs across unordered group members. Priority identifies ordering.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Do not assign member connector regions from the group control plane. Qualify each member separately.",
         "summaries": "Intentionally unsupported: omit routing priorities as inferred failover or health. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector_group.html.markdown",
@@ -87894,17 +87896,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnectorGroup. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_chime_voice_connector_logging": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1595,
-      "gap": "#1595 — Verify the configured connector ID. The logging toggles name no CloudWatch destination. Qualify logging as configuration of the verified connector and retain stand-alone presentation when unknown.",
+      "gap": "#1595 — Verify the configured connector. Logging toggles do not identify destinations.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87916,9 +87920,9 @@
           "id"
         ],
         "placement": "Supported: managed Logical Controller with the Amazon Chime service label. Adds a logging configuration for the specified Amazon Chime Voice Connector. The logging configuration specifies whether SIP message logs are enabled for sending to Amazon CloudWatch Logs.",
-        "ownership": "Missing: Qualify logging as configuration of the verified connector and retain stand-alone presentation when unknown.",
+        "ownership": "Supported: Present under the verified connector.",
         "network": "Not applicable: Logging choices do not configure a VPC endpoint.",
-        "references": "Missing: Verify the configured connector ID. The logging toggles name no CloudWatch destination.",
+        "references": "Supported: Verify the configured connector. Logging toggles do not identify destinations.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the verified connector for any separately presented owner region.",
         "summaries": "Intentionally unsupported: omit SIP logs, metrics and call contents. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector_logging.html.markdown",
@@ -87948,17 +87952,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnectorLogging. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_chime_voice_connector_origination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1595,
-      "gap": "#1595 — Verify the connector ID. A route host, port and protocol specify SIP routing settings, without identifying a managed endpoint or proven reachability. Keep configured origination attached only to a verified connector.",
+      "gap": "#1595 — Verify the configured connector. SIP route settings do not identify managed endpoints.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -87972,9 +87978,9 @@
           "disabled"
         ],
         "placement": "Supported: managed Logical Node with the Amazon Chime service label. Enable origination settings to control inbound calling to your SIP infrastructure.",
-        "ownership": "Missing: Keep configured origination attached only to a verified connector.",
+        "ownership": "Supported: Present under the verified connector.",
         "network": "Not applicable: SIP routing is distinct from subnet routing and does not prove network membership.",
-        "references": "Missing: Verify the connector ID. A route host, port and protocol specify SIP routing settings, without identifying a managed endpoint or proven reachability.",
+        "references": "Supported: Verify the configured connector. SIP route settings do not identify managed endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Origination configuration follows the connector's confirmed identity. A DNS host is not regional provider evidence.",
         "summaries": "Intentionally unsupported: omit route hosts, port details and inferred call paths. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector_origination.html.markdown",
@@ -88016,7 +88022,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnectorOrigination. No same-name data source in the pinned schema.",
         "dataContracts": {}
@@ -88087,10 +88095,10 @@
       }
     },
     "aws_chime_voice_connector_termination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1595,
-      "gap": "#1595 — Verify the configured connector. Calling regions and CIDR allowlists configure restrictions and do not identify managed network objects or called customers. Verify the connector as owner before nesting termination settings.",
+      "gap": "#1595 — Verify the configured connector. Calling regions and CIDR selectors do not identify managed endpoints.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -88103,9 +88111,9 @@
           "disabled"
         ],
         "placement": "Supported: managed Logical Node with the Amazon Chime service label. Enable Termination settings to control outbound calling from your SIP infrastructure.",
-        "ownership": "Missing: Verify the connector as owner before nesting termination settings.",
+        "ownership": "Supported: Present under the verified connector.",
         "network": "Not applicable: CIDRs are filter operands and do not establish subnet or VPC containment.",
-        "references": "Missing: Verify the configured connector. Calling regions and CIDR allowlists configure restrictions and do not identify managed network objects or called customers.",
+        "references": "Supported: Verify the configured connector. Calling regions and CIDR selectors do not identify managed endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Calling regions describe permitted destinations, not the connector deployment region.",
         "summaries": "Intentionally unsupported: omit phone numbers, CIDR allowlists and call records. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector_termination.html.markdown",
@@ -88145,17 +88153,19 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnectorTermination. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_chime_voice_connector_termination_credentials": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1595,
-      "gap": "#1595 — Verify the connector ID while excluding all credentials from rendering, endpoints and output summaries. A credentials declaration concerns only its verified connector.",
+      "gap": "#1595 — Verify the configured connector and omit credential values.",
       "review": {
         "issue": 734,
         "implementationCommit": "34ad466650c4bce3df2e80f4cc24bb8e58a2da70",
@@ -88166,9 +88176,9 @@
           "id"
         ],
         "placement": "Supported: managed Logical Node with the Amazon Chime service label. Adds termination SIP credentials for the specified Amazon Chime Voice Connector.",
-        "ownership": "Missing: A credentials declaration concerns only its verified connector.",
+        "ownership": "Supported: Present under the verified connector.",
         "network": "Not applicable: Authentication does not establish network attachment.",
-        "references": "Missing: Verify the connector ID while excluding all credentials from rendering, endpoints and output summaries.",
+        "references": "Supported: Verify the configured connector and omit credential values.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Use the connector's independently verified location. Credentials provide no scope evidence.",
         "summaries": "Intentionally unsupported: omit credential set members, usernames and passwords. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/chime_voice_connector_termination_credentials.html.markdown",
@@ -88194,7 +88204,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/communications.rs",
+          "tests/unit/semantic/communications.rs"
         ],
         "managedDataContract": "Managed ResourceVoiceConnectorTerminationCredentials. No same-name data source in the pinned schema.",
         "dataContracts": {}
