@@ -183,3 +183,70 @@ fn communications_voice_connector_placement_and_unordered_members() {
             .is_none()
     );
 }
+
+#[test]
+fn communications_media_insights_respects_selector_and_streaming_switches() {
+    let sink = "arn:aws:kinesis:us-east-1:123456789012:stream/insights";
+    let pipeline =
+        "arn:aws:chime:us-east-1:123456789012:media-insights-pipeline-configuration/insights";
+    let mut fixture = plan(&[
+        (
+            "aws_chime_voice_connector.main",
+            json!({"id":"voice","aws_region":"us-east-1"}),
+            json!({}),
+        ),
+        ("aws_kinesis_stream.sink", json!({"arn":sink}), json!({})),
+        (
+            "aws_chimesdkmediapipelines_media_insights_pipeline_configuration.insights",
+            json!({"arn":pipeline,"elements":[{"type":"KinesisDataStreamSink","kinesis_data_stream_sink_configuration":[{"insights_target":sink}]}]}),
+            json!({
+                "elements":[{"kinesis_data_stream_sink_configuration":[{"insights_target":{"references":["aws_kinesis_stream.sink.arn"]}}]}]
+            }),
+        ),
+        (
+            "aws_chime_voice_connector_streaming.main",
+            json!({"voice_connector_id":"voice","media_insights_configuration":[{"configuration_arn":pipeline,"disabled":false}]}),
+            json!({
+                "voice_connector_id":{"references":["aws_chime_voice_connector.main.id"]},
+                "media_insights_configuration":[{"configuration_arn":{"references":["aws_chimesdkmediapipelines_media_insights_pipeline_configuration.insights.arn"]}}]
+            }),
+        ),
+    ]);
+    let media = "aws_chimesdkmediapipelines_media_insights_pipeline_configuration.insights";
+    let voice = "aws_chime_voice_connector_streaming.main";
+    let path = "elements.kinesis_data_stream_sink_configuration.insights_target";
+    assert!(verified(
+        &graph(&fixture),
+        media,
+        path,
+        label(super::MEDIA, path)
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        voice,
+        super::INSIGHTS,
+        label(super::STREAMING, super::INSIGHTS)
+    ));
+    fixture["resource_changes"][2]["change"]["after"]["elements"][0]["type"] =
+        json!("SnsTopicSink");
+    fixture["resource_changes"][3]["change"]["after"]["media_insights_configuration"][0]["disabled"] =
+        json!(true);
+    assert!(!verified(
+        &graph(&fixture),
+        media,
+        path,
+        label(super::MEDIA, path)
+    ));
+    assert!(!verified(
+        &graph(&fixture),
+        voice,
+        super::INSIGHTS,
+        label(super::STREAMING, super::INSIGHTS)
+    ));
+    assert!(verified(
+        &graph(&fixture),
+        voice,
+        "voice_connector_id",
+        label(super::STREAMING, "voice_connector_id")
+    ));
+}

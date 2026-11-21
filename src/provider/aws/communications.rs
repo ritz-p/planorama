@@ -13,15 +13,20 @@ const VOICE_ORIGINATION: &str = "aws_chime_voice_connector_origination";
 const VOICE_TERMINATION: &str = "aws_chime_voice_connector_termination";
 const VOICE_CREDENTIALS: &str = "aws_chime_voice_connector_termination_credentials";
 
+const STREAMING: &str = "aws_chime_voice_connector_streaming";
+const MEDIA: &str = "aws_chimesdkmediapipelines_media_insights_pipeline_configuration";
+const INSIGHTS: &str = "media_insights_configuration.configuration_arn";
+const ANALYTICS_KEY: &str = "elements.amazon_transcribe_call_analytics_processor_configuration.post_call_analytics_settings.output_encryption_kms_key_id";
+
 fn voice_configuration(kind: &str) -> bool {
     matches!(
         kind,
-        VOICE_LOGGING | VOICE_ORIGINATION | VOICE_TERMINATION | VOICE_CREDENTIALS
+        VOICE_LOGGING | VOICE_ORIGINATION | VOICE_TERMINATION | VOICE_CREDENTIALS | STREAMING
     )
 }
 
 pub(crate) fn has_indexed(kind: &str) -> bool {
-    kind == VOICE_GROUP
+    matches!(kind, VOICE_GROUP | MEDIA | STREAMING)
 }
 
 pub(crate) fn indexed(kind: &str, path: &str) -> bool {
@@ -63,6 +68,30 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[(VOICE_CONNECTOR, &["id"])],
         )
         .in_control_plane_account(),
+        (STREAMING, INSIGHTS) => scalar("Chime Media Insights configuration", &[(MEDIA, &["arn"])])
+            .in_control_plane_account(),
+        (MEDIA, "resource_access_role_arn") => {
+            scalar("Media Insights access role", &[("aws_iam_role", &["arn"])])
+        }
+        (MEDIA, "elements.kinesis_data_stream_sink_configuration.insights_target") => element(
+            "Media Insights Kinesis sink",
+            &[("aws_kinesis_stream", &["arn"])],
+        ),
+        (MEDIA, "elements.lambda_function_sink_configuration.insights_target") => {
+            element("Media Insights Lambda sink", LAMBDA)
+        }
+        (MEDIA, "elements.sns_topic_sink_configuration.insights_target") => {
+            element("Media Insights SNS sink", &[("aws_sns_topic", &["arn"])])
+        }
+        (MEDIA, "elements.sqs_queue_sink_configuration.insights_target") => {
+            element("Media Insights SQS sink", &[("aws_sqs_queue", &["arn"])])
+        }
+        (MEDIA, "elements.s3_recording_sink_configuration.destination") => element(
+            "Media Insights recording bucket",
+            &[("aws_s3_bucket", &["arn", "bucket", "id"])],
+        )
+        .decoded(recording_bucket),
+        (MEDIA, ANALYTICS_KEY) => element("Media Insights analytics output key", KMS),
         _ => return None,
     })
 }
@@ -118,9 +147,41 @@ fn qualified_arn(node: &TerraformEntity, value: &str, service: &str, prefix: &st
     })
 }
 
-fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, _: &str) -> bool {
+fn qualifies(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
     if e.nodes[source].resource_type == VOICE_CONNECTOR {
         return e.nodes[source].region_override.is_some();
+    }
+    let target = r.target;
+    if r.attribute == INSIGHTS {
+        return ["disabled", "media_insights_configuration.0.disabled"]
+            .iter()
+            .all(|path| {
+                matches!(
+                    e.value(target, path),
+                    Some(Value::Bool(false) | Value::Null)
+                )
+            })
+            && endpoint(e, target, "voice_connector_id", VOICE_CONNECTOR, "id").is_some_and(
+                |connector| {
+                    same_region(&e.nodes[connector], &e.nodes[source])
+                        && e.text(source, "arn").is_some_and(|value| {
+                            qualified_arn(
+                                &e.nodes[source],
+                                value,
+                                "chime",
+                                "media-insights-pipeline-configuration/",
+                            )
+                        })
+                },
+            );
+    }
+    if e.nodes[target].resource_type == MEDIA {
+        if r.attribute == "resource_access_role_arn" {
+            return e
+                .text(source, "arn")
+                .is_some_and(|value| qualified_arn(&e.nodes[source], value, "iam", "role/"));
+        }
+        return media_element(e, r, source, path);
     }
     let (service, prefix) = match r.attribute.as_str() {
         "iam_role_arn" => ("iam", "role/"),
@@ -184,6 +245,133 @@ pub(super) fn owner(kind: &str) -> Option<(&'static str, &'static str, &'static 
         "Chime voice connector",
         "Connector settings",
     ))
+}
+
+type Outputs = &'static [(&'static str, &'static [&'static str])];
+const LAMBDA: Outputs = &[
+    ("aws_lambda_function", &["arn", "qualified_arn"]),
+    ("aws_lambda_alias", &["arn"]),
+];
+const KMS: Outputs = &[
+    ("aws_kms_key", &["arn", "key_id", "id"]),
+    ("aws_kms_alias", &["arn", "name"]),
+];
+
+fn scalar(label: &'static str, fields: Outputs) -> Rule {
+    Rule::new(label, fields, false, &[])
+}
+
+fn element(label: &'static str, fields: Outputs) -> Rule {
+    Rule::new(label, fields, false, &["elements"])
+}
+
+fn recording_bucket<'a>(_: &str, value: &'a Value) -> Option<std::collections::BTreeSet<&'a str>> {
+    let value = value.as_str()?;
+    if let Some(resource) = value.strip_prefix("s3://") {
+        let bucket = resource.split('/').next()?;
+        return (!bucket.is_empty()).then(|| [bucket].into());
+    }
+    let mut arn = value.splitn(6, ':');
+    if arn.next()? != "arn"
+        || !arn.next()?.starts_with("aws")
+        || arn.next()? != "s3"
+        || !arn.next()?.is_empty()
+        || !arn.next()?.is_empty()
+    {
+        return None;
+    }
+    Some([value].into())
+}
+
+fn same_region(left: &TerraformEntity, right: &TerraformEntity) -> bool {
+    super::scope::scope(left)
+        .and_then(|s| s.region)
+        .is_some_and(|region| super::scope::scope(right).and_then(|s| s.region) == Some(region))
+}
+
+fn endpoint(e: &Evidence<'_>, node: usize, path: &str, kind: &str, output: &str) -> Option<usize> {
+    let r = super::lambda_core::unique(e.refs, node, path)?;
+    let [source] = *r.sources.as_slice() else {
+        return None;
+    };
+    let attributes = r.source_attributes_by_instance.get(&source)?;
+    let left = &e.nodes[node];
+    let right = &e.nodes[source];
+    (current(left)
+        && current(right)
+        && right.resource_type == kind
+        && source != node
+        && r.complete
+        && r.instances_explicit
+        && r.issues.is_empty()
+        && attributes.len() == 1
+        && attributes.contains(output)
+        && configured_links::same_account(
+            left.provider_configuration.as_ref(),
+            right.provider_configuration.as_ref(),
+        )
+        && e.text(node, path)
+            .is_some_and(|value| e.text(source, output) == Some(value)))
+    .then_some(source)
+}
+
+fn media_element(e: &Evidence<'_>, r: &AttributeReference, source: usize, path: &str) -> bool {
+    let mut parts = path.split('.');
+    let Some(index) = parts.nth(1) else {
+        return false;
+    };
+    let expected = match parts.next() {
+        Some("kinesis_data_stream_sink_configuration") => "KinesisDataStreamSink",
+        Some("lambda_function_sink_configuration") => "LambdaFunctionSink",
+        Some("sns_topic_sink_configuration") => "SnsTopicSink",
+        Some("sqs_queue_sink_configuration") => "SqsQueueSink",
+        Some("s3_recording_sink_configuration") => "S3RecordingSink",
+        Some("amazon_transcribe_call_analytics_processor_configuration") => {
+            "AmazonTranscribeCallAnalyticsProcessor"
+        }
+        _ => return false,
+    };
+    e.text(r.target, &format!("elements.{index}.type")) == Some(expected)
+        && match expected {
+            "KinesisDataStreamSink" => input_arn(e, r.target, source, path, "kinesis", "stream/"),
+            "LambdaFunctionSink" => input_arn(e, r.target, source, path, "lambda", "function:"),
+            "SnsTopicSink" => input_arn(e, r.target, source, path, "sns", ""),
+            "SqsQueueSink" => input_arn(e, r.target, source, path, "sqs", ""),
+            "AmazonTranscribeCallAnalyticsProcessor" => key_input(e, r.target, source, path),
+            _ => true,
+        }
+}
+
+fn input_arn(
+    e: &Evidence<'_>,
+    target: usize,
+    source: usize,
+    path: &str,
+    service: &str,
+    prefix: &str,
+) -> bool {
+    e.text(target, path)
+        .is_some_and(|value| qualified_arn(&e.nodes[source], value, service, prefix))
+}
+
+fn key_input(e: &Evidence<'_>, target: usize, source: usize, path: &str) -> bool {
+    let alias = e.nodes[source].resource_type == "aws_kms_alias";
+    e.text(target, path).is_some_and(|value| {
+        if value.starts_with("arn:") {
+            qualified_arn(
+                &e.nodes[source],
+                value,
+                "kms",
+                if alias { "alias/" } else { "key/" },
+            )
+        } else if alias {
+            value
+                .strip_prefix("alias/")
+                .is_some_and(|name| !name.is_empty())
+        } else {
+            !value.contains([':', '/'])
+        }
+    })
 }
 
 #[cfg(test)]
