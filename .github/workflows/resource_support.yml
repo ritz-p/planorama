@@ -63,7 +63,7 @@ jobs:
           const messages = fs.readFileSync(process.argv[2], 'utf8').trim().split('\n').map(line => JSON.parse(line));
           const tests = messages.filter(message =>
             message.reason === 'compiler-artifact' && message.profile.test &&
-            message.target.kind.includes('lib') && message.executable);
+            message.executable);
           if (tests.length !== 1 || !fs.existsSync(tests[0].executable)) {
             throw new Error('Expected one Cargo library test executable');
           }
