@@ -62,6 +62,35 @@ fn lex_bot_owns_scoped_draft_locale() {
 }
 
 #[test]
+fn lex_source_versions_use_terraform_map_expression_references() {
+    let mut fixture = plan(&[
+        ("aws_lexv2models_bot.main", json!({"id":"bot"}), json!({})),
+        (
+            "aws_lexv2models_bot_version.previous",
+            json!({"bot_id":"bot","bot_version":"1","locale_specification":{"en_US":{"source_bot_version":"DRAFT"}}}),
+            json!({"bot_id":{"references":["aws_lexv2models_bot.main.id"]}}),
+        ),
+        (
+            "aws_lexv2models_bot_version.next",
+            json!({"bot_id":"bot","locale_specification":{"en_US":{"source_bot_version":"1"}}}),
+            json!({"bot_id":{"references":["aws_lexv2models_bot.main.id"]},"locale_specification":{"references":["aws_lexv2models_bot_version.previous.bot_version"]}}),
+        ),
+    ]);
+    let check = |v: &Value| {
+        crate::configured_service_links::verified(
+            &graph(v),
+            "aws_lexv2models_bot_version.next",
+            "locale_specification",
+            Some("Lex source locale version"),
+        )
+    };
+    assert!(check(&fixture));
+    fixture["resource_changes"][2]["change"]["after_unknown"] =
+        json!({"locale_specification":{"en_US":{"source_bot_version":true}}});
+    assert!(!check(&fixture));
+}
+
+#[test]
 fn lex_intent_owns_only_matching_locale() {
     let mut fixture = plan(&[
         ("aws_lexv2models_bot.main", json!({"id":"bot"}), json!({})),
