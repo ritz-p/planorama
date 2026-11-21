@@ -897,3 +897,12 @@ test('#734 distinguishes communications endpoints, service scopes, and historica
   assert.match(review('notifications_notification_configuration').references, /#1548/);
   assert.match(review('notifications_event_rule').scope, /filter captured events/);
 });
+
+test('#735 verifies messaging destinations and identity outputs', () => {
+  const decisions = auditedServiceTypes(735, [
+    'ses', 'sesv2', 'mailmanager', 'pinpoint', 'pinpointsmsvoicev2', 'workmail',
+  ], 58);
+  const review = type => decisions['aws_' + type].review;
+  assert.equal(review('ses_domain_identity').contracts.verification_token, 'computed');
+  assert.deepEqual(review('pinpoint_event_stream').shapes.destination_stream_arn, ['string']);
+});
