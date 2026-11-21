@@ -489,3 +489,113 @@ fn location_tracker_association_validates_reference_scope() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"consumer_arn":true});
     assert!(!verified(&input, kind, "Geofence collection"));
 }
+
+#[test]
+fn medialive_multiplex_program_validates_reference_scope() {
+    let kind = "aws_medialive_multiplex_program";
+    let value = "1234567";
+    let mut input = reference_plan(
+        "aws_medialive_multiplex",
+        json!({"id":value}),
+        kind,
+        json!({"multiplex_id":value}),
+        json!({"multiplex_id":{"references":["aws_medialive_multiplex.source.id"]}}),
+    );
+    assert!(verified(&input, kind, "MediaLive multiplex"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "MediaLive multiplex"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"multiplex_id":true});
+    assert!(!verified(&input, kind, "MediaLive multiplex"));
+}
+
+#[test]
+fn medialive_matches_a_nested_media_package_destination() {
+    let kind = "aws_medialive_channel";
+    let mut input = reference_plan(
+        "aws_media_package_channel",
+        json!({"channel_id":"package-example"}),
+        kind,
+        json!({"destinations":[{"media_package_settings":[{"channel_id":"package-example"}]}]}),
+        json!({"destinations":[{"media_package_settings":[{
+            "channel_id":{"references":["aws_media_package_channel.source.channel_id"]}
+        }]}]}),
+    );
+    assert!(verified(&input, kind, "MediaPackage channel"));
+    input["resource_changes"][0]["change"]["after"]["channel_id"] = json!("different");
+    assert!(!verified(&input, kind, "MediaPackage channel"));
+}
+
+#[test]
+fn medialive_rejects_data_mode_and_cross_account_multiplexes() {
+    let kind = "aws_medialive_multiplex_program";
+    let mut input = reference_plan(
+        "aws_medialive_multiplex",
+        json!({"id":"1234567"}),
+        kind,
+        json!({"multiplex_id":"1234567"}),
+        json!({"multiplex_id":{"references":["aws_medialive_multiplex.source.id"]}}),
+    );
+    assert!(verified(&input, kind, "MediaLive multiplex"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["allowed_account_ids"]["constant_value"] =
+        json!(["210987654321"]);
+    let resources = &mut input["configuration"]["root_module"]["resources"];
+    resources[0]["provider_config_key"] = json!("aws.other");
+    assert!(!verified(&input, kind, "MediaLive multiplex"));
+
+    let resources = &mut input["configuration"]["root_module"]["resources"];
+    resources[0]["provider_config_key"] = json!("aws");
+    resources[0]["mode"] = json!("data");
+    resources[0]["address"] = json!("data.aws_medialive_multiplex.source");
+    resources[1]["expressions"]["multiplex_id"]["references"] =
+        json!(["data.aws_medialive_multiplex.source.id"]);
+    input["resource_changes"][0]["mode"] = json!("data");
+    input["resource_changes"][0]["address"] = json!("data.aws_medialive_multiplex.source");
+    assert!(!verified(&input, kind, "MediaLive multiplex"));
+}
+
+#[test]
+fn medialive_subnets_and_security_groups_must_share_a_vpc() {
+    let kind = "aws_medialive_channel";
+    let mut input = reference_plan(
+        "aws_subnet",
+        json!({"id":"subnet-a","vpc_id":"vpc-a"}),
+        kind,
+        json!({"vpc":[{"subnet_ids":["subnet-a"],"security_group_ids":["sg-a"]}]}),
+        json!({"vpc":[{
+            "subnet_ids":{"references":["aws_subnet.source.id"]},
+            "security_group_ids":{"references":["aws_security_group.sg.id"]}
+        }]}),
+    );
+    input["resource_changes"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_security_group.sg","mode":"managed",
+            "type":"aws_security_group","name":"sg",
+            "provider_name":"registry.terraform.io/hashicorp/aws",
+            "change":{"actions":["create"],"after":{"id":"sg-a","vpc_id":"vpc-a"}}
+        }));
+    input["configuration"]["root_module"]["resources"]
+        .as_array_mut()
+        .unwrap()
+        .push(json!({
+            "address":"aws_security_group.sg","provider_config_key":"aws","expressions":{}
+        }));
+    assert!(verified(&input, kind, "MediaLive subnets"));
+    assert!(verified(&input, kind, "MediaLive security groups"));
+    input["resource_changes"][2]["change"]["after"]["vpc_id"] = json!("vpc-b");
+    assert!(!verified(&input, kind, "MediaLive subnets"));
+    assert!(!verified(&input, kind, "MediaLive security groups"));
+}

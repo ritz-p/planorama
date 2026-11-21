@@ -95427,10 +95427,10 @@
       }
     },
     "aws_media_store_container_policy": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1656,
-      "gap": "#1656 — Verify container_name for aws_media_store_container_policy.",
+      "gap": "#1656 — Verify container_name.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95441,7 +95441,7 @@
         "placement": "Supported: Logical Policy for AWS Elemental MediaStore. Provides a MediaStore Container Policy.",
         "ownership": "Not applicable: Keep AWS Elemental MediaStore policy independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a MediaStore Container Policy. No direct subnet placement follows from container_name.",
-        "references": "Missing: Resolve known container_name only against unique compatible managed endpoints (#1656).",
+        "references": "Supported: Verified references for container_name (#1656).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit policy from dedicated summaries.",
         "officialDocumentation": "website/docs/r/media_store_container_policy.html.markdown",
@@ -95457,17 +95457,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourceContainerPolicy. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_medialive_channel": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1656,
-      "gap": "#1656 — Verify input_attachments.input_id, destinations.media_package_settings.channel_id, vpc.subnet_ids, vpc.security_group_ids, role_arn for aws_medialive_channel.",
+      "gap": "#1656 — Verify input_attachments.input_id, destinations.media_package_settings.channel_id, vpc.subnet_ids, vpc.security_group_ids, role_arn.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95483,8 +95484,8 @@
         ],
         "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive Channel.",
         "ownership": "Not applicable: Keep AWS Elemental MediaLive node independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1656).",
-        "references": "Missing: Resolve known input_attachments.input_id, destinations.media_package_settings.channel_id, vpc.subnet_ids, vpc.security_group_ids, role_arn only against unique compatible managed endpoints (#1656).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1656). Service placement remains independent.",
+        "references": "Supported: Verified references for input_attachments.input_id, destinations.media_package_settings.channel_id, vpc.subnet_ids, vpc.security_group_ids, role_arn (#1656).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit destinations.settings.password_param, destinations.settings.url, encoder_settings.avail_blanking.avail_blanking_image.password_param from dedicated summaries.",
         "officialDocumentation": "website/docs/r/medialive_channel.html.markdown",
@@ -95535,17 +95536,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceChannel. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_medialive_input": {
-      "status": "Basic-only",
+      "status": "Partial",
       "priority": "P2",
       "issue": 1656,
-      "gap": "#1656 — Verify vpc.subnet_ids, vpc.security_group_ids, role_arn, media_connect_flows.flow_arn for aws_medialive_input.",
+      "gap": "#1656 — Verify vpc.subnet_ids, vpc.security_group_ids, role_arn. The MediaConnect flow ARN remains external because the pinned provider has no managed Flow resource.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95560,8 +95562,8 @@
         ],
         "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive Input.",
         "ownership": "Not applicable: Keep AWS Elemental MediaLive node independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1656).",
-        "references": "Missing: Resolve known vpc.subnet_ids, vpc.security_group_ids, role_arn, media_connect_flows.flow_arn only against unique compatible managed endpoints (#1656).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1656). Service placement remains independent.",
+        "references": "Supported: Verified references for vpc.subnet_ids, vpc.security_group_ids, role_arn (#1656). The MediaConnect flow ARN remains external because the pinned provider has no managed Flow resource.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit sources.password_param, sources.url from dedicated summaries.",
         "officialDocumentation": "website/docs/r/medialive_input.html.markdown",
@@ -95606,7 +95608,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed resourceInput. Same-name data selectors are recorded separately.",
         "dataContracts": {
@@ -95715,10 +95718,10 @@
       }
     },
     "aws_medialive_multiplex_program": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1656,
-      "gap": "#1656 — Verify multiplex_id for aws_medialive_multiplex_program.",
+      "gap": "#1656 — Verify multiplex_id.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95728,9 +95731,9 @@
           "id"
         ],
         "placement": "Supported: Logical Node for AWS Elemental MediaLive. Terraform resource for managing an AWS MediaLive MultiplexProgram.",
-        "ownership": "Missing: Verify the service parent selected by multiplex_id before presenting this helper under that parent (#1656).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1656).",
         "network": "Not applicable: Terraform resource for managing an AWS MediaLive MultiplexProgram. No direct subnet placement follows from multiplex_id.",
-        "references": "Missing: Resolve known multiplex_id only against unique compatible managed endpoints (#1656).",
+        "references": "Supported: Verified references for multiplex_id (#1656).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit multiplex_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/medialive_multiplex_program.html.markdown",
@@ -95750,7 +95753,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed newMultiplexProgramResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
