@@ -33,6 +33,18 @@ pub(crate) fn has_indexed_service_references(
             || aws::quicksight::resource(resource)
             || aws::sagemaker_studio::resource(resource)
             || aws::sagemaker_jobs::resource(resource)
+            || matches!(
+                resource,
+                "aws_mailmanager_ingress_point"
+                    | "aws_mailmanager_relay"
+                    | "aws_mailmanager_rule_set"
+            )
+            || matches!(resource, "aws_pinpoint_app")
+            || matches!(resource, "aws_pinpointsmsvoicev2_event_destination")
+            || matches!(
+                resource,
+                "aws_ses_event_destination" | "aws_ses_receipt_rule"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
@@ -181,6 +193,7 @@ pub(crate) fn indexed_service_reference(
             || aws::quicksight::indexed(resource, attribute)
             || aws::sagemaker_studio::indexed(resource, attribute)
             || aws::sagemaker_jobs::indexed(resource, attribute)
+            || aws::email_engagement::indexed(resource, attribute)
             || aws::sagemaker_catalog::indexed(resource, attribute)
             || aws::sagemaker_workforce::indexed(resource, attribute)
             || aws::msk_connect::indexed(resource, attribute)
