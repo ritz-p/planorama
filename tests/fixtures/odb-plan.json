@@ -1,0 +1,276 @@
+{
+  "format_version": "1.2",
+  "resource_changes": [
+    {
+      "address": "aws_odb_cloud_exadata_infrastructure.exadata",
+      "type": "aws_odb_cloud_exadata_infrastructure",
+      "name": "exadata",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "exainfra-0123456789abcdef",
+          "arn": "arn:aws:odb:us-east-1:123456789012:cloud-exadata-infrastructure/exainfra-0123456789abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_odb_network.primary",
+      "type": "aws_odb_network",
+      "name": "primary",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "odbnet-0123456789abcdef",
+          "arn": "arn:aws:odb:us-east-1:123456789012:odb-network/odbnet-0123456789abcdef",
+          "client_cidr": "10.42.0.0/24"
+        }
+      }
+    },
+    {
+      "address": "aws_odb_cloud_vm_cluster.cluster",
+      "type": "aws_odb_cloud_vm_cluster",
+      "name": "cluster",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "odbvm-0123456789abcdef",
+          "arn": "arn:aws:odb:us-east-1:123456789012:cloud-vm-cluster/odbvm-0123456789abcdef",
+          "odb_network_id": "odbnet-0123456789abcdef",
+          "cloud_exadata_infrastructure_id": "exainfra-0123456789abcdef",
+          "odb_network_arn": "arn:aws:odb:us-east-1:123456789012:odb-network/odbnet-0123456789abcdef",
+          "cloud_exadata_infrastructure_arn": "arn:aws:odb:us-east-1:123456789012:cloud-exadata-infrastructure/exainfra-0123456789abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_odb_cloud_autonomous_vm_cluster.autonomous",
+      "type": "aws_odb_cloud_autonomous_vm_cluster",
+      "name": "autonomous",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "odb_network_arn": "arn:aws:odb:us-east-1:123456789012:odb-network/odbnet-0123456789abcdef",
+          "cloud_exadata_infrastructure_arn": "arn:aws:odb:us-east-1:123456789012:cloud-exadata-infrastructure/exainfra-0123456789abcdef",
+          "odb_network_id": "odbnet-0123456789abcdef",
+          "cloud_exadata_infrastructure_id": "exainfra-0123456789abcdef"
+        }
+      }
+    },
+    {
+      "address": "aws_odb_autonomous_database.database",
+      "type": "aws_odb_autonomous_database",
+      "name": "database",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "odb_network_id": "odbnet-0123456789abcdef",
+          "admin_password": "PRIVATE_EXCLUDED"
+        }
+      }
+    },
+    {
+      "address": "aws_vpc.application",
+      "type": "aws_vpc",
+      "name": "application",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "id": "vpc-0123456789abcdef0",
+          "cidr_block": "10.44.0.0/16"
+        }
+      }
+    },
+    {
+      "address": "aws_odb_network_peering_connection.application",
+      "type": "aws_odb_network_peering_connection",
+      "name": "application",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "odb_network_arn": "arn:aws:odb:us-east-1:123456789012:odb-network/odbnet-0123456789abcdef",
+          "odb_network_id": "odbnet-0123456789abcdef",
+          "peer_network_id": "vpc-0123456789abcdef0"
+        }
+      }
+    },
+    {
+      "address": "aws_iam_role.encryption",
+      "type": "aws_iam_role",
+      "name": "encryption",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "arn": "arn:aws:iam::123456789012:role/odb-encryption"
+        }
+      }
+    },
+    {
+      "address": "aws_odb_iam_role_association.encryption",
+      "type": "aws_odb_iam_role_association",
+      "name": "encryption",
+      "mode": "managed",
+      "provider_name": "registry.terraform.io/hashicorp/aws",
+      "change": {
+        "actions": [
+          "create"
+        ],
+        "after": {
+          "aws_integration": "KmsTde",
+          "resource_arn": "arn:aws:odb:us-east-1:123456789012:cloud-vm-cluster/odbvm-0123456789abcdef",
+          "iam_role_arn": "arn:aws:iam::123456789012:role/odb-encryption"
+        }
+      }
+    }
+  ],
+  "configuration": {
+    "provider_config": {
+      "aws": {
+        "name": "aws",
+        "full_name": "registry.terraform.io/hashicorp/aws",
+        "expressions": {
+          "region": {
+            "constant_value": "us-east-1"
+          },
+          "assume_role": [
+            {
+              "role_arn": {
+                "constant_value": "arn:aws:iam::123456789012:role/Deployment"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "root_module": {
+      "resources": [
+        {
+          "address": "aws_odb_cloud_exadata_infrastructure.exadata",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_odb_network.primary",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_odb_cloud_vm_cluster.cluster",
+          "provider_config_key": "aws",
+          "expressions": {
+            "odb_network_id": {
+              "references": [
+                "aws_odb_network.primary.id"
+              ]
+            },
+            "cloud_exadata_infrastructure_id": {
+              "references": [
+                "aws_odb_cloud_exadata_infrastructure.exadata.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_odb_cloud_autonomous_vm_cluster.autonomous",
+          "provider_config_key": "aws",
+          "expressions": {
+            "odb_network_arn": {
+              "references": [
+                "aws_odb_network.primary.arn"
+              ]
+            },
+            "cloud_exadata_infrastructure_arn": {
+              "references": [
+                "aws_odb_cloud_exadata_infrastructure.exadata.arn"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_odb_autonomous_database.database",
+          "provider_config_key": "aws",
+          "expressions": {
+            "odb_network_id": {
+              "references": [
+                "aws_odb_network.primary.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_vpc.application",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_odb_network_peering_connection.application",
+          "provider_config_key": "aws",
+          "expressions": {
+            "odb_network_arn": {
+              "references": [
+                "aws_odb_network.primary.arn"
+              ]
+            },
+            "peer_network_id": {
+              "references": [
+                "aws_vpc.application.id"
+              ]
+            }
+          }
+        },
+        {
+          "address": "aws_iam_role.encryption",
+          "provider_config_key": "aws",
+          "expressions": {}
+        },
+        {
+          "address": "aws_odb_iam_role_association.encryption",
+          "provider_config_key": "aws",
+          "expressions": {
+            "resource_arn": {
+              "references": [
+                "aws_odb_cloud_vm_cluster.cluster.arn"
+              ]
+            },
+            "iam_role_arn": {
+              "references": [
+                "aws_iam_role.encryption.arn"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

@@ -183,6 +183,7 @@ pub(crate) mod oam;
 mod observability;
 pub(crate) mod observability_logs;
 pub(crate) mod observability_monitors;
+pub(crate) mod odb;
 mod opensearch_serverless;
 pub(crate) mod operations;
 pub(crate) mod organization_accounts;
