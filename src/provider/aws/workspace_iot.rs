@@ -85,6 +85,78 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_iot_authorizer", "authorizer_function_arn") => Rule::new(
+            "IoT authorizer Lambda function",
+            &[("aws_lambda_function", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_logging_options", "role_arn") => Rule::new(
+            "IoT logging role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_provisioning_template", "provisioning_role_arn") => Rule::new(
+            "IoT provisioning role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_provisioning_template", "pre_provisioning_hook.target_arn") => Rule::new(
+            "IoT provisioning hook",
+            &[("aws_lambda_function", &["arn"])],
+            false,
+            &["pre_provisioning_hook"],
+        ),
+        ("aws_iot_role_alias", "role_arn") => Rule::new(
+            "IoT aliased role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &[],
+        ),
+        ("aws_iot_topic_rule", "lambda.function_arn") => Rule::new(
+            "IoT Lambda action",
+            &[("aws_lambda_function", &["arn"])],
+            false,
+            &[],
+        )
+        .unordered(&["lambda"]),
+        ("aws_iot_topic_rule", "s3.bucket_name") => Rule::new(
+            "IoT S3 action",
+            &[("aws_s3_bucket", &["bucket", "id"])],
+            false,
+            &[],
+        )
+        .unordered(&["s3"]),
+        ("aws_iot_topic_rule", "sns.target_arn") => {
+            Rule::new("IoT SNS action", &[("aws_sns_topic", &["arn"])], false, &[])
+                .unordered(&["sns"])
+        }
+        ("aws_iot_topic_rule", "error_action.lambda.function_arn") => Rule::new(
+            "IoT Lambda error action",
+            &[("aws_lambda_function", &["arn"])],
+            false,
+            &["error_action", "error_action.lambda"],
+        ),
+        ("aws_iot_topic_rule_destination", "vpc_configuration.role_arn") => Rule::new(
+            "IoT VPC destination role",
+            &[("aws_iam_role", &["arn"])],
+            false,
+            &["vpc_configuration"],
+        ),
+        ("aws_iot_topic_rule_destination", "vpc_configuration.subnet_ids") => Rule::new(
+            "IoT VPC destination subnets",
+            &[("aws_subnet", &["id"])],
+            true,
+            &["vpc_configuration"],
+        ),
+        ("aws_iot_topic_rule_destination", "vpc_configuration.vpc_id") => Rule::new(
+            "IoT destination VPC",
+            &[("aws_vpc", &["id"])],
+            false,
+            &["vpc_configuration"],
+        ),
         _ => return None,
     })
 }
@@ -115,6 +187,7 @@ fn qualifies(
     let (companion, configured_vpc) = match reference.attribute.as_str() {
         "vpc_config.subnet_ids" => (Some("vpc_config.security_group_ids"), None),
         "vpc_config.security_group_ids" => (Some("vpc_config.subnet_ids"), None),
+        "vpc_configuration.subnet_ids" => (None, Some("vpc_configuration.0.vpc_id")),
         _ => return true,
     };
     let others = companion

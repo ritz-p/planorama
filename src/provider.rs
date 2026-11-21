@@ -65,6 +65,12 @@ pub(crate) fn has_indexed_service_references(
                     | "aws_appstream_image_builder"
                     | "aws_appstream_stack"
             )
+            || matches!(
+                resource,
+                "aws_iot_provisioning_template"
+                    | "aws_iot_topic_rule"
+                    | "aws_iot_topic_rule_destination"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
