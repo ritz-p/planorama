@@ -159,6 +159,7 @@ pub(crate) mod lightsail_configuration;
 pub(crate) mod local_gateways;
 pub(crate) mod lustre_sources;
 pub(crate) mod macie_classification;
+pub(crate) mod mailmanager;
 mod members;
 mod memorydb;
 mod messaging;
