@@ -669,3 +669,29 @@ fn iot_error_action_verifies_nested_lambda_arn() {
         json!({"error_action":[{"lambda":[{"function_arn":true}]}]});
     assert!(!verified(&input, kind, "IoT Lambda error action"));
 }
+
+#[test]
+fn iot_thing_group_membership_validates_managed_reference() {
+    let kind = "aws_iot_thing_group_membership";
+    let value = "thing-example";
+    let mut input = reference_plan(
+        "aws_iot_thing",
+        json!({"name":value}),
+        kind,
+        json!({"thing_name":value}),
+        json!({"thing_name":{"references":["aws_iot_thing.source.name"]}}),
+    );
+
+    assert!(verified(&input, kind, "IoT thing"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "IoT thing"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"thing_name":true});
+    assert!(!verified(&input, kind, "IoT thing"));
+}

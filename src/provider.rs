@@ -71,6 +71,10 @@ pub(crate) fn has_indexed_service_references(
                     | "aws_iot_topic_rule"
                     | "aws_iot_topic_rule_destination"
             )
+            || matches!(
+                resource,
+                "aws_iot_ca_certificate" | "aws_iot_domain_configuration"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
