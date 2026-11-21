@@ -263,6 +263,7 @@ pub(crate) mod vpclattice;
 pub(crate) mod waf_classic;
 pub(crate) mod waf_destinations;
 pub(crate) mod waf_statements;
+pub(crate) mod workspace_iot;
 pub(crate) mod xray_encryption;
 
 #[cfg(test)]

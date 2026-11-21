@@ -208,6 +208,9 @@ pub(super) fn label(resource: &str, attribute: &str) -> Option<&'static str> {
     if let Some(label) = super::media_services::label(resource, attribute) {
         return Some(label);
     }
+    if let Some(label) = super::workspace_iot::label(resource, attribute) {
+        return Some(label);
+    }
     if let Some(label) = super::email_engagement::label(resource, attribute) {
         return Some(label);
     }
@@ -1255,6 +1258,7 @@ pub(crate) fn annotate(
     super::sagemaker_studio::annotate(nodes, references, evidence);
     super::sagemaker_jobs::annotate(nodes, references, evidence);
     super::media_services::annotate(nodes, references, evidence);
+    super::workspace_iot::annotate(nodes, references, evidence);
     super::email_engagement::annotate(nodes, references, evidence);
     super::sagemaker_catalog::annotate(nodes, references, evidence);
     super::sagemaker_workforce::annotate(nodes, references, evidence);
@@ -1365,6 +1369,7 @@ pub(super) fn verified(raw: &Input, reference: &AttributeReference) -> bool {
         && super::sagemaker_studio::bindings(raw, reference)
         && super::sagemaker_jobs::bindings(raw, reference)
         && super::media_services::bindings(raw, reference)
+        && super::workspace_iot::bindings(raw, reference)
         && super::email_engagement::bindings(raw, reference)
         && super::sagemaker_catalog::bindings(raw, reference)
         && super::sagemaker_workforce::bindings(raw, reference)
@@ -2129,6 +2134,7 @@ pub(super) fn present(raw: &Input, graph: &mut Graph) {
             || super::sagemaker_studio::indexed(&node.resource_type, &reference.attribute)
             || super::sagemaker_jobs::indexed(&node.resource_type, &reference.attribute)
             || super::media_services::indexed(&node.resource_type, &reference.attribute)
+            || super::workspace_iot::indexed(&node.resource_type, &reference.attribute)
             || super::email_engagement::indexed(&node.resource_type, &reference.attribute)
             || super::sagemaker_catalog::indexed(&node.resource_type, &reference.attribute)
             || super::sagemaker_workforce::indexed(&node.resource_type, &reference.attribute)

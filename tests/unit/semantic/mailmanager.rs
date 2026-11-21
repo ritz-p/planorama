@@ -599,3 +599,29 @@ fn medialive_subnets_and_security_groups_must_share_a_vpc() {
     assert!(!verified(&input, kind, "MediaLive subnets"));
     assert!(!verified(&input, kind, "MediaLive security groups"));
 }
+
+#[test]
+fn appstream_fleet_stack_association_validates_managed_reference() {
+    let kind = "aws_appstream_fleet_stack_association";
+    let value = "fleet-example";
+    let mut input = reference_plan(
+        "aws_appstream_fleet",
+        json!({"name":value}),
+        kind,
+        json!({"fleet_name":value}),
+        json!({"fleet_name":{"references":["aws_appstream_fleet.source.name"]}}),
+    );
+
+    assert!(verified(&input, kind, "AppStream fleet"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "AppStream fleet"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"fleet_name":true});
+    assert!(!verified(&input, kind, "AppStream fleet"));
+}

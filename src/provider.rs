@@ -58,6 +58,13 @@ pub(crate) fn has_indexed_service_references(
                 "aws_ivs_recording_configuration" | "aws_ivschat_logging_configuration"
             )
             || matches!(resource, "aws_medialive_channel" | "aws_medialive_input")
+            || matches!(
+                resource,
+                "aws_appstream_directory_config"
+                    | "aws_appstream_fleet"
+                    | "aws_appstream_image_builder"
+                    | "aws_appstream_stack"
+            )
             || aws::sagemaker_catalog::resource(resource)
             || aws::sagemaker_workforce::resource(resource)
             || aws::msk_connect::resource(resource)
@@ -208,6 +215,7 @@ pub(crate) fn indexed_service_reference(
             || aws::sagemaker_jobs::indexed(resource, attribute)
             || aws::email_engagement::indexed(resource, attribute)
             || aws::media_services::indexed(resource, attribute)
+            || aws::workspace_iot::indexed(resource, attribute)
             || aws::sagemaker_catalog::indexed(resource, attribute)
             || aws::sagemaker_workforce::indexed(resource, attribute)
             || aws::msk_connect::indexed(resource, attribute)
