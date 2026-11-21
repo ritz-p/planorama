@@ -229,6 +229,33 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             false,
             &[],
         ),
+        ("aws_workspaces_directory", "directory_id") => Rule::new(
+            "Directory Service directory",
+            &[("aws_directory_service_directory", &["id"])],
+            false,
+            &[],
+        ),
+        ("aws_workspaces_directory", "ip_group_ids") => Rule::new(
+            "WorkSpaces IP groups",
+            &[("aws_workspaces_ip_group", &["id"])],
+            true,
+            &[],
+        ),
+        ("aws_workspaces_directory", "subnet_ids") => {
+            Rule::new("WorkSpaces subnets", &[("aws_subnet", &["id"])], true, &[])
+        }
+        ("aws_workspaces_pool", "directory_id") => Rule::new(
+            "Registered WorkSpaces directory",
+            &[("aws_workspaces_directory", &["directory_id", "id"])],
+            false,
+            &[],
+        ),
+        ("aws_workspaces_workspace", "directory_id") => Rule::new(
+            "Registered WorkSpaces directory",
+            &[("aws_workspaces_directory", &["directory_id", "id"])],
+            false,
+            &[],
+        ),
         _ => return None,
     })
 }
@@ -260,6 +287,7 @@ fn qualifies(
         "vpc_config.subnet_ids" => (Some("vpc_config.security_group_ids"), None),
         "vpc_config.security_group_ids" => (Some("vpc_config.subnet_ids"), None),
         "vpc_configuration.subnet_ids" => (None, Some("vpc_configuration.0.vpc_id")),
+        "subnet_ids" => (None, None),
         _ => return true,
     };
     let others = companion
