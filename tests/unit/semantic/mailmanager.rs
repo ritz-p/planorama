@@ -263,3 +263,29 @@ fn workmail_default_domain_must_belong_to_the_configured_organization() {
     input["resource_changes"][0]["change"]["after"]["organization_id"] = json!("m-other");
     assert!(!verified(&input, kind, "WorkMail mail domain"));
 }
+
+#[test]
+fn elastictranscoder_pipeline_validates_reference_scope() {
+    let kind = "aws_elastictranscoder_pipeline";
+    let value = "arn:aws:kms:us-east-1:123456789012:key/11111111-1111-1111-1111-111111111111";
+    let mut input = reference_plan(
+        "aws_kms_key",
+        json!({"arn":value}),
+        kind,
+        json!({"aws_kms_key_arn":value}),
+        json!({"aws_kms_key_arn":{"references":["aws_kms_key.source.arn"]}}),
+    );
+    assert!(verified(&input, kind, "Transcoder encryption key"));
+
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "Transcoder encryption key"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] = json!({"aws_kms_key_arn":true});
+    assert!(!verified(&input, kind, "Transcoder encryption key"));
+}

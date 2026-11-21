@@ -94217,10 +94217,10 @@
       }
     },
     "aws_elastictranscoder_pipeline": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1652,
-      "gap": "#1652 — Verify input_bucket, output_bucket, role, aws_kms_key_arn for aws_elastictranscoder_pipeline.",
+      "gap": "#1652 — Verify input_bucket, output_bucket, role, aws_kms_key_arn.",
       "review": {
         "issue": 736,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94236,7 +94236,7 @@
         "placement": "Supported: Logical Node for AWS Elastic Transcoder. Provides an Elastic Transcoder pipeline resource.",
         "ownership": "Not applicable: Keep AWS Elastic Transcoder node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides an Elastic Transcoder pipeline resource. No direct subnet placement follows from input_bucket.",
-        "references": "Missing: Resolve known input_bucket, output_bucket, role, aws_kms_key_arn only against unique compatible managed endpoints (#1652).",
+        "references": "Supported: Verified references for input_bucket, output_bucket, role, aws_kms_key_arn (#1652).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit input_bucket, output_bucket, role, aws_kms_key_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/elastictranscoder_pipeline.html.markdown",
@@ -94272,7 +94272,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/media_services.rs"
         ],
         "managedDataContract": "Managed ResourcePipeline. No same-name data registration in the pinned schema.",
         "dataContracts": {}
