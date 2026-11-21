@@ -625,3 +625,47 @@ fn appstream_fleet_stack_association_validates_managed_reference() {
     input["resource_changes"][1]["change"]["after_unknown"] = json!({"fleet_name":true});
     assert!(!verified(&input, kind, "AppStream fleet"));
 }
+
+#[test]
+fn iot_authorizer_validates_managed_reference() {
+    let kind = "aws_iot_authorizer";
+    let value = "arn:aws:lambda:us-east-1:123456789012:function:authorize";
+    let mut input = reference_plan(
+        "aws_lambda_function",
+        json!({"arn":value}),
+        kind,
+        json!({"authorizer_function_arn":value}),
+        json!({"authorizer_function_arn":{"references":["aws_lambda_function.source.arn"]}}),
+    );
+
+    assert!(verified(&input, kind, "IoT authorizer Lambda function"));
+    let provider = &mut input["configuration"]["provider_config"];
+    provider["aws.other"] = provider["aws"].clone();
+    provider["aws.other"]["alias"] = json!("other");
+    provider["aws.other"]["expressions"]["region"]["constant_value"] = json!("us-west-2");
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] =
+        json!("aws.other");
+    assert!(!verified(&input, kind, "IoT authorizer Lambda function"));
+
+    input["configuration"]["root_module"]["resources"][0]["provider_config_key"] = json!("aws");
+    input["resource_changes"][1]["change"]["after_unknown"] =
+        json!({"authorizer_function_arn":true});
+    assert!(!verified(&input, kind, "IoT authorizer Lambda function"));
+}
+
+#[test]
+fn iot_error_action_verifies_nested_lambda_arn() {
+    let kind = "aws_iot_topic_rule";
+    let arn = "arn:aws:lambda:us-east-1:123456789012:function:handle-error";
+    let mut input = reference_plan(
+        "aws_lambda_function",
+        json!({"arn":arn}),
+        kind,
+        json!({"error_action":[{"lambda":[{"function_arn":arn}]}]}),
+        json!({"error_action":[{"lambda":[{"function_arn":{"references":["aws_lambda_function.source.arn"]}}]}]}),
+    );
+    assert!(verified(&input, kind, "IoT Lambda error action"));
+    input["resource_changes"][1]["change"]["after_unknown"] =
+        json!({"error_action":[{"lambda":[{"function_arn":true}]}]});
+    assert!(!verified(&input, kind, "IoT Lambda error action"));
+}

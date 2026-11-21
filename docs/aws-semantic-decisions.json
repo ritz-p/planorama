@@ -96131,10 +96131,10 @@
       }
     },
     "aws_iot_authorizer": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1659,
-      "gap": "#1659 — Verify authorizer_function_arn for aws_iot_authorizer.",
+      "gap": "#1659 — Verify authorizer_function_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96146,7 +96146,7 @@
         "placement": "Supported: Logical Policy for AWS IoT Core. Creates and manages an AWS IoT Authorizer.",
         "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Creates and manages an AWS IoT Authorizer. No direct subnet placement follows from authorizer_function_arn.",
-        "references": "Missing: Resolve known authorizer_function_arn only against unique compatible managed endpoints (#1659).",
+        "references": "Supported: Verified references for authorizer_function_arn (#1659).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit authorizer_function_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_authorizer.html.markdown",
@@ -96166,7 +96166,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceAuthorizer. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96456,10 +96457,10 @@
       }
     },
     "aws_iot_logging_options": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1659,
-      "gap": "#1659 — Verify role_arn for aws_iot_logging_options.",
+      "gap": "#1659 — Verify role_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96470,7 +96471,7 @@
         "placement": "Supported: Logical Controller for AWS IoT Core. Provides a resource to manage default logging options.",
         "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a resource to manage default logging options. No direct subnet placement follows from role_arn.",
-        "references": "Missing: Resolve known role_arn only against unique compatible managed endpoints (#1659).",
+        "references": "Supported: Verified references for role_arn (#1659).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_logging_options.html.markdown",
@@ -96486,7 +96487,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceLoggingOptions. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96581,10 +96583,10 @@
       }
     },
     "aws_iot_provisioning_template": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1659,
-      "gap": "#1659 — Verify provisioning_role_arn, pre_provisioning_hook.target_arn for aws_iot_provisioning_template.",
+      "gap": "#1659 — Verify provisioning_role_arn, pre_provisioning_hook.target_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96597,7 +96599,7 @@
         "placement": "Supported: Logical Controller for AWS IoT Core. Manages an IoT fleet provisioning template.",
         "ownership": "Not applicable: Keep AWS IoT Core controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an IoT fleet provisioning template. No direct subnet placement follows from provisioning_role_arn.",
-        "references": "Missing: Resolve known provisioning_role_arn, pre_provisioning_hook.target_arn only against unique compatible managed endpoints (#1659).",
+        "references": "Supported: Verified references for provisioning_role_arn, pre_provisioning_hook.target_arn (#1659).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit provisioning_role_arn, pre_provisioning_hook.target_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_provisioning_template.html.markdown",
@@ -96622,17 +96624,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceProvisioningTemplate. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_iot_role_alias": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1659,
-      "gap": "#1659 — Verify role_arn for aws_iot_role_alias.",
+      "gap": "#1659 — Verify role_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96644,7 +96647,7 @@
         "placement": "Supported: Logical Identity for AWS IoT Core. Provides an IoT role alias.",
         "ownership": "Not applicable: Keep AWS IoT Core identity independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides an IoT role alias. No direct subnet placement follows from role_arn.",
-        "references": "Missing: Resolve known role_arn only against unique compatible managed endpoints (#1659).",
+        "references": "Supported: Verified references for role_arn (#1659).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit role_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_role_alias.html.markdown",
@@ -96664,7 +96667,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed ResourceRoleAlias. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96891,10 +96895,10 @@
       }
     },
     "aws_iot_topic_rule": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1659,
-      "gap": "#1659 — Verify lambda.function_arn, s3.bucket_name, sns.target_arn, error_action.lambda.function_arn for aws_iot_topic_rule.",
+      "gap": "#1659 — Verify lambda.function_arn, s3.bucket_name, sns.target_arn, error_action.lambda.function_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96910,7 +96914,7 @@
         "placement": "Supported: Logical Policy for AWS IoT Core. Creates and manages an AWS IoT topic rule",
         "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Creates and manages an AWS IoT topic rule No direct subnet placement follows from lambda.function_arn.",
-        "references": "Missing: Resolve known lambda.function_arn, s3.bucket_name, sns.target_arn, error_action.lambda.function_arn only against unique compatible managed endpoints (#1659).",
+        "references": "Supported: Verified references for lambda.function_arn, s3.bucket_name, sns.target_arn, error_action.lambda.function_arn (#1659).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit error_action.http.url, http.url from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_topic_rule.html.markdown",
@@ -96951,17 +96955,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceTopicRule. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_iot_topic_rule_destination": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1659,
-      "gap": "#1659 — Verify vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id for aws_iot_topic_rule_destination.",
+      "gap": "#1659 — Verify vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96974,8 +96979,8 @@
         ],
         "placement": "Supported: Logical Policy for AWS IoT Core. Creates and manages an AWS IoT topic rule destination",
         "ownership": "Not applicable: Keep AWS IoT Core policy independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc_configuration.subnet_ids, vpc_configuration.vpc_id against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1659).",
-        "references": "Missing: Resolve known vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id only against unique compatible managed endpoints (#1659).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1659). Service placement remains independent.",
+        "references": "Supported: Verified references for vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id (#1659).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit vpc_configuration.role_arn, vpc_configuration.subnet_ids, vpc_configuration.vpc_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/iot_topic_rule_destination.html.markdown",
@@ -97009,7 +97014,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceTopicRuleDestination. No same-name data registration in the pinned schema.",
         "dataContracts": {}
