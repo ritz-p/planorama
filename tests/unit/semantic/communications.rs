@@ -580,3 +580,60 @@ fn communications_connect_queue_routes_require_same_instance() {
         label(super::ROUTING, "queue_configs.queue_id")
     ));
 }
+
+#[test]
+fn communications_connect_phone_association_requires_claim_and_flow_context() {
+    let arn = "arn:aws:connect:us-east-1:123456789012:instance/connect";
+    let mut fixture = plan(&[
+        (
+            "aws_connect_instance.main",
+            json!({"id":"connect","arn":arn}),
+            json!({}),
+        ),
+        (
+            "aws_connect_phone_number.claim",
+            json!({"target_arn":arn,"id":"phone","phone_number":"+15550100000"}),
+            json!({"target_arn":{"references":["aws_connect_instance.main.arn"]}}),
+        ),
+        (
+            "aws_connect_contact_flow.main",
+            json!({"instance_id":"connect","contact_flow_id":"flow"}),
+            json!({"instance_id":{"references":["aws_connect_instance.main.id"]}}),
+        ),
+        (
+            "aws_connect_phone_number_contact_flow_association.main",
+            json!({"instance_id":"connect","phone_number_id":"phone","contact_flow_id":"flow"}),
+            json!({
+                "instance_id":{"references":["aws_connect_instance.main.id"]},"phone_number_id":{"references":["aws_connect_phone_number.claim.id"]},"contact_flow_id":{"references":["aws_connect_contact_flow.main.contact_flow_id"]}
+            }),
+        ),
+    ]);
+    let association = "aws_connect_phone_number_contact_flow_association.main";
+    let phone = "aws_connect_phone_number.claim";
+    let g = graph(&fixture);
+    assert!(verified(
+        &g,
+        phone,
+        "target_arn",
+        label(super::PHONE, "target_arn")
+    ));
+    for path in ["phone_number_id", "contact_flow_id"] {
+        assert!(verified(
+            &g,
+            association,
+            path,
+            label(super::PHONE_FLOW, path)
+        ));
+    }
+    fixture["resource_changes"][1]["change"]["after_sensitive"] = json!({"target_arn":true});
+    let g = graph(&fixture);
+    for path in ["phone_number_id", "contact_flow_id"] {
+        assert!(!verified(
+            &g,
+            association,
+            path,
+            label(super::PHONE_FLOW, path)
+        ));
+    }
+    assert!(label(super::PHONE, "phone_number").is_none());
+}
