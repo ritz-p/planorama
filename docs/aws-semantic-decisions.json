@@ -95761,10 +95761,10 @@
       }
     },
     "aws_appstream_directory_config": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1658,
-      "gap": "#1658 — Verify certificate_based_auth_properties.certificate_authority_arn for aws_appstream_directory_config.",
+      "gap": "#1658 — Verify certificate_based_auth_properties.certificate_authority_arn.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95776,7 +95776,7 @@
         "placement": "Supported: Logical Policy for AWS AppStream 2.0. Provides an AppStream Directory Config",
         "ownership": "Not applicable: Keep AWS AppStream 2.0 policy independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides an AppStream Directory Config No direct subnet placement follows from certificate_based_auth_properties.certificate_authority_arn.",
-        "references": "Missing: Resolve known certificate_based_auth_properties.certificate_authority_arn only against unique compatible managed endpoints (#1658).",
+        "references": "Supported: Verified references for certificate_based_auth_properties.certificate_authority_arn (#1658).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit service_account_credentials.account_password from dedicated summaries.",
         "officialDocumentation": "website/docs/r/appstream_directory_config.html.markdown",
@@ -95797,17 +95797,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceDirectoryConfig. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appstream_fleet": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1658,
-      "gap": "#1658 — Verify iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name for aws_appstream_fleet.",
+      "gap": "#1658 — Verify iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95822,8 +95823,8 @@
         ],
         "placement": "Supported: Logical Node for AWS AppStream 2.0. Provides an AppStream fleet",
         "ownership": "Not applicable: Keep AWS AppStream 2.0 node independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc_config.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1658).",
-        "references": "Missing: Resolve known iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name only against unique compatible managed endpoints (#1658).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1658). Service placement remains independent.",
+        "references": "Supported: Verified references for iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name (#1658).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit iam_role_arn, vpc_config.subnet_ids, vpc_config.security_group_ids, domain_join_info.directory_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/appstream_fleet.html.markdown",
@@ -95868,17 +95869,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceFleet. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appstream_fleet_stack_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1658,
-      "gap": "#1658 — Verify fleet_name, stack_name for aws_appstream_fleet_stack_association.",
+      "gap": "#1658 — Verify fleet_name, stack_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95891,7 +95893,7 @@
         "placement": "Supported: Logical Association for AWS AppStream 2.0. Manages an AppStream Fleet Stack association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Manages an AppStream Fleet Stack association. No direct subnet placement follows from fleet_name.",
-        "references": "Missing: Resolve known fleet_name, stack_name only against unique compatible managed endpoints (#1658).",
+        "references": "Supported: Verified references for fleet_name, stack_name (#1658).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit fleet_name, stack_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/appstream_fleet_stack_association.html.markdown",
@@ -95915,17 +95917,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceFleetStackAssociation. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appstream_image_builder": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1658,
-      "gap": "#1658 — Verify iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id for aws_appstream_image_builder.",
+      "gap": "#1658 — Verify iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -95939,8 +95942,8 @@
         ],
         "placement": "Supported: Logical Node for AWS AppStream 2.0. Provides an AppStream image builder",
         "ownership": "Not applicable: Keep AWS AppStream 2.0 node independently addressable. Its managed identity alone establishes no diagram parent.",
-        "network": "Missing: Check vpc_config.subnet_ids against managed network identities in the same account and region. Multiple subnets require common VPC evidence (#1658).",
-        "references": "Missing: Resolve known iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id only against unique compatible managed endpoints (#1658).",
+        "network": "Supported: Typed network references with common VPC evidence across multiple resolved endpoints (#1658). Service placement remains independent.",
+        "references": "Supported: Verified references for iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id (#1658).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit iam_role_arn, vpc_config.subnet_ids, access_endpoint.vpce_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/appstream_image_builder.html.markdown",
@@ -95977,17 +95980,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceImageBuilder. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_appstream_stack": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1658,
-      "gap": "#1658 — Verify access_endpoints.vpce_id for aws_appstream_stack.",
+      "gap": "#1658 — Verify access_endpoints.vpce_id.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96000,7 +96004,7 @@
         "placement": "Supported: Logical Node for AWS AppStream 2.0. Provides an AppStream stack",
         "ownership": "Not applicable: Keep AWS AppStream 2.0 node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides an AppStream stack No direct subnet placement follows from access_endpoints.vpce_id.",
-        "references": "Missing: Resolve known access_endpoints.vpce_id only against unique compatible managed endpoints (#1658).",
+        "references": "Supported: Verified references for access_endpoints.vpce_id (#1658).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit access_endpoints.vpce_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/appstream_stack.html.markdown",
@@ -96025,7 +96029,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceStack. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -96078,10 +96083,10 @@
       }
     },
     "aws_appstream_user_stack_association": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1658,
-      "gap": "#1658 — Verify stack_name, user_name for aws_appstream_user_stack_association.",
+      "gap": "#1658 — Verify stack_name, user_name.",
       "review": {
         "issue": 737,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -96094,7 +96099,7 @@
         "placement": "Supported: Logical Association for AWS AppStream 2.0. Manages an AppStream User Stack association.",
         "ownership": "Not applicable: The association joins independently managed endpoints. Keep its Terraform identity without nesting either endpoint under the other.",
         "network": "Not applicable: Manages an AppStream User Stack association. No direct subnet placement follows from stack_name.",
-        "references": "Missing: Resolve known stack_name, user_name only against unique compatible managed endpoints (#1658).",
+        "references": "Supported: Verified references for stack_name, user_name (#1658).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit stack_name, user_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/appstream_user_stack_association.html.markdown",
@@ -96118,7 +96123,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/workspace_iot.rs"
         ],
         "managedDataContract": "Managed resourceUserStackAssociation. No same-name data registration in the pinned schema.",
         "dataContracts": {}
