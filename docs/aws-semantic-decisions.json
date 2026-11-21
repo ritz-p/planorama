@@ -90561,7 +90561,7 @@
       }
     },
     "aws_lexv2models_bot": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1605,
       "gap": "#1605 — Verify the configured execution role and typed bot-network member identity. Qualify explicit member IDs within their bot and version context. Alias names and alias IDs without a compatible registered managed producer do not create endpoints.",
@@ -90581,7 +90581,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Bot.",
         "ownership": "Not applicable: Bots and network members retain independently addressable identities. A bot network is not an ownership hierarchy.",
         "network": "Not applicable: Bot networks are logical service compositions without VPC placement.",
-        "references": "Missing: Verify the configured execution role and typed bot-network member identity. Qualify explicit member IDs within their bot and version context. Alias names and alias IDs without a compatible registered managed producer do not create endpoints.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the configured execution role and typed bot-network member identity. Qualify explicit member IDs within their bot and version context. Alias names and alias IDs without a compatible registered managed producer do not create endpoints.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Verify bot identities in their actual account and region. A network member declaration does not create a network location.",
         "summaries": "Intentionally unsupported: omit bot data, fulfillment execution and test alias metadata. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/lexv2models_bot.html.markdown",
@@ -90626,7 +90626,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newBotResource. No same-name data source in the pinned schema.",
         "dataContracts": {},
@@ -90639,7 +90641,7 @@
       }
     },
     "aws_lexv2models_bot_locale": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1605,
       "gap": "#1605 — Verify the configured bot ID and distinguish the DRAFT selector from verifiable version identity. Locale code and voice selection do not identify managed runtime services. Qualify a locale by its bot and version before presenting ownership.",
@@ -90657,7 +90659,7 @@
         "placement": "Supported: managed Logical Node with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Bot Locale.",
         "ownership": "Missing: Qualify a locale by its bot and version before presenting ownership.",
         "network": "Not applicable: A language model locale does not configure a network attachment.",
-        "references": "Missing: Verify the configured bot ID and distinguish the DRAFT selector from verifiable version identity. Locale code and voice selection do not identify managed runtime services.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the configured bot ID and distinguish the DRAFT selector from verifiable version identity. Locale code and voice selection do not identify managed runtime services.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Locale ID is only meaningful within the bot and version. Language and voice are not region evidence.",
         "summaries": "Intentionally unsupported: omit utterances, voice samples and language inference. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/lexv2models_bot_locale.html.markdown",
@@ -90692,14 +90694,16 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newBotLocaleResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_lexv2models_bot_version": {
-      "status": "Basic-only",
+      "status": "Partial (bounded capabilities implemented)",
       "priority": "P2",
       "issue": 1605,
       "gap": "#1605 — Verify the configured bot ID and the map of explicitly selected locales and source versions within that bot. A DRAFT selector and provider-computed version number do not identify an unrelated managed version. Verify version ownership by the bot and keep reusable source locales independently addressable.",
@@ -90716,7 +90720,7 @@
         "placement": "Supported: managed Logical Controller with the Amazon Lex service label. Terraform resource for managing an AWS Lex V2 Models Bot Version.",
         "ownership": "Missing: Verify version ownership by the bot and keep reusable source locales independently addressable.",
         "network": "Not applicable: Publishing a version does not assign the bot to subnets.",
-        "references": "Missing: Verify the configured bot ID and the map of explicitly selected locales and source versions within that bot. A DRAFT selector and provider-computed version number do not identify an unrelated managed version.",
+        "references": "Partial: Verified relationships are limited to the configured fields registered in lex_notifications.rs. Verify the configured bot ID and the map of explicitly selected locales and source versions within that bot. A DRAFT selector and provider-computed version number do not identify an unrelated managed version.",
         "scope": "Supported: The runtime requires regional provider evidence and supported resource overrides. Bot and source locale scope must agree. A version number alone is not globally unique.",
         "summaries": "Intentionally unsupported: omit model contents and publication outcome. Preserve the resource label and action without exposing those values.",
         "officialDocumentation": "website/docs/r/lexv2models_bot_version.html.markdown",
@@ -90754,7 +90758,9 @@
           "src/provider/aws/scope.rs",
           "src/provider/aws/service_references.rs",
           "tests/unit/aws_inventory.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/lex_notifications.rs",
+          "tests/unit/semantic/lex_notifications.rs"
         ],
         "managedDataContract": "Managed newBotVersionResource. No same-name data source in the pinned schema.",
         "dataContracts": {}
