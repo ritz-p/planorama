@@ -94012,10 +94012,10 @@
       }
     },
     "aws_workmail_default_domain": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1650,
-      "gap": "#1650 — Verify organization_id, domain_name for aws_workmail_default_domain.",
+      "gap": "#1650 — Verify organization_id, domain_name.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94025,9 +94025,9 @@
           "domain_name"
         ],
         "placement": "Supported: Logical Node for Amazon WorkMail. Manages the default mail domain for an AWS WorkMail organization.",
-        "ownership": "Missing: Verify the service parent selected by organization_id before presenting this helper under that parent (#1650).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1650).",
         "network": "Not applicable: Manages the default mail domain for an AWS WorkMail organization. No direct subnet placement follows from organization_id.",
-        "references": "Missing: Resolve known organization_id, domain_name only against unique compatible managed endpoints (#1650).",
+        "references": "Supported: Verified references for organization_id, domain_name (#1650). A domain must belong to the selected organization.",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit organization_id, domain_name values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workmail_default_domain.html.markdown",
@@ -94047,17 +94047,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newDefaultDomainResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workmail_domain": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1650,
-      "gap": "#1650 — Verify organization_id for aws_workmail_domain.",
+      "gap": "#1650 — Verify organization_id.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94066,9 +94067,9 @@
           "organization_id"
         ],
         "placement": "Supported: Logical Node for Amazon WorkMail. Manages a mail domain registered to an AWS WorkMail organization.",
-        "ownership": "Missing: Verify the service parent selected by organization_id before presenting this helper under that parent (#1650).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1650).",
         "network": "Not applicable: Manages a mail domain registered to an AWS WorkMail organization. No direct subnet placement follows from organization_id.",
-        "references": "Missing: Resolve known organization_id only against unique compatible managed endpoints (#1650).",
+        "references": "Supported: Verified references for organization_id (#1650).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit organization_id values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workmail_domain.html.markdown",
@@ -94084,17 +94085,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newDomainResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workmail_group": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1650,
-      "gap": "#1650 — Verify organization_id for aws_workmail_group.",
+      "gap": "#1650 — Verify organization_id.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94103,9 +94105,9 @@
           "organization_id"
         ],
         "placement": "Supported: Logical Identity for Amazon WorkMail. Manages an AWS WorkMail Group.",
-        "ownership": "Missing: Verify the service parent selected by organization_id before presenting this helper under that parent (#1650).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1650).",
         "network": "Not applicable: Manages an AWS WorkMail Group. No direct subnet placement follows from organization_id.",
-        "references": "Missing: Resolve known organization_id only against unique compatible managed endpoints (#1650).",
+        "references": "Supported: Verified references for organization_id (#1650).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit email from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workmail_group.html.markdown",
@@ -94121,17 +94123,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newGroupResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workmail_organization": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1650,
-      "gap": "#1650 — Verify directory_id, kms_key_arn for aws_workmail_organization.",
+      "gap": "#1650 — Verify directory_id, kms_key_arn.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94144,7 +94147,7 @@
         "placement": "Supported: Logical Node for Amazon WorkMail. Manages an AWS WorkMail Organization.",
         "ownership": "Not applicable: Keep Amazon WorkMail node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Manages an AWS WorkMail Organization. No direct subnet placement follows from directory_id.",
-        "references": "Missing: Resolve known directory_id, kms_key_arn only against unique compatible managed endpoints (#1650).",
+        "references": "Supported: Verified references for directory_id, kms_key_arn (#1650).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit directory_id, kms_key_arn values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workmail_organization.html.markdown",
@@ -94168,17 +94171,18 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newOrganizationResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
       }
     },
     "aws_workmail_user": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1650,
-      "gap": "#1650 — Verify organization_id for aws_workmail_user.",
+      "gap": "#1650 — Verify organization_id.",
       "review": {
         "issue": 735,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -94187,9 +94191,9 @@
           "organization_id"
         ],
         "placement": "Supported: Logical Identity for Amazon WorkMail. Manages an AWS WorkMail User.",
-        "ownership": "Missing: Verify the service parent selected by organization_id before presenting this helper under that parent (#1650).",
+        "ownership": "Not applicable: Keep this independently addressable configuration visible. The verified service relationship is available as a reference (#1650).",
         "network": "Not applicable: Manages an AWS WorkMail User. No direct subnet placement follows from organization_id.",
-        "references": "Missing: Resolve known organization_id only against unique compatible managed endpoints (#1650).",
+        "references": "Supported: Verified references for organization_id (#1650).",
         "scope": "Supported: Runtime default Regional (conditional). Provider registration ResourceRegionDefault; the pinned managed schema accepts a region override. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit email, password from dedicated summaries.",
         "officialDocumentation": "website/docs/r/workmail_user.html.markdown",
@@ -94205,7 +94209,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/email_engagement.rs"
         ],
         "managedDataContract": "Managed newUserResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
