@@ -98047,10 +98047,10 @@
       }
     },
     "aws_bcmdataexports_export": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1664,
-      "gap": "#1664 — Verify export.destination_configurations.s3_destination.s3_bucket for aws_bcmdataexports_export.",
+      "gap": "#1664 — Verify export.destination_configurations.s3_destination.s3_bucket.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98062,7 +98062,7 @@
         "placement": "Supported: Logical Node for AWS BCM Data Exports. Terraform resource for managing an AWS BCM Data Exports Export.",
         "ownership": "Not applicable: Keep AWS BCM Data Exports node independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Terraform resource for managing an AWS BCM Data Exports Export. No direct subnet placement follows from export.destination_configurations.s3_destination.s3_bucket.",
-        "references": "Missing: Resolve known export.destination_configurations.s3_destination.s3_bucket only against unique compatible managed endpoints (#1664).",
+        "references": "Supported: Verified references for export.destination_configurations.s3_destination.s3_bucket (#1664).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit export.data_query.query_statement from dedicated summaries.",
         "officialDocumentation": "website/docs/r/bcmdataexports_export.html.markdown",
@@ -98085,7 +98085,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed newExportResource. No same-name data registration in the pinned schema.",
         "dataContracts": {}
@@ -98594,10 +98595,10 @@
       }
     },
     "aws_cur_report_definition": {
-      "status": "Basic-only",
+      "status": "Implemented",
       "priority": "P2",
       "issue": 1664,
-      "gap": "#1664 — Verify s3_bucket for aws_cur_report_definition.",
+      "gap": "#1664 — Verify s3_bucket.",
       "review": {
         "issue": 738,
         "implementationCommit": "97b2f5449696d29f2b58c6aeae217a4d9bdd7dbb",
@@ -98609,7 +98610,7 @@
         "placement": "Supported: Logical Controller for AWS Cost and Usage Report. Provides a Cost and Usage Report Definition.",
         "ownership": "Not applicable: Keep AWS Cost and Usage Report controller independently addressable. Its managed identity alone establishes no diagram parent.",
         "network": "Not applicable: Provides a Cost and Usage Report Definition. No direct subnet placement follows from s3_bucket.",
-        "references": "Missing: Resolve known s3_bucket only against unique compatible managed endpoints (#1664).",
+        "references": "Supported: Verified references for s3_bucket (#1664).",
         "scope": "Supported: Runtime default Global. Provider registration ResourceRegionDisabled; no managed region override is registered. External destination identifiers do not set the source account.",
         "summaries": "Intentionally unsupported: Keep the resource label and plan action; omit s3_bucket values from dedicated summaries.",
         "officialDocumentation": "website/docs/r/cur_report_definition.html.markdown",
@@ -98629,7 +98630,8 @@
           "src/provider/aws/basic_entries.rs",
           "src/provider/aws/classification.rs",
           "src/provider/aws/scope.rs",
-          "tests/unit/resource_support.rs"
+          "tests/unit/resource_support.rs",
+          "src/provider/aws/billing_services.rs"
         ],
         "managedDataContract": "Managed resourceReportDefinition. Same-name data selectors are recorded separately.",
         "dataContracts": {
