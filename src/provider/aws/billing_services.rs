@@ -95,6 +95,18 @@ fn rule(kind: &str, path: &str) -> Option<Rule> {
             &[],
         )
         .in_control_plane_account(),
+        ("aws_pricingplanmanager_subscription", "resource_arns") => Rule::new(
+            "Covered CloudFront plan resources",
+            &[
+                ("aws_cloudfront_distribution", &["arn"]),
+                ("aws_wafv2_web_acl", &["arn"]),
+                ("aws_route53_zone", &["arn"]),
+                ("aws_cloudfront_key_value_store", &["arn"]),
+            ],
+            true,
+            &[],
+        )
+        .in_control_plane_account(),
         _ => return None,
     })
 }
@@ -183,6 +195,34 @@ fn qualifies(
         ("aws_budgets_budget", "notification.subscriber_sns_topic_arns")
         | ("aws_ce_anomaly_subscription", "monitor_arn_list") => {
             destination_account_matches(evidence, reference, endpoint)
+        }
+        ("aws_pricingplanmanager_subscription", "resource_arns") => {
+            if evidence.text(reference.target, "plan_family") != Some("CloudFront") {
+                return false;
+            }
+            let resources = reference
+                .sources
+                .iter()
+                .map(|&index| evidence.nodes[index].resource_type.as_str());
+            if resources
+                .clone()
+                .filter(|&kind| kind == "aws_cloudfront_distribution")
+                .count()
+                != 1
+                || resources
+                    .filter(|&kind| kind == "aws_wafv2_web_acl")
+                    .count()
+                    != 1
+            {
+                return false;
+            }
+            match target.resource_type.as_str() {
+                "aws_wafv2_web_acl" => evidence.text(endpoint, "scope") == Some("CLOUDFRONT"),
+                "aws_cloudfront_key_value_store" => evidence
+                    .text(reference.target, "plan_tier")
+                    .is_some_and(|tier| tier != "FREE"),
+                _ => true,
+            }
         }
         _ => true,
     }
